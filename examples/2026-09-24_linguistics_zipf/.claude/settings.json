@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [ { "type": "command", "command": "cd \"$CLAUDE_PROJECT_DIR\" && git config core.hooksPath .githooks; python3 tools/ledger.py brief" } ] }
+    ],
+    "SessionEnd": [
+      { "hooks": [ { "type": "command", "command": "cd \"$CLAUDE_PROJECT_DIR\" && python3 tools/ledger.py export-chat" } ] }
+    ]
+  }
+}
