@@ -1,0 +1,342 @@
+<title>Алиса на 11 языках</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alice&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root {
+  --bg: #f4f3fa;
+  --surface: #fcfcfe;
+  --ink: #1a1c33;
+  --ink-2: #45486a;
+  --muted: #6a6d8c;
+  --rule: #d9d8e8;
+  --grid: #e6e5f1;
+  --words: #3949ab;
+  --letters: #c8243b;
+  --pick: #c8243b;
+  --chip: #ebeaf6;
+  --display: "Alice", "Georgia", "Times New Roman", serif;
+  --body: "Golos Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #15172b; --surface: #1c1f38; --ink: #ecebf7; --ink-2: #c3c4dc; --muted: #9c9ebd;
+    --rule: #34375a; --grid: #2a2d4b; --words: #7986f2; --letters: #f2566c; --pick: #f2566c; --chip: #262947;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #15172b; --surface: #1c1f38; --ink: #ecebf7; --ink-2: #c3c4dc; --muted: #9c9ebd;
+  --rule: #34375a; --grid: #2a2d4b; --words: #7986f2; --letters: #f2566c; --pick: #f2566c; --chip: #262947;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.6 var(--body); }
+.wrap { max-width: 780px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 56px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; text-wrap: balance; margin: 0; line-height: 1.15; }
+h1 { font-size: clamp(38px, 7vw, 64px); letter-spacing: -0.01em; }
+h2 { font-size: clamp(26px, 4.4vw, 34px); }
+p { margin: 0; max-width: 65ch; }
+.eyebrow { font: 500 12px/1.4 var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { font-size: 20px; color: var(--ink-2); }
+section { display: grid; gap: 18px; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+a { color: var(--words); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--pick); outline-offset: 2px; }
+
+/* hero */
+.hero { display: grid; gap: 20px; }
+.tape { display: flex; align-items: flex-end; gap: 0; height: 28px; border-bottom: 1px solid var(--ink); overflow: hidden; }
+.tape i { flex: 1; border-left: 1px solid var(--ink); height: 8px; }
+.tape i:nth-child(5n+1) { height: 16px; }
+.tape i:nth-child(10n+1) { height: 26px; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 28px; font-size: 15px; color: var(--ink-2); }
+.facts b { font: 600 22px/1.2 var(--mono); color: var(--ink); display: block; }
+
+/* quiz */
+.quiz { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 20px; display: grid; gap: 14px; }
+.quiz h3 { font-size: 24px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips button { font: 500 15px/1 var(--body); color: var(--ink); background: var(--chip); border: 1px solid transparent; border-radius: 999px; padding: 10px 14px; cursor: pointer; }
+.chips button:hover { border-color: var(--rule); }
+.chips button[aria-pressed="true"] { background: var(--pick); color: #fff; }
+.verdict { min-height: 1.6em; font-size: 16px; }
+
+/* charts */
+.chart { background: var(--surface); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 12px 10px; position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--body); fill: var(--ink); }
+.chart .axis { font: 400 11px var(--mono); fill: var(--muted); }
+.chart .val { font: 600 13px var(--mono); fill: var(--ink); }
+.chart .lab { font-size: 14px; }
+.legend { display: flex; gap: 18px; flex-wrap: wrap; font-size: 14px; color: var(--ink-2); padding: 0 6px 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-size: 13px; line-height: 1.45; padding: 8px 10px; border-radius: 8px; max-width: 260px; z-index: 2; }
+.caption { font-size: 14px; color: var(--muted); }
+
+/* callouts and grids */
+.call { border-left: 3px solid var(--pick); padding: 4px 0 4px 16px; }
+.words-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.wcard { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 14px; display: grid; gap: 4px; }
+.wcard .w { font: 400 30px/1.1 var(--display); font-family: var(--display), "Noto Sans Hebrew", "Arial Hebrew", sans-serif; }
+.wcard .l { font-size: 13px; color: var(--muted); }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.stat { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; gap: 6px; }
+.stat b { font: 600 34px/1 var(--mono); }
+ol.steps { margin: 0; padding-left: 22px; display: grid; gap: 8px; max-width: 65ch; }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; font-size: 14px; min-width: 520px; width: 100%; }
+th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--rule); }
+td.n, th.n { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+details summary { cursor: pointer; color: var(--ink-2); }
+footer { font-size: 14px; color: var(--muted); display: grid; gap: 8px; border-top: 1px solid var(--rule); padding-top: 18px; }
+@media (prefers-reduced-motion: no-preference) { .bar { transition: fill .2s; } }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Одна книга · 11 языков · 14 переводов · каждое слово посчитано</div>
+    <h1>Какой язык самый болтливый?</h1>
+    <p class="lede">«Алиса в стране чудес» у Кэрролла — <span class="num" id="wen"></span> слов. Мы взяли ту же сказку на десяти других языках и посчитали, сколько слов нужно каждому, чтобы рассказать её целиком.</p>
+    <div class="tape" aria-hidden="true" id="tape"></div>
+    <div class="facts">
+      <div><b id="f-short"></b>самый краткий</div>
+      <div><b id="f-long"></b>самый болтливый</div>
+      <div><b id="f-gap"></b>разница между ними</div>
+    </div>
+  </header>
+
+  <section class="quiz" aria-labelledby="qh">
+    <h3 id="qh">Сначала угадайте: какой язык длиннее всех?</h3>
+    <div class="chips" id="chips" role="group" aria-label="Выберите язык"></div>
+    <div class="verdict" id="verdict" aria-live="polite">Выберите язык — он подсветится на графике ниже.</div>
+  </section>
+
+  <section aria-labelledby="h-rank">
+    <div class="eyebrow">Рейтинг</div>
+    <h2 id="h-rank">Сколько слов нужно на каждые 100 слов оригинала</h2>
+    <div class="chart" id="c-rank"><div class="legend"><span><i class="sw" style="background:var(--words)"></i>медиана переводов языка</span><span><i class="sw" style="background:var(--ink);width:8px;height:8px"></i>отдельный перевод</span></div></div>
+    <p class="caption">Черта на 100 — английский оригинал. Точки — отдельные переводы, где их два. Наведите на строку, чтобы увидеть переводчиков.</p>
+    <p class="call" id="podium"></p>
+  </section>
+
+  <section aria-labelledby="h-letters">
+    <div class="eyebrow">Сюрприз</div>
+    <h2 id="h-letters">Финский короче всех по словам и длиннее английского по буквам</h2>
+    <p>Слово в финском длинное: падеж, число и даже «и» или «ли» приклеиваются к нему окончаниями. Поэтому слов мало, а букв больше, чем у Кэрролла. Иврит наоборот экономен на письме: гласные в нём обычно не пишутся.</p>
+    <div class="chart" id="c-letters"><div class="legend"><span><i class="sw" style="background:var(--words)"></i>слова</span><span><i class="sw" style="background:var(--letters);border-radius:2px"></i>буквы</span></div></div>
+    <p class="caption">Оба ряда — к английскому оригиналу (= 100). <span id="cjk"></span></p>
+  </section>
+
+  <section aria-labelledby="h-top">
+    <div class="eyebrow">Любимое слово</div>
+    <h2 id="h-top">Самое частое слово в каждом языке</h2>
+    <p>У английского это <b>the</b>. У эсперанто артикль <b>la</b> один на все случаи, и он бьёт рекорд. А в иврите союзы и предлоги пишутся слитно со словом, поэтому самым частым «словом» оказалась сама Алиса.</p>
+    <div class="words-grid" id="topwords"></div>
+  </section>
+
+  <section aria-labelledby="h-art">
+    <div class="eyebrow">Эксперимент</div>
+    <h2 id="h-art">Уберём артикли — догонят русский?</h2>
+    <p>В русском нет артиклей, а в английском каждое шестнадцатое слово — the. Мы вычеркнули артикли у шести языков. Все стали ближе к русскому, но ни один не догнал.</p>
+    <div class="chart" id="c-art"><div class="legend"><span><i class="sw" style="background:var(--muted)"></i>с артиклями</span><span><i class="sw" style="background:var(--words)"></i>без артиклей</span><span><i class="sw" style="background:var(--letters);border-radius:2px;width:3px"></i>русский</span></div></div>
+  </section>
+
+  <section aria-labelledby="h-tr">
+    <div class="eyebrow">Кто виноват</div>
+    <h2 id="h-tr">Язык или переводчик?</h2>
+    <p>Два перевода на один язык расходятся заметно, но гораздо меньше, чем языки между собой. Поэтому соседей в рейтинге, которые отличаются на несколько слов, лучше считать ничьей.</p>
+    <div class="stats" id="trstats"></div>
+  </section>
+
+  <section aria-labelledby="h-honest">
+    <div class="eyebrow">Без кликбейта</div>
+    <h2 id="h-honest">Что из этого не следует</h2>
+    <p><b>Короче не значит лучше.</b> Когда люди говорят вслух, «плотные» языки произносят медленнее, «лёгкие» быстрее, и поток смысла выходит почти одинаковым, около 39 бит в секунду (Coupé и др., 2019).</p>
+    <p><b>Мы сравнили переводы, а не языки.</b> Одна книга, один-два перевода на язык, переводы разных эпох. Переводчики переделывали стихи и шутки, иногда меняли имена: у финнов Алиса стала Лиисой, у чехов — Аленкой.</p>
+    <p><b>«Разнообразие слов» — это разнообразие форм.</b> У иврита и финского больше всего разных слов на ту же длину (<span class="num" id="ttr-top"></span>), у английского меньше всего (<span class="num" id="ttr-en"></span>). Английский при этом не беднее: его слова просто почти не меняют форму.</p>
+  </section>
+
+  <section aria-labelledby="h-how">
+    <div class="eyebrow">Как считали</div>
+    <h2 id="h-how">Правила записаны до подсчёта</h2>
+    <ol class="steps">
+      <li>Гипотезы записаны в публичный журнал до поиска текстов. Самый краткий — финский, самый болтливый — французский или английский, без артиклей английский всё равно длиннее русского.</li>
+      <li>Правила подсчёта и пороги «подтверждено / опровергнуто» закоммичены до извлечения глав.</li>
+      <li>Главы вырезаны из 17 файлов. Лицензии, оглавления, предисловия, сноски и комментарии удалены. Каждую выгрузку проверял независимый агент.</li>
+      <li>Все пять предсказаний подтвердились. Одна оговорка: звание «самого болтливого» зависит от переводчика. В 8 вариантах выбора переводов его получает французский <span id="mc"></span>.</li>
+      <li>Наша ошибка: часть грубых подсчётов попалась нам на глаза до того, как были записаны пороги. Поэтому результат нужно повторить на других переводах. Ошибка записана в журнал.</li>
+    </ol>
+    <details>
+      <summary>Таблица всех переводов</summary>
+      <div class="tablewrap"><table id="tbl"><thead><tr><th>Язык</th><th>Перевод</th><th class="n">Слов</th><th class="n">На 100 англ.</th></tr></thead><tbody></tbody></table></div>
+    </details>
+  </section>
+
+  <footer>
+    <div>Исследование S2 проекта Neu, 24.09.2026. Код, план, журнал ошибок и все числа: <a href="https://github.com/131ymm-commits/Neu/tree/main/examples/2026-09-24_linguistics_zipf/studies/2026-09-24_S2_alice" target="_blank" rel="noopener">github.com/131ymm-commits/Neu</a>.</div>
+    <div>Тексты: Project Gutenberg (через GITenberg), корпус iglika88, «Читанка», Проект Бен-Иехуды, Аодзора Бунко, Haodoo, Městská knihovna v Praze. Японский и китайский в счёт слов не входят: там нет пробелов между словами.</div>
+  </footer>
+</div>
+
+<script>
+const D = __DATA__;
+const $ = s => document.querySelector(s);
+const fmt = (x, d = 0) => x.toLocaleString('ru-RU', { minimumFractionDigits: d, maximumFractionDigits: d });
+const per100 = r => Math.round(r * 100);
+const byCode = Object.fromEntries(D.langs.map(l => [l.code, l]));
+const shortest = D.langs[0], longest = D.langs[D.langs.length - 1];
+let picked = null;
+try { picked = localStorage.getItem('alice-pick'); } catch (e) {}
+
+$('#wen').textContent = fmt(D.W_en);
+$('#f-short').textContent = shortest.name + ' · ' + per100(shortest.r);
+$('#f-long').textContent = longest.name + ' · ' + per100(longest.r);
+$('#f-gap').textContent = '×' + fmt(longest.r / shortest.r, 2);
+$('#tape').innerHTML = '<i></i>'.repeat(60);
+$('#mc').textContent = `${D.max_counts.fr || 0} раза, английский ${D.max_counts.en || 0}, испанский ${D.max_counts.es || 0}`;
+$('#cjk').textContent = `Японский и китайский считаются знаками: японский тратит ${per100(D.ref.ja)} знаков, китайский ${per100(D.ref.zh)} на каждые 100 английских букв.`;
+const ttrSorted = [...D.langs].sort((a, b) => b.ttr - a.ttr);
+$('#ttr-top').textContent = `${fmt(ttrSorted[0].ttr * 100, 1)} и ${fmt(ttrSorted[1].ttr * 100, 1)} на 100 слов`;
+$('#ttr-en').textContent = `${fmt(byCode.en.ttr * 100, 1)}`;
+
+// ---------- tooltip ----------
+function tipFor(chart) {
+  let t = chart.querySelector('.tip');
+  if (!t) { t = document.createElement('div'); t.className = 'tip'; t.hidden = true; chart.appendChild(t); }
+  return t;
+}
+function bindTip(chart, el, html) {
+  const t = tipFor(chart);
+  const show = ev => {
+    t.innerHTML = html; t.hidden = false;
+    const cr = chart.getBoundingClientRect();
+    const x = (ev.clientX ?? cr.left + cr.width / 2) - cr.left, y = (ev.clientY ?? cr.top) - cr.top;
+    t.style.left = Math.min(Math.max(8, x + 12), cr.width - 270) + 'px'; t.style.top = (y + 14) + 'px';
+  };
+  el.addEventListener('pointermove', show); el.addEventListener('pointerenter', show);
+  el.addEventListener('pointerleave', () => { t.hidden = true; });
+}
+const NS = 'http://www.w3.org/2000/svg';
+function svgEl(name, attrs, parent) { const e = document.createElementNS(NS, name); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function freshSvg(chart, h) {
+  chart.querySelector('svg')?.remove();
+  const w = Math.max(300, chart.clientWidth - 24);
+  const s = svgEl('svg', { viewBox: `0 0 ${w} ${h}`, width: w, height: h, role: 'img' });
+  chart.insertBefore(s, chart.querySelector('.tip'));
+  return [s, w];
+}
+
+// ---------- chart 1: ranking ----------
+function drawRank() {
+  const chart = $('#c-rank'); const rowH = 34, top = 26, n = D.langs.length;
+  const [s, w] = freshSvg(chart, top + rowH * n + 8);
+  s.setAttribute('aria-label', 'Слов на 100 слов оригинала по языкам: ' + D.langs.map(l => `${l.name} ${per100(l.r)}`).join(', '));
+  const labW = w < 460 ? 96 : 118, x0 = labW, x1 = w - 44, max = 1.1;
+  const X = v => x0 + (x1 - x0) * v / max;
+  for (const g of [0, 0.25, 0.5, 0.75, 1]) {
+    svgEl('line', { x1: X(g), x2: X(g), y1: top - 6, y2: top + rowH * n, stroke: g === 1 ? 'var(--ink)' : 'var(--grid)', 'stroke-width': g === 1 ? 1.5 : 1, 'stroke-dasharray': g === 1 ? '4 3' : '' }, s);
+    svgEl('text', { x: X(g), y: top - 12, 'text-anchor': 'middle', class: 'axis' }, s).textContent = per100(g);
+  }
+  D.langs.forEach((l, i) => {
+    const y = top + i * rowH + 6, bh = rowH - 14, isPick = picked === l.code;
+    const g = svgEl('g', { tabindex: 0 }, s);
+    svgEl('rect', { x: 0, y: y - 5, width: w, height: rowH, fill: 'transparent' }, g);
+    svgEl('text', { x: labW - 10, y: y + bh / 2 + 5, 'text-anchor': 'end', class: 'lab', 'font-weight': isPick ? 600 : 400 }, g).textContent = l.name;
+    svgEl('rect', { class: 'bar', x: x0, y, width: Math.max(0, X(l.r) - x0), height: bh, rx: 4, fill: isPick ? 'var(--pick)' : 'var(--words)' }, g);
+    if (l.texts.length > 1) {
+      const rs = l.texts.map(t => t.r);
+      svgEl('line', { x1: X(Math.min(...rs)), x2: X(Math.max(...rs)), y1: y + bh / 2, y2: y + bh / 2, stroke: 'var(--ink)', 'stroke-width': 2 }, g);
+      rs.forEach(r => svgEl('circle', { cx: X(r), cy: y + bh / 2, r: 4, fill: 'var(--ink)', stroke: 'var(--surface)', 'stroke-width': 2 }, g));
+    }
+    const vx = Math.max(X(l.r), ...l.texts.map(t => X(t.r))) + 8;
+    svgEl('text', { x: vx, y: y + bh / 2 + 5, class: 'val' }, g).textContent = per100(l.r);
+    bindTip(chart, g, `<b>${l.name}: ${per100(l.r)}</b><br>` + l.texts.map(t => `${t.who}: ${fmt(t.W)} слов (${per100(t.r)})`).join('<br>'));
+  });
+}
+
+// ---------- chart 2: words vs letters ----------
+function drawLetters() {
+  const chart = $('#c-letters'); const rowH = 30, top = 26, n = D.langs.length;
+  const [s, w] = freshSvg(chart, top + rowH * n + 8);
+  s.setAttribute('aria-label', 'Слова и буквы к английскому: ' + D.langs.map(l => `${l.name}: слов ${per100(l.r)}, букв ${per100(l.letters)}`).join('; '));
+  const labW = w < 460 ? 96 : 118, lo = 0.6, hi = 1.2, x0 = labW, x1 = w - 16;
+  const X = v => x0 + (x1 - x0) * (v - lo) / (hi - lo);
+  for (const g of [0.6, 0.7, 0.8, 0.9, 1, 1.1, 1.2]) {
+    svgEl('line', { x1: X(g), x2: X(g), y1: top - 6, y2: top + rowH * n, stroke: g === 1 ? 'var(--ink)' : 'var(--grid)', 'stroke-dasharray': g === 1 ? '4 3' : '' }, s);
+    svgEl('text', { x: X(g), y: top - 12, 'text-anchor': 'middle', class: 'axis' }, s).textContent = per100(g);
+  }
+  D.langs.forEach((l, i) => {
+    const y = top + i * rowH + rowH / 2;
+    const g = svgEl('g', {}, s);
+    svgEl('rect', { x: 0, y: y - rowH / 2, width: w, height: rowH, fill: 'transparent' }, g);
+    svgEl('text', { x: labW - 10, y: y + 5, 'text-anchor': 'end', class: 'lab' }, g).textContent = l.name;
+    svgEl('line', { x1: X(l.r), x2: X(l.letters), y1: y, y2: y, stroke: 'var(--rule)', 'stroke-width': 2 }, g);
+    svgEl('circle', { cx: X(l.r), cy: y, r: 6, fill: 'var(--words)', stroke: 'var(--surface)', 'stroke-width': 2 }, g);
+    svgEl('rect', { x: X(l.letters) - 6, y: y - 6, width: 12, height: 12, rx: 2, fill: 'var(--letters)', stroke: 'var(--surface)', 'stroke-width': 2 }, g);
+    if (l.code === 'fi') {
+      svgEl('text', { x: X(l.r) - 12, y: y + 4, 'text-anchor': 'end', class: 'axis' }, g).textContent = 'слова ' + per100(l.r);
+      svgEl('text', { x: X(l.letters) + 12, y: y + 4, class: 'axis' }, g).textContent = 'буквы ' + per100(l.letters);
+    }
+    bindTip(chart, g, `<b>${l.name}</b><br>слов: ${per100(l.r)} на 100<br>букв: ${per100(l.letters)} на 100`);
+  });
+}
+
+// ---------- chart 3: articles ----------
+function drawArticles() {
+  const chart = $('#c-art');
+  const rows = D.langs.filter(l => l.noart != null).sort((a, b) => b.r - a.r);
+  const ru = byCode.ru.r, rowH = 34, top = 30;
+  const [s, w] = freshSvg(chart, top + rowH * rows.length + 8);
+  s.setAttribute('aria-label', 'Без артиклей: ' + rows.map(l => `${l.name} ${per100(l.r)} → ${per100(l.noart)}`).join(', ') + `; русский ${per100(ru)}`);
+  const labW = w < 460 ? 96 : 118, lo = 0.7, hi = 1.05, x0 = labW, x1 = w - 40;
+  const X = v => x0 + (x1 - x0) * (v - lo) / (hi - lo);
+  svgEl('line', { x1: X(ru), x2: X(ru), y1: top - 10, y2: top + rowH * rows.length, stroke: 'var(--letters)', 'stroke-width': 3 }, s);
+  svgEl('text', { x: X(ru) + 6, y: top - 14, class: 'axis' }, s).textContent = 'русский ' + per100(ru);
+  rows.forEach((l, i) => {
+    const y = top + i * rowH + rowH / 2;
+    const g = svgEl('g', {}, s);
+    svgEl('rect', { x: 0, y: y - rowH / 2, width: w, height: rowH, fill: 'transparent' }, g);
+    svgEl('text', { x: labW - 10, y: y + 5, 'text-anchor': 'end', class: 'lab' }, g).textContent = l.name;
+    svgEl('line', { x1: X(l.r), x2: X(l.noart) + 7, y1: y, y2: y, stroke: 'var(--muted)', 'stroke-width': 2 }, g);
+    svgEl('path', { d: `M${X(l.noart) + 9},${y - 5} L${X(l.noart) + 2},${y} L${X(l.noart) + 9},${y + 5}`, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 2 }, g);
+    svgEl('circle', { cx: X(l.r), cy: y, r: 5, fill: 'var(--muted)' }, g);
+    svgEl('circle', { cx: X(l.noart), cy: y, r: 6, fill: 'var(--words)', stroke: 'var(--surface)', 'stroke-width': 2 }, g);
+    svgEl('text', { x: X(l.r) + 10, y: y + 5, class: 'val' }, g).textContent = per100(l.r) + ' → ' + per100(l.noart);
+    bindTip(chart, g, `<b>${l.name}</b><br>с артиклями: ${per100(l.r)}<br>без артиклей: ${per100(l.noart)}<br>русский: ${per100(ru)}`);
+  });
+}
+
+// ---------- quiz ----------
+function renderQuiz() {
+  const chips = $('#chips'); chips.innerHTML = '';
+  [...D.langs].sort((a, b) => a.name.localeCompare(b.name, 'ru')).forEach(l => {
+    const b = document.createElement('button'); b.type = 'button'; b.id = 'pick-' + l.code;
+    b.textContent = l.name; b.setAttribute('aria-pressed', picked === l.code ? 'true' : 'false');
+    b.addEventListener('click', () => { picked = l.code; try { localStorage.setItem('alice-pick', l.code); } catch (e) {} renderQuiz(); drawRank(); });
+    chips.appendChild(b);
+  });
+  if (!picked) return;
+  const l = byCode[picked], place = D.langs.length - D.langs.indexOf(l);
+  const v = $('#verdict');
+  if (picked === longest.code) v.innerHTML = `<b>Угадали.</b> ${l.name} — ${per100(l.r)} слов на 100 английских. Но победа хрупкая: с другим переводчиком первое место берёт английский или испанский.`;
+  else if (picked === 'en' || picked === 'es') v.innerHTML = `<b>Почти.</b> ${l.name} — ${per100(l.r)}, место ${place} с конца. Первое место делят французский, английский и испанский: всё решает переводчик.`;
+  else v.innerHTML = `<b>Мимо.</b> ${l.name} — ${per100(l.r)} слов на 100 английских, ${place === D.langs.length ? 'это самый краткий язык из всех' : 'место ' + place + ' с конца'}. Самый болтливый — ${longest.name} (${per100(longest.r)}).`;
+}
+
+// ---------- static blocks ----------
+$('#podium').innerHTML = `<b>Пьедестал шаткий.</b> ${longest.name[0].toUpperCase() + longest.name.slice(1)} на первом месте, только если брать медиану двух переводов. Перевод Бюэ 1869 года короче оригинала (${per100(byCode.fr.texts[0].r)}), перевод Папи 2001 года длиннее (${per100(byCode.fr.texts[1].r)}). А вот низ таблицы прочный: финский — самый краткий при любом выборе переводов.`;
+$('#topwords').innerHTML = D.langs.map(l => `<div class="wcard"><span class="l">${l.name}</span><span class="w" lang="${l.code}">${l.top.w}</span><span class="num">${fmt(l.top.share * 100, 1)}% всех слов</span></div>`).join('');
+const e1 = Object.entries(D.e1).map(([L, v]) => `${byCode[L].name} ${per100(v)}`).join(', ');
+$('#trstats').innerHTML = `
+  <div class="stat"><span class="muted">разница между двумя переводами одного языка</span><b>${Math.round(Math.min(...Object.values(D.e1)) * 100)}–${Math.round(Math.max(...Object.values(D.e1)) * 100)}</b><span class="muted">слов на 100 (${e1})</span></div>
+  <div class="stat"><span class="muted">разница между самым кратким и самым болтливым языком</span><b>${per100(D.between)}</b><span class="muted">слов на 100</span></div>`;
+$('#tbl tbody').innerHTML = D.langs.flatMap(l => l.texts.map(t => `<tr><td>${l.name}</td><td>${t.who}</td><td class="n">${fmt(t.W)}</td><td class="n">${per100(t.r)}</td></tr>`)).join('');
+
+function drawAll() { drawRank(); drawLetters(); drawArticles(); }
+renderQuiz(); drawAll();
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(drawAll, 120); });
+</script>
