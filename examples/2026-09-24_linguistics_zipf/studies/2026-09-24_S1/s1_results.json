@@ -1,0 +1,374 @@
+{
+ "n_pairs": 16,
+ "P1": {
+  "k": 16,
+  "of": 16,
+  "verdict": "подтверждено",
+  "p_one_sided": 1.52587890625e-05
+ },
+ "P2": {
+  "k": 16,
+  "of": 16,
+  "verdict": "подтверждено",
+  "p_one_sided": 1.52587890625e-05
+ },
+ "P3": {
+  "tokens_ru": 29539,
+  "tokens_en": 37097,
+  "N": 29539,
+  "ttr_ru": 0.23582382612816954,
+  "ttr_en": 0.12620603270252886,
+  "alpha_ru": 0.7994619090514107,
+  "alpha_en": 0.9448464218434766,
+  "heaps": {
+   "ru": [
+    [
+     1000,
+     602
+    ],
+    [
+     2000,
+     1058
+    ],
+    [
+     5000,
+     2070
+    ],
+    [
+     10000,
+     3381
+    ],
+    [
+     20000,
+     5508
+    ],
+    [
+     29539,
+     6966
+    ]
+   ],
+   "en": [
+    [
+     1000,
+     414
+    ],
+    [
+     2000,
+     694
+    ],
+    [
+     5000,
+     1279
+    ],
+    [
+     10000,
+     1897
+    ],
+    [
+     20000,
+     2986
+    ],
+    [
+     29539,
+     3728
+    ]
+   ]
+  },
+  "top10": {
+   "ru": [
+    [
+     "не",
+     1259
+    ],
+    [
+     "и",
+     927
+    ],
+    [
+     "в",
+     617
+    ],
+    [
+     "это",
+     511
+    ],
+    [
+     "а",
+     418
+    ],
+    [
+     "что",
+     389
+    ],
+    [
+     "m",
+     246
+    ],
+    [
+     "с",
+     243
+    ],
+    [
+     "на",
+     199
+    ],
+    [
+     "узел",
+     189
+    ]
+   ],
+   "en": [
+    [
+     "the",
+     2950
+    ],
+    [
+     "a",
+     1537
+    ],
+    [
+     "is",
+     1472
+    ],
+    [
+     "not",
+     887
+    ],
+    [
+     "and",
+     873
+    ],
+    [
+     "of",
+     734
+    ],
+    [
+     "it",
+     630
+    ],
+    [
+     "to",
+     546
+    ],
+    [
+     "in",
+     455
+    ],
+    [
+     "that",
+     356
+    ]
+   ]
+  }
+ },
+ "rows": [
+  {
+   "chapter": "01_PROTOCOL.md",
+   "tokens_ru": 3118,
+   "tokens_en": 4027,
+   "len_ratio": 0.774,
+   "N": 3118,
+   "ttr_ru": 0.4622,
+   "ttr_en": 0.3072,
+   "alpha_ru": 0.7486,
+   "alpha_en": 0.947,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "02_COMMUNION.md",
+   "tokens_ru": 2455,
+   "tokens_en": 2739,
+   "len_ratio": 0.896,
+   "N": 2455,
+   "ttr_ru": 0.4851,
+   "ttr_en": 0.3157,
+   "alpha_ru": 0.713,
+   "alpha_en": 0.8881,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "03_SOVEREIGNTY.md",
+   "tokens_ru": 1191,
+   "tokens_en": 1429,
+   "len_ratio": 0.833,
+   "N": 1191,
+   "ttr_ru": 0.5861,
+   "ttr_en": 0.3997,
+   "alpha_ru": 0.7047,
+   "alpha_en": 0.8171,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "04_EVOLUTION.md",
+   "tokens_ru": 1187,
+   "tokens_en": 1549,
+   "len_ratio": 0.766,
+   "N": 1187,
+   "ttr_ru": 0.524,
+   "ttr_en": 0.3682,
+   "alpha_ru": 0.7029,
+   "alpha_en": 0.8506,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "05_ATTACHMENT.md",
+   "tokens_ru": 1266,
+   "tokens_en": 1681,
+   "len_ratio": 0.753,
+   "N": 1266,
+   "ttr_ru": 0.5363,
+   "ttr_en": 0.3697,
+   "alpha_ru": 0.6962,
+   "alpha_en": 0.9146,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "06_BOUNDARY.md",
+   "tokens_ru": 2013,
+   "tokens_en": 2648,
+   "len_ratio": 0.76,
+   "N": 2013,
+   "ttr_ru": 0.4789,
+   "ttr_en": 0.3224,
+   "alpha_ru": 0.6788,
+   "alpha_en": 0.8355,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "07_ECONOMY.md",
+   "tokens_ru": 4084,
+   "tokens_en": 5220,
+   "len_ratio": 0.782,
+   "N": 4084,
+   "ttr_ru": 0.4403,
+   "ttr_en": 0.297,
+   "alpha_ru": 0.7345,
+   "alpha_en": 0.8844,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "08_DATA.md",
+   "tokens_ru": 2195,
+   "tokens_en": 2605,
+   "len_ratio": 0.843,
+   "N": 2195,
+   "ttr_ru": 0.4847,
+   "ttr_en": 0.3285,
+   "alpha_ru": 0.7507,
+   "alpha_en": 0.8584,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "09_VIRTUES.md",
+   "tokens_ru": 1727,
+   "tokens_en": 2228,
+   "len_ratio": 0.775,
+   "N": 1727,
+   "ttr_ru": 0.4881,
+   "ttr_en": 0.3329,
+   "alpha_ru": 0.7552,
+   "alpha_en": 0.8196,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "10_PRECEDENTS.md",
+   "tokens_ru": 1462,
+   "tokens_en": 1715,
+   "len_ratio": 0.852,
+   "N": 1462,
+   "ttr_ru": 0.5732,
+   "ttr_en": 0.4097,
+   "alpha_ru": 0.7136,
+   "alpha_en": 0.8515,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "11_START.md",
+   "tokens_ru": 1130,
+   "tokens_en": 1415,
+   "len_ratio": 0.799,
+   "N": 1130,
+   "ttr_ru": 0.5487,
+   "ttr_en": 0.377,
+   "alpha_ru": 0.6902,
+   "alpha_en": 0.8127,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "12_JURISDICTION.md",
+   "tokens_ru": 1361,
+   "tokens_en": 1704,
+   "len_ratio": 0.799,
+   "N": 1361,
+   "ttr_ru": 0.5496,
+   "ttr_en": 0.3975,
+   "alpha_ru": 0.6362,
+   "alpha_en": 0.8121,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "13_GRADUATE.md",
+   "tokens_ru": 1218,
+   "tokens_en": 1579,
+   "len_ratio": 0.771,
+   "N": 1218,
+   "ttr_ru": 0.5255,
+   "ttr_en": 0.3571,
+   "alpha_ru": 0.7311,
+   "alpha_en": 0.796,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "14_RESILIENCE.md",
+   "tokens_ru": 1270,
+   "tokens_en": 1601,
+   "len_ratio": 0.793,
+   "N": 1270,
+   "ttr_ru": 0.5079,
+   "ttr_en": 0.3583,
+   "alpha_ru": 0.7051,
+   "alpha_en": 0.8141,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "16_OBJECTIONS.md",
+   "tokens_ru": 2426,
+   "tokens_en": 3101,
+   "len_ratio": 0.782,
+   "N": 2426,
+   "ttr_ru": 0.5004,
+   "ttr_en": 0.331,
+   "alpha_ru": 0.738,
+   "alpha_en": 0.8291,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  },
+  {
+   "chapter": "17_RISKS.md",
+   "tokens_ru": 1436,
+   "tokens_en": 1856,
+   "len_ratio": 0.774,
+   "N": 1436,
+   "ttr_ru": 0.5794,
+   "ttr_en": 0.4102,
+   "alpha_ru": 0.7051,
+   "alpha_en": 0.8504,
+   "ranks_ru": 100,
+   "ranks_en": 100
+  }
+ ]
+}

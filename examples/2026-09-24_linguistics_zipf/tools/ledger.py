@@ -86,7 +86,8 @@ def cmd_set(a):
 
 
 # ---------- аудит текста ----------
-NUM = re.compile(r'(?<![\w.,])[−-]?\d+(?:[.,]\d+)?(?:\s?%)?')
+# «29 539» — одно число (разделитель тысяч: пробел, NBSP, узкий NBSP); хэши вида 964508d, даты 24.09.2026 и номера C-003 не числа
+NUM = re.compile(r'(?<![\w.,−-])[−-]?(?:\d{1,3}(?:[ \u00a0\u202f]\d{3})+|\d+)(?:[.,]\d+)?(?!\w)(?![.,]\d)(?:\s?%)?')
 DATA_ONLY = ('.json', '.jsonl', '.csv', '.tsv', '.log', '.txt', '.out')
 CNUM = re.compile(rb'-?\d+\.?\d*(?:[eE][-+]?\d+)?')
 
@@ -120,7 +121,7 @@ def density(v, d, srt):
 
 
 def check_number(raw, idx, srt):
-    t = raw.replace('−', '-').replace(' ', '').replace(',', '.')
+    t = re.sub(r'[\s\u00a0\u202f]', '', raw.replace('−', '-')).replace(',', '.')
     pct = t.endswith('%'); t = t.rstrip('%').lstrip('-')
     d = min(6, len(t.split('.')[1]) if '.' in t else 0)
     v = float(t)
