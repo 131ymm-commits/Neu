@@ -1,0 +1,232 @@
+{
+ "en": [
+  {
+   "source": "S-05",
+   "url": "https://raw.githubusercontent.com/GITenberg/Alice-s-Adventures-in-Wonderland_11/master/11-0.txt",
+   "file": "en_00.txt",
+   "bytes": 173595,
+   "sha256": "49a0b2726606e1290ac03a63978fa1dd1bd38a8d805704d98265f393533ea094"
+  }
+ ],
+ "de": [
+  {
+   "source": "S-06",
+   "url": "https://raw.githubusercontent.com/GITenberg/Alice-s-Abenteuer-im-Wunderland_19778/master/19778-8.txt",
+   "file": "de_00.txt",
+   "bytes": 183285,
+   "sha256": "942bc318e5b1f016fc895fd0995dba2efe80c1c3b02caa1211fc9b2ee9a6f3c0"
+  }
+ ],
+ "fr_bue": [
+  {
+   "source": "S-07",
+   "url": "https://raw.githubusercontent.com/GITenberg/Aventures-d-Alice-au-pays-des-merveilles_55456/master/55456-0.txt",
+   "file": "fr_bue_00.txt",
+   "bytes": 184669,
+   "sha256": "bbef7cb5377f30f7cf25267cf59b3024eeefe49a37201e4e6f7823ecbc62ead9"
+  }
+ ],
+ "fr_papy": [
+  {
+   "source": "S-08",
+   "url": "https://raw.githubusercontent.com/iglika88/corpus_original_and_abridged_texts/main/French/Alice%20in%20Wonderland/aw%20fr%20full%201.txt",
+   "file": "fr_papy_00.txt",
+   "bytes": 197942,
+   "sha256": "69df0e56000c90434128886078d56feb220a37400b53390542c14e1912be597b"
+  }
+ ],
+ "it": [
+  {
+   "source": "S-09",
+   "url": "https://raw.githubusercontent.com/GITenberg/Le-avventure-d-Alice-nel-paese-delle-meraviglie_28371/master/28371-8.txt",
+   "file": "it_00.txt",
+   "bytes": 173440,
+   "sha256": "2582db0e2568d257465b6644cdb8d3fc13273d84106a9607311e79e0911e352a"
+  }
+ ],
+ "es_1": [
+  {
+   "source": "S-10",
+   "url": "https://raw.githubusercontent.com/iglika88/corpus_original_and_abridged_texts/main/Spanish/Alice%20in%20Wonderland/aw%20sp%20full%201.txt",
+   "file": "es_1_00.txt",
+   "bytes": 167548,
+   "sha256": "761a4e64a36381220eaf900d16960e251ba212dfb2a5330710ae99d5e4f08179"
+  }
+ ],
+ "es_2": [
+  {
+   "source": "S-11",
+   "url": "https://raw.githubusercontent.com/iglika88/corpus_original_and_abridged_texts/main/Spanish/Alice%20in%20Wonderland/aw%20sp%20full%202.txt",
+   "file": "es_2_00.txt",
+   "bytes": 152744,
+   "sha256": "f5fea9e014a6e916fee4de851ac56b763f10a8c290d7592b91087160475634a0"
+  }
+ ],
+ "eo": [
+  {
+   "source": "S-12",
+   "url": "https://raw.githubusercontent.com/GITenberg/La-Aventuroj-de-Alicio-en-Mirlando_17482/master/17482-0.txt",
+   "file": "eo_00.txt",
+   "bytes": 186987,
+   "sha256": "3cf004a2c2c026ea72f3df9e46dcf63638239a8dbb74180fa360b7c881e47eb4"
+  }
+ ],
+ "fi": [
+  {
+   "source": "S-13",
+   "url": "https://raw.githubusercontent.com/GITenberg/Liisan-seikkailut-ihmemaassa_46569/master/46569-8.txt",
+   "file": "fi_00.txt",
+   "bytes": 166031,
+   "sha256": "a6ea721c49bf05caa85c970516c5687e84a8b4dec44fba402ed45ec1b3d0f675"
+  }
+ ],
+ "ru_dem": [
+  {
+   "source": "S-14",
+   "url": "https://raw.githubusercontent.com/iglika88/corpus_original_and_abridged_texts/main/Russian/Alice%20in%20Wonderland/aw%20ru%20full%201.txt",
+   "file": "ru_dem_00.txt",
+   "bytes": 314132,
+   "sha256": "b2c6ea0be61f6b38013a2065da0d68c5b9a4c9df4d194295f7d8dea83c53ef9d"
+  }
+ ],
+ "ru_nes": [
+  {
+   "source": "S-15",
+   "url": "https://raw.githubusercontent.com/iglika88/corpus_original_and_abridged_texts/main/Russian/Alice%20in%20Wonderland/aw%20ru%20full%202.txt",
+   "file": "ru_nes_00.txt",
+   "bytes": 255911,
+   "sha256": "78cc38372b1ba1025e31c0312b10dc6c4a49dbe3d57c7b0b4940950b18cb650e"
+  }
+ ],
+ "cs": [
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_008.md",
+   "file": "cs_00.md",
+   "bytes": 10331,
+   "sha256": "e81bee11970aec241a6973c2fa358d9738ed5d14ee0b93298c989269d1a60846"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_017.md",
+   "file": "cs_01.md",
+   "bytes": 9936,
+   "sha256": "927ff575a96c2fef6332d3e6fd836533a5e8e15831abcf3f6fce8c4e299cff8c"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_024.md",
+   "file": "cs_02.md",
+   "bytes": 10435,
+   "sha256": "de9dabc5e7b5d0fad78921a5f78ded04ad5967692a8524a72be62bb709249c8b"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_029.md",
+   "file": "cs_03.md",
+   "bytes": 12336,
+   "sha256": "0f9bae059ba12fbe03b87f6aee7256371f3c198b6b70c22aad1de629aee44cf1"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_037.md",
+   "file": "cs_04.md",
+   "bytes": 10509,
+   "sha256": "8ddd0ca6c008ac297fb30bdea99cec2f71c7b2ab56b3b323f2604906d99f0753"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_045.md",
+   "file": "cs_05.md",
+   "bytes": 12564,
+   "sha256": "93e27d1b17bc957f5662691b78c2f850ff92760e1a35636a1277d2954aea8d45"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_055.md",
+   "file": "cs_06.md",
+   "bytes": 11485,
+   "sha256": "83b32c107557aa819c4d2ecd8873c00195a214872cdf26adcf346ad3d7ef8ee0"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_062.md",
+   "file": "cs_07.md",
+   "bytes": 13093,
+   "sha256": "3889476636baea3f9ec7ccfbf8b41ac884153bc37e71024cc4c22380455187b1"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_071.md",
+   "file": "cs_08.md",
+   "bytes": 11912,
+   "sha256": "0b4ca4c153da950b15e01f24da4dc529b122e3f4566759e674111c2cde1dae7d"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_078.md",
+   "file": "cs_09.md",
+   "bytes": 10515,
+   "sha256": "53a661acf7c80db98cb2c470f15935b2fe7712feb96cc1e7a34b8aeb84618d5d"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_083.md",
+   "file": "cs_10.md",
+   "bytes": 9897,
+   "sha256": "ae412bab1cf6fe9d7f924e79ab7ec05206f4d7a465d112aec1c9ac447276299c"
+  },
+  {
+   "source": "S-16",
+   "url": "https://raw.githubusercontent.com/books-are-next/carroll-alenka-v-kraji-divu/main/content/alenka_v_kraji_divu_089.md",
+   "file": "cs_11.md",
+   "bytes": 11337,
+   "sha256": "69214dcc065c301c4849ee60c9b66b4d32bec4e8e1f3d424f7ba2fa2cbd30b2e"
+  }
+ ],
+ "bg": [
+  {
+   "source": "S-17",
+   "url": "https://raw.githubusercontent.com/chitanka/content-text/master/02/552",
+   "file": "bg_00",
+   "bytes": 233973,
+   "sha256": "45575b466df3ed48687b6739f28c700cd7a54dd6661ed9268b78ea4151acefb9"
+  }
+ ],
+ "he": [
+  {
+   "source": "S-18",
+   "url": "https://raw.githubusercontent.com/projectbenyehuda/public_domain_dump/master/txt_stripped/p1045/m34262.txt",
+   "file": "he_00.txt",
+   "bytes": 194198,
+   "sha256": "29e3f9ac2ec8e16c3c8d51b92eb0b95ef8092b3cd63377f8776a3e7917e1d7df"
+  }
+ ],
+ "ja": [
+  {
+   "source": "S-19",
+   "url": "https://raw.githubusercontent.com/P4suta/aozorabunko_text/master/%E4%BD%9C%E5%93%81/%E3%82%AD%E3%83%A3%E3%83%AD%E3%83%AB%E3%83%AB%E3%82%A4%E3%82%B9/%E3%82%A2%E3%83%AA%E3%82%B9%E3%81%AF%E3%81%B5%E3%81%97%E3%81%8E%E3%81%AE%E5%9B%BD%E3%81%A7%EF%BC%8857320_ruby_57182%EF%BC%89.txt",
+   "file": "ja_00.txt",
+   "bytes": 249137,
+   "sha256": "ee4adb32c14808e0afd79ca00aa107a4d666dda158b971e4f0b96b2e13b2a3b3"
+  }
+ ],
+ "zh": [
+  {
+   "source": "S-20",
+   "url": "https://raw.githubusercontent.com/haodoo/haodoo-classic/HEAD/html/PDB/H/10P1.epub",
+   "file": "zh_00.epub",
+   "bytes": 336437,
+   "sha256": "63bd5816d2c02b54e751a3682d96f7b9ffab64dc37e931c79ae8ae6584158463"
+  }
+ ],
+ "ru_zakh": [
+  {
+   "source": "S-21",
+   "url": "https://raw.githubusercontent.com/Tviskaron/mipt/HEAD/2019/python/04-sem/alice.txt",
+   "file": "ru_zakh_00.txt",
+   "bytes": 305677,
+   "sha256": "e189237368957619391998f67670f0bf1896fc0cf96a90d1ba14c1ec70a3d75a"
+  }
+ ]
+}
