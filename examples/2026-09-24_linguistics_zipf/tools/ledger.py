@@ -146,8 +146,8 @@ def cmd_audit(a):
     for ln, line in enumerate(text.splitlines(), 1):
         for m in NUM.finditer(line):
             raw = m.group(0).strip(); digits = re.sub(r'\D', '', raw)
-            if len(digits) < 3 or re.fullmatch(r'(19|20)\d\d', digits):
-                continue   # мелкие целые и годы не проверяем
+            if len(digits) < 3 or re.fullmatch(r'(1[5-9]|20)\d\d', digits):
+                continue   # мелкие целые и годы (1500–2099) не проверяем
             k, dens = check_number(raw, idx, srt)
             res[k].append((ln, raw, dens))
     print(f"файлов данных: {len(files)}; чисел: {sum(map(len, res.values()))}; найдено: {len(res['найдено'])}; "
