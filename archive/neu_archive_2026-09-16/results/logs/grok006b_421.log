@@ -1,0 +1,4 @@
+сид 421 lr=14: born=True bursts=83 T_med=69.0 T*lr=966.0 pre_sharp=3.4675168504700946 final_sharp=3.5171305345172854 final_norm=16.68 final_acc=1.000 cold_disc=0.03525338068878263 [1412s]
+сид 421 lr=7: born=True bursts=1 T_med=None T*lr=None pre_sharp=None final_sharp=2.028728599202009 final_norm=21.56 final_acc=1.000 cold_disc=0.008533505607759029 [5523s]
+сид 421 lr=5: born=True bursts=1 T_med=None T*lr=None pre_sharp=None final_sharp=1.938789522088827 final_norm=21.91 final_acc=1.000 cold_disc=0.006328077006442744 [8042s]
+[8042s]

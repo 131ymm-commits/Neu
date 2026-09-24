@@ -1,0 +1,4 @@
+<string>:44: RuntimeWarning: overflow encountered in square
+<string>:61: RuntimeWarning: overflow encountered in multiply
+<string>:13: RuntimeWarning: overflow encountered in multiply
+<string>:15: RuntimeWarning: invalid value encountered in matmul

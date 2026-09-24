@@ -1,0 +1,66 @@
+{
+ "431": {
+  "born_before_switch": true,
+  "t_death_from_switch": 166,
+  "val_final": 0.013523131672597865,
+  "val_min": 0.013523131672597865
+ },
+ "432": {
+  "born_before_switch": true,
+  "t_death_from_switch": 160,
+  "val_final": 0.027758007117437724,
+  "val_min": 0.018505338078291814
+ },
+ "433": {
+  "born_before_switch": true,
+  "t_death_from_switch": 178,
+  "val_final": 0.01494661921708185,
+  "val_min": 0.01494661921708185
+ },
+ "434": {
+  "born_before_switch": true,
+  "t_death_from_switch": 162,
+  "val_final": 0.032740213523131674,
+  "val_min": 0.020640569395017794
+ },
+ "435": {
+  "born_before_switch": true,
+  "t_death_from_switch": 172,
+  "val_final": 0.016370106761565837,
+  "val_min": 0.016370106761565837
+ },
+ "436": {
+  "born_before_switch": true,
+  "t_death_from_switch": 164,
+  "val_final": 0.014234875444839857,
+  "val_min": 0.013523131672597865
+ },
+ "437": {
+  "born_before_switch": true,
+  "t_death_from_switch": 162,
+  "val_final": 0.014234875444839857,
+  "val_min": 0.014234875444839857
+ },
+ "438": {
+  "born_before_switch": true,
+  "t_death_from_switch": 182,
+  "val_final": 0.022775800711743774,
+  "val_min": 0.022775800711743774
+ },
+ "summary": {
+  "n": 8,
+  "t_death": [
+   166,
+   160,
+   178,
+   162,
+   172,
+   164,
+   162,
+   182
+  ],
+  "mean": 168.25,
+  "cv_death": 0.0485720814602881,
+  "cv_birth_ref": 0.02
+ }
+}

@@ -1,0 +1,129 @@
+{
+ "D": {
+  "handle": "N",
+  "params": {
+   "cw": 2.0,
+   "G1": 1.2,
+   "G2": 0.6
+  },
+  "folds": [
+   0.8326868712436408,
+   3.8710402993950996
+  ],
+  "pred": "birth",
+  "0.5": {
+   "std_birth": 0.23595090846679798,
+   "std_death": 0.07325047108466567,
+   "ratio_birth_over_death": 3.2211520959923514,
+   "mean_birth": 2.393929766862615,
+   "mean_death": 0.9990151868886314,
+   "Wn": 0.4591021462643511,
+   "miss": [
+    0,
+    0
+   ],
+   "observed_noisier": "birth",
+   "match": true
+  },
+  "0.8": {
+   "std_birth": 0.3974913209776016,
+   "std_death": 0.16075950844495918,
+   "ratio_birth_over_death": 2.4725835804212766,
+   "mean_birth": 1.2907862220725748,
+   "mean_death": 1.2440086281964866,
+   "Wn": 0.015395705266766067,
+   "miss": [
+    0,
+    0
+   ],
+   "observed_noisier": "birth",
+   "match": true
+  }
+ },
+ "E": {
+  "handle": "W",
+  "params": {
+   "cn": 2.0,
+   "G1": 0.6,
+   "G2": 0.6
+  },
+  "folds": [
+   1.0614290601108223,
+   4.01994858053513
+  ],
+  "pred": "death",
+  "0.5": {
+   "std_birth": 0.13172550105958028,
+   "std_death": 0.17912466206225408,
+   "ratio_birth_over_death": 0.7353845056455688,
+   "mean_birth": 1.327072710686224,
+   "mean_death": 3.6560016952025243,
+   "Wn": 0.7871940571756946,
+   "miss": [
+    0,
+    0
+   ],
+   "observed_noisier": "death",
+   "match": true
+  },
+  "0.8": {
+   "std_birth": 0.17027088387965628,
+   "std_death": 0.439933904455487,
+   "ratio_birth_over_death": 0.3870374212017216,
+   "mean_birth": 1.4771665758356456,
+   "mean_death": 2.739274549597595,
+   "Wn": 0.42660119869039753,
+   "miss": [
+    0,
+    0
+   ],
+   "observed_noisier": "death",
+   "match": true
+  }
+ },
+ "G": {
+  "handle": "W",
+  "params": {
+   "cn": 2.5,
+   "G1": 0.6,
+   "G2": 1.2
+  },
+  "folds": [
+   0.8978326186537745,
+   4.089554759766909
+  ],
+  "pred": "death",
+  "0.5": {
+   "std_birth": 0.09373264935227657,
+   "std_death": 0.27442063926944443,
+   "ratio_birth_over_death": 0.34156559653023627,
+   "mean_birth": 1.1886708626104527,
+   "mean_death": 3.5615349046589118,
+   "Wn": 0.7434431749190131,
+   "miss": [
+    0,
+    0
+   ],
+   "observed_noisier": "death",
+   "match": true
+  },
+  "0.8": {
+   "std_birth": 0.17785686097245204,
+   "std_death": 0.5097828057969752,
+   "ratio_birth_over_death": 0.348887524157268,
+   "mean_birth": 1.3706614655704477,
+   "mean_death": 2.2945868875074678,
+   "Wn": 0.2894755185721759,
+   "miss": [
+    0,
+    0
+   ],
+   "observed_noisier": "death",
+   "match": true
+  }
+ },
+ "verdict": {
+  "matches_sigma05": 3,
+  "PB1": "\u041f\u041e\u0414\u0422\u0412\u0415\u0420\u0416\u0414\u0401\u041d"
+ }
+}

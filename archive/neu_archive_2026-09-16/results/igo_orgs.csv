@@ -1,0 +1,535 @@
+ionum,name,long,y0,y1,sdate,deaddate,dead,integrated,replaced
+10,ACPEU,ACP-EU Joint Assembly,1984,2014,1984,,0,0,0
+20,ACSSRB,Adminstrative Center for Social Security for Rhine Boatmen,1950,2014,1950,,0,0,0
+25,ACWL,Advisory Centre on WTO Law (ACWL),2001,2014,2001,,0,0,0
+30,CAMES,African and Malagasy Council for Higher Education,1968,2014,1968,,0,0,0
+40,AMSC,African and Malagasy Sugar Council,1966,1977,1966,1977.0,1,0,0
+50,ACSO,African Civil Service Observatory (ACSO),1991,2014,1991,,0,0,0
+60,ACI,African Cultural Institute (ACI)/African and Maritanian Cultual Institute,1971,1999,1971,1999.0,1,0,0
+70,AfDB,African Development Bank,1963,2014,1963,,0,0,0
+80,AFEXIMB,African Export Import Bank (Afreximbank),1993,2014,1993,,0,0,0
+90,AFRAND,African Foundation for Research and Development (AFRAND),1994,2000,1994,2000.0,1,0,0
+100,AFGEC,African Fund for Guarantee and Economic Cooperation,1977,2014,1977,,0,0,0
+110,AGC,African Groundnut Council,1964,2014,1964,,0,0,0
+115,AIPO,African Intellectual Property Organization,1976,2014,1976,,0,0,0
+120,AMCO,African Malagasy Coffee Organization,1960,2007,1960,2007.0,1,0,0
+125,AMCOW,African Ministers' Council on Water (AMCOW),2002,2014,2002,,0,0,0
+130,AfrOPDA,African Oil Palm Development Association (AFOPDA),1985,2001,1985,2001.0,1,0,0
+140,AOCRS,African Organization of Cartography and Remote Sensing (AOCRS),1988,2014,1988,,0,0,0
+150,APPA,African Petroleum Producers Association (APPA),1987,1998,1987,1998.0,1,0,0
+155,APTU,African Postal and Telecommunications Union,1935,1965,1935,1965.0,1,0,0
+160,AFPU,African Postal Union,1961,2014,1961,,0,0,0
+170,ARIPO,African Regional Industrial Property Organization (ARIPO)/Afr. Regional Intellectual Property Org.,1976,2014,1976,,0,0,0
+180,Africare,African Reinsurance Corporation (AFRICA RE),1976,2014,1976,,0,0,0
+190,ASATP,African School of Architecture and Town Planning,1975,2014,1975,,0,0,0
+200,ASCBC,African Standing Conference on Bibliographic Control (ASCOBIC),1978,2000,1978,2000.0,1,0,0
+210,ATO,African Timber Organization (ATO),1976,2004,1976,2004.0,1,0,0
+220,ACP,"African, Caribbean and Pacific Group of States (ACP Group)",1975,2014,1975,,0,0,0
+225,ALSF,African Legal Support Facility,2009,2014,2009,,0,0,0
+230,AARO,Afro-Asian Rural Reconstruction Organization,1962,2014,1962,,0,0,0
+240,AMIPO,Afro-Malagasy Industrial Property Office,1962,1975,1962,1975.0,1,0,1
+250,AMPTU,Afro-Malagasy Postal and Telecommunications Union/African Posts and Telecommunic,1961,1996,1961,1996.0,1,0,0
+260,OCAM,Afro-Malagasy Union (Common Afro-Malagasy Economic Organization) (OCAM),1961,1985,1961,1985.0,1,0,0
+270,ACCT,Agence de La Francophonie (ACCT),1970,2014,1970,2005.0,1,0,1
+275,AITIC,Agency for International Trade Information and Cooperation (AITIC),2004,2011,2004,2011.0,1,0,0
+280,OPANAL,Agency for the Prohibition of Nuclear Weapons in Latin America and the,1969,2014,1969,,0,0,0
+290,ASECNA,Agency for the Safety of Aerial Navigation in Africa and Madagascar,1959,2014,1959,,0,0,0
+300,BONN,Agreement for cooperation in dealing with pollution of the North Sea (Bonn Agree,1983,2014,1983,,0,0,0
+310,AmCC,Amazonian Cooperation Council,1978,2014,1978,,0,0,0
+320,ACDT,American Committee on Dependent Territories,1948,1956,1948,1956.0,1,0,0
+330,Andean,Andean Common Market (ANCOM)/Andean Pact/Andean Community,1970,2014,1970,,0,0,0
+340,AP,Andean Parliament,1980,1989,1980,1989.0,1,1,0
+360,ANZUS,ANZUS Council,1951,2014,1951,,0,0,0
+370,AAAID,Arab Authority for Agricultural Investment and Development (AAAID),1976,2014,1976,,0,0,0
+380,ABEDA,Arab Bank for Economic Development in Africa,1974,2014,1974,,0,0,0
+390,ACML,Arab Centre for Medical Literature (ACML),1983,2000,1983,2000.0,1,0,0
+400,ACC,Arab Cooperation Council (ACC),1989,1990,1989,1990.0,1,0,0
+410,AFTE,Arab Federation for Technical Education (AFTE),1980,2003,1980,2003.0,1,0,0
+420,AFESD,Arab Fund for Economic and Social Development (AFESD),1968,2014,1968,,0,0,0
+430,AGPUNDO,Arab Gulf Programme for United Nations Development Organizations,1981,2014,1981,,0,0,0
+440,AIDO,Arab Industrial Development and Mining Organization (AIDMO),1968,2014,1968,,0,0,0
+450,AIC,Arab Investment Company (AIC),1974,2014,1974,,0,0,0
+460,ALO,Arab Labour Organization (ALO),1965,2014,1965,,0,0,0
+470,AMU,Arab Maghreb Union (AMU),1989,2014,1989,,0,0,0
+490,AMF,Arab Monetary Fund (AMF),1976,2014,1976,,0,0,0
+500,AOAD,Arab Organization for Agricultural Development (AOAD),1970,2014,1970,,0,0,0
+510,AOMR,Arab Organization for Mineral Resources (AOMR),1979,1991,1979,1991.0,1,1,0
+520,ARPU,Arab Postal Union/Arab Permanent Postal Commission (APPC),1952,2014,1952,,0,0,0
+530,ArticC,Arctic Council,1996,2014,1996,,0,0,0
+540,ASEF,Asia-Europe Foundation (ASEF),1997,2014,1997,,0,0,0
+550,APCC,Asian and Pacific Coconut Community (APCC),1968,2014,1968,,0,0,0
+560,ASPAC,Asian and Pacific Council (ASPAC),1966,1973,1966,1973.0,1,0,0
+570,ACU,Asian Clearing Union (ACU),1974,2014,1974,,0,0,0
+580,AsDB,Asian Development Bank (ADB),1966,2014,1966,,0,0,0
+590,AIDC,Asian Industrial Development Council (AIDC),1966,1974,1966,1974.0,1,0,0
+600,APO,Asian Productivity Organization,1961,2014,1961,,0,0,0
+610,ARC,Asian Reinsurance Corporation (Asian Re),1979,2014,1979,,0,0,0
+620,AVRDC,Asian Vegetable Research and Development Center (AVRDC),1971,2014,1971,,0,0,0
+630,AALCO,Asian-African Legal Consultative Committee,1956,2014,1956,,0,0,0
+640,AOPU,Asian-Oceanic Postal Union/Asian-Pacific Postal Union,1962,2014,1962,,0,0,0
+650,APEC,Asia-Pacific Economic Cooperation (APEC),1989,2014,1989,,0,0,0
+660,APIBD,Asia-Pacific Institute for Broadcasting Development (AIBD),1987,2014,1987,,0,0,0
+670,APT,Asia-Pacific Telecommunity (APT),1976,2014,1976,,0,0,0
+680,ABEPSEAC,Association between the European Economic Community and the Partner States of th,1968,1975,1968,1975.0,1,0,1
+690,AACB,Association of African Central Banks (AACB),1968,2014,1968,,0,0,0
+700,AATA,Association of African Tax Administrators (AATA),1987,2014,1987,,0,0,0
+710,AATPO,Association of African Trade Promotion Organizations (AATPO),1974,1992,1974,1992.0,1,1,0
+720,ACS,Association of Caribbean States (ACS),1994,2014,1994,,0,0,0
+725,AFSPC,Association of Financial Supervisors of Pacific Countries (AFSPC),2002,2014,2002,,0,0,0
+730,AIOEC,Association of Iron Ore Exporting Countries,1975,1998,1975,1998.0,1,0,0
+740,ASCRubber,Association of Natural Rubber Producing Countries (ANRPC),1970,2014,1970,,0,0,0
+750,ASEAN,Association of South East Asian Nations (ASEAN),1967,2014,1967,,0,0,0
+760,ASBLAC,Association of Supervisors of Banks of Latin America and the Caribbean,1981,2014,1981,,0,0,0
+770,ATPC,Association of Tin Producing Countries (ATPC),1983,2001,1983,2001.0,1,0,0
+780,BC,Baltic Council,1991,2014,1991,,0,0,0
+800,BALTBAT,Baltic Peacekeeping Battalion (BALTBAT),1994,2003,1994,2003.0,1,0,0
+810,BIS,Bank for International Settlements,1930,2014,1930,,0,0,0
+815,BS,Bank of the South,2007,2014,2007,,0,0,0
+820,BIISEF,Banque internationale d'information sur les Etats francophones (BIEF),1986,1996,1986,1996.0,1,1,0
+825,BOBP,Bay of Bengal Programme Inter-Governmental Organization (BOBP-IGO),2003,2014,2003,,0,0,0
+832,BORGIP,Benelux Organization for Intellectual Property,2006,2014,2006,,0,0,0
+840,BENELUX,Benelux Economic Union,1958,2014,1958,,0,0,0
+850,BIONET,BioNET INTERNATIONAL - Global Network for Biosystematics (BI),1991,2014,1991,,0,0,0
+860,BNDP,Board of Nordic Development Projects,1968,1987,1968,1987.0,1,0,0
+870,BCSC,British Commonwealth Scientific Committee/Commonwealth Science Council (CSC),1946,2014,1946,,0,0,0
+871,CABI,CAB International,1986,2014,1986,,0,0,0
+873,CSLF,Carbon Sequestration Leadership Forum (CSLF),2003,2014,2003,,0,0,0
+875,CComm,Caribbean Commission/Anglo-American Caribbean Commission (AACarib),1946,1959,1946,1959.0,1,0,0
+880,CARICOM,Caribbean Community (CARICOM),1973,2014,1973,,0,0,0
+890,CDB,Caribbean Development Bank (CDB),1969,2014,1969,,0,0,0
+900,CXC,Caribbean Examinations Council (CXC),1972,2014,1972,,0,0,0
+910,CFATF,Caribbean Financial Action Task Force (CFATF),1994,2014,1994,,0,0,0
+912,CARIFTA,Caribbean Free Trade Association (CARIFTA),1966,1973,1966,1973.0,1,0,1
+913,Corg,Caribbean Organization,1960,1965,1960,1965.0,1,0,0
+920,CPU,Caribbean Postal Union (CPU),1997,2014,1997,,0,0,0
+940,UDEAC,Central African Customs and Economic Union (UDEAC),1964,1994,1964,1994.0,1,0,1
+950,CACB,Central American Coffee Board,1975,1979,1975,1979.0,1,0,1
+970,CAEC,Central American Energy Commission,1979,1993,1979,1993.0,1,0,0
+980,CAIPA,Central American Institute for Public Administration,1954,2014,1954,,0,0,0
+990,SICA,Central American Integration System (SICA),1991,2014,1991,,0,0,0
+1000,CAMSF,Central American Monetary Stabilization Fund,1969,1991,1969,1991.0,1,1,0
+1010,CARII,Central American Research Institute for Industry,1956,1997,1956,1997.0,1,0,0
+1020,CEEPN,Central and Eastern European Privatization Network (CEEPN),1991,2001,1991,2001.0,1,0,0
+1030,CAECC,Central Asian Economic Community/Central Asian Economic Union/Central Asian Cooperation Organization,1994,2006,1994,2006.0,1,1,0
+1040,CBI,"Central Bureau for the International 1:1,000,000 Map of the World",1909,1953,1909,1953.0,1,0,0
+1050,CCNR,Central Commission for the Navigation of the Rhine,1816,2014,1815,,0,0,0
+1060,CCOM,Central Compensation Office of the Maghreb,1969,2000,1969,2000.0,1,0,0
+1070,CEFTA,Central European Free Trade Association (CEFTA),1992,2014,1992,,0,0,0
+1080,CEI,Central European Initiative (CEI),1989,2014,1989,,0,0,0
+1090,OTIF,Central Office for International Railway Transport/OTIF,1890,2014,1890,,0,0,0
+1095,CPAB,Central Pan American Bureau of Eugenics and Homiculture,1927,1949,1927,1949.0,1,0,0
+1100,CENTO,Central Treaty Organization (CENTO)/Middle East Treaty Organization,1955,1979,1955,1979.0,1,0,0
+1110,INFSMK,Centre for Marketing Information and Advisory Services for Fishery/INFOSAMAK,1986,2014,1986,,0,0,0
+1115,CfRN,Coalition for Rainforest Nations,2005,2014,2005,,0,0,0
+1120,CCPA,Cocoa Producers Alliance,1962,2014,1962,,0,0,0
+1125,CSTO,Collective Security Treaty Organization (CSTO),2002,2014,2002,,0,0,0
+1130,COSAVE,Comit Regional de Sanidad Vegetal del Cono Sur (COSAVE),1991,2014,1991,,0,0,0
+1140,CIFC,Commission for International Financial Control in Macedonia,1905,1914,1905,1914.0,1,0,0
+1145,CTCAf,Commission for Technical Cooperation in Africa South of the Sahara,1950,1965,1950,1965.0,1,0,0
+1150,LCBC,Commission of the Chad Basin/Lake Chad Basin Commission,1964,2014,1964,,0,0,0
+1160,CFC,Common Fund for Commodities (CFC),1989,2014,1989,,0,0,0
+1170,COMESA,Common Market for Eastern and Southern Africa (COMESA),1994,2014,1994,,0,0,0
+1180,CAARC,Commonwealth Advisory Aeronautical Research Council (CAARC),1946,1993,1946,1993.0,1,0,0
+1190,ComAB,Commonwealth Agricultural Bureau,1929,1985,1929,1985.0,1,0,1
+1200,CATC,Commonwealth Air Transport Council,1945,1991,1945,1991.0,1,0,0
+1210,CEC,Commonwealth Economic Committee,1925,1967,1925,1967.0,1,1,0
+1220,CELC,Commonwealth Education Liaison Committee,1960,1967,1960,1967.0,1,1,0
+1230,CIS,Commonwealth of Independent States (CIS),1991,2014,1991,,0,0,0
+1240,ComSec,Commonwealth Secretariat (ComSec),1965,2014,1965,,0,0,0
+1250,CTO,Commonwealth Telecommunications Board/CTO,1928,2014,1928,,0,0,0
+1260,CEMAC,Communaut conomique et montaire d'Afrique centrale (CEMAC),1994,2014,1994,,0,0,0
+1270,CPSC,Community of Portuguese-Speaking Countries,1996,2014,1996,,0,0,0
+1280,CAAD,Concerted Action for African Development,1979,1988,1979,1988.0,1,0,0
+1290,CIMA,Confrence interafricaine des marchs d'assurances (CIMA)/Inter-African Conference on Insurance Markets,1992,2014,1992,,0,0,0
+1300,CONFEJES,Confrence des ministres de la jeunesse et des sports des pays,1977,2014,1977,,0,0,0
+1310,CAMRSD,Conference of African Ministers Responsible for Sustainable,1993,1997,1993,1997.0,1,0,1
+1320,CHSTEA,Conference of Heads of State of Equatorial Africa,1960,1968,1960,1968.0,1,0,0
+1330,CMAOC,Conference of Ministers of Agriculture of West and Central Africa,1991,2014,1991,,0,0,0
+1340,COPTAC,Conference of Posts and Telecommunications Administrations of Central Africa/Conf. of Posts & Telecommunications  of Central Africa,1975,2014,1975,,0,0,0
+1345,CICA,Conference on Interaction and Confidence-Building Measures in Asia (CICA),2006,2014,2006,,0,0,0
+1350,CACI,Conferencia de Autoridades Cinematogrficas de Iberoamerica (CACI),1989,2014,1989,,0,0,0
+1355,CBFP,Congo Basin Forest Partnership (CBFP),2002,2014,2002,,0,0,0
+1360,CAB,"Convenio Andrs Bello de integraci n educativa, cientfica y cultural",1970,2014,1970,,0,0,0
+1370,CMEA,Council for Mutual Economic Aid (COMECON),1949,1991,1949,1991.0,1,0,0
+1380,COLOMBO,Council for Technical Cooperation in South and Southeast Asia (Colombo Plan),1950,2014,1950,,0,0,0
+1390,COE,Council of Europe,1949,2014,1949,,0,0,0
+1400,CMAEC,Council of Ministers for Asian Economic Cooperation,1968,1971,1968,1971.0,1,0,0
+1410,CMHASG,Council of Ministers of Health of the Arab States of the Gulf,1976,2014,1976,,0,0,0
+1420,CBSS,Council of the Baltic Sea States (CBSS),1992,2014,1992,,0,0,0
+1430,Entente,Council of the Entente/Entente Council,1960,2014,1960,,0,0,0
+1440,Danube,Danube Commission,1948,2014,1948,,0,0,0
+1450,DLCOEA,Desert Locust Control Organization for East Africa,1962,2014,1962,,0,0,0
+1455,D8,Developing 8 Organization for Economic Cooperation (D-8),1997,2014,1997,,0,0,0
+1460,DBGLS,Development Bank of the Great Lakes States,1977,2000,1977,2000.0,1,0,0
+1470,EACM,East African Common Market (EACM),1967,1977,1967,1977.0,1,0,0
+1475,EACSO,East African Common Services Organization,1961,1967,1961,1967.0,1,0,1
+1480,EADB,East African Development Bank (EADB),1967,2014,1967,,0,0,0
+1486,ECCM,East Caribbean Common Market (ECCM),1968,1981,1968,1981.0,1,1,0
+1489,ECCA,Eastern Caribbean Currency Area (ECCA),1979,1983,1979,1983.0,1,0,1
+1490,ECCB,Eastern Caribbean Central Bank (ECCB),1983,2014,1983,,0,0,0
+1500,ECCAS,Economic Community of Central African States (ECCAS),1981,2014,1981,,0,0,0
+1510,CEPGL,Economic Community of the Great Lakes Countries,1976,2014,1976,,0,0,0
+1520,ECOWAS,Economic Community of West African States (ECOWAS),1975,2014,1975,,0,0,0
+1530,ECO,Economic Cooperation Organization (ECO),1985,2014,1985,,0,0,0
+1532,ERIA,Economic Research Institute for ASEAN and East Asia,2008,2014,2008,,0,0,0
+1535,EMB,Empire Marketing Board,1926,1933,1926,1933.0,1,0,0
+1540,EAPO,Eurasian Patent Organization (EAPO),1994,2014,1994,,0,0,0
+1545,EAEC,Eurasian Economic Community,2000,2014,2000,,0,0,0
+1550,EAPC,Euro Atlantic Partnership Council (EAPC),1994,2014,1994,,0,0,0
+1560,EMPPO,European and Mediterranean Plant Protection Organization,1951,2014,1951,,0,0,0
+1563,EURAMET,European Association of National Metrology Institute,2007,2014,2007,,0,0,0
+1565,EURATOM,European Atomic Energy Commission (EURATOM),1958,1992,1958,1992.0,1,0,0
+1570,EBRD,European Bank for Reconstruction and Development (EBRD),1990,2014,1990,,0,0,0
+1580,ECB,European Central Bank (ECB),1998,2014,1998,,0,0,0
+1585,ECSC,European Coal and Steel Community,1952,1992,1952,1992.0,1,0,0
+1590,EUROMET,European Collaboration on Measurement Standards (EUROMET),1987,2007,1987,2007.0,1,0,1
+1600,EUFMD,European Commision for the Control of Foot and Mouth Disease,1954,2014,1954,,0,0,0
+1610,ECCD,European Commission for Control of the Danube,1856,1939,1856,1939.0,1,0,0
+1620,ECCPIF,European Company for the Chemical Processing of Irradiated Fuels,1957,1984,1957,1984.0,1,0,0
+1630,EUROFIMA,European Company for the Financing of Railway Rolling Stock,1956,2014,1956,,0,0,0
+1640,ECPTA,European Conference of Postal and Telecommunications Adminstrations,1959,2014,1959,,0,0,0
+1645,EFCC,European Food Code Council,1958,1965,1958,1965.0,1,1,0
+1650,WCO,European Customs Union Study Group (Customs Cooperation Council) (World Customs,1950,2014,1950,,0,0,0
+1653,EEC,European Economic Community/European Community,1958,1992,1958,1992.0,1,0,0
+1660,EFILWC,European Foundation for the Improvement of Living and Working,1975,2014,1975,,0,0,0
+1670,EFTA,European Free Trade Association,1960,2014,1960,,0,0,0
+1675,EIP,European Institute for Peace,2014,2014,2014,,0,0,0
+1680,EIPA,European Institute of Public Administration (EIPA),1981,1995,1981,1995.0,1,1,0
+1690,EIB,European Investment Bank,1957,2014,1957,,0,0,0
+1700,EMBC,European Molecular Biology Conference (EMBC),1969,2014,1969,,0,0,0
+1710,EMBL,European Molecular Biology Laboratory (EMBL),1973,2014,1973,,0,0,0
+1715,EMI,European Monetary Institute (EMI),1994,1998,1994,1998.0,1,0,1
+1720,CERN,European Organization for Nuclear Research,1954,2014,1954,,0,0,0
+1730,EUROCONTROL,European Organization for the Safety of Air Navigation/EUROCONTROL,1960,2014,1960,,0,0,0
+1740,EPO,European Patent Office (EPO)/E.P. Organization,1977,2014,1977,,0,0,0
+1750,EPU,European Payments Union,1950,1958,1950,1958.0,1,0,1
+1760,EPFSC,European Postal Financial Services Commission (EFPSC),1992,2006,1992,2006.0,1,0,0
+1770,EPA,European Productivity Agency,1953,1961,1953,1961.0,1,0,0
+1780,ESO,European Southern Observatory,1962,2014,1962,,0,0,0
+1790,ESA,European Space Agency (ESA),1975,2014,1975,,0,0,0
+1800,ESRO,European Space Research Organization,1964,1975,1964,1975.0,1,0,1
+1810,ELDO,European Space Vehicle Launcher Development Organization,1964,1975,1964,1975.0,1,0,1
+1820,ETF,European Training Foundation (ETF),1990,2014,1990,,0,0,0
+1830,EU,European Union (EU),1993,2014,1993,,0,0,0
+1840,FAO,FAO,1945,2014,1945,,0,0,0
+1850,FEC,Far East Commission,1945,1951,1945,1951.0,1,0,0
+1860,FDIPLAC,Fund for the Development of the Indigenous Peoples of Latin America,1992,2014,1992,,0,0,0
+1870,OMVG,Gambia River Basin Development Organization,1978,2014,1978,,0,0,0
+1880,GATT,General Agreement on Tariffs and Trade (GATT),1948,1995,1948,1995.0,1,0,1
+1890,SIECA,General Treaty on Central American Economic Integration/Permanent Secretariate o,1960,2014,1960,,0,0,0
+1900,GEF,Global Environment Facility (GEF),1991,2014,1991,,0,0,0
+1905,GHSI,Global Health Security Initiative (GHSI),2001,2014,2001,,0,0,0
+1910,G15,Group of Fifteen (G-15),1989,2014,1989,,0,0,0
+1920,GLACSEC,Group of Latin American and Caribbean Sugar Exporting Countries,1974,2001,1974,2001.0,1,0,0
+1930,SCHENGEN,Group of Schengen,1985,1999,1985,1999.0,1,1,0
+1940,VALDIVIA,Group of Temperate Southern Hemisphere Countries on the Environment/VALDIVA Grou,1995,2002,1995,2002.0,1,0,0
+1950,G3,Group of Three (G-3),1995,2006,1995,2006.0,1,0,0
+1960,GEO,Group on Earth Observations (GEO),2005,2014,2005,,0,0,0
+1970,GBACT,Group on the Balkan Agreement on Cooperation on Tourism,1971,1988,1971,1988.0,1,0,0
+1980,GCRSNC,Guidance Committee for Road Safety in the Nordic Countries,1993,1999,1993,1999.0,1,0,0
+1990,GCC,Gulf Cooperation Council (GCC),1981,2014,1981,,0,0,0
+2000,GOIC,Gulf Organization for Industrial Consulting (GOIC),1976,2014,1976,,0,0,0
+2010,HCPIL,Hague Conference on Private International Law,1955,2014,1955,,0,0,0
+2015,SEGIB,Ibero-American General Secretariat (SEGIB),2003,2014,2003,,0,0,0
+2020,IABE,Ibero-American Office of Education/Organization of Ibero-American States for Edu,1949,2014,1949,,0,0,0
+2030,IDC,Imperial Defense Committee,1920,1946,1920,1946.0,1,0,0
+2033,IIE,Imperial Institute of Entomology,1920,1933,1920,1933.0,1,1,0
+2036,IMI,Imperial Mycological Institute,1920,1933,1920,1933.0,1,1,0
+2040,CWGC,Imperial War Graves Commission/Commonwealth War Graves Commission,1917,2014,1917,,0,0,0
+2050,IOCom,Indian Ocean Commission (IOC),1982,2014,1982,,0,0,0
+2055,IORARC,Indian Ocean Rim Association for Regional Cooperation/Ocean Rim Initiative/Indian Ocean Rim Assocation,1997,2014,1997,,0,0,0
+2060,APFIC,Indo-Pacific Fisheries Council/Asia Pacific Fishery Commission (APFIC),1948,2014,1948,,0,0,0
+2070,INCAP,Institute of Nutrition for Central America and Panama (INCAP),1949,2014,1949,,0,0,0
+2080,IACS,Inter-African Committee on Statistics,1954,1965,1954,1965.0,1,0,0
+2090,IAPhy,Inter-African Phytosanitary Convention,1954,1960,1954,1960.0,1,0,0
+2100,IARA,Inter-Allied Reparation Agency,1946,1955,1946,1955.0,1,0,0
+2105,IARHC,Inter-Allied Rhineland High Commission,1919,1934,1919,1934.0,1,0,0
+2110,IACI,Inter-American Children's Institute,1927,2014,1927,,0,0,0
+2120,IACB,Inter-American Coffee Board,1940,1948,1940,1948.0,1,0,1
+2130,IACW,Inter-American Commission of Women,1928,1965,1928,1965.0,1,1,0
+2140,IACSS,Inter-American Conference on Social Security,1942,2014,1942,,0,0,0
+2150,IADefB,Inter-American Defense Board,1942,2014,1942,,0,0,0
+2160,IADB,Inter-American Development Bank,1959,2014,1959,,0,0,0
+2170,IAFC,Inter-American Federation of Cotton,1959,1966,1959,1966.0,1,0,0
+2175,IAHC,Inter-American High Commission,1916,1931,1916,1931.0,1,0,0
+2180,IAII,Inter-American Indian Institute,1940,1953,1940,1953.0,1,1,0
+2190,IAIAS,Inter-American Institute of Agricultural Science/Inter-American Institute for Co,1942,2014,1942,,0,0,0
+2200,IAIC,Inter-American Investment Corporation,1986,2014,1986,,0,0,0
+2203,IARadiO,Inter-American Radio Office,1937,1963,1937,1963.0,1,1,0
+2206,IATB,Inter-American Trademark Bureau,1917,1944,1917,1944.0,1,0,0
+2210,IATTC,Inter-American Tropical Tuna Commission,1950,2014,1950,,0,0,0
+2220,IAIGC,Inter-Arab Investment Guarantee Corporation (IAIGC),1974,2014,1974,,0,0,0
+2230,IGAD,Intergovernmental Authority on Development (IGAD)/Inter-Governmental Authority o,1986,2014,1986,,0,0,0
+2240,IBI,Intergovernmental Bureau for Informatics (IBI),1974,1991,1974,1991.0,1,0,0
+2250,IOMig,Intergovernmental Committee for European Migration/International Organization fo,1951,2014,1951,,0,0,0
+2260,ICRPBC,Intergovernmental Committee of the River Plate Basin Countries,1969,2014,1969,,0,0,0
+2270,IGCC,Intergovernmental Copyright Committee,1952,1971,1952,1971.0,1,1,0
+2280,ICCEC,Intergovernmental Council of Copper Exporting Countries,1968,1997,1968,1997.0,1,0,0
+2285,G24,Intergovernmental Group of Twenty-Four on International Monetary,1972,2014,1972,,0,0,0
+2290,IOcC,Intergovernmental Oceanographic Commission,1960,2014,1960,,0,0,0
+2300,INFOFISH,Intergovernmental Organization for Marketing Information and Technical Advisory,1981,2014,1981,,0,0,0
+2310,ITVRC,Intergovernmental TV & Radio Corporation (ITRC MIR),1992,2014,1992,,0,0,0
+2315,IUIC,Intergovernmental University of Cooperation (IUIC),2001,2014,2001,,0,0,0
+2320,ICCILMB,Interim Committee for Coordination of Investigations of the Lower Mekong Basin (,1978,1995,1978,1995.0,1,0,1
+2325,IALong,International Advisory Committee for Long Distance Telephony,1924,1932,1924,1932.0,1,0,0
+2330,IAMLO,International African Migratory Locust Organization,1952,1985,1952,1985.0,1,0,0
+2340,IATSJ,International Arbitration Tribunal at San Jose,1907,1916,1907,1916.0,1,0,0
+2345,IABath,International Association for Public Baths and Cleanliness,1912,1923,1912,1923.0,1,0,0
+2350,IAS,International Association of Seismology,1903,1922,1903,1922.0,1,0,0
+2360,IASAJ,International Association of Supreme Administrative Jurisdictions,1983,2014,1983,,0,0,0
+2370,IAEA,International Atomic Energy Agency,1957,2014,1957,,0,0,0
+2380,IARuhr,International Authority for the Ruhr,1949,1953,1949,1953.0,1,0,0
+2390,IBEC,International Bank for Economic Cooperation,1963,2014,1963,,0,0,0
+2400,IBRD,International Bank for Reconstruction and Development (World Bank),1945,2014,1945,,0,0,0
+2410,IBA,International Bauxite Association (IBA),1974,1997,1974,1997.0,1,0,0
+2430,IBIER,International Bureau for Information and Enquiries regarding Relief to Foreigner,1907,1921,1907,1921.0,1,0,0
+2440,IBPMP,International Bureau for the Protection of the Moselle against Pollution,1963,2004,1963,2004.0,1,0,0
+2450,ICPRP,International Bureau for the Protection of the Rhine against Pollution/Convention on the Protection of the Rhine,1963,2014,1963,,0,0,0
+2455,IBCS,International Bureau of Commercial Statistics,1913,1935,1913,1935.0,1,0,0
+2460,IBE,International Bureau of Education,1929,1969,1929,1969.0,1,1,0
+2470,BIPM,International Bureau of Weights and Measures (BIPM),1875,2014,1875,,0,0,0
+2480,ICCROM,International Center for the Study of the Preservation and the Restoration of Cu,1958,2014,1958,,0,0,0
+2490,ICAmO,International Central American Office,1907,1914,1907,1914.0,1,0,0
+2492,ICFAM,Intergovernmental Institution for the use of Micro-Algae Spirulina Against Malnutrition/ Intergovernmental Institution for the use of Micro-Algae Against Malnutrition,2001,2014,2001,,0,0,0
+2495,IChemO,International Chemistry Office,1927,1950,1927,1950.0,1,0,0
+2500,ICAO,International Civil Aviation Organization (ICAO)/International Commission for Ai,1919,2014,1919,,0,0,0
+2510,ICivDO,International Civil Defence Organization (ICDO),1972,2014,1972,,0,0,0
+2520,ICCO,International Cocoa Organization (ICCO),1973,2014,1973,,0,0,0
+2530,ICfO,International Coffee Organization,1963,2014,1963,,0,0,0
+2540,ICDR,International Commission for the Decennial Revision of the Nomenclature of the C,1900,1938,1900,1938.0,1,0,0
+2550,ICHRB,International Commission for the Hydrology of the Rhine Basin,1970,2014,1970,,0,0,0
+2560,ICNC,International Commission for the Navigation of the Congo,1885,1914,1885,1914.0,1,0,0
+2570,ICNWAF,International Commission for the Northwest Atlantic Fisheries,1949,1978,1949,1978.0,1,0,1
+2572,NAFO,Northwest Atlantic Fisheries Organization,1979,2014,1979,,0,0,0
+2575,IComO,International Commission for the Oder,1919,1936,1919,1936.0,1,0,0
+2580,ICSE,International Commission for the Scientific Exploration of the Mediterranean Sea (CIESM)/Mediterranean Science Commission,1910,2014,1910,,0,0,0
+2590,ICSEAF,International Commission for the Southeast Atlantic Fisheries (ICSEAF),1969,1990,1969,1990.0,1,0,0
+2600,ICAI,International Commission of Agricultural Industries/International Commission for Agricultural and Food Industries,1935,2014,1935,,0,0,0
+2610,ICCSLT,International Commission of the Cape Spartel Light in Tangier,1865,1958,1865,1958.0,1,0,0
+2620,ICCS,International Commission on Civil Status,1948,2014,1948,,0,0,0
+2630,ICTM,International Commission on the Teaching of Mathematics,1908,1939,1908,1939.0,1,0,0
+2640,ICMMP,International Committee of Military Medicine and Pharmacy/International Committe,1921,2014,1921,,0,0,0
+2650,ICPTU,International Conference for Promoting Technical Unification on the Railways/Int,1882,1938,1882,1938.0,1,0,0
+2660,ICSG,International Copper Study Group,1992,2014,1992,,0,0,0
+2670,ICRI,International Coral Reef Initiative (ICRI),1994,2014,1994,,0,0,0
+2680,ICAC,International Cotton Advisory Committee,1939,2014,1939,,0,0,0
+2690,ICES,International Council for the Exploration of the Sea,1902,2014,1902,,0,0,0
+2700,INTERPOL,International Criminal Police Commission/International Criminal Police Organizat,1923,2014,1923,,0,0,0
+2702,ICC,International Criminal Court (ICC),2002,2014,2002,,0,0,0
+2705,IEC,International Elbe Commission,1919,1936,1919,1936.0,1,0,0
+2710,IEA,International Energy Agency (IEA),1974,2014,1974,,0,0,0
+2720,IES,International Exchange Service,1886,1939,1886,1939.0,1,0,0
+2730,IEXB,International Exhibitions Bureau,1928,2014,1928,,0,0,0
+2740,IFCA,International Finance Commission at Athens,1898,1914,1898,1914.0,1,0,0
+2750,IFC,International Finance Corporation (IFC),1956,2014,1956,,0,0,0
+2760,IFAD,International Fund for Agricultural Development (IFAD),1974,2014,1974,,0,0,0
+2770,AralSea,International Fund for Saving the Aral Sea (IFAS),1997,2014,1997,,0,0,0
+2780,IHO,International Hydrographic Bureau/International Hydrographic Organization,1920,2014,1919,,0,0,0
+2790,UNIDROIT,International Institute for the Unification of Private Law/UNIDROIT,1940,2014,1940,,0,0,0
+2795,IIWEE,International Institute for Water and Environment Engineering (2IE),2004,2014,2004,,0,0,0
+2800,IIA,International Institute of Agriculture,1905,1945,1905,1945.0,1,0,1
+2805,IICom,International Institute of Commerce,1919,1943,1919,1943.0,1,0,0
+2810,IIF,International Institute of Refrigeration/International Cold Institute,1920,2014,1920,,0,0,0
+2820,IJO,International Jute Organization (IJO),1984,2001,1984,2001.0,1,0,0
+2830,ILO,International Labour Organization,1919,2014,1919,,0,0,0
+2840,ILZSG,International Lead and Zinc Study Group,1977,2014,1977,,0,0,0
+2850,IMBSlav,International Maritime Bureau Against the Slave Trade,1890,1909,1890,1909.0,1,0,0
+2860,IMO,International Maritime Organization (IMO)/Provisional Maritime Consultative Comm,1948,2014,1948,,0,0,0
+2870,IMSO,International Mobile Satellite Organization (IMSO),1979,2014,1979,,0,0,0
+2880,IMF,International Monetary Fund,1945,2014,1945,,0,0,0
+2890,IMC,International Moselle Company,1956,1987,1956,1987.0,1,0,0
+2900,INRO,International Natural Rubber Organization (INRO),1980,1999,1980,1999.0,1,0,0
+2910,INSG,International Nickel Study Group (INSG),1990,2014,1990,,0,0,0
+2920,INPFC,International North Pacific Fisheries Commission,1952,1992,1952,1992.0,1,0,1
+2930,IOEz,International Office of Epizootics/World Organization for Animal Health (OIE),1924,2014,1924,,0,0,0
+2940,IOPH,International Office of Public Hygiene,1907,1946,1907,1946.0,1,0,0
+2950,IOPCF,International Oil Pollution Compensation Funds 1971 and 1992 (IOPC,1975,2014,1975,,0,0,0
+2960,IOOC,International Olive Oil Council,1959,2014,1959,,0,0,0
+2970,IOLM,International Organization for Legal Metrology,1955,2014,1955,,0,0,0
+2972,IPI,International Patent Institute,1947,1977,1947,1977.0,1,1,0
+2980,IPedI,Int'l Pedological Instit,1908,1941,1908,1941.0,1,1,0
+2990,IPentC,International Penitentiary Commission,1875,1951,1875,1951.0,1,0,0
+3000,IPC,International Pepper Community (IPC),1971,2014,1971,,0,0,0
+3010,IPhyL,International Physiological Laboratories on Monte-Rosa,1907,1929,1907,1929.0,1,0,0
+3030,IPrizeC,International Prize Court,1907,1914,1907,1914.0,1,0,0
+3040,IRLCS,International Red Locust Control Service,1949,1970,1949,1970.0,1,0,1
+3050,IRO,International Refugee Organization,1946,1952,1946,1952.0,1,0,0
+3060,RIOPPAH,International Regional Organization against Plant and Animal Diseases/Internatio,1953,2014,1953,,0,0,0
+3070,IRU,International Relief Union,1927,1967,1927,1968.0,0,0,0
+3075,IRENA,International Renewable Energy AgencyÊ,2009,2014,2009,,0,0,0
+3090,IRSG,International Rubber Study Group,1944,2014,1944,,0,0,0
+3095,ISRBC,International Sava River Basin Commission (ISRBC),2002,2014,2002,,0,0,0
+3100,ISA,International Seabed Authority (ISBA),1994,2014,1994,,0,0,0
+3110,ISUPT,International Secretariat for the Unification of Pharmacological Terms,1902,1914,1902,1914.0,1,0,0
+3130,ISuC,International Sugar Council,1937,1967,1937,1967.0,1,0,0
+3140,ITPA,International Tea Promotion Association (ITPA),1977,1984,1977,1984.0,1,0,0
+3150,ITCLE,International Technical Committee of Legal Experts on Air Questions,1926,1941,1926,1941.0,1,0,0
+3160,ITU,International Telecommunication Union,1865,2014,1865,,0,0,0
+3170,INTELSAT,International Telecommunications Satellite Organization (INTELSAT),1964,2001,1964,2001.0,1,0,0
+3175,ITCC,International Telegraph Consultative Committee,1925,1956,1925,1956.0,1,0,0
+3177,IIFEO,International Thermonuclear Experimental Reactor International Fusion Energy Organization,2006,2014,2006,,0,0,0
+3180,ITC,International Tin Council,1956,1985,1956,1990.0,0,0,0
+3185,ITRO,"International Tripartite Rubber Organization, Thailand (ITRO)",2001,2005,2001,2005.0,1,0,0
+3190,ITTO,International Tropical Timber Organization (ITTO),1987,2014,1987,,0,0,0
+3200,IUPIP,International Union for the Protection of Industrial Property,1883,2014,1883,,0,0,0
+3210,IUPLAW,International Union for the Protection of Literary and Artistic Works (Berne Uni,1886,2014,1886,,0,0,0
+3220,IUPCT,Intl Union for the Publication of Customs Tariffs/Intl Customs Tariffs Bureau (BITD),1890,2014,1890,,0,0,0
+3230,IUPR,International Union of Pruth (River),1878,1914,1878,1914.0,1,0,0
+3240,IVWO,International Wine Office,1924,2003,1924,2003.0,1,0,1
+3245,OIV,International Organization of Vine and Wine,2004,2014,2004,,0,0,0
+3250,IWhale,International Whaling Commission,1946,2014,1946,,0,0,0
+3260,IGC,International Wheat Advisory Committee (IW Council)/Int'l Grains Council,1949,2014,1949,,0,0,0
+3270,IWSG,International Wool Study Group,1947,1992,1947,1992.0,1,0,0
+3280,Iocean,Interoceanmetal,1987,2014,1987,,0,0,0
+3290,ISB,Inter-State Bank,1993,2014,1993,,0,0,0
+3300,IOATHRE,Inter-State Organization for Advanced Technicians of Hydraulics and,1972,2004,1972,2004.0,1,0,0
+3310,ISHREST,Inter-State School of Hydraulic and Rural Engineering for Senior,1972,1996,1972,1996.0,1,0,0
+3320,ISDB,Islamic Development Bank (IsDB),1974,2014,1974,,0,0,0
+3330,Turksoy,Joint Administration of the Turkic Culture and Arts (TURKSOY),1993,2014,1993,,0,0,0
+3340,JALAAO,Joint Anti-Locust and Anti-Aviarian Organization,1965,2001,1965,2001.0,1,0,0
+3350,JINR,Joint Institute for Nuclear Research,1956,2014,1956,,0,0,0
+3360,JNOLCRH,Joint Nordic Organization for Lappish Culture and Reindeer Husbandry,1965,2000,1965,2000.0,1,0,0
+3370,LACP,Latin American Center for Physics,1962,2014,1962,,0,0,0
+3380,LACAC,Latin American Civil Aviation Commission (LACAC),1973,2014,1973,,0,0,0
+3390,SELA,Latin American Economic System/SELA,1975,2014,1975,,0,0,0
+3400,LAIEC,Latin American Educational Film Institute/Latin American Institute of Educational Communication,1978,2014,1978,,0,0,0
+3410,LAEO,Latin American Energy Organization,1973,2014,1973,,0,0,0
+3420,LAFDO,Latin American Fisheries Development Organization,1982,2014,1982,,0,0,0
+3428,LAFTA,Latin American Free Trade Association,1961,1980,1961,1980.0,1,0,1
+3430,LAIA,Latin American Integration Association (LAIA),1980,2014,1980,,0,0,0
+3440,LATIN,Latin Union,1983,2014,1983,,0,0,0
+3450,LOAS,League of Arab States,1945,2014,1945,,0,0,0
+3460,LoN,League of Nations,1919,1945,1919,1945.0,1,0,1
+3470,LGIDA,Liptako-Gourma Integrated Development Authority (LGA),1970,2005,1970,2005.0,1,0,0
+3480,MRU,Mano River Union (MRU),1980,2014,1980,,0,0,0
+3485,MAOCN,Maritime Analysis and Operations Centre - Narcotics,2008,2014,2008,,0,0,0
+3490,MWN,Mediterranean Water Network (MWN),1993,2001,1993,2001.0,1,0,0
+3505,MARRI,"Migration, Asylum, Refugees Regional Initiative (MARRI)",2003,2014,2003,,0,0,0
+3510,MCWCASM,Ministerial Conference of West and Central African States on Maritime,1975,2014,1975,,0,0,0
+3520,MCPTTC,"Multi-Country Posts and Telecommunications Training Centre, Blantyre/not indep u",1984,2002,1984,2002.0,1,0,0
+3530,Montreal,Multilateral Fund for the Implementation of the Montreal Protocol,1990,2014,1990,,0,0,0
+3540,MIGA,Multilateral Investment Guarantee Agency (MIGA),1988,2014,1988,,0,0,0
+3550,MFO,Multinational Force and Observers (MFO),1981,2014,1981,,0,0,0
+3560,NACAP,Network of Aquaculture Centres in Asia-Pacific (NACA),1990,2014,1990,,0,0,0
+3570,NRC,Niger River Commission/Niger Basin Authority,1964,2014,1964,,0,0,0
+3580,NAM,Non-Aligned Movement (NAM),1961,2014,1961,,0,0,0
+3585,NVC,Nordic Centre for Welfare and Social Issues (Nordens Vlfrdscenter ),2009,2014,2009,,0,0,0
+3590,NordC,Nordic Council,1952,2014,1952,,0,0,0
+3600,NCRR,Nordic Council for Reindeer Research,1980,1992,1980,1992.0,1,1,0
+3610,NCTR,Nordic Council for Tax Research,1973,2014,1973,,0,0,0
+3620,NCM,Nordic Council of Ministers,1971,2014,1971,,0,0,0
+3630,NDF,Nordic Development Fund (NDF),1989,2014,1989,,0,0,0
+3640,NERC,Nordic Economic Research Council,1979,1996,1979,1996.0,1,0,0
+3650,NIB,Nordic Investment Bank,1976,2014,1976,,0,0,0
+3655,NPI,Nordic Patent Institute,2008,2014,2008,,0,0,0
+3660,NTSC,Nordic Telecommunications Satellite Council (NTSR),1965,1986,1965,1986.0,1,0,0
+3665,NWHF,Nordic World Heritage Foundation (NWHF),2002,2014,2002,,0,0,0
+3670,NAFTA,North American Free Trade Agreement (NAFTA),1993,2014,1993,,0,0,0
+3680,NAPPO,North American Plant Protection Organization (NAPPO),1976,2014,1976,,0,0,0
+3690,NASCO,North Atlantic Salmon Conservation Organization (NASCO),1983,2014,1983,,0,0,0
+3700,NATO,North Atlantic Treaty Organization (NATO),1949,2014,1949,,0,0,0
+3705,NPAFC,North Pacific Anadromous Fish Commission,1993,2014,1993,,0,0,0
+3710,NPFSC,North Pacific Fur Seal Commission,1958,1988,1958,1988.0,1,0,0
+3720,PICES,North Pacific Marine Science Organization (PICES),1992,2014,1992,,0,0,0
+3730,NEAFC,Northeast Atlantic Fisheries Commission (NEAFC),1998,2014,1998,,0,0,0
+3740,AFRISTAT,Observatoire conomique et statistique d'Afrique subsaharienne,1993,2014,1993,,0,0,0
+3750,OECD,Organization for Economic Cooperation and Development (OECD),1961,2014,1961,,0,0,0
+3760,OAU,Organization for African Unity,1963,2002,1963,2002.0,1,0,1
+3761,AU,African Union (AU),2002,2014,2002,,0,0,0
+3762,OEEC,Organization for European Economic Cooperation (Organization for Economic Cooper,1948,1961,1948,1961.0,1,0,0
+3770,OSCE,Organization for Security and Cooperation in Europe (OSCE),1973,2014,1973,,0,0,0
+3780,OCR,Organization for the Collaboration of Railways/WP states/ Organization of Railwa,1956,2014,1956,,0,0,0
+3790,OMDKR,Organization for the Management and Development of the Kagera River,1977,2000,1977,2000.0,1,0,0
+3800,OAPEC,Organization of Arab Petroleum Exporting Countries (OAPEC),1968,2014,1968,,0,0,0
+3810,BSEC,Organization of Black Sea Economic Cooperation (BSEC),1992,2014,1992,,0,0,0
+3812,OCAS,Organization of Central American States,1951,1991,1951,1991.0,1,0,1
+3820,OCCEDCA,Organization of Coordination for the Control of Endemic Diseases in Central Afri,1963,2014,1963,,0,0,0
+3830,OECS,Organization of Eastern Caribbean States (OECS),1981,2014,1981,,0,0,0
+3840,OPEC,Organization of Petroleum Exporting Countries (OPEC),1960,2014,1960,,0,0,0
+3850,OIC,Organization of the Islamic Conference (OIC),1969,2014,1969,,0,0,0
+3855,OSLO,Oslo Commission,1972,1998,1972,1998.0,1,0,1
+3860,OSPAR,OSPAR Commission,1998,2014,1998,,0,0,0
+3870,PCB,Pacific Cable Board,1920,1928,1920,1928.0,1,0,0
+3875,PAP,Pan-African Parliament,2002,2014,2002,,0,0,0
+3880,PAIGH,Pan American Institute of Geography and History,1928,2014,1928,,0,0,0
+3890,PAHO,Pan American Sanitary Bureau (PASOrganization/PAHealthOrganization),1902,2014,1902,,0,0,0
+3900,OAS,Pan American Union (OAS),1890,2014,1890,,0,0,0
+3905,PAPU,Pan African Postal Union,1980,2014,1980,,0,0,0
+3910,PC,Paris Commission (PARCOM),1977,1998,1977,1998.0,1,0,1
+3920,PIPD,Partners in Population and Development - A South-South Initiative,1994,2014,1994,,0,0,0
+3925,PAHC,Permanent Association of Pan American Highway Congresses,1939,1952,1939,1952.0,1,0,0
+3930,PCSP,Permanent Commission for the Conservation of the Maritime Resources of the South,1952,2014,1952,,0,0,0
+3940,PCA,Permanent Court of Arbitration,1899,2014,1899,,0,0,0
+3950,PIARC,Permanent International Association of Road Congresses/ World Road Association,1908,2014,1908,,0,0,0
+3960,PIBAC,Permanent International Bureau of the Analytical Chemistry of Human and Animal F,1923,1934,1923,1934.0,1,0,1
+3965,PICS,Permanent International Commission of Studies on Sanitary Equipment,1925,1938,1925,1938.0,1,0,0
+3970,CILSS,Permanent Interstate Committee for Drought Control in the Sahel,1973,2014,1973,,0,0,0
+3980,PSNARCO,Permanent Secretariat of the South American Agreement on Narcotic Drugs and Psyc,1979,1998,1979,1998.0,1,0,0
+4000,PED,Ple europen de dveloppement (PED),1985,2014,1985,,0,0,0
+4010,PMAESA,Port Management Association of Eastern and Southern Africa (PMAESA),1973,2014,1973,,0,0,0
+4020,PUASP,"Postal Union of the Americas and Spain/Postal Union of the Americas, Spain, and",1911,2014,1911,,0,0,0
+4030,PTASEA,Preferential Trade Agreement for Southern & Eastern Africa,1981,1994,1981,1994.0,1,0,1
+4040,RadioU,Radiotelegraph Union,1906,1926,1906,1926.0,1,0,0
+4050,RASCOM,Regional African Satellite Communications Organization (RASCOM),1992,2014,1992,,0,0,0
+4055,RECSA,Regional Centre on Small Arms and Light Weapons (RECSA),2004,2014,2004,,0,0,0
+4060,RCFC,Regional Commonwealth in the Field of Communications (RCC),1991,2014,1991,,0,0,0
+4070,ARCAL,Regional Cooperation Agreement for the Promotion of Nuclear Science,1985,2014,1985,,0,0,0
+4075,RCC,Regional Cooperation Council,2008,2014,2008,,0,0,0
+4080,RCAELA,Regional Council for Adult Education and Literacy in Africa,1974,2004,1974,2004.0,1,0,0
+4085,RepCom,Reparation Commission,1919,1933,1919,1933.0,1,0,0
+4090,RIMMO,Rserve internationale maritime en mditerrane occidentale (RIMMO),1992,2014,1992,,0,0,0
+4100,RIOgroup,Rio Group,1986,2014,1986,,0,0,0
+4110,SCAf,Scientific Council for Africa South of the Sahara,1950,1965,1950,1965.0,1,0,0
+4115,SCO,Shanghai Cooperation Organisation/Shanghai Pact/Shanghai Five,1996,2014,1996,,0,0,0
+4120,EAC,East African Community,1996,2014,1996,,0,0,0
+4130,SRDO,Senegal River Development Organization,1972,2014,1972,,0,0,0
+4140,SAMI,Societe arabe des mines de l'Inchiri (SAMIN),1980,2000,1980,2000.0,1,0,0
+4150,SWAPU,South and West Asia Postal Union (SWAPU),1987,2006,1987,2006.0,1,0,0
+4160,SACEP,South Asia Cooperative Environment Programme (SACEP),1983,2014,1983,,0,0,0
+4170,SAARC,South Asian Association for Regional Cooperation (SAARC),1985,2014,1985,,0,0,0
+4180,SITTDEC,"South Investment, Trade and Technological Data Exchange Centre",1990,2014,1990,,0,0,0
+4190,SPC,South Pacific Commission/Secretariat of the Pacific Commission (SPC),1947,2014,1947,,0,0,0
+4200,PIF,South Pacific Forum (SPF),1971,2014,1971,,0,0,0
+4210,SEATO,Southeast Asia Treaty Organization (SEATO),1954,1977,1954,1977.0,1,0,0
+4220,SEAMEO,Southeast Asian Ministers of Education Organization (SEAMEO),1965,2014,1965,,0,0,0
+4230,SARTC,Southern Africa Regional Tourism Council (SARTOC),1973,1996,1973,1996.0,1,0,1
+4240,SACU,Southern African Customs Union (SACU),1969,2014,1969,,0,0,0
+4250,SADC,Southern African Development Community (SADC),1992,2014,1992,,0,0,0
+4251,SADCC,Southern African Development Coordination Conference (SADCC),1980,1992,1980,1992.0,1,0,1
+4260,Mercosur,Southern Common Market/MERCOSUR,1991,2014,1991,,0,0,0
+4265,SWPD,South-West Pacific Dialogue (SWPD),2002,2014,2002,,0,0,0
+4270,SAAFA,Special Arab Aid Fund for Africa (SAAFA),1974,1977,1974,1977.0,1,1,0
+4280,SCA,Suez Canal Administration,1888,1914,1888,1914.0,1,0,0
+4290,SugU,Sugar Union,1902,1913,1902,1913.0,1,0,0
+4300,SCH,Superior Council of Health,1838,1914,1838,1914.0,1,0,0
+4320,TCRMG,Tripartite Commission for the Restitution of Monetary Gold,1946,1998,1946,1998.0,1,0,0
+4340,UEMOA,Union conomique et mon taire Ouest africaine (UEMOA),1994,2014,1994,,0,0,0
+4350,UIUCV,Union for the International Use of Carriages and Vans,1923,1979,1923,1979.0,1,0,0
+4360,IUPNVP,Union for the Protection of New Varieties of Plants/International Union of the P,1961,2014,1961,,0,0,0
+4365,UMAC,Union montaire de l'Afrique centrale (UMAC),1972,1994,1972,1994.0,1,0,1
+4370,UBEC,Union of Banana Exporting Countries,1974,1996,1974,1996.0,1,0,0
+4375,UM,Union of the Mediterranian,2008,2014,2008,,0,0,0
+4380,UASC,United Arab Shipping Company (UASC),1976,2014,1976,,0,0,0
+4390,UKDWD,United Kingdom--Dominion Wool Disposals,1945,1953,1945,1953.0,1,0,0
+4400,UN,United Nations,1945,2014,1945,,0,0,0
+4410,UNESCO,"United Nations Educational, Scientific, and Cultural Organization (UNESCO)",1945,2014,1945,,0,0,0
+4420,UNIDO,United Nations Industrial Development Organization (UNIDO),1966,2014,1966,,0,0,0
+4430,UPU,Universal Postal Union,1874,2014,1874,,0,0,0
+4440,USP,University of the South Pacific (USP),1967,2014,1967,,0,0,0
+4450,VASAB,Vision and Strategies around the Baltic Sea 2010 (VASAB 2010),1992,2014,1992,,0,0,0
+4460,WPact,Warsaw Treaty Organization,1955,1991,1955,1991.0,1,0,0
+4470,Wassen,Wassenaar Arrangement on Export Controls for Conventional Arms and,1996,2014,1996,,0,0,0
+4480,AfricaRice,West Africa Rice Development Association (WARDA)/Africa Rice Center,1970,2014,1970,,0,0,0
+4485,CEAO,West African Economic Community (CEAO),1960,1994,1960,1994.0,1,0,1
+4490,WAEC,West African Examinations Council,1960,2014,1960,,0,0,0
+4500,WAHC,West African Health Community (WAHC),1972,1987,1972,1987.0,1,1,0
+4501,WAHO,West African Health Organization,1988,2014,1988,,0,0,0
+4503,UMOA,West African Monetary Union/UMOA,1962,1994,1962,1994.0,1,1,0
+4510,WEU,Western European Union (WEU),1955,2011,1955,2011.0,1,0,0
+4520,WNF,West-Nordic Foundation,1987,2014,1987,,0,0,0
+4530,WMO,World Meteorological Organization,1948,2014,1948,,0,0,0
+4540,WCDC,Working Community of the Danube Countries,1990,2014,1990,,0,0,0
+4550,WHO,World Health Organization,1946,2014,1946,,0,0,0
+4560,WIPO,World Intellectual Property Organization (WIPO),1970,2014,1970,,0,0,0
+4570,WTOURO,World Tourism Organization (WTO),1975,2014,1975,,0,0,0
+4580,WTO,World Trade Organization (WTO),1995,2014,1995,,0,0,0

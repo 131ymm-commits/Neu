@@ -1,0 +1,28 @@
+{
+  "name": "posle-vspyshki",
+  "productName": "После вспышки",
+  "version": "0.1.0",
+  "description": "Кооперативная стратегия о восстановлении мира после геомагнитной сверхбури",
+  "main": "src/main.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "game": "node tools/build_game.js",
+    "assets": "node tools/make_assets.js",
+    "test": "node tools/test_electron.js",
+    "dist:win": "electron-builder --win --x64",
+    "dist:linux": "electron-builder --linux --x64",
+    "dist": "electron-builder --win --linux --x64"
+  },
+  "devDependencies": {
+    "@fontsource/golos-text": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@fontsource/unbounded": "^5.3.0",
+    "electron": "^44.4.3",
+    "electron-builder": "^26.15.3"
+  },
+  "dependencies": {
+    "steamworks.js": "^0.4.0"
+  }
+}

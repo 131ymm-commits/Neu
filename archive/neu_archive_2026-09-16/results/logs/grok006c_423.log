@@ -1,0 +1,2 @@
+сид 423 lr=8: born=True bursts=8 T_med=None T*lr=None pre_sharp=None final_sharp=2.404518326198389 final_norm=21.53 final_acc=1.000 cold_disc=0.006027338723049131 [3584s]
+сид 423 lr=9.5: born=True bursts=67 T_med=89.0 T*lr=845.5 pre_sharp=3.2584947303089313 final_sharp=3.0651305673386413 final_norm=20.29 final_acc=1.000 cold_disc=0.008066960861827616 [6427s]

@@ -1,0 +1,5 @@
+26 областей: ['build-ci', 'common', 'convert', 'docs', 'examples', 'ggml-backend', 'ggml-cann', 'ggml-core', 'ggml-cpu', 'ggml-cuda', 'ggml-hexagon', 'ggml-metal', 'ggml-opencl', 'ggml-rpc', 'ggml-sycl', 'ggml-vulkan', 'ggml-webgpu', 'other', 'scripts', 'src', 'tests', 'tools-cli', 'tools-llama-bench', 'tools-mtmd', 'tools-server', 'tools-ui']
+2024Q1 - 2024Q4 пар 135 порог 0.919 обнаружимо 0 ρ [0.789] области: []
+2024Q3 - 2025Q2 пар 148 порог 0.904 обнаружимо 2 ρ [0.997, 0.923, 0.882] области: ['ggml-cann', 'ggml-cuda']
+2025Q1 - 2025Q4 пар 162 порог 0.984 обнаружимо 0 ρ [0.983] области: []
+2025Q2 - 2026Q1 пар 168 порог 0.793 обнаружимо 8 ρ [0.974, 0.972, 0.935, 0.928, 0.892, 0.864, 0.849, 0.839, 0.786] области: ['ggml-cann', 'ggml-webgpu', 'ggml-sycl', 'ggml-rpc', 'ggml-cpu', 'ggml-hexagon', 'ggml-opencl', 'ggml-vulkan']

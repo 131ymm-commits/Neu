@@ -1,0 +1,3 @@
+alpha=0.23 steps=8000: n_train=646 residuals=34238 params=81408 val_acc=0.779 [280s]
+largest eig JJ^T = 1.3343e+02 [2s]
+GROK-007 feasibility: SA-Lanczos on JJ^T (34k x 34k, matrix-free) did not converge in 28 CPU-min at alpha=0.23 -> not feasible at this size; route via small D (dense SVD) recorded as return

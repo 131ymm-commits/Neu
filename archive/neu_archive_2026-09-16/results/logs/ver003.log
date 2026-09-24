@@ -1,0 +1,10 @@
+P-V3b (MF dt/2): k=6 амплитуда 0.0000 (<0.02?), k=7 1.0238 (>0.05?) -> ✓ [19s]
+P-V3c (ORD-002b шаг/2): AND split=True окно=[16.0, 40.0] (реф [16,40]±1 узел), OR split=False -> ✓ [27s]
+Traceback (most recent call last):
+  File "/home/claude/ver003_run.py", line 63, in <module>
+    exec(open("/home/claude/uni04d_run.py").read().split("\nres = {}")[0], g)   # sim, label3 in g
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4
+    exec(open("/home/claude/uni04b_run.py").read().split("
+                                                         ^
+SyntaxError: unterminated string literal (detected at line 4)

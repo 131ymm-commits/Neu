@@ -1,0 +1,20 @@
+const { chromium } = require('playwright');
+const http = require('http'), fs = require('fs');
+const srv = http.createServer((req, res) => { res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' }); fs.createReadStream('/tmp/game/ekonomika-forkov.html').pipe(res); }).listen(8768);
+const mock = fs.readFileSync('/tmp/game/mock_claude.js', 'utf8');
+(async () => {
+  const browser = await chromium.launch();
+  const ctx = await browser.newContext({ viewport: { width: 1300, height: 820 } });
+  await ctx.addInitScript(mock); await ctx.route('**/fonts.g*/**', r => r.abort());
+  const open = async uid => { const p = await ctx.newPage(); await p.goto('http://localhost:8768/?uid=' + uid); await p.waitForFunction(() => typeof M !== 'undefined' && M.ready && game(), null, { timeout: 30000 }); await p.evaluate(() => closeDialog()); return p; };
+  const A = await open('u_alice'), Bp = await open('u_bob');
+  await Bp.evaluate(() => claim('C:KAZ')); await Bp.waitForTimeout(200);
+  await Bp.waitForTimeout(16000); await Bp.evaluate(() => advanceYear()); await Bp.waitForTimeout(500); console.log('после хода Бориса год', await Bp.evaluate(() => curYear()), '| тост Бориса «' + await Bp.$eval('#toast', e => e.textContent).catch(()=>'') + '»');
+  const t0 = Date.now();
+  await A.evaluate(() => resetWorld()); await A.waitForTimeout(300);
+  console.log('сброс владельцем сразу после хода Бориса: тост «' + await A.$eval('#toast', e => e.textContent) + '» | год', await A.evaluate(() => curYear()), 'мест', await A.evaluate(() => Object.keys(M.c.places).length));
+  await A.waitForTimeout(10500 - (Date.now() - t0));
+  await A.evaluate(() => resetWorld()); await A.waitForTimeout(800);
+  console.log('через ~10 с: тост «' + await A.$eval('#toast', e => e.textContent) + '» | год', await A.evaluate(() => curYear()), 'мест', await A.evaluate(() => Object.keys(M.c.places).length));
+  await browser.close(); srv.close();
+})().catch(e => { console.error('ТЕСТ УПАЛ', e); process.exit(1); });

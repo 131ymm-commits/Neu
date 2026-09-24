@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""gate.py — проверка ворот ПЕРЕД прогоном. Проверяет ФАЙЛЫ, не память.
+Использование: python gate.py LEV-001
+Выход 0 — можно гонять; 1 — ворота не пройдены."""
+import sys, os, re
+
+def fail(msg):
+    print(f"[GATE FAIL] {msg}")
+    sys.exit(1)
+
+exp = sys.argv[1] if len(sys.argv) > 1 else fail("нет ID эксперимента")
+d = os.path.dirname(os.path.abspath(__file__))
+
+pri = os.path.join(d, "PRIORITY.md")
+if not os.path.exists(pri):
+    fail("нет PRIORITY.md")
+ptxt = open(pri, encoding="utf-8").read()
+if exp not in ptxt:
+    fail(f"в PRIORITY.md нет строки занятости для {exp} (ворота 2)")
+
+pre = os.path.join(d, "PREREG.md")
+if not os.path.exists(pre):
+    fail("нет PREREG.md")
+rtxt = open(pre, encoding="utf-8").read()
+if exp not in rtxt:
+    fail(f"в PREREG.md нет предрегистрации {exp} (ворота 4)")
+
+# Ревизия 3 (2026-09-14): блок вырезается точно — от заголовка «### <ID>» до следующего «### »; без заголовка — как раньше (усиление: слова из
+# соседних блоков больше не засчитываются)
+m_hdr = re.search(r"^### [^\n]*" + re.escape(exp) + r"[^\n]*$", rtxt, re.MULTILINE)
+if m_hdr:
+    rest = rtxt[m_hdr.end():]; m_next = re.search(r"^### ", rest, re.MULTILINE)
+    blk = rtxt[m_hdr.start():m_hdr.end() + (m_next.start() if m_next else len(rest))]
+    hdr = m_hdr.group(0)
+else:
+    blk = rtxt[rtxt.index(exp):]; hdr = blk.split("\n", 1)[0]
+need = {
+    "прогноз с направлением/порогом": r"(P1a|прогноз)",
+    "исход-убийца": r"(мертв|убито|убийца|K1)",
+    "контроли": r"(leave|LOO|джекнайф|j16|вырожденн|перестановочн)",
+    "наблюдаемая": r"(наблюдаемая|меряю)",
+    # Ревизия 2 (2026-08-23, после DET-010 P-Y4): нуль обязан уметь ответить иначе
+    "невырожденность нуля": r"(невырожденн|может дать друг|пол поглоща|нуль различ|нуль варьиру)",
+}
+for name, pat in need.items():
+    if not re.search(pat, blk, re.IGNORECASE):
+        fail(f"в предрегистрации {exp} не найдено: {name}")
+
+# Ревизия 3 (2026-09-14, после ACH-01 — 9-й случай семьи №14/45 и 6-й случай широкой категории): для блоков, датированных ≥ 2026-09-14,
+# обязательны список событий под ярлык (ворота 3 п. 2) и относительная форма порога либо явное обоснование абсолютной (ворота 4 «чей порог»)
+m_date = re.search(r"(20\d\d-\d\d-\d\d)", hdr)
+if m_date and m_date.group(1) >= "2026-09-14":
+    need_r3 = {
+        "список событий под ярлык (ворота 3 п. 2, ревизия 3)": r"(список событий|под ярлык|исключен)",
+        "относительная форма порога или обоснование абсолютной — «чей порог» (ворота 4, ревизия 3)": r"(относительн|нормиров|порог абсолют)",
+    }
+    for name, pat in need_r3.items():
+        if not re.search(pat, blk, re.IGNORECASE):
+            fail(f"в предрегистрации {exp} не найдено: {name}")
+
+print(f"[GATE OK] {exp}: ворота 2–4 по файлам пройдены. Гонять.")

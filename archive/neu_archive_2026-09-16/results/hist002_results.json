@@ -1,0 +1,33 @@
+{
+ "n_countries": 100,
+ "n_births": 57,
+ "DI": 1.9453571428571428,
+ "null_p95": 1.178421052631579,
+ "DI_sub90": [
+  1.6214285714285717,
+  2.0816000000000003
+ ],
+ "share_failed": 0.2807017543859649,
+ "mean_failed": 0.38596491228070173,
+ "n_inc_birth": 96,
+ "n_inc_death": 46,
+ "med_inc_birth": 8.23021480134097,
+ "med_inc_death": 8.093899568596825,
+ "delta": 0.13631523274414548,
+ "excluded_no_maddison": 21,
+ "max_inc_death": 9.612087877644237,
+ "verdicts": {
+  "PHD1": {
+   "ok": true,
+   "killed": false
+  },
+  "PHD2": {
+   "ok": false,
+   "killed": true
+  },
+  "PHD3": {
+   "ok": false,
+   "killed": false
+  }
+ }
+}

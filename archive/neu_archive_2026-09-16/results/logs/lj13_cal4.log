@@ -1,0 +1,4 @@
+levels 2 liquid macro 0 [71s]
+slow (7500 t.u./leg): midpoints heating 0.2556478933333334 cooling 0.31425610666666665 dT=-0.05860821333333327 [719s]
+fast10 (750 t.u./leg): midpoints heating 0.2568629333333333 cooling 0.33146773333333335 dT=-0.07460480000000003 [795s]
+fast30 (250 t.u./leg): midpoints heating 0.2729248 cooling 0.3288992 dT=-0.05597439999999998 [802s]

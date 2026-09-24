@@ -1,0 +1,14 @@
+{
+ "indicators_32": 0.7315277220553416,
+ "ceiling_indicators_32": 0.7325395890324584,
+ "linear+indicators_32": 0.8781179384953607,
+ "ceiling_linear+indicators_32": 0.8845022977873063,
+ "indicators_64": 0.8211418114845924,
+ "ceiling_indicators_64": 0.824310479693266,
+ "linear+indicators_64": 0.9061160095334133,
+ "ceiling_linear+indicators_64": 0.9143585498112603,
+ "indicators_128": 0.904807648166117,
+ "ceiling_indicators_128": 0.9100639042561689,
+ "linear+indicators_128": 0.9344596951833571,
+ "ceiling_linear+indicators_128": 0.9462340239615519
+}

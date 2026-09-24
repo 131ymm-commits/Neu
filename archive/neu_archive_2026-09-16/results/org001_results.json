@@ -1,0 +1,58 @@
+{
+ "n_igo": 534,
+ "DI": 4.713586659891215,
+ "null_p95": 1.1705154988425275,
+ "top_birth_years": {
+  "1994": 14,
+  "1974": 14,
+  "1992": 13,
+  "1976": 13,
+  "1975": 12,
+  "1960": 12,
+  "1991": 11,
+  "1968": 11
+ },
+ "DI_sub": [
+  4.112939698492463,
+  4.621273031825797
+ ],
+ "DI_post1900": 3.1629121111958645,
+ "null_p95_post1900": 1.2174930078820239,
+ "n_pre1900": 21,
+ "n_dead": 198,
+ "life_mean": 22.42929292929293,
+ "life_median": 19.0,
+ "CV_life": 0.7099251684473272,
+ "CV_sub": [
+  0.664512445070091,
+  0.7297199944116426
+ ],
+ "share_succession": 0.30303030303030304,
+ "n_succ": 60,
+ "n_no_membership_rows": 0,
+ "median_peak_outright": 12.0,
+ "median_peak_succession": 13.0,
+ "ratio": 1.0833333333333333,
+ "ratio_ci95": [
+  0.6923076923076923,
+  1.5
+ ],
+ "median_peak_replaced_only": 12.0,
+ "median_peak_integrated_only": 13.0,
+ "mean_peak_outright": 15.0,
+ "mean_peak_succession": 18.833333333333332,
+ "verdicts": {
+  "PO1": {
+   "ok": true,
+   "killed": false
+  },
+  "PO2": {
+   "ok": true,
+   "killed": false
+  },
+  "PO4": {
+   "ok": false,
+   "killed": false
+  }
+ }
+}

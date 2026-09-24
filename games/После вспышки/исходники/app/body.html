@@ -1,0 +1,55 @@
+<div class="app">
+  <header class="top">
+    <div class="brand" title="После вспышки">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>
+      <span class="t">После вспышки</span>
+    </div>
+    <div class="yearbox">
+      <span class="lbl" id="ylbl">месяц</span><span class="yr" id="year">—</span>
+      <button class="btn primary" id="nextYear" disabled>Следующий месяц →</button>
+      <span class="stage" id="stage" aria-live="polite"></span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab on" data-v="map">Карта</button>
+      <button class="tab" data-v="world">Мир</button>
+      <button class="tab" data-v="patches">Патчи</button>
+      <button class="tab" data-v="forks">Форки</button>
+      <button class="tab" data-v="players">Игроки</button>
+      <button class="tab" data-v="help">Как играть</button>
+      <button class="tab" data-v="known">Факты</button>
+    </nav>
+    <div class="who" id="who"></div>
+  </header>
+  <div class="worldbar" id="worldbar"></div>
+  <div class="banner" id="banner" style="display:none"></div>
+  <main class="views">
+    <section class="view on" id="view-map">
+      <div id="mapwrap">
+        <canvas id="map" aria-label="Карта мира"></canvas>
+        <div class="loading" id="maploading">Загружаю мир…</div>
+        <div class="mapui tl"><div class="seg" id="metricSeg"></div></div>
+        <div class="mapui tr">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="q" type="text" placeholder="Страна или город (города — латиницей)" autocomplete="off" spellcheck="false" aria-label="Поиск">
+            <div class="sug" id="sug"></div>
+          </div>
+        </div>
+        <div class="mapui bl"><div class="legend" id="legend"></div></div>
+        <div class="mapui br">
+          <div class="zoombtns"><button id="zin" aria-label="Приблизить">+</button><button id="zout" aria-label="Отдалить">−</button><button id="zhome" aria-label="Весь мир">⌂</button></div>
+        </div>
+        <div class="tip" id="tip"></div>
+      </div>
+      <aside class="card" id="card"></aside>
+    </section>
+    <section class="view" id="view-world"><div class="page"><div class="page-in" id="worldPage"></div></div></section>
+    <section class="view" id="view-patches"><div class="page"><div class="page-in" id="patchesPage"></div></div></section>
+    <section class="view" id="view-forks"><div class="page"><div class="page-in" id="forksPage"></div></div></section>
+    <section class="view" id="view-players"><div class="page"><div class="page-in" id="playersPage"></div></div></section>
+    <section class="view" id="view-help"><div class="page"><div class="page-in" id="helpPage"></div></div></section>
+    <section class="view" id="view-known"><div class="page"><div class="page-in" id="knownPage"></div></div></section>
+  </main>
+</div>
+<div class="modal" id="modal"><div class="dlg" id="dlg" role="dialog" aria-modal="true" aria-labelledby="dlgTitle"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>

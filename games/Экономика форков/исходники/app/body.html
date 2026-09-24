@@ -1,0 +1,54 @@
+<div class="app">
+  <header class="top">
+    <div class="brand" title="Экономика форков">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="5" r="2.2"/><circle cx="18" cy="5" r="2.2"/><circle cx="12" cy="19" r="2.2"/><path d="M6 7.2v1.3a4 4 0 0 0 4 4h4a4 4 0 0 0 4-4V7.2"/><path d="M12 12.5v4.3"/></svg>
+      <span class="t">Экономика форков</span>
+    </div>
+    <div class="yearbox">
+      <span class="lbl">год</span><span class="yr" id="year">—</span>
+      <button class="btn primary" id="nextYear" disabled>Следующий год →</button>
+    </div>
+    <div class="worldbar" id="worldbar"></div>
+    <nav class="tabs" id="tabs">
+      <button class="tab on" data-v="map">Карта</button>
+      <button class="tab" data-v="patches">Патчи</button>
+      <button class="tab" data-v="log">Хроника</button>
+      <button class="tab" data-v="compare">Форки и план</button>
+      <button class="tab" data-v="help">Как играть</button>
+    </nav>
+    <div class="who" id="who"></div>
+  </header>
+  <div class="banner" id="banner"></div>
+  <main class="views">
+    <section class="view on" id="view-map">
+      <div id="mapwrap">
+        <canvas id="map" aria-label="Карта мира"></canvas>
+        <div class="loading" id="maploading">Загружаю карту…</div>
+        <div class="mapui tl">
+          <div class="seg" id="metricSeg"></div>
+          <div class="seg" id="worldSeg"></div>
+        </div>
+        <div class="mapui tr">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="q" type="text" placeholder="Страна, город или село" autocomplete="off" spellcheck="false">
+            <div class="sug" id="sug"></div>
+          </div>
+        </div>
+        <div class="mapui bl"><div class="legend" id="legend"></div></div>
+        <div class="mapui br">
+          <button class="btn small fab" id="addVillage" title="Отметить на карте населённый пункт, которого нет в списке">+ Своё село</button>
+          <div class="zoombtns"><button id="zin" aria-label="Приблизить">+</button><button id="zout" aria-label="Отдалить">−</button><button id="zhome" aria-label="Весь мир">⌂</button></div>
+        </div>
+        <div class="tip" id="tip"></div>
+      </div>
+      <aside class="card" id="card"></aside>
+    </section>
+    <section class="view" id="view-patches"><div class="page"><div class="page-in" id="patchesPage"></div></div></section>
+    <section class="view" id="view-log"><div class="page"><div class="page-in" id="logPage"></div></div></section>
+    <section class="view" id="view-compare"><div class="page"><div class="page-in" id="comparePage"></div></div></section>
+    <section class="view" id="view-help"><div class="page"><div class="page-in" id="helpPage"></div></div></section>
+  </main>
+</div>
+<div class="modal" id="modal"><div class="dlg" id="dlg"></div></div>
+<div class="toast" id="toast"></div>
