@@ -1,0 +1,12 @@
+#!/bin/bash
+# Запрещает менять уже закоммиченный PLAN/PREREG: план замораживается в момент первого коммита.
+# Исправление плана — новым файлом (PLAN-v2.md) с объяснением, а не правкой старого.
+changed=$(git diff --cached --name-only --diff-filter=MD | grep -E '(^|/)(PLAN|PREREG)[^/]*\.md$')
+if [ -n "$changed" ]; then
+  echo "✗ Нельзя менять или удалять уже закоммиченный план:"; echo "$changed" | sed 's/^/   /'
+  echo "  Создайте новый файл (например PLAN-v2.md) и объясните в нём, что и почему изменилось."
+  echo "  Обойти осознанно: git commit --no-verify (будет видно в истории)."
+  exit 1
+fi
+[ -f claims.jsonl ] && python3 tools/ledger.py render && git add CLAIMS.md
+exit 0

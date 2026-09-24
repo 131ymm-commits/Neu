@@ -13,4 +13,5 @@ description: Ведение любого исследования в репоз�
 - **После** → `REPORT.md` с хешем PLAN (`git log --format=%h -1 -- PLAN.md`), вердикт по букве, пост-хок отдельно; статус в `CLAIMS.md` новой строкой истории.
 - **Итоговый текст** → каждое утверждение сверить с `CLAIMS.md`; расхождения назвать человеку.
 - **Конец сессии** → `python3 journal/export_chat.py <transcript.jsonl> journal/CHAT_<дата>.md`; `journal/ERRORS.md`; `journal/DECISIONS.md`; README; commit + push.
+- **Инструменты:** `python3 tools/ledger.py add|set|render|audit|verify-plans|brief|export-chat|check`; `python3 tools/false_level.py binom|pairs|perm`. Аудит чисел — против файлов опоры утверждения (`--data`), не всего репозитория.
 - **Нельзя:** переписывать запушенную историю; выдавать «по памяти» за «подтверждено»; удалять или публиковать без явного слова человека.

@@ -1,0 +1,12 @@
+name: ledger-check
+on: [push, pull_request]
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - name: Реестр утверждений и предрегистрации
+        run: python3 tools/ledger.py check
