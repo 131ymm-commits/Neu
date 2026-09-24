@@ -54,4 +54,9 @@ def chapters(paths):
     end = [j for j, ln in enumerate(lines) if ln.strip() == END]
     assert len(end) == 1 and end[0] > heads[-1], 'fi: нет единственной строки LOPPU после главы 12'
     bounds = heads + end
+    # подпись переделчика стиха в гл. 5 («Mukaillut / Panu Pekkanen») — не текст книги; найдена ревью после расчёта (ERRORS № 20)
+    credit = [j for j, ln in enumerate(lines) if ln.strip() == 'Mukaillut' and lines[j + 1].strip() == 'Panu Pekkanen']
+    assert len(credit) == 1, 'fi: подпись Pekkanen должна встречаться ровно один раз'
+    del lines[credit[0]:credit[0] + 2]
+    bounds = [b - 2 if b > credit[0] else b for b in bounds]
     return [clean(lines[bounds[k] + 1:bounds[k + 1]]) for k in range(12)]

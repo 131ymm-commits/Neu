@@ -103,9 +103,9 @@ footer { font-size: 14px; color: var(--muted); display: grid; gap: 8px; border-t
     <p class="lede">«Алиса в стране чудес» у Кэрролла — <span class="num" id="wen"></span> слов. Мы взяли ту же сказку на десяти других языках и посчитали, сколько слов нужно каждому, чтобы рассказать её целиком.</p>
     <div class="tape" aria-hidden="true" id="tape"></div>
     <div class="facts">
-      <div><b id="f-short"></b>самый краткий</div>
-      <div><b id="f-long"></b>самый болтливый</div>
-      <div><b id="f-gap"></b>разница между ними</div>
+      <div><b id="f-short"></b>краткие: финский, иврит, чешский</div>
+      <div><b id="f-long"></b>болтливые: немецкий, испанский, английский, французский</div>
+      <div><b id="f-gap"></b>самый длинный перевод против самого короткого</div>
     </div>
   </header>
 
@@ -119,14 +119,14 @@ footer { font-size: 14px; color: var(--muted); display: grid; gap: 8px; border-t
     <div class="eyebrow">Рейтинг</div>
     <h2 id="h-rank">Сколько слов нужно на каждые 100 слов оригинала</h2>
     <div class="chart" id="c-rank"><div class="legend"><span><i class="sw" style="background:var(--words)"></i>медиана переводов языка</span><span><i class="sw" style="background:var(--ink);width:8px;height:8px"></i>отдельный перевод</span></div></div>
-    <p class="caption">Черта на 100 — английский оригинал. Точки — отдельные переводы, где их два. Наведите на строку, чтобы увидеть переводчиков.</p>
+    <p class="caption">Черта на 100 — английский оригинал. Точки — отдельные переводы, где их два. Наведите на строку, чтобы увидеть переводчиков. Пунктир делит языки на группы: краткие, средние, болтливые. Соседи в списке ближе друг к другу, чем два перевода одного языка, поэтому точные места внутри групп не установлены.</p>
     <p class="call" id="podium"></p>
   </section>
 
   <section aria-labelledby="h-letters">
     <div class="eyebrow">Сюрприз</div>
-    <h2 id="h-letters">Финский короче всех по словам и длиннее английского по буквам</h2>
-    <p>Слово в финском длинное: падеж, число и даже «и» или «ли» приклеиваются к нему окончаниями. Поэтому слов мало, а букв больше, чем у Кэрролла. Иврит наоборот экономен на письме: гласные в нём обычно не пишутся.</p>
+    <h2 id="h-letters">Финский короче всех по словам, но не по буквам</h2>
+    <p id="letters-text"></p>
     <div class="chart" id="c-letters"><div class="legend"><span><i class="sw" style="background:var(--words)"></i>слова</span><span><i class="sw" style="background:var(--letters);border-radius:2px"></i>буквы</span></div></div>
     <p class="caption">Оба ряда — к английскому оригиналу (= 100). <span id="cjk"></span></p>
   </section>
@@ -134,30 +134,30 @@ footer { font-size: 14px; color: var(--muted); display: grid; gap: 8px; border-t
   <section aria-labelledby="h-top">
     <div class="eyebrow">Любимое слово</div>
     <h2 id="h-top">Самое частое слово в каждом языке</h2>
-    <p>У английского это <b>the</b>. У эсперанто артикль <b>la</b> один на все случаи, и он бьёт рекорд. А в иврите союзы и предлоги пишутся слитно со словом, поэтому самым частым «словом» оказалась сама Алиса.</p>
+    <p id="top-text">У английского это <b>the</b>. У эсперанто артикль <b>la</b> один на все случаи, и он бьёт рекорд.</p>
     <div class="words-grid" id="topwords"></div>
   </section>
 
   <section aria-labelledby="h-art">
     <div class="eyebrow">Эксперимент</div>
     <h2 id="h-art">Уберём артикли — догонят русский?</h2>
-    <p>В русском нет артиклей, а в английском каждое шестнадцатое слово — the. Мы вычеркнули артикли у шести языков. Все стали ближе к русскому, но ни один не догнал.</p>
+    <p id="art-text"></p>
     <div class="chart" id="c-art"><div class="legend"><span><i class="sw" style="background:var(--muted)"></i>с артиклями</span><span><i class="sw" style="background:var(--words)"></i>без артиклей</span><span><i class="sw" style="background:var(--letters);border-radius:2px;width:3px"></i>русский</span></div></div>
   </section>
 
   <section aria-labelledby="h-tr">
     <div class="eyebrow">Кто виноват</div>
     <h2 id="h-tr">Язык или переводчик?</h2>
-    <p>Два перевода на один язык расходятся заметно, но гораздо меньше, чем языки между собой. Поэтому соседей в рейтинге, которые отличаются на несколько слов, лучше считать ничьей.</p>
+    <p>Два перевода на один язык расходятся на 8–10 %. Языки между собой обычно расходятся сильнее, но не всегда: соседи в рейтинге ближе друг к другу, чем два переводчика. Поэтому честный вывод — группы, а не места.</p>
     <div class="stats" id="trstats"></div>
   </section>
 
   <section aria-labelledby="h-honest">
     <div class="eyebrow">Без кликбейта</div>
     <h2 id="h-honest">Что из этого не следует</h2>
-    <p><b>Короче не значит лучше.</b> Когда люди говорят вслух, «плотные» языки произносят медленнее, «лёгкие» быстрее, и поток смысла выходит почти одинаковым, около 39 бит в секунду (Coupé и др., 2019).</p>
+    <p><b>Короче не значит лучше.</b> В устной речи языки, где на слог приходится больше информации, произносятся медленнее, и поток смысла выходит близким, около 39 бит в секунду (Coupé и др., 2019). Краткость в словах на письме — другая мера, и её связь с речью мы не проверяли.</p>
     <p><b>Мы сравнили переводы, а не языки.</b> Одна книга, один-два перевода на язык, переводы разных эпох. Переводчики переделывали стихи и шутки, иногда меняли имена: у финнов Алиса стала Лиисой, у чехов — Аленкой.</p>
-    <p><b>«Разнообразие слов» — это разнообразие форм.</b> У иврита и финского больше всего разных слов на ту же длину (<span class="num" id="ttr-top"></span>), у английского меньше всего (<span class="num" id="ttr-en"></span>). Английский при этом не беднее: его слова просто почти не меняют форму.</p>
+    <p><b>«Разнообразие слов» — это разнообразие форм.</b> У иврита и финского больше всего разных слов на ту же длину (<span class="num" id="ttr-top"></span>, практически ничья), у английского меньше всего (<span class="num" id="ttr-en"></span>). Английский при этом не беднее: его слова просто почти не меняют форму.</p>
   </section>
 
   <section aria-labelledby="h-how">
@@ -167,8 +167,9 @@ footer { font-size: 14px; color: var(--muted); display: grid; gap: 8px; border-t
       <li>Гипотезы записаны в публичный журнал до поиска текстов. Самый краткий — финский, самый болтливый — французский или английский, без артиклей английский всё равно длиннее русского.</li>
       <li>Правила подсчёта и пороги «подтверждено / опровергнуто» закоммичены до извлечения глав.</li>
       <li>Главы вырезаны из 17 файлов. Лицензии, оглавления, предисловия, сноски и комментарии удалены. Каждую выгрузку проверял независимый агент.</li>
-      <li>Все пять предсказаний подтвердились. Одна оговорка: звание «самого болтливого» зависит от переводчика. В 8 вариантах выбора переводов его получает французский <span id="mc"></span>.</li>
-      <li>Наша ошибка: часть грубых подсчётов попалась нам на глаза до того, как были записаны пороги. Поэтому результат нужно повторить на других переводах. Ошибка записана в журнал.</li>
+      <li>Все пять предсказаний подтвердились. Оговорка: крайние места хрупкие. В 8 вариантах выбора переводов первое место получает французский <span id="mc"></span>, а финский опережает иврит и чешский лишь на один процент.</li>
+      <li>После расчёта четыре независимых агента проверили всё заново. Числа сошлись, вердикты те же. Они нашли у нас завышенную подачу и два непроверенных объяснения; мы их исправили, ошибки записаны в журнал.</li>
+      <li>Наша ошибка: часть грубых подсчётов попалась нам на глаза до того, как были записаны пороги. Поэтому результат нужно повторить на других переводах.</li>
     </ol>
     <details>
       <summary>Таблица всех переводов</summary>
@@ -193,9 +194,17 @@ let picked = null;
 try { picked = localStorage.getItem('alice-pick'); } catch (e) {}
 
 $('#wen').textContent = fmt(D.W_en);
-$('#f-short').textContent = shortest.name + ' · ' + per100(shortest.r);
-$('#f-long').textContent = longest.name + ' · ' + per100(longest.r);
-$('#f-gap').textContent = '×' + fmt(longest.r / shortest.r, 2);
+const grp = k => D.groups[k].map(c => byCode[c]);
+const avg = k => grp(k).reduce((x, l) => x + l.r, 0) / grp(k).length;
+const rng = k => { const v = grp(k).map(l => per100(l.r)); return Math.min(...v) + '–' + Math.max(...v); };
+$('#f-short').textContent = rng('short') + ' слов';
+$('#f-long').textContent = rng('talk') + ' слов';
+const allT = D.langs.flatMap(l => l.texts);
+$('#f-gap').textContent = '×' + fmt(Math.max(...allT.map(t => t.r)) / Math.min(...allT.map(t => t.r)), 2);
+const V = D.rev;
+$('#letters-text').innerHTML = `Финский пишет долгие звуки двумя буквами: <i>kissa</i>, <i>maa</i>. В финской «Алисе» ${fmt(V.fi_doubles)} удвоений, в английской ${fmt(V.en_doubles)}. Если считать удвоенную букву за одну, финский по буквам выходит ровно как английский (${per100(V.fi_letters_collapsed)}). У иврита букв меньше всех: огласовки в счёт не входят.`;
+$('#top-text').innerHTML += ` А в иврите первое место заняла сама Алиса. Отчасти потому, что союзы и предлоги пишутся слитно со словом, отчасти потому, что переводчик зовёт её по имени ${V.he_alice} раз, а Кэрролл ${V.en_alice}.`;
+$('#art-text').innerHTML = `В русском нет артиклей, а в английском каждое шестнадцатое слово — the. Мы вычеркнули отдельные артикли у шести языков. Все стали ближе к русскому (${per100(byCode.ru.r)}), но никто его не догнал: английский без артиклей — ${per100(byCode.en.noart)}. Итальянский подошёл ближе всех (${per100(V.it_noart)}) и уже короче одного из русских переводов (${per100(V.ru_nes)}). Счёт немного завышает вычет: der, die, das, le, la бывают и местоимениями.`;
 $('#tape').innerHTML = '<i></i>'.repeat(60);
 $('#mc').textContent = `${D.max_counts.fr || 0} раза, английский ${D.max_counts.en || 0}, испанский ${D.max_counts.es || 0}`;
 $('#cjk').textContent = `Японский и китайский считаются знаками: японский тратит ${per100(D.ref.ja)} знаков, китайский ${per100(D.ref.zh)} на каждые 100 английских букв.`;
@@ -241,6 +250,8 @@ function drawRank() {
     svgEl('line', { x1: X(g), x2: X(g), y1: top - 6, y2: top + rowH * n, stroke: g === 1 ? 'var(--ink)' : 'var(--grid)', 'stroke-width': g === 1 ? 1.5 : 1, 'stroke-dasharray': g === 1 ? '4 3' : '' }, s);
     svgEl('text', { x: X(g), y: top - 12, 'text-anchor': 'middle', class: 'axis' }, s).textContent = per100(g);
   }
+  const starts = [D.groups.mid[0], D.groups.talk[0]].map(c => D.langs.findIndex(l => l.code === c));
+  starts.forEach(i => svgEl('line', { x1: 8, x2: w - 8, y1: top + i * rowH, y2: top + i * rowH, stroke: 'var(--muted)', 'stroke-dasharray': '2 4' }, s));
   D.langs.forEach((l, i) => {
     const y = top + i * rowH + 6, bh = rowH - 14, isPick = picked === l.code;
     const g = svgEl('g', { tabindex: 0 }, s);
@@ -322,18 +333,21 @@ function renderQuiz() {
   if (!picked) return;
   const l = byCode[picked], place = D.langs.length - D.langs.indexOf(l);
   const v = $('#verdict');
-  if (picked === longest.code) v.innerHTML = `<b>Угадали.</b> ${l.name} — ${per100(l.r)} слов на 100 английских. Но победа хрупкая: с другим переводчиком первое место берёт английский или испанский.`;
-  else if (picked === 'en' || picked === 'es') v.innerHTML = `<b>Почти.</b> ${l.name} — ${per100(l.r)}, место ${place} с конца. Первое место делят французский, английский и испанский: всё решает переводчик.`;
-  else v.innerHTML = `<b>Мимо.</b> ${l.name} — ${per100(l.r)} слов на 100 английских, ${place === D.langs.length ? 'это самый краткий язык из всех' : 'место ' + place + ' с конца'}. Самый болтливый — ${longest.name} (${per100(longest.r)}).`;
+  const inTalk = D.groups.talk.includes(picked);
+  if (picked === longest.code) v.innerHTML = `<b>Угадали.</b> ${l.name} — ${per100(l.r)} слов на 100 английских, первое место по медиане двух переводов. Но отрыв меньше, чем разница между переводчиками: немецкий, испанский и английский почти рядом.`;
+  else if (inTalk) v.innerHTML = `<b>Почти.</b> ${l.name} — ${per100(l.r)}, в группе самых болтливых. Внутри группы ничья: всё решает переводчик. По медиане первым идёт ${longest.name} (${per100(longest.r)}).`;
+  else if (D.groups.short.includes(picked)) v.innerHTML = `<b>Наоборот.</b> ${l.name} — ${per100(l.r)} слов на 100 английских, это один из самых кратких языков. Самые болтливые — немецкий, испанский, английский и французский.`;
+  else v.innerHTML = `<b>Мимо.</b> ${l.name} — ${per100(l.r)} слов на 100 английских, середина списка. Самые болтливые — немецкий, испанский, английский и французский (${rng('talk')}).`;
 }
 
 // ---------- static blocks ----------
-$('#podium').innerHTML = `<b>Пьедестал шаткий.</b> ${longest.name[0].toUpperCase() + longest.name.slice(1)} на первом месте, только если брать медиану двух переводов. Перевод Бюэ 1869 года короче оригинала (${per100(byCode.fr.texts[0].r)}), перевод Папи 2001 года длиннее (${per100(byCode.fr.texts[1].r)}). А вот низ таблицы прочный: финский — самый краткий при любом выборе переводов.`;
+$('#podium').innerHTML = `<b>Пьедестал — ничья.</b> Французский первый только по медиане двух переводов: у Бюэ (1869) текст короче оригинала (${per100(byCode.fr.texts[0].r)}), у Папи (2001) длиннее (${per100(byCode.fr.texts[1].r)}). Внизу то же самое: финский (${per100(byCode.fi.r)}) опережает иврит и чешский (${per100(byCode.he.r)}) на один процент. Надёжно другое: болтливые языки тратят в среднем на ${Math.round((avg('talk') / avg('short') - 1) * 100)}% больше слов, чем краткие.`;
 $('#topwords').innerHTML = D.langs.map(l => `<div class="wcard"><span class="l">${l.name}</span><span class="w" lang="${l.code}">${l.top.w}</span><span class="num">${fmt(l.top.share * 100, 1)}% всех слов</span></div>`).join('');
 const e1 = Object.entries(D.e1).map(([L, v]) => `${byCode[L].name} ${per100(v)}`).join(', ');
 $('#trstats').innerHTML = `
-  <div class="stat"><span class="muted">разница между двумя переводами одного языка</span><b>${Math.round(Math.min(...Object.values(D.e1)) * 100)}–${Math.round(Math.max(...Object.values(D.e1)) * 100)}</b><span class="muted">слов на 100 (${e1})</span></div>
-  <div class="stat"><span class="muted">разница между самым кратким и самым болтливым языком</span><b>${per100(D.between)}</b><span class="muted">слов на 100</span></div>`;
+  <div class="stat"><span class="muted">два перевода одного языка</span><b>${Math.round(Math.min(...Object.values(D.e1)) * 100)}–${Math.round(Math.max(...Object.values(D.e1)) * 100)}</b><span class="muted">слов на 100 (${e1})</span></div>
+  <div class="stat"><span class="muted">два случайных языка, обычно</span><b>${per100(D.rev.pair_median)}</b><span class="muted">слов на 100 (медиана по всем парам)</span></div>
+  <div class="stat"><span class="muted">самый болтливый язык против самого краткого</span><b>+${Math.round(D.rev.max_over_min * 100)}%</b><span class="muted">слов на ту же книгу</span></div>`;
 $('#tbl tbody').innerHTML = D.langs.flatMap(l => l.texts.map(t => `<tr><td>${l.name}</td><td>${t.who}</td><td class="n">${fmt(t.W)}</td><td class="n">${per100(t.r)}</td></tr>`)).join('');
 
 function drawAll() { drawRank(); drawLetters(); drawArticles(); }

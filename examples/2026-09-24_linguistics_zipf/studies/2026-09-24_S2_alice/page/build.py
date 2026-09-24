@@ -27,6 +27,14 @@ data['rho4'] = R['P4']['rho']; data['rho6'] = R['P6']['rho']; data['p4'] = P['p_
 data['max_counts'] = P['summary']['max_counts']; data['combos'] = P['summary']['n']
 data['e1'] = {L: max(d.values()) - min(d.values()) for L, d in R['E1'].items()}
 data['between'] = R['E1_between']['range']
+rv = P['review']
+data['groups'] = {'short': ['fi', 'he', 'cs'], 'mid': ['ru', 'bg', 'it', 'eo'], 'talk': ['de', 'es', 'en', 'fr']}
+data['rev'] = {'fi_letters_collapsed': rv['letters_doubles_collapsed_rel_en']['fi'], 'fi_doubles': rv['doubled_pairs']['fi'],
+               'en_doubles': rv['doubled_pairs']['en'], 'he_alice': rv['he_alice']['with_prefix'],
+               'en_alice': rv['en_alice']['alice'] + rv['en_alice']["alice's"], 'he_hi': rv['he_alice']['hi'], 'en_she': rv['en_alice']['she'],
+               'pair_median': rv['E1_pairwise_lang']['median'], 'max_over_min': rv['E1_max_over_min_lang'],
+               'e1_rel': rv['E1_relative'], 'gap': rv['gap_short_vs_talkative'], 'fr_e3': rv['E3_symmetric_fr_median'],
+               'it_noart': R['P7']['no_art']['it'], 'ru_nes': R['r']['ru_nes'], 'spread': max(max(d.values()) - min(d.values()) for d in R['E1'].values())}
 html = open(os.path.join(HERE, 'template.html'), encoding='utf-8').read().replace('__DATA__', json.dumps(data, ensure_ascii=False))
 open(os.path.join(HERE, 'alice.html'), 'w', encoding='utf-8').write(html)
 print('page/alice.html', len(html), 'байт')
