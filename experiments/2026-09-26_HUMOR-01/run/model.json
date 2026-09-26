@@ -1,0 +1,1 @@
+{"session_model":"claude-opus-5-5","last_served_model":"claude-opus-5-5","checked":"2026-09-26 перед частью 1","subagent_model":"наследуется от сессии; фактическую модель подвызова workflow не сообщает","sampling":"не контролируется"}
