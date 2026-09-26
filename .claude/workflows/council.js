@@ -1,11 +1,12 @@
 export const meta = {
   name: 'council',
   description: 'Совет голов-специалистов: формалист, интуит, скептик, инженер и мозолистое тело ведут диалог над задачей',
-  whenToUse: 'Проектирование экспериментов, разбор результатов, спорные решения в Neu. args: { task, context?, rounds? }',
+  whenToUse: 'Проектирование экспериментов, разбор результатов, спорные решения в Neu. args: { task, context?, rounds?, decision? } — если передан decision, совет сразу голосует по нему',
   phases: [
     { title: 'Раунд 1', detail: 'каждая голова предлагает своё' },
     { title: 'Диалог', detail: 'головы отвечают друг другу через мозолистое тело' },
     { title: 'Синтез', detail: 'мозолистое тело сводит решение и несогласия' },
+    { title: 'Голосование', detail: 'четыре головы голосуют; принято при ≥ 3 «за»; иначе переписать и переголосовать (до 2 раз)' },
   ],
 }
 
@@ -23,6 +24,8 @@ const rounds = (args && args.rounds) || 2
 const RULES = 'Пиши по-русски, коротко и конкретно, без воды и без украшений. Не выдумывай числа и источники; если опираешься на память, помечай «(п)». Отвечай 150–350 словами.'
 
 const transcript = []
+const preset = args && args.decision
+if (!preset) {
 phase('Раунд 1')
 const first = await parallel(Object.entries(HEADS).map(([name, role]) => () =>
   agent(`${role}\n\nЗАДАЧА СОВЕТА:\n${task}\n\nКОНТЕКСТ:\n${context}\n\nРаунд 1. Дай своё предложение с точки зрения своей специальности. ${RULES}`,
@@ -42,7 +45,25 @@ for (let r = 2; r <= rounds + 1; r++) {
   last.forEach(x => transcript.push({ round: r, speaker: x.name, text: x.text }))
 }
 
+}
 phase('Синтез')
-const decision = await agent(`${CALLOSUM}\n\nЗАДАЧА: ${task}\n\nКОНТЕКСТ:\n${context}\n\nПОЛНАЯ СТЕНОГРАММА:\n${transcript.map(x => `## Раунд ${x.round} — ${x.speaker}\n${x.text}`).join('\n\n')}\n\nСведи итог совета: 1) решение (конкретно и исполнимо); 2) что предложила каждая голова и что из этого вошло; 3) оставшиеся несогласия — честно, с именами голов; 4) что проверить первым. Пиши по-русски, коротко, без украшений. Не выдумывай числа.`,
+const decision = preset ? preset : await agent(`${CALLOSUM}\n\nЗАДАЧА: ${task}\n\nКОНТЕКСТ:\n${context}\n\nПОЛНАЯ СТЕНОГРАММА:\n${transcript.map(x => `## Раунд ${x.round} — ${x.speaker}\n${x.text}`).join('\n\n')}\n\nСведи итог совета: 1) решение (конкретно и исполнимо); 2) что предложила каждая голова и что из этого вошло; 3) оставшиеся несогласия — честно, с именами голов; 4) что проверить первым. Пиши по-русски, коротко, без украшений. Не выдумывай числа.`,
   { label: 'синтез', phase: 'Синтез' })
-return { task, transcript, decision }
+phase('Голосование')
+const VOTE = { type: 'object', properties: { vote: { type: 'string', enum: ['за', 'против', 'воздерживаюсь'] }, reason: { type: 'string' },
+  required_change: { type: 'string', description: 'что изменить, чтобы голос стал «за» (пусто, если «за»)' } }, required: ['vote', 'reason', 'required_change'] }
+let current = decision, votes = [], status = 'не принято', attempt = 0
+while (attempt < 3) {
+  attempt++
+  votes = (await parallel(Object.entries(HEADS).map(([name, role]) => () =>
+    agent(`${role}\n\nЗАДАЧА: ${task}\n\nРЕШЕНИЕ СОВЕТА НА ГОЛОСОВАНИИ (попытка ${attempt}):\n${current}\n\nПроголосуй со своей профессиональной позиции: «за», «против» или «воздерживаюсь». Коротко объясни и, если не «за», назови конкретное изменение, при котором проголосуешь «за». По-русски.`,
+      { label: `голос ${attempt}:${name}`, phase: 'Голосование', schema: VOTE }).then(v => v && ({ name, ...v }))))).filter(Boolean)
+  const za = votes.filter(v => v.vote === 'за').length
+  transcript.push({ round: `голосование ${attempt}`, speaker: 'итог', text: votes.map(v => `${v.name}: ${v.vote} — ${v.reason}${v.required_change ? ' | нужно: ' + v.required_change : ''}`).join('\n') })
+  if (za === votes.length) { status = 'принято единогласно'; break }
+  if (za >= 3) { status = `принято большинством (${za} из ${votes.length})`; break }
+  if (attempt === 3) break
+  current = await agent(`${CALLOSUM}\n\nРешение не набрало большинства (${za} «за» из ${votes.length}). Голоса:\n${votes.map(v => `${v.name}: ${v.vote} — ${v.reason} | нужно: ${v.required_change}`).join('\n')}\n\nПерепиши решение так, чтобы учесть обоснованные требования, не ломая то, за что уже голосовали «за». Верни полный новый текст решения. По-русски, коротко, без выдуманных чисел.\n\nТЕКУЩЕЕ РЕШЕНИЕ:\n${current}`,
+    { label: `переписать ${attempt}`, phase: 'Голосование' })
+}
+return { task, transcript, decision: current, status, votes }
