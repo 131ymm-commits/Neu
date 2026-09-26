@@ -4,7 +4,7 @@ export const meta = {
   phases: [{ title: 'Вызовы' }],
 }
 // args: {part, calls: [{label, prompt, expect: {kind: author|pairs|labels|known, ...}}]}
-const words = t => String(t).split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length
+const words = t => String(t).split(/[ \t\n\r\f\v\u00a0\u2000-\u200b\u2028\u2029\u202f\u205f\u3000]+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length
 const now = () => { try { return new Date().toISOString() } catch (e) { return 'не контролируется' } }
 const obj = (props, req) => ({ type: 'object', properties: props, required: req })
 const list = item => obj({ items: { type: 'array', items: item } }, ['items'])
@@ -33,9 +33,9 @@ async function run(c) {
   const schema = typeof SCHEMA[c.expect.kind] === 'function' ? SCHEMA[c.expect.kind](c.expect) : SCHEMA[c.expect.kind]
   for (let a = 0; a < 3; a++) {
     let res = null, err = null
-    try { res = await agent(c.prompt, { label: a ? `${c.label}#retry${a}` : c.label, phase: 'Вызовы', schema }) } catch (e) { err = String(e) }
+    try { res = await agent(c.prompt, { label: a ? `${c.alias}#retry${a}` : c.alias, phase: 'Вызовы', schema }) } catch (e) { err = String(e) }
     const problem = err || (res == null ? 'пустой ответ' : check(c.expect)(res))
-    records.push({ part: args.part, label: c.label, attempt: a, retry: a > 0, t: now(), how: 'workflow agent() со схемой', response: res, problem })
+    records.push({ part: args.part, label: c.label, alias: c.alias, attempt: a, retry: a > 0, t: now(), how: 'workflow agent() со схемой', prompt: c.prompt, response: res, problem })
     if (!problem) return
   }
 }

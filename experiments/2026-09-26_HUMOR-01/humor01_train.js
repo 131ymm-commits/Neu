@@ -10,7 +10,7 @@ const rnd = mulberry32(A.seed)  // используется только в по
 const shuffle = xs => { const a = [...xs]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] } return a }
 const ALPH = 'abcdefghjkmnpqrstuvwxyz23456789'
 const newIds = n => { const s = new Set(); while (s.size < n) { let x = ''; for (let i = 0; i < 5; i++) x += ALPH[Math.floor(rnd() * ALPH.length)]; s.add(x) } return [...s] }
-const words = t => String(t).split(/\s+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length
+const words = t => String(t).split(/[ \t\n\r\f\v\u00a0\u2000-\u200b\u2028\u2029\u202f\u205f\u3000]+/).filter(w => /[\p{L}\p{N}]/u.test(w)).length
 const now = () => { try { return new Date().toISOString() } catch (e) { return 'не контролируется' } }
 const records = []
 
@@ -37,13 +37,15 @@ const checkScores = ids => r => {
 const checkCoach = r => (r.memo || []).length >= 1 && r.memo.length <= A.memo_max ? null : `пунктов ${(r.memo || []).length}`
 
 // технический повтор: до 2 раз с тем же промптом (ошибка API, обрыв, формат); смысловых повторов нет
+let seq = 0
 async function call(label, phase, prompt, schema, check) {
   let last = null
+  const alias = `h1c${String(++seq).padStart(2, '0')}`  // нейтральная метка для agent(): ни роли, ни раунда
   for (let a = 0; a < 3; a++) {
     let res = null, err = null
-    try { res = await agent(prompt, { label: a ? `${label}#retry${a}` : label, phase, schema }) } catch (e) { err = String(e) }
+    try { res = await agent(prompt, { label: a ? `${alias}#retry${a}` : alias, phase, schema }) } catch (e) { err = String(e) }
     const problem = err || (res == null ? 'пустой ответ' : check(res))
-    records.push({ part: 1, label, attempt: a, retry: a > 0, t: now(), how: 'workflow agent() со схемой', prompt, response: res, problem })
+    records.push({ part: 1, label, alias, attempt: a, retry: a > 0, t: now(), how: 'workflow agent() со схемой', prompt, response: res, problem })
     if (res != null) last = res
     if (!problem) return res
   }
@@ -64,7 +66,7 @@ async function nofbChain(r0) {
     const p = `Ты — автор коротких шуток на русском языке. ${A.no_tools}\nВот твои шутки, у каждой в скобках ключ темы:\n${list}\n\nУлучши каждую сам: сделай смешнее. Отзывов нет, опирайся только на своё суждение. Верни столько же шуток, по ${A.per_topic} на каждую тему, каждая не длиннее ${A.max_words} слов.\nТемы:\n${TOPICS}\n\nВерни список: ключ темы и текст шутки.`
     const r = await call(`NOFB${k}`, 'NOFB', p, AUTHOR, checkAuthor)
     const js = norm(r, `N${k}`)
-    nofb.push({ k, jokes: js })
+    nofb.push({ k, jokes: js.length ? js : cur, empty: !js.length })  // пустой ответ после повторов — остаётся прежняя версия
     if (js.length) cur = js
   }
 }

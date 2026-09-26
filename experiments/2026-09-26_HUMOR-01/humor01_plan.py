@@ -4,7 +4,8 @@
 import json, re, sys, hashlib
 import numpy as np
 
-SEED_TRAIN, SEED_PLAN3, SEED_HUMAN, SEED_BOOT, SEED_POWER = 2609261, 2609263, 2609264, 2609265, 2609266
+SEED_TRAIN, SEED_PLAN3, SEED_HUMAN, SEED_BOOT, SEED_POWER, SEED_BOOT_F = 2609261, 2609263, 2609264, 2609265, 2609266, 2609267
+KEY_DIR = '/root/humor01_secret'  # ключ человека — вне репозитория; в git только SHA-256 (ключ воспроизводим по зерну)
 MAX_WORDS = 40
 
 TRAIN_TOPICS = [('T1', 'понедельник у кота'), ('T2', 'научный грант'), ('T3', 'робот-пылесос и философия'),
@@ -33,8 +34,11 @@ NO_TOOLS = 'Не используй никакие инструменты и н�
 ALPH = 'abcdefghjkmnpqrstuvwxyz23456789'
 
 
+SPACE = r'[ \t\n\r\f\v\u00a0\u2000-\u200b\u2028\u2029\u202f\u205f\u3000]+'  # тот же класс, что в JS
+
+
 def words(t):
-    return sum(1 for w in str(t).split() if re.search(r'[^\W_]', w))
+    return sum(1 for w in re.split(SPACE, str(t)) if re.search(r'[^\W_]', w))
 
 
 def topics_text(topics):
@@ -76,10 +80,10 @@ def part2(p1):
     samp_txt = 'Образцы твоего стиля (твои прежние шутки на другие темы):\n' + '\n'.join(f'- {j["text"]}' for j in nofb4) + '\n\n'
     keys = [k for k, _ in HELD_TOPICS]
     ex = dict(kind='author', keys=keys, k=6, max_words=MAX_WORDS)
-    return [dict(label='MEMO', prompt=author_prompt(HELD_TOPICS, 6, memo_txt), expect=ex),
-            dict(label='BASE', prompt=author_prompt(HELD_TOPICS, 6), expect=ex),
-            dict(label='BASE2', prompt=author_prompt(HELD_TOPICS, 6), expect=ex),
-            dict(label='NOFB', prompt=author_prompt(HELD_TOPICS, 6, samp_txt), expect=ex)]
+    return [dict(label='MEMO', alias='h2c01', prompt=author_prompt(HELD_TOPICS, 6, memo_txt), expect=ex),
+            dict(label='BASE', alias='h2c02', prompt=author_prompt(HELD_TOPICS, 6), expect=ex),
+            dict(label='BASE2', alias='h2c03', prompt=author_prompt(HELD_TOPICS, 6), expect=ex),
+            dict(label='NOFB', alias='h2c04', prompt=author_prompt(HELD_TOPICS, 6, samp_txt), expect=ex)]
 
 
 def transfer_jokes(p2):
@@ -127,7 +131,14 @@ def part3(p1, p2):
     hk, tk = [k for k, _ in HELD_TOPICS], [k for k, _ in TRAIN_TOPICS]
     comps = {'MEMO-BASE': ('MEMO', 'BASE'), 'MEMO-NOFB': ('MEMO', 'NOFB'), 'BASE-BASE2': ('BASE', 'BASE2')}
     designs = {c: design(rng, J[a], J[b], hk) for c, (a, b) in comps.items()}
-    repeats = {c: sorted(rng.choice(len(d), 24, replace=False).tolist()) for c, d in designs.items()}
+    def pick_rep(d):  # 6 на тему: 3 пары AB и 3 BA
+        out = []
+        for t in hk:
+            for af in (True, False):
+                cand = [n for n, p in enumerate(d) if p['topic'] == t and p['a_first'] == af]
+                out += rng.choice(cand, 3, replace=False).tolist()
+        return sorted(out)
+    repeats = {c: pick_rep(d) for c, d in designs.items()}
     fin_rr = design(rng, J['R4'], J['R0'], tk)
     fin_rn = design(rng, J['R4'], J['NOFB4'], tk)
     calls, plan = [], []
@@ -157,8 +168,9 @@ def part3(p1, p2):
                 rep.append(dict(kind='repeat', comp=c, pair=int(n), topic=p['topic'], a=p['a'], b=p['b'], a_first=not p['a_first'], x=x, y=y))
             seq = main + rep
             ctlp = [(CONTROL_PAIRS[0], True), (CONTROL_PAIRS[1], True), (CONTROL_PAIRS[0], False), (CONTROL_PAIRS[1], False)]
-            for q, ((s, w), sf) in enumerate(ctlp):  # контроли на 20/40/60/80 % длины
-                pos = round(len(seq) * (q + 1) / 5)
+            n0 = len(seq)
+            for q, ((s, w), sf) in enumerate(ctlp):  # контроли в полосах 10–30/30–50/50–70/70–90 % длины, позиция случайна
+                pos = int(n0 * (0.1 + 0.2 * q + 0.2 * rng.random())) + q
                 seq.insert(pos, dict(kind='control', comp=c, strong=s, weak=w, a_first=sf,
                                      x=ctl[s] if sf else ctl[w], y=ctl[w] if sf else ctl[s]))
             emit(f'J:{c}:{jk}', persona, seq)
@@ -195,6 +207,8 @@ def part3(p1, p2):
     calls.append(dict(label='ARCHIVE', expect=dict(kind='known', ids=ids), prompt=(
         f'Ты — архивист юмора, знаешь огромное число анекдотов и шуток. {NO_TOOLS}\nДля каждой шутки ниже скажи, узнаёшь ли ты её '
         f'(или её явный прототип) как известную, ранее существовавшую шутку или анекдот: да или нет. Ответь для каждого ID.\n\n{body}')))
+    for n, c in enumerate(calls):  # нейтральные метки для agent(): ни условия, ни роли
+        c['alias'] = f'h3c{n + 1:02d}'
     return calls, plan, J
 
 
@@ -220,7 +234,7 @@ def human_pairs(tf, n=20, seed=SEED_HUMAN):
             for i in rng.permutation(len(A)): aug(int(i), set())
             found += [(t, i, j) for j, i in sorted(match.items())]
         if len(found) >= n:
-            pick = sorted(rng.choice(len(found), n, replace=False).tolist())
+            pick = rng.choice(len(found), n, replace=False).tolist()  # порядок показа случайный
             memo_first = rng.permutation([True] * (n // 2) + [False] * (n - n // 2))
             return dict(tol=round(tol, 2), pairs=[dict(topic=found[k][0], memo=found[k][1], base=found[k][2], memo_first=bool(f))
                                                   for k, f in zip(pick, memo_first)])
@@ -245,7 +259,11 @@ if __name__ == '__main__':
     elif cmd == 'human':
         tf = transfer_jokes(json.load(open(f'{D}/part2.json')))
         h = human_pairs(tf)
-        json.dump(h, open(f'{D}/human_key.json', 'w'), ensure_ascii=False, indent=1)
+        import os
+        os.makedirs(KEY_DIR, exist_ok=True)
+        kp = f'{KEY_DIR}/human_key.json'
+        json.dump(h, open(kp, 'w'), ensure_ascii=False, indent=1)
+        open(f'{D}/human_key.sha256', 'w').write(hashlib.sha256(open(kp, 'rb').read()).hexdigest() + '  human_key.json\n')
         lines = [f'# HUMOR-01: слепая проверка (20 пар)\n\nВ каждой паре выберите, какая шутка смешнее: 1 или 2. Ответ — 20 цифр подряд.\n']
         for n, p in enumerate(h['pairs'], 1):
             a, b = tf['MEMO'][p['topic']][p['memo']], tf['BASE'][p['topic']][p['base']]
@@ -253,3 +271,14 @@ if __name__ == '__main__':
             lines.append(f'**{n}.**\n1) {x}\n2) {y}\n')
         open(f'{D}/HUMAN_TEST.md', 'w').write('\n'.join(lines))
         print('допуск по длине', h['tol'])
+    elif cmd == 'human_score':  # python3 humor01_plan.py human_score <dir> <20 цифр 1/2>
+        digits = [c for c in sys.argv[3] if c in '12']
+        kp = f'{KEY_DIR}/human_key.json'
+        import os
+        if not os.path.exists(kp):  # ключ воспроизводим по зерну
+            json.dump(human_pairs(transfer_jokes(json.load(open(f'{D}/part2.json')))), open(kp, 'w'), ensure_ascii=False, indent=1)
+        h = json.load(open(kp))
+        assert len(digits) == len(h['pairs']), f'{len(digits)} цифр, нужно {len(h["pairs"])}'
+        wins = sum(1 for d, p in zip(digits, h['pairs']) if (d == '1') == p['memo_first'])
+        json.dump(dict(answers=''.join(digits), memo_wins=wins, n=len(digits)), open(f'{D}/human_answers.json', 'w'), ensure_ascii=False)
+        print('MEMO выбрана', wins, 'из', len(digits))

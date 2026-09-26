@@ -5,7 +5,7 @@
 import json, sys, math
 from collections import Counter
 import numpy as np
-from humor01_plan import (SEED_BOOT, SEED_POWER, HELD_TOPICS, TRAIN_TOPICS, TRAIN_JUDGES, JURY, CONTROLS, words, accepted)
+from humor01_plan import (SEED_BOOT, SEED_POWER, SEED_BOOT_F, HELD_TOPICS, TRAIN_TOPICS, TRAIN_JUDGES, JURY, CONTROLS, words, accepted)
 
 B_MAIN = 10000
 
@@ -21,7 +21,7 @@ def boot_auc(mats, idx):
 
 def resample(rng, sizes, B):
     """sizes: {cond: {topic: n}} -> одинаковые индексы шуток условия во всех сравнениях, где оно участвует."""
-    return {c: {t: rng.integers(0, n, size=(B, n)) for t, n in d.items()} for c, d in sizes.items()}
+    return {c: {t: rng.integers(0, max(n, 1), size=(B, n)) for t, n in d.items()} for c, d in sizes.items()}
 
 
 def comp_boot(S, conds, sizes, B, seed):
@@ -31,9 +31,9 @@ def comp_boot(S, conds, sizes, B, seed):
     R = resample(rng, sizes, B)
     point, reps = {}, {}
     for comp, (ca, cb, mats) in S.items():
-        mean = {t: m.mean(axis=0) for t, m in mats.items()}
+        mean = {t: m.mean(axis=0) for t, m in mats.items() if m.shape[1] and m.shape[2]}  # тема без шуток выпадает
         point[comp] = float(np.mean([m.mean() for m in mean.values()]))
-        reps[comp] = boot_auc(mean, {t: (R[ca][t], R[cb][t]) for t in mats})
+        reps[comp] = boot_auc(mean, {t: (R[ca][t], R[cb][t]) for t in mean})
     return point, reps
 
 
@@ -120,7 +120,7 @@ def round0_power(D):
     v_res = np.nanmean(np.nanvar(X, axis=0, ddof=1))
     s = math.sqrt(v_res / v_joke)  # шум судьи в единицах разброса качества шуток
     return dict(v_joke=float(v_joke), v_resid=float(v_res), sig_judge_rel=s,
-                power=power(sig_taste=s * 0.5, sig_noise=s * math.sqrt(0.75)))
+                power=power(sig_taste=s * math.sqrt(0.2), sig_noise=s * math.sqrt(0.8)))  # доли 0,25:1 как в основной модели
 
 
 # ---------------------------------------------------------------- анализ прогона
@@ -185,24 +185,26 @@ def run(D):
     res['holm'] = decide(point, reps, hk_)
     res['human'] = human
     # устойчивость: без помеченных судей жюри
-    Sx = {}
+    res['robust_unflagged'] = {}
     for c, (a, b, m) in S.items():
         keep = [n for n, jk in enumerate(jury) if not flagged.get(f'J:{c}:{jk}')]
-        Sx[c] = (a, b, {t: m[t][keep] for t in m}) if keep else None
-    if all(Sx.values()):
-        px, rx = comp_boot(Sx, None, sizes, B_MAIN, SEED_BOOT)
-        res['robust_unflagged'] = {c: dict(point=px[c], ci95=ci(rx[c])) for c in Sx}
+        if not keep:
+            res['robust_unflagged'][c] = 'все вызовы помечены'; continue
+        px, rx = comp_boot({c: (a, b, {t: m[t][keep] for t in m})}, None, sizes, B_MAIN, SEED_BOOT)
+        res['robust_unflagged'][c] = dict(point=px[c], ci95=ci(rx[c]), judges=[jury[n] for n in keep])
     # длина: доля побед более длинной; AUC по парам с разницей длин ≤ 20 %
-    longer, near = [], {c: [] for c in S}
+    longer, near = [], {}
     for p in plan:
-        if p.get('kind') != 'main' or not p['call'].startswith('J:'): continue
+        if p.get('kind') != 'main' or not p['call'].startswith(('J:', 'F:')): continue
         ca, cb = comps[p['comp']]
         la, lb_ = words(J[ca][p['topic']][p['a']]), words(J[cb][p['topic']][p['b']])
         s = score_of(p, ans.get((p['call'], p['id'])))
         if la != lb_ and s != 0.5: longer.append(s if la > lb_ else 1 - s)
-        if abs(la - lb_) / max(la, lb_, 1) <= 0.2: near[p['comp']].append(s)
+        grp = p['comp'] + ('' if p['call'].startswith('J:') else (':жюри' if p['call'][2:4] == 'jj' else ':обучение'))
+        if abs(la - lb_) / max(la, lb_, 1) <= 0.2: near.setdefault(grp, {}).setdefault(p['topic'], []).append(s)
     res['length'] = dict(longer_wins=float(np.mean(longer)) if longer else None, n=len(longer),
-                         auc_len20={c: (float(np.mean(v)) if v else None, len(v)) for c, v in near.items()},
+                         auc_len20={g: dict(auc=float(np.mean([np.mean(v) for v in d.values()])), n=sum(map(len, d.values())), topics=len(d))
+                                    for g, d in near.items()},  # равный вес тем, как в основном AUC
                          mean_words={c: float(np.mean([words(x) for t in J[c] for x in J[c][t]])) for c in J})
     # согласие порядков (24 повторные пары)
     agree = {}
@@ -216,7 +218,20 @@ def run(D):
                 if s1 != 0.5 and s2 != 0.5: ag.append(s1 == s2)
         agree[lb] = (float(np.mean(ag)) if ag else None, len(ag))
     res['order_agreement'] = agree
-    # позиционный сдвиг: доля выбора первой шутки
+    # согласие судей жюри между собой на одних и тех же основных парах (доля совпадений)
+    ja = {}
+    for c in S:
+        ch = {}
+        for jk in jury:
+            lb = f'J:{c}:{jk}'
+            ch[jk] = {p['pair']: score_of(p, ans.get((lb, p['id']))) for p in plan if p['call'] == lb and p.get('kind') == 'main'}
+        for i in range(3):
+            for k in range(i + 1, 3):
+                a_, b_ = ch[jury[i]], ch[jury[k]]
+                both = [n for n in a_ if n in b_ and a_[n] != 0.5 and b_[n] != 0.5]
+                ja[f'{c}:{jury[i]}-{jury[k]}'] = (float(np.mean([a_[n] == b_[n] for n in both])) if both else None, len(both))
+    res['judge_agreement'] = ja
+    # позиционный сдвиг (включает контроли и повторы): доля выбора первой шутки
     firsts = [it['choice'] == 1 for (lb, _), it in ans.items() if lb.startswith(('J:', 'F:')) and it.get('choice') in (1, 2)]
     res['first_chosen'] = float(np.mean(firsts)) if firsts else None
     # P1, P3: финальная проверка раунд 4 против раунда 0
@@ -225,7 +240,7 @@ def run(D):
     for m in (Mt, Mj, Mn):
         for t in m: m[t] = np.where(np.isnan(m[t]), 0.5, m[t])
     sz = {c: {t: len(J[c][t]) for t in tk} for c in ('R4', 'R0', 'NOFB4')}
-    pt, rt = comp_boot({'train': ('R4', 'R0', Mt), 'jury': ('R4', 'R0', Mj), 'r4_nofb4': ('R4', 'NOFB4', Mn)}, None, sz, B_MAIN, SEED_BOOT + 1)
+    pt, rt = comp_boot({'train': ('R4', 'R0', Mt), 'jury': ('R4', 'R0', Mj), 'r4_nofb4': ('R4', 'NOFB4', Mn)}, None, sz, B_MAIN, SEED_BOOT_F)
     res['P1'] = dict(auc=pt['train'], ci95=ci(rt['train']), p=p_one(rt['train'] - 0.5), confirmed=p_one(rt['train'] - 0.5) < 0.05)
     d = rt['train'] - rt['jury']
     res['P3'] = dict(diff=pt['train'] - pt['jury'], auc_jury=pt['jury'], ci95=ci(d), p=p_one(d), confirmed=p_one(d) < 0.05)
@@ -247,6 +262,9 @@ def run(D):
         if nk: row['NOFB4'] = float(np.mean([r['scores'][jk][k]['score'] for jk in trj for k in nk if r['scores'][jk].get(k)]))
         means.append(dict(r=r['r'], **row)); tflags.append(dict(r=r['r'], judges=fl, round_flagged=all(fl.values())))
     res['round_means'], res['flags']['train'] = means, tflags
+    res['round_means_unflagged'] = [dict(r=m['r'], mean=(float(np.mean([m[jk] for jk in trj if not f['judges'][jk]]))
+                                                         if not f['round_flagged'] and any(not f['judges'][jk] for jk in trj) else 'раунд помечен'))
+                                    for m, f in zip(means, tflags)]
     # разнообразие приёмов (энтропия, бит) и архивист
     lab = accepted(p3['records'], 'LABEL'); la = {it['id']: it['technique'] for it in ((lab or {}).get('response') or {}).get('items', [])}
     div = {}
@@ -256,6 +274,8 @@ def run(D):
         n = sum(cnt.values())
         div[c] = dict(entropy=float(-sum(v / n * math.log2(v / n) for v in cnt.values())) if n else None, distinct=len(cnt), counts=dict(cnt))
     res['diversity'] = div
+    e_m, e_b = div['MEMO']['entropy'], div['BASE']['entropy']
+    res['explore_diversity_memo_lower'] = None if e_m is None or e_b is None else bool(e_m < e_b)  # правило: по точечной оценке
     arc = accepted(p3['records'], 'ARCHIVE'); ka = {it['id']: it['known'] for it in ((arc or {}).get('response') or {}).get('items', [])}
     res['archive'] = {c: float(np.mean([ka[p['id']] for p in plan if p['call'] == 'ARCHIVE' and p['cond'] == c and p['id'] in ka] or [np.nan]))
                       for c in ('MEMO', 'BASE', 'BASE2', 'NOFB', 'CTRL')}
