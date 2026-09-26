@@ -121,10 +121,10 @@ def logistic_loo(X, y, lam=1.0, iters=200):
         w = np.zeros(A.shape[1])
         for _ in range(iters):
             pr = 1 / (1 + np.exp(-A @ w))
-            R = np.eye(len(w)) * lam; R[0, 0] = 0
+            R = np.eye(len(w)) * lam; R[0, 0] = 1e-6
             g = A.T @ (pr - t) + R @ w
             H = A.T @ (A * (pr * (1 - pr))[:, None]) + R
-            w -= np.linalg.solve(H, g)
+            w -= np.linalg.lstsq(H, g, rcond=None)[0]
         x = np.r_[1, (X[i] - mu) / sd]
         preds.append(float(1 / (1 + np.exp(-x @ w))))
     return preds
