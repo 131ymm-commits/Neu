@@ -1,0 +1,182 @@
+[
+ {
+  "id": "P0-0",
+  "tier": 0,
+  "L": 338,
+  "SOLO_LONG": 1.0,
+  "SOLO_LONG_exact": true,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 6,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   1.0,
+   0.0
+  ],
+  "EST": 300,
+  "EST_exact": false
+ },
+ {
+  "id": "P0-1",
+  "tier": 0,
+  "L": 227,
+  "SOLO_LONG": 1.0,
+  "SOLO_LONG_exact": true,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 4,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "EST": 310,
+  "EST_exact": false
+ },
+ {
+  "id": "P0-2",
+  "tier": 0,
+  "L": 249,
+  "SOLO_LONG": 1.0,
+  "SOLO_LONG_exact": true,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 5,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "EST": 202,
+  "EST_exact": false
+ },
+ {
+  "id": "P1-0",
+  "tier": 1,
+  "L": 402,
+  "SOLO_LONG": 1.0,
+  "SOLO_LONG_exact": true,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 7,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "EST": 360,
+  "EST_exact": false
+ },
+ {
+  "id": "P1-1",
+  "tier": 1,
+  "L": 490,
+  "SOLO_LONG": 0.0,
+  "SOLO_LONG_exact": false,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 9,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "EST": 382,
+  "EST_exact": false
+ },
+ {
+  "id": "P1-2",
+  "tier": 1,
+  "L": 529,
+  "SOLO_LONG": 1.0,
+  "SOLO_LONG_exact": true,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 9,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "EST": 383,
+  "EST_exact": false
+ },
+ {
+  "id": "P2-0",
+  "tier": 2,
+  "L": 612,
+  "SOLO_LONG": 1.0,
+  "SOLO_LONG_exact": true,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 11,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "EST": 440,
+  "EST_exact": false
+ },
+ {
+  "id": "P2-1",
+  "tier": 2,
+  "L": 332,
+  "SOLO_LONG": 0.07228915662650602,
+  "SOLO_LONG_exact": false,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 6,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   0.12048192771084337,
+   1.0
+  ],
+  "EST": 455,
+  "EST_exact": false
+ },
+ {
+  "id": "P2-2",
+  "tier": 2,
+  "L": 500,
+  "SOLO_LONG": 1.0,
+  "SOLO_LONG_exact": true,
+  "SEG1": 1.0,
+  "SEG1_exact": true,
+  "CHAIN": 1.0,
+  "CHAIN_exact": true,
+  "CHAIN_links": 9,
+  "SC_exact": true,
+  "SC_M1": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "EST": 450,
+  "EST_exact": false
+ }
+]
