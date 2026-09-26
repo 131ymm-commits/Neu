@@ -1,0 +1,74 @@
+[
+ {
+  "task": "I1_s1001",
+  "conf": 0.9,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "I1_s1002",
+  "conf": 0.9,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "I2_s1002",
+  "conf": 0.75,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "I3_s1001",
+  "conf": 0.3,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "I3_s1002",
+  "conf": 0.2,
+  "frac": 0.8145506419400856,
+  "solved": false
+ },
+ {
+  "task": "C1_s1001",
+  "conf": 0.99,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "C1_s1002",
+  "conf": 0.99,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "C2_s1001",
+  "conf": 0.98,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "I2_s1001",
+  "conf": 0.8,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "C2_s1002",
+  "conf": 0.98,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "C3_s1001",
+  "conf": 0.98,
+  "frac": 1.0,
+  "solved": true
+ },
+ {
+  "task": "C3_s1002",
+  "conf": 0.98,
+  "frac": 1.0,
+  "solved": true
+ }
+]

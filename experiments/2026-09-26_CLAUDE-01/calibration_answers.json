@@ -1,0 +1,113 @@
+{
+ "tag": "calibration",
+ "answers": [
+  {
+   "task": "I1_s1001",
+   "arm": "A1",
+   "i": 0,
+   "code": "def f(x):\n    return -2 * x - 7",
+   "answer": "",
+   "confidence": 0.9,
+   "note": "I checked all 12 given points by hand, and every one fits f(x) = -2x - 7, for both positive and negative x. I did not run any code."
+  },
+  {
+   "task": "I1_s1002",
+   "arm": "A1",
+   "i": 0,
+   "code": "def f(x):\n    return abs(x + 6)",
+   "answer": "",
+   "confidence": 0.9,
+   "note": "For x ≥ 0 every given value equals x + 6, and for the large negative x it equals −x − 6. f(−5) = 1 also fits |x + 6|. So the formula f(x) = |x + 6| matches all 12 given points; I checked them by hand and did not run code."
+  },
+  {
+   "task": "I2_s1002",
+   "arm": "A1",
+   "i": 0,
+   "code": "def f(x):\n    if x % 4 == 3:\n        return sum(int(c) for c in str(abs(x)))\n    return x // 3",
+   "answer": "",
+   "confidence": 0.75,
+   "note": "Most points match floor(x/3). The four that don't all have x%4==3 (Python modulo), and for those f gives the digit sum of |x|. Checked the code against all 12 given values."
+  },
+  {
+   "task": "I3_s1001",
+   "arm": "A1",
+   "i": 0,
+   "code": "def f(x):\n    if x < 20:\n        return x % 11\n    return x + 10 if x % 2 == 0 else x - 3",
+   "answer": "",
+   "confidence": 0.3,
+   "note": "Для x ≤ 17 (включая все отрицательные) все значения совпадают с x mod 11. Для x ≥ 23 чётные дают x+10, нечётные x−3. Порог 20 выбран наугад: данные допускают любую границу от 18 до 23. Функция воспроизводит все 12 известных значений."
+  },
+  {
+   "task": "I3_s1002",
+   "arm": "A1",
+   "i": 0,
+   "code": "def f(x):\n    if x < 0:\n        return x // 3\n    if x % 3 == 0:\n        return x // 10\n    return x ^ 5",
+   "answer": "",
+   "confidence": 0.2,
+   "note": "f(x) = x // 3 (деление с округлением вниз) подходит ко всем 6 отрицательным точкам. f(x) = x XOR 5 подходит ко всем неотрицательным точкам, кроме 30 -> 3. Для кратных 3 я угадал правило x // 10, опираясь на одну точку: x % 9 или x % 27 тоже дают 3, поэтому уверенность низкая. Код я не запускал, значения проверил вручную."
+  },
+  {
+   "task": "C1_s1001",
+   "arm": "A1",
+   "i": 0,
+   "code": "from functools import lru_cache\ndef solve(N):\n    d=list(map(int,str(N)))\n    @lru_cache(None)\n    def g(i,s,t):\n        if i==len(d): return 1 if s==3 else 0\n        lim=d[i] if t else 9\n        return sum(g(i+1,(s+c)%7,t and c==lim) for c in range(lim+1))\n    return g(0,0,True)",
+   "answer": "523928840853579",
+   "confidence": 0.99,
+   "note": "Digit DP over digit-sum mod 7 with tight flag; x=0 has sum 0 so not counted. Verified against brute force and both given checks."
+  },
+  {
+   "task": "C1_s1002",
+   "arm": "A1",
+   "i": 0,
+   "code": "def solve(N):\n    return (N - 7) // 9 + 1 if N >= 7 else 0",
+   "answer": "298941313203225",
+   "confidence": 0.99,
+   "note": "Сумма цифр числа сравнима с самим числом по модулю 9, поэтому нужно посчитать x ≤ N с x mod 9 = 7; это (N-7)//9+1. Формула сходится с обоими контрольными примерами (96 и 577)."
+  },
+  {
+   "task": "C2_s1001",
+   "arm": "A1",
+   "i": 0,
+   "code": "from functools import lru_cache\ndef solve(N):\n    if N < 1: return 0\n    d = list(map(int, str(N)))\n    n = len(d)\n    @lru_cache(None)\n    def go(i, tight, s, r):\n        if i == n:\n            return 1 if (s == 3 and r == 5) else 0\n        lim = d[i] if tight else 9\n        t = 0\n        for c in range(lim + 1):\n            t += go(i+1, tight and c == lim, (s+c) % 7, (r*10+c) % 17)\n        return t\n    return go(0, True, 0, 0)",
+   "answer": "30819343579604",
+   "confidence": 0.98,
+   "note": "Я решил задачу через динамику по цифрам: состояние задаётся позицией, признаком совпадения с префиксом N, суммой цифр по модулю 7 и самим числом по модулю 17. Оба контрольных значения (11 и 106) совпали, и полный перебор при N = 1, 100 и 5000 дал те же результаты."
+  },
+  {
+   "task": "I2_s1001",
+   "arm": "A1",
+   "i": 0,
+   "code": "def f(x):\n    if x % 2 == 0:\n        return x % 11\n    return abs(x + 10)\n",
+   "answer": "",
+   "confidence": 0.8,
+   "note": "Split the known points by parity. Every odd x fits |x+10| (including the negative ones), and every even x fits x mod 11 using Python's non-negative remainder. I checked the formula in Python and it matches all 12 given values."
+  },
+  {
+   "task": "C2_s1002",
+   "arm": "A1",
+   "i": 0,
+   "code": "from functools import lru_cache\ndef solve(N):\n    d=list(map(int,str(N)))\n    n=len(d)\n    @lru_cache(None)\n    def go(i,s,r,t):\n        if i==n: return 1 if s==7 and r==2 else 0\n        lim=d[i] if t else 9\n        return sum(go(i+1,(s+c)%9,(r*10+c)%11,t and c==lim) for c in range(lim+1))\n    return go(0,0,0,True)\n",
+   "answer": "27176483018475",
+   "confidence": 0.98,
+   "note": "Я посчитал ответ динамикой по цифрам числа, в состоянии храню остаток суммы цифр по модулю 9 и остаток самого числа по модулю 11. На N=869 и N=5195 код даёт 8 и 52, как в условии. Ещё я сравнил его с перебором на 200 случайных N до 20000, и все ответы совпали."
+  },
+  {
+   "task": "C3_s1001",
+   "arm": "A1",
+   "i": 0,
+   "code": "from functools import lru_cache\ndef solve(N):\n    if N<1: return 0\n    d=list(map(int,str(N)))\n    L=len(d)\n    @lru_cache(None)\n    def go(i,s,r,tight):\n        if i==L: return 1 if (s==3 and r==13) else 0\n        lim=d[i] if tight else 9\n        t=0\n        for c in range(lim+1):\n            if c==2: continue\n            t+=go(i+1,(s+c)%7,(r*10+c)%17,tight and c==lim)\n        return t\n    return go(0,0,0,True)\n",
+   "answer": "4543667072819",
+   "confidence": 0.98,
+   "note": "I used a digit DP over the digits of N. The state tracks the digit sum mod 7, the number's value mod 17, and whether the prefix still matches N. It skips the digit 2 and counts from 0, but 0 fails the sum condition, so it never gets counted. The code gives the two check values from the task (12 and 75) and matches a brute-force count at several other N values."
+  },
+  {
+   "task": "C3_s1002",
+   "arm": "A1",
+   "i": 0,
+   "code": "from functools import lru_cache\ndef solve(N):\n    d=list(map(int,str(N)));L=len(d)\n    @lru_cache(None)\n    def go(i,s,r,tight,started):\n        if i==L: return 1 if started and s==7 and r==10 else 0\n        lim=d[i] if tight else 9; t=0\n        for c in range(lim+1):\n            if c==2: continue\n            ns=started or c>0\n            t+=go(i+1,(s+c)%9,(r*10+c)%11,tight and c==lim,ns)\n        return t\n    return go(0,0,0,True,False)",
+   "answer": "4159417167845",
+   "confidence": 0.98,
+   "note": "Решил динамикой по цифрам. Состояние хранит сумму цифр по модулю 9, остаток числа по модулю 11 и флаг, упирается ли префикс в N; цифру 2 пропускаю. Ответ совпал с перебором на N = 869, 5195 и ещё нескольких N до 99999."
+  }
+ ]
+}
