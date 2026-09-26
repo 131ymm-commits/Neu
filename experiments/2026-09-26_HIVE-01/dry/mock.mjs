@@ -17,5 +17,4 @@ const phase = () => {}
 const AF = Object.getPrototypeOf(async function () {}).constructor
 const out = await new AF('agent', 'parallel', 'phase', src)(agent, parallel, phase)
 fs.writeFileSync(process.argv[3], JSON.stringify(out))
-console.log('вызовов', n, 'записей', out.records.length, 'тест', Object.fromEntries(Object.entries(out.test).map(([k, v]) => [k, +v.res.is.toFixed(3)])))
-for (const [k, v] of Object.entries(out.history)) if (v.legislation) console.log(k, 'личные', JSON.stringify(v.legislation.hive?.personal || []).slice(0,80), 'законов', v.hive.laws.length, 'принято', v.legislation.adopted.length, 'дельфи', v.hive.delphi, v.hive.agg)
+console.log('вызовов', n)
