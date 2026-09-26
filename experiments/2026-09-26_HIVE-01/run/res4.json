@@ -1,0 +1,1546 @@
+{
+ "A": {
+  "rows": [
+   {
+    "id": "COL3-1400",
+    "fam": "COL3",
+    "truth": 24,
+    "final": {
+     "estimate": 24.000000000000004,
+     "lo": 24.000000000000004,
+     "hi": 24.000000000000004
+    },
+    "heads": [
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Exact count: the core is forced by its triangles (6 colourings), then x2 for vertex 3 and x2 for vertex 9; all three heads got 24 by different orders of analysis."
+     },
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Exact count: triangles 1-6-7 and 1-6-8 force the core (6 colourings); vertex 3 and leaf 9 each have 2 options, so 24. Confirmed by a second order of elimination and matches the other heads."
+     },
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Exact count. The triangles force the core (6 colourings), then vertex 3 and leaf 9 each have 2 options: 6*2*2=24. All three heads agree, and each reached it by its own order of working."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1401",
+    "fam": "COL3",
+    "truth": 54,
+    "final": {
+     "estimate": 54.00000000000001,
+     "lo": 54.00000000000001,
+     "hi": 54.00000000000001
+    },
+    "heads": [
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "Exact count: the chain of triangles fixes the component up to a permutation of colours (6), and the isolated vertices 1 and 13 give x9; all three heads agree."
+     },
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "Exact count: a chain of triangles fixes the component up to relabelling (6 colourings), and isolated vertices 1 and 13 give x9, so 54. Confirmed from two starting triangles."
+     },
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "Exact count. The chain of triangles fixes the component on vertices 2-12 (6 colourings), and isolated vertices 1 and 13 give x9: 54. Confirmed from two different starting triangles."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1400",
+    "fam": "PART",
+    "truth": 6711480,
+    "final": {
+     "estimate": 6711473.999999996,
+     "lo": 6711399.999999994,
+     "hi": 6711550.000000003
+    },
+    "heads": [
+     {
+      "id": "PART-1400",
+      "estimate": 6711474,
+      "lo": 6711400,
+      "hi": 6711550,
+      "note": "Leading Bessel term of Hua's series, calibrated on known q(n); direct and ratio computations agree to within a few units."
+     },
+     {
+      "id": "PART-1400",
+      "estimate": 6711474,
+      "lo": 6711300,
+      "hi": 6711650,
+      "note": "Hua/Rademacher leading Bessel term, calibrated on q(100) and on earlier truths q(127) and q(141). All three heads agree at 6711473-6711475; the k=3 term is about 10."
+     },
+     {
+      "id": "PART-1400",
+      "estimate": 6711475,
+      "lo": 6711400,
+      "hi": 6711550,
+      "note": "Leading Bessel term of Hua's series, checked against the known q(100), q(127), q(141) and q(200). All three heads land at 6711472-6711475, and the k=3 correction is about 10."
+     }
+    ],
+    "ignorance": 8.939909950100855e-07,
+    "deception": 0.0,
+    "width": 2.234978153303757e-05,
+    "interval_score": 2.234978153303757e-05,
+    "covered": true
+   },
+   {
+    "id": "PART-1401",
+    "fam": "PART",
+    "truth": 1186949056,
+    "final": {
+     "estimate": 1186949070.0000012,
+     "lo": 1186948799.9999998,
+     "hi": 1186949300.0000017
+    },
+    "heads": [
+     {
+      "id": "PART-1401",
+      "estimate": 1186949070,
+      "lo": 1186948800,
+      "hi": 1186949300,
+      "note": "Same Bessel leading term, computed directly and via ratios to q(200) and q(209); the routes agree to about 50."
+     },
+     {
+      "id": "PART-1401",
+      "estimate": 1186949070,
+      "lo": 1186948000,
+      "hi": 1186950000,
+      "note": "Same Bessel main term (about 1186949072-1186949103), cross-checked by scaling from known q(200) and q(209); the higher terms are only tens."
+     },
+     {
+      "id": "PART-1401",
+      "estimate": 1186949070,
+      "lo": 1186948800,
+      "hi": 1186949300,
+      "note": "Same Bessel main term, plus the ratio to the known q(200) and q(209). Estimates fall between 1186949030 and 1186949103; higher terms are about 50."
+     }
+    ],
+    "ignorance": 1.1794945464771445e-08,
+    "deception": 0.0,
+    "width": 4.21248074644609e-07,
+    "interval_score": 4.21248074644609e-07,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1400",
+    "fam": "TWIN",
+    "truth": 1073,
+    "final": {
+     "estimate": 1069.9999999999998,
+     "lo": 1026.9999999999995,
+     "hi": 1113.0000000000002
+    },
+    "heads": [
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1027,
+      "hi": 1113,
+      "note": "Hardy-Littlewood estimate 2C2*H/ln^2 x, with a band of +/-1.28 Poisson standard deviations."
+     },
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1028,
+      "hi": 1112,
+      "note": "Hardy-Littlewood estimate 2C2*H/ln^2 x with H=300000, with a Poisson spread of +-1.28 sqrt(mu)."
+     },
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1025,
+      "hi": 1115,
+      "note": "Hardy-Littlewood density 2*C2/ln^2(x) times length 300000, with an interval of about +/-1.3 Poisson standard deviations. There is no exact method here."
+     }
+    ],
+    "ignorance": 0.0027998151747468114,
+    "deception": 0.0,
+    "width": 0.08041714134698719,
+    "interval_score": 0.08041714134698719,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1401",
+    "fam": "TWIN",
+    "truth": 3539,
+    "final": {
+     "estimate": 3492.9999999999977,
+     "lo": 3415.0000000000005,
+     "hi": 3571.0000000000027
+    },
+    "heads": [
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3415,
+      "hi": 3571,
+      "note": "Hardy-Littlewood estimate 2C2*H/ln^2 x, with a band of +/-1.3 Poisson standard deviations."
+     },
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3417,
+      "hi": 3569,
+      "note": "Hardy-Littlewood estimate 2C2*H/ln^2 x with H=1e6, with a Poisson spread of +-1.28 sqrt(mu)."
+     },
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3413,
+      "hi": 3573,
+      "note": "Hardy-Littlewood density times length 1e6 (3493), with an interval of about +/-1.3 Poisson standard deviations (sd about 59)."
+     }
+    ],
+    "ignorance": 0.01308323553863211,
+    "deception": 0.0,
+    "width": 0.0446681755895586,
+    "interval_score": 0.0446681755895586,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1400",
+    "fam": "SUB5",
+    "truth": 9229,
+    "final": {
+     "estimate": 9229.000000000007,
+     "lo": 9229.000000000007,
+     "hi": 9229.000000000007
+    },
+    "heads": [
+     {
+      "id": "SUB5-1400",
+      "estimate": 9229,
+      "lo": 9229,
+      "hi": 9229,
+      "note": "Exact: partitions in a 5x34 box of size 81 and its mirror 89 both give 9229, confirmed by the other heads."
+     },
+     {
+      "id": "SUB5-1400",
+      "estimate": 9229,
+      "lo": 9229,
+      "hi": 9229,
+      "note": "Exact: partitions of 81 in a 5x34 box. Both the direct side and the mirror side (89) give 9229, the same as the other heads."
+     },
+     {
+      "id": "SUB5-1400",
+      "estimate": 9229,
+      "lo": 9229,
+      "hi": 9229,
+      "note": "Exact: partitions of 81 in a 5x34 box (21224-12142+147), confirmed by the mirror case 89 (30020-20791=9229). All heads agree."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1401",
+    "fam": "SUB5",
+    "truth": 2351,
+    "final": {
+     "estimate": 2350.999999999999,
+     "lo": 2350.999999999999,
+     "hi": 2350.999999999999
+    },
+    "heads": [
+     {
+      "id": "SUB5-1401",
+      "estimate": 2351,
+      "lo": 2351,
+      "hi": 2351,
+      "note": "Exact: partitions in a 5x24 box of size 51 and its mirror 69 both give 2351."
+     },
+     {
+      "id": "SUB5-1401",
+      "estimate": 2351,
+      "lo": 2351,
+      "hi": 2351,
+      "note": "Exact: box-partition count from both sides (51 and 69) gives 2351, and all heads agree."
+     },
+     {
+      "id": "SUB5-1401",
+      "estimate": 2351,
+      "lo": 2351,
+      "hi": 2351,
+      "note": "Exact: partitions in a 5x24 box counted from both sides, 51 and 69, and both give 2351."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1400",
+    "fam": "COLLATZ",
+    "truth": 365,
+    "final": {
+     "estimate": 365.0,
+     "lo": 365.0,
+     "hi": 365.0
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 365,
+      "lo": 365,
+      "hi": 365,
+      "note": "Direct trajectory count (125 odd + 240 halving steps), verified by log balance; head 2 independently got 365 by a different split. Head 3's model (290) is superseded by the exact count."
+     },
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 365,
+      "lo": 365,
+      "hi": 365,
+      "note": "Direct trajectory count, checked by a log/product identity. Head 1 got the same 365 independently; Head 3's model (about 290) is superseded by the exact count."
+     },
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 365,
+      "lo": 361,
+      "hi": 369,
+      "note": "I adopt the other heads' direct counts in place of my random-walk estimate of 290. Heads 1 and 2 split the path differently but both reach 365. I checked their consistency (did not recount): odd steps 86+39=125 and halvings 173+67=240 agree, and log2 n + 125*log2(3) is about 239.76, so 240 halvings fits. The model's typical value is superseded."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1401",
+    "fam": "COLLATZ",
+    "truth": 355,
+    "final": {
+     "estimate": 355.00000000000006,
+     "lo": 355.00000000000006,
+     "hi": 355.00000000000006
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 355,
+      "lo": 355,
+      "hi": 355,
+      "note": "Direct trajectory count (121 odd + 234 halving steps), verified by log balance and matching head 2's independent count."
+     },
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 355,
+      "lo": 355,
+      "hi": 355,
+      "note": "Direct trajectory count (121 odd and 234 halving steps), checked by the product identity. Head 1 got the same 355 independently."
+     },
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 355,
+      "lo": 351,
+      "hi": 359,
+      "note": "Two heads counted directly and got 355. I checked their consistency (did not recount): 118 odd steps plus the 3 odd steps on the tail from 151 give 121, and 222 halvings plus 12 give 234. Also log2 n + 121*log2(3) is about 233.99, so 234 halvings fits. The model estimate of 294 is superseded."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   }
+  ],
+  "IS": 0.012510808796615347,
+  "coverage": 1.0
+ },
+ "B": {
+  "rows": [
+   {
+    "id": "COL3-1400",
+    "fam": "COL3",
+    "truth": 24,
+    "final": {
+     "estimate": 24.000000000000004,
+     "lo": 24.000000000000004,
+     "hi": 24.000000000000004
+    },
+    "heads": [
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Exact count by forced color propagation, done twice from different triangles (6·2·2=24); heads 2 and 3 got the same result independently."
+     },
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Точный счёт двумя порядками распространения цветов: 6 раскрасок ядра, ×2 за вершину 3, ×2 за лист 9. Совпадает с головами 1 и 3."
+     },
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Exact count by forced propagation, repeated from two different triangles: 6 x 2 (vertex 3) x 2 (leaf 9) = 24. All three heads agree."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1401",
+    "fam": "COL3",
+    "truth": 54,
+    "final": {
+     "estimate": 54.00000000000001,
+     "lo": 54.00000000000001,
+     "hi": 54.00000000000001
+    },
+    "heads": [
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "The component 2-12 is forced (6 colorings) and isolated vertices 1 and 13 give ×9; done from two different starting triangles."
+     },
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "Точный счёт: компонента {2..12} раскрашивается однозначно с точностью до перестановки цветов (6 способов), изолированные вершины 1 и 13 дают ×9."
+     },
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "The component on vertices 2-12 is forced up to relabeling colors (6 colorings); isolated vertices 1 and 13 give x9, so 54. Checked from two starting triangles."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1400",
+    "fam": "PART",
+    "truth": 6711480,
+    "final": {
+     "estimate": 6711475.000000004,
+     "lo": 6711399.999999994,
+     "hi": 6711550.000000003
+    },
+    "heads": [
+     {
+      "id": "PART-1400",
+      "estimate": 6711474,
+      "lo": 6711400,
+      "hi": 6711550,
+      "note": "Leading Bessel (Hua) term, checked against past q(127) and q(141). The result is even because 135 is not a generalized pentagonal number. Head 2 got a similar result."
+     },
+     {
+      "id": "PART-1400",
+      "estimate": 6711476,
+      "lo": 6711440,
+      "hi": 6711510,
+      "note": "Главный бесселев член формулы Хуа для q(135), сверенный через отношения к известным q(n); следующий член ряда около ±6, интервал немного расширен под ошибки ручного счёта."
+     },
+     {
+      "id": "PART-1400",
+      "estimate": 6711475,
+      "lo": 6711200,
+      "hi": 6711800,
+      "note": "Leading Bessel term of the q(n) asymptotic. Two heads independently got 6711474-6711476, calibrated against past answers q(127) and q(141). My cruder asymptotic run (6713000) is consistent; I kept margin for hand-arithmetic error."
+     }
+    ],
+    "ignorance": 7.449924392943785e-07,
+    "deception": 0.0,
+    "width": 2.234978153303757e-05,
+    "interval_score": 2.234978153303757e-05,
+    "covered": true
+   },
+   {
+    "id": "PART-1401",
+    "fam": "PART",
+    "truth": 1186949056,
+    "final": {
+     "estimate": 1186949060.0000005,
+     "lo": 1186944999.999999,
+     "hi": 1186953000.0000021
+    },
+    "heads": [
+     {
+      "id": "PART-1401",
+      "estimate": 1186949060,
+      "lo": 1186945000,
+      "hi": 1186953000,
+      "note": "Leading Bessel term plus ratios to q(209) and q(200). Widened to cover the spread between my arithmetic and head 2's (±~50) and possible arithmetic errors."
+     },
+     {
+      "id": "PART-1401",
+      "estimate": 1186949060,
+      "lo": 1186948000,
+      "hi": 1186950500,
+      "note": "Главный бесселев член формулы Хуа для q(215), сверенный через q(200) и q(209); прямые значения расходятся примерно на 1e-7, интервал это накрывает."
+     },
+     {
+      "id": "PART-1401",
+      "estimate": 1186949060,
+      "lo": 1186938000,
+      "hi": 1186960000,
+      "note": "Leading Bessel term, checked by ratios to q(209) and q(200). The heads agree to about 1e-7; widened for hand arithmetic in I1 at a large argument."
+     }
+    ],
+    "ignorance": 3.369983403445076e-09,
+    "deception": 0.0,
+    "width": 6.739969453661843e-06,
+    "interval_score": 6.739969453661843e-06,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1400",
+    "fam": "TWIN",
+    "truth": 1073,
+    "final": {
+     "estimate": 1069.9999999999998,
+     "lo": 1025.0000000000005,
+     "hi": 1115.0000000000002
+    },
+    "heads": [
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1025,
+      "hi": 1115,
+      "note": "Hardy–Littlewood 2C2·Δ/ln²p with a Poisson spread of sd≈33 plus model error."
+     },
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1025,
+      "hi": 1115,
+      "note": "Плотность Харди–Литтлвуда 2C2/ln²x на отрезке длиной 300001; интервал около ±1,3σ пуассоновского разброса (σ≈33) плюс ошибка модели."
+     },
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1020,
+      "hi": 1120,
+      "note": "Hardy-Littlewood 1.3203*300000/ln^2(p) is about 1070; the interval is Poisson sd 33 x 1.5 plus model error."
+     }
+    ],
+    "ignorance": 0.0027998151747468114,
+    "deception": 0.0,
+    "width": 0.0841617923217104,
+    "interval_score": 0.0841617923217104,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1401",
+    "fam": "TWIN",
+    "truth": 3539,
+    "final": {
+     "estimate": 3492.9999999999977,
+     "lo": 3412.9999999999973,
+     "hi": 3572.9999999999973
+    },
+    "heads": [
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3413,
+      "hi": 3573,
+      "note": "Hardy–Littlewood with a Poisson spread of sd≈59 plus model error."
+     },
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3413,
+      "hi": 3573,
+      "note": "Плотность Харди–Литтлвуда на отрезке длиной 1000001; интервал около ±1,3σ пуассоновского разброса (σ≈59) плюс ошибка модели."
+     },
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3400,
+      "hi": 3590,
+      "note": "Hardy-Littlewood 1.3203*1e6/19.44^2 is about 3493; the interval is Poisson sd 59 x 1.5 plus model error."
+     }
+    ],
+    "ignorance": 0.01308323553863211,
+    "deception": 0.0,
+    "width": 0.04581390911670269,
+    "interval_score": 0.04581390911670269,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1400",
+    "fam": "SUB5",
+    "truth": 9229,
+    "final": {
+     "estimate": 9229.000000000007,
+     "lo": 9225.000000000002,
+     "hi": 9232.999999999993
+    },
+    "heads": [
+     {
+      "id": "SUB5-1400",
+      "estimate": 9229,
+      "lo": 9225,
+      "hi": 9233,
+      "note": "Exact count via partitions of 81 into ≤5 parts each ≤34, repeated through the mirror sum 89; head 2 got the same, and Edgeworth gives ≈9230-9240."
+     },
+     {
+      "id": "SUB5-1400",
+      "estimate": 9229,
+      "lo": 9225,
+      "hi": 9234,
+      "note": "Точный счёт: разбиения 81 не более чем на 5 частей, каждая не больше 34, через включения-исключения; зеркальная сумма 89 даёт то же число. Совпадает с головой 1; голова 3 получила P5(81) на единицу больше."
+     },
+     {
+      "id": "SUB5-1400",
+      "estimate": 9229,
+      "lo": 9226,
+      "hi": 9233,
+      "note": "Partitions of 81 into at most 5 parts of size at most 34. The mirror sum 89 by the other heads gives the same 9229; my 9230 differed by an off-by-one in P5(81)."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0008668328638989919,
+    "interval_score": 0.0008668328638989919,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1401",
+    "fam": "SUB5",
+    "truth": 2351,
+    "final": {
+     "estimate": 2350.999999999999,
+     "lo": 2347.999999999999,
+     "hi": 2353.9999999999995
+    },
+    "heads": [
+     {
+      "id": "SUB5-1401",
+      "estimate": 2351,
+      "lo": 2348,
+      "hi": 2354,
+      "note": "Exact count via partitions of 69 into ≤5 parts each ≤24, repeated through the mirror sum 51; head 2 got the same."
+     },
+     {
+      "id": "SUB5-1401",
+      "estimate": 2351,
+      "lo": 2347,
+      "hi": 2356,
+      "note": "Точный счёт: разбиения 69 не более чем на 5 частей, каждая не больше 24; зеркальная сумма 51 даёт то же. Совпадает с головой 1, у головы 3 получилось 2352."
+     },
+     {
+      "id": "SUB5-1401",
+      "estimate": 2351,
+      "lo": 2348,
+      "hi": 2354,
+      "note": "Partitions of 69 into at most 5 parts of size at most 24: 11835-9484 = 2351, confirmed by the mirror sum 51. My 2352 carried an off-by-one in inclusion-exclusion."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0025521068722351714,
+    "interval_score": 0.0025521068722351714,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1400",
+    "fam": "COLLATZ",
+    "truth": 365,
+    "final": {
+     "estimate": 365.0,
+     "lo": 358.0,
+     "hi": 371.9999999999999
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 365,
+      "lo": 361,
+      "hi": 369,
+      "note": "Hand simulation (259 steps to 31, then 106 more), matching head 2's independent iteration."
+     },
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 365,
+      "lo": 356,
+      "hi": 378,
+      "note": "Прямая ручная итерация до 31 (259 шагов) плюс 106 шагов от 31 до 1; голова 1 независимо получила 365. Интервал расширен на случай ошибки в ручном счёте."
+     },
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 365,
+      "lo": 358,
+      "hi": 372,
+      "note": "Two heads' full hand simulations independently gave 365: 259 steps to 31, plus 106. Consistent with H - O*log2(3) ≈ log2(n) (240 - 125*1.585 ≈ 41.9 vs 41.6). The random-walk model (about 300) was badly off in past runs."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.03836086787244586,
+    "interval_score": 0.03836086787244586,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1401",
+    "fam": "COLLATZ",
+    "truth": 355,
+    "final": {
+     "estimate": 355.00000000000006,
+     "lo": 348.00000000000006,
+     "hi": 362.00000000000017
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 355,
+      "lo": 351,
+      "hi": 359,
+      "note": "Hand simulation ending 341→1024; matches head 2 (340 steps to 151, then 15 more)."
+     },
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 355,
+      "lo": 345,
+      "hi": 370,
+      "note": "Прямая ручная итерация, голова 1 независимо получила 355. Её разбиение на 121 нечётный шаг и 234 деления лучше проходит логарифмическую проверку, чем мои 118 нечётных шагов, поэтому интервал расширен."
+     },
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 355,
+      "lo": 348,
+      "hi": 362,
+      "note": "Two hand simulations with different checkpoints (151 plus 15 steps; 341 to 1024) both gave 355. The balance H - O*log2(3) = 42.2 ≈ log2(n) = 42.2 checks out."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.039441732051296974,
+    "interval_score": 0.039441732051296974,
+    "covered": true
+   }
+  ],
+  "IS": 0.021122633084927678,
+  "coverage": 1.0
+ },
+ "Fp": {
+  "rows": [
+   {
+    "id": "COL3-1400",
+    "fam": "COL3",
+    "truth": 24,
+    "final": {
+     "estimate": 24.000000000000004,
+     "lo": 24.000000000000004,
+     "hi": 24.000000000000004
+    },
+    "heads": [
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Triangles force colours: fixing 6 and 7 leaves 6 ways, and only vertices 3 and 9 get a free binary choice, so 6·2·2 = 24."
+     },
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Fixed the colours of triangle 1-6-7 (6 ways); vertices 8, 11, 10, 5, 2 and 4 are then forced, and 3 and 9 each have 2 options, giving 6*2*2=24."
+     },
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Fixed the colours of triangle 6-7 and propagated them by hand; only vertices 3 and 9 have 2 choices each, so 6*2*2=24, checked again vertex by vertex."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1401",
+    "fam": "COL3",
+    "truth": 54,
+    "final": {
+     "estimate": 54.00000000000001,
+     "lo": 54.00000000000001,
+     "hi": 54.00000000000001
+    },
+    "heads": [
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "Vertices 1 and 13 are isolated (factor 9); the chain of triangles leaves only the 3! colourings of 3 and 5, so 6·9 = 54."
+     },
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "Fixed the colours of triangle 2-3-5; every other connected vertex is then forced (unique colouring), so 6 ways, times 3^2 for isolated vertices 1 and 13."
+     },
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "Vertices 1 and 13 are isolated (factor 9); fixing triangle 2-3-5 forces a unique colouring of the rest (6 ways), so 6*9=54, checked edge by edge."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1400",
+    "fam": "PART",
+    "truth": 6711480,
+    "final": {
+     "estimate": 6710000.000000002,
+     "lo": 6580000.0,
+     "hi": 6839999.999999998
+    },
+    "heads": [
+     {
+      "id": "PART-1400",
+      "estimate": 6710000,
+      "lo": 6580000,
+      "hi": 6840000,
+      "note": "Hardy–Ramanujan asymptotic for q(n), with a 1−0.1775/√n correction fitted to the known q(100) and q(200)."
+     },
+     {
+      "id": "PART-1400",
+      "estimate": 6710000,
+      "lo": 6500000,
+      "hi": 6920000,
+      "note": "Asymptotic formula exp(pi*sqrt(n/3))/n^(3/4) with its constant fitted to the known q(100)=444793 and q(200)=487067745."
+     },
+     {
+      "id": "PART-1400",
+      "estimate": 6713000,
+      "lo": 6600000,
+      "hi": 6830000,
+      "note": "Asymptotic q(n)~exp(pi*sqrt(n/3))/n^{3/4} applied as a ratio from the known q(100)=444793, with a small correction fitted on q(200)/q(100)."
+     }
+    ],
+    "ignorance": 0.0002205419977521217,
+    "deception": 0.0,
+    "width": 0.038752986297232894,
+    "interval_score": 0.038752986297232894,
+    "covered": true
+   },
+   {
+    "id": "PART-1401",
+    "fam": "PART",
+    "truth": 1186949056,
+    "final": {
+     "estimate": 1186799999.9999993,
+     "lo": 1164999999.999999,
+     "hi": 1207000000.0000017
+    },
+    "heads": [
+     {
+      "id": "PART-1401",
+      "estimate": 1186000000,
+      "lo": 1165000000,
+      "hi": 1207000000,
+      "note": "Asymptotic exp(π√(n/3))/(4·3^{1/4}·n^{3/4}), with the correction fitted to q(100) and q(200)."
+     },
+     {
+      "id": "PART-1401",
+      "estimate": 1187000000,
+      "lo": 1150000000,
+      "hi": 1225000000,
+      "note": "Same asymptotic formula with the constant fitted to q(100) and q(200); extrapolates only slightly past q(200)."
+     },
+     {
+      "id": "PART-1401",
+      "estimate": 1186800000,
+      "lo": 1170000000,
+      "hi": 1205000000,
+      "note": "Asymptotic ratio from the known q(200)=487067745, with the same correction as a cross-check."
+     }
+    ],
+    "ignorance": 0.0001255869906060525,
+    "deception": 0.0,
+    "width": 0.035416855097732736,
+    "interval_score": 0.035416855097732736,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1400",
+    "fam": "TWIN",
+    "truth": 1073,
+    "final": {
+     "estimate": 1069.9999999999998,
+     "lo": 1019.9999999999998,
+     "hi": 1119.9999999999998
+    },
+    "heads": [
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1005,
+      "hi": 1135,
+      "note": "Hardy–Littlewood density 2C2/ln²p times the interval length of 300000."
+     },
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1020,
+      "hi": 1120,
+      "note": "Hardy-Littlewood estimate 2*C2*L/ln^2(p) with L=300000 and ln p about 19.24, plus about ±sqrt(N) of scatter."
+     },
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1020,
+      "hi": 1120,
+      "note": "Hardy-Littlewood: 1.3203*300000/ln^2(2.27e8) is about 1070; interval set by the Poisson spread and past bias."
+     }
+    ],
+    "ignorance": 0.0027998151747468114,
+    "deception": 0.0,
+    "width": 0.09352605801082348,
+    "interval_score": 0.09352605801082348,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1401",
+    "fam": "TWIN",
+    "truth": 3539,
+    "final": {
+     "estimate": 3492.9999999999977,
+     "lo": 3390.0000000000027,
+     "hi": 3599.999999999998
+    },
+    "heads": [
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3370,
+      "hi": 3620,
+      "note": "Hardy–Littlewood density 2C2/ln²p times the interval length of 1e6."
+     },
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3400,
+      "hi": 3590,
+      "note": "Hardy-Littlewood estimate 2*C2*L/ln^2(p) with L=1e6 and ln p about 19.44."
+     },
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3390,
+      "hi": 3600,
+      "note": "Hardy-Littlewood: 1.3203*1e6/ln^2(2.78e8) is about 3493."
+     }
+    ],
+    "ignorance": 0.01308323553863211,
+    "deception": 0.0,
+    "width": 0.06010392406970411,
+    "interval_score": 0.06010392406970411,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1400",
+    "fam": "SUB5",
+    "truth": 9229,
+    "final": {
+     "estimate": 9229.999999999998,
+     "lo": 8900.000000000002,
+     "hi": 9499.999999999995
+    },
+    "heads": [
+     {
+      "id": "SUB5-1400",
+      "estimate": 9230,
+      "lo": 8900,
+      "hi": 9550,
+      "note": "Normal approximation of the sum for sampling without replacement (σ²=566.7), with an Edgeworth kurtosis correction; cross-checked against the unconstrained count of partitions into 5 distinct parts (≈21300)."
+     },
+     {
+      "id": "SUB5-1400",
+      "estimate": 9200,
+      "lo": 8900,
+      "hi": 9500,
+      "note": "Local normal approximation (mean 100, variance 567) applied to C(39,5), corrected for the negative kurtosis of the uniform distribution."
+     },
+     {
+      "id": "SUB5-1400",
+      "estimate": 9240,
+      "lo": 9000,
+      "hi": 9480,
+      "note": "Normal approximation of the Gaussian binomial coefficient (C(39,5), sd 23.8, z=-0.17) with an Edgeworth kurtosis correction of about -2.9%."
+     }
+    ],
+    "ignorance": 0.00010834823132022109,
+    "deception": 0.0,
+    "width": 0.06524052186840024,
+    "interval_score": 0.06524052186840024,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1401",
+    "fam": "SUB5",
+    "truth": 2351,
+    "final": {
+     "estimate": 2350.0000000000005,
+     "lo": 2269.999999999999,
+     "hi": 2430.0
+    },
+    "heads": [
+     {
+      "id": "SUB5-1401",
+      "estimate": 2350,
+      "lo": 2260,
+      "hi": 2440,
+      "note": "Normal approximation with σ²=300 at z=0.52, plus an Edgeworth kurtosis correction."
+     },
+     {
+      "id": "SUB5-1401",
+      "estimate": 2350,
+      "lo": 2270,
+      "hi": 2430,
+      "note": "Local normal approximation (mean 75, variance 300) applied to C(29,5), with a kurtosis correction."
+     },
+     {
+      "id": "SUB5-1401",
+      "estimate": 2350,
+      "lo": 2280,
+      "hi": 2420,
+      "note": "Normal approximation (C(29,5), sd 17.3, z=0.52) with a kurtosis correction of about -1.5%."
+     }
+    ],
+    "ignorance": 0.00042544140186429047,
+    "deception": 0.0,
+    "width": 0.0681114258591462,
+    "interval_score": 0.0681114258591462,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1400",
+    "fam": "COLLATZ",
+    "truth": 365,
+    "final": {
+     "estimate": 259.99999999999994,
+     "lo": 170.00000000000006,
+     "hi": 439.99999999999983
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 300,
+      "lo": 190,
+      "hi": 450,
+      "note": "Heuristic of 1.5·ln n/0.1438 (random-walk model) steps, with a wide spread taken from the history."
+     },
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 260,
+      "lo": 170,
+      "hi": 430,
+      "note": "Not computed; the typical 6.95*ln n is about 200, shifted up toward the past true values (median about 280), with a wide interval."
+     },
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 250,
+      "lo": 165,
+      "hi": 440,
+      "note": "Heuristic 6.95*ln n is about 200, shifted up by the right skew of past answers; the interval is wide because the reference hive missed on past Collatz questions."
+     }
+    ],
+    "ignorance": 0.33921572256696386,
+    "deception": 0.0,
+    "width": 0.9509762898620444,
+    "interval_score": 0.9509762898620444,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1401",
+    "fam": "COLLATZ",
+    "truth": 355,
+    "final": {
+     "estimate": 259.99999999999994,
+     "lo": 170.00000000000006,
+     "hi": 439.99999999999983
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 305,
+      "lo": 190,
+      "hi": 455,
+      "note": "Heuristic of 1.5·ln n/0.1438 steps, with a wide spread taken from the history."
+     },
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 260,
+      "lo": 170,
+      "hi": 430,
+      "note": "Not computed; the typical 6.95*ln n is about 203, shifted up toward the past true values, with a wide interval."
+     },
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 250,
+      "lo": 165,
+      "hi": 440,
+      "note": "Same heuristic, 6.95*ln(5.1e12) is about 203, with a wide right-skewed interval."
+     }
+    ],
+    "ignorance": 0.31143615845988837,
+    "deception": 0.0,
+    "width": 0.9509762898620444,
+    "interval_score": 0.9509762898620444,
+    "covered": true
+   }
+  ],
+  "IS": 0.22631043509271284,
+  "coverage": 1.0
+ },
+ "F": {
+  "rows": [
+   {
+    "id": "COL3-1400",
+    "fam": "COL3",
+    "truth": 24,
+    "final": {
+     "estimate": 24.000000000000004,
+     "lo": 24.000000000000004,
+     "hi": 24.000000000000004
+    },
+    "heads": [
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Треугольник 1-6-7 даёт 6 вариантов, после этого цвета вынуждены везде, кроме вершин 9 и 3 (по 2 варианта у каждой): 6*2*2=24."
+     },
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Fix the colours of triangle 1-6-7: the rest of the graph is then forced, except for free choices at vertices 3 and 9 (3·2·2·2 = 24)."
+     },
+     {
+      "id": "COL3-1400",
+      "estimate": 24,
+      "lo": 24,
+      "hi": 24,
+      "note": "Triangles 1-6-7, 1-6-8, 5-6-8 etc. force most colors: 6 permutations × 2 (vertex 9) × 2 (vertex 3), done by hand propagation."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1401",
+    "fam": "COL3",
+    "truth": 54,
+    "final": {
+     "estimate": 54.00000000000001,
+     "lo": 54.00000000000001,
+     "hi": 54.00000000000001
+    },
+    "heads": [
+     {
+      "id": "COL3-1401",
+      "estimate": 18,
+      "lo": 18,
+      "hi": 18,
+      "note": "Треугольник 2-3-5 даёт 6 вариантов, остальная часть графа раскрашивается однозначно, изолированная вершина 1 даёт множитель 3: 18."
+     },
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "The chain of triangles forces all of vertices 2–12 once triangle 2-3-5 is coloured (6 ways); isolated vertices 1 and 13 give a factor of 9."
+     },
+     {
+      "id": "COL3-1401",
+      "estimate": 54,
+      "lo": 54,
+      "hi": 54,
+      "note": "Chain of triangles fixes vertices 2–12 uniquely up to the 6 color permutations; isolated vertices 1 and 13 give ×9."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1400",
+    "fam": "PART",
+    "truth": 6711480,
+    "final": {
+     "estimate": 6720000.000000006,
+     "lo": 6500000.000000005,
+     "hi": 6920000.000000004
+    },
+    "heads": [
+     {
+      "id": "PART-1400",
+      "estimate": 6710000,
+      "lo": 6500000,
+      "hi": 6920000,
+      "note": "Асимптотика q(n)~exp(pi*sqrt(n/3))/(4*3^{1/4}*n^{3/4}) с поправкой около 0.985, откалиброванной по q(100) и q(200)."
+     },
+     {
+      "id": "PART-1400",
+      "estimate": 6720000,
+      "lo": 6400000,
+      "hi": 7050000,
+      "note": "Hardy–Ramanujan asymptotic formula as a ratio, starting from the known q(100)=444793 and q(200)=487067745 (both give about 6.7e6)."
+     },
+     {
+      "id": "PART-1400",
+      "estimate": 6720000,
+      "lo": 6550000,
+      "hi": 6900000,
+      "note": "Scaled q(100)=444793 by the asymptotic q(n)~exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)), after checking the scaling against q(200)."
+     }
+    ],
+    "ignorance": 0.0012686615537162993,
+    "deception": 0.0,
+    "width": 0.0626135927279865,
+    "interval_score": 0.0626135927279865,
+    "covered": true
+   },
+   {
+    "id": "PART-1401",
+    "fam": "PART",
+    "truth": 1186949056,
+    "final": {
+     "estimate": 1187000000.0000007,
+     "lo": 1149999999.9999998,
+     "hi": 1224999999.9999979
+    },
+    "heads": [
+     {
+      "id": "PART-1401",
+      "estimate": 1187000000,
+      "lo": 1150000000,
+      "hi": 1225000000,
+      "note": "Та же асимптотика с поправкой около 0.988, откалиброванной по q(200)."
+     },
+     {
+      "id": "PART-1401",
+      "estimate": 1187000000,
+      "lo": 1150000000,
+      "hi": 1225000000,
+      "note": "Asymptotic ratio exp(π√(n/3))/n^{3/4} applied to the known q(200)=487067745."
+     },
+     {
+      "id": "PART-1401",
+      "estimate": 1187000000,
+      "lo": 1160000000,
+      "hi": 1215000000,
+      "note": "Scaled known q(200)=487067745 by the same asymptotic ratio to n=215."
+     }
+    ],
+    "ignorance": 4.2919202396518585e-05,
+    "deception": 0.0,
+    "width": 0.06317890162153006,
+    "interval_score": 0.06317890162153006,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1400",
+    "fam": "TWIN",
+    "truth": 1073,
+    "final": {
+     "estimate": 1069.9999999999998,
+     "lo": 1015.0,
+     "hi": 1125.0000000000002
+    },
+    "heads": [
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1015,
+      "hi": 1125,
+      "note": "Формула Харди–Литтлвуда: 1.3203*L/ln^2 p при длине отрезка L=3e5 и ln p≈19.24."
+     },
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 990,
+      "hi": 1150,
+      "note": "Hardy–Littlewood: 1.3203·Δ/ln²x with ln x ≈ 19.24."
+     },
+     {
+      "id": "TWIN-1400",
+      "estimate": 1070,
+      "lo": 1020,
+      "hi": 1120,
+      "note": "Hardy–Littlewood density 2C2/ln^2 p × 300000, widened for the random scatter in the count."
+     }
+    ],
+    "ignorance": 0.0027998151747468114,
+    "deception": 0.0,
+    "width": 0.10289442316263298,
+    "interval_score": 0.10289442316263298,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1401",
+    "fam": "TWIN",
+    "truth": 3539,
+    "final": {
+     "estimate": 3492.9999999999977,
+     "lo": 3390.0000000000027,
+     "hi": 3599.999999999998
+    },
+    "heads": [
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3390,
+      "hi": 3600,
+      "note": "Формула Харди–Литтлвуда: 1.3203*1e6/ln^2 p при ln p≈19.44."
+     },
+     {
+      "id": "TWIN-1401",
+      "estimate": 3490,
+      "lo": 3340,
+      "hi": 3640,
+      "note": "Hardy–Littlewood: 1.3203·10^6/ln²x with ln x ≈ 19.44."
+     },
+     {
+      "id": "TWIN-1401",
+      "estimate": 3493,
+      "lo": 3400,
+      "hi": 3590,
+      "note": "Hardy–Littlewood density 2C2/ln^2 p × 1000000, widened for the random scatter in the count."
+     }
+    ],
+    "ignorance": 0.01308323553863211,
+    "deception": 0.0,
+    "width": 0.06010392406970411,
+    "interval_score": 0.06010392406970411,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1400",
+    "fam": "SUB5",
+    "truth": 9229,
+    "final": {
+     "estimate": 9529.999999999998,
+     "lo": 8849.999999999993,
+     "hi": 9899.999999999995
+    },
+    "heads": [
+     {
+      "id": "SUB5-1400",
+      "estimate": 9250,
+      "lo": 8850,
+      "hi": 9650,
+      "note": "Нормальное приближение с поправкой Эджворта: C(39,5)=575757, центр 100, σ≈23.8."
+     },
+     {
+      "id": "SUB5-1400",
+      "estimate": 9550,
+      "lo": 8700,
+      "hi": 10400,
+      "note": "Normal approximation to the sum of a sample without replacement: C(39,5)·φ((96−100)/23.8)/23.8."
+     },
+     {
+      "id": "SUB5-1400",
+      "estimate": 9530,
+      "lo": 9200,
+      "hi": 9900,
+      "note": "Normal approximation to the subset-sum distribution (mean 100, sd 23.8) × C(39,5)."
+     }
+    ],
+    "ignorance": 0.03209401738267026,
+    "deception": 0.0,
+    "width": 0.11211729812070637,
+    "interval_score": 0.11211729812070637,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1401",
+    "fam": "SUB5",
+    "truth": 2351,
+    "final": {
+     "estimate": 2389.999999999999,
+     "lo": 2259.999999999999,
+     "hi": 2509.9999999999995
+    },
+    "heads": [
+     {
+      "id": "SUB5-1401",
+      "estimate": 2355,
+      "lo": 2260,
+      "hi": 2450,
+      "note": "Нормальное приближение с поправкой Эджворта: C(29,5)=118755, центр 75, σ≈17.3, z≈0.52."
+     },
+     {
+      "id": "SUB5-1401",
+      "estimate": 2400,
+      "lo": 2150,
+      "hi": 2650,
+      "note": "Normal approximation: C(29,5)=118755, mean 75, sd 17.3, deviation 9."
+     },
+     {
+      "id": "SUB5-1401",
+      "estimate": 2390,
+      "lo": 2270,
+      "hi": 2510,
+      "note": "Normal approximation (mean 75, sd 17.3) × C(29,5)."
+     }
+    ],
+    "ignorance": 0.016452596385486906,
+    "deception": 0.0,
+    "width": 0.10491793985949815,
+    "interval_score": 0.10491793985949815,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1400",
+    "fam": "COLLATZ",
+    "truth": 365,
+    "final": {
+     "estimate": 299.99999999999994,
+     "lo": 209.99999999999994,
+     "hi": 419.99999999999994
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 300,
+      "lo": 225,
+      "hi": 385,
+      "note": "Модель случайного блуждания: около 10.43*ln n шагов (ln n≈28.86), разброс σ порядка 55."
+     },
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 300,
+      "lo": 210,
+      "hi": 420,
+      "note": "Average stopping time ≈ 10.4·ln n with ln n ≈ 28.9; the interval is wide because of large variance."
+     },
+     {
+      "id": "COLLATZ-1400",
+      "estimate": 300,
+      "lo": 210,
+      "hi": 430,
+      "note": "Heuristic of about 10.4·ln n average steps, with a wide interval because step counts vary a lot."
+     }
+    ],
+    "ignorance": 0.19611487892629054,
+    "deception": 0.0,
+    "width": 0.6931471805599454,
+    "interval_score": 0.6931471805599454,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1401",
+    "fam": "COLLATZ",
+    "truth": 355,
+    "final": {
+     "estimate": 305.00000000000006,
+     "lo": 214.99999999999991,
+     "hi": 425.00000000000017
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 305,
+      "lo": 230,
+      "hi": 390,
+      "note": "Модель случайного блуждания: около 10.43*ln n шагов (ln n≈29.26), разброс σ порядка 55."
+     },
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 305,
+      "lo": 215,
+      "hi": 425,
+      "note": "Average stopping time ≈ 10.4·ln n with ln n ≈ 29.3."
+     },
+     {
+      "id": "COLLATZ-1401",
+      "estimate": 305,
+      "lo": 215,
+      "hi": 435,
+      "note": "Heuristic of about 10.4·ln n average steps, with a wide interval because step counts vary a lot."
+     }
+    ],
+    "ignorance": 0.1518060128680041,
+    "deception": 0.0,
+    "width": 0.6814511407967547,
+    "interval_score": 0.6814511407967547,
+    "covered": true
+   }
+  ],
+  "IS": 0.18804244009187582,
+  "coverage": 1.0
+ }
+}
