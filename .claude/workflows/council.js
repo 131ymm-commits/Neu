@@ -60,6 +60,7 @@ while (attempt < 3) {
       { label: `голос ${attempt}:${name}`, phase: 'Голосование', schema: VOTE }).then(v => v && ({ name, ...v }))))).filter(Boolean)
   const za = votes.filter(v => v.vote === 'за').length
   transcript.push({ round: `голосование ${attempt}`, speaker: 'итог', text: votes.map(v => `${v.name}: ${v.vote} — ${v.reason}${v.required_change ? ' | нужно: ' + v.required_change : ''}`).join('\n') })
+  if (votes.length < 4) { status = `сбой: голосов ${votes.length} из 4`; break }
   if (za === votes.length) { status = 'принято единогласно'; break }
   if (za >= 3) { status = `принято большинством (${za} из ${votes.length})`; break }
   if (attempt === 3) break
