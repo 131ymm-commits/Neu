@@ -76,8 +76,8 @@ def col_check(p, s):
             and s[0] == 1 and s[1] == 2 and all(s[a - 1] != s[b - 1] for a, b in p['edges']))
 
 def col_gen(r):
-    n = r.randint(8, 10)
-    m = r.randint(int(1.6 * n), int(2.3 * n))
+    n = r.randint(10, 12)
+    m = r.randint(int(1.9 * n), int(2.3 * n))
     edges = set()
     while len(edges) < m:
         a, b = sorted(r.sample(range(1, n + 1), 2)); edges.add((a, b))
@@ -109,6 +109,21 @@ FAM = dict(NUM=(num_gen, num_text, num_all, num_check), SQ=(sq_gen, sq_text, sq_
 MANY = 5  # «много решений» — не меньше 5
 
 
+def shallow(fam, p):
+    """Невозможность видна простым признаком (после пилота 1: такие задачи головы решают сразу) — такие не берём."""
+    if fam == 'NUM':
+        return (p['S'] - p['Q']) % 2 != 0 or p['S'] < 10 or p['S'] > 4 * p['M'] - 6
+    if fam == 'SQ':
+        return (not all(6 <= x <= 24 for x in p['rows'] + p['cols'] + [p['diag']]) or sum(p['rows']) != 45 or sum(p['cols']) != 45)
+    if fam == 'COL':
+        adj = {v: set() for v in range(1, p['n'] + 1)}
+        for a, b in p['edges']: adj[a].add(b); adj[b].add(a)
+        return any(all(y in adj[x] for x, y in itertools.combinations(q, 2)) for q in itertools.combinations(range(1, p['n'] + 1), 4))
+    if fam == 'DIO':
+        return (p['s'] - p['t']) % 2 != 0
+    return False
+
+
 def make(fam, want, seed):
     """want: 'none' (0 решений) или 'many' (>= MANY). Перебор параметров детерминирован."""
     gen, text, allf, _ = FAM[fam]
@@ -116,7 +131,8 @@ def make(fam, want, seed):
         r = random.Random(f'{fam}:{want}:{seed}:{k}')
         p = gen(r)
         n = len(allf(p))
-        if (want == 'none' and n == 0) or (want == 'many' and n >= MANY):
+        if shallow(fam, p): continue
+        if (want == 'none' and n == 0) or (want == 'many' and MANY <= n <= 30):
             return dict(id=f'{fam}-{want}-{seed}', fam=fam, want=want, seed=seed, params=p, text=text(p), n_solutions=n)
     raise RuntimeError((fam, want, seed))
 
