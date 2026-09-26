@@ -3,6 +3,7 @@
 # Ветви: A0 — только LM; F — K голов «через k_j токенов будет токен v_j»; S — те же цели от чужой последовательности батча;
 #        N — K голов на свежий шум. Общий вес λ при любом K. Метрика — лосс на отложенном тексте.
 # Запуск в Колабе: Runtime → GPU; затем ячейки ноутбука aux_heads_pythia.ipynb (она же вызывает run_all()).
+# 26.09: головы читают остаточный поток до final_layer_norm (исправлено до первого запуска, см. ERRORS № 25).
 # Местная проверка без интернета: SMOKE=1 python3 aux_heads_pythia.py (крошечная случайная GPT-NeoX, случайные данные).
 import os, json, time, math, random
 import numpy as np
@@ -12,7 +13,7 @@ CFG = dict(
     model='EleutherAI/pythia-160m',      # или pythia-70m / pythia-410m
     mode='finetune',                      # 'finetune' — с обученных весов; 'scratch' — случайная инициализация той же архитектуры
     data_url='https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt',
-    seq=256, batch=16, steps=1000, lr=1e-4, lam=0.3, K=1024, horizon=16, layer=-1,
+    seq=256, batch=16, steps=1000, lr=1e-4, lam=0.3, K=1024, horizon=16,
     arms=['A0', 'F', 'S', 'N'], seeds=[0, 1, 2, 3, 4], eval_every=250, out='results.json')
 SMOKE = os.environ.get('SMOKE') == '1'
 dev = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -83,11 +84,13 @@ def run(arm, seed):
     for i in range(steps):
         st = rng.integers(0, len(tr) - T - 1, Bsz)
         xb = torch.tensor(np.stack([tr[s:s + T + 1] for s in st]), device=dev)
-        out = model(xb[:, :-1], output_hidden_states=True)
+        cap = {}                                                    # остаточный поток ДО финальной нормализации (как в JAX AUTO-04…07)
+        hk = model.gpt_neox.final_layer_norm.register_forward_hook(lambda mod, inp, o: cap.update(pre=inp[0]))
+        out = model(xb[:, :-1]); hk.remove()
         lm = Fnn.cross_entropy(out.logits.reshape(-1, V), xb[:, 1:].reshape(-1))
         loss = lm
         if arm != 'A0':
-            h = out.hidden_states[CFG['layer']][:, :T - H]
+            h = cap['pre'][:, :T - H]
             y = aux_targets(xb[:, :-1], arm, KJ, VJ, gen)
             var = y.reshape(-1, K).var(0) + 1e-6
             aux = (((head(h) - y) ** 2).reshape(-1, K).mean(0) / var).mean()
