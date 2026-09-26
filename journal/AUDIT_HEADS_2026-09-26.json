@@ -1,0 +1,608 @@
+[
+ {
+  "wf": "wf_6a344c19-9c8",
+  "name": "audit-odin-proekt",
+  "start": 1790103810251,
+  "status": "completed",
+  "script": "/root/.claude/projects/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/workflows/scripts/audit-odin-proekt-wf_6a344c19-9c8.js",
+  "agents": 73,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 284,
+   "Read": 13,
+   "ToolSearch": 3,
+   "WebSearch": 109,
+   "WebFetch": 166
+  }
+ },
+ {
+  "wf": "wf_9afec355-36d",
+  "name": "alice-sources-and-prior-art",
+  "start": 1790269229288,
+  "status": "completed",
+  "script": "/root/.claude/projects/-home-user-neu/368a3030-ed6f-5d75-8ccd-d3417f8f1866/workflows/scripts/alice-sources-and-prior-art-wf_9afec355-36d.js",
+  "agents": 8,
+  "relayed": [
+   "Проверь на других текстах Алиса в стране. И создай исследование если его разместить в предложил на него кликнет 5 из 10 человек. Возьми другие языки. Найди \"жаренное сравнение кто лучше кто хуже. Людям такое нравится"
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "ToolSearch": 9,
+   "WebSearch": 208,
+   "WebFetch": 38,
+   "Bash": 276,
+   "TaskStop": 3,
+   "mcp__github__search_code": 8,
+   "Read": 2
+  }
+ },
+ {
+  "wf": "wf_13f8d401-149",
+  "name": "alice-extract-chapters",
+  "start": 1790273324504,
+  "status": "completed",
+  "script": "/root/.claude/projects/-home-user-neu-examples-2026-09-24-linguistics-zipf-studies-2026-09-24-S2-alice/368a3030-ed6f-5d75-8ccd-d3417f8f1866/workflows/scripts/alice-extract-chapters-wf_13f8d401-149.js",
+  "agents": 12,
+  "relayed": [],
+  "claude_md_agents": 7,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 512,
+   "Write": 17,
+   "Edit": 25,
+   "Read": 25
+  }
+ },
+ {
+  "wf": "wf_2a51d7b4-ede",
+  "name": "alice-s2-adversarial-review",
+  "start": 1790276763327,
+  "status": "completed",
+  "script": "/root/.claude/projects/-home-user-neu/368a3030-ed6f-5d75-8ccd-d3417f8f1866/workflows/scripts/alice-s2-adversarial-review-wf_2a51d7b4-ede.js",
+  "agents": 4,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 155,
+   "Read": 1
+  }
+ },
+ {
+  "wf": "wf_4c6b9a31-a0f",
+  "name": "evo05-design-review",
+  "start": 1790411383715,
+  "status": "completed",
+  "script": "/root/.claude/projects/-home-user-neu-experiments-2026-09-26-EVO-05/368a3030-ed6f-5d75-8ccd-d3417f8f1866/workflows/scripts/evo05-design-review-wf_4c6b9a31-a0f.js",
+  "agents": 3,
+  "relayed": [
+   "Запускай пробуй"
+  ],
+  "claude_md_agents": 1,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 30,
+   "Read": 1
+  }
+ },
+ {
+  "wf": "wf_e24302e2-5ef",
+  "name": "recursive-self-improvement-review",
+  "start": 1790412785476,
+  "status": "completed",
+  "script": "/tmp/claude-0/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/scratchpad/rsi_review.js",
+  "agents": 15,
+  "relayed": [
+   "Опиши разные концепции саморекурсирования ИИ. Объективный анализ как основа."
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "ToolSearch": 12,
+   "WebSearch": 120,
+   "WebFetch": 2
+  }
+ },
+ {
+  "wf": "wf_183d096e-4de",
+  "name": "rsi-review-edit",
+  "start": 1790413503508,
+  "status": "completed",
+  "script": "/root/.claude/projects/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/workflows/scripts/rsi-review-edit-wf_183d096e-4de.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 1,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 7,
+   "Read": 5,
+   "Write": 1,
+   "Edit": 1
+  }
+ },
+ {
+  "wf": "wf_6fa37008-9be",
+  "name": "council",
+  "start": 1790413865395,
+  "status": "completed",
+  "script": "/home/user/neu/.claude/workflows/council.js",
+  "agents": 15,
+  "relayed": [
+   "Реально создай несколько голов для работы над заданиями и диалог между ними. Каждая огромный специалист в своём деле как полушария мозга."
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Grep": 2,
+   "Bash": 10
+  }
+ },
+ {
+  "wf": "wf_2ec9480d-c4c",
+  "name": "council",
+  "start": 1790414168884,
+  "status": "completed",
+  "script": "/home/user/neu/.claude/workflows/council.js",
+  "agents": 19,
+  "relayed": [
+   "Ты не понял. Мы будем создавать модель не с нуля у нас уже есть Клауд. Мы будем экспериментировать с тобой а не с песочницей"
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_184331bb-b34",
+  "name": "claude01",
+  "start": 1790416096591,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_CLAUDE-01/c01.js",
+  "agents": 12,
+  "relayed": [
+   "Да запускай"
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Read": 12,
+   "Bash": 14
+  }
+ },
+ {
+  "wf": "wf_5a259a9a-8b5",
+  "name": "council",
+  "start": 1790416314028,
+  "status": "completed",
+  "script": "/home/user/neu/.claude/workflows/council.js",
+  "agents": 14,
+  "relayed": [
+   "Слишком простые задачи для голов. Давай юмор. Оценка тремя другими головами. Обучение юмору."
+  ],
+  "claude_md_agents": 1,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 4,
+   "Read": 1
+  }
+ },
+ {
+  "wf": "wf_0cb90c45-402",
+  "name": "humor01-train",
+  "start": 1790417402387,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HUMOR-01/humor01_train.js",
+  "agents": 29,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_b88b43d8-e3e",
+  "name": "humor01-runner",
+  "start": 1790417751022,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HUMOR-01/humor01_runner.js",
+  "agents": 4,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_cf4c3d50-2c5",
+  "name": "humor01-runner3-1",
+  "start": 1790417837772,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HUMOR-01/run/runner3_1.js",
+  "agents": 5,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_dc8ac147-b3a",
+  "name": "humor01-runner3-2",
+  "start": 1790417837900,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HUMOR-01/run/runner3_2.js",
+  "agents": 12,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_5fbff23d-061",
+  "name": "humor01-runner3-3",
+  "start": 1790417837954,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HUMOR-01/run/runner3_3.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_21e4d772-477",
+  "name": "council",
+  "start": 1790418824465,
+  "status": "completed",
+  "script": "/home/user/neu/.claude/workflows/council.js",
+  "agents": 9,
+  "relayed": [
+   "Делай"
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 5
+  }
+ },
+ {
+  "wf": "wf_24e63152-53a",
+  "name": "sm-A-1",
+  "start": 1790419192825,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_SMUGGLE-01/pilot/runner_A_1.js",
+  "agents": 4,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 7
+  }
+ },
+ {
+  "wf": "wf_a96874d2-b67",
+  "name": "sm-A-1",
+  "start": 1790419305209,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_SMUGGLE-01/pilot2/runner_A_1.js",
+  "agents": 5,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 9,
+   "TaskStop": 1
+  }
+ },
+ {
+  "wf": "wf_5e94825a-7f4",
+  "name": "sm-B-1",
+  "start": 1790419485180,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_SMUGGLE-01/pilot2/runner_B_1.js",
+  "agents": 16,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 6
+  }
+ },
+ {
+  "wf": "wf_1c550910-47b",
+  "name": "sm-C-1",
+  "start": 1790419550582,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_SMUGGLE-01/pilot2/runner_C_1.js",
+  "agents": 4,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_bdba0ab1-faf",
+  "name": "calib-pilot",
+  "start": 1790420313851,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_CALIB-01/pilot/runner_pilot.js",
+  "agents": 8,
+  "relayed": [
+   "На твой выбор"
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_11dab341-228",
+  "name": "calib-pilot2",
+  "start": 1790420402780,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_CALIB-01/pilot2/runner.js",
+  "agents": 8,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_6f57921f-818",
+  "name": "peer-solve",
+  "start": 1790420593777,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_PEER-01/pilot/runner_solve.js",
+  "agents": 8,
+  "relayed": [
+   "О давай математически логические задачи у которых нет решений или их очень много. И пусть оценивают друг друга"
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_bdee83ad-a4e",
+  "name": "peer-solve",
+  "start": 1790420656096,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_PEER-01/pilot2/runner_solve.js",
+  "agents": 8,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_0afc2fec-2f9",
+  "name": "pred-pilot",
+  "start": 1790421032391,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_PRED-01/pilot/runner.js",
+  "agents": 24,
+  "relayed": [
+   "Давай задачи на предикты. У кого точнее"
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_e105e2c6-27d",
+  "name": "hive-pilot",
+  "start": 1790421302663,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/pilot/runner_pilot.js",
+  "agents": 3,
+  "relayed": [
+   "Давай составим какой то каркас истины. Что то поверх этих агентов даваемые им препромтом. Аналог улия какой то закон и не один взаимодействия агентов. И пусть эволюционирует улей"
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_ec1f4208-b07",
+  "name": "council",
+  "start": 1790421500596,
+  "status": "completed",
+  "script": "/home/user/neu/.claude/workflows/council.js",
+  "agents": 14,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 5
+  }
+ },
+ {
+  "wf": "wf_9d3db31f-a0b",
+  "name": "council",
+  "start": 1790421972293,
+  "status": "completed",
+  "script": "/home/user/neu/.claude/workflows/council.js",
+  "agents": 9,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [
+   "/root/hive_secret"
+  ],
+  "tools": {
+   "Bash": 14
+  }
+ },
+ {
+  "wf": "wf_1d0bf5ce-382",
+  "name": "hive-ans0",
+  "start": 1790422229035,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/run/ans0.js",
+  "agents": 12,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_bab72929-b11",
+  "name": "hive-leg0",
+  "start": 1790422698427,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/run/leg0.js",
+  "agents": 16,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_643a3e8c-bd4",
+  "name": "hive-ans1",
+  "start": 1790422803980,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/run/ans1.js",
+  "agents": 12,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_9be1e613-f37",
+  "name": "hive-leg1",
+  "start": 1790423329987,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/run/leg1.js",
+  "agents": 16,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_6096d44e-d93",
+  "name": "hive-ans2",
+  "start": 1790423451892,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/run/ans2.js",
+  "agents": 12,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_d9df86ed-a95",
+  "name": "hive-leg2",
+  "start": 1790423946795,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/run/leg2.js",
+  "agents": 16,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_787e3eba-a5f",
+  "name": "hive-ans3",
+  "start": 1790424080755,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/run/ans3.js",
+  "agents": 12,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_1aad8b45-d79",
+  "name": "hive-leg3",
+  "start": 1790424679288,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_HIVE-01/run/leg3.js",
+  "agents": 16,
+  "relayed": [
+   "Головы слишком умные. Их нужно состязаться с друг другом."
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_15e44f55-f2d",
+  "name": "duel-set0",
+  "start": 1790424770285,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-26_DUEL-01/pilot/set0.js",
+  "agents": 4,
+  "relayed": [
+   "Головы слишком умные. Их нужно состязаться с друг другом."
+  ],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_c83130a6-147",
+  "name": "council",
+  "start": 1790428478006,
+  "status": "killed",
+  "script": "/home/user/neu/.claude/workflows/council.js",
+  "agents": 2,
+  "relayed": [
+   "Эвалюция братец эволюция и смерть как её двигатель"
+  ],
+  "claude_md_agents": 2,
+  "secret_paths": [
+   "/root/hive2_secret",
+   "/root/hive_secret"
+  ],
+  "tools": {
+   "Bash": 14,
+   "Glob": 1
+  }
+ },
+ {
+  "wf": "wf_35f84d54-112",
+  "name": "? голос 2:Инженер",
+  "start": null,
+  "status": "идёт",
+  "script": null,
+  "agents": 9,
+  "relayed": [
+   "Нет эвалюция природная. Сначало много ресурса. Улии растут и делятся. Потом кратное падение и уйти выживают."
+  ],
+  "claude_md_agents": 9,
+  "secret_paths": [
+   "/root/hive2_secret",
+   "/root/hive_secret"
+  ],
+  "tools": {
+   "Bash": 180,
+   "Glob": 4
+  }
+ },
+ {
+  "wf": "wf_3e92ebfe-8ba",
+  "name": "? D1:solve",
+  "start": null,
+  "status": "идёт",
+  "script": null,
+  "agents": 4,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ },
+ {
+  "wf": "wf_8312e4a1-04a",
+  "name": "? B:h2",
+  "start": null,
+  "status": "идёт",
+  "script": null,
+  "agents": 6,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {}
+ }
+]
