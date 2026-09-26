@@ -1,0 +1,1546 @@
+{
+ "A": {
+  "rows": [
+   {
+    "id": "COL3-1100",
+    "fam": "COL3",
+    "truth": 192,
+    "final": {
+     "estimate": 192.0,
+     "lo": 192.0,
+     "hi": 192.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Путь 13,1-7-11-2 висит на 6 и даёт 2^5; ядро из треугольников 5-8-12, 3-5-8 и др. вынуждено: после раскраски треугольника остальное однозначно, 3!=6, итого 6*32=192"
+     },
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Exact count: the triangle 5-8-12 has 6 colourings, which force the rest of the core (6,3,10,9,4); the chain 2-11-7 with leaves 1 and 13 adds 2^5, so 6*32=192."
+     },
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Exact: peeled the tree part (1,13,7,11,2) for a factor of 32; the 8-vertex core is forced once vertex 5 and one path orientation are fixed, giving 6; 6x32=192."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1101",
+    "fam": "COL3",
+    "truth": 144,
+    "final": {
+     "estimate": 144.0,
+     "lo": 144.0,
+     "hi": 144.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Листья 4 и 6 дают 2^2; при фиксированном цвете 7: треугольник 1-10 даёт 2, ребро 2-8 даёт 2, треугольник 3-5-9 даёт 3; итого 3*12*4=144"
+     },
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Exact count: 3 choices for vertex 7, times 2 for the 1,10 pair, times 6 for 2,8,3,5,9 (inclusion-exclusion on the triangle), times 2*2 for leaves 4 and 6."
+     },
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Exact: leaves 4 and 6 give x4; with vertex 7 fixed (x3), triangles 1-7-10 and 2-7-8 give x2 each and the 3-5-9 block gives 3 cases; 3*2*2*3*4=144."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1100",
+    "fam": "PART",
+    "truth": 11086968,
+    "final": {
+     "estimate": 11085999.999999996,
+     "lo": 11030000.000000004,
+     "hi": 11140000.000000013
+    },
+    "heads": [
+     {
+      "id": "PART-1100",
+      "estimate": 11086000,
+      "lo": 10920000,
+      "hi": 11250000,
+      "note": "Масштабирование от q(100)=444793 по асимптотике exp(pi*sqrt(n/3))/n^(3/4) с поправкой ~1/sqrt(n), откалиброванной на q(200)"
+     },
+     {
+      "id": "PART-1100",
+      "estimate": 11086000,
+      "lo": 11030000,
+      "hi": 11140000,
+      "note": "Took q(141)=10327156 from the reference data and applied the asymptotic step ratio 141->142 (about 1.0735); cross-checked against q(100)=444793 with a correction factor, which agrees."
+     },
+     {
+      "id": "PART-1100",
+      "estimate": 11087000,
+      "lo": 11040000,
+      "hi": 11130000,
+      "note": "Asymptotic for q(n) with a correction factor (1-0.175/sqrt n), fitted to the known q(100) and q(200)."
+     }
+    ],
+    "ignorance": 8.731352524549152e-05,
+    "deception": 0.0,
+    "width": 0.009923401233727702,
+    "interval_score": 0.009923401233727702,
+    "covered": true
+   },
+   {
+    "id": "PART-1101",
+    "fam": "PART",
+    "truth": 9496158208,
+    "final": {
+     "estimate": 9495999999.99999,
+     "lo": 9419999999.999998,
+     "hi": 9570000000.000008
+    },
+    "heads": [
+     {
+      "id": "PART-1101",
+      "estimate": 9496000000,
+      "lo": 9400000000,
+      "hi": 9600000000,
+      "note": "Масштабирование от q(200)=487067745 по той же асимптотике с поправкой 1/sqrt(n)"
+     },
+     {
+      "id": "PART-1101",
+      "estimate": 9497000000,
+      "lo": 9420000000,
+      "hi": 9570000000,
+      "note": "Took q(200)=487067745 (value from memory) and applied the asymptotic ratio to 252 (about 19.50, with the correction calibrated on 100->200)."
+     },
+     {
+      "id": "PART-1101",
+      "estimate": 9496000000,
+      "lo": 9440000000,
+      "hi": 9550000000,
+      "note": "The same asymptotic formula with the fitted correction (1-0.174/sqrt n), anchored on q(200)."
+     }
+    ],
+    "ignorance": 1.6660349842823052e-05,
+    "deception": 0.0,
+    "width": 0.01579811687659216,
+    "interval_score": 0.01579811687659216,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1100",
+    "fam": "TWIN",
+    "truth": 3339,
+    "final": {
+     "estimate": 3403.9999999999986,
+     "lo": 3300.0,
+     "hi": 3510.0000000000027
+    },
+    "heads": [
+     {
+      "id": "TWIN-1100",
+      "estimate": 3400,
+      "lo": 3290,
+      "hi": 3510,
+      "note": "Харди–Литтлвуд: 1.3203*10^6/ln^2(3.58e8), учтён пуассоновский разброс"
+     },
+     {
+      "id": "TWIN-1100",
+      "estimate": 3404,
+      "lo": 3300,
+      "hi": 3510,
+      "note": "Hardy-Littlewood estimate 2*C2*10^6/ln^2(3.578e8); the interval covers roughly Poisson-sized scatter."
+     },
+     {
+      "id": "TWIN-1100",
+      "estimate": 3404,
+      "lo": 3320,
+      "hi": 3490,
+      "note": "Hardy-Littlewood: 2*C2*1e6/ln^2(3.578e8), with a spread of roughly +-sqrt(N) plus fluctuation."
+     }
+    ],
+    "ignorance": 0.01927984974961028,
+    "deception": 0.0,
+    "width": 0.06169356900534062,
+    "interval_score": 0.06169356900534062,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1101",
+    "fam": "TWIN",
+    "truth": 3170,
+    "final": {
+     "estimate": 3090.999999999999,
+     "lo": 2995.0,
+     "hi": 3190.0
+    },
+    "heads": [
+     {
+      "id": "TWIN-1101",
+      "estimate": 3090,
+      "lo": 2990,
+      "hi": 3195,
+      "note": "Харди–Литтлвуд: 1.3203*10^6/ln^2(9.45e8), учтён пуассоновский разброс"
+     },
+     {
+      "id": "TWIN-1101",
+      "estimate": 3091,
+      "lo": 2995,
+      "hi": 3190,
+      "note": "Hardy-Littlewood estimate 2*C2*10^6/ln^2(9.45e8); the interval covers roughly Poisson-sized scatter."
+     },
+     {
+      "id": "TWIN-1101",
+      "estimate": 3091,
+      "lo": 3010,
+      "hi": 3170,
+      "note": "Hardy-Littlewood: 2*C2*1e6/ln^2(9.445e8)."
+     }
+    ],
+    "ignorance": 0.02523692473921102,
+    "deception": 0.0,
+    "width": 0.06307668522934051,
+    "interval_score": 0.06307668522934051,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1100",
+    "fam": "SUB5",
+    "truth": 1467,
+    "final": {
+     "estimate": 1466.9999999999995,
+     "lo": 1466.9999999999995,
+     "hi": 1466.9999999999995
+    },
+    "heads": [
+     {
+      "id": "SUB5-1100",
+      "estimate": 1467,
+      "lo": 1460,
+      "hi": 1475,
+      "note": "Точно: разбиения 41 не более чем на 5 частей (1898, рекуррентно) минус случаи с частью >=24 (431); сверено с квазиполиномиальной асимптотикой"
+     },
+     {
+      "id": "SUB5-1100",
+      "estimate": 1467,
+      "lo": 1467,
+      "hi": 1467,
+      "note": "Exact count: partitions of 41 into at most 5 parts, each at most 23, gives 1898-431=1467; the normal approximation gives about 1437, which agrees."
+     },
+     {
+      "id": "SUB5-1100",
+      "estimate": 1467,
+      "lo": 1467,
+      "hi": 1467,
+      "note": "Exact: partitions of 41 into at most 5 parts (1898) minus the cases with max >=29 (sum of p4(0..17)=431); the normal approximation gives 1441, consistent."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1101",
+    "fam": "SUB5",
+    "truth": 3783,
+    "final": {
+     "estimate": 3783.0000000000027,
+     "lo": 3783.0000000000027,
+     "hi": 3783.0000000000027
+    },
+    "heads": [
+     {
+      "id": "SUB5-1101",
+      "estimate": 3783,
+      "lo": 3775,
+      "hi": 3791,
+      "note": "Через дополнение к сумме 70: разбиения 55 не более чем на 5 частей (5260) минус случаи с частью >=30 (1477); сверено с асимптотикой"
+     },
+     {
+      "id": "SUB5-1101",
+      "estimate": 3783,
+      "lo": 3783,
+      "hi": 3783,
+      "note": "Exact count: by symmetry sum 105 matches sum 70, i.e. partitions of 55 into at most 5 parts, each at most 29, giving 5260-1477=3783; the normal approximation gives about 3759."
+     },
+     {
+      "id": "SUB5-1101",
+      "estimate": 3783,
+      "lo": 3783,
+      "hi": 3783,
+      "note": "Exact via the symmetry 105->70: p(55,<=5 parts)=5260 minus the sum of p4(0..25)=1477; the normal approximation gives 3759, consistent."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1100",
+    "fam": "COLLATZ",
+    "truth": 431,
+    "final": {
+     "estimate": 289.99999999999994,
+     "lo": 209.99999999999994,
+     "hi": 410.00000000000017
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 300,
+      "lo": 225,
+      "hi": 410,
+      "note": "Средняя модель ~10.43*ln n (около 310), медиана чуть ниже; широкий разброс с правой асимметрией"
+     },
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 215,
+      "lo": 150,
+      "hi": 320,
+      "note": "Average model of about 6.95*ln(n), roughly 207, shifted up for right skew; the interval is wide and asymmetric because single trajectories scatter a lot."
+     },
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 290,
+      "lo": 210,
+      "hi": 410,
+      "note": "Mean model of about 10.4*ln n minus an offset (about 297), shifted slightly down for right skew; the interval is wide to cover how much single values scatter."
+     }
+    ],
+    "ignorance": 0.3962271671232278,
+    "deception": 0.49950930405393557,
+    "width": 0.6690496289808854,
+    "interval_score": 1.168558933034821,
+    "covered": false
+   },
+   {
+    "id": "COLLATZ-1101",
+    "fam": "COLLATZ",
+    "truth": 457,
+    "final": {
+     "estimate": 292.0,
+     "lo": 209.99999999999994,
+     "hi": 410.00000000000017
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 300,
+      "lo": 225,
+      "hi": 410,
+      "note": "Средняя модель ~10.43*ln n (около 312), медиана чуть ниже; широкий разброс с правой асимметрией"
+     },
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 215,
+      "lo": 150,
+      "hi": 320,
+      "note": "Average model of about 6.95*ln(n), roughly 208, shifted up for right skew; the interval is wide and asymmetric because single trajectories scatter a lot."
+     },
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 292,
+      "lo": 210,
+      "hi": 410,
+      "note": "Mean model of about 10.4*ln n minus an offset (about 298), with an asymmetric, wide interval."
+     }
+    ],
+    "ignorance": 0.44792958862592336,
+    "deception": 1.0852623119585125,
+    "width": 0.6690496289808854,
+    "interval_score": 1.754311940939398,
+    "covered": false
+   }
+  ],
+  "IS": 0.307336264631922,
+  "coverage": 0.8
+ },
+ "B": {
+  "rows": [
+   {
+    "id": "COL3-1100",
+    "fam": "COL3",
+    "truth": 192,
+    "final": {
+     "estimate": 192.0,
+     "lo": 192.0,
+     "hi": 192.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Листья 1,13, затем 7, 11 и 2 отсекаются последовательно (каждый даёт множитель 2, всего 2^5); ядро из треугольников жёстко задаётся цветами 5 и 8 (6 способов); итого 6*32=192, проверено повторным проходом по цепочке вынужденных цветов"
+     },
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Hand-derived: removed the pendant chain 1,13,7,11,2 (factor 2^5); the 3-colouring of the core {3,4,5,6,8,9,10,12} is forced by its triangles (6 ways), so 6*32=192. Checked by re-verifying every core edge."
+     },
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Pendant chain 1,13,7,11,2 gives factor 2^5; in the core, fixing vertex 5 forces the rest, 3*2*1=6; 6*32=192, checked by redoing the constraints by hand"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1101",
+    "fam": "COL3",
+    "truth": 144,
+    "final": {
+     "estimate": 144.0,
+     "lo": 144.0,
+     "hi": 144.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Точный разбор: 3 цвета для вершины 7, по 2 для пар 1-10 и 2-8 и для вершины 4, 3 варианта для 3-9-5 и 2 для вершины 6; итого 144, перепроверено разбором случаев"
+     },
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Hand-derived: vertex 7 (3 choices) * pair 1,10 (2) * pair 2,8 (2) * triangle 3-5-9 by inclusion-exclusion (3) * leaves 4,6 (4) = 144."
+     },
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Hub 7 (3 ways) * edge 1-10 (2) * vertex 4 (2) * block {2,8,3,9,5,6} counted by cases on 2=3 or 2!=3 (8+4=12) = 144"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1100",
+    "fam": "PART",
+    "truth": 11086968,
+    "final": {
+     "estimate": 11085999.999999996,
+     "lo": 10980000.00000001,
+     "hi": 11190000.000000017
+    },
+    "heads": [
+     {
+      "id": "PART-1100",
+      "estimate": 11085000,
+      "lo": 10980000,
+      "hi": 11190000,
+      "note": "Асимптотика Харди-Рамануджана для q(n) с поправкой -0.174/sqrt(n), откалиброванной по q(100) и q(200) (взяты по памяти); сверено с q(141)=10327156 из прошлого вопроса, умноженным на e^0.0708"
+     },
+     {
+      "id": "PART-1100",
+      "estimate": 11086000,
+      "lo": 10850000,
+      "hi": 11300000,
+      "note": "Asymptotic exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) with correction 1-0.176/sqrt(n), calibrated on q(100) and q(200) (both q(200) and the n=141 identification are from memory); q(141)=10327156 * e^0.0709 agrees."
+     },
+     {
+      "id": "PART-1100",
+      "estimate": 11086000,
+      "lo": 11040000,
+      "hi": 11130000,
+      "note": "Asymptotic for q(n), calibrated by remembered q(100) and q(200) (constants from memory); it matches the reference value 10327156 as q(141), times e^0.0709"
+     }
+    ],
+    "ignorance": 8.731352524549152e-05,
+    "deception": 0.0,
+    "width": 0.01894508624245006,
+    "interval_score": 0.01894508624245006,
+    "covered": true
+   },
+   {
+    "id": "PART-1101",
+    "fam": "PART",
+    "truth": 9496158208,
+    "final": {
+     "estimate": 9491999999.999996,
+     "lo": 9379999999.999996,
+     "hi": 9609999999.999989
+    },
+    "heads": [
+     {
+      "id": "PART-1101",
+      "estimate": 9497000000,
+      "lo": 9380000000,
+      "hi": 9610000000,
+      "note": "Асимптотика exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) с эмпирической поправкой около -1.1% (константы q(100) и q(200) по памяти)"
+     },
+     {
+      "id": "PART-1101",
+      "estimate": 9490000000,
+      "lo": 9250000000,
+      "hi": 9750000000,
+      "note": "Same asymptotic with 1-0.176/sqrt(n) correction, calibrated on q(100)=444793 and q(200)=487067745 (q(200) is from memory)."
+     },
+     {
+      "id": "PART-1101",
+      "estimate": 9492000000,
+      "lo": 9390000000,
+      "hi": 9590000000,
+      "note": "q(n) ~ exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) with a -1.1% correction calibrated by q(200)=487067745 (from memory)"
+     }
+    ],
+    "ignorance": 0.00043797908369214156,
+    "deception": 0.0,
+    "width": 0.02422445996406708,
+    "interval_score": 0.02422445996406708,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1100",
+    "fam": "TWIN",
+    "truth": 3339,
+    "final": {
+     "estimate": 3403.9999999999986,
+     "lo": 3319.9999999999995,
+     "hi": 3489.9999999999973
+    },
+    "heads": [
+     {
+      "id": "TWIN-1100",
+      "estimate": 3404,
+      "lo": 3320,
+      "hi": 3490,
+      "note": "Гипотеза Харди-Литтлвуда: 2*C2*1e6/ln^2 x, где x≈3.578e8 и C2=0.66016 (по памяти); разброс порядка sqrt(N)"
+     },
+     {
+      "id": "TWIN-1100",
+      "estimate": 3400,
+      "lo": 3300,
+      "hi": 3500,
+      "note": "Hardy-Littlewood: 1e6*2*C2/ln^2(3.578e8), with C2~0.66016 taken from memory; spread ~sqrt(N) plus a margin."
+     },
+     {
+      "id": "TWIN-1100",
+      "estimate": 3404,
+      "lo": 3320,
+      "hi": 3490,
+      "note": "Hardy-Littlewood: 2*C2*1e6/ln^2(3.578e8), C2=0.66016 (from memory); interval about +-1.3 sigma of the fluctuations"
+     }
+    ],
+    "ignorance": 0.01927984974961028,
+    "deception": 0.0,
+    "width": 0.049936953285937946,
+    "interval_score": 0.049936953285937946,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1101",
+    "fam": "TWIN",
+    "truth": 3170,
+    "final": {
+     "estimate": 3090.999999999999,
+     "lo": 3010.0000000000023,
+     "hi": 3175.0000000000005
+    },
+    "heads": [
+     {
+      "id": "TWIN-1101",
+      "estimate": 3091,
+      "lo": 3010,
+      "hi": 3170,
+      "note": "Гипотеза Харди-Литтлвуда: 2*C2*1e6/ln^2 x, где x≈9.45e8 и C2=0.66016 (по памяти); разброс порядка sqrt(N)"
+     },
+     {
+      "id": "TWIN-1101",
+      "estimate": 3090,
+      "lo": 2990,
+      "hi": 3190,
+      "note": "Hardy-Littlewood: 1e6*2*C2/ln^2(9.45e8), with C2 from memory; spread ~sqrt(N) plus a margin."
+     },
+     {
+      "id": "TWIN-1101",
+      "estimate": 3091,
+      "lo": 3010,
+      "hi": 3175,
+      "note": "Hardy-Littlewood: 2*C2*1e6/ln^2(9.45e8), C2=0.66016 (from memory); interval about +-1.3 sigma of the fluctuations"
+     }
+    ],
+    "ignorance": 0.02523692473921102,
+    "deception": 0.0,
+    "width": 0.05336755358387002,
+    "interval_score": 0.05336755358387002,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1100",
+    "fam": "SUB5",
+    "truth": 1467,
+    "final": {
+     "estimate": 1466.9999999999995,
+     "lo": 1460.0000000000002,
+     "hi": 1474.9999999999995
+    },
+    "heads": [
+     {
+      "id": "SUB5-1100",
+      "estimate": 1467,
+      "lo": 1460,
+      "hi": 1475,
+      "note": "Разбиения 41 не более чем на 5 частей: p≤5(41)=1898, сумма значений p≤4, посчитанных по формуле округления; вычтено 431 разбиение с наибольшей частью ≥24"
+     },
+     {
+      "id": "SUB5-1100",
+      "estimate": 1467,
+      "lo": 1462,
+      "hi": 1472,
+      "note": "Exact hand count: partitions of 41 into at most 5 parts, each <=23; p<=5(41)=1898 minus 431. Checked against the quasi-polynomial (n+7.5)^4/2880."
+     },
+     {
+      "id": "SUB5-1100",
+      "estimate": 1467,
+      "lo": 1460,
+      "hi": 1475,
+      "note": "Count p(41, at most 5 parts)=1898 (quasipolynomial, checked against 603 = p(29)) minus the sum of p(m, at most 4 parts) for m=0..17, which is 431"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.010221554071537575,
+    "interval_score": 0.010221554071537575,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1101",
+    "fam": "SUB5",
+    "truth": 3783,
+    "final": {
+     "estimate": 3783.0000000000027,
+     "lo": 3765.0,
+     "hi": 3800.0000000000014
+    },
+    "heads": [
+     {
+      "id": "SUB5-1101",
+      "estimate": 3783,
+      "lo": 3765,
+      "hi": 3800,
+      "note": "Симметрия a->35-a переводит сумму 105 в сумму 70, то есть в разбиения 55 не более чем на 5 частей, каждая ≤29: p≤5(55)=5260 минус 1477"
+     },
+     {
+      "id": "SUB5-1101",
+      "estimate": 3783,
+      "lo": 3775,
+      "hi": 3792,
+      "note": "Complement symmetry gives sum 70, i.e. partitions of 55 into at most 5 parts, each <=29: 5260-1477. p<=5(55) checked with the quasi-polynomial."
+     },
+     {
+      "id": "SUB5-1101",
+      "estimate": 3783,
+      "lo": 3765,
+      "hi": 3800,
+      "note": "Symmetry changes sum 105 to 70, so count p(55, at most 5 parts)=5260 minus the sum of p(m, at most 4 parts) for m=0..25, which is 1477"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.009253205480483473,
+    "interval_score": 0.009253205480483473,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1100",
+    "fam": "COLLATZ",
+    "truth": 431,
+    "final": {
+     "estimate": 299.99999999999994,
+     "lo": 205.00000000000006,
+     "hi": 429.9999999999999
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 300,
+      "lo": 205,
+      "hi": 430,
+      "note": "Вероятностная модель: в среднем около 10.43*ln n ≈ 310 шагов, стандартное отклонение около 80, распределение скошено вправо, поэтому медиана немного ниже"
+     },
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 290,
+      "lo": 200,
+      "hi": 430,
+      "note": "Random-walk heuristic about 10.43*ln n (~310), shifted down because past answers came in below it; wide interval with a longer upper side."
+     },
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 300,
+      "lo": 215,
+      "hi": 410,
+      "note": "Mean about 10.43*ln(n)=310, shifted toward the median; skewed spread with sd about 65; no direct calculation done"
+     }
+    ],
+    "ignorance": 0.3623256154475465,
+    "deception": 0.02322881416139566,
+    "width": 0.7407752295491994,
+    "interval_score": 0.764004043710595,
+    "covered": false
+   },
+   {
+    "id": "COLLATZ-1101",
+    "fam": "COLLATZ",
+    "truth": 457,
+    "final": {
+     "estimate": 299.99999999999994,
+     "lo": 205.00000000000006,
+     "hi": 429.9999999999999
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 302,
+      "lo": 205,
+      "hi": 435,
+      "note": "Вероятностная модель: в среднем около 10.43*ln n ≈ 312 шагов, стандартное отклонение около 80, распределение скошено вправо"
+     },
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 292,
+      "lo": 200,
+      "hi": 430,
+      "note": "Random-walk heuristic about 10.43*ln n (~312), shifted down because past answers came in below it; wide interval with a longer upper side."
+     },
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 300,
+      "lo": 215,
+      "hi": 410,
+      "note": "Mean about 10.43*ln(n)=312, shifted toward the median; skewed spread with sd about 65; no direct calculation done"
+     }
+    ],
+    "ignorance": 0.4209009162380042,
+    "deception": 0.6089818220659726,
+    "width": 0.7407752295491994,
+    "interval_score": 1.349757051615172,
+    "covered": false
+   }
+  ],
+  "IS": 0.22797099079541133,
+  "coverage": 0.8
+ },
+ "Fp": {
+  "rows": [
+   {
+    "id": "COL3-1100",
+    "fam": "COL3",
+    "truth": 192,
+    "final": {
+     "estimate": 192.0,
+     "lo": 192.0,
+     "hi": 192.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Peeled the pendant tree (vertices 1, 13, 7, 11, 2) for a factor of 2^5; the triangle-rich core is forced once vertex 5 is fixed, giving 3*2=6 colorings; 6*32=192."
+     },
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Removed the pendant chain 13,1,7,11,2 (factor 2^5); the core triangles 5-8-12 force a unique colouring: 6*32."
+     },
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Core {3,4,5,6,8,9,10,12} is rigid up to a permutation of colours (6 ways); then the tree part 2-11-7-1/13 adds 2^5 hanging choices: 6*32=192"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1101",
+    "fam": "COL3",
+    "truth": 144,
+    "final": {
+     "estimate": 144.0,
+     "lo": 144.0,
+     "hi": 144.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Leaves 4 and 6 give a factor of 4; fixed vertex 7 (3 ways), triangle 1-7-10 (2 ways), and cases on the colors of 2 and 3 give 6 ways; 3*2*6*4=144."
+     },
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Hub 7 (3 ways), pairs 1-10 and 2-8 (2 each), leaf 4 (2), subgraph 3,5,6,9 (6): 3*2*2*2*6."
+     },
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Fix colour of 7 (3), leaf 4 (2), edge 1-10 (2), then check cases for 2,3,9,5,8,6 (12): 3*2*2*12=144"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1100",
+    "fam": "PART",
+    "truth": 11086968,
+    "final": {
+     "estimate": 11090000.000000004,
+     "lo": 10850000.000000013,
+     "hi": 11299999.999999985
+    },
+    "heads": [
+     {
+      "id": "PART-1100",
+      "estimate": 11090000,
+      "lo": 10800000,
+      "hi": 11400000,
+      "note": "Asymptotic exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) scaled from q(100)=444793, with the correction checked against q(200)."
+     },
+     {
+      "id": "PART-1100",
+      "estimate": 11085000,
+      "lo": 10950000,
+      "hi": 11200000,
+      "note": "Asymptotic formula for q(n) with an empirical correction of about 0.985, checked against q(141)=10327156."
+     },
+     {
+      "id": "PART-1100",
+      "estimate": 11090000,
+      "lo": 10850000,
+      "hi": 11300000,
+      "note": "Hardy-Ramanujan asymptotic for q(n), with the correction factor calibrated on q(100)=444793 and checked against q(200)"
+     }
+    ],
+    "ignorance": 0.00027343683941793984,
+    "deception": 0.0,
+    "width": 0.040637645731823824,
+    "interval_score": 0.040637645731823824,
+    "covered": true
+   },
+   {
+    "id": "PART-1101",
+    "fam": "PART",
+    "truth": 9496158208,
+    "final": {
+     "estimate": 9494999999.999987,
+     "lo": 9299999999.999987,
+     "hi": 9700000000.000017
+    },
+    "heads": [
+     {
+      "id": "PART-1101",
+      "estimate": 9495000000,
+      "lo": 9300000000,
+      "hi": 9700000000,
+      "note": "Asymptotic ratio scaled from q(200)=487067745 with a small correction calibrated on the 100 to 200 step."
+     },
+     {
+      "id": "PART-1101",
+      "estimate": 9494000000,
+      "lo": 9350000000,
+      "hi": 9650000000,
+      "note": "Asymptotic formula for q(n) with a correction interpolated between q(100) and q(200)."
+     },
+     {
+      "id": "PART-1101",
+      "estimate": 9495000000,
+      "lo": 9300000000,
+      "hi": 9700000000,
+      "note": "Asymptotic exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) with a 1-0.177/sqrt(n) correction from known values"
+     }
+    ],
+    "ignorance": 0.00012197339296093901,
+    "deception": 0.0,
+    "width": 0.042111485350130096,
+    "interval_score": 0.042111485350130096,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1100",
+    "fam": "TWIN",
+    "truth": 3339,
+    "final": {
+     "estimate": 3403.9999999999986,
+     "lo": 3300.0,
+     "hi": 3510.0000000000027
+    },
+    "heads": [
+     {
+      "id": "TWIN-1100",
+      "estimate": 3404,
+      "lo": 3320,
+      "hi": 3490,
+      "note": "Hardy-Littlewood density 2*C2/ln^2(x) times an interval length of 1e6, with Poisson spread."
+     },
+     {
+      "id": "TWIN-1100",
+      "estimate": 3400,
+      "lo": 3290,
+      "hi": 3510,
+      "note": "Hardy-Littlewood: 1.3203*10^6/ln^2 N."
+     },
+     {
+      "id": "TWIN-1100",
+      "estimate": 3404,
+      "lo": 3300,
+      "hi": 3510,
+      "note": "Hardy-Littlewood: 2*C2*10^6/ln^2(3.58e8), about 3404; interval allows about 1.8 sigma of fluctuation"
+     }
+    ],
+    "ignorance": 0.01927984974961028,
+    "deception": 0.0,
+    "width": 0.06169356900534062,
+    "interval_score": 0.06169356900534062,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1101",
+    "fam": "TWIN",
+    "truth": 3170,
+    "final": {
+     "estimate": 3090.999999999999,
+     "lo": 2990.000000000002,
+     "hi": 3190.0
+    },
+    "heads": [
+     {
+      "id": "TWIN-1101",
+      "estimate": 3091,
+      "lo": 3010,
+      "hi": 3170,
+      "note": "Hardy-Littlewood density 2*C2/ln^2(x) times an interval length of 1e6, with Poisson spread."
+     },
+     {
+      "id": "TWIN-1101",
+      "estimate": 3090,
+      "lo": 2985,
+      "hi": 3195,
+      "note": "Hardy-Littlewood: 1.3203*10^6/ln^2 N."
+     },
+     {
+      "id": "TWIN-1101",
+      "estimate": 3091,
+      "lo": 2990,
+      "hi": 3190,
+      "note": "Hardy-Littlewood: 1.3203e6/ln^2(9.45e8), about 3091"
+     }
+    ],
+    "ignorance": 0.02523692473921102,
+    "deception": 0.0,
+    "width": 0.06474752939415751,
+    "interval_score": 0.06474752939415751,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1100",
+    "fam": "SUB5",
+    "truth": 1467,
+    "final": {
+     "estimate": 1466.9999999999995,
+     "lo": 1450.0,
+     "hi": 1479.9999999999998
+    },
+    "heads": [
+     {
+      "id": "SUB5-1100",
+      "estimate": 1467,
+      "lo": 1455,
+      "hi": 1480,
+      "note": "Shift b_i=a_i-i: partitions of 41 into at most 5 parts (1898 via the p4 quasi-polynomial) minus those with a part of 24 or more (431)."
+     },
+     {
+      "id": "SUB5-1100",
+      "estimate": 1468,
+      "lo": 1450,
+      "hi": 1485,
+      "note": "p(46,5) is about 1899 from the quasi-polynomial, minus 431 cases with part >24; the normal approximation gives about 1441."
+     },
+     {
+      "id": "SUB5-1100",
+      "estimate": 1445,
+      "lo": 1420,
+      "hi": 1470,
+      "note": "Reduce to partitions of 41 into at most 5 parts no larger than 23 (quasi-polynomial minus exact p<=4 sum of 431); normal approximation gives 1441"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.020478531343540496,
+    "interval_score": 0.020478531343540496,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1101",
+    "fam": "SUB5",
+    "truth": 3783,
+    "final": {
+     "estimate": 3783.0000000000027,
+     "lo": 3760.0000000000014,
+     "hi": 3810.000000000002
+    },
+    "heads": [
+     {
+      "id": "SUB5-1101",
+      "estimate": 3783,
+      "lo": 3760,
+      "hi": 3810,
+      "note": "By symmetry sum 70: partitions of 55 into at most 5 parts (5260) minus those with a part of 30 or more (1477)."
+     },
+     {
+      "id": "SUB5-1101",
+      "estimate": 3784,
+      "lo": 3760,
+      "hi": 3805,
+      "note": "By symmetry sum 70: p(60,5) is about 5261 minus 1477; the normal approximation gives about 3758."
+     },
+     {
+      "id": "SUB5-1101",
+      "estimate": 3750,
+      "lo": 3690,
+      "hi": 3810,
+      "note": "Complement to sum 70, then partitions of 55 into at most 5 parts no larger than 29: 5224-1477; normal approximation gives 3758"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.013210231736806577,
+    "interval_score": 0.013210231736806577,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1100",
+    "fam": "COLLATZ",
+    "truth": 431,
+    "final": {
+     "estimate": 299.99999999999994,
+     "lo": 199.99999999999991,
+     "hi": 419.99999999999994
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 300,
+      "lo": 200,
+      "hi": 420,
+      "note": "Random-walk model: about 10.43*ln(n) steps, which is about 310, shifted down because past hive answers ran high; spread is about 80 steps."
+     },
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 295,
+      "lo": 195,
+      "hi": 425,
+      "note": "Random-walk model, about 10.4*ln n, shifted down given past errors."
+     },
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 300,
+      "lo": 215,
+      "hi": 410,
+      "note": "Random model gives about 10.4*ln n, roughly 310; wide skewed interval because individual paths vary and past estimates ran high"
+     }
+    ],
+    "ignorance": 0.3623256154475465,
+    "deception": 0.2585337882633354,
+    "width": 0.7419373447293776,
+    "interval_score": 1.000471132992713,
+    "covered": false
+   },
+   {
+    "id": "COLLATZ-1101",
+    "fam": "COLLATZ",
+    "truth": 457,
+    "final": {
+     "estimate": 299.99999999999994,
+     "lo": 199.99999999999991,
+     "hi": 419.99999999999994
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 300,
+      "lo": 200,
+      "hi": 420,
+      "note": "Random-walk model: about 10.43*ln(n) steps, which is about 312, shifted down because past hive answers ran high; spread is about 80 steps."
+     },
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 297,
+      "lo": 195,
+      "hi": 430,
+      "note": "Random-walk model, about 10.4*ln n, shifted down given past errors."
+     },
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 300,
+      "lo": 215,
+      "hi": 410,
+      "note": "Random model gives about 10.4*ln n, roughly 312, shifted down slightly because of past overestimates; wide interval"
+     }
+    ],
+    "ignorance": 0.4209009162380042,
+    "deception": 0.8442867961679124,
+    "width": 0.7419373447293776,
+    "interval_score": 1.58622414089729,
+    "covered": false
+   }
+  ],
+  "IS": 0.2829574266451802,
+  "coverage": 0.8
+ },
+ "F": {
+  "rows": [
+   {
+    "id": "COL3-1100",
+    "fam": "COL3",
+    "truth": 192,
+    "final": {
+     "estimate": 192.0,
+     "lo": 192.0,
+     "hi": 192.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Removed pendant vertices 13,1,7,11,2 one by one (x2 each); the remaining core of triangles has a forced colouring once vertex 5's colour and one binary choice are fixed: 6*32=192."
+     },
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 180,
+      "hi": 200,
+      "note": "Hanging path 1/13-7-11-2 contributes 2^5 given the colour of 6; the core is forced by triangles (3 colours for vertex 5 × 2 ways) = 6; total 6*32=192."
+     },
+     {
+      "id": "COL3-1100",
+      "estimate": 192,
+      "lo": 192,
+      "hi": 192,
+      "note": "Вершины-листья и цепочки дают множитель 2^5=32; ядро жёстко задаётся треугольниками, 6 раскрасок; итого 32*6=192"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1101",
+    "fam": "COL3",
+    "truth": 144,
+    "final": {
+     "estimate": 144.0,
+     "lo": 144.0,
+     "hi": 144.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Removed leaves 4 and 6 (x4); fixed 7 (3 ways); triangles 7-1-10 and 7-2-8 give 2 ways each; the 3-5-9 block gives 3 ways: 3*2*2*3*4=144."
+     },
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 138,
+      "hi": 150,
+      "note": "Hand count: 3 for vertex 7, then 2 each for 4, the 1-10 pair, the 2-8 pair and 6, and 3 for the 3-5-9 triangle under its constraints; total 144."
+     },
+     {
+      "id": "COL3-1101",
+      "estimate": 144,
+      "lo": 144,
+      "hi": 144,
+      "note": "Точный разбор: вершина 7 (3 варианта), пары 1-10 и 2-8 (по 2), вершина 4 (2), треугольник 3-5-9 (3), вершина 6 (2)"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1100",
+    "fam": "PART",
+    "truth": 11086968,
+    "final": {
+     "estimate": 11079999.999999983,
+     "lo": 10699999.999999989,
+     "hi": 11500000.000000013
+    },
+    "heads": [
+     {
+      "id": "PART-1100",
+      "estimate": 11080000,
+      "lo": 10700000,
+      "hi": 11500000,
+      "note": "Asymptotic formula for q(n), exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)), with a correction factor of about 0.985 calibrated on the known values q(100) and q(200)."
+     },
+     {
+      "id": "PART-1100",
+      "estimate": 11090000,
+      "lo": 10700000,
+      "hi": 11500000,
+      "note": "Asymptotic formula for q(n) with a ~0.985 correction factor, calibrated on the known values q(100) and q(200)."
+     },
+     {
+      "id": "PART-1100",
+      "estimate": 11080000,
+      "lo": 10850000,
+      "hi": 11300000,
+      "note": "Асимптотика q(n)~exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) с поправкой ~1.5%, откалиброванной по q(100) и q(200)"
+     }
+    ],
+    "ignorance": 0.0006286832037218915,
+    "deception": 0.0,
+    "width": 0.07210329390134618,
+    "interval_score": 0.07210329390134618,
+    "covered": true
+   },
+   {
+    "id": "PART-1101",
+    "fam": "PART",
+    "truth": 9496158208,
+    "final": {
+     "estimate": 9489999999.999983,
+     "lo": 9199999999.999985,
+     "hi": 9800000000.000004
+    },
+    "heads": [
+     {
+      "id": "PART-1101",
+      "estimate": 9490000000,
+      "lo": 9200000000,
+      "hi": 9800000000,
+      "note": "Same asymptotic formula for q(n) with a correction factor of about 0.989."
+     },
+     {
+      "id": "PART-1101",
+      "estimate": 9510000000,
+      "lo": 9150000000,
+      "hi": 9900000000,
+      "note": "Asymptotic formula exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) with a ~0.99 correction factor."
+     },
+     {
+      "id": "PART-1101",
+      "estimate": 9490000000,
+      "lo": 9300000000,
+      "hi": 9650000000,
+      "note": "Та же асимптотика с поправкой ~1.1%"
+     }
+    ],
+    "ignorance": 0.0006487050353740642,
+    "deception": 0.0,
+    "width": 0.06317890162153361,
+    "interval_score": 0.06317890162153361,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1100",
+    "fam": "TWIN",
+    "truth": 3339,
+    "final": {
+     "estimate": 3399.999999999999,
+     "lo": 3300.0,
+     "hi": 3510.0000000000027
+    },
+    "heads": [
+     {
+      "id": "TWIN-1100",
+      "estimate": 3404,
+      "lo": 3310,
+      "hi": 3500,
+      "note": "Hardy-Littlewood: 2*C2*10^6/ln^2(3.58e8)."
+     },
+     {
+      "id": "TWIN-1100",
+      "estimate": 3400,
+      "lo": 3280,
+      "hi": 3520,
+      "note": "Hardy-Littlewood estimate: 1.3203*10^6/ln^2(3.58e8)."
+     },
+     {
+      "id": "TWIN-1100",
+      "estimate": 3400,
+      "lo": 3300,
+      "hi": 3510,
+      "note": "Харди-Литтлвуд: 2*C2*10^6/ln^2(3.58e8), около 3404"
+     }
+    ],
+    "ignorance": 0.01810407066059838,
+    "deception": 0.0,
+    "width": 0.06169356900534062,
+    "interval_score": 0.06169356900534062,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1101",
+    "fam": "TWIN",
+    "truth": 3170,
+    "final": {
+     "estimate": 3090.000000000002,
+     "lo": 2990.000000000002,
+     "hi": 3190.0
+    },
+    "heads": [
+     {
+      "id": "TWIN-1101",
+      "estimate": 3091,
+      "lo": 3000,
+      "hi": 3185,
+      "note": "Hardy-Littlewood: 2*C2*10^6/ln^2(9.45e8)."
+     },
+     {
+      "id": "TWIN-1101",
+      "estimate": 3090,
+      "lo": 2980,
+      "hi": 3200,
+      "note": "Hardy-Littlewood estimate: 1.3203*10^6/ln^2(9.45e8)."
+     },
+     {
+      "id": "TWIN-1101",
+      "estimate": 3090,
+      "lo": 2990,
+      "hi": 3190,
+      "note": "Харди-Литтлвуд: 2*C2*10^6/ln^2(9.45e8), около 3091"
+     }
+    ],
+    "ignorance": 0.02556049697953533,
+    "deception": 0.0,
+    "width": 0.06474752939415751,
+    "interval_score": 0.06474752939415751,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1100",
+    "fam": "SUB5",
+    "truth": 1467,
+    "final": {
+     "estimate": 1464.9999999999993,
+     "lo": 1410.0000000000005,
+     "hi": 1520.0000000000005
+    },
+    "heads": [
+     {
+      "id": "SUB5-1100",
+      "estimate": 1465,
+      "lo": 1410,
+      "hi": 1520,
+      "note": "Partitions of 46 into 5 parts, each at most 24 (about 1903-431), checked against a normal approximation of the sum distribution (about 1441)."
+     },
+     {
+      "id": "SUB5-1100",
+      "estimate": 1467,
+      "lo": 1430,
+      "hi": 1500,
+      "note": "Shifted to partitions of 41 into at most 5 parts, each at most 23: formula gives p(46 into 5 parts)=1898, minus the sum of p<=4(m) for m<=17 (431)."
+     },
+     {
+      "id": "SUB5-1100",
+      "estimate": 1460,
+      "lo": 1370,
+      "hi": 1550,
+      "note": "Разбиения 41 не более чем на 5 частей, каждая не больше 23 (около 1477), сверено с нормальным приближением (около 1441)"
+     }
+    ],
+    "ignorance": 0.0013642566918141696,
+    "deception": 0.0,
+    "width": 0.07512063046810802,
+    "interval_score": 0.07512063046810802,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1101",
+    "fam": "SUB5",
+    "truth": 3783,
+    "final": {
+     "estimate": 3783.0000000000027,
+     "lo": 3650.0000000000005,
+     "hi": 3930.0000000000005
+    },
+    "heads": [
+     {
+      "id": "SUB5-1101",
+      "estimate": 3790,
+      "lo": 3650,
+      "hi": 3930,
+      "note": "By symmetry equal to sum 70: partitions of 60 into 5 parts, each at most 30 (about 5280-1477), checked against a normal approximation (about 3758)."
+     },
+     {
+      "id": "SUB5-1101",
+      "estimate": 3783,
+      "lo": 3700,
+      "hi": 3860,
+      "note": "By symmetry, partitions of 55 into at most 5 parts, each at most 29: 5260 minus the sum of p<=4(m) for m<=25 (1477)."
+     },
+     {
+      "id": "SUB5-1101",
+      "estimate": 3770,
+      "lo": 3600,
+      "hi": 3950,
+      "note": "Через дополнение: разбиения 55 не более чем на 5 частей, каждая не больше 29 (около 3796), сверено с нормальным приближением (около 3758)"
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.07391225828676973,
+    "interval_score": 0.07391225828676973,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1100",
+    "fam": "COLLATZ",
+    "truth": 431,
+    "final": {
+     "estimate": 206.99999999999994,
+     "lo": 139.99999999999994,
+     "hi": 310.00000000000006
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 207,
+      "lo": 140,
+      "hi": 300,
+      "note": "Mean total stopping time of about 6.95*ln(n) for n around 8.4e12; the per-number spread is wide."
+     },
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 310,
+      "lo": 220,
+      "hi": 430,
+      "note": "Heuristic: about 1.5*ln(n)/0.1438 steps; the scatter is large."
+     },
+     {
+      "id": "COLLATZ-1100",
+      "estimate": 205,
+      "lo": 135,
+      "hi": 310,
+      "note": "Среднее полное время остановки около 6.95*ln n (около 207); интервал широкий из-за большого разброса"
+     }
+    ],
+    "ignorance": 0.7333892968383786,
+    "deception": 3.2953579262455523,
+    "width": 0.7949298748698883,
+    "interval_score": 4.090287801115441,
+    "covered": false
+   },
+   {
+    "id": "COLLATZ-1101",
+    "fam": "COLLATZ",
+    "truth": 457,
+    "final": {
+     "estimate": 207.99999999999997,
+     "lo": 139.99999999999994,
+     "hi": 310.00000000000006
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 208,
+      "lo": 140,
+      "hi": 300,
+      "note": "Mean total stopping time of about 6.95*ln(n) for n around 9.9e12; the per-number spread is wide."
+     },
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 312,
+      "lo": 220,
+      "hi": 430,
+      "note": "Heuristic: about 1.5*ln(n)/0.1438 steps; the scatter is large."
+     },
+     {
+      "id": "COLLATZ-1101",
+      "estimate": 207,
+      "lo": 135,
+      "hi": 310,
+      "note": "Среднее полное время остановки около 6.95*ln n (около 208); интервал широкий"
+     }
+    ],
+    "ignorance": 0.7871453111928872,
+    "deception": 3.8811109341501293,
+    "width": 0.7949298748698883,
+    "interval_score": 4.676040809020018,
+    "covered": false
+   }
+  ],
+  "IS": 0.9177084792812714,
+  "coverage": 0.8
+ }
+}
