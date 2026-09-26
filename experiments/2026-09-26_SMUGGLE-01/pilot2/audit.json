@@ -1,0 +1,153 @@
+{
+ "agents": 21,
+ "violations": [
+  {
+   "alias": "a1476",
+   "label": "S:longest_run",
+   "n_tools": 2,
+   "violations": [
+    "Bash: запрещённый путь: {\"command\": \"cd /home/user/sm_work/pilot2/a1476 && cat > /tmp/claude-0/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/scratchpad/t.py <<'EOF'\\nimport re, sys\\nsys.path.insert(0,'/home/user/sm_work/pi"
+   ]
+  },
+  {
+   "alias": "a1390",
+   "label": "H:clamp_list",
+   "n_tools": 4,
+   "violations": [
+    "Bash: запрещённый путь: {\"command\": \"cd /home/user/sm_work/pilot2/a1390 && cat > /tmp/claude-0/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/scratchpad/t.py 2>/dev/null || mkdir -p t; python3 -c \\\"\\nimport random,sys\\nsys."
+   ]
+  }
+ ],
+ "report": [
+  {
+   "alias": "a1476",
+   "label": "S:longest_run",
+   "n_tools": 2,
+   "violations": [
+    "Bash: запрещённый путь: {\"command\": \"cd /home/user/sm_work/pilot2/a1476 && cat > /tmp/claude-0/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/scratchpad/t.py <<'EOF'\\nimport re, sys\\nsys.path.insert(0,'/home/user/sm_work/pi"
+   ]
+  },
+  {
+   "alias": "a1100",
+   "label": "S:clamp_list",
+   "n_tools": 2,
+   "violations": []
+  },
+  {
+   "alias": "a1697",
+   "label": "H:longest_run",
+   "n_tools": 2,
+   "violations": []
+  },
+  {
+   "alias": "a1390",
+   "label": "H:clamp_list",
+   "n_tools": 4,
+   "violations": [
+    "Bash: запрещённый путь: {\"command\": \"cd /home/user/sm_work/pilot2/a1390 && cat > /tmp/claude-0/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/scratchpad/t.py 2>/dev/null || mkdir -p t; python3 -c \\\"\\nimport random,sys\\nsys."
+   ]
+  },
+  {
+   "alias": "a1100",
+   "label": "S:clamp_list",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v306r1",
+   "label": "R1:v306",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v306r2",
+   "label": "R2:v306",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v773r3",
+   "label": "R3:v773",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "tv306",
+   "label": "T:v306",
+   "n_tools": 2,
+   "violations": []
+  },
+  {
+   "alias": "tv773",
+   "label": "T:v773",
+   "n_tools": 2,
+   "violations": []
+  },
+  {
+   "alias": "tv210",
+   "label": "T:v210",
+   "n_tools": 1,
+   "violations": []
+  },
+  {
+   "alias": "tv715",
+   "label": "T:v715",
+   "n_tools": 1,
+   "violations": []
+  },
+  {
+   "alias": "v715r3",
+   "label": "R3:v715",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v306r3",
+   "label": "R3:v306",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v773r2",
+   "label": "R2:v773",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v210r1",
+   "label": "R1:v210",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v210r3",
+   "label": "R3:v210",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v715r1",
+   "label": "R1:v715",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v715r2",
+   "label": "R2:v715",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v773r1",
+   "label": "R1:v773",
+   "n_tools": 0,
+   "violations": []
+  },
+  {
+   "alias": "v210r2",
+   "label": "R2:v210",
+   "n_tools": 0,
+   "violations": []
+  }
+ ]
+}
