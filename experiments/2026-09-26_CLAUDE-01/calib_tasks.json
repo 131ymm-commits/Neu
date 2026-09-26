@@ -1,0 +1,74 @@
+[
+ {
+  "id": "I1_s1001",
+  "kind": "I",
+  "level": 1,
+  "dir": "/home/user/c01_work/I1_s1001"
+ },
+ {
+  "id": "I1_s1002",
+  "kind": "I",
+  "level": 1,
+  "dir": "/home/user/c01_work/I1_s1002"
+ },
+ {
+  "id": "I2_s1001",
+  "kind": "I",
+  "level": 2,
+  "dir": "/home/user/c01_work/I2_s1001"
+ },
+ {
+  "id": "I2_s1002",
+  "kind": "I",
+  "level": 2,
+  "dir": "/home/user/c01_work/I2_s1002"
+ },
+ {
+  "id": "I3_s1001",
+  "kind": "I",
+  "level": 3,
+  "dir": "/home/user/c01_work/I3_s1001"
+ },
+ {
+  "id": "I3_s1002",
+  "kind": "I",
+  "level": 3,
+  "dir": "/home/user/c01_work/I3_s1002"
+ },
+ {
+  "id": "C1_s1001",
+  "kind": "C",
+  "level": 1,
+  "dir": "/home/user/c01_work/C1_s1001"
+ },
+ {
+  "id": "C1_s1002",
+  "kind": "C",
+  "level": 1,
+  "dir": "/home/user/c01_work/C1_s1002"
+ },
+ {
+  "id": "C2_s1001",
+  "kind": "C",
+  "level": 2,
+  "dir": "/home/user/c01_work/C2_s1001"
+ },
+ {
+  "id": "C2_s1002",
+  "kind": "C",
+  "level": 2,
+  "dir": "/home/user/c01_work/C2_s1002"
+ },
+ {
+  "id": "C3_s1001",
+  "kind": "C",
+  "level": 3,
+  "dir": "/home/user/c01_work/C3_s1001"
+ },
+ {
+  "id": "C3_s1002",
+  "kind": "C",
+  "level": 3,
+  "dir": "/home/user/c01_work/C3_s1002"
+ }
+]
