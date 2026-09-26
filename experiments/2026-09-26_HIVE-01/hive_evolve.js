@@ -1,6 +1,6 @@
 export const meta = {
   name: 'hive-evolve',
-  description: 'HIVE-01: самоуправляемые ульи — отвечают на свежие вопросы, видят правду по прошлым, сами предлагают, обсуждают и голосуют поправки к законам; рядом замороженный улей',
+  description: 'HIVE-01: самоуправляемые ульи — отвечают на свежие вопросы, видят правду по прошлым, оценивают и критикуют друг друга, меняют личные правила при сгустившейся критике, голосуют поправки к законам; рядом замороженный улей',
   phases: [{ title: 'Поколения' }, { title: 'Итоговая проверка' }],
 }
 // ARGS: {gens: [[вопросы поколения g]], test: [вопросы], init: {laws, roles, delphi, agg}, hives: ['A','B'], no_tools, max_laws}
@@ -15,8 +15,14 @@ const AMEND = obj({ amendments: { type: 'array', items: obj({
   law_number: { type: 'integer', description: 'номер закона для «заменить»/«удалить», иначе 0' },
   text: { type: 'string', description: 'текст нового закона; для «протокол» — одно из: «пересмотр вкл», «пересмотр выкл», «итог медиана», «итог мозолистое тело»' },
   why: { type: 'string' } }, ['kind', 'law_number', 'text', 'why']) } }, ['amendments'])
+const CRIT = obj({ critiques: { type: 'array', items: obj({ head: { type: 'integer', description: 'номер другой головы' }, score: { type: 'integer', minimum: 1, maximum: 10 },
+  point: { type: 'string', description: 'одно конкретное место, в котором голова ошибается (метод, поправка, ширина интервала, семейство вопросов)' }, text: { type: 'string' } },
+  ['head', 'score', 'point', 'text']) }, amendments: AMEND.properties.amendments }, ['critiques', 'amendments'])
+const REVISE = obj({ personal: { type: 'array', items: { type: 'string' }, description: 'новый список личных правил, не больше 4' }, response: { type: 'string' } }, ['personal', 'response'])
 const BALLOT = obj({ ballot: { type: 'array', items: obj({ kind: { type: 'string', enum: ['добавить закон', 'заменить закон', 'удалить закон', 'протокол'] },
-  law_number: { type: 'integer' }, text: { type: 'string' }, summary: { type: 'string' } }, ['kind', 'law_number', 'text', 'summary']) } }, ['ballot'])
+  law_number: { type: 'integer' }, text: { type: 'string' }, summary: { type: 'string' } }, ['kind', 'law_number', 'text', 'summary']) },
+  concentrated: { type: 'array', items: obj({ head: { type: 'integer' }, point: { type: 'string' }, critics: { type: 'integer' } }, ['head', 'point', 'critics']),
+    description: 'головы, на которых сошлась критика: не меньше двух критиков указывают на одно и то же место' } }, ['ballot', 'concentrated'])
 const VOTES = obj({ votes: { type: 'array', items: obj({ n: { type: 'integer' }, vote: { type: 'string', enum: ['за', 'против'] } }, ['n', 'vote']) } }, ['votes'])
 const records = []
 async function call(label, prompt, schema, check) {
@@ -43,17 +49,18 @@ const median = xs => { const s = [...xs].sort((a, b) => a - b); const m = s.leng
 const qtext = qs => qs.map(q => `[${q.id}] ${q.text}`).join('\n')
 const ASK = 'Для каждого вопроса нужна оценка, точный подсчёт не требуется. Для каждого ID верни: estimate — лучшая оценка (число); lo и hi — границы интервала, в который правильный ответ попадает с вероятностью 80 %; note — метод одной фразой.'
 const lawsText = h => h.laws.length ? 'Законы улья, в котором ты работаешь (соблюдай их):\n' + h.laws.map((x, i) => `${i + 1}. ${x}`).join('\n') + '\n\n' : ''
+const persText = (h, k) => (h.personal && h.personal[k] && h.personal[k].length) ? 'Твои личные правила (выработаны после критики коллег):\n' + h.personal[k].map((x, i) => `${i + 1}. ${x}`).join('\n') + '\n\n' : ''
 const protoText = h => `Протокол улья: ${h.roles.length} головы; пересмотр после знакомства с оценками других — ${h.delphi ? 'да' : 'нет'}; итог — ${h.agg === 'callosum' ? 'мозолистое тело' : 'медиана оценок голов (в логарифмах)'}.\n\n`
 
 async function answer(h, qs, tag) {  // улей отвечает на пачку; возвращает итог и ответы голов
   const ids = qs.map(q => q.id)
   const first = await parallel(h.roles.map((role, k) => () => call(`${tag}:h${k + 1}`,
-    `${A.no_tools}\n\n${lawsText(h)}${protoText(h)}${role ? 'Твоя роль в улье: ' + role + '\n\n' : ''}Вопросы:\n${qtext(qs)}\n\n${ASK}`, BATCH, okBatch(ids))))
+    `${A.no_tools}\n\n${lawsText(h)}${protoText(h)}${role ? 'Твоя роль в улье: ' + role + '\n\n' : ''}${persText(h, k)}Вопросы:\n${qtext(qs)}\n\n${ASK}`, BATCH, okBatch(ids))))
   let heads = first
   if (h.delphi && h.roles.length > 1) {
     const show = (k) => first.map((b, j) => j === k || !b ? '' : `Голова ${j + 1}:\n` + (b.items || []).map(x => `[${x.id}] ${x.estimate} [${x.lo}; ${x.hi}] — ${x.note}`).join('\n')).filter(Boolean).join('\n\n')
     heads = await parallel(h.roles.map((role, k) => () => call(`${tag}:h${k + 1}r`,
-      `${A.no_tools}\n\n${lawsText(h)}${protoText(h)}${role ? 'Твоя роль в улье: ' + role + '\n\n' : ''}Твои первые оценки:\n` + (first[k]?.items || []).map(x => `[${x.id}] ${x.estimate} [${x.lo}; ${x.hi}]`).join('\n') +
+      `${A.no_tools}\n\n${lawsText(h)}${protoText(h)}${role ? 'Твоя роль в улье: ' + role + '\n\n' : ''}${persText(h, k)}Твои первые оценки:\n` + (first[k]?.items || []).map(x => `[${x.id}] ${x.estimate} [${x.lo}; ${x.hi}]`).join('\n') +
       `\n\nПервые оценки других голов:\n${show(k)}\n\nПересмотри свои оценки, если доводы других тебя убеждают.\nВопросы:\n${qtext(qs)}\n\n${ASK}`, BATCH, okBatch(ids))))
   }
   const hm = heads.map(b => new Map((b?.items || []).map(x => [x.id, x])))
@@ -81,15 +88,31 @@ function feedback(res) {
 
 async function legislate(h, res, tag, g) {
   const fb = feedback(res)
-  const props = await parallel(h.roles.map((role, k) => () => call(`${tag}:prop${k + 1}`,
-    `${A.no_tools}\n\n${lawsText(h)}${protoText(h)}${role ? 'Твоя роль в улье: ' + role + '\n\n' : ''}Ты — голова улья. Улей только что ответил на вопросы. Вот правда и ваши ответы:\n${fb}\n\n` +
-    `Предложи до двух поправок к законам или протоколу улья, которые сделают будущие ответы точнее на НОВЫХ вопросах того же рода (не подгоняй под эти ответы). ` +
-    `Законов не больше ${A.max_laws}. Поправки к протоколу: «пересмотр вкл», «пересмотр выкл», «итог медиана», «итог мозолистое тело».`, AMEND, r => Array.isArray(r.amendments) ? null : 'формат')))
+  const others = k => res.rows.length ? h.roles.map((_, j) => j === k ? '' : `Голова ${j + 1}:\n` + res.rows.map(r => r.heads[j] ? `[${r.id}] ${+r.heads[j].estimate.toPrecision(5)} [${+r.heads[j].lo.toPrecision(4)}; ${+r.heads[j].hi.toPrecision(4)}] — ${r.heads[j].note}` : `[${r.id}] нет`).join('\n')).filter(Boolean).join('\n\n') : ''
+  const props = await parallel(h.roles.map((role, k) => () => call(`${tag}:crit${k + 1}`,
+    `${A.no_tools}\n\n${lawsText(h)}${protoText(h)}${role ? 'Твоя роль в улье: ' + role + '\n\n' : ''}${persText(h, k)}Ты — голова ${k + 1} улья. Улей только что ответил на вопросы. Вот правда и ответы:\n${fb}\n\n` +
+    `Ответы других голов подробно:\n${others(k)}\n\n` +
+    `1) Оцени каждую другую голову от 1 до 10 и покритикуй её: назови одно конкретное место, где она ошибается или может ошибиться на новых вопросах. ` +
+    `2) Предложи до двух поправок к законам или протоколу улья, которые сделают будущие ответы точнее на НОВЫХ вопросах того же рода (не подгоняй под эти ответы). ` +
+    `Законов не больше ${A.max_laws}. Поправки к протоколу: «пересмотр вкл», «пересмотр выкл», «итог медиана», «итог мозолистое тело».`, CRIT,
+    r => Array.isArray(r.critiques) && Array.isArray(r.amendments) ? null : 'формат')))
+  const critText = props.flatMap((p, k) => (p?.critiques || []).filter(c => c.head !== k + 1).map(c => `Голова ${k + 1} о голове ${c.head}: оценка ${c.score}; место: «${c.point}» — ${c.text}`)).join('\n')
   const all = props.flatMap((p, k) => (p?.amendments || []).slice(0, 2).map(a => `Голова ${k + 1}: ${a.kind}${a.law_number ? ' №' + a.law_number : ''}: «${a.text}» — ${a.why}`)).join('\n')
   const b = await call(`${tag}:ballot`, `${A.no_tools}\n\n${lawsText(h)}${protoText(h)}Ты — мозолистое тело улья. Головы предложили поправки:\n${all || '(нет)'}\n\n` +
-    'Сведи их в бюллетень: объедини совпадающие, убери противоречащие друг другу дубли, не больше 4 пунктов. Сохрани формулировки голов, не добавляй своих.', BALLOT, r => Array.isArray(r.ballot) ? null : 'формат')
+    'Сведи их в бюллетень: объедини совпадающие, убери противоречащие друг другу дубли, не больше 4 пунктов. Сохрани формулировки голов, не добавляй своих.\n\n' +
+    `Критика голов друг о друге:\n${critText || '(нет)'}\n\nОтметь в concentrated каждую голову, на которой сошлась критика: не меньше двух критиков указывают на одно и то же место (по смыслу). Если такого нет — пустой список.`,
+    BALLOT, r => Array.isArray(r.ballot) && Array.isArray(r.concentrated) ? null : 'формат')
   const ballot = (b?.ballot || []).slice(0, 4)
-  if (!ballot.length) return { ballot, adopted: [] }
+  // голова со сгустившейся критикой обязана пересмотреть свои личные правила
+  const conc = (b?.concentrated || []).filter(c => c.head >= 1 && c.head <= h.roles.length && c.critics >= 2)
+  const personal = (h.personal || h.roles.map(() => [])).map(x => [...x])
+  const revisions = await parallel(conc.map(c => () => call(`${tag}:rev${c.head}`,
+    `${A.no_tools}\n\n${lawsText(h)}${persText(h, c.head - 1)}Ты — голова ${c.head} улья. Критика коллег сошлась на одном месте твоей работы: «${c.point}».\n` +
+    `Вся критика о тебе:\n${props.flatMap((p, k) => (p?.critiques || []).filter(x => x.head === c.head && k + 1 !== c.head).map(x => `— оценка ${x.score}; «${x.point}»: ${x.text}`)).join('\n')}\n\n` +
+    `Правда и ответы улья:\n${fb}\n\nИзмени свои личные правила (не больше 4), чтобы исправить это место на НОВЫХ вопросах. Если считаешь критику неверной, объясни это в response и оставь правила как есть.`,
+    REVISE, r => Array.isArray(r.personal) ? null : 'формат').then(r => ({ head: c.head, r }))))
+  for (const x of revisions) if (x?.r?.personal) personal[x.head - 1] = x.r.personal.slice(0, 4)
+  if (!ballot.length) return { proposals: props, ballot, concentrated: conc, revisions, adopted: [], hive: { ...h, personal } }
   const bt = ballot.map((x, i) => `${i + 1}. ${x.kind}${x.law_number ? ' №' + x.law_number : ''}: «${x.text}» (${x.summary})`).join('\n')
   const votes = await parallel(h.roles.map((role, k) => () => call(`${tag}:vote${k + 1}`,
     `${A.no_tools}\n\n${lawsText(h)}${protoText(h)}${role ? 'Твоя роль в улье: ' + role + '\n\n' : ''}Итоги последних ответов улья:\n${fb}\n\nБюллетень поправок:\n${bt}\n\nПроголосуй по каждому пункту «за» или «против». Принимается пункт, за который не меньше двух голов.`,
@@ -102,7 +125,7 @@ async function legislate(h, res, tag, g) {
   const del = new Set(adopted.filter(x => x.kind === 'удалить закон').map(x => x.law_number))
   laws = laws.filter((_, i) => !del.has(i + 1))
   for (const x of adopted) if (x.kind === 'добавить закон' && laws.length < A.max_laws) laws.push(x.text)
-  const nh = { ...h, laws }
+  const nh = { ...h, laws, personal }
   for (const x of adopted) if (x.kind === 'протокол') {
     if (/пересмотр вкл/.test(x.text)) nh.delphi = true
     if (/пересмотр выкл/.test(x.text)) nh.delphi = false
@@ -110,7 +133,7 @@ async function legislate(h, res, tag, g) {
     if (/мозолист/.test(x.text)) nh.agg = 'callosum'
   }
   // потолок бюджета: 3 головы × (1 + пересмотр) + мозолистое тело ≤ 7 вызовов — выполняется всегда
-  return { proposals: props, ballot, votes, adopted, hive: nh }
+  return { proposals: props, ballot, concentrated: conc, revisions, votes, adopted, hive: nh }
 }
 
 const history = {}
