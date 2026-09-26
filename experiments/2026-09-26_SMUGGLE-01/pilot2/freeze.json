@@ -1,0 +1,19 @@
+{
+ "versions": {
+  "clamp_list:S": "5224b22b01d1027528a7c5be8e90dd0cdd586096e10eeebee6ddcbadd33687e4",
+  "clamp_list:H": "7c046787dcd301a339ab27c955a43cef9ea1befcfbdf169328a97df2d24599c5",
+  "longest_run:S": "c8d6d41c38e7d31ac9a21fcef3261bbdd4340718956aeb48b23675bc7c4dfe5e",
+  "longest_run:H": "9d252d53d092b7959d9a2bbc23de4d88e123d79f6f92795c251b764b7597a1f0"
+ },
+ "labels_sha256": "91b59906ba0d7e8e3a77e026727e67868e7f5722f8777c5f9e634a48145bc674",
+ "files": {
+  "sm_corpus.py": "8a2560e2faaf6383d05ae06f67c3880d7f10de05c77b425a8ba0397dbf9dd0f1",
+  "sm_oracle.py": "9fc6e147faef49d5c665905e28818bfd17c3a03ac595d253defd67b6cca67598",
+  "sm_plan.py": "388bfae6e9cf3db85626b3e27b0bd909ed136696e6842b6b9eeed9bf0733bd8e",
+  "sm_analyze.py": "9e89a1b3dd908da3d676247ea2c1f16bd15888ae43d371146045871fe2fc0449",
+  "sm_runner.js": "de786bfe9b2bcb740d27b484701d14b2188cadffa974172c26b4b48498095975"
+ },
+ "base_rate": 0.5,
+ "n": 4,
+ "n_bug": 2
+}
