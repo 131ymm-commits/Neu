@@ -37,8 +37,12 @@ def fixed_sequence(tests, order=('P1', 'P3', 'P2')):
     return out
 
 
-def score_hive(o, qs):
+MISSING = {}
+
+
+def score_hive(o, qs, name=None):
     fin, _ = final_of(o, [q['id'] for q in qs])
+    if name: MISSING[name] = set(final_of.missing)
     return {q['id']: score_q(q['truth'], fin[q['id']]['estimate'], fin[q['id']]['lo'], fin[q['id']]['hi']) for q in qs}
 
 
@@ -46,13 +50,15 @@ def test(path, exclude=()):
     full = J(f'{SECRET}/questions_full.json')
     conf, ctrl = full['test_conf'], full['test_ctrl']
     out = J(path)['out']
-    S = {k: score_hive(o, conf + ctrl) for k, o in out.items()}
+    S = {k: score_hive(o, conf + ctrl, k) for k, o in out.items()}
     IS = lambda k, i: S[k][i]['interval_score']
+    # поправка заседания 6: вопрос, где у любого участника сравнения нет ответа (вызов упал и после повтора), — ничья (d = 0, исключается)
+    miss = lambda ks, i: any(i in MISSING.get(k, ()) for k in ks)
     ids = [q['id'] for q in conf]
     selfs = [k for k in ('A', 'B') if k not in exclude]
-    d1 = [sum(IS(k, i) for k in selfs) / len(selfs) - (IS('F1', i) + IS('F2', i)) / 2 for i in ids] if selfs else []
-    d2 = [(IS('F1', i) + IS('F2', i)) / 2 - IS('S', i) for i in ids]
-    d3 = [sum(IS(k, i) for k in selfs) / len(selfs) - IS('Fp', i) for i in ids] if selfs else []
+    d1 = [0.0 if miss(selfs + ['F1', 'F2'], i) else sum(IS(k, i) for k in selfs) / len(selfs) - (IS('F1', i) + IS('F2', i)) / 2 for i in ids] if selfs else []
+    d2 = [0.0 if miss(['F1', 'F2', 'S'], i) else (IS('F1', i) + IS('F2', i)) / 2 - IS('S', i) for i in ids]
+    d3 = [0.0 if miss(selfs + ['Fp'], i) else sum(IS(k, i) for k in selfs) / len(selfs) - IS('Fp', i) for i in ids] if selfs else []
     tests = dict(P1=sign_test(d1), P2=sign_test(d2), P3=sign_test(d3))
     mean = lambda k, qs: {m: sum(S[k][q['id']][m] for q in qs) / len(qs) for m in ('interval_score', 'ignorance', 'deception', 'width', 'covered')}
     res = dict(decision=fixed_sequence(tests), d1=d1, d2=d2, d3=d3,

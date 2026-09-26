@@ -9,8 +9,8 @@ async function agent(prompt, o) {
   if (P.critiques) return { critiques: [1,2,3].map(h => ({ head: h, score: 1 + (n % 10), point: 'ширина интервала', text: 't' })), amendments: [{ kind: 'добавить закон', law_number: 0, text: 'закон ' + n, why: 'w' }] }
   if (P.personal) return { personal: ['личное ' + n], response: 'ок' }
   if (P.amendments) return { amendments: [{ kind: 'добавить закон', law_number: 0, text: 'закон ' + n, why: 'потому' }, { kind: 'протокол', law_number: 0, text: Math.random() < .5 ? 'пересмотр вкл' : 'итог мозолистое тело', why: 'x' }] }
-  if (P.ballot) return { concentrated: Math.random() < .7 ? [{ head: 1 + (n % 3), point: 'ширина', critics: 2 }] : [], ballot: [{ kind: 'добавить закон', law_number: 0, text: 'закон ' + n, summary: 's' }, { kind: 'протокол', law_number: 0, text: 'пересмотр вкл', summary: 's' }, { kind: 'удалить закон', law_number: 1, text: '', summary: 's' }] }
-  if (P.votes) return { votes: [1, 2, 3].map(i => ({ n: i, vote: Math.random() < .6 ? 'за' : 'против' })) }
+  if (P.ballot) return { concentrated: [1, 2, 3].map(h => ({ head: h, point: 'ширина', critics: 2 })), ballot: [{ kind: 'добавить закон', law_number: 0, text: 'закон ' + n, summary: 's' }, { kind: 'протокол', law_number: 0, text: 'пересмотр вкл', summary: 's' }, { kind: 'протокол', law_number: 0, text: 'итог мозолистое тело', summary: 's' }] }
+  if (P.votes) return { votes: [1, 2, 3].map(i => ({ n: i, vote: 'за' })) }
 }
 const parallel = fs_ => Promise.all(fs_.map(f => f()))
 const phase = () => {}

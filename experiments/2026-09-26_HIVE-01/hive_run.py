@@ -12,6 +12,23 @@ N_GENS, GEN_SEED, TEST_SEED = 5, 1000, 5000
 NO_TOOLS = 'Не используй никакие инструменты и не открывай файлы: оценивай сам, опираясь только на текст ниже.'
 INIT = dict(laws=[SEED_LAWS[0], SEED_LAWS[1], SEED_LAWS[6], SEED_LAWS[8]], roles=ROLES[:3], delphi=False, agg='median', personal=[[], [], []])
 SELF = ['A', 'B']
+CAP = 200                      # потолок вызовов основного прогона (технические повторы не считаются)
+WORST_GEN = 2 * 7 + 3 + 3 + 2 * (3 + 1 + 1 + 3)   # ответ: A, B до 7 (пересмотр + мозолистое тело), F, F+ по 3; законодательство A, B по 8
+TEST_RESERVE = 2 * 7 + 3 + 3 + 3 + 1               # A, B до 7; F+ 3; F дважды по 3; S 1
+
+
+def used_calls(D):
+    """Счётчик по сырым журналам: число вызовов без технических повторов."""
+    n = 0
+    for f in sorted(os.listdir(D)):
+        if f.startswith(('raw_ans', 'raw_leg')) and f.endswith('.json'):
+            n += sum(1 for r in J(f'{D}/{f}')['records'] if not r.get('retry'))
+    return n
+
+
+def can_start_gen(D):
+    u = used_calls(D)
+    return u + WORST_GEN + TEST_RESERVE <= CAP, u
 
 
 def J(p, x=None):
@@ -48,6 +65,9 @@ def bundle(D, tag, args):
 
 
 def ans(D, g):
+    ok, u = can_start_gen(D)
+    if not ok:
+        print(f'СТОП: использовано {u}, худший случай поколения {WORST_GEN} + резерв теста {TEST_RESERVE} > {CAP}; поколение {g} не начинается'); sys.exit(3)
     st = J(f'{D}/state.json'); qs = J(f'{D}/questions_public.json')['gens'][g]
     hv = {k: st['hives'][k] for k in ('A', 'B', 'Fp', 'F')}
     dg = {k: (st['digest'] if k in ('A', 'B', 'Fp') else '') for k in hv}
@@ -60,14 +80,16 @@ def final_of(o, ids):
     hm = [{x['id']: x for x in (b or {}).get('items', [])} for b in heads]
     cal = {x['id']: x for x in ((o.get('cal') or {}).get('items') or [])}
     L = lambda v: math.log(max(v, 1e-9))
-    out = {}
+    out = {}; missing = set()
     for i in ids:
         x = cal.get(i)
         if x is None:
             xs = [m[i] for m in hm if i in m]
+            if not xs: missing.add(i)
             x = dict(estimate=math.exp(statistics.median(L(y['estimate']) for y in xs)), lo=math.exp(statistics.median(L(y['lo']) for y in xs)),
                      hi=math.exp(statistics.median(L(y['hi']) for y in xs))) if xs else dict(estimate=1, lo=1, hi=1)
         out[i] = clean(x)
+    final_of.missing = missing
     return out, hm
 
 

@@ -1,0 +1,38 @@
+{
+ "questions_sha256": "6d1b139b199b4cef9a100f9359179cc184e990ab630421a369190b0bded68911",
+ "test_ids": [
+  "COL3-5000",
+  "COL3-5001",
+  "COL3-5002",
+  "COL3-5003",
+  "COL3-5004",
+  "PART-5000",
+  "PART-5001",
+  "PART-5002",
+  "PART-5003",
+  "PART-5004",
+  "TWIN-5000",
+  "TWIN-5001",
+  "TWIN-5002",
+  "TWIN-5003",
+  "TWIN-5004",
+  "SUB5-5000",
+  "SUB5-5001",
+  "SUB5-5002",
+  "SUB5-5003",
+  "SUB5-5004",
+  "COLLATZ-5000",
+  "COLLATZ-5001",
+  "COLLATZ-5002",
+  "COLLATZ-5003"
+ ],
+ "files": {
+  "hive_q.py": "04c7c371e1a822201644628c69510563870d2f33db530b270fa33d93bf7bfcd7",
+  "hive_core.py": "dd30a43e98db1dbd03cd971dffca935373b3e2f9931031dc83e7de1894a29a2f",
+  "hive_step.js": "c712ddf80b2aec72bb2f0d54bc5f5064ac11fe74d5b29b68764eefa27fd30d08",
+  "hive_run.py": "ee7e369c623740ddfa87edf69ce86575e3cf88175ad6b6ba71bb244218e4497b",
+  "hive_analyze.py": "240eb354a31468e4b74df0164b616222ec348832a347ec4ab324659846c40c45",
+  "verify_truth.py": "0cd28cec7eac0460110a1ea26945f04132b6032a263f55ad1d344e4324f1aaed"
+ },
+ "temperature": "по умолчанию, не контролируется"
+}

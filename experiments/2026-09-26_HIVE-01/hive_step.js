@@ -35,7 +35,13 @@ async function call(label, prompt, schema, check) {
   return last
 }
 // Код-фильтр предметного содержания (решение совета): цифры, формулы, названия семейств, привязанные методы.
-const SUBJ = /[0-9^≈√π∑∫]|\bln\b|\blog|\bexp|sqrt|раскраск|разбиени|слагаем|близнец|подмножеств|коллатц|граф|прост(ое|ых|ые|ым)\b|харди|литтлвуд|рамануджан|асимптотик|сумм[аы] цифр|решет|нормальн(ое|ым) приближ|пуассон|кэли|эйлер/i
+const SUBJ = new RegExp([
+  '[0-9^≈√π∑∫]', '\\bln\\b', '\\blog', '\\bexp', 'sqrt', 'раскраск', 'разбиени', 'слагаем', 'близнец', 'подмножеств', 'коллатц', 'граф', 'прост(ое|ых|ые|ым)\\b',
+  'харди', 'литтлвуд', 'рамануджан', 'асимптотик', 'сумм[аы] цифр', 'решет', 'нормальн(ое|ым) приближ', 'пуассон', 'кэли', 'эйлер',
+  // поправка заседания 6: числительные словами и описательные формулы
+  '\\bнол[ьяю]', '\\bнул[ьяю]', '\\bодин\\b', '\\bодн[аоиу]\\b', '\\bдв[ау]\\b', '\\bдвух\\b', '\\bтр[иёе]х?\\b', '\\bчетыр', '\\bпят[ьи]', '\\bшест[ьи]', '\\bсем[ьи]\\b',
+  '\\bвосем', '\\bдевят', '\\bдесят', 'надцат', 'дцат', '\\bсорок', '\\bсто\\b', '\\bсот', 'тысяч', 'миллион', 'миллиард', 'половин', '\\bтрет[ьи]', 'вдвое', 'втрое', 'полтор',
+  'десяток', 'порядка', 'квадрат', '\\bкуб', 'логарифм', 'экспонент', 'корен', 'корн[яе]'].join('|'), 'i')
 const subjective = t => SUBJ.test(String(t || ''))
 const okBatch = ids => r => { const m = new Map((r.items || []).map(x => [x.id, x]))
   return ids.every(i => { const x = m.get(i); return x && [x.estimate, x.lo, x.hi].every(v => typeof v === 'number' && isFinite(v)) }) ? null : 'формат пачки' }
@@ -83,7 +89,9 @@ async function legislate(name, h, fb, others) {
     `Критика голов друг о друге:\n${critText || '(нет)'}\n\nОтметь в concentrated каждую голову, на которой сошлась критика: не меньше двух критиков указывают на одно и то же место (по смыслу). Иначе — пустой список.`,
     BALLOT, r => Array.isArray(r.ballot) && Array.isArray(r.concentrated) ? null : 'формат')
   const ballot = (b?.ballot || []).filter(x => x.kind === 'протокол' || !subjective(x.text)).slice(0, 4)
-  const conc = (b?.concentrated || []).filter(c => c.head >= 1 && c.head <= n && c.critics >= 2)
+  const concAll = (b?.concentrated || []).filter(c => c.head >= 1 && c.head <= n && c.critics >= 2)
+  // поправка заседания 6: за поколение пересматривает правила не больше одной головы — с наибольшим числом совпавших критиков, при равенстве меньший номер
+  const conc = concAll.slice().sort((x, y) => y.critics - x.critics || x.head - y.head).slice(0, 1)
   const personal = (h.personal || h.roles.map(() => [])).map(x => [...x])
   const revisions = await parallel(conc.map(c => () => call(`${name}:rev${c.head}`,
     `${A.no_tools}\n\n${lawsText(h)}${persText(h, c.head - 1)}Ты — голова ${c.head} улья. Критика коллег сошлась на одном месте твоей работы: «${c.point}».\nВся критика о тебе:\n` +
@@ -115,7 +123,7 @@ async function legislate(name, h, fb, others) {
     if (/итог медиана/.test(x.text)) nh.agg = 'median'
     if (/мозолист/.test(x.text)) nh.agg = 'callosum'
   }
-  return { proposals: props, rejected, ballot, concentrated: conc, revisions, rejectedPersonal, votes, adopted, hive: nh }
+  return { proposals: props, rejected, ballot, concentrated: concAll, revising: conc, revisions, rejectedPersonal, votes, adopted, hive: nh }
 }
 
 let out = {}
