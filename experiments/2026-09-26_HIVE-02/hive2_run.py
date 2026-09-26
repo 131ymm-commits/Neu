@@ -1,9 +1,11 @@
-# HIVE-02: эволюция ульев со смертью (по слову человека: «эволюция и смерть как её двигатель»).
-# Популяция 6 ульев (3 головы, медиана, без пересмотра — эволюционируют только законы). В каждом поколении все отвечают
+# HIVE-02: природная эволюция ульев (слова человека: «эволюция и смерть как её двигатель»; «сначала много ресурса,
+# ульи растут и делятся, потом кратное падение, и выживают лучшие»).
+# Улей = 3 головы, медиана, без пересмотра — эволюционируют только законы. В каждом поколении все живые ульи отвечают
 # на одни и те же 12 свежих вопросов (по 3 из COL3, PART, TWIN, SUB5; Коллатца нет — это чистый шум).
-# Смерть: 2 худших по среднему интервальному баллу. Рождение: потомок 1-го места (мутация) и потомок 2-го места
-# (скрещивание с 1-м + мутация). Выжившие законы не меняют. Правда — вне репозитория.
-#   init | ans <g> | collect_ans <g> <out> | birth <g> | collect_birth <g> <out> | test | collect_test <out>
+# Изобилие: каждый улей делится — остаётся сам и рождает потомка (его законы с мутацией). Численность 3 → 6 → 12.
+# Падение: ёмкость среды падает вчетверо (12 → 3); выживают 3 лучших по баллу этого поколения. Цикл повторяется.
+# Выжившие своих законов не меняют. Правда — вне репозитория.
+#   init | ans <g> | collect_ans <g> <out> | next <g> (падение или сборка деления) | collect_birth <g> <out> | test
 import json, os, sys, math, random, hashlib, statistics
 from hive_q import make
 from hive_core import SEED_LAWS, ROLES, score_q
@@ -11,7 +13,7 @@ from hive_core import SEED_LAWS, ROLES, score_q
 HERE = os.path.dirname(os.path.abspath(__file__)); RUN = os.environ.get('HIVE2_RUN', 'run'); D = os.path.join(HERE, RUN)
 SECRET = f'/root/hive2_secret/{RUN}'
 FAMS = ['COL3', 'PART', 'TWIN', 'SUB5']
-POP, KILL, N_GENS, PER_FAM = 6, 2, 6, 3
+FOUNDERS, BOOM_MAX, BUST_KEEP, N_GENS, PER_FAM = 3, 12, 3, 6, 3
 GEN_SEED, TEST_SEED, INIT_SEED = int(os.environ.get('HIVE2_GEN_SEED', 20000)), 25000, 2609291
 NO_TOOLS = 'Не используй никакие инструменты и не открывай файлы: оценивай сам, опираясь только на текст ниже.'
 
@@ -27,13 +29,13 @@ def hive(laws): return dict(laws=list(laws), roles=ROLES[:3], delphi=False, agg=
 def init():
     os.makedirs(D, exist_ok=True); os.makedirs(SECRET, exist_ok=True)
     rng = random.Random(INIT_SEED)
-    pop = {f'H{i + 1}': dict(hive=hive(rng.sample(SEED_LAWS, rng.randint(3, 5))), born=0, parents=[]) for i in range(POP)}
+    pop = {f'H{i + 1}': dict(hive=hive(rng.sample(SEED_LAWS, rng.randint(3, 5))), born=0, parents=[]) for i in range(FOUNDERS)}
     gens = [[dict(make(f, GEN_SEED + 100 * g + i), id=f'{f}-{GEN_SEED + 100 * g + i}') for f in FAMS for i in range(PER_FAM)] for g in range(N_GENS)]
     test = [dict(make(f, TEST_SEED + i), id=f'{f}-{TEST_SEED + i}') for f in FAMS for i in range(5)]
     J(f'{SECRET}/questions_full.json', dict(gens=gens, test=test))
     pub = lambda qs: [dict(id=q['id'], text=q['text']) for q in qs]
     J(f'{D}/questions_public.json', dict(gens=[pub(g) for g in gens], test=pub(test)))
-    J(f'{D}/state.json', dict(g=0, pop=pop, next_id=POP + 1, founders={k: v['hive']['laws'] for k, v in pop.items()}, graveyard=[], history=[]))
+    J(f'{D}/state.json', dict(g=0, pop=pop, next_id=FOUNDERS + 1, founders={k: v['hive']['laws'] for k, v in pop.items()}, graveyard=[], history=[]))
     J(f'{D}/freeze.json', dict(questions_sha256=hashlib.sha256(json.dumps(dict(gens=gens, test=test), ensure_ascii=False, sort_keys=True).encode()).hexdigest(),
                                files={f: hashlib.sha256(open(os.path.join(HERE, f), 'rb').read()).hexdigest() for f in ('hive_q.py', 'hive_core.py', 'hive2_step.js', 'hive2_run.py', 'hive2_analyze.py')},
                                temperature='по умолчанию, не контролируется'))
@@ -89,25 +91,33 @@ def collect_ans(g, path):
     print('поколение', g, ' '.join(f"{k}:{res[k]['IS']:.3f}" for k in rank))
 
 
-def birth(g):
+def next_step(g):
+    """После поколения g: падение (если численность достигла ёмкости изобилия) или деление всех ульев."""
     st = J(f'{D}/state.json'); res = J(f'{D}/res{g}.json')
     rank = sorted(res, key=lambda k: res[k]['IS'])
-    b1, b2 = rank[0], rank[1]
-    children = {f'H{st["next_id"]}': dict(parent=st['pop'][b1]['hive'], feedback=fmt_rows(res[b1]['rows']), parents=[b1]),
-                f'H{st["next_id"] + 1}': dict(parent=st['pop'][b2]['hive'], partner=st['pop'][b1]['hive'], feedback=fmt_rows(res[b2]['rows']), parents=[b2, b1])}
-    J(f'{D}/birth{g}_plan.json', dict(rank=rank, dead=rank[-KILL:], children={k: v['parents'] for k, v in children.items()}))
-    bundle(f'birth{g}', dict(mode='birth', children={k: {kk: vv for kk, vv in v.items() if kk != 'parents'} for k, v in children.items()}, no_tools=NO_TOOLS))
+    if len(st['pop']) >= BOOM_MAX:
+        dead = rank[BUST_KEEP:]
+        for k in dead:
+            st['graveyard'].append(dict(id=k, died=g, laws=st['pop'][k]['hive']['laws'], born=st['pop'][k]['born'], parents=st['pop'][k]['parents'])); del st['pop'][k]
+        st['g'] = g + 1; st.setdefault('events', []).append(dict(g=g, kind='падение', survivors=rank[:BUST_KEEP], dead=dead))
+        J(f'{D}/state.json', st)
+        print('ПАДЕНИЕ после поколения', g, ': выжили', rank[:BUST_KEEP], '; умерли', len(dead)); return
+    children = {}
+    for i, k in enumerate(rank):
+        children[f'H{st["next_id"] + i}'] = dict(parent=st['pop'][k]['hive'], feedback=fmt_rows(res[k]['rows']), parents=[k])
+    J(f'{D}/birth{g}_plan.json', dict(rank=rank, dead=[], children={c: v['parents'] for c, v in children.items()}))
+    bundle(f'birth{g}', dict(mode='birth', children={c: {kk: vv for kk, vv in v.items() if kk != 'parents'} for c, v in children.items()}, no_tools=NO_TOOLS))
+    print('ИЗОБИЛИЕ после поколения', g, ': делятся все', len(children), 'ульев')
 
 
 def collect_birth(g, path):
     out = J(path); J(f'{D}/raw_birth{g}.json', out); st = J(f'{D}/state.json'); plan = J(f'{D}/birth{g}_plan.json')
-    for k in plan['dead']:
-        st['graveyard'].append(dict(id=k, died=g, laws=st['pop'][k]['hive']['laws'], born=st['pop'][k]['born'], parents=st['pop'][k]['parents'])); del st['pop'][k]
     for k, parents in plan['children'].items():
         st['pop'][k] = dict(hive=hive(out['out'][k]['laws']), born=g + 1, parents=parents, rejected=out['out'][k].get('rejected', []))
-    st['next_id'] += 2; st['g'] = g + 1
+    st['next_id'] += len(plan['children']); st['g'] = g + 1
+    st.setdefault('events', []).append(dict(g=g, kind='деление', children=plan['children']))
     J(f'{D}/state.json', st)
-    print('умерли', plan['dead'], '; родились', {k: v for k, v in plan['children'].items()}, '; популяция', list(st['pop']))
+    print('родились', len(plan['children']), '; популяция', len(st['pop']))
 
 
 def test():
@@ -130,6 +140,6 @@ if __name__ == '__main__':
     if c == 'init': init()
     elif c == 'ans': ans(int(sys.argv[2]))
     elif c == 'collect_ans': collect_ans(int(sys.argv[2]), sys.argv[3])
-    elif c == 'birth': birth(int(sys.argv[2]))
+    elif c == 'next': next_step(int(sys.argv[2]))
     elif c == 'collect_birth': collect_birth(int(sys.argv[2]), sys.argv[3])
     elif c == 'test': test()
