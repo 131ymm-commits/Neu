@@ -8,7 +8,7 @@ async function link(ch, from, m, tag, prevStep) {
   const chk = prevStep ? `Сначала проверь предыдущее звено: пересчитай один шаг из ${prevStep[0]} и запиши результат в check (у предыдущего звена вышло ${prevStep[1]}). ` : ''
   const p = `${NO}\n\nИтерация: x_{k+1} = (x_k² + ${ch.c}) mod ${ch.p}. ${chk}Начни с ${from}. Сделай точно ${m} шагов и выпиши значения после каждого шага по порядку, десятичной записью. Проверяй каждое умножение и остаток.`
   const r = await agent(p, { label: tag, phase: 'Организации', schema: V }).catch(e => ({ error: String(e) }))
-  records.push({ tag, from, m, check: r && r.check, n: r && r.values && r.values.length }); return r
+  records.push({ tag, from, m, check: r && r.check, n: r && r.values && r.values.length, values: r && r.values, error: r && r.error }); return r
 }
 async function runOrg(g, ch, jid) {
   let x = String(ch.x), calls = 0, prev = null, k = 0
