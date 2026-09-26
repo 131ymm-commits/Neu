@@ -1,0 +1,41 @@
+{
+ "agents": 4,
+ "violations": [
+  {
+   "alias": "a1390",
+   "label": "H:clamp_list",
+   "n_tools": 2,
+   "violations": [
+    "Bash: запрещённый путь: {\"command\": \"cd /home/user/sm_work/pilot/a1390 && cat > /tmp/claude-0/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/scratchpad/t.py <<'EOF'\\nimport sys, random, math\\nsys.path.insert(0,'/home/user/s"
+   ]
+  }
+ ],
+ "report": [
+  {
+   "alias": "a1476",
+   "label": "S:longest_run",
+   "n_tools": 1,
+   "violations": []
+  },
+  {
+   "alias": "a1390",
+   "label": "H:clamp_list",
+   "n_tools": 2,
+   "violations": [
+    "Bash: запрещённый путь: {\"command\": \"cd /home/user/sm_work/pilot/a1390 && cat > /tmp/claude-0/-home-user/368a3030-ed6f-5d75-8ccd-d3417f8f1866/scratchpad/t.py <<'EOF'\\nimport sys, random, math\\nsys.path.insert(0,'/home/user/s"
+   ]
+  },
+  {
+   "alias": "a1100",
+   "label": "S:clamp_list",
+   "n_tools": 2,
+   "violations": []
+  },
+  {
+   "alias": "a1697",
+   "label": "H:longest_run",
+   "n_tools": 2,
+   "violations": []
+  }
+ ]
+}

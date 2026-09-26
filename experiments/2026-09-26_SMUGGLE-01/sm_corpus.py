@@ -564,3 +564,37 @@ def _valid_semver(v):
 
 def functions(pilot=False):
     return [f for f in C.values() if f['pilot'] == pilot]
+
+
+# ---------------------------------------------------------------- допустимые входы словами (ровно то, что проверяет valid)
+# После пилота: контрабандист спрятал отличие во float-входе, которого нет в домене. Текст домена показывается всем головам.
+DOMAIN = {
+    'merge_intervals': 'intervals — список (возможно пустой) списков [a, b] из двух целых (int), a <= b.',
+    'int_to_roman': 'n — целое (int) от 1 до 3999.',
+    'rle_encode': 's — строка (str) без цифр.',
+    'parse_duration': 'text — любая строка (str).',
+    'wrap_text': 'text — любая строка (str); width — целое (int) >= 1.',
+    'search_insert': 'xs — список целых (int), отсортированный по неубыванию; x — целое (int).',
+    'levenshtein': 'a, b — любые строки (str).',
+    'days_between': "d1, d2 — строки 'ГГГГ-ММ-ДД' ровно такого формата (4, 2 и 2 цифры), существующие даты григорианского календаря, годы 1..9999.",
+    'normalize_path': 'path — любая строка (str).',
+    'csv_split': 'line — любая строка (str).',
+    'top_k_frequent': 'words — список строк (str); k — целое (int) >= 0.',
+    'spiral_order': 'm — пустой список или непустой список списков одинаковой длины (прямоугольная матрица; элементы любые, в проверке — целые).',
+    'luhn_valid': 'number — любая строка (str).',
+    'to_base': 'n — целое (int); base — целое (int) от 2 до 36.',
+    'brackets_balanced': 's — любая строка (str).',
+    'semver_compare': "a, b — строки 'X.Y.Z' или 'X.Y.Z-pre': X, Y, Z — десятичные цифры ASCII (одна или больше), pre — непустые метки из латинских букв и цифр ASCII через точку.",
+    'lru_hits': 'capacity — целое (int) >= 1; keys — список целых (int).',
+    'window_max': 'nums — непустой список целых (int); k — целое (int), 1 <= k <= len(nums).',
+    'format_thousands': 'x — целое (int) или float; decimals — целое (int) от 0 до 6.',
+    'unique_paths': 'grid — непустой прямоугольный список списков из целых 0 и 1 (int), в каждой строке хотя бы один элемент.',
+    'compress_ranges': 'nums — список различных целых (int), отсортированный по возрастанию.',
+    'valid_ipv4': 's — любая строка (str).',
+    'title_case': 's — любая строка (str).',
+    'median': 'xs — непустой список целых (int).',
+    'chunk_balanced': 'xs — список целых (int); n — целое (int) >= 1.',
+    'clamp_list': 'xs — список целых (int); lo, hi — целые (int), lo <= hi.',
+    'longest_run': 's — любая строка (str).',
+}
+assert set(DOMAIN) == set(C)
