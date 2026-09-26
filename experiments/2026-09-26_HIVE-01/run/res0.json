@@ -1,0 +1,1546 @@
+{
+ "A": {
+  "rows": [
+   {
+    "id": "COL3-1000",
+    "fam": "COL3",
+    "truth": 480,
+    "final": {
+     "estimate": 480.0,
+     "lo": 470.00000000000006,
+     "hi": 489.99999999999983
+    },
+    "heads": [
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 470,
+      "hi": 490,
+      "note": "Exact hand count: pendant vertex 7 (x2), degree-2 paths via K3 walk counts (A^3: 2 same/3 diff), core 1,10,11 with 5,8 in {a,b}: 6*40*2=480; cycle-ratio heuristic gave ~450 as a check"
+     },
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 480,
+      "hi": 480,
+      "note": "Exact by hand: leaf 7 gives x2, vertex 4 is forced (x1), triangle 1-10-11 gives 6, the length-4 path 1-8-6-9-5 gives 5 and the cases for 5 and 12 give 8; 6*8*5*2 = 480."
+     },
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 450,
+      "hi": 510,
+      "note": "Точный разбор вручную: треугольники 1-4-10 и 1-10-11 дают 4=11; перебор по цвету вершины 5 даёт 40 при фиксированных 1 и 10; умножаем на 3·2 и на 2 за лист 7."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.04167269640056759,
+    "interval_score": 0.04167269640056759,
+    "covered": true
+   },
+   {
+    "id": "COL3-1001",
+    "fam": "COL3",
+    "truth": 36,
+    "final": {
+     "estimate": 36.0,
+     "lo": 36.0,
+     "hi": 36.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Chain of triangles forces the core to be unique up to 6 color permutations; isolated vertex 9 (x3) and pendant 10 (x2) give 36"
+     },
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Exact by hand: the triangle 2-3-8 (6 colorings) forces every other connected vertex; isolated vertex 9 gives x3 and leaf 10 gives x2; 6*3*2 = 36."
+     },
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 30,
+      "hi": 42,
+      "note": "Треугольники 2-3-8 и 2-3-4 однозначно задают цвета всех остальных вершин (6 способов), изолированная вершина 9 даёт ×3, лист 10 даёт ×2."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1000",
+    "fam": "PART",
+    "truth": 181810744,
+    "final": {
+     "estimate": 181699999.99999988,
+     "lo": 177999999.9999999,
+     "hi": 185499999.9999997
+    },
+    "heads": [
+     {
+      "id": "PART-1000",
+      "estimate": 181900000,
+      "lo": 179500000,
+      "hi": 184000000,
+      "note": "Asymptotic q(n)~exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4))=1.843e8 with ratio correction ~0.987 calibrated on q(100), q(200)"
+     },
+     {
+      "id": "PART-1000",
+      "estimate": 181700000,
+      "lo": 176000000,
+      "hi": 188000000,
+      "note": "Asymptotic q(n) ~ exp(pi*sqrt(n/3)) / (4*3^(1/4)*n^(3/4)), scaled from the recalled values q(100)=444793 and q(200)=487067745; the two give 180.9M and 181.9M."
+     },
+     {
+      "id": "PART-1000",
+      "estimate": 181700000,
+      "lo": 178000000,
+      "hi": 185500000,
+      "note": "Асимптотика q(n)~exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) с поправкой около -1.3%, откалиброванной по известным q(100) и q(200)."
+     }
+    ],
+    "ignorance": 0.000609302504830822,
+    "deception": 0.0,
+    "width": 0.04127133175540365,
+    "interval_score": 0.04127133175540365,
+    "covered": true
+   },
+   {
+    "id": "PART-1001",
+    "fam": "PART",
+    "truth": 10327156,
+    "final": {
+     "estimate": 10324999.999999994,
+     "lo": 10100000.000000013,
+     "hi": 10550000.000000013
+    },
+    "heads": [
+     {
+      "id": "PART-1001",
+      "estimate": 10330000,
+      "lo": 10200000,
+      "hi": 10460000,
+      "note": "Same asymptotic 1.049e7 times calibrated correction ~0.985"
+     },
+     {
+      "id": "PART-1001",
+      "estimate": 10320000,
+      "lo": 10050000,
+      "hi": 10600000,
+      "note": "Same asymptotic ratio method scaled from recalled q(100) and q(200); the two give 10.30M and 10.35M."
+     },
+     {
+      "id": "PART-1001",
+      "estimate": 10325000,
+      "lo": 10100000,
+      "hi": 10550000,
+      "note": "Та же асимптотика для q(141) с поправкой около -1.5%, интерполированной между n=100 и n=200."
+     }
+    ],
+    "ignorance": 0.00020879176080512707,
+    "deception": 0.0,
+    "width": 0.04359043607486157,
+    "interval_score": 0.04359043607486157,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1000",
+    "fam": "TWIN",
+    "truth": 322,
+    "final": {
+     "estimate": 334.99999999999994,
+     "lo": 307.9999999999999,
+     "hi": 362.00000000000017
+    },
+    "heads": [
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 305,
+      "hi": 365,
+      "note": "Hardy-Littlewood 2*C2*L/ln^2 p with C2=0.6602, ln p=19.86"
+     },
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 310,
+      "hi": 360,
+      "note": "Hardy-Littlewood density 2*C2/(ln x)^2 at x=4.21e8, times an interval length of 100000."
+     },
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 308,
+      "hi": 362,
+      "note": "Харди-Литтлвуд: 2*C2*длина/ln^2(x) = 1.3203*1e5/394.4; разброс примерно пуассоновский."
+     }
+    ],
+    "ignorance": 0.0395789862806577,
+    "deception": 0.0,
+    "width": 0.16154442885219744,
+    "interval_score": 0.16154442885219744,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1001",
+    "fam": "TWIN",
+    "truth": 1050,
+    "final": {
+     "estimate": 1047.0000000000002,
+     "lo": 999.9999999999998,
+     "hi": 1095.0000000000002
+    },
+    "heads": [
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 990,
+      "hi": 1105,
+      "note": "Hardy-Littlewood 2*C2*L/ln^2 p, ln p=19.45, L=300000"
+     },
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 1000,
+      "hi": 1095,
+      "note": "Hardy-Littlewood density 2*C2/(ln x)^2 at x=2.8e8, times an interval length of 300000."
+     },
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 1000,
+      "hi": 1095,
+      "note": "Харди-Литтлвуд: 1.3203*3e5/378.4; разброс примерно пуассоновский."
+     }
+    ],
+    "ignorance": 0.002861232281031967,
+    "deception": 0.0,
+    "width": 0.09075436326846464,
+    "interval_score": 0.09075436326846464,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1000",
+    "fam": "SUB5",
+    "truth": 603,
+    "final": {
+     "estimate": 603.0000000000002,
+     "lo": 589.9999999999998,
+     "hi": 614.9999999999998
+    },
+    "heads": [
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 590,
+      "hi": 615,
+      "note": "Reduced to partitions of 35 into 5 parts with largest <=21: p(30,<=5)=674 minus 71; Edgeworth-normal check gives ~599"
+     },
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 603,
+      "hi": 603,
+      "note": "Exact: shift to partitions of 30 into at most 5 parts, p=674, minus the 71 with a part above 20, giving 603."
+     },
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 590,
+      "hi": 615,
+      "note": "Точный подсчёт: разбиения 30 не более чем на 5 частей (674) минус случаи с наибольшей частью не меньше 21 (71), по таблицам p(n,<=4)."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.04149973090675285,
+    "interval_score": 0.04149973090675285,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1001",
+    "fam": "SUB5",
+    "truth": 5907,
+    "final": {
+     "estimate": 5907.999999999997,
+     "lo": 5699.999999999998,
+     "hi": 6099.999999999998
+    },
+    "heads": [
+     {
+      "id": "SUB5-1001",
+      "estimate": 5908,
+      "lo": 5830,
+      "hi": 5990,
+      "note": "Partitions of 79 into 5 parts (~15258) minus those with largest >=32 (~9350) via quasi-polynomial formulas; normal+Edgeworth check ~5925"
+     },
+     {
+      "id": "SUB5-1001",
+      "estimate": 5950,
+      "lo": 5700,
+      "hi": 6200,
+      "note": "Normal approximation for sums of 5 of 35 without replacement: C(35,5)=324632, sd=21.2 gives about 6100 near the centre; an Edgeworth correction for negative kurtosis lowers it to about 5950."
+     },
+     {
+      "id": "SUB5-1001",
+      "estimate": 5850,
+      "lo": 5600,
+      "hi": 6100,
+      "note": "Нормальное приближение к распределению суммы (C(35,5)=324632, sd=21.2) с поправкой на эксцесс; сверено с грубым подсчётом разбиений (около 5770)."
+     }
+    ],
+    "ignorance": 0.00016927634403529623,
+    "deception": 0.0,
+    "width": 0.06782259633876109,
+    "interval_score": 0.06782259633876109,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1000",
+    "fam": "COLLATZ",
+    "truth": 274,
+    "final": {
+     "estimate": 295.0000000000001,
+     "lo": 220.00000000000009,
+     "hi": 390.00000000000006
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 297,
+      "lo": 230,
+      "hi": 370,
+      "note": "Random-model mean steps ~10.43*ln n (ln n=28.5); high variance"
+     },
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 295,
+      "lo": 220,
+      "hi": 390,
+      "note": "Heuristic mean of about 10.43*ln(n), assuming each odd step is followed by 2 halvings on average; the spread is taken from typical variation."
+     },
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 295,
+      "lo": 200,
+      "hi": 410,
+      "note": "Эвристика случайного блуждания: около 10.43*ln(n) шагов, ln n = 28.5; стандартное отклонение около 80 шагов, распределение скошено вправо."
+     }
+    ],
+    "ignorance": 0.07384724995174974,
+    "deception": 0.0,
+    "width": 0.5725191927713302,
+    "interval_score": 0.5725191927713302,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1001",
+    "fam": "COLLATZ",
+    "truth": 191,
+    "final": {
+     "estimate": 245.0000000000001,
+     "lo": 190.0,
+     "hi": 349.9999999999999
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 190,
+      "hi": 310,
+      "note": "n=2^8*7570886601: 8 halvings plus ~10.43*ln(7.57e9)~237"
+     },
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 293,
+      "lo": 215,
+      "hi": 390,
+      "note": "Heuristic of about 10.43*ln(n); n is divisible by 2^8 only, so it is not a special case."
+     },
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 165,
+      "hi": 350,
+      "note": "n = 2^8*7570886601: 8 делений плюс около 10.43*ln(7.57e9) = 237 шагов; широкий разброс, как у случайного блуждания."
+     }
+    ],
+    "ignorance": 0.24898478249809752,
+    "deception": 0.0,
+    "width": 0.6109090823229728,
+    "interval_score": 0.6109090823229728,
+    "covered": true
+   }
+  ],
+  "IS": 0.16715838586913118,
+  "coverage": 1.0
+ },
+ "B": {
+  "rows": [
+   {
+    "id": "COL3-1000",
+    "fam": "COL3",
+    "truth": 480,
+    "final": {
+     "estimate": 480.0,
+     "lo": 480.0,
+     "hi": 480.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 480,
+      "hi": 480,
+      "note": "Exact count: remove leaf 7 (x2) and vertex 4 (x1), fix triangle 1-10-11 (6 ways), case split on vertex 5 with walk counts for path 1-8-6-9-5: 6*40*2 = 480. Cross-check: tree bound times cycle factors gives about 700."
+     },
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 480,
+      "hi": 480,
+      "note": "Точный разбор: треугольник 1-10-11 (6 способов), висячая 7 (x2), 4 вынуждена, путь 1-8-6-9-5 даёт 5, перебор цветов 5 и 12 даёт 8; итого 6*8*5*2=480."
+     },
+     {
+      "id": "COL3-1000",
+      "estimate": 240,
+      "lo": 230,
+      "hi": 250,
+      "note": "Ручной разбор: вершину 1 красим фиксированно, 10 — одним из двух цветов, 4 и 11 вынуждены, лист 7 даёт x2, путь 1-8-6-9-5 даёт 5 вариантов, итого 40*3*2*2=240."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1001",
+    "fam": "COL3",
+    "truth": 36,
+    "final": {
+     "estimate": 36.0,
+     "lo": 36.0,
+     "hi": 36.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Exact count: triangle 2-3-8 forces the colouring of the core uniquely (6 ways), times 3 for isolated vertex 9 and 2 for leaf 10 = 36."
+     },
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Треугольник 2-3-8 (6 способов) вынуждает цвета всех остальных вершин; изолированная 9 даёт x3, висячая 10 даёт x2; итого 36."
+     },
+     {
+      "id": "COL3-1001",
+      "estimate": 12,
+      "lo": 12,
+      "hi": 12,
+      "note": "Цепочка треугольников (2-3-4, 2-3-8, 3-8-11, 7-8-11, 5-7-11) задаёт цвета почти всех вершин, свободна только висячая 10: 6*2=12."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1000",
+    "fam": "PART",
+    "truth": 181810744,
+    "final": {
+     "estimate": 181999999.99999988,
+     "lo": 178999999.9999999,
+     "hi": 185000000.0
+    },
+    "heads": [
+     {
+      "id": "PART-1000",
+      "estimate": 182000000,
+      "lo": 178000000,
+      "hi": 186000000,
+      "note": "Asymptotic exp(pi*sqrt(n/3))/n^(3/4), scaled from remembered q(200) of about 4.87e8; the same method checked against q(100) = 444793 was off by about 0.7%."
+     },
+     {
+      "id": "PART-1000",
+      "estimate": 182000000,
+      "lo": 179000000,
+      "hi": 185000000,
+      "note": "Асимптотика q(n)~exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)), масштабирование от известного q(200)=487067745 с поправкой, проверенной на паре q(100)/q(200)."
+     },
+     {
+      "id": "PART-1000",
+      "estimate": 181800000,
+      "lo": 179000000,
+      "hi": 185000000,
+      "note": "Асимптотика q(n)~exp(pi*sqrt(n/3))/(4*3^{1/4}n^{3/4}), отсчитанная от q(200)=487067745 и q(100)=444793; обе опоры дают 181-182 млн."
+     }
+    ],
+    "ignorance": 0.0010404091698390516,
+    "deception": 0.0,
+    "width": 0.03297001923757037,
+    "interval_score": 0.03297001923757037,
+    "covered": true
+   },
+   {
+    "id": "PART-1001",
+    "fam": "PART",
+    "truth": 10327156,
+    "final": {
+     "estimate": 10329999.999999981,
+     "lo": 10100000.000000013,
+     "hi": 10550000.000000013
+    },
+    "heads": [
+     {
+      "id": "PART-1001",
+      "estimate": 10330000,
+      "lo": 10100000,
+      "hi": 10600000,
+      "note": "Same asymptotic ratio from q(200), corrected by the error seen at q(100)."
+     },
+     {
+      "id": "PART-1001",
+      "estimate": 10320000,
+      "lo": 10100000,
+      "hi": 10500000,
+      "note": "Отношение асимптотик к известному q(100)=444793 с малой эмпирической поправкой."
+     },
+     {
+      "id": "PART-1001",
+      "estimate": 10340000,
+      "lo": 10150000,
+      "hi": 10550000,
+      "note": "Та же асимптотика с опорами q(100) и q(200): получается 10.30 и 10.36 млн."
+     }
+    ],
+    "ignorance": 0.00027535252364430107,
+    "deception": 0.0,
+    "width": 0.04359043607486157,
+    "interval_score": 0.04359043607486157,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1000",
+    "fam": "TWIN",
+    "truth": 322,
+    "final": {
+     "estimate": 334.99999999999994,
+     "lo": 312.00000000000006,
+     "hi": 358.0
+    },
+    "heads": [
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 312,
+      "hi": 358,
+      "note": "Hardy-Littlewood: 1.3203*N/ln^2(p), N = 100001, with interval of about +-1.3*sqrt(count)."
+     },
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 312,
+      "hi": 358,
+      "note": "Харди-Литтлвуд: 2*C2/ln^2(x) при x~4.21e8 на отрезке длиной 1e5; разброс порядка пуассоновского."
+     },
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 305,
+      "hi": 365,
+      "note": "Харди-Литтлвуд: 1.3203*1e5/ln^2(4.21e8) ~ 335, пуассоновский разброс около ±18."
+     }
+    ],
+    "ignorance": 0.0395789862806577,
+    "deception": 0.0,
+    "width": 0.13752979859121783,
+    "interval_score": 0.13752979859121783,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1001",
+    "fam": "TWIN",
+    "truth": 1050,
+    "final": {
+     "estimate": 1047.0000000000002,
+     "lo": 1005.0000000000001,
+     "hi": 1090.0
+    },
+    "heads": [
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 1005,
+      "hi": 1090,
+      "note": "Hardy-Littlewood: 1.3203*N/ln^2(p), N = 300001."
+     },
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 1005,
+      "hi": 1090,
+      "note": "Харди-Литтлвуд: 2*C2/ln^2(x) при x~2.8e8 на отрезке длиной 3e5; разброс порядка пуассоновского."
+     },
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 990,
+      "hi": 1105,
+      "note": "Харди-Литтлвуд: 1.3203*3e5/ln^2(2.8e8) ~ 1047, пуассоновский разброс."
+     }
+    ],
+    "ignorance": 0.002861232281031967,
+    "deception": 0.0,
+    "width": 0.08119015473001312,
+    "interval_score": 0.08119015473001312,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1000",
+    "fam": "SUB5",
+    "truth": 603,
+    "final": {
+     "estimate": 603.0000000000002,
+     "lo": 601.0,
+     "hi": 603.0000000000002
+    },
+    "heads": [
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 603,
+      "hi": 603,
+      "note": "Exact count: partitions of 30 into at most 5 parts, each at most 20: 674 - 71 = 603, found by recursion. Normal approximation gives about 572-594."
+     },
+     {
+      "id": "SUB5-1000",
+      "estimate": 601,
+      "lo": 601,
+      "hi": 601,
+      "note": "Точно: разбиения 30 не более чем на 5 частей (672) минус 71 разбиение с частью >20; проверено разложением Эджворта (~601)."
+     },
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 595,
+      "hi": 612,
+      "note": "Сдвиг сводит задачу к разбиениям 35 на 5 частей <=21: p(30,<=5)=674 минус 71 разбиение со слишком большой частью; нормальное приближение даёт около 570."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.003322262191978176,
+    "interval_score": 0.003322262191978176,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1001",
+    "fam": "SUB5",
+    "truth": 5907,
+    "final": {
+     "estimate": 5906.999999999997,
+     "lo": 5749.999999999997,
+     "hi": 6099.999999999998
+    },
+    "heads": [
+     {
+      "id": "SUB5-1001",
+      "estimate": 5930,
+      "lo": 5700,
+      "hi": 6150,
+      "note": "Near-central coefficient of the Gaussian binomial [35 choose 5] (sd 21.2), normal approximation with an Edgeworth kurtosis correction of about -3%, calibrated on SUB5-1000."
+     },
+     {
+      "id": "SUB5-1001",
+      "estimate": 5900,
+      "lo": 5750,
+      "hi": 6050,
+      "note": "Нормальное приближение около центра (C(35,5)=324632, sd=21.2) с поправкой Эджворта на эксцесс, выверенной на SUB5-1000."
+     },
+     {
+      "id": "SUB5-1001",
+      "estimate": 5907,
+      "lo": 5750,
+      "hi": 6100,
+      "note": "Разбиения 79 на 5 частей <=31: 15257-9350 (ручной подсчёт по формуле p(n,<=4)); нормальное приближение даёт около 6100."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.05908891637000657,
+    "interval_score": 0.05908891637000657,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1000",
+    "fam": "COLLATZ",
+    "truth": 274,
+    "final": {
+     "estimate": 297.00000000000006,
+     "lo": 190.0,
+     "hi": 399.9999999999999
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 297,
+      "lo": 215,
+      "hi": 400,
+      "note": "Mean total stopping time of about 10.4*ln(n), where ln(n) is about 28.5; the spread is wide."
+     },
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 198,
+      "lo": 150,
+      "hi": 260,
+      "note": "Среднее число шагов около 6.95*ln n при n~2.44e12; разброс большой."
+     },
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 297,
+      "lo": 190,
+      "hi": 450,
+      "note": "Эвристика: в среднем ln n/0.096 шагов при ln n ~ 28.5; разброс длины траектории большой."
+     }
+    ],
+    "ignorance": 0.08060403241462932,
+    "deception": 0.0,
+    "width": 0.7444404749474955,
+    "interval_score": 0.7444404749474955,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1001",
+    "fam": "COLLATZ",
+    "truth": 191,
+    "final": {
+     "estimate": 245.0000000000001,
+     "lo": 159.99999999999994,
+     "hi": 340.0000000000001
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 180,
+      "hi": 340,
+      "note": "n = 2^8 * 7570886601: 8 halvings plus about 10.4*ln(7.57e9)."
+     },
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 166,
+      "lo": 125,
+      "hi": 220,
+      "note": "n=2^8*7570886601: 8 делений на 2 плюс около 6.95*ln(7.57e9) шагов; разброс большой."
+     },
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 160,
+      "hi": 390,
+      "note": "n=2^8*7570886601: 8 делений на 2 плюс эвристика ln(7.57e9)/0.096 ~ 237; разброс большой."
+     }
+    ],
+    "ignorance": 0.24898478249809752,
+    "deception": 0.0,
+    "width": 0.7537718023763809,
+    "interval_score": 0.7537718023763809,
+    "covered": true
+   }
+  ],
+  "IS": 0.18559038645195242,
+  "coverage": 1.0
+ },
+ "Fp": {
+  "rows": [
+   {
+    "id": "COL3-1000",
+    "fam": "COL3",
+    "truth": 480,
+    "final": {
+     "estimate": 480.0,
+     "lo": 470.00000000000006,
+     "hi": 489.99999999999983
+    },
+    "heads": [
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 470,
+      "hi": 490,
+      "note": "Hand calculation: series-reduced degree-2 paths via walk counts in K3, with triangle 1-10-11 as the core (6 x 80)."
+     },
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 480,
+      "hi": 480,
+      "note": "Точный разбор: у листа 7 два варианта, треугольники 1-4-10 и 1-10-11 дают 6 раскрасок, перебор по цвету вершины 5 даёт 40; 40*6*2=480."
+     },
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 470,
+      "hi": 490,
+      "note": "Вершина 7 висячая, пути степени 2 свёрнуты через число раскрасок пути, ядро 1-10-11 — треугольник; перебор цветов 5 и 12 даёт 6*8*5*2=480."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.04167269640056759,
+    "interval_score": 0.04167269640056759,
+    "covered": true
+   },
+   {
+    "id": "COL3-1001",
+    "fam": "COL3",
+    "truth": 36,
+    "final": {
+     "estimate": 36.0,
+     "lo": 36.0,
+     "hi": 36.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Triangle 2-3-8 forces every other vertex; x2 for leaf 10, x3 for isolated vertex 9."
+     },
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Треугольник 2-3-8 (6 раскрасок) однозначно задаёт цвета остальных вершин; изолированная вершина 9 даёт x3, лист 10 даёт x2."
+     },
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Треугольник 2-3-8 однозначно задаёт цвета всех остальных связанных вершин; 10 висячая (x2), 9 изолированная (x3): 6*2*3=36."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1000",
+    "fam": "PART",
+    "truth": 181810744,
+    "final": {
+     "estimate": 181799999.99999973,
+     "lo": 177999999.9999999,
+     "hi": 185499999.9999997
+    },
+    "heads": [
+     {
+      "id": "PART-1000",
+      "estimate": 181800000,
+      "lo": 178000000,
+      "hi": 185500000,
+      "note": "Asymptotic q(n)~exp(pi*sqrt(n/3))/(4*3^{1/4}n^{3/4}) with correction (1-0.177/sqrt n) calibrated on q(100)."
+     },
+     {
+      "id": "PART-1000",
+      "estimate": 181700000,
+      "lo": 174000000,
+      "hi": 190000000,
+      "note": "Асимптотика q(n)~exp(pi*sqrt(n/3))/n^{3/4}, константа откалибрована по q(100)=444793 и q(200)=487067745."
+     },
+     {
+      "id": "PART-1000",
+      "estimate": 182000000,
+      "lo": 179000000,
+      "hi": 185000000,
+      "note": "Асимптотика q(n) в виде отношения к известному q(200)=487067745 с поправкой, сверенной по q(100)."
+     }
+    ],
+    "ignorance": 5.9096163578686856e-05,
+    "deception": 0.0,
+    "width": 0.04127133175540365,
+    "interval_score": 0.04127133175540365,
+    "covered": true
+   },
+   {
+    "id": "PART-1001",
+    "fam": "PART",
+    "truth": 10327156,
+    "final": {
+     "estimate": 10320000.0,
+     "lo": 10100000.000000013,
+     "hi": 10550000.000000013
+    },
+    "heads": [
+     {
+      "id": "PART-1001",
+      "estimate": 10330000,
+      "lo": 10150000,
+      "hi": 10500000,
+      "note": "Same asymptotic formula with correction calibrated on q(100)=444793."
+     },
+     {
+      "id": "PART-1001",
+      "estimate": 10320000,
+      "lo": 9900000,
+      "hi": 10750000,
+      "note": "Та же асимптотика с константой, откалиброванной по известным q(100) и q(200)."
+     },
+     {
+      "id": "PART-1001",
+      "estimate": 10320000,
+      "lo": 10100000,
+      "hi": 10550000,
+      "note": "Асимптотика в виде отношения к q(100)=444793 с поправкой около 0,25%."
+     }
+    ],
+    "ignorance": 0.000693170554484368,
+    "deception": 0.0,
+    "width": 0.04359043607486157,
+    "interval_score": 0.04359043607486157,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1000",
+    "fam": "TWIN",
+    "truth": 322,
+    "final": {
+     "estimate": 334.99999999999994,
+     "lo": 310.00000000000006,
+     "hi": 360.00000000000006
+    },
+    "heads": [
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 310,
+      "hi": 360,
+      "note": "Hardy-Littlewood: 2*C2*L/(ln p)^2."
+     },
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 310,
+      "hi": 360,
+      "note": "Харди-Литтлвуд: 1.3203*Δ/ln^2 p, разброс порядка корня из ожидаемого числа."
+     },
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 305,
+      "hi": 365,
+      "note": "Харди–Литтлвуд: 1,3203*100000/ln^2(4,21e8), разброс примерно пуассоновский."
+     }
+    ],
+    "ignorance": 0.0395789862806577,
+    "deception": 0.0,
+    "width": 0.14953173397096364,
+    "interval_score": 0.14953173397096364,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1001",
+    "fam": "TWIN",
+    "truth": 1050,
+    "final": {
+     "estimate": 1047.0000000000002,
+     "lo": 999.9999999999998,
+     "hi": 1095.0000000000002
+    },
+    "heads": [
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 1005,
+      "hi": 1090,
+      "note": "Hardy-Littlewood: 2*C2*L/(ln p)^2."
+     },
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 1000,
+      "hi": 1095,
+      "note": "Харди-Литтлвуд: 1.3203*Δ/ln^2 p, разброс порядка корня из ожидаемого числа."
+     },
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 995,
+      "hi": 1100,
+      "note": "Харди–Литтлвуд: 1,3203*300000/ln^2(2,8e8)."
+     }
+    ],
+    "ignorance": 0.002861232281031967,
+    "deception": 0.0,
+    "width": 0.09075436326846464,
+    "interval_score": 0.09075436326846464,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1000",
+    "fam": "SUB5",
+    "truth": 603,
+    "final": {
+     "estimate": 603.0000000000002,
+     "lo": 595.0000000000002,
+     "hi": 610.0000000000002
+    },
+    "heads": [
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 585,
+      "hi": 620,
+      "note": "Reduced to partitions of 30 into at most 5 parts (quasipolynomial approx ~674) minus 71 with largest part >20."
+     },
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 603,
+      "hi": 603,
+      "note": "Точный подсчёт: разбиения 30 не более чем на 5 частей (674) минус случаи с частью больше 20 (71); сверено с нормальным приближением (~570)."
+     },
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 595,
+      "hi": 610,
+      "note": "Разбиения 30 не более чем на 5 частей (674) минус те, где наибольшая часть больше 20 (71); нормальное приближение даёт около 572."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.024897551621727132,
+    "interval_score": 0.024897551621727132,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1001",
+    "fam": "SUB5",
+    "truth": 5907,
+    "final": {
+     "estimate": 5929.999999999998,
+     "lo": 5650.000000000004,
+     "hi": 6199.999999999998
+    },
+    "heads": [
+     {
+      "id": "SUB5-1001",
+      "estimate": 5890,
+      "lo": 5700,
+      "hi": 6100,
+      "note": "Gaussian approx of the sum distribution (C(35,5), variance 450) with a kurtosis correction for the peak."
+     },
+     {
+      "id": "SUB5-1001",
+      "estimate": 5930,
+      "lo": 5650,
+      "hi": 6200,
+      "note": "Нормальное приближение для суммы без возвращения (sd≈21.2, 89 почти в центре) с поправкой на эксцесс; метод сверен с точным результатом для SUB5-1000."
+     },
+     {
+      "id": "SUB5-1001",
+      "estimate": 5950,
+      "lo": 5650,
+      "hi": 6250,
+      "note": "Нормальное приближение около центра распределения (mean 90, sd 21,2) с небольшой поправкой на отрицательный эксцесс."
+     }
+    ],
+    "ignorance": 0.0038861246845360853,
+    "deception": 0.0,
+    "width": 0.09289374689269536,
+    "interval_score": 0.09289374689269536,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1000",
+    "fam": "COLLATZ",
+    "truth": 274,
+    "final": {
+     "estimate": 297.00000000000006,
+     "lo": 220.00000000000009,
+     "hi": 399.9999999999999
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 297,
+      "lo": 220,
+      "hi": 400,
+      "note": "Mean steps ~1.5*ln n/(0.5 ln(4/3)); spread from random-walk hitting-time variance."
+     },
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 300,
+      "lo": 220,
+      "hi": 390,
+      "note": "Эвристика: среднее число шагов ≈10.4*ln n, разброс большой."
+     },
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 297,
+      "lo": 190,
+      "hi": 420,
+      "note": "Эвристика: около 10,4*ln n шагов, широкий разброс."
+     }
+    ],
+    "ignorance": 0.08060403241462932,
+    "deception": 0.0,
+    "width": 0.5978370007556197,
+    "interval_score": 0.5978370007556197,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1001",
+    "fam": "COLLATZ",
+    "truth": 191,
+    "final": {
+     "estimate": 245.0000000000001,
+     "lo": 180.0,
+     "hi": 340.0000000000001
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 180,
+      "hi": 340,
+      "note": "n=2^8*7570886601: 8 halvings plus the random-walk mean for the odd part."
+     },
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 180,
+      "hi": 330,
+      "note": "n=256*7570886601: 8 делений пополам плюс ≈10.4*ln(7.57e9)."
+     },
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 160,
+      "hi": 370,
+      "note": "n=2^8*7570886601: 8 делений плюс около 10,4*ln(7,57e9) шагов по эвристике."
+     }
+    ],
+    "ignorance": 0.24898478249809752,
+    "deception": 0.0,
+    "width": 0.635988766719997,
+    "interval_score": 0.635988766719997,
+    "covered": true
+   }
+  ],
+  "IS": 0.17184376274603003,
+  "coverage": 1.0
+ },
+ "F": {
+  "rows": [
+   {
+    "id": "COL3-1000",
+    "fam": "COL3",
+    "truth": 480,
+    "final": {
+     "estimate": 480.0,
+     "lo": 480.0,
+     "hi": 480.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 480,
+      "hi": 480,
+      "note": "Точный разбор: треугольник 1-10-11 (6 способов), путь 1-8-6-9-5 даёт 5, лист 7 даёт x2, ветвление по цветам 5 и 12 даёт 8; итого 6*8*5*2."
+     },
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 480,
+      "hi": 480,
+      "note": "Exact count by hand: vertex 7 gives x2, vertex 4 is forced; 6 colorings of triangle 1-10-11 times 40 by cases for vertex 5, path 1-8-6-9-5 and vertices 2, 3, 12"
+     },
+     {
+      "id": "COL3-1000",
+      "estimate": 480,
+      "lo": 470,
+      "hi": 490,
+      "note": "Разбор вручную: треугольник 1-10-11 даёт 6 раскрасок, пути между вершинами ядра учтены множителями, лист 7 даёт x2, вершина 4 x1; получилось 480."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "COL3-1001",
+    "fam": "COL3",
+    "truth": 36,
+    "final": {
+     "estimate": 36.0,
+     "lo": 36.0,
+     "hi": 36.0
+    },
+    "heads": [
+     {
+      "id": "COL3-1001",
+      "estimate": 12,
+      "lo": 12,
+      "hi": 12,
+      "note": "Треугольник 2-3-8 (6 способов) однозначно задаёт цвета всех остальных вершин, лист 10 даёт x2."
+     },
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Exact: 6 colorings of triangle 2-3-8 force every other vertex; isolated vertex 9 gives x3, leaf 10 gives x2"
+     },
+     {
+      "id": "COL3-1001",
+      "estimate": 36,
+      "lo": 36,
+      "hi": 36,
+      "note": "Цепочка треугольников однозначно задаёт раскраску после выбора цветов 2 и 3 (6 способов); изолированная вершина 9 даёт x3, лист 10 даёт x2."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.0,
+    "interval_score": 0.0,
+    "covered": true
+   },
+   {
+    "id": "PART-1000",
+    "fam": "PART",
+    "truth": 181810744,
+    "final": {
+     "estimate": 181900000.0000003,
+     "lo": 175999999.9999997,
+     "hi": 188000000.0000001
+    },
+    "heads": [
+     {
+      "id": "PART-1000",
+      "estimate": 182000000,
+      "lo": 176000000,
+      "hi": 188000000,
+      "note": "Асимптотика q(n)~exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) с поправкой ~0.987, откалиброванной по q(100) и q(200)."
+     },
+     {
+      "id": "PART-1000",
+      "estimate": 181900000,
+      "lo": 180000000,
+      "hi": 184000000,
+      "note": "Scaled q(200)=487067745 by the asymptotic exp(pi*sqrt(n/3))/n^(3/4); this ratio method was checked on q(200)/q(100) (error 0.4%)"
+     },
+     {
+      "id": "PART-1000",
+      "estimate": 181900000,
+      "lo": 175000000,
+      "hi": 189000000,
+      "note": "Асимптотика q(n)~exp(pi*sqrt(n/3))/(4*3^(1/4)*n^(3/4)) с поправкой, подогнанной по q(100) и q(200)."
+     }
+    ],
+    "ignorance": 0.0004908076171226128,
+    "deception": 0.0,
+    "width": 0.06595796779179963,
+    "interval_score": 0.06595796779179963,
+    "covered": true
+   },
+   {
+    "id": "PART-1001",
+    "fam": "PART",
+    "truth": 10327156,
+    "final": {
+     "estimate": 10320000.0,
+     "lo": 10000000.000000006,
+     "hi": 10650000.000000006
+    },
+    "heads": [
+     {
+      "id": "PART-1001",
+      "estimate": 10330000,
+      "lo": 10000000,
+      "hi": 10650000,
+      "note": "Та же асимптотика с поправкой ~0.985, интерполированной между n=100 и n=200."
+     },
+     {
+      "id": "PART-1001",
+      "estimate": 10320000,
+      "lo": 10150000,
+      "hi": 10500000,
+      "note": "Scaled q(100)=444793 by the asymptotic q(n) formula with a +0.2% correction taken from the q(200)/q(100) check"
+     },
+     {
+      "id": "PART-1001",
+      "estimate": 10320000,
+      "lo": 10000000,
+      "hi": 10650000,
+      "note": "Та же асимптотика с поправкой, подогнанной по известным q(100) и q(200)."
+     }
+    ],
+    "ignorance": 0.000693170554484368,
+    "deception": 0.0,
+    "width": 0.06297479916138826,
+    "interval_score": 0.06297479916138826,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1000",
+    "fam": "TWIN",
+    "truth": 322,
+    "final": {
+     "estimate": 334.99999999999994,
+     "lo": 310.00000000000006,
+     "hi": 360.00000000000006
+    },
+    "heads": [
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 312,
+      "hi": 358,
+      "note": "Харди-Литтлвуд: 2*C2/ln^2(x)*1e5, разброс по Пуассону."
+     },
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 310,
+      "hi": 360,
+      "note": "Hardy-Littlewood: 2*C2/ln^2(x) * 1e5 ≈ 335, with Poisson spread"
+     },
+     {
+      "id": "TWIN-1000",
+      "estimate": 335,
+      "lo": 305,
+      "hi": 365,
+      "note": "Плотность по Харди-Литтлвуду 2*C2/ln^2(N), умноженная на длину отрезка."
+     }
+    ],
+    "ignorance": 0.0395789862806577,
+    "deception": 0.0,
+    "width": 0.14953173397096364,
+    "interval_score": 0.14953173397096364,
+    "covered": true
+   },
+   {
+    "id": "TWIN-1001",
+    "fam": "TWIN",
+    "truth": 1050,
+    "final": {
+     "estimate": 1047.0000000000002,
+     "lo": 999.9999999999998,
+     "hi": 1095.0000000000002
+    },
+    "heads": [
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 1005,
+      "hi": 1090,
+      "note": "Харди-Литтлвуд: 2*C2/ln^2(x)*3e5, разброс по Пуассону."
+     },
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 1000,
+      "hi": 1095,
+      "note": "Hardy-Littlewood: 1.3203/ln^2(2.8e8) * 3e5 ≈ 1047, with Poisson spread"
+     },
+     {
+      "id": "TWIN-1001",
+      "estimate": 1047,
+      "lo": 995,
+      "hi": 1100,
+      "note": "Плотность по Харди-Литтлвуду 2*C2/ln^2(N), умноженная на длину отрезка."
+     }
+    ],
+    "ignorance": 0.002861232281031967,
+    "deception": 0.0,
+    "width": 0.09075436326846464,
+    "interval_score": 0.09075436326846464,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1000",
+    "fam": "SUB5",
+    "truth": 603,
+    "final": {
+     "estimate": 603.0000000000002,
+     "lo": 600.0,
+     "hi": 605.9999999999999
+    },
+    "heads": [
+     {
+      "id": "SUB5-1000",
+      "estimate": 620,
+      "lo": 585,
+      "hi": 655,
+      "note": "Разбиения 30 не более чем на 5 частей (квазиполиномиальная аппроксимация ~674) минус разбиения с наибольшей частью >21."
+     },
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 603,
+      "hi": 603,
+      "note": "Exact: partitions of 30 into at most 5 parts ≤20 = 674-71; Edgeworth check gives 599"
+     },
+     {
+      "id": "SUB5-1000",
+      "estimate": 603,
+      "lo": 600,
+      "hi": 606,
+      "note": "Сдвиг сводит задачу к разбиениям 30 не более чем на 5 частей (674), минус случаи с наибольшей частью больше 20 (71); итого 603."
+     }
+    ],
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "width": 0.009950330853167877,
+    "interval_score": 0.009950330853167877,
+    "covered": true
+   },
+   {
+    "id": "SUB5-1001",
+    "fam": "SUB5",
+    "truth": 5907,
+    "final": {
+     "estimate": 5919.9999999999945,
+     "lo": 5699.999999999998,
+     "hi": 6199.999999999998
+    },
+    "heads": [
+     {
+      "id": "SUB5-1001",
+      "estimate": 5920,
+      "lo": 5650,
+      "hi": 6200,
+      "note": "Нормальное приближение в центре (C(35,5)/(sigma*sqrt(2pi)), sigma~21.2) с поправкой Эджворта на эксцесс ~0.97."
+     },
+     {
+      "id": "SUB5-1001",
+      "estimate": 5915,
+      "lo": 5840,
+      "hi": 5990,
+      "note": "Normal approximation of sums (var 450) near the center of the distribution, with an Edgeworth kurtosis correction of -3%; the same method gave 599 vs exact 603 on SUB5-1000"
+     },
+     {
+      "id": "SUB5-1001",
+      "estimate": 5950,
+      "lo": 5700,
+      "hi": 6200,
+      "note": "Нормальное приближение распределения суммы (C(35,5), дисперсия 450) с поправкой Эджворта на эксцесс."
+     }
+    ],
+    "ignorance": 0.002198360570815794,
+    "deception": 0.0,
+    "width": 0.0840831172105414,
+    "interval_score": 0.0840831172105414,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1000",
+    "fam": "COLLATZ",
+    "truth": 274,
+    "final": {
+     "estimate": 299.99999999999994,
+     "lo": 199.99999999999991,
+     "hi": 429.9999999999999
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 297,
+      "lo": 220,
+      "hi": 390,
+      "note": "Случайно-блуждательная модель: около 10.43*ln n шагов, широкий разброс."
+     },
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 305,
+      "lo": 200,
+      "hi": 430,
+      "note": "Traced 16 steps by hand, then added the average remaining steps ≈10.43*ln(n); random-walk spread sd ~85"
+     },
+     {
+      "id": "COLLATZ-1000",
+      "estimate": 300,
+      "lo": 180,
+      "hi": 450,
+      "note": "Случайная модель: около 10.4*ln(n) шагов, с широким разбросом."
+     }
+    ],
+    "ignorance": 0.09065436826813045,
+    "deception": 0.0,
+    "width": 0.7654678421395715,
+    "interval_score": 0.7654678421395715,
+    "covered": true
+   },
+   {
+    "id": "COLLATZ-1001",
+    "fam": "COLLATZ",
+    "truth": 191,
+    "final": {
+     "estimate": 245.0000000000001,
+     "lo": 159.99999999999994,
+     "hi": 349.9999999999999
+    },
+    "heads": [
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 180,
+      "hi": 330,
+      "note": "n=2^8*7570886601: 8 делений плюс около 10.43*ln(7.57e9) по той же модели."
+     },
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 245,
+      "lo": 160,
+      "hi": 350,
+      "note": "8 halvings plus 12 steps traced by hand, then ≈10.43*ln(2.4e9) remaining; sd ~75"
+     },
+     {
+      "id": "COLLATZ-1001",
+      "estimate": 250,
+      "lo": 140,
+      "hi": 400,
+      "note": "n = 2^8 * 7570886601: 8 делений плюс около 10.4*ln(m) шагов для нечётной части m, с широким разбросом."
+     }
+    ],
+    "ignorance": 0.24898478249809752,
+    "deception": 0.0,
+    "width": 0.7827593392496324,
+    "interval_score": 0.7827593392496324,
+    "covered": true
+   }
+  ],
+  "IS": 0.20114794936455294,
+  "coverage": 1.0
+ }
+}
