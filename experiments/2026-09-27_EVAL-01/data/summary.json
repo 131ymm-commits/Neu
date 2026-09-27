@@ -1,0 +1,149 @@
+{
+ "sources": {
+  "HIVE-01": {
+   "n": 1188,
+   "exact": 409,
+   "kinds": [
+    "estimate"
+   ],
+   "fams": [
+    "COL3",
+    "COLLATZ",
+    "PART",
+    "SUB5",
+    "TWIN"
+   ],
+   "leak_note": 53,
+   "exact_rate": 0.344
+  },
+  "DIV-01": {
+   "n": 60,
+   "exact": 0,
+   "kinds": [
+    "estimate"
+   ],
+   "fams": [
+    "COLLATZ",
+    "TWIN"
+   ],
+   "leak_note": 0,
+   "exact_rate": 0.0
+  },
+  "DUEL-01": {
+   "n": 32,
+   "exact": 32,
+   "kinds": [
+    "estimate"
+   ],
+   "fams": [
+    "COL3"
+   ],
+   "leak_note": 3,
+   "exact_rate": 1.0
+  },
+  "PRED-01": {
+   "n": 24,
+   "exact": 3,
+   "kinds": [
+    "estimate"
+   ],
+   "fams": [
+    "DIGSUM",
+    "PRIMES",
+    "SUBSETS",
+    "WALK"
+   ],
+   "leak_note": 0,
+   "exact_rate": 0.125
+  },
+  "CALIB-01": {
+   "n": 16,
+   "exact": 14,
+   "kinds": [
+    "exact"
+   ],
+   "fams": [
+    "DIGITDP"
+   ],
+   "leak_note": 0,
+   "exact_rate": 0.875
+  },
+  "PEER-01": {
+   "n": 16,
+   "exact": 16,
+   "kinds": [
+    "existence"
+   ],
+   "fams": [
+    "COL",
+    "DIO",
+    "NUM",
+    "SQ"
+   ],
+   "leak_note": 0,
+   "exact_rate": 1.0
+  },
+  "DIV-02": {
+   "n": 49,
+   "exact": 43,
+   "kinds": [
+    "estimate",
+    "trajectory"
+   ],
+   "fams": [
+    "COLLATZ-steps",
+    "COLLATZ-traj"
+   ],
+   "leak_note": 0,
+   "exact_rate": 0.878
+  },
+  "LEVEL-04": {
+   "n": 326,
+   "exact": 273,
+   "kinds": [
+    "trajectory"
+   ],
+   "fams": [
+    "MODSQ-link",
+    "MODSQ-traj"
+   ],
+   "leak_note": 0,
+   "exact_rate": 0.837
+  }
+ },
+ "total": 1711,
+ "log": [
+  [
+   "HIVE-01",
+   1188
+  ],
+  [
+   "DIV-01",
+   60
+  ],
+  [
+   "DUEL-01",
+   32
+  ],
+  [
+   "PRED-01",
+   24
+  ],
+  [
+   "CALIB-01",
+   16
+  ],
+  [
+   "PEER-01",
+   16
+  ],
+  [
+   "DIV-02",
+   49
+  ],
+  [
+   "LEVEL-04",
+   326
+  ]
+ ]
+}
