@@ -170,18 +170,25 @@ def cmd_verify_plans(_=None):
         if not first:
             print(f'  ⚠ {rel}: не закоммичен'); bad += 1; continue
         h, t = first[-1].split(); t = int(t)
-        changed = git('log', '--format=%h', f'{h}..HEAD', '--', rel).splitlines()
+        # Правило (PROTOCOL.md §3.3, 27.09.2026): PREREG закоммичен раньше первого прогона, по которому будет вердикт, и не менялся после него.
+        # Код, сухой прогон и пилоты до регистрации допустимы. Прогон = файлы в run/ или результаты/отчёт/сырые выводы в папке опыта.
         others = [p for p in glob.glob(os.path.join(d, '**', '*'), recursive=True) if os.path.isfile(p) and p != plan]
-        earlier = []
+        def is_run(p):
+            rp = os.path.relpath(p, d).replace(os.sep, '/'); b = os.path.basename(p)
+            return rp.startswith('run/') or b.startswith(('REPORT', 'results', 'raw_', 'out_', 'res'))
+        run_times = []
         for p in others:
+            if not is_run(p): continue
             r = git('log', '--diff-filter=A', '--format=%ct', '--', os.path.relpath(p, ROOT)).splitlines()
-            if r and int(r[-1]) < t:
-                earlier.append(os.path.relpath(p, ROOT))
-        ok = not changed and not earlier
+            if r: run_times.append((int(r[-1]), os.path.relpath(p, ROOT)))
+        t_run = min(run_times)[0] if run_times else None
+        late = [p for tt, p in run_times if tt < t] if t_run is not None else []
+        changed = [c for c in git('log', '--format=%h %ct', f'{h}..HEAD', '--', rel).splitlines() if t_run is not None and int(c.split()[1]) > t_run]
+        ok = not changed and not late
         bad += not ok
-        print(f"  {'✓' if ok else '✗'} {rel}: закоммичен {h[:7]}"
-              + (f'; изменён после: {", ".join(changed)}' if changed else '')
-              + (f'; файлы появились раньше плана: {", ".join(earlier[:3])}' if earlier else ''))
+        print(f"  {'✓' if ok else '✗'} {rel}: закоммичен {h[:7]}" + ('' if run_times else ' (прогона ещё нет)')
+              + (f'; изменён после первого прогона: {", ".join(c.split()[0] for c in changed)}' if changed else '')
+              + (f'; прогон раньше плана: {", ".join(late[:3])}' if late else ''))
     return bad
 
 
