@@ -1,0 +1,150 @@
+{
+ "rows": [
+  {
+   "scenario": "K0 чисто: база PREREG → прогон → отчёт → реестр",
+   "rule": "—",
+   "violation": false,
+   "flagged": false,
+   "ok": true,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H1 отчёт ссылается на хеш PREREG, которого нет в истории (amend)",
+   "rule": "PROTOCOL §3.3/§3.5, §6.2; CLAUDE.md п.3–4",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен d5bb0d8",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H2 число в REPORT, которого нет ни в одном json",
+   "rule": "CLAUDE.md «каждое число из json»; PROTOCOL §4.4, §5.1",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H3 PREREG без предсказаний с порогами",
+   "rule": "PROTOCOL §3.3; SKILL «Перед любым экспериментом» п.1",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 492ea21",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H4 код прогона изменён после прогона, DEVIATIONS.md нет",
+   "rule": "PROTOCOL §3.3 «отклонения — в DEVIATIONS.md»",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H5 чекпойнт *.pkl в git",
+   "rule": "CLAUDE.md п.5; PROTOCOL §6.3",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H6 правда от кода рядом с промптами голов",
+   "rule": "CLAUDE.md «правду не класть туда, где её могут прочитать головы»",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H7 запись в journal/ERRORS.md удалена",
+   "rule": "CLAUDE.md п.2; PROTOCOL §4.2",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 7cd653f",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H8 REPORT без ссылки на хеш PREREG",
+   "rule": "PROTOCOL §3.5; SKILL «После эксперимента» п.1",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H9 перепрогон после отчёта, вердикт перевёрнут без новой PREREG",
+   "rule": "PROTOCOL §3.5–3.6 «вердикт по букве, пост-хок не меняет»",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H10 реестр «подтверждено», отчёт говорит «опровергнуто»",
+   "rule": "PROTOCOL §3.5; CLAUDE.md «выводы меняются с опорой»",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H11 PREREG закоммичен, но не запушен до прогона",
+   "rule": "PROTOCOL §3.3 «коммит и push до первого прогона»; SKILL п.2",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "H12 смена статуса в реестре без «почему» (в обход ledger.py set)",
+   "rule": "CLAUDE.md «выводы меняются только через ledger.py»",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "проверка: всё в порядке"
+   ]
+  }
+ ],
+ "caught": 0.0,
+ "false_alarms": 0,
+ "n_violations": 12
+}
