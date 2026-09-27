@@ -1,0 +1,105 @@
+{
+ "rows": [
+  {
+   "scenario": "K1 чисто: PREREG → прогон → отчёт",
+   "violation": false,
+   "flagged": false,
+   "ok": true,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен bbc0dd6",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "K2 чисто: пилот и сухой прогон до PREREG",
+   "violation": false,
+   "flagged": false,
+   "ok": true,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен dea080f",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "V1 PREREG изменён после прогона",
+   "violation": true,
+   "flagged": true,
+   "ok": true,
+   "tail": [
+    "✗ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 7620228; изменён после первого прогона: e171d59",
+    "проверка: нарушений: 1"
+   ]
+  },
+  {
+   "scenario": "V2 прогон раньше PREREG",
+   "violation": true,
+   "flagged": true,
+   "ok": true,
+   "tail": [
+    "✗ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен f9c5799; прогон раньше плана: experiments/2026-09-27_X-01/run/raw_0.json",
+    "проверка: нарушений: 1"
+   ]
+  },
+  {
+   "scenario": "V3 статус «подтверждено» без опоры",
+   "violation": true,
+   "flagged": true,
+   "ok": true,
+   "tail": [
+    "✗ C-001: статус без опоры",
+    "проверка: нарушений: 1"
+   ]
+  },
+  {
+   "scenario": "V4 опора указывает на несуществующий файл",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "V5 PREREG без строки «кто раньше» в PRIORITY",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 3cde037 (прогона ещё нет)",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "V6 прогон без предрегистрации",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "V7 отчёт есть, в реестре ничего",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен bbc0dd6",
+    "проверка: всё в порядке"
+   ]
+  },
+  {
+   "scenario": "V8 PREREG ссылается на совет, стенограммы нет",
+   "violation": true,
+   "flagged": false,
+   "ok": false,
+   "tail": [
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 6ed8642 (прогона ещё нет)",
+    "проверка: всё в порядке"
+   ]
+  }
+ ],
+ "caught": 0.375,
+ "false_alarms": 0,
+ "n_violations": 8
+}
