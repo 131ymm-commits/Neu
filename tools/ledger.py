@@ -193,6 +193,42 @@ def cmd_verify_plans(_=None):
     return bad
 
 
+# ---------- проверки протокола кодом (критерий 2, DECISIONS 27.09.2026; корпус — tools/protocol_tests.py) ----------
+def _exp_id(d):
+    b = os.path.basename(d); return b.split('_', 1)[1] if '_' in b and b[:4].isdigit() else b
+
+
+def protocol_checks(cl):
+    import re
+    bad = 0
+    prio = ''
+    for pp in (os.path.join(ROOT, 'docs', 'PRIORITY.md'), os.path.join(ROOT, 'archive', 'neu_archive_2026-09-16', 'docs', 'PRIORITY.md')):
+        if os.path.exists(pp): prio += open(pp, encoding='utf-8').read()
+    council = ' '.join(os.listdir(os.path.join(ROOT, 'docs', 'council'))) if os.path.isdir(os.path.join(ROOT, 'docs', 'council')) else ''
+    claims_text = ' '.join(c['text'] + ' ' + str(c['support']) for c in cl.values())
+    # V4: опора должна существовать (если это путь)
+    for c in cl.values():
+        sup = str(c.get('support') or '')
+        if sup and re.match(r'^(experiments|docs|journal|archive|tools)/\S+\.(md|json|txt|py)$', sup.split()[0]) and not os.path.exists(os.path.join(ROOT, sup.split()[0])):
+            print(f"  ✗ {c['id']}: опора не найдена: {sup}"); bad += 1
+    for d in sorted(glob.glob(os.path.join(ROOT, 'experiments', '2*'))):
+        if not os.path.isdir(d): continue
+        eid = _exp_id(d); pre = glob.glob(os.path.join(d, 'PREREG*.md')); rep = glob.glob(os.path.join(d, 'REPORT*.md'))
+        has_run = bool(rep) or any(os.path.basename(x).startswith(('raw_', 'out_', 'res', 'results')) for x in glob.glob(os.path.join(d, 'run', '*')))
+        if has_run and not pre:  # V6
+            print(f'  ✗ {eid}: прогон или отчёт без предрегистрации'); bad += 1
+        if pre:
+            ptxt = ' '.join(open(x, encoding='utf-8').read() for x in pre)
+            lit = glob.glob(os.path.join(d, 'LITERATURE*.md')) or re.search(r'кто раньше|занято|не найдено', ptxt)
+            if eid not in prio and not lit:  # V5
+                print(f'  ✗ {eid}: нет строки «кто раньше» (docs/PRIORITY.md или LITERATURE.md)'); bad += 1
+            if re.search(r'совет|заседани', ptxt, re.I) and eid not in council:  # V8
+                print(f'  ✗ {eid}: PREREG ссылается на совет, стенограммы в docs/council/ нет'); bad += 1
+        if rep and eid not in claims_text:  # V7
+            print(f'  ✗ {eid}: есть отчёт, но в реестре нет утверждения с этим ID'); bad += 1
+    return bad
+
+
 # ---------- сводка ----------
 def cmd_brief(_=None):
     cl = state(load())
@@ -258,6 +294,7 @@ def cmd_check(_=None):
     for o in orphan:
         print(f'  ✗ {o}: статус без опоры')
     bad += len(orphan)
+    bad += protocol_checks(cl)
     print('проверка:', 'всё в порядке' if not bad else f'нарушений: {bad}')
     sys.exit(1 if bad else 0)
 

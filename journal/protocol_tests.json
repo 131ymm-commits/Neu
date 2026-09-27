@@ -6,7 +6,7 @@
    "flagged": false,
    "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен bbc0dd6",
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a505470",
     "проверка: всё в порядке"
    ]
   },
@@ -16,7 +16,7 @@
    "flagged": false,
    "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен dea080f",
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 62841ba",
     "проверка: всё в порядке"
    ]
   },
@@ -26,8 +26,9 @@
    "flagged": true,
    "ok": true,
    "tail": [
-    "✗ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 7620228; изменён после первого прогона: e171d59",
-    "проверка: нарушений: 1"
+    "  ✗ X-01: нет строки «кто раньше» (docs/PRIORITY.md или LITERATURE.md)",
+    "  ✗ X-01: PREREG ссылается на совет, стенограммы в docs/council/ нет",
+    "проверка: нарушений: 3"
    ]
   },
   {
@@ -36,8 +37,9 @@
    "flagged": true,
    "ok": true,
    "tail": [
-    "✗ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен f9c5799; прогон раньше плана: experiments/2026-09-27_X-01/run/raw_0.json",
-    "проверка: нарушений: 1"
+    "  ✗ X-01: нет строки «кто раньше» (docs/PRIORITY.md или LITERATURE.md)",
+    "  ✗ X-01: PREREG ссылается на совет, стенограммы в docs/council/ нет",
+    "проверка: нарушений: 3"
    ]
   },
   {
@@ -53,53 +55,59 @@
   {
    "scenario": "V4 опора указывает на несуществующий файл",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "проверка: всё в порядке"
+    "✗ C-001: опора не найдена: experiments/2026-09-27_X-01/REPORT-НЕТ.md",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "V5 PREREG без строки «кто раньше» в PRIORITY",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 3cde037 (прогона ещё нет)",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 7887cf0 (прогона ещё нет)",
+    "  ✗ X-01: нет строки «кто раньше» (docs/PRIORITY.md или LITERATURE.md)",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "V6 прогон без предрегистрации",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "проверка: всё в порядке"
+    "✗ X-01: прогон или отчёт без предрегистрации",
+    "  ✗ X-01: есть отчёт, но в реестре нет утверждения с этим ID",
+    "проверка: нарушений: 2"
    ]
   },
   {
    "scenario": "V7 отчёт есть, в реестре ничего",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен bbc0dd6",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a505470",
+    "  ✗ X-01: есть отчёт, но в реестре нет утверждения с этим ID",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "V8 PREREG ссылается на совет, стенограммы нет",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 6ed8642 (прогона ещё нет)",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 4b2eb7a (прогона ещё нет)",
+    "  ✗ X-01: PREREG ссылается на совет, стенограммы в docs/council/ нет",
+    "проверка: нарушений: 1"
    ]
   }
  ],
- "caught": 0.375,
+ "caught": 1.0,
  "false_alarms": 0,
  "n_violations": 8
 }
