@@ -7,7 +7,7 @@
    "flagged": false,
    "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 98827fc",
     "проверка: всё в порядке"
    ]
   },
@@ -15,55 +15,60 @@
    "scenario": "H1 отчёт ссылается на хеш PREREG, которого нет в истории (amend)",
    "rule": "PROTOCOL §3.3/§3.5, §6.2; CLAUDE.md п.3–4",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен d5bb0d8",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 5c042ea",
+    "  ✗ X-01: хеш предрегистрации в REPORT-X-01.md не подтверждён историей (98827fc: не в текущей ветке)",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "H2 число в REPORT, которого нет ни в одном json",
    "rule": "CLAUDE.md «каждое число из json»; PROTOCOL §4.4, §5.1",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 98827fc",
+    "  ✗ X-01: числа в REPORT-X-01.md не найдены в файлах данных папки: 0.91 (строка 3)",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "H3 PREREG без предсказаний с порогами",
    "rule": "PROTOCOL §3.3; SKILL «Перед любым экспериментом» п.1",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 492ea21",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 55666f7",
+    "  ✗ X-01: PREREG-X-01.md без предсказаний с порогами (нет ≥/≤/</>/«порог»)",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "H4 код прогона изменён после прогона, DEVIATIONS.md нет",
    "rule": "PROTOCOL §3.3 «отклонения — в DEVIATIONS.md»",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
-    "проверка: всё в порядке"
+    "  ✗ X-01: код изменён после первого прогона, а DEVIATIONS.md нет: experiments/2026-09-27_X-01/run.py (c8f7678)",
+    "  ✗ X-01: после отчёта новые результаты без новой предрегистрации: experiments/2026-09-27_X-01/run/raw_1.json",
+    "проверка: нарушений: 2"
    ]
   },
   {
    "scenario": "H5 чекпойнт *.pkl в git",
    "rule": "CLAUDE.md п.5; PROTOCOL §6.3",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
-    "проверка: всё в порядке"
+    "  ✗ X-01: после отчёта новые результаты без новой предрегистрации: experiments/2026-09-27_X-01/run/model_final.pkl",
+    "  ✗ чекпойнты в git (CLAUDE.md п. 5): experiments/2026-09-27_X-01/run/model_final.pkl",
+    "проверка: нарушений: 2"
    ]
   },
   {
@@ -73,7 +78,7 @@
    "flagged": false,
    "ok": false,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 98827fc",
     "проверка: всё в порядке"
    ]
   },
@@ -81,11 +86,12 @@
    "scenario": "H7 запись в journal/ERRORS.md удалена",
    "rule": "CLAUDE.md п.2; PROTOCOL §4.2",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 7cd653f",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен cc2c693",
+    "  ✗ journal/ERRORS.md: удалены или переписаны записи: 8063315: «1. Ошибся в пороге.»",
+    "проверка: нарушений: 1"
    ]
   },
   {
@@ -95,7 +101,8 @@
    "flagged": false,
    "ok": false,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 98827fc",
+    "  ⚠ X-01: REPORT-X-01.md не ссылается на хеш предрегистрации",
     "проверка: всё в порядке"
    ]
   },
@@ -103,48 +110,52 @@
    "scenario": "H9 перепрогон после отчёта, вердикт перевёрнут без новой PREREG",
    "rule": "PROTOCOL §3.5–3.6 «вердикт по букве, пост-хок не меняет»",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 98827fc",
+    "  ✗ X-01: после отчёта новые результаты без новой предрегистрации: experiments/2026-09-27_X-01/run/raw_1.json",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "H10 реестр «подтверждено», отчёт говорит «опровергнуто»",
    "rule": "PROTOCOL §3.5; CLAUDE.md «выводы меняются с опорой»",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 98827fc",
+    "  ✗ C-001: статус «подтверждено», а в опоре experiments/2026-09-27_X-01/REPORT-X-01.md для P1 по букве — противоположный вердикт",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "H11 PREREG закоммичен, но не запушен до прогона",
    "rule": "PROTOCOL §3.3 «коммит и push до первого прогона»; SKILL п.2",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 98827fc",
+    "  ✗ X-01: коммит предрегистрации 98827fc (PREREG-X-01.md) не запушен в origin",
+    "проверка: нарушений: 1"
    ]
   },
   {
    "scenario": "H12 смена статуса в реестре без «почему» (в обход ledger.py set)",
    "rule": "CLAUDE.md «выводы меняются только через ledger.py»",
    "violation": true,
-   "flagged": false,
-   "ok": false,
+   "flagged": true,
+   "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен a6fdc64",
-    "проверка: всё в порядке"
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 98827fc",
+    "  ✗ смена статуса без причины (why): C-001→опровергнуто (2026-09-27T03:00)",
+    "проверка: нарушений: 1"
    ]
   }
  ],
- "caught": 0.0,
+ "caught": 0.8333333333333334,
  "false_alarms": 0,
  "n_violations": 12
 }
