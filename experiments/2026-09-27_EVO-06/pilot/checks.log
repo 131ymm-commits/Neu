@@ -5,11 +5,31 @@ OK   % отрицательных = знак делителя (−7%3 = 2)
 OK   % при отрицательном делителе (7 % −3 = −2) 
 OK   truth.py = независимая перепись на 50 прогонах расхождений 0
 OK   FIXED16 T1 s0 побитово = EVO-01 (claimed, true по 151 поколению) 
-OK   SPLIT16+16: подмена выборки заявки не меняет траекторию (true побитово) 
+OK   FIXED32: подмена выборки заявки не меняет траекторию (true, elite_age побитово) 
+OK   SAME32: подмена выборки заявки не меняет траекторию (true, elite_age побитово) 
+OK   SPLIT16+16: подмена выборки заявки не меняет траекторию (true, elite_age побитово) 
 OK   SPLIT16+16: подмена выборки заявки меняет заявку 
-OK   SPLIT16+16 и SAME16 с общим сидом: одна начальная популяция (true в g=0 совпадает) 
+OK   AA32: подмена выборки заявки не меняет траекторию (true, elite_age побитово) 
+OK   SAME16: подмена выборки заявки не меняет траекторию (true, elite_age побитово) 
+OK   SPLIT8+8: подмена выборки заявки не меняет траекторию (true, elite_age побитово) 
+OK   SPLIT8+8: подмена выборки заявки меняет заявку 
+OK   RANDEVAL: подмена выборки заявки не меняет траекторию (true, elite_age побитово) 
+OK   ORACLE: подмена выборки заявки не меняет траекторию (true, elite_age побитово) 
 OK   SPLIT: claimed == claimed_fresh 
 OK   SAME: claimed по выборке отбора, claimed_fresh — по другой 
+OK   SPLIT16+16 ≡ SAME16: true, true_fresh, elite_age, claimed_fresh совпадают по всем поколениям 
+OK   SPLIT16+16 ≠ SAME16 по claimed 
+OK   claimed(SPLIT16+16) == claimed_fresh(SAME16) по всем поколениям 
+OK   начальная популяция: SAME32 = SPLIT16+16 = FIXED32 = SAME16 (поток r без сдвига); AA32 — другая (сдвиг +500) 
+OK   FIXED32: подмена скрытого набора не меняет claimed, claimed_fresh, elite_age 
+OK   SAME32: подмена скрытого набора не меняет claimed, claimed_fresh, elite_age 
+OK   SPLIT16+16: подмена скрытого набора не меняет claimed, claimed_fresh, elite_age 
+OK   AA32: подмена скрытого набора не меняет claimed, claimed_fresh, elite_age 
+OK   SAME16: подмена скрытого набора не меняет claimed, claimed_fresh, elite_age 
+OK   SPLIT8+8: подмена скрытого набора не меняет claimed, claimed_fresh, elite_age 
+OK   RANDEVAL: подмена скрытого набора не меняет claimed, claimed_fresh, elite_age 
+OK   ORACLE: подмена скрытого набора меняет claimed (отбор по правде — потолок) 
+OK   подмена скрытого набора меняет true (набор действительно другой) 
 OK   labels на поколение: FIXED32 (после g=0) 0, SAME32 32, SPLIT16+16 32 {'FIXED32': 0, 'SAME32': 32, 'SPLIT16+16': 32}
-OK   вызовов на поколение: SAME32 9600, SPLIT16+16 4816, SAME16 4800 {'SAME32': 9600, 'SPLIT16+16': 4816, 'SAME16': 4800}
-итого: 14 проверок, провалов 0
+OK   вызовов на поколение: SAME32 9600, SPLIT16+16 4816, SAME16 4800, SPLIT8+8 2408 {'SAME32': 9600, 'SPLIT16+16': 4816, 'SAME16': 4800, 'SPLIT8+8': 2408}
+итого: 34 проверок, провалов 0

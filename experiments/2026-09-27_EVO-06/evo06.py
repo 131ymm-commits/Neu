@@ -133,6 +133,8 @@ if __name__ == '__main__':
                calls_total=int(sum(x['n_calls'] for x in hist)), code=code_hash(), sec=round(time.time() - t0, 1))
     os.makedirs(outdir, exist_ok=True)
     name = f'{task}_{arm}_s{seed}' + (f'_tour{tour}' if tour != E.TOUR else '')
-    json.dump(res, open(f'{outdir}/{name}.json', 'w'))
+    tmp = f'{outdir}/{name}.json.tmp'                   # атомарная запись: усечённый файл не останется под итоговым именем (REVIEW_workflow, код 5)
+    with open(tmp, 'w') as fh: json.dump(res, fh)
+    os.replace(tmp, f'{outdir}/{name}.json')
     print(task, arm, seed, 'ИОИ', round(res['ioi'], 3), '|C−T| поздн.', round(res['abs_ct_late'], 3), 'C−T', round(res['signed_ct_late'], 3),
           'незн.', round(res['ign_late'], 3), 'итог', round(res['final_true'], 3), 'labels', res['labels_total'], res['sec'], 'с', flush=True)
