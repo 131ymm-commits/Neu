@@ -1,0 +1,150 @@
+{
+ "G1": {
+  "SAME32": {
+   "T3": {
+    "n": 19,
+    "median": 0.0404,
+    "share_pos": 0.89
+   },
+   "T5": {
+    "n": 14,
+    "median": 0.0215,
+    "share_pos": 0.79
+   },
+   "T4": {
+    "n": 11,
+    "median": -0.0144,
+    "share_pos": 0.36
+   },
+   "all": {
+    "n": 44,
+    "median": 0.0197,
+    "share_pos": 0.73
+   }
+  },
+  "SPLIT16+16": {
+   "T3": {
+    "n": 20,
+    "median": -0.002,
+    "share_pos": 0.5
+   },
+   "T5": {
+    "n": 12,
+    "median": -0.0473,
+    "share_pos": 0.25
+   },
+   "T4": {
+    "n": 10,
+    "median": -0.0228,
+    "share_pos": 0.4
+   },
+   "all": {
+    "n": 42,
+    "median": -0.0136,
+    "share_pos": 0.4
+   }
+  },
+  "SAME16": {
+   "T3": {
+    "n": 20,
+    "median": 0.0469,
+    "share_pos": 0.65
+   },
+   "T5": {
+    "n": 12,
+    "median": 0.026,
+    "share_pos": 0.67
+   },
+   "T4": {
+    "n": 10,
+    "median": 0.0322,
+    "share_pos": 0.9
+   },
+   "all": {
+    "n": 42,
+    "median": 0.034,
+    "share_pos": 0.71
+   }
+  },
+  "SPLIT8+8": {
+   "T4": {
+    "n": 14,
+    "median": -0.0414,
+    "share_pos": 0.14
+   },
+   "T5": {
+    "n": 13,
+    "median": 0.0443,
+    "share_pos": 0.85
+   },
+   "T3": {
+    "n": 19,
+    "median": 0.0053,
+    "share_pos": 0.58
+   },
+   "all": {
+    "n": 46,
+    "median": 0.0014,
+    "share_pos": 0.52
+   }
+  }
+ },
+ "G2": {
+  "T3": {
+   "plateau_share": 0.85,
+   "delta_true_median": 0.0,
+   "claimed1_true_lt09": 0.0,
+   "age_fixed_gt_same32": "19/20",
+   "age_diff_median": 89.0
+  },
+  "T4": {
+   "plateau_share": 0.9,
+   "delta_true_median": 0.0,
+   "claimed1_true_lt09": 0.0,
+   "age_fixed_gt_same32": "18/20",
+   "age_diff_median": 92.5
+  },
+  "T5": {
+   "plateau_share": 0.9,
+   "delta_true_median": 0.0,
+   "claimed1_true_lt09": 0.0,
+   "age_fixed_gt_same32": "19/20",
+   "age_diff_median": 75.5
+  }
+ },
+ "G3": {
+  "SAME32/T4": {
+   "churn_median": 0.067,
+   "rho": 0.644
+  },
+  "SAME32/T5": {
+   "churn_median": 0.083,
+   "rho": 0.378
+  },
+  "SAME16/T4": {
+   "churn_median": 0.017,
+   "rho": 0.333
+  },
+  "SAME16/T5": {
+   "churn_median": 0.083,
+   "rho": 0.241
+  },
+  "SPLIT16+16/T4": {
+   "churn_median": 0.017,
+   "rho": 0.332
+  },
+  "SPLIT16+16/T5": {
+   "churn_median": 0.083,
+   "rho": 0.429
+  },
+  "ORACLE/T4": {
+   "churn_median": 0.0,
+   "rho": null
+  },
+  "ORACLE/T5": {
+   "churn_median": 0.0,
+   "rho": null
+  },
+  "churn_SAME16_gt_SAME32": "30/80"
+ }
+}
