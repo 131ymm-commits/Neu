@@ -20,7 +20,7 @@ for line in open(src):
         if isinstance(c, str): txt = clean(c)
         elif isinstance(c, list): txt = clean('\n'.join(x.get('text', '') for x in c if isinstance(x, dict) and x.get('type') == 'text'))
         else: txt = ''
-        if not txt or 'task-notification' in txt or txt.startswith('Stop hook feedback') and False: pass
+        if txt.startswith('Stop hook feedback') or txt.startswith('[SYSTEM NOTIFICATION') or txt.startswith('<system-reminder>'): continue  # служебные сообщения среды, не реплики человека
         if txt and '<task-notification>' in txt:
             m = re.search(r'<summary>(.*?)</summary>', txt, re.S)
             out.append(f'\n- _событие среды (не человек): {(m.group(1) if m else "фоновая задача").strip()[:200]}_\n'); continue
