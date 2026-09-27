@@ -1,0 +1,83 @@
+{
+ "NOTE": {
+  "n": 7,
+  "brier": 0.0774,
+  "acc": 0.857,
+  "conf": 0.867,
+  "ioi": 0.1529,
+  "ignorance": 0.143,
+  "deception": 0.01,
+  "auc": 0.95,
+  "by_source": {
+   "HIVE-01": {
+    "n": 4,
+    "acc": 0.75,
+    "brier": 0.134
+   },
+   "LEVEL-04": {
+    "n": 1,
+    "acc": 1,
+    "brier": 0.001
+   },
+   "CALIB-01": {
+    "n": 2,
+    "acc": 1,
+    "brier": 0.002
+   }
+  }
+ },
+ "BLIND": {
+  "n": 6,
+  "brier": 0.0914,
+  "acc": 0.833,
+  "conf": 0.848,
+  "ioi": 0.1817,
+  "ignorance": 0.167,
+  "deception": 0.015,
+  "auc": 0.875,
+  "by_source": {
+   "HIVE-01": {
+    "n": 4,
+    "acc": 0.75,
+    "brier": 0.136
+   },
+   "LEVEL-04": {
+    "n": 1,
+    "acc": 1,
+    "brier": 0.003
+   },
+   "CALIB-01": {
+    "n": 1,
+    "acc": 1,
+    "brier": 0.001
+   }
+  }
+ },
+ "RECOMPUTE": {
+  "n": 6,
+  "brier": 0.1043,
+  "acc": 0.833,
+  "conf": 0.877,
+  "ioi": 0.21,
+  "ignorance": 0.167,
+  "deception": 0.043,
+  "auc": 0.875,
+  "by_source": {
+   "HIVE-01": {
+    "n": 4,
+    "acc": 0.75,
+    "brier": 0.156
+   },
+   "LEVEL-04": {
+    "n": 1,
+    "acc": 1,
+    "brier": 0.003
+   },
+   "CALIB-01": {
+    "n": 1,
+    "acc": 1,
+    "brier": 0.001
+   }
+  }
+ }
+}
