@@ -175,7 +175,8 @@ def cmd_verify_plans(_=None):
         others = [p for p in glob.glob(os.path.join(d, '**', '*'), recursive=True) if os.path.isfile(p) and p != plan]
         def is_run(p):
             rp = os.path.relpath(p, d).replace(os.sep, '/'); b = os.path.basename(p)
-            return rp.startswith('run/') or b.startswith(('REPORT', 'results', 'raw_', 'out_', 'res'))
+            if rp.startswith(('pilot', 'dry', 'test/')): return False  # пилоты и сухие прогоны до регистрации допустимы
+            return rp.startswith('run/') or b.startswith(('REPORT', 'results', 'raw_', 'out_', 'res')) or '_out' in b or b.startswith('analysis')
         run_times = []
         for p in others:
             if not is_run(p): continue

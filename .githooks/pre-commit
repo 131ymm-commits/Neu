@@ -1,0 +1,11 @@
+#!/bin/bash
+# Neu: проверки протокола кодом при каждом коммите (ERRORS № 44).
+# 1) PREREG закоммичен раньше первого прогона и не менялся после него (tools/ledger.py verify-plans).
+# 2) CLAIMS.md пересобирается из claims.jsonl.
+cd "$(git rev-parse --show-toplevel)" || exit 1
+if ! python3 tools/ledger.py verify-plans > /tmp/neu_verify.txt 2>&1; then
+  echo "✗ verify-plans: предрегистрация нарушена:"; grep -E "✗|⚠" /tmp/neu_verify.txt
+  echo "  Отклонение — в DEVIATIONS.md опыта; обойти осознанно: git commit --no-verify (видно в истории)."; exit 1
+fi
+if [ -f claims.jsonl ]; then python3 tools/ledger.py render > /dev/null 2>&1 && git add CLAIMS.md; fi
+exit 0
