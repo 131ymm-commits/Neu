@@ -1,0 +1,244 @@
+{
+ "landscape": {
+  "s200": [
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": true
+   },
+   {
+    "chain": "P2C1",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": true
+   },
+   {
+    "chain": "P2C2",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": true
+   },
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": false
+   },
+   {
+    "chain": "P2C1",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": false
+   },
+   {
+    "chain": "P2C2",
+    "ok": 0,
+    "label": "отказ",
+    "calls": 1,
+    "rep": false
+   }
+  ],
+  "s200r2": [
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 2,
+    "rep": false
+   },
+   {
+    "chain": "P2C1",
+    "ok": 1,
+    "label": "верно",
+    "calls": 3,
+    "rep": false
+   },
+   {
+    "chain": "P2C2",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 3,
+    "rep": false
+   }
+  ],
+  "s200v": [
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": true
+   },
+   {
+    "chain": "P2C1",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": true
+   },
+   {
+    "chain": "P2C2",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": true
+   },
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": false
+   },
+   {
+    "chain": "P2C1",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": false
+   },
+   {
+    "chain": "P2C2",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 1,
+    "rep": false
+   }
+  ],
+  "s200vr2": [
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 3,
+    "rep": false
+   },
+   {
+    "chain": "P2C1",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 3,
+    "rep": false
+   },
+   {
+    "chain": "P2C2",
+    "ok": 0,
+    "label": "отказ с догадкой",
+    "calls": 2,
+    "rep": false
+   }
+  ],
+  "s40": [
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "ошибка",
+    "calls": 5,
+    "rep": false
+   },
+   {
+    "chain": "P2C1",
+    "ok": 0,
+    "label": "ошибка",
+    "calls": 5,
+    "rep": false
+   },
+   {
+    "chain": "P2C2",
+    "ok": 0,
+    "label": "ошибка",
+    "calls": 5,
+    "rep": false
+   }
+  ],
+  "s40r2": [
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "ошибка",
+    "calls": 12,
+    "rep": false
+   },
+   {
+    "chain": "P2C1",
+    "ok": 1,
+    "label": "верно",
+    "calls": 10,
+    "rep": false
+   },
+   {
+    "chain": "P2C2",
+    "ok": 1,
+    "label": "верно",
+    "calls": 11,
+    "rep": false
+   }
+  ],
+  "s40v": [
+   {
+    "chain": "P2C0",
+    "ok": 0,
+    "label": "ошибка",
+    "calls": 5,
+    "rep": false
+   },
+   {
+    "chain": "P2C1",
+    "ok": 1,
+    "label": "верно",
+    "calls": 5,
+    "rep": false
+   },
+   {
+    "chain": "P2C2",
+    "ok": 1,
+    "label": "верно",
+    "calls": 5,
+    "rep": false
+   }
+  ],
+  "s40vr2": [
+   {
+    "chain": "P2C0",
+    "ok": 1,
+    "label": "верно",
+    "calls": 11,
+    "rep": false
+   },
+   {
+    "chain": "P2C1",
+    "ok": 1,
+    "label": "верно",
+    "calls": 12,
+    "rep": false
+   },
+   {
+    "chain": "P2C2",
+    "ok": 1,
+    "label": "верно",
+    "calls": 10,
+    "rep": false
+   }
+  ]
+ },
+ "missing": [
+  "s10:P2C0",
+  "s10:P2C1",
+  "s10:P2C2",
+  "s10r2:P2C0",
+  "s10r2:P2C1",
+  "s10r2:P2C2",
+  "s10v:P2C0",
+  "s10v:P2C1",
+  "s10v:P2C2",
+  "s10vr2:P2C0",
+  "s10vr2:P2C1",
+  "s10vr2:P2C2"
+ ]
+}
