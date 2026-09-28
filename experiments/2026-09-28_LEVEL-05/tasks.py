@@ -1,8 +1,21 @@
 # LEVEL-05: задачи «произведение M матриц 2×2 по модулю простого p». Правда — код, вне репозитория (/root/level5_secret).
-# Правда считается двумя способами: слева направо и деревом (ассоциативность) — должны совпасть.
-#   python3 tasks.py <tag> <seed> <N> [<N> ...]   → tasks/<tag>.json (матрицы, p, листья по 10), правда в секрете
-import json, os, sys, random
-SECRET = '/root/level5_secret'; LEAF = 10
+#
+# Ветвь организаций (решение совета 13 + твёрдые требования Скептика 1–2):
+#   * ВЛОЖЕННАЯ генерация: на зерно — одно p и 200 матриц; N = 20 берёт все, N = 10 — половины, N = 5 — четверти;
+#     лист = 10 матриц. assert: правда(N=20) = правда(первая N=10) · правда(вторая N=10) mod p (и то же для четвертей).
+#   * Зёрна оценки — HMAC-SHA256(salt, '<ns>:<i>'); соль лежит вне репозитория (/root/level5_secret/salt),
+#     в репозиторий пишется только sha256(соли) — файл salt_sha256.txt (для PREREG).
+#   * Публичный файл задач (tasks/<tag>.json) содержит только номер, p и матрицы — без зерна и без правды.
+#
+#   python3 tasks.py salt                                  → создать соль (если её нет), записать salt_sha256.txt
+#   python3 tasks.py nested <tag> <ns> <n> [<offset>]      → n вложенных задач из зёрен HMAC(salt, ns:i), i = offset…
+#                                                           ns: eval (оценка), hold (отложенные), mock (сухой прогон)
+#   python3 tasks.py asm <tag> <n>                         → n задач калибровки ε сборки (одно произведение A·B, числа < p)
+#   python3 tasks.py <tag> <seed> <N> [<N> ...]            → старый формат (smoke/calib), оставлен для воспроизводимости
+import json, os, sys, random, hmac, hashlib
+HERE = os.path.dirname(os.path.abspath(__file__))
+SECRET = '/root/level5_secret'; SALT = f'{SECRET}/salt'; SALT_HASH = f'{HERE}/salt_sha256.txt'
+LEAF = 10; NLEAF = 20; NMAT = LEAF * NLEAF
 def is_prime(n):
     if n < 2: return False
     for q in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37):
@@ -25,6 +38,86 @@ def prod_lr(Ms, p):
 def prod_tree(Ms, p):
     if len(Ms) == 1: return Ms[0]
     m = len(Ms) // 2; return mul(prod_tree(Ms[:m], p), prod_tree(Ms[m:], p), p)
+def tr(A): return [[A[0][0], A[1][0]], [A[0][1], A[1][1]]]
+
+# --- дерево организации: то же правило деления, что в org_step.js (split = lo + floor((hi - lo) / 2)) ---
+def split(lo, hi): return lo + (hi - lo) // 2
+def tree_spans(lo, hi):
+    """Все узлы вложенного дерева над листами [lo, hi): список (lo, hi); листья — hi - lo == 1."""
+    out = [(lo, hi)]
+    if hi - lo > 1:
+        m = split(lo, hi); out += tree_spans(lo, m) + tree_spans(m, hi)
+    return out
+
+# --- соль и зёрна (Скептик 2) ---
+def make_salt():
+    os.makedirs(SECRET, mode=0o700, exist_ok=True)
+    if not os.path.exists(SALT):
+        fd = os.open(SALT, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        os.write(fd, os.urandom(32).hex().encode()); os.close(fd); print('новая соль →', SALT)
+    h = hashlib.sha256(open(SALT, 'rb').read()).hexdigest()
+    open(SALT_HASH, 'w').write(h + '\n'); print('sha256(соли) =', h, '→', SALT_HASH); return h
+def seed_of(ns, i):
+    if not os.path.exists(SALT): raise SystemExit('нет соли: python3 tasks.py salt')
+    salt = open(SALT, 'rb').read()
+    h = hashlib.sha256(salt).hexdigest()
+    if os.path.exists(SALT_HASH) and open(SALT_HASH).read().strip() != h: raise SystemExit('соль не совпадает с salt_sha256.txt')
+    return hmac.new(salt, f'{ns}:{i}'.encode(), hashlib.sha256).hexdigest()[:24]
+
+# --- вложенная задача (Скептик 1) ---
+def make_nested(seed):
+    r = random.Random(f'L5nest:{seed}')
+    p = r.randrange(10**8, 10**9)
+    while not is_prime(p): p += 1
+    Ms = [[[r.randrange(0, 1000), r.randrange(0, 1000)], [r.randrange(0, 1000), r.randrange(0, 1000)]] for _ in range(NMAT)]
+    leaves = [prod_lr(Ms[i*LEAF:(i+1)*LEAF], p) for i in range(NLEAF)]
+    spans = {}
+    for lo, hi in tree_spans(0, NLEAF):
+        spans[f'{lo}:{hi}'] = prod_lr(Ms[lo*LEAF:hi*LEAF], p)
+    prefix = []; R = [[1, 0], [0, 1]]
+    for M in Ms: R = mul(R, M, p); prefix.append(R)                 # prefix[k-1] = M1·…·Mk
+    # проверки правды вторым способом
+    whole = prod_lr(Ms, p)
+    assert whole == prod_tree(Ms, p) == prefix[-1] == spans['0:20']
+    h1, h2 = prod_lr(Ms[:100], p), prod_lr(Ms[100:], p)
+    assert whole == mul(h1, h2, p), 'N=20 ≠ N=10 · N=10'               # требование Скептика 1
+    for a in (0, 100):
+        q1, q2 = prod_lr(Ms[a:a+50], p), prod_lr(Ms[a+50:a+100], p)
+        assert prod_lr(Ms[a:a+100], p) == mul(q1, q2, p), 'N=10 ≠ N=5 · N=5'
+    assert spans['0:10'] == h1 and spans['10:20'] == h2 and spans['0:5'] == prod_lr(Ms[:50], p)
+    for lo, hi in tree_spans(0, NLEAF):                              # каждый узел = произведение детей
+        if hi - lo > 1:
+            m = split(lo, hi); assert spans[f'{lo}:{hi}'] == mul(spans[f'{lo}:{m}'], spans[f'{m}:{hi}'], p)
+    for i in range(NLEAF):                                           # путь «транспонированный обратный»: (M1…M10)ᵀ = M10ᵀ…M1ᵀ
+        assert tr(prod_lr([tr(M) for M in reversed(Ms[i*LEAF:(i+1)*LEAF])], p)) == leaves[i]
+        a = i * LEAF                                                 # путь «половины»: (M1…M5)(M6…M10)
+        assert mul(prod_lr(Ms[a:a+5], p), prod_lr(Ms[a+5:a+10], p), p) == leaves[i]
+    halves = [[prod_lr(Ms[i*LEAF:i*LEAF+5], p), prod_lr(Ms[i*LEAF+5:(i+1)*LEAF], p)] for i in range(NLEAF)]
+    return dict(p=p, matrices=Ms), dict(seed=seed, p=p, leaves=leaves, halves=halves, spans=spans, prefix=prefix, truth=whole)
+
+def nested(tag, ns, n, offset=0):
+    os.makedirs(SECRET, mode=0o700, exist_ok=True); os.makedirs(f'{HERE}/tasks', exist_ok=True)
+    pub, sec = [], {}
+    for i in range(offset, offset + n):
+        q, t = make_nested(seed_of(ns, i)); tid = f'{ns[0].upper()}{i}'
+        pub.append(dict(id=tid, **q)); sec[tid] = t
+    json.dump(pub, open(f'{HERE}/tasks/{tag}.json', 'w')); json.dump(dict(ns=ns, tasks=sec), open(f'{SECRET}/{tag}.json', 'w'))
+    print(f'{n} вложенных задач ({pub[0]["id"]}…{pub[-1]["id"]}, ns={ns}) → tasks/{tag}.json; правда (asserts прошли) → {SECRET}/{tag}.json')
+
+def asm(tag, n):
+    """Калибровка ε сборки: одно произведение двух матриц 2×2 с элементами < p (как выходы листьев). Зёрна — отдельное пространство."""
+    os.makedirs(SECRET, mode=0o700, exist_ok=True); os.makedirs(f'{HERE}/tasks', exist_ok=True)
+    pub, sec = [], {}
+    for i in range(n):
+        r = random.Random(f'L5asm:{i}'); p = r.randrange(10**8, 10**9)
+        while not is_prime(p): p += 1
+        A, B = ([[r.randrange(0, p), r.randrange(0, p)], [r.randrange(0, p), r.randrange(0, p)]] for _ in range(2))
+        t = mul(A, B, p); assert t == prod_lr([A, B], p) == tr(mul(tr(B), tr(A), p))
+        tid = f'A{i}'; pub.append(dict(id=tid, p=p, matrices=[A, B])); sec[tid] = dict(p=p, truth=t)
+    json.dump(pub, open(f'{HERE}/tasks/{tag}.json', 'w')); json.dump(dict(ns='asm', tasks=sec), open(f'{SECRET}/{tag}.json', 'w'))
+    print(f'{n} задач сборки → tasks/{tag}.json; правда → {SECRET}/{tag}.json')
+
+# --- старый формат (smoke, calib) — не менялся ---
 def make(seed, N):
     r = random.Random(f'L5:{seed}:{N}')
     p = r.randrange(10**8, 10**9)
@@ -33,11 +126,17 @@ def make(seed, N):
     t1, t2 = prod_lr(Ms, p), prod_tree(Ms, p); assert t1 == t2
     leaves = [prod_lr(Ms[i*LEAF:(i+1)*LEAF], p) for i in range(N)]
     return dict(id=f'M{N}-{seed}', N=N, p=p, matrices=Ms), dict(truth=t1, leaves=leaves)
+
 if __name__ == '__main__':
-    tag, seed, Ns = sys.argv[1], int(sys.argv[2]), [int(x) for x in sys.argv[3:]]
-    os.makedirs(SECRET, exist_ok=True); os.makedirs('tasks', exist_ok=True)
-    pub, sec = [], {}
-    for N in Ns:
-        q, t = make(seed, N); pub.append(q); sec[q['id']] = t
-    json.dump(pub, open(f'tasks/{tag}.json', 'w')); json.dump(sec, open(f'{SECRET}/{tag}.json', 'w'))
-    print(f"{len(pub)} задач ({', '.join(q['id'] for q in pub)}) → tasks/{tag}.json; правда (два способа совпали) → {SECRET}/{tag}.json")
+    a = sys.argv[1:]
+    if a[0] == 'salt': make_salt()
+    elif a[0] == 'nested': nested(a[1], a[2], int(a[3]), int(a[4]) if len(a) > 4 else 0)
+    elif a[0] == 'asm': asm(a[1], int(a[2]))
+    else:
+        tag, seed, Ns = a[0], int(a[1]), [int(x) for x in a[2:]]
+        os.makedirs(SECRET, exist_ok=True); os.makedirs('tasks', exist_ok=True)
+        pub, sec = [], {}
+        for N in Ns:
+            q, t = make(seed, N); pub.append(q); sec[q['id']] = t
+        json.dump(pub, open(f'tasks/{tag}.json', 'w')); json.dump(sec, open(f'{SECRET}/{tag}.json', 'w'))
+        print(f"{len(pub)} задач ({', '.join(q['id'] for q in pub)}) → tasks/{tag}.json; правда (два способа совпали) → {SECRET}/{tag}.json")

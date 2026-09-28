@@ -1,0 +1,562 @@
+{
+ "budget": {
+  "eps_leaf": 0.25,
+  "p_mismatch": 0.4375,
+  "a20_seeds": 10,
+  "n_seeds": 10,
+  "n_self": 8,
+  "rows": [
+   {
+    "cell": "calib",
+    "what": "калибровка: 8 сборок + 4 TR на C10",
+    "seeds": 1,
+    "per_seed_min": 12,
+    "per_seed_exp": 12,
+    "per_seed_max": 12,
+    "total_min": 12,
+    "total_exp": 12,
+    "total_max": 12
+   },
+   {
+    "cell": "b20",
+    "what": "b: дерево + проверка другим путём, N=20 (N=5,10 — поддеревья)",
+    "seeds": 10,
+    "per_seed_min": 59,
+    "per_seed_exp": 85.25,
+    "per_seed_max": 119,
+    "total_min": 590,
+    "total_exp": 852.5,
+    "total_max": 1190
+   },
+   {
+    "cell": "a20",
+    "what": "a: дерево без защиты N=20 (листья общие с b)",
+    "seeds": 10,
+    "per_seed_min": 19,
+    "per_seed_exp": 19,
+    "per_seed_max": 19,
+    "total_min": 190,
+    "total_exp": 190,
+    "total_max": 190
+   },
+   {
+    "cell": "c10",
+    "what": "c: цепочка N=10",
+    "seeds": 10,
+    "per_seed_min": 10,
+    "per_seed_exp": 10,
+    "per_seed_max": 10,
+    "total_min": 100,
+    "total_exp": 100,
+    "total_max": 100
+   },
+   {
+    "cell": "s5",
+    "what": "s: одиночка одним вызовом N=5",
+    "seeds": 10,
+    "per_seed_min": 1,
+    "per_seed_exp": 1,
+    "per_seed_max": 1,
+    "total_min": 10,
+    "total_exp": 10,
+    "total_max": 10
+   },
+   {
+    "cell": "s10",
+    "what": "s: одиночка одним вызовом N=10",
+    "seeds": 10,
+    "per_seed_min": 1,
+    "per_seed_exp": 1,
+    "per_seed_max": 1,
+    "total_min": 10,
+    "total_exp": 10,
+    "total_max": 10
+   },
+   {
+    "cell": "s20",
+    "what": "s: одиночка одним вызовом N=20",
+    "seeds": 10,
+    "per_seed_min": 1,
+    "per_seed_exp": 1,
+    "per_seed_max": 1,
+    "total_min": 10,
+    "total_exp": 10,
+    "total_max": 10
+   },
+   {
+    "cell": "e10",
+    "what": "e: равный бюджет N=10 (K = вызовы b на поддереве N=10)",
+    "seeds": 8,
+    "per_seed_min": 29,
+    "per_seed_exp": 42.12,
+    "per_seed_max": 59,
+    "total_min": 232,
+    "total_exp": 337.0,
+    "total_max": 472
+   }
+  ],
+  "total": {
+   "min": 1154,
+   "exp": 1521.5,
+   "p95": 1574,
+   "p99": 1595,
+   "max": 1994
+  }
+ },
+ "jobs": [
+  {
+   "id": "b20-M0",
+   "kind": "tree",
+   "task": "M0",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M0",
+   "kind": "tree",
+   "task": "M0",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M0"
+  },
+  {
+   "id": "c10-M0",
+   "kind": "chain",
+   "task": "M0",
+   "N": 10
+  },
+  {
+   "id": "s5-M0",
+   "kind": "single",
+   "task": "M0",
+   "N": 5
+  },
+  {
+   "id": "s10-M0",
+   "kind": "single",
+   "task": "M0",
+   "N": 10
+  },
+  {
+   "id": "s20-M0",
+   "kind": "single",
+   "task": "M0",
+   "N": 20
+  },
+  {
+   "id": "e10-M0",
+   "kind": "self",
+   "task": "M0",
+   "N": 10,
+   "match": "b20-M0",
+   "K": 42
+  },
+  {
+   "id": "b20-M1",
+   "kind": "tree",
+   "task": "M1",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M1",
+   "kind": "tree",
+   "task": "M1",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M1"
+  },
+  {
+   "id": "c10-M1",
+   "kind": "chain",
+   "task": "M1",
+   "N": 10
+  },
+  {
+   "id": "s5-M1",
+   "kind": "single",
+   "task": "M1",
+   "N": 5
+  },
+  {
+   "id": "s10-M1",
+   "kind": "single",
+   "task": "M1",
+   "N": 10
+  },
+  {
+   "id": "s20-M1",
+   "kind": "single",
+   "task": "M1",
+   "N": 20
+  },
+  {
+   "id": "e10-M1",
+   "kind": "self",
+   "task": "M1",
+   "N": 10,
+   "match": "b20-M1",
+   "K": 42
+  },
+  {
+   "id": "b20-M2",
+   "kind": "tree",
+   "task": "M2",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M2",
+   "kind": "tree",
+   "task": "M2",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M2"
+  },
+  {
+   "id": "c10-M2",
+   "kind": "chain",
+   "task": "M2",
+   "N": 10
+  },
+  {
+   "id": "s5-M2",
+   "kind": "single",
+   "task": "M2",
+   "N": 5
+  },
+  {
+   "id": "s10-M2",
+   "kind": "single",
+   "task": "M2",
+   "N": 10
+  },
+  {
+   "id": "s20-M2",
+   "kind": "single",
+   "task": "M2",
+   "N": 20
+  },
+  {
+   "id": "e10-M2",
+   "kind": "self",
+   "task": "M2",
+   "N": 10,
+   "match": "b20-M2",
+   "K": 42
+  },
+  {
+   "id": "b20-M3",
+   "kind": "tree",
+   "task": "M3",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M3",
+   "kind": "tree",
+   "task": "M3",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M3"
+  },
+  {
+   "id": "c10-M3",
+   "kind": "chain",
+   "task": "M3",
+   "N": 10
+  },
+  {
+   "id": "s5-M3",
+   "kind": "single",
+   "task": "M3",
+   "N": 5
+  },
+  {
+   "id": "s10-M3",
+   "kind": "single",
+   "task": "M3",
+   "N": 10
+  },
+  {
+   "id": "s20-M3",
+   "kind": "single",
+   "task": "M3",
+   "N": 20
+  },
+  {
+   "id": "e10-M3",
+   "kind": "self",
+   "task": "M3",
+   "N": 10,
+   "match": "b20-M3",
+   "K": 42
+  },
+  {
+   "id": "b20-M4",
+   "kind": "tree",
+   "task": "M4",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M4",
+   "kind": "tree",
+   "task": "M4",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M4"
+  },
+  {
+   "id": "c10-M4",
+   "kind": "chain",
+   "task": "M4",
+   "N": 10
+  },
+  {
+   "id": "s5-M4",
+   "kind": "single",
+   "task": "M4",
+   "N": 5
+  },
+  {
+   "id": "s10-M4",
+   "kind": "single",
+   "task": "M4",
+   "N": 10
+  },
+  {
+   "id": "s20-M4",
+   "kind": "single",
+   "task": "M4",
+   "N": 20
+  },
+  {
+   "id": "e10-M4",
+   "kind": "self",
+   "task": "M4",
+   "N": 10,
+   "match": "b20-M4",
+   "K": 42
+  },
+  {
+   "id": "b20-M5",
+   "kind": "tree",
+   "task": "M5",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M5",
+   "kind": "tree",
+   "task": "M5",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M5"
+  },
+  {
+   "id": "c10-M5",
+   "kind": "chain",
+   "task": "M5",
+   "N": 10
+  },
+  {
+   "id": "s5-M5",
+   "kind": "single",
+   "task": "M5",
+   "N": 5
+  },
+  {
+   "id": "s10-M5",
+   "kind": "single",
+   "task": "M5",
+   "N": 10
+  },
+  {
+   "id": "s20-M5",
+   "kind": "single",
+   "task": "M5",
+   "N": 20
+  },
+  {
+   "id": "e10-M5",
+   "kind": "self",
+   "task": "M5",
+   "N": 10,
+   "match": "b20-M5",
+   "K": 42
+  },
+  {
+   "id": "b20-M6",
+   "kind": "tree",
+   "task": "M6",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M6",
+   "kind": "tree",
+   "task": "M6",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M6"
+  },
+  {
+   "id": "c10-M6",
+   "kind": "chain",
+   "task": "M6",
+   "N": 10
+  },
+  {
+   "id": "s5-M6",
+   "kind": "single",
+   "task": "M6",
+   "N": 5
+  },
+  {
+   "id": "s10-M6",
+   "kind": "single",
+   "task": "M6",
+   "N": 10
+  },
+  {
+   "id": "s20-M6",
+   "kind": "single",
+   "task": "M6",
+   "N": 20
+  },
+  {
+   "id": "e10-M6",
+   "kind": "self",
+   "task": "M6",
+   "N": 10,
+   "match": "b20-M6",
+   "K": 42
+  },
+  {
+   "id": "b20-M7",
+   "kind": "tree",
+   "task": "M7",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M7",
+   "kind": "tree",
+   "task": "M7",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M7"
+  },
+  {
+   "id": "c10-M7",
+   "kind": "chain",
+   "task": "M7",
+   "N": 10
+  },
+  {
+   "id": "s5-M7",
+   "kind": "single",
+   "task": "M7",
+   "N": 5
+  },
+  {
+   "id": "s10-M7",
+   "kind": "single",
+   "task": "M7",
+   "N": 10
+  },
+  {
+   "id": "s20-M7",
+   "kind": "single",
+   "task": "M7",
+   "N": 20
+  },
+  {
+   "id": "e10-M7",
+   "kind": "self",
+   "task": "M7",
+   "N": 10,
+   "match": "b20-M7",
+   "K": 42
+  },
+  {
+   "id": "b20-M8",
+   "kind": "tree",
+   "task": "M8",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M8",
+   "kind": "tree",
+   "task": "M8",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M8"
+  },
+  {
+   "id": "c10-M8",
+   "kind": "chain",
+   "task": "M8",
+   "N": 10
+  },
+  {
+   "id": "s5-M8",
+   "kind": "single",
+   "task": "M8",
+   "N": 5
+  },
+  {
+   "id": "s10-M8",
+   "kind": "single",
+   "task": "M8",
+   "N": 10
+  },
+  {
+   "id": "s20-M8",
+   "kind": "single",
+   "task": "M8",
+   "N": 20
+  },
+  {
+   "id": "b20-M9",
+   "kind": "tree",
+   "task": "M9",
+   "N": 20,
+   "check": "tr"
+  },
+  {
+   "id": "a20-M9",
+   "kind": "tree",
+   "task": "M9",
+   "N": 20,
+   "check": "none",
+   "share": "b20-M9"
+  },
+  {
+   "id": "c10-M9",
+   "kind": "chain",
+   "task": "M9",
+   "N": 10
+  },
+  {
+   "id": "s5-M9",
+   "kind": "single",
+   "task": "M9",
+   "N": 5
+  },
+  {
+   "id": "s10-M9",
+   "kind": "single",
+   "task": "M9",
+   "N": 10
+  },
+  {
+   "id": "s20-M9",
+   "kind": "single",
+   "task": "M9",
+   "N": 20
+  }
+ ]
+}

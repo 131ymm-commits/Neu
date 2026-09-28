@@ -1,0 +1,651 @@
+{
+ "tag": "orgmock",
+ "frozen_sha256": "273464608c86fb21204dd691905a0f78bb13174c34f5863225e79049ca09c90b",
+ "eps_per_matrix": 0.0284,
+ "cells": {
+  "b5": {
+   "n": 10,
+   "acc": 0.3,
+   "ok": 3,
+   "wrong": 5,
+   "fmt": 2,
+   "refused": 0,
+   "M": 50,
+   "M_eps": 1.42,
+   "wilson95": [
+    0.108,
+    0.603
+   ],
+   "fail_nonanswer_share": 0.2,
+   "calls_total": 214,
+   "calls_per_seed": 21.4
+  },
+  "b10": {
+   "n": 10,
+   "acc": 0.2,
+   "ok": 2,
+   "wrong": 5,
+   "fmt": 3,
+   "refused": 0,
+   "M": 100,
+   "M_eps": 2.84,
+   "wilson95": [
+    0.057,
+    0.51
+   ],
+   "fail_nonanswer_share": 0.3,
+   "calls_total": 414,
+   "calls_per_seed": 41.4
+  },
+  "b20": {
+   "n": 10,
+   "acc": 0.0,
+   "ok": 0,
+   "wrong": 5,
+   "fmt": 5,
+   "refused": 0,
+   "M": 200,
+   "M_eps": 5.67,
+   "wilson95": [
+    0.0,
+    0.278
+   ],
+   "fail_nonanswer_share": 0.5,
+   "calls_total": 817,
+   "calls_per_seed": 81.7
+  },
+  "a5": {
+   "n": 10,
+   "acc": 0.0,
+   "ok": 0,
+   "wrong": 8,
+   "fmt": 2,
+   "refused": 0,
+   "M": 50,
+   "M_eps": 1.42,
+   "wilson95": [
+    0.0,
+    0.278
+   ],
+   "fail_nonanswer_share": 0.2,
+   "calls_total": 35,
+   "calls_per_seed": 3.5
+  },
+  "a10": {
+   "n": 10,
+   "acc": 0.0,
+   "ok": 0,
+   "wrong": 7,
+   "fmt": 3,
+   "refused": 0,
+   "M": 100,
+   "M_eps": 2.84,
+   "wilson95": [
+    0.0,
+    0.278
+   ],
+   "fail_nonanswer_share": 0.3,
+   "calls_total": 81,
+   "calls_per_seed": 8.1
+  },
+  "a20": {
+   "n": 10,
+   "acc": 0.0,
+   "ok": 0,
+   "wrong": 4,
+   "fmt": 6,
+   "refused": 0,
+   "M": 200,
+   "M_eps": 5.67,
+   "wilson95": [
+    0.0,
+    0.278
+   ],
+   "fail_nonanswer_share": 0.6,
+   "calls_total": 165,
+   "calls_per_seed": 16.5
+  },
+  "c10": {
+   "n": 10,
+   "acc": 0.0,
+   "ok": 0,
+   "wrong": 9,
+   "fmt": 1,
+   "refused": 0,
+   "M": 100,
+   "M_eps": 2.84,
+   "wilson95": [
+    0.0,
+    0.278
+   ],
+   "fail_nonanswer_share": 0.1,
+   "calls_total": 98,
+   "calls_per_seed": 9.8
+  },
+  "s5": {
+   "n": 10,
+   "acc": 0.1,
+   "ok": 1,
+   "wrong": 9,
+   "fmt": 0,
+   "refused": 0,
+   "M": 50,
+   "M_eps": 1.42,
+   "wilson95": [
+    0.018,
+    0.404
+   ],
+   "fail_nonanswer_share": 0.0,
+   "calls_total": 10,
+   "calls_per_seed": 1
+  },
+  "s10": {
+   "n": 10,
+   "acc": 0.0,
+   "ok": 0,
+   "wrong": 8,
+   "fmt": 1,
+   "refused": 1,
+   "M": 100,
+   "M_eps": 2.84,
+   "wilson95": [
+    0.0,
+    0.278
+   ],
+   "fail_nonanswer_share": 0.2,
+   "calls_total": 10,
+   "calls_per_seed": 1
+  },
+  "s20": {
+   "n": 10,
+   "acc": 0.0,
+   "ok": 0,
+   "wrong": 8,
+   "fmt": 0,
+   "refused": 2,
+   "M": 200,
+   "M_eps": 5.67,
+   "wilson95": [
+    0.0,
+    0.278
+   ],
+   "fail_nonanswer_share": 0.2,
+   "calls_total": 10,
+   "calls_per_seed": 1
+  },
+  "e10": {
+   "n": 8,
+   "acc": 0.25,
+   "ok": 2,
+   "wrong": 6,
+   "fmt": 0,
+   "refused": 0,
+   "M": 100,
+   "M_eps": 2.84,
+   "wilson95": [
+    0.071,
+    0.591
+   ],
+   "fail_nonanswer_share": 0.0,
+   "calls_total": 81,
+   "calls_per_seed": 10.12
+  }
+ },
+ "per_seed": {
+  "M0": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 0,
+   "b10": 0,
+   "b20": 0,
+   "e10": 1
+  },
+  "M1": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 0,
+   "b10": 0,
+   "b20": 0,
+   "e10": 0
+  },
+  "M2": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 1,
+   "b10": 1,
+   "b20": 0,
+   "e10": 0
+  },
+  "M3": {
+   "s5": 1,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 0,
+   "b10": 0,
+   "b20": 0,
+   "e10": 1
+  },
+  "M4": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 1,
+   "b10": 0,
+   "b20": 0,
+   "e10": 0
+  },
+  "M5": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 0,
+   "b10": 0,
+   "b20": 0,
+   "e10": 0
+  },
+  "M6": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 1,
+   "b10": 1,
+   "b20": 0,
+   "e10": 0
+  },
+  "M7": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 0,
+   "b10": 0,
+   "b20": 0,
+   "e10": 0
+  },
+  "M8": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 0,
+   "b10": 0,
+   "b20": 0,
+   "e10": null
+  },
+  "M9": {
+   "s5": 0,
+   "s10": 0,
+   "s20": 0,
+   "a5": 0,
+   "a10": 0,
+   "a20": 0,
+   "c10": 0,
+   "b5": 0,
+   "b10": 0,
+   "b20": 0,
+   "e10": null
+  }
+ },
+ "secondary_subtrees": {
+  "a5": {
+   "n": 30,
+   "acc": 0.0667
+  },
+  "a10": {
+   "n": 10,
+   "acc": 0
+  },
+  "b5": {
+   "n": 30,
+   "acc": 0.3667
+  },
+  "b10": {
+   "n": 10,
+   "acc": 0
+  }
+ },
+ "nodes": {
+  "P": {
+   "n": 200,
+   "err": 0.265,
+   "n_cond": 200,
+   "err_cond": 0.265,
+   "fmt": 5
+  },
+  "TR": {
+   "n": 200,
+   "err": 0.24,
+   "n_cond": 200,
+   "err_cond": 0.24,
+   "fmt": 2
+  },
+  "link": {
+   "n": 98,
+   "err": 0.8367,
+   "n_cond": 26,
+   "err_cond": 0.3846,
+   "fmt": 1
+  },
+  "H1": {
+   "n": 86,
+   "err": 0.1628,
+   "n_cond": 86,
+   "err_cond": 0.1628,
+   "fmt": 1
+  },
+  "H2": {
+   "n": 86,
+   "err": 0.1512,
+   "n_cond": 86,
+   "err_cond": 0.1512,
+   "fmt": 2
+  },
+  "A": {
+   "n": 327,
+   "err": 0.5566,
+   "n_cond": 159,
+   "err_cond": 0.0881,
+   "fmt": 4
+  },
+  "HC": {
+   "n": 83,
+   "err": 0.3373,
+   "n_cond": 59,
+   "err_cond": 0.0678,
+   "fmt": 2
+  },
+  "rho_TR_equals_wrong_P": {
+   "n_wrong_P": 48,
+   "same": 0
+  },
+  "both_wrong_P_TR": 13,
+  "leaf_paths": {
+   "P=TR": 114,
+   "unresolved": 38,
+   "unresolved:wrong": 31,
+   "TR=H": 27,
+   "P=H": 21
+  }
+ },
+ "paired": {
+  "b5-s5": {
+   "n": 10,
+   "diff": 0.2,
+   "boot95": [
+    -0.2,
+    0.6
+   ],
+   "newcombe95": [
+    -0.1937,
+    0.531
+   ],
+   "lower": -0.2
+  },
+  "a5-s5": {
+   "n": 10,
+   "diff": -0.1,
+   "boot95": [
+    -0.3,
+    0.0
+   ],
+   "newcombe95": [
+    -0.4042,
+    0.1894
+   ],
+   "lower": -0.4042
+  },
+  "b10-s10": {
+   "n": 10,
+   "diff": 0.2,
+   "boot95": [
+    0.0,
+    0.5
+   ],
+   "newcombe95": [
+    -0.1124,
+    0.5098
+   ],
+   "lower": -0.1124
+  },
+  "a10-s10": {
+   "n": 10,
+   "diff": 0,
+   "boot95": [
+    0.0,
+    0.0
+   ],
+   "newcombe95": [
+    -0.2775,
+    0.2775
+   ],
+   "lower": -0.2775
+  },
+  "b20-s20": {
+   "n": 10,
+   "diff": 0,
+   "boot95": [
+    0.0,
+    0.0
+   ],
+   "newcombe95": [
+    -0.2775,
+    0.2775
+   ],
+   "lower": -0.2775
+  },
+  "a20-s20": {
+   "n": 10,
+   "diff": 0,
+   "boot95": [
+    0.0,
+    0.0
+   ],
+   "newcombe95": [
+    -0.2775,
+    0.2775
+   ],
+   "lower": -0.2775
+  },
+  "b10-e10": {
+   "n": 8,
+   "diff": 0,
+   "boot95": [
+    -0.5,
+    0.5
+   ],
+   "newcombe95": [
+    -0.4342,
+    0.4342
+   ],
+   "lower": -0.5
+  },
+  "b10-c10": {
+   "n": 10,
+   "diff": 0.2,
+   "boot95": [
+    0.0,
+    0.5
+   ],
+   "newcombe95": [
+    -0.1124,
+    0.5098
+   ],
+   "lower": -0.1124
+  }
+ },
+ "macro": {
+  "a5": {
+   "observed": 0.0,
+   "n": 10,
+   "pred_plugin": 0.2373,
+   "pred_obs_90": [
+    0.0,
+    0.7
+   ],
+   "inside": true
+  },
+  "a10": {
+   "observed": 0.0,
+   "n": 10,
+   "pred_plugin": 0.0563,
+   "pred_obs_90": [
+    0.0,
+    0.5
+   ],
+   "inside": true
+  },
+  "a20": {
+   "observed": 0.0,
+   "n": 10,
+   "pred_plugin": 0.0032,
+   "pred_obs_90": [
+    0.0,
+    0.2
+   ],
+   "inside": true
+  },
+  "b5": {
+   "observed": 0.3,
+   "n": 10,
+   "pred_plugin": 1.0,
+   "pred_obs_90": [
+    0.0,
+    0.9
+   ],
+   "inside": true
+  },
+  "b10": {
+   "observed": 0.2,
+   "n": 10,
+   "pred_plugin": 1.0,
+   "pred_obs_90": [
+    0.0,
+    0.8
+   ],
+   "inside": true
+  },
+  "b20": {
+   "observed": 0.0,
+   "n": 10,
+   "pred_plugin": 1.0,
+   "pred_obs_90": [
+    0.0,
+    0.6
+   ],
+   "inside": true
+  },
+  "c10": {
+   "observed": 0.0,
+   "n": 10,
+   "pred_plugin": 0.0563,
+   "pred_obs_90": [
+    0.0,
+    0.7
+   ],
+   "inside": true
+  }
+ },
+ "certificate": {
+  "c1_b20_minus_single_lower_gt_0_3": false,
+  "c2_council_b10_minus_equal_lower_gt_0": false,
+  "c2_skeptic_b10_minus_equal_lower_gt_0_2": false,
+  "veto_equal_budget_ge_0_8": false,
+  "c4_single_le_0_1_and_nonanswer_le_0_3": {
+   "5": true,
+   "10": true,
+   "20": true
+  },
+  "c5_macro_inside_90": {
+   "b5": true,
+   "b10": true,
+   "b20": true
+  },
+  "LEVEL_council": false,
+  "LEVEL_skeptic_strict": false,
+  "note": "N = 20 против равного бюджета не сертифицируется (равный бюджет ставится только при N = 10). Нижняя граница = min(бутстреп по зёрнам 2,5 %, Ньюкомб 95 %)."
+ },
+ "self_trace": {
+  "K": [
+   42,
+   47,
+   42,
+   44,
+   41,
+   38,
+   38,
+   44
+  ],
+  "calls_used": [
+   10,
+   10,
+   10,
+   10,
+   10,
+   10,
+   10,
+   11
+  ],
+  "acc_by_call": {
+   "1": 0.812,
+   "2": 0.75,
+   "3": 0.625,
+   "4": 0.557,
+   "5": 0.625,
+   "6": 0.625,
+   "7": 0.525,
+   "8": 0.463,
+   "9": 0.375,
+   "10": 0.362,
+   "11": 0
+  },
+  "acc_by_k_decile": {
+   "1-10": 0.812,
+   "11-20": 0.75,
+   "21-30": 0.625,
+   "31-40": 0.613,
+   "41-50": 0.625,
+   "51-60": 0.525,
+   "61-70": 0.5,
+   "71-80": 0.463,
+   "81-90": 0.375,
+   "91-100": 0.362
+  }
+ }
+}

@@ -1,0 +1,104 @@
+{
+ "eps_leaf": 0.25,
+ "p_mismatch": 0.4375,
+ "a20_seeds": 10,
+ "n_seeds": 10,
+ "n_self": 8,
+ "rows": [
+  {
+   "cell": "calib",
+   "what": "калибровка: 8 сборок + 4 TR на C10",
+   "seeds": 1,
+   "per_seed_min": 12,
+   "per_seed_exp": 12,
+   "per_seed_max": 12,
+   "total_min": 12,
+   "total_exp": 12,
+   "total_max": 12
+  },
+  {
+   "cell": "b20",
+   "what": "b: дерево + проверка другим путём, N=20 (N=5,10 — поддеревья)",
+   "seeds": 10,
+   "per_seed_min": 59,
+   "per_seed_exp": 85.25,
+   "per_seed_max": 119,
+   "total_min": 590,
+   "total_exp": 852.5,
+   "total_max": 1190
+  },
+  {
+   "cell": "a20",
+   "what": "a: дерево без защиты N=20 (листья общие с b)",
+   "seeds": 10,
+   "per_seed_min": 19,
+   "per_seed_exp": 19,
+   "per_seed_max": 19,
+   "total_min": 190,
+   "total_exp": 190,
+   "total_max": 190
+  },
+  {
+   "cell": "c10",
+   "what": "c: цепочка N=10",
+   "seeds": 10,
+   "per_seed_min": 10,
+   "per_seed_exp": 10,
+   "per_seed_max": 10,
+   "total_min": 100,
+   "total_exp": 100,
+   "total_max": 100
+  },
+  {
+   "cell": "s5",
+   "what": "s: одиночка одним вызовом N=5",
+   "seeds": 10,
+   "per_seed_min": 1,
+   "per_seed_exp": 1,
+   "per_seed_max": 1,
+   "total_min": 10,
+   "total_exp": 10,
+   "total_max": 10
+  },
+  {
+   "cell": "s10",
+   "what": "s: одиночка одним вызовом N=10",
+   "seeds": 10,
+   "per_seed_min": 1,
+   "per_seed_exp": 1,
+   "per_seed_max": 1,
+   "total_min": 10,
+   "total_exp": 10,
+   "total_max": 10
+  },
+  {
+   "cell": "s20",
+   "what": "s: одиночка одним вызовом N=20",
+   "seeds": 10,
+   "per_seed_min": 1,
+   "per_seed_exp": 1,
+   "per_seed_max": 1,
+   "total_min": 10,
+   "total_exp": 10,
+   "total_max": 10
+  },
+  {
+   "cell": "e10",
+   "what": "e: равный бюджет N=10 (K = вызовы b на поддереве N=10)",
+   "seeds": 8,
+   "per_seed_min": 29,
+   "per_seed_exp": 42.12,
+   "per_seed_max": 59,
+   "total_min": 232,
+   "total_exp": 337.0,
+   "total_max": 472
+  }
+ ],
+ "total": {
+  "min": 1154,
+  "exp": 1521.5,
+  "p95": 1574,
+  "p99": 1595,
+  "max": 1994
+ }
+}
