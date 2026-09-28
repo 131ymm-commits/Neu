@@ -18,12 +18,12 @@
   </ResearchProjectDef>
   <ResearchProjectDef>
     <defName>SF_Inselnetz</defName><label>островная сеть посёлка</label>
-    <description>Контроллер островной сети: генератор, солнце и аккумуляторы держат частоту вместе, нагрузка распределяется по приоритетам. Посёлок живёт как маленькая страна.</description>
+    <description>Контроллер островной сети: генератор, солнце и аккумуляторы держат частоту вместе; большой буфер сглаживает пики. Посёлок живёт как маленькая энергосистема.</description>
     <baseCost>1600</baseCost><techLevel>Industrial</techLevel><prerequisites><li>SF_Solar</li></prerequisites><tab>Schwarzfall</tab><researchViewX>3</researchViewX><researchViewY>1</researchViewY>
   </ResearchProjectDef>
   <ResearchProjectDef>
     <defName>SF_Sync</defName><label>синхронизация с общей сетью</label>
-    <description>Когда сеть начнут возвращать по часам в сутки, островную сеть надо уметь подключить без обрыва: синхроноскоп, автомат обратной мощности. С этого момента ваш сетевой ввод снова живёт в окна подачи, а излишки уходят соседям.</description>
+    <description>Когда сеть начнут возвращать по частям (с 29-го дня), подключиться без обрыва можно только с синхроноскопом и автоматом обратной мощности. Открывает сетевой ввод: 2000 Вт из общей сети.</description>
     <baseCost>2200</baseCost><techLevel>Industrial</techLevel><prerequisites><li>SF_Inselnetz</li></prerequisites><tab>Schwarzfall</tab><researchViewX>4</researchViewX><researchViewY>1</researchViewY>
   </ResearchProjectDef>
 </Defs>

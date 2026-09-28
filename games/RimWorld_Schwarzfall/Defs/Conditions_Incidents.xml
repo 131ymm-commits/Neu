@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Defs>
-  <!-- Само условие: блэкаут. Стадии по игровым дням от начала (хронология реального обвала сети). -->
-  <GameConditionDef>
-    <defName>Schwarzfall_Blackout</defName>
-    <conditionClass>Schwarzfall.GameCondition_Blackout</conditionClass>
-    <label>блэкаут</label>
-    <description>Европейская сеть лежит. Сетевой ввод (Netzanschluss) мёртв, всё, что питалось от него, стоит. Стадии: ночь 1 — темнота; сутки 1–2 — вода и связь; дни 3–5 — топливо и магазины; дни 6–14 — холод, мародёры, больницы; недели 3–4 — АЭС без солярки для насосов; после — сеть возвращают по частям: сначала на часы в сутки, потом насовсем. Своя энергия — ИБП, аггрегат, солнце, островная сеть — работает всегда.</description>
-    <endMessage>Сеть восстановлена. Диспетчер сообщает: частота 50,00 Гц, все регионы синхронизированы.</endMessage>
-    <letterText>22:14. Частота сети упала ниже 49,8 Гц, автоматика отключила потребителей по всей континентальной Европе. Свет погас от Гамбурга до Мюнхена. Радио: «оставайтесь дома». Сетевой ввод мёртв; всё, что вы построите на своей энергии, будет работать.</letterText>
+  <!-- Письма-стадии: короткие условия без эффекта, только текст (класс GameCondition — базовый, эффектов не даёт). -->
+  <GameConditionDef Name="SF_LetterBase" Abstract="True">
+    <conditionClass>GameCondition</conditionClass>
     <canBeVisible>true</canBeVisible>
     <natural>false</natural>
     <allowUnderground>true</allowUnderground>
+    <defaultDraw>false</defaultDraw>
   </GameConditionDef>
-
-  <IncidentDef>
-    <defName>Schwarzfall_Blackout</defName>
-    <label>блэкаут</label>
+  <IncidentDef Name="SF_IncBase" Abstract="True">
     <category>Misc</category>
     <targetTags><li>Map_PlayerHome</li></targetTags>
     <workerClass>IncidentWorker_MakeGameCondition</workerClass>
-    <gameCondition>Schwarzfall_Blackout</gameCondition>
-    <durationDays>40~55</durationDays>
     <baseChance>0</baseChance>
-    <letterLabel>Schwarzfall: Европа без света</letterLabel>
-    <letterDef>ThreatBig</letterDef>
+    <letterDef>NegativeEvent</letterDef>
   </IncidentDef>
 
-  <!-- Угроза с АЭС: радиоактивное облако на 5–8 дней (переиспользуем механику токсичных осадков) -->
-  <GameConditionDef ParentName="ToxicFallout" Name="Schwarzfall_FalloutBase" Abstract="True"/>
+  <GameConditionDef ParentName="SF_LetterBase"><defName>SF_Night1</defName><label>блэкаут: ночь первая</label><description>Европейская сеть лежит. Свет теперь только свой.</description><letterText>22:14. Частота сети упала ниже 49,8 Гц, автоматика отключила потребителей от Португалии до Польши. Темно от Гамбурга до Мюнхена. Радио: «оставайтесь дома». Первая задача — пережить ночи: ИБП из автомобильных аккумуляторов и инвертора.</letterText><endMessage>Радио, утро: диспетчеры пытаются поднять сеть от гидростанций Альп.</endMessage></GameConditionDef>
+  <IncidentDef ParentName="SF_IncBase"><defName>SF_Night1</defName><label>блэкаут</label><gameCondition>SF_Night1</gameCondition><durationDays>1</durationDays><letterLabel>Schwarzfall: Европа без света</letterLabel><letterDef>ThreatBig</letterDef></IncidentDef>
+
+  <GameConditionDef ParentName="SF_LetterBase"><defName>SF_Day1_Water</defName><label>блэкаут: вода и связь</label><description>Насосные станции без резерва, базовые станции разряжены.</description><letterText>День 1. Вода из крана кончилась: у насосных станций резерва хватило на сутки. Сотовые вышки разрядились — телефоны молчат. Радио: «наберите воду, соберитесь в одном тёплом помещении». Вода теперь из реки и колодца, еда — из кладовой и с огорода.</letterText><endMessage>Радио: две попытки поднять сеть сорвались, частота снова упала.</endMessage></GameConditionDef>
+  <IncidentDef ParentName="SF_IncBase"><defName>SF_Day1_Water</defName><label>вода и связь</label><gameCondition>SF_Day1_Water</gameCondition><durationDays>2</durationDays><letterLabel>Блэкаут: вода и связь</letterLabel></IncidentDef>
+
+  <GameConditionDef ParentName="SF_LetterBase"><defName>SF_Day3_Fuel</defName><label>блэкаут: топливо</label><description>Заправки не качают, магазины закрыты, холодильники потекли.</description><letterText>День 3. Заправки без электричества не качают, магазины закрыты, больницы дожигают последний дизель. Солярка — в баках машин и котельных. Дизельный Notstromaggregat даёт 1200 Вт, пока есть топливо: сифон, канистры, бартер с соседями.</letterText><endMessage>Радио: Бундесвер и THW разворачивают пункты выдачи воды.</endMessage></GameConditionDef>
+  <IncidentDef ParentName="SF_IncBase"><defName>SF_Day3_Fuel</defName><label>топливо</label><gameCondition>SF_Day3_Fuel</gameCondition><durationDays>3</durationDays><letterLabel>Блэкаут: топливо кончается</letterLabel></IncidentDef>
+
+  <GameConditionDef ParentName="SF_LetterBase"><defName>SF_Day6_Cold</defName><label>блэкаут: холод и чужие</label><description>Отопление стоит, по округе ходят те, у кого кончилась еда.</description><letterText>День 6. Отопление в домах стоит, ночи холодные. Радио: «полиция просит не выходить ночью; в городах мародёрство». По дорогам идут люди, у которых кончилась еда, — ждите гостей. Солнечная крыша в автономном режиме даст свет днём; тепло — от печей и генератора.</letterText><endMessage>Радио: восстановлены отдельные острова сети вокруг электростанций.</endMessage></GameConditionDef>
+  <IncidentDef ParentName="SF_IncBase"><defName>SF_Day6_Cold</defName><label>холод и чужие</label><gameCondition>SF_Day6_Cold</gameCondition><durationDays>8</durationDays><letterLabel>Блэкаут: холод и мародёры</letterLabel><letterDef>ThreatSmall</letterDef></IncidentDef>
+
+  <GameConditionDef ParentName="SF_LetterBase"><defName>SF_Day14_Islands</defName><label>блэкаут: острова сети</label><description>Электростанции держат частоту на островах, до посёлков не дотягиваются.</description><letterText>День 14. Радио: «электростанции подняли островные сети вокруг себя; сельские районы подключат последними». Ваш посёлок — сам себе остров: контроллер островной сети держит частоту, батареи, солнце и генератор работают вместе.</letterText><endMessage>Радио: на одной из АЭС заканчивается топливо для аварийных дизелей.</endMessage></GameConditionDef>
+  <IncidentDef ParentName="SF_IncBase"><defName>SF_Day14_Islands</defName><label>острова сети</label><gameCondition>SF_Day14_Islands</gameCondition><durationDays>6</durationDays><letterLabel>Блэкаут: острова сети</letterLabel><letterDef>NeutralEvent</letterDef></IncidentDef>
+
+  <!-- Облако с АЭС: механика токсичных осадков, 5–8 дней -->
   <GameConditionDef>
-    <defName>Schwarzfall_NuclearCloud</defName>
+    <defName>SF_Day20_Cloud</defName>
     <conditionClass>GameCondition_ToxicFallout</conditionClass>
     <label>облако с АЭС</label>
-    <description>На АЭС кончилась солярка для аварийных насосов. Пар сбросили через фильтры, но ветер несёт облако на вас. Не выходить без нужды, крыша — защита.</description>
+    <description>На АЭС кончилась солярка для аварийных насосов; давление сбросили через фильтры, ветер несёт облако. Под крышей безопасно, снаружи — накопление отравления.</description>
     <endMessage>Ветер сменился. Облако ушло к морю.</endMessage>
-    <letterText>Радио: «…аварийный сброс давления на энергоблоке… населению закрыть окна и не покидать помещения». Облако будет над вами несколько дней.</letterText>
+    <letterText>День 20. Радио: «…аварийный сброс давления на энергоблоке… населению закрыть окна и не покидать помещения». Облако пройдёт над вами за несколько дней. Животных — под крышу, урожай — собрать до него или списать.</letterText>
     <canBeVisible>true</canBeVisible>
+    <natural>false</natural>
     <defaultDraw>true</defaultDraw>
     <weatherDef>Fog</weatherDef>
     <exclusiveConditions><li>ToxicFallout</li></exclusiveConditions>
   </GameConditionDef>
-  <IncidentDef>
-    <defName>Schwarzfall_NuclearCloud</defName>
-    <label>облако с АЭС</label>
-    <category>Misc</category>
-    <targetTags><li>Map_PlayerHome</li></targetTags>
-    <workerClass>IncidentWorker_MakeGameCondition</workerClass>
-    <gameCondition>Schwarzfall_NuclearCloud</gameCondition>
-    <durationDays>5~8</durationDays>
-    <baseChance>0</baseChance>
-    <letterLabel>Облако с АЭС</letterLabel>
-    <letterDef>ThreatBig</letterDef>
-  </IncidentDef>
+  <IncidentDef ParentName="SF_IncBase"><defName>SF_Day20_Cloud</defName><label>облако с АЭС</label><gameCondition>SF_Day20_Cloud</gameCondition><durationDays>5~8</durationDays><letterLabel>Облако с АЭС</letterLabel><letterDef>ThreatBig</letterDef></IncidentDef>
+
+  <GameConditionDef ParentName="SF_LetterBase"><defName>SF_Day29_Grid</defName><label>сеть возвращают по частям</label><description>Подача по графику, подключение только через синхронизацию.</description><letterText>День 29. Радио: «начинается подача электроэнергии по графику: с 6 утра, на несколько часов, подключение только через диспетчера». Кто исследовал синхронизацию — может поставить сетевой ввод и получать 2000 Вт из общей сети. Остальные ждут.</letterText><endMessage>Радио: график подачи расширен, сеть стабильна.</endMessage></GameConditionDef>
+  <IncidentDef ParentName="SF_IncBase"><defName>SF_Day29_Grid</defName><label>сеть возвращают</label><gameCondition>SF_Day29_Grid</gameCondition><durationDays>16</durationDays><letterLabel>Блэкаут: сеть возвращают по частям</letterLabel><letterDef>PositiveEvent</letterDef></IncidentDef>
+
+  <GameConditionDef ParentName="SF_LetterBase"><defName>SF_Day45_Restored</defName><label>сеть восстановлена</label><description>Частота 50,00 Гц, все регионы синхронизированы.</description><letterText>День 45. Диспетчер: «частота 50,00 Гц, все регионы синхронизированы». Европа снова с электричеством. Посёлок пережил это на своей энергии — и теперь знает, как.</letterText><endMessage>Жизнь продолжается.</endMessage></GameConditionDef>
+  <IncidentDef ParentName="SF_IncBase"><defName>SF_Day45_Restored</defName><label>сеть восстановлена</label><gameCondition>SF_Day45_Restored</gameCondition><durationDays>1</durationDays><letterLabel>Schwarzfall окончен</letterLabel><letterDef>PositiveEvent</letterDef></IncidentDef>
 </Defs>

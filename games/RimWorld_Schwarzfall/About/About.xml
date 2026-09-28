@@ -3,10 +3,6 @@
   <name>Schwarzfall — Германия. Блэкаут</name>
   <author>Neu</author>
   <packageId>neu.schwarzfall</packageId>
-  <supportedVersions><li>1.5</li><li>1.6</li></supportedVersions>
-  <description>Наши дни, Германия. В 22:14 частота европейской сети проседает ниже 49,8 Гц, автоматика отключает регион за регионом — и через одиннадцать минут от Гамбурга до Мюнхена темно. Сценарий «Schwarzfall»: вы — несколько человек в посёлке под Кёльном в первую ночь. Дальше всё идёт по реальной хронологии блэкаута: гаснет свет, за ним вода и связь, кончается топливо на заправках, встают магазины и больницы, на четвёртой неделе — угроза с АЭС, в которой не хватает солярки на аварийные насосы. Развитие — не оружие, а энергия: аккумуляторный ИБП, дизельный Notstromaggregat, солнечная крыша, островная сеть посёлка, синхронизация с общей сетью, которую восстанавливают по частям. Требует Harmony.</description>
-  <modDependencies>
-    <li><packageId>brrainz.harmony</packageId><displayName>Harmony</displayName><steamWorkshopUrl>steam://url/CommunityFilePage/2009463077</steamWorkshopUrl><downloadUrl>https://github.com/pardeike/HarmonyRimWorld/releases/latest</downloadUrl></li>
-  </modDependencies>
-  <loadAfter><li>brrainz.harmony</li></loadAfter>
+  <supportedVersions><li>1.4</li><li>1.5</li><li>1.6</li></supportedVersions>
+  <description>Наши дни, Германия. 22:14, частота европейской сети проседает ниже 49,8 Гц, автоматика отключает регион за регионом — через одиннадцать минут темно от Гамбурга до Мюнхена. Сценарий «Schwarzfall»: вы — четверо соседей в посёлке под Кёльном в первую ночь. Дальше всё по хронологии реального блэкаута: вода и связь, топливо, холод и мародёры, облако с АЭС, возврат сети по частям. Развитие — энергия: ИБП из аккумуляторов, дизельный Notstromaggregat, солнечная крыша, островная сеть, синхронизация с общей сетью. Чистый XML, без зависимостей.</description>
 </ModMetaData>
