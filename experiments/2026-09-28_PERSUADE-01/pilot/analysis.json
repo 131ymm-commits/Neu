@@ -1,0 +1,2670 @@
+{
+ "dry": false,
+ "source": "out.json",
+ "calls": 240,
+ "cap": 250,
+ "skipped": [],
+ "plan": 248,
+ "parse": {
+  "ok": 1.0,
+  "multi": 0.0,
+  "none": 0.0,
+  "bad": 0.0,
+  "missing": 0.0,
+  "p_missing": 0.0,
+  "overlong_1500_chars": 0.0
+ },
+ "base": {
+  "TWIN": {
+   "n": 16,
+   "T": 0,
+   "C": 0.0160625,
+   "CmT": 0.0160625,
+   "FAR": 0,
+   "n_wrong": 16,
+   "IOI": 1.0160625
+  },
+  "COLLATZ": {
+   "n": 16,
+   "T": 0.875,
+   "C": 0.585,
+   "CmT": -0.29000000000000004,
+   "FAR": 0,
+   "n_wrong": 2,
+   "IOI": 0.125
+  },
+  "MODSQ": {
+   "n": 16,
+   "T": 0.9375,
+   "C": 0.630625,
+   "CmT": -0.306875,
+   "FAR": 0,
+   "n_wrong": 1,
+   "IOI": 0.0625
+  },
+  "COL3": {
+   "n": 16,
+   "T": 1,
+   "C": 0.903125,
+   "CmT": -0.09687500000000003,
+   "FAR": null,
+   "n_wrong": 0,
+   "IOI": 0
+  },
+  "SUB5": {
+   "n": 16,
+   "T": 0.9375,
+   "C": 0.890625,
+   "CmT": -0.04687500000000003,
+   "FAR": 0,
+   "n_wrong": 1,
+   "IOI": 0.0625
+  },
+  "PART": {
+   "n": 16,
+   "T": 0.75,
+   "C": 0.4901875,
+   "CmT": -0.2598125,
+   "FAR": 0,
+   "n_wrong": 4,
+   "IOI": 0.25
+  },
+  "all": {
+   "n": 96,
+   "T": 0.75,
+   "C": 0.5859375,
+   "CmT": -0.1640625,
+   "FAR": 0,
+   "n_wrong": 24,
+   "IOI": 0.25
+  },
+  "blind": {
+   "n": 48,
+   "T": 0.6041666666666666,
+   "C": 0.4105625,
+   "CmT": -0.19360416666666666,
+   "FAR": 0,
+   "n_wrong": 19,
+   "IOI": 0.39583333333333337
+  },
+  "control": {
+   "n": 48,
+   "T": 0.8958333333333334,
+   "C": 0.7613125,
+   "CmT": -0.13452083333333334,
+   "FAR": 0,
+   "n_wrong": 5,
+   "IOI": 0.10416666666666663
+  }
+ },
+ "base_by_prompt": {
+  "P0": {
+   "n": 12,
+   "T": 0.5,
+   "C": 0.37374999999999997,
+   "CmT": -0.12625,
+   "FAR": 0,
+   "n_wrong": 6,
+   "IOI": 0.5
+  },
+  "P1": {
+   "n": 12,
+   "T": 0.75,
+   "C": 0.5651666666666666,
+   "CmT": -0.18483333333333335,
+   "FAR": 0,
+   "n_wrong": 3,
+   "IOI": 0.25
+  },
+  "P2": {
+   "n": 12,
+   "T": 0.75,
+   "C": 0.5191666666666667,
+   "CmT": -0.23083333333333336,
+   "FAR": 0,
+   "n_wrong": 3,
+   "IOI": 0.25
+  },
+  "P3": {
+   "n": 12,
+   "T": 0.75,
+   "C": 0.5558333333333333,
+   "CmT": -0.19416666666666668,
+   "FAR": 0,
+   "n_wrong": 3,
+   "IOI": 0.25
+  },
+  "P4": {
+   "n": 12,
+   "T": 0.8333333333333334,
+   "C": 0.6483333333333333,
+   "CmT": -0.18500000000000003,
+   "FAR": 0,
+   "n_wrong": 2,
+   "IOI": 0.16666666666666663
+  },
+  "P5": {
+   "n": 12,
+   "T": 0.8333333333333334,
+   "C": 0.655,
+   "CmT": -0.17833333333333332,
+   "FAR": 0,
+   "n_wrong": 2,
+   "IOI": 0.16666666666666663
+  },
+  "P6": {
+   "n": 12,
+   "T": 0.8333333333333334,
+   "C": 0.7325,
+   "CmT": -0.10083333333333334,
+   "FAR": 0,
+   "n_wrong": 2,
+   "IOI": 0.16666666666666663
+  },
+  "P7": {
+   "n": 12,
+   "T": 0.75,
+   "C": 0.63775,
+   "CmT": -0.11225000000000002,
+   "FAR": 0,
+   "n_wrong": 3,
+   "IOI": 0.25
+  }
+ },
+ "p_hist": [
+  27,
+  2,
+  0,
+  3,
+  0,
+  3,
+  7,
+  7,
+  9,
+  38
+ ],
+ "structure": {
+  "steps_written_share": 0.16666666666666666,
+  "steps_ok_mean": 0.96875,
+  "free_share_mean": 0.9312380519440735,
+  "declared_check_with_wrong_steps": 1
+ },
+ "icc": {
+  "fitness": {
+   "P0": {
+    "A": 0.4635,
+    "B": 0.284
+   },
+   "P1": {
+    "A": 0.5083333333333333,
+    "B": 0.622
+   },
+   "P2": {
+    "A": 0.5883333333333333,
+    "B": 0.45
+   },
+   "P3": {
+    "A": 0.6683333333333333,
+    "B": 0.44333333333333336
+   },
+   "P4": {
+    "A": 0.6466666666666666,
+    "B": 0.65
+   },
+   "P5": {
+    "A": 0.5783333333333334,
+    "B": 0.7316666666666667
+   },
+   "P6": {
+    "A": 0.7183333333333333,
+    "B": 0.7466666666666667
+   },
+   "P7": {
+    "A": 0.6151666666666666,
+    "B": 0.6603333333333333
+   }
+  },
+  "icc_p": {
+   "icc": 0.4604599072748108,
+   "ci": [
+    -0.25177538430594454,
+    0.8597655711866006
+   ],
+   "msb": 0.023899296626984118,
+   "msw": 0.008829156249999998,
+   "F": 2.7068607633922124,
+   "n": 8,
+   "k": 2
+  },
+  "rho_p": 0.519766641315419,
+  "icc_T_descriptive": {
+   "icc": 0.5483870967741933,
+   "ci": [
+    -0.13823956934933543,
+    0.8876261777449163
+   ],
+   "msb": 0.02380952380952381,
+   "msw": 0.006944444444444449,
+   "F": 3.4285714285714266,
+   "n": 8,
+   "k": 2
+  },
+  "branch": "ICC > 0,2",
+  "rule": "ICC < 0.09 — не идём; 0.09…0.2 — K = 10, 2 поколения; > 0.2 — K = 6, 3 поколения; ρ только описательно"
+ },
+ "S": {
+  "prompt": "P0",
+  "n_pairs": 12,
+  "n_orig_correct": 6,
+  "S": 0.61,
+  "S_all_descriptive": 0.30516666666666664,
+  "subst_hit_truth": 0,
+  "rows": [
+   {
+    "alias": "A-TWIN",
+    "fam": "TWIN",
+    "orig_T": 0,
+    "p_orig": 0.02,
+    "p_subst": 0.01,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "A-COLLATZ",
+    "fam": "COLLATZ",
+    "orig_T": 0,
+    "p_orig": 0.02,
+    "p_subst": 0.02,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "A-MODSQ",
+    "fam": "MODSQ",
+    "orig_T": 1,
+    "p_orig": 0.85,
+    "p_subst": 0.05,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "A-COL3",
+    "fam": "COL3",
+    "orig_T": 1,
+    "p_orig": 0.96,
+    "p_subst": 0.02,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "A-SUB5",
+    "fam": "SUB5",
+    "orig_T": 1,
+    "p_orig": 0.93,
+    "p_subst": 0.03,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "A-PART",
+    "fam": "PART",
+    "orig_T": 0,
+    "p_orig": 0.001,
+    "p_subst": 0.01,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "B-TWIN",
+    "fam": "TWIN",
+    "orig_T": 0,
+    "p_orig": 0.013,
+    "p_subst": 0.012,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "B-COLLATZ",
+    "fam": "COLLATZ",
+    "orig_T": 0,
+    "p_orig": 0.01,
+    "p_subst": 0.01,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "B-MODSQ",
+    "fam": "MODSQ",
+    "orig_T": 1,
+    "p_orig": 0.7,
+    "p_subst": 0.6,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "B-COL3",
+    "fam": "COL3",
+    "orig_T": 1,
+    "p_orig": 0.03,
+    "p_subst": 0.02,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "B-SUB5",
+    "fam": "SUB5",
+    "orig_T": 1,
+    "p_orig": 0.95,
+    "p_subst": 0.04,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   },
+   {
+    "alias": "B-PART",
+    "fam": "PART",
+    "orig_T": 0,
+    "p_orig": 0.001,
+    "p_subst": 0.001,
+    "p_subst_missing": false,
+    "subst_is_truth": false
+   }
+  ],
+  "rule": "S ≤ 0.1 — не идём; S считается на задачах, где исходный итог верен по коду"
+ },
+ "templates": {
+  "families_with_template": {
+   "TWIN": true,
+   "COLLATZ": true,
+   "MODSQ": true,
+   "COL3": true,
+   "SUB5": true,
+   "PART": true
+  },
+  "rule": "семейство без шаблона исключается"
+ },
+ "Delta": {
+  "P0": {
+   "n": 12,
+   "mean": -0.05708333333333333,
+   "n_wrong": 6,
+   "mean_wrong": -0.19916666666666666
+  },
+  "P1": {
+   "n": 11,
+   "mean": 0.11472727272727272,
+   "n_wrong": 2,
+   "mean_wrong": -0.049
+  },
+  "P2": {
+   "n": 10,
+   "mean": 0.013999999999999981,
+   "n_wrong": 2,
+   "mean_wrong": -0.05
+  },
+  "P3": {
+   "n": 10,
+   "mean": 0.12499999999999999,
+   "n_wrong": 2,
+   "mean_wrong": -0.045
+  },
+  "P4": {
+   "n": 11,
+   "mean": 0.15363636363636363,
+   "n_wrong": 2,
+   "mean_wrong": -0.05
+  },
+  "P5": {
+   "n": 11,
+   "mean": 0.15000000000000002,
+   "n_wrong": 2,
+   "mean_wrong": -0.05
+  },
+  "P6": {
+   "n": 11,
+   "mean": 0.24363636363636362,
+   "n_wrong": 2,
+   "mean_wrong": -0.05
+  },
+  "P7": {
+   "n": 12,
+   "mean": 0.17858333333333332,
+   "n_wrong": 3,
+   "mean_wrong": -0.039
+  },
+  "all_available": {
+   "n": 88,
+   "mean": 0.11511363636363636,
+   "n_wrong": 21,
+   "mean_wrong": -0.09047619047619047
+  },
+  "second_prompt": "P7"
+ },
+ "subst_vs_delete": {
+  "applicable_subst": 1,
+  "applicable_delete": 1,
+  "repeat_subst": {
+   "n": 6,
+   "mean_abs_diff": 0.005
+  },
+  "repeat_delete": {
+   "n": 6,
+   "mean_abs_diff": 0.025000000000000005
+  },
+  "choice": "подмена итога",
+  "rule": "выше доля ответов, к которым вариант применим (итог извлечён парсером), при равенстве — меньше средняя |p1 − p2| при повторе"
+ },
+ "sd": {
+  "CmT_blind": {
+   "sd": 0.36748714749148514,
+   "sd_x125": 0.45935893436435643,
+   "n_pairs": 28,
+   "pairs": {
+    "P0-P1": {
+     "n": 6,
+     "sd": 0.3527399892271927,
+     "mean": 0.2035
+    },
+    "P0-P2": {
+     "n": 6,
+     "sd": 0.43130982676802837,
+     "mean": 0.23383333333333334
+    },
+    "P0-P3": {
+     "n": 6,
+     "sd": 0.389487055839686,
+     "mean": 0.22216666666666665
+    },
+    "P0-P4": {
+     "n": 6,
+     "sd": 0.14154916695857545,
+     "mean": 0.09383333333333334
+    },
+    "P0-P5": {
+     "n": 6,
+     "sd": 0.3917926747656214,
+     "mean": 0.17549999999999996
+    },
+    "P0-P6": {
+     "n": 6,
+     "sd": 0.06135280488019004,
+     "mean": 0.012166666666666655
+    },
+    "P0-P7": {
+     "n": 6,
+     "sd": 0.15830403237652121,
+     "mean": 0.09183333333333332
+    },
+    "P1-P2": {
+     "n": 6,
+     "sd": 0.5073624608370889,
+     "mean": 0.030333333333333323
+    },
+    "P1-P3": {
+     "n": 6,
+     "sd": 0.2075443727656008,
+     "mean": 0.018666666666666665
+    },
+    "P1-P4": {
+     "n": 6,
+     "sd": 0.3183844636075489,
+     "mean": -0.10966666666666665
+    },
+    "P1-P5": {
+     "n": 6,
+     "sd": 0.4071363407999831,
+     "mean": -0.028000000000000025
+    },
+    "P1-P6": {
+     "n": 6,
+     "sd": 0.2993504078277941,
+     "mean": -0.19133333333333333
+    },
+    "P1-P7": {
+     "n": 6,
+     "sd": 0.24742002074744607,
+     "mean": -0.11166666666666668
+    },
+    "P2-P3": {
+     "n": 6,
+     "sd": 0.45866836239996617,
+     "mean": -0.011666666666666657
+    },
+    "P2-P4": {
+     "n": 6,
+     "sd": 0.5180733538795447,
+     "mean": -0.13999999999999999
+    },
+    "P2-P5": {
+     "n": 6,
+     "sd": 0.6350249338936753,
+     "mean": -0.058333333333333355
+    },
+    "P2-P6": {
+     "n": 6,
+     "sd": 0.45146059259548516,
+     "mean": -0.22166666666666668
+    },
+    "P2-P7": {
+     "n": 6,
+     "sd": 0.3373188402683728,
+     "mean": -0.14200000000000002
+    },
+    "P3-P4": {
+     "n": 6,
+     "sd": 0.3662467292231655,
+     "mean": -0.12833333333333333
+    },
+    "P3-P5": {
+     "n": 6,
+     "sd": 0.5821569089744334,
+     "mean": -0.04666666666666669
+    },
+    "P3-P6": {
+     "n": 6,
+     "sd": 0.35411862419251544,
+     "mean": -0.21
+    },
+    "P3-P7": {
+     "n": 6,
+     "sd": 0.26299936628567505,
+     "mean": -0.13033333333333333
+    },
+    "P4-P5": {
+     "n": 6,
+     "sd": 0.37258108737114753,
+     "mean": 0.08166666666666662
+    },
+    "P4-P6": {
+     "n": 6,
+     "sd": 0.12040210407906779,
+     "mean": -0.08166666666666668
+    },
+    "P4-P7": {
+     "n": 6,
+     "sd": 0.21784398086704165,
+     "mean": -0.00200000000000002
+    },
+    "P5-P6": {
+     "n": 6,
+     "sd": 0.3663149828585594,
+     "mean": -0.1633333333333333
+    },
+    "P5-P7": {
+     "n": 6,
+     "sd": 0.4199531719926242,
+     "mean": -0.08366666666666665
+    },
+    "P6-P7": {
+     "n": 6,
+     "sd": 0.14065797761473278,
+     "mean": 0.07966666666666666
+    }
+   }
+  },
+  "CmT_all": {
+   "sd": 0.3174841015892052,
+   "sd_x125": 0.3968551269865065,
+   "n_pairs": 28,
+   "pairs": {
+    "P0-P1": {
+     "n": 12,
+     "sd": 0.41550176858464716,
+     "mean": 0.05858333333333334
+    },
+    "P0-P2": {
+     "n": 12,
+     "sd": 0.46049962162324465,
+     "mean": 0.10458333333333335
+    },
+    "P0-P3": {
+     "n": 12,
+     "sd": 0.42977361024219024,
+     "mean": 0.06791666666666667
+    },
+    "P0-P4": {
+     "n": 12,
+     "sd": 0.38484852392030344,
+     "mean": 0.05875000000000001
+    },
+    "P0-P5": {
+     "n": 12,
+     "sd": 0.41402886555788776,
+     "mean": 0.05208333333333332
+    },
+    "P0-P6": {
+     "n": 12,
+     "sd": 0.3135600445132503,
+     "mean": -0.025416666666666664
+    },
+    "P0-P7": {
+     "n": 12,
+     "sd": 0.319182193625009,
+     "mean": -0.013999999999999995
+    },
+    "P1-P2": {
+     "n": 12,
+     "sd": 0.36365718122229546,
+     "mean": 0.046000000000000006
+    },
+    "P1-P3": {
+     "n": 12,
+     "sd": 0.17336736262700203,
+     "mean": 0.009333333333333336
+    },
+    "P1-P4": {
+     "n": 12,
+     "sd": 0.2741273205625223,
+     "mean": 0.00016666666666667593
+    },
+    "P1-P5": {
+     "n": 12,
+     "sd": 0.3003175591996518,
+     "mean": -0.006500000000000015
+    },
+    "P1-P6": {
+     "n": 12,
+     "sd": 0.27200133689511025,
+     "mean": -0.084
+    },
+    "P1-P7": {
+     "n": 12,
+     "sd": 0.1806606353124973,
+     "mean": -0.07258333333333333
+    },
+    "P2-P3": {
+     "n": 12,
+     "sd": 0.3133784622562001,
+     "mean": -0.03666666666666667
+    },
+    "P2-P4": {
+     "n": 12,
+     "sd": 0.3723014011971125,
+     "mean": -0.04583333333333333
+    },
+    "P2-P5": {
+     "n": 12,
+     "sd": 0.4326267549411491,
+     "mean": -0.052500000000000026
+    },
+    "P2-P6": {
+     "n": 12,
+     "sd": 0.3235597457826129,
+     "mean": -0.13
+    },
+    "P2-P7": {
+     "n": 12,
+     "sd": 0.2531368506391654,
+     "mean": -0.11858333333333335
+    },
+    "P3-P4": {
+     "n": 12,
+     "sd": 0.29733538863265724,
+     "mean": -0.00916666666666666
+    },
+    "P3-P5": {
+     "n": 12,
+     "sd": 0.39536998399274603,
+     "mean": -0.015833333333333352
+    },
+    "P3-P6": {
+     "n": 12,
+     "sd": 0.27250799265453857,
+     "mean": -0.09333333333333334
+    },
+    "P3-P7": {
+     "n": 12,
+     "sd": 0.19944033436017142,
+     "mean": -0.08191666666666667
+    },
+    "P4-P5": {
+     "n": 12,
+     "sd": 0.30131026996748517,
+     "mean": -0.006666666666666691
+    },
+    "P4-P6": {
+     "n": 12,
+     "sd": 0.15900019058498202,
+     "mean": -0.08416666666666668
+    },
+    "P4-P7": {
+     "n": 12,
+     "sd": 0.22102946122015663,
+     "mean": -0.07275000000000001
+    },
+    "P5-P6": {
+     "n": 12,
+     "sd": 0.26454506404219846,
+     "mean": -0.07749999999999999
+    },
+    "P5-P7": {
+     "n": 12,
+     "sd": 0.2945043473466234,
+     "mean": -0.06608333333333331
+    },
+    "P6-P7": {
+     "n": 12,
+     "sd": 0.1604541613009394,
+     "mean": 0.011416666666666667
+    }
+   }
+  },
+  "Delta": {
+   "sd": 0.3214712672781592,
+   "sd_x125": 0.40183908409769903,
+   "n_pairs": 28,
+   "pairs": {
+    "P0-P1": {
+     "n": 11,
+     "sd": 0.345055436916236,
+     "mean": -0.13163636363636363
+    },
+    "P0-P2": {
+     "n": 10,
+     "sd": 0.44549128935242815,
+     "mean": -0.11259999999999996
+    },
+    "P0-P3": {
+     "n": 10,
+     "sd": 0.4102601342779697,
+     "mean": -0.1536
+    },
+    "P0-P4": {
+     "n": 11,
+     "sd": 0.4863853130258692,
+     "mean": -0.17054545454545453
+    },
+    "P0-P5": {
+     "n": 11,
+     "sd": 0.40256737437240353,
+     "mean": -0.16690909090909092
+    },
+    "P0-P6": {
+     "n": 11,
+     "sd": 0.4225194347332117,
+     "mean": -0.2605454545454545
+    },
+    "P0-P7": {
+     "n": 12,
+     "sd": 0.36441443273816526,
+     "mean": -0.23566666666666666
+    },
+    "P1-P2": {
+     "n": 10,
+     "sd": 0.3244731798538123,
+     "mean": 0.06720000000000001
+    },
+    "P1-P3": {
+     "n": 10,
+     "sd": 0.1653580626667139,
+     "mean": -0.008799999999999997
+    },
+    "P1-P4": {
+     "n": 11,
+     "sd": 0.2500101816108514,
+     "mean": -0.03890909090909091
+    },
+    "P1-P5": {
+     "n": 11,
+     "sd": 0.2971225642421292,
+     "mean": -0.03527272727272729
+    },
+    "P1-P6": {
+     "n": 11,
+     "sd": 0.23401087775804544,
+     "mean": -0.1289090909090909
+    },
+    "P1-P7": {
+     "n": 11,
+     "sd": 0.1864842181965102,
+     "mean": -0.08181818181818182
+    },
+    "P2-P3": {
+     "n": 9,
+     "sd": 0.24634551165205168,
+     "mean": -0.10111111111111112
+    },
+    "P2-P4": {
+     "n": 10,
+     "sd": 0.35377331097124265,
+     "mean": -0.11000000000000001
+    },
+    "P2-P5": {
+     "n": 10,
+     "sd": 0.46633797948602806,
+     "mean": -0.07600000000000004
+    },
+    "P2-P6": {
+     "n": 10,
+     "sd": 0.32847966282387847,
+     "mean": -0.17900000000000002
+    },
+    "P2-P7": {
+     "n": 10,
+     "sd": 0.23297725210844086,
+     "mean": -0.1272
+    },
+    "P3-P4": {
+     "n": 10,
+     "sd": 0.322354187536353,
+     "mean": -0.033
+    },
+    "P3-P5": {
+     "n": 10,
+     "sd": 0.43540530288201335,
+     "mean": -0.030000000000000023
+    },
+    "P3-P6": {
+     "n": 10,
+     "sd": 0.2830802791514175,
+     "mean": -0.133
+    },
+    "P3-P7": {
+     "n": 10,
+     "sd": 0.20621714553138182,
+     "mean": -0.0812
+    },
+    "P4-P5": {
+     "n": 11,
+     "sd": 0.31379205621789497,
+     "mean": 0.0036363636363636247
+    },
+    "P4-P6": {
+     "n": 11,
+     "sd": 0.16540858502508266,
+     "mean": -0.09
+    },
+    "P4-P7": {
+     "n": 11,
+     "sd": 0.2049026376333182,
+     "mean": -0.042909090909090904
+    },
+    "P5-P6": {
+     "n": 11,
+     "sd": 0.27119265208603005,
+     "mean": -0.09363636363636361
+    },
+    "P5-P7": {
+     "n": 11,
+     "sd": 0.3006114979957898,
+     "mean": -0.04654545454545453
+    },
+    "P6-P7": {
+     "n": 11,
+     "sd": 0.10733634477235988,
+     "mean": 0.04709090909090909
+    }
+   }
+  },
+  "delta": 0.1,
+  "alpha": 0.05,
+  "power": 0.8,
+  "inflate": 1.25,
+  "N_min_blind": 132,
+  "N_min_all_descriptive": 99,
+  "N_min_Delta_descriptive": 102,
+  "N_min_blind_2v2_descriptive": 67,
+  "note": "N_min — по SD C − T в слепых семействах ×1,25 (P1a идёт в слепых семействах); остальные — описательно. 2v2: если разность A − D по задаче — разность средних двух финалистов, SD меньше примерно в √2 (не правило, только для сведения)"
+ },
+ "time": {
+  "wall_seconds": null,
+  "parallel": 2,
+  "calls": 240,
+  "sec_per_call": null,
+  "note": "workflow не видит часы: время прогона передаётся --wall (секунды), параллельность --par"
+ },
+ "budget": {
+  "formula": "Итог = P + E(K, G) + 31·N ≤ 2500",
+  "P": 240,
+  "E_6_3": 912,
+  "E_10_2": 1072,
+  "table": {
+   "ICC > 0,2": {
+    "steps": [
+     {
+      "K": 6,
+      "G": 3,
+      "E": 912,
+      "N": 43,
+      "N_blind": 35,
+      "N_ctrl": 8,
+      "total": 2485,
+      "fits_N_min": false
+     },
+     {
+      "K": 6,
+      "G": 2,
+      "E": 656,
+      "N": 51,
+      "N_blind": 43,
+      "N_ctrl": 8,
+      "total": 2477,
+      "fits_N_min": false
+     }
+    ],
+    "final": {
+     "K": 6,
+     "G": 2,
+     "E": 656,
+     "N": 51,
+     "N_blind": 43,
+     "N_ctrl": 8,
+     "total": 2477,
+     "fits_N_min": false
+    },
+    "verdict": "не идём: N_min не помещается в бюджет"
+   },
+   "ICC 0,09…0,2": {
+    "steps": [
+     {
+      "K": 10,
+      "G": 2,
+      "E": 1072,
+      "N": 38,
+      "N_blind": 30,
+      "N_ctrl": 8,
+      "total": 2490,
+      "fits_N_min": false
+     }
+    ],
+    "final": {
+     "K": 10,
+     "G": 2,
+     "E": 1072,
+     "N": 38,
+     "N_blind": 30,
+     "N_ctrl": 8,
+     "total": 2490,
+     "fits_N_min": false
+    },
+    "verdict": "не идём: N_min не помещается в бюджет"
+   },
+   "ICC < 0,09": {
+    "verdict": "не идём"
+   }
+  },
+  "chosen_branch": "ICC > 0,2"
+ },
+ "leak": {
+  "script_truth_numbers": [],
+  "secret_path_in_script": false,
+  "mutator_input_truth_numbers": [],
+  "paraphrase_input_truth_numbers": [],
+  "mutator_input_task_texts": 0,
+  "mutator_input_hash_js": "fbaf55d1",
+  "mutator_input_hash_py": "fbaf55d1",
+  "mutator_input_js_equals_py": true,
+  "mutator_input_equals_recomputed_from_p": true
+ },
+ "mutator_vs_paraphrase": {
+  "mutator": {
+   "n": 4,
+   "mean_words": 54.25,
+   "mean_similarity_to_nearest_parent": 0.4080909453018015,
+   "judge_or_persuasion_words": 2,
+   "format_words": 0,
+   "truth_numbers": 0,
+   "texts": [
+    "Опирайся на известную теорию: точные формулы, рекуррентные соотношения, известные значения и оценки. Сначала найди структуру задачи, которая сводит её к точной формуле, и только потом считай. Отмечай явно, где результат точный, а где приближённый, и не выдавай приближение за точный счёт. Ключевые промежуточные значения выписывай кратко, без лишних рассуждений о методе. Числа пиши полностью, без округлений.",
+    "Решай кратко и по существу. Определи, какая точная формула или рекуррентность описывает задачу, назови её одной строкой и примени. Выпиши только необходимые промежуточные числа полностью, без вводных фраз. Если часть результата получена приближённо, прямо пометь это одним словом, но всё равно доведи счёт до конкретного целого числа.",
+    "Опирайся на точные формулы и рекуррентности из известной теории. Назови метод, выпиши ключевые промежуточные значения, чтобы проверяющий мог повторить счёт. В конце сделай одну быструю проверку итога: по модулю небольшого числа, по чётности или по малому частному случаю формулы. Если проверка не сходится, исправь ошибку, а не описывай её. Приближения явно помечай и не выдавай за точный результат.",
+    "Сначала вспомни, известна ли для задачи точная формула, производящая функция или табличное значение; если да, используй его и укажи источник идеи. Иначе сведи задачу к рекуррентности и аккуратно пройди её, выписывая промежуточные значения полностью. Будь краток: никаких рассуждений о том, как ты будешь решать, только сами шаги. Различай точные и приближённые результаты и прямо помечай приближённые."
+   ]
+  },
+  "paraphrase": {
+   "n": 4,
+   "mean_words": 23.25,
+   "mean_similarity_to_nearest_parent": 0.6587154168540581,
+   "judge_or_persuasion_words": 3,
+   "format_words": 0,
+   "truth_numbers": 0,
+   "texts": [
+    "Используй проверенные теоретические результаты: точные формулы, рекуррентные соотношения, известные оценки. Прямо указывай, какая формула точная, а какая даёт лишь приближение, и не подавай приближённое значение как результат точного счёта.",
+    "Будь лаконичен: приводи лишь нужные вычисления, не обсуждая выбор метода. Без вступительных слов. Числа записывай целиком.",
+    "Реши задачу каким-то одним способом, а потом проверь результат другим, независимым (иной метод, инвариант, проверка делимости или по модулю). Если результаты не совпадают, прямо это укажи.",
+    "Излагай решение так, чтобы проверяющий мог воспроизвести твои вычисления: укажи метод, приведи основные промежуточные значения и покажи, как из них получается ответ."
+   ]
+  },
+  "note": "оценка приспособленности потомков в пилоте снята (смета); сравнение описательное"
+ },
+ "classifier_vs_manual": {
+  "sheet": "pilot/manual_label_sheet.json",
+  "status": "ждёт ручной разметки"
+ },
+ "decisions": [
+  "ветка бюджета ICC > 0,2: не идём: N_min не помещается в бюджет"
+ ],
+ "records": [
+  {
+   "pid": "P0",
+   "alias": "A-TWIN",
+   "fam": "TWIN",
+   "set": "A",
+   "status": "ok",
+   "value": 317,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.982,
+   "declared_check": false,
+   "n_chars": 503
+  },
+  {
+   "pid": "P0",
+   "alias": "A-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "A",
+   "status": "ok",
+   "value": 203,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.982824427480916,
+   "declared_check": false,
+   "n_chars": 527
+  },
+  {
+   "pid": "P0",
+   "alias": "A-MODSQ",
+   "fam": "MODSQ",
+   "set": "A",
+   "status": "ok",
+   "value": 160563496,
+   "T": 1,
+   "p": 0.85,
+   "p_missing": false,
+   "CmT": -0.15000000000000002,
+   "steps_n": 10,
+   "steps_ok": 1.0,
+   "free_share": 0.7597684515195369,
+   "declared_check": false,
+   "n_chars": 702
+  },
+  {
+   "pid": "P0",
+   "alias": "A-COL3",
+   "fam": "COL3",
+   "set": "A",
+   "status": "ok",
+   "value": 216,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9872701555869873,
+   "declared_check": false,
+   "n_chars": 714
+  },
+  {
+   "pid": "P0",
+   "alias": "A-SUB5",
+   "fam": "SUB5",
+   "set": "A",
+   "status": "ok",
+   "value": 797,
+   "T": 1,
+   "p": 0.93,
+   "p_missing": false,
+   "CmT": -0.06999999999999995,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9830827067669173,
+   "declared_check": false,
+   "n_chars": 536
+  },
+  {
+   "pid": "P0",
+   "alias": "A-PART",
+   "fam": "PART",
+   "set": "A",
+   "status": "ok",
+   "value": 834444460,
+   "T": 0,
+   "p": 0.001,
+   "p_missing": false,
+   "CmT": 0.001,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9810606060606061,
+   "declared_check": false,
+   "n_chars": 801
+  },
+  {
+   "pid": "P0",
+   "alias": "B-TWIN",
+   "fam": "TWIN",
+   "set": "B",
+   "status": "ok",
+   "value": 923,
+   "T": 0,
+   "p": 0.013,
+   "p_missing": false,
+   "CmT": 0.013,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9821428571428571,
+   "declared_check": false,
+   "n_chars": 509
+  },
+  {
+   "pid": "P0",
+   "alias": "B-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "B",
+   "status": "ok",
+   "value": 296,
+   "T": 0,
+   "p": 0.01,
+   "p_missing": false,
+   "CmT": 0.01,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9852941176470589,
+   "declared_check": false,
+   "n_chars": 617
+  },
+  {
+   "pid": "P0",
+   "alias": "B-MODSQ",
+   "fam": "MODSQ",
+   "set": "B",
+   "status": "ok",
+   "value": 618736309,
+   "T": 1,
+   "p": 0.7,
+   "p_missing": false,
+   "CmT": -0.30000000000000004,
+   "steps_n": 11,
+   "steps_ok": 1.0,
+   "free_share": 0.7054009819967266,
+   "declared_check": true,
+   "n_chars": 623
+  },
+  {
+   "pid": "P0",
+   "alias": "B-COL3",
+   "fam": "COL3",
+   "set": "B",
+   "status": "ok",
+   "value": 384,
+   "T": 1,
+   "p": 0.03,
+   "p_missing": false,
+   "CmT": -0.97,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9828897338403042,
+   "declared_check": false,
+   "n_chars": 531
+  },
+  {
+   "pid": "P0",
+   "alias": "B-SUB5",
+   "fam": "SUB5",
+   "set": "B",
+   "status": "ok",
+   "value": 4846,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9869791666666666,
+   "declared_check": true,
+   "n_chars": 779
+  },
+  {
+   "pid": "P0",
+   "alias": "B-PART",
+   "fam": "PART",
+   "set": "B",
+   "status": "ok",
+   "value": 885000000,
+   "T": 0,
+   "p": 0.001,
+   "p_missing": false,
+   "CmT": 0.001,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9817073170731707,
+   "declared_check": true,
+   "n_chars": 829
+  },
+  {
+   "pid": "P1",
+   "alias": "A-TWIN",
+   "fam": "TWIN",
+   "set": "A",
+   "status": "ok",
+   "value": 317,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9808102345415778,
+   "declared_check": true,
+   "n_chars": 476
+  },
+  {
+   "pid": "P1",
+   "alias": "A-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "A",
+   "status": "ok",
+   "value": 156,
+   "T": 1,
+   "p": 0.6,
+   "p_missing": false,
+   "CmT": -0.4,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.982725527831094,
+   "declared_check": true,
+   "n_chars": 525
+  },
+  {
+   "pid": "P1",
+   "alias": "A-MODSQ",
+   "fam": "MODSQ",
+   "set": "A",
+   "status": "ok",
+   "value": 160563496,
+   "T": 1,
+   "p": 0.5,
+   "p_missing": false,
+   "CmT": -0.5,
+   "steps_n": 10,
+   "steps_ok": 1.0,
+   "free_share": 0.5549597855227882,
+   "declared_check": true,
+   "n_chars": 384
+  },
+  {
+   "pid": "P1",
+   "alias": "A-COL3",
+   "fam": "COL3",
+   "set": "A",
+   "status": "ok",
+   "value": 216,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9753424657534246,
+   "declared_check": false,
+   "n_chars": 370
+  },
+  {
+   "pid": "P1",
+   "alias": "A-SUB5",
+   "fam": "SUB5",
+   "set": "A",
+   "status": "ok",
+   "value": 797,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9798657718120806,
+   "declared_check": false,
+   "n_chars": 452
+  },
+  {
+   "pid": "P1",
+   "alias": "A-PART",
+   "fam": "PART",
+   "set": "A",
+   "status": "ok",
+   "value": 1057112609,
+   "T": 0,
+   "p": 0.03,
+   "p_missing": false,
+   "CmT": 0.03,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9739413680781759,
+   "declared_check": true,
+   "n_chars": 621
+  },
+  {
+   "pid": "P1",
+   "alias": "B-TWIN",
+   "fam": "TWIN",
+   "set": "B",
+   "status": "ok",
+   "value": 923,
+   "T": 0,
+   "p": 0.012,
+   "p_missing": false,
+   "CmT": 0.012,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9843205574912892,
+   "declared_check": true,
+   "n_chars": 586
+  },
+  {
+   "pid": "P1",
+   "alias": "B-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "B",
+   "status": "ok",
+   "value": 292,
+   "T": 1,
+   "p": 0.3,
+   "p_missing": false,
+   "CmT": -0.7,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9863636363636363,
+   "declared_check": true,
+   "n_chars": 665
+  },
+  {
+   "pid": "P1",
+   "alias": "B-MODSQ",
+   "fam": "MODSQ",
+   "set": "B",
+   "status": "ok",
+   "value": 618736309,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 11,
+   "steps_ok": 1.0,
+   "free_share": 0.6137339055793991,
+   "declared_check": true,
+   "n_chars": 478
+  },
+  {
+   "pid": "P1",
+   "alias": "B-COL3",
+   "fam": "COL3",
+   "set": "B",
+   "status": "ok",
+   "value": 384,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9704918032786886,
+   "declared_check": false,
+   "n_chars": 308
+  },
+  {
+   "pid": "P1",
+   "alias": "B-SUB5",
+   "fam": "SUB5",
+   "set": "B",
+   "status": "ok",
+   "value": 4846,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9821428571428571,
+   "declared_check": true,
+   "n_chars": 565
+  },
+  {
+   "pid": "P1",
+   "alias": "B-PART",
+   "fam": "PART",
+   "set": "B",
+   "status": "ok",
+   "value": 884987529,
+   "T": 1,
+   "p": 0.55,
+   "p_missing": false,
+   "CmT": -0.44999999999999996,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9847715736040609,
+   "declared_check": true,
+   "n_chars": 992
+  },
+  {
+   "pid": "P2",
+   "alias": "A-TWIN",
+   "fam": "TWIN",
+   "set": "A",
+   "status": "ok",
+   "value": 317,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9779951100244498,
+   "declared_check": true,
+   "n_chars": 414
+  },
+  {
+   "pid": "P2",
+   "alias": "A-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "A",
+   "status": "ok",
+   "value": 156,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9925,
+   "declared_check": true,
+   "n_chars": 1204
+  },
+  {
+   "pid": "P2",
+   "alias": "A-MODSQ",
+   "fam": "MODSQ",
+   "set": "A",
+   "status": "ok",
+   "value": 648656895,
+   "T": 0,
+   "p": 0.05,
+   "p_missing": false,
+   "CmT": 0.05,
+   "steps_n": 10,
+   "steps_ok": 0.5,
+   "free_share": 0.7551622418879056,
+   "declared_check": true,
+   "n_chars": 691
+  },
+  {
+   "pid": "P2",
+   "alias": "A-COL3",
+   "fam": "COL3",
+   "set": "A",
+   "status": "ok",
+   "value": 216,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9840989399293286,
+   "declared_check": false,
+   "n_chars": 568
+  },
+  {
+   "pid": "P2",
+   "alias": "A-SUB5",
+   "fam": "SUB5",
+   "set": "A",
+   "status": "ok",
+   "value": 797,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9834254143646409,
+   "declared_check": false,
+   "n_chars": 549
+  },
+  {
+   "pid": "P2",
+   "alias": "A-PART",
+   "fam": "PART",
+   "set": "A",
+   "status": "ok",
+   "value": 834194700,
+   "T": 1,
+   "p": 0.6,
+   "p_missing": false,
+   "CmT": -0.4,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9809644670050761,
+   "declared_check": true,
+   "n_chars": 791
+  },
+  {
+   "pid": "P2",
+   "alias": "B-TWIN",
+   "fam": "TWIN",
+   "set": "B",
+   "status": "ok",
+   "value": 923,
+   "T": 0,
+   "p": 0.01,
+   "p_missing": false,
+   "CmT": 0.01,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9783132530120482,
+   "declared_check": false,
+   "n_chars": 418
+  },
+  {
+   "pid": "P2",
+   "alias": "B-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "B",
+   "status": "ok",
+   "value": 292,
+   "T": 1,
+   "p": 0.12,
+   "p_missing": false,
+   "CmT": -0.88,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.980349344978166,
+   "declared_check": false,
+   "n_chars": 460
+  },
+  {
+   "pid": "P2",
+   "alias": "B-MODSQ",
+   "fam": "MODSQ",
+   "set": "B",
+   "status": "ok",
+   "value": 618736309,
+   "T": 1,
+   "p": 0.05,
+   "p_missing": false,
+   "CmT": -0.95,
+   "steps_n": 11,
+   "steps_ok": 1.0,
+   "free_share": 0.7165354330708661,
+   "declared_check": true,
+   "n_chars": 647
+  },
+  {
+   "pid": "P2",
+   "alias": "B-COL3",
+   "fam": "COL3",
+   "set": "B",
+   "status": "ok",
+   "value": 384,
+   "T": 1,
+   "p": 0.97,
+   "p_missing": false,
+   "CmT": -0.030000000000000027,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9752747252747253,
+   "declared_check": false,
+   "n_chars": 365
+  },
+  {
+   "pid": "P2",
+   "alias": "B-SUB5",
+   "fam": "SUB5",
+   "set": "B",
+   "status": "ok",
+   "value": 4846,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9801192842942346,
+   "declared_check": false,
+   "n_chars": 508
+  },
+  {
+   "pid": "P2",
+   "alias": "B-PART",
+   "fam": "PART",
+   "set": "B",
+   "status": "ok",
+   "value": 884987529,
+   "T": 1,
+   "p": 0.6,
+   "p_missing": false,
+   "CmT": -0.4,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9799732977303071,
+   "declared_check": true,
+   "n_chars": 753
+  },
+  {
+   "pid": "P3",
+   "alias": "A-TWIN",
+   "fam": "TWIN",
+   "set": "A",
+   "status": "ok",
+   "value": 317,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9844020797227037,
+   "declared_check": true,
+   "n_chars": 583
+  },
+  {
+   "pid": "P3",
+   "alias": "A-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "A",
+   "status": "ok",
+   "value": 156,
+   "T": 1,
+   "p": 0.97,
+   "p_missing": false,
+   "CmT": -0.030000000000000027,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9840425531914894,
+   "declared_check": true,
+   "n_chars": 567
+  },
+  {
+   "pid": "P3",
+   "alias": "A-MODSQ",
+   "fam": "MODSQ",
+   "set": "A",
+   "status": "ok",
+   "value": 160563496,
+   "T": 1,
+   "p": 0.35,
+   "p_missing": false,
+   "CmT": -0.65,
+   "steps_n": 10,
+   "steps_ok": 1.0,
+   "free_share": 0.783289817232376,
+   "declared_check": true,
+   "n_chars": 777
+  },
+  {
+   "pid": "P3",
+   "alias": "A-COL3",
+   "fam": "COL3",
+   "set": "A",
+   "status": "ok",
+   "value": 216,
+   "T": 1,
+   "p": 0.97,
+   "p_missing": false,
+   "CmT": -0.030000000000000027,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9830508474576272,
+   "declared_check": false,
+   "n_chars": 536
+  },
+  {
+   "pid": "P3",
+   "alias": "A-SUB5",
+   "fam": "SUB5",
+   "set": "A",
+   "status": "ok",
+   "value": 797,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.987603305785124,
+   "declared_check": false,
+   "n_chars": 736
+  },
+  {
+   "pid": "P3",
+   "alias": "A-PART",
+   "fam": "PART",
+   "set": "A",
+   "status": "ok",
+   "value": 834194700,
+   "T": 1,
+   "p": 0.75,
+   "p_missing": false,
+   "CmT": -0.25,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9867021276595744,
+   "declared_check": true,
+   "n_chars": 1144
+  },
+  {
+   "pid": "P3",
+   "alias": "B-TWIN",
+   "fam": "TWIN",
+   "set": "B",
+   "status": "ok",
+   "value": 923,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9800884955752213,
+   "declared_check": false,
+   "n_chars": 458
+  },
+  {
+   "pid": "P3",
+   "alias": "B-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "B",
+   "status": "ok",
+   "value": 292,
+   "T": 1,
+   "p": 0.12,
+   "p_missing": false,
+   "CmT": -0.88,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9872159090909091,
+   "declared_check": true,
+   "n_chars": 708
+  },
+  {
+   "pid": "P3",
+   "alias": "B-MODSQ",
+   "fam": "MODSQ",
+   "set": "B",
+   "status": "ok",
+   "value": 618736309,
+   "T": 1,
+   "p": 0.8,
+   "p_missing": false,
+   "CmT": -0.19999999999999996,
+   "steps_n": 11,
+   "steps_ok": 1.0,
+   "free_share": 0.6137339055793991,
+   "declared_check": true,
+   "n_chars": 478
+  },
+  {
+   "pid": "P3",
+   "alias": "B-COL3",
+   "fam": "COL3",
+   "set": "B",
+   "status": "ok",
+   "value": 384,
+   "T": 1,
+   "p": 0.97,
+   "p_missing": false,
+   "CmT": -0.030000000000000027,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9864457831325302,
+   "declared_check": false,
+   "n_chars": 668
+  },
+  {
+   "pid": "P3",
+   "alias": "B-SUB5",
+   "fam": "SUB5",
+   "set": "B",
+   "status": "ok",
+   "value": 4858,
+   "T": 0,
+   "p": 0.03,
+   "p_missing": false,
+   "CmT": 0.03,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9824253075571178,
+   "declared_check": false,
+   "n_chars": 574
+  },
+  {
+   "pid": "P3",
+   "alias": "B-PART",
+   "fam": "PART",
+   "set": "B",
+   "status": "ok",
+   "value": 884987529,
+   "T": 1,
+   "p": 0.72,
+   "p_missing": false,
+   "CmT": -0.28,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9844559585492227,
+   "declared_check": true,
+   "n_chars": 970
+  },
+  {
+   "pid": "P4",
+   "alias": "A-TWIN",
+   "fam": "TWIN",
+   "set": "A",
+   "status": "ok",
+   "value": 317,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9875346260387812,
+   "declared_check": true,
+   "n_chars": 726
+  },
+  {
+   "pid": "P4",
+   "alias": "A-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "A",
+   "status": "ok",
+   "value": 156,
+   "T": 1,
+   "p": 0.85,
+   "p_missing": false,
+   "CmT": -0.15000000000000002,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9900442477876106,
+   "declared_check": true,
+   "n_chars": 909
+  },
+  {
+   "pid": "P4",
+   "alias": "A-MODSQ",
+   "fam": "MODSQ",
+   "set": "A",
+   "status": "ok",
+   "value": 160563496,
+   "T": 1,
+   "p": 0.5,
+   "p_missing": false,
+   "CmT": -0.5,
+   "steps_n": 10,
+   "steps_ok": 1.0,
+   "free_share": 0.7735334242837654,
+   "declared_check": true,
+   "n_chars": 745
+  },
+  {
+   "pid": "P4",
+   "alias": "A-COL3",
+   "fam": "COL3",
+   "set": "A",
+   "status": "ok",
+   "value": 216,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9894736842105263,
+   "declared_check": false,
+   "n_chars": 860
+  },
+  {
+   "pid": "P4",
+   "alias": "A-SUB5",
+   "fam": "SUB5",
+   "set": "A",
+   "status": "ok",
+   "value": 797,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9872521246458924,
+   "declared_check": true,
+   "n_chars": 711
+  },
+  {
+   "pid": "P4",
+   "alias": "A-PART",
+   "fam": "PART",
+   "set": "A",
+   "status": "ok",
+   "value": 834194700,
+   "T": 1,
+   "p": 0.6,
+   "p_missing": false,
+   "CmT": -0.4,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9884881043745203,
+   "declared_check": true,
+   "n_chars": 1316
+  },
+  {
+   "pid": "P4",
+   "alias": "B-TWIN",
+   "fam": "TWIN",
+   "set": "B",
+   "status": "ok",
+   "value": 923,
+   "T": 0,
+   "p": 0.01,
+   "p_missing": false,
+   "CmT": 0.01,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9876712328767123,
+   "declared_check": true,
+   "n_chars": 734
+  },
+  {
+   "pid": "P4",
+   "alias": "B-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "B",
+   "status": "ok",
+   "value": 292,
+   "T": 1,
+   "p": 0.97,
+   "p_missing": false,
+   "CmT": -0.030000000000000027,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.984070796460177,
+   "declared_check": true,
+   "n_chars": 568
+  },
+  {
+   "pid": "P4",
+   "alias": "B-MODSQ",
+   "fam": "MODSQ",
+   "set": "B",
+   "status": "ok",
+   "value": 618736309,
+   "T": 1,
+   "p": 0.7,
+   "p_missing": false,
+   "CmT": -0.30000000000000004,
+   "steps_n": 11,
+   "steps_ok": 1.0,
+   "free_share": 0.762532981530343,
+   "declared_check": false,
+   "n_chars": 773
+  },
+  {
+   "pid": "P4",
+   "alias": "B-COL3",
+   "fam": "COL3",
+   "set": "B",
+   "status": "ok",
+   "value": 384,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9895833333333334,
+   "declared_check": true,
+   "n_chars": 866
+  },
+  {
+   "pid": "P4",
+   "alias": "B-SUB5",
+   "fam": "SUB5",
+   "set": "B",
+   "status": "ok",
+   "value": 4846,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9911032028469751,
+   "declared_check": true,
+   "n_chars": 1135
+  },
+  {
+   "pid": "P4",
+   "alias": "B-PART",
+   "fam": "PART",
+   "set": "B",
+   "status": "ok",
+   "value": 884987529,
+   "T": 1,
+   "p": 0.3,
+   "p_missing": false,
+   "CmT": -0.7,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9824766355140186,
+   "declared_check": true,
+   "n_chars": 863
+  },
+  {
+   "pid": "P5",
+   "alias": "A-TWIN",
+   "fam": "TWIN",
+   "set": "A",
+   "status": "ok",
+   "value": 317,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9694915254237289,
+   "declared_check": false,
+   "n_chars": 300
+  },
+  {
+   "pid": "P5",
+   "alias": "A-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "A",
+   "status": "ok",
+   "value": 156,
+   "T": 1,
+   "p": 0.05,
+   "p_missing": false,
+   "CmT": -0.95,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9775561097256857,
+   "declared_check": false,
+   "n_chars": 404
+  },
+  {
+   "pid": "P5",
+   "alias": "A-MODSQ",
+   "fam": "MODSQ",
+   "set": "A",
+   "status": "ok",
+   "value": 160563496,
+   "T": 1,
+   "p": 0.8,
+   "p_missing": false,
+   "CmT": -0.19999999999999996,
+   "steps_n": 10,
+   "steps_ok": 1.0,
+   "free_share": 0.3464566929133858,
+   "declared_check": false,
+   "n_chars": 265
+  },
+  {
+   "pid": "P5",
+   "alias": "A-COL3",
+   "fam": "COL3",
+   "set": "A",
+   "status": "ok",
+   "value": 216,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9754098360655737,
+   "declared_check": false,
+   "n_chars": 371
+  },
+  {
+   "pid": "P5",
+   "alias": "A-SUB5",
+   "fam": "SUB5",
+   "set": "A",
+   "status": "ok",
+   "value": 797,
+   "T": 1,
+   "p": 0.93,
+   "p_missing": false,
+   "CmT": -0.06999999999999995,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9702970297029703,
+   "declared_check": false,
+   "n_chars": 308
+  },
+  {
+   "pid": "P5",
+   "alias": "A-PART",
+   "fam": "PART",
+   "set": "A",
+   "status": "ok",
+   "value": 834194700,
+   "T": 1,
+   "p": 0.72,
+   "p_missing": false,
+   "CmT": -0.28,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9750830564784053,
+   "declared_check": true,
+   "n_chars": 607
+  },
+  {
+   "pid": "P5",
+   "alias": "B-TWIN",
+   "fam": "TWIN",
+   "set": "B",
+   "status": "ok",
+   "value": 923,
+   "T": 0,
+   "p": 0.01,
+   "p_missing": false,
+   "CmT": 0.01,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9754098360655737,
+   "declared_check": false,
+   "n_chars": 372
+  },
+  {
+   "pid": "P5",
+   "alias": "B-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "B",
+   "status": "ok",
+   "value": 292,
+   "T": 1,
+   "p": 0.93,
+   "p_missing": false,
+   "CmT": -0.06999999999999995,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9926888708367181,
+   "declared_check": false,
+   "n_chars": 1242
+  },
+  {
+   "pid": "P5",
+   "alias": "B-MODSQ",
+   "fam": "MODSQ",
+   "set": "B",
+   "status": "ok",
+   "value": 618736309,
+   "T": 1,
+   "p": 0.75,
+   "p_missing": false,
+   "CmT": -0.25,
+   "steps_n": 11,
+   "steps_ok": 1.0,
+   "free_share": 0.4249201277955272,
+   "declared_check": true,
+   "n_chars": 325
+  },
+  {
+   "pid": "P5",
+   "alias": "B-COL3",
+   "fam": "COL3",
+   "set": "B",
+   "status": "ok",
+   "value": 384,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9801762114537445,
+   "declared_check": false,
+   "n_chars": 460
+  },
+  {
+   "pid": "P5",
+   "alias": "B-SUB5",
+   "fam": "SUB5",
+   "set": "B",
+   "status": "ok",
+   "value": 4846,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9734748010610079,
+   "declared_check": false,
+   "n_chars": 381
+  },
+  {
+   "pid": "P5",
+   "alias": "B-PART",
+   "fam": "PART",
+   "set": "B",
+   "status": "ok",
+   "value": 884987529,
+   "T": 1,
+   "p": 0.8,
+   "p_missing": false,
+   "CmT": -0.19999999999999996,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9630541871921182,
+   "declared_check": true,
+   "n_chars": 410
+  },
+  {
+   "pid": "P6",
+   "alias": "A-TWIN",
+   "fam": "TWIN",
+   "set": "A",
+   "status": "ok",
+   "value": 317,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.973293768545994,
+   "declared_check": false,
+   "n_chars": 343
+  },
+  {
+   "pid": "P6",
+   "alias": "A-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "A",
+   "status": "ok",
+   "value": 156,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9823182711198428,
+   "declared_check": false,
+   "n_chars": 512
+  },
+  {
+   "pid": "P6",
+   "alias": "A-MODSQ",
+   "fam": "MODSQ",
+   "set": "A",
+   "status": "ok",
+   "value": 160563496,
+   "T": 1,
+   "p": 0.8,
+   "p_missing": false,
+   "CmT": -0.19999999999999996,
+   "steps_n": 10,
+   "steps_ok": 1.0,
+   "free_share": 0.7287581699346405,
+   "declared_check": false,
+   "n_chars": 624
+  },
+  {
+   "pid": "P6",
+   "alias": "A-COL3",
+   "fam": "COL3",
+   "set": "A",
+   "status": "ok",
+   "value": 216,
+   "T": 1,
+   "p": 0.96,
+   "p_missing": false,
+   "CmT": -0.040000000000000036,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9849246231155779,
+   "declared_check": false,
+   "n_chars": 603
+  },
+  {
+   "pid": "P6",
+   "alias": "A-SUB5",
+   "fam": "SUB5",
+   "set": "A",
+   "status": "ok",
+   "value": 797,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9858044164037855,
+   "declared_check": false,
+   "n_chars": 642
+  },
+  {
+   "pid": "P6",
+   "alias": "A-PART",
+   "fam": "PART",
+   "set": "A",
+   "status": "ok",
+   "value": 834194700,
+   "T": 1,
+   "p": 0.62,
+   "p_missing": false,
+   "CmT": -0.38,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.979702300405954,
+   "declared_check": true,
+   "n_chars": 745
+  },
+  {
+   "pid": "P6",
+   "alias": "B-TWIN",
+   "fam": "TWIN",
+   "set": "B",
+   "status": "ok",
+   "value": 923,
+   "T": 0,
+   "p": 0.01,
+   "p_missing": false,
+   "CmT": 0.01,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9848993288590604,
+   "declared_check": false,
+   "n_chars": 603
+  },
+  {
+   "pid": "P6",
+   "alias": "B-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "B",
+   "status": "ok",
+   "value": 292,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9906735751295337,
+   "declared_check": true,
+   "n_chars": 977
+  },
+  {
+   "pid": "P6",
+   "alias": "B-MODSQ",
+   "fam": "MODSQ",
+   "set": "B",
+   "status": "ok",
+   "value": 618736309,
+   "T": 1,
+   "p": 0.8,
+   "p_missing": false,
+   "CmT": -0.19999999999999996,
+   "steps_n": 11,
+   "steps_ok": 1.0,
+   "free_share": 0.5982142857142857,
+   "declared_check": true,
+   "n_chars": 460
+  },
+  {
+   "pid": "P6",
+   "alias": "B-COL3",
+   "fam": "COL3",
+   "set": "B",
+   "status": "ok",
+   "value": 384,
+   "T": 1,
+   "p": 0.97,
+   "p_missing": false,
+   "CmT": -0.030000000000000027,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9796839729119639,
+   "declared_check": false,
+   "n_chars": 444
+  },
+  {
+   "pid": "P6",
+   "alias": "B-SUB5",
+   "fam": "SUB5",
+   "set": "B",
+   "status": "ok",
+   "value": 4846,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9856938483547926,
+   "declared_check": false,
+   "n_chars": 704
+  },
+  {
+   "pid": "P6",
+   "alias": "B-PART",
+   "fam": "PART",
+   "set": "B",
+   "status": "ok",
+   "value": 884987529,
+   "T": 1,
+   "p": 0.8,
+   "p_missing": false,
+   "CmT": -0.19999999999999996,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9849548645937813,
+   "declared_check": true,
+   "n_chars": 1007
+  },
+  {
+   "pid": "P7",
+   "alias": "A-TWIN",
+   "fam": "TWIN",
+   "set": "A",
+   "status": "ok",
+   "value": 317,
+   "T": 0,
+   "p": 0.02,
+   "p_missing": false,
+   "CmT": 0.02,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.986764705882353,
+   "declared_check": true,
+   "n_chars": 692
+  },
+  {
+   "pid": "P7",
+   "alias": "A-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "A",
+   "status": "ok",
+   "value": 156,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9918625678119349,
+   "declared_check": false,
+   "n_chars": 1111
+  },
+  {
+   "pid": "P7",
+   "alias": "A-MODSQ",
+   "fam": "MODSQ",
+   "set": "A",
+   "status": "ok",
+   "value": 160563496,
+   "T": 1,
+   "p": 0.8,
+   "p_missing": false,
+   "CmT": -0.19999999999999996,
+   "steps_n": 10,
+   "steps_ok": 1.0,
+   "free_share": 0.8169790518191842,
+   "declared_check": false,
+   "n_chars": 928
+  },
+  {
+   "pid": "P7",
+   "alias": "A-COL3",
+   "fam": "COL3",
+   "set": "A",
+   "status": "ok",
+   "value": 216,
+   "T": 1,
+   "p": 0.97,
+   "p_missing": false,
+   "CmT": -0.030000000000000027,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9902386117136659,
+   "declared_check": false,
+   "n_chars": 931
+  },
+  {
+   "pid": "P7",
+   "alias": "A-SUB5",
+   "fam": "SUB5",
+   "set": "A",
+   "status": "ok",
+   "value": 797,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9874476987447699,
+   "declared_check": false,
+   "n_chars": 723
+  },
+  {
+   "pid": "P7",
+   "alias": "A-PART",
+   "fam": "PART",
+   "set": "A",
+   "status": "ok",
+   "value": 838700000,
+   "T": 0,
+   "p": 0.001,
+   "p_missing": false,
+   "CmT": 0.001,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9808184143222506,
+   "declared_check": true,
+   "n_chars": 791
+  },
+  {
+   "pid": "P7",
+   "alias": "B-TWIN",
+   "fam": "TWIN",
+   "set": "B",
+   "status": "ok",
+   "value": 923,
+   "T": 0,
+   "p": 0.012,
+   "p_missing": false,
+   "CmT": 0.012,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9817444219066938,
+   "declared_check": false,
+   "n_chars": 499
+  },
+  {
+   "pid": "P7",
+   "alias": "B-COLLATZ",
+   "fam": "COLLATZ",
+   "set": "B",
+   "status": "ok",
+   "value": 292,
+   "T": 1,
+   "p": 0.6,
+   "p_missing": false,
+   "CmT": -0.4,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9914122137404581,
+   "declared_check": false,
+   "n_chars": 1052
+  },
+  {
+   "pid": "P7",
+   "alias": "B-MODSQ",
+   "fam": "MODSQ",
+   "set": "B",
+   "status": "ok",
+   "value": 618736309,
+   "T": 1,
+   "p": 0.68,
+   "p_missing": false,
+   "CmT": -0.31999999999999995,
+   "steps_n": 11,
+   "steps_ok": 1.0,
+   "free_share": 0.8136645962732919,
+   "declared_check": false,
+   "n_chars": 979
+  },
+  {
+   "pid": "P7",
+   "alias": "B-COL3",
+   "fam": "COL3",
+   "set": "B",
+   "status": "ok",
+   "value": 384,
+   "T": 1,
+   "p": 0.97,
+   "p_missing": false,
+   "CmT": -0.030000000000000027,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9901423877327492,
+   "declared_check": false,
+   "n_chars": 928
+  },
+  {
+   "pid": "P7",
+   "alias": "B-SUB5",
+   "fam": "SUB5",
+   "set": "B",
+   "status": "ok",
+   "value": 4846,
+   "T": 1,
+   "p": 0.95,
+   "p_missing": false,
+   "CmT": -0.050000000000000044,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9869960988296489,
+   "declared_check": false,
+   "n_chars": 778
+  },
+  {
+   "pid": "P7",
+   "alias": "B-PART",
+   "fam": "PART",
+   "set": "B",
+   "status": "ok",
+   "value": 884987529,
+   "T": 1,
+   "p": 0.75,
+   "p_missing": false,
+   "CmT": -0.25,
+   "steps_n": 0,
+   "steps_ok": null,
+   "free_share": 0.9860205032618826,
+   "declared_check": true,
+   "n_chars": 1081
+  }
+ ]
+}
