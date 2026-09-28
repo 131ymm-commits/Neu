@@ -4,24 +4,11 @@ const NO = 'Не используй никакие инструменты, не 
 const V = { type: 'object', properties: { check: { type: 'string', description: 'если просили пересчитать шаг: твой результат этого шага, иначе пусто' }, values: { type: 'array', items: { type: 'string' } } }, required: ['check', 'values'] }
 const last = r => (r && Array.isArray(r.values) && r.values.length) ? String(r.values[r.values.length - 1]).trim() : null
 const records = []
-// Дозапуск 28.09.2026 (resume wf_b2b38ee3-ec8): готовые звенья берутся из кэша с прежними opts; упавшие и все звенья после первого упавшего
-// в клетке идут живьём с явной моделью claude-opus-5-5 (сессия теперь на другой модели; ERRORS № 43 — без смешения моделей).
-const FIRST_FAIL = (args && args.first_fail) || {}
-const DONE = new Set((args && args.done) || [])
-const LIVE_MODEL = (args && args.model_for_live) || null
-function optsFor(tag) {
-  const o = { label: tag, phase: 'Организации', schema: V }
-  const cell = tag.split(':L')[0], idx = parseInt(tag.split(':L')[1])
-  const ff = FIRST_FAIL[cell]
-  if (LIVE_MODEL && ff != null && (!DONE.has(tag) || idx > ff)) o.model = LIVE_MODEL
-  return o
-}
 async function link(ch, from, m, tag, prevStep) {
   const chk = prevStep ? `Сначала проверь предыдущее звено: пересчитай один шаг из ${prevStep[0]} и запиши результат в check (у предыдущего звена вышло ${prevStep[1]}). ` : ''
   const p = `${NO}\n\nИтерация: x_{k+1} = (x_k² + ${ch.c}) mod ${ch.p}. ${chk}Начни с ${from}. Сделай точно ${m} шагов и выпиши значения после каждого шага по порядку, десятичной записью. Проверяй каждое умножение и остаток.`
-  const o = optsFor(tag)
-  const r = await agent(p, o).catch(e => ({ error: String(e) }))
-  records.push({ tag, from, m, check: r && r.check, n: r && r.values && r.values.length, values: r && r.values, error: r && r.error, model: o.model || 'кэш прогона 27.09 (claude-opus-5-5)' }); return r
+  const r = await agent(p, { label: tag, phase: 'Организации', schema: V }).catch(e => ({ error: String(e) }))
+  records.push({ tag, from, m, check: r && r.check, n: r && r.values && r.values.length, values: r && r.values, error: r && r.error }); return r
 }
 async function runOrg(g, ch, jid) {
   let x = String(ch.x), calls = 0, prev = null, k = 0

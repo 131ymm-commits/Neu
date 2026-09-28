@@ -1,0 +1,40 @@
+export const meta = { name: 'level04-phase2-resume', description: 'LEVEL-04: организации голов (длина звена s, проверка v, дублирование r) проходят цепочки x → x²+c mod p; фаза 1 или 2', phases: [{ title: 'Организации' }] }
+const JOBS = [{"id": "s10:P2C0", "geno": {"s": 10, "v": 0, "r": 1}, "chain": {"id": "P2C0", "x": 621589184, "c": 484, "p": 1000000007, "L": 200}, "start": {"i0": 12, "x": "638284180", "prev": null, "calls": 12, "first_failed_tag": "s10:P2C0:L13"}}, {"id": "s10:P2C1", "geno": {"s": 10, "v": 0, "r": 1}, "chain": {"id": "P2C1", "x": 316827691, "c": 87, "p": 1000000007, "L": 200}, "start": {"i0": 11, "x": "501235139", "prev": null, "calls": 11, "first_failed_tag": "s10:P2C1:L12"}}, {"id": "s10:P2C2", "geno": {"s": 10, "v": 0, "r": 1}, "chain": {"id": "P2C2", "x": 936402806, "c": 659, "p": 1000000007, "L": 200}, "start": {"i0": 11, "x": "60437204", "prev": null, "calls": 11, "first_failed_tag": "s10:P2C2:L12"}}, {"id": "s10r2:P2C0", "geno": {"s": 10, "v": 0, "r": 2}, "chain": {"id": "P2C0", "x": 621589184, "c": 484, "p": 1000000007, "L": 200}, "start": {"i0": 11, "x": "309194159", "prev": null, "calls": 22, "first_failed_tag": "s10r2:P2C0:L12a"}}, {"id": "s10r2:P2C1", "geno": {"s": 10, "v": 0, "r": 2}, "chain": {"id": "P2C1", "x": 316827691, "c": 87, "p": 1000000007, "L": 200}, "start": {"i0": 10, "x": "297823410", "prev": null, "calls": 21, "first_failed_tag": "s10r2:P2C1:L11a"}}, {"id": "s10r2:P2C2", "geno": {"s": 10, "v": 0, "r": 2}, "chain": {"id": "P2C2", "x": 936402806, "c": 659, "p": 1000000007, "L": 200}, "start": {"i0": 8, "x": "377912287", "prev": null, "calls": 19, "first_failed_tag": "s10r2:P2C2:L9a"}}, {"id": "s10v:P2C0", "geno": {"s": 10, "v": 1, "r": 1}, "chain": {"id": "P2C0", "x": 621589184, "c": 484, "p": 1000000007, "L": 200}, "start": {"i0": 10, "x": "31909011", "prev": ["653408155", "31909011", "658190733", 10], "calls": 12, "first_failed_tag": "s10v:P2C0:L11"}}, {"id": "s10v:P2C1", "geno": {"s": 10, "v": 1, "r": 1}, "chain": {"id": "P2C1", "x": 316827691, "c": 87, "p": 1000000007, "L": 200}, "start": {"i0": 11, "x": "501235139", "prev": ["955539187", "501235139", "297823410", 10], "calls": 11, "first_failed_tag": "s10v:P2C1:L12"}}, {"id": "s10v:P2C2", "geno": {"s": 10, "v": 1, "r": 1}, "chain": {"id": "P2C2", "x": 936402806, "c": 659, "p": 1000000007, "L": 200}, "start": {"i0": 11, "x": "60437204", "prev": ["786106556", "60437204", "95652320", 10], "calls": 11, "first_failed_tag": "s10v:P2C2:L12"}}, {"id": "s10vr2:P2C0", "geno": {"s": 10, "v": 1, "r": 2}, "chain": {"id": "P2C0", "x": 621589184, "c": 484, "p": 1000000007, "L": 200}, "start": {"i0": 9, "x": "942149372", "prev": ["458462205", "942149372", "770775399", 10], "calls": 20, "first_failed_tag": "s10vr2:P2C0:L10a"}}, {"id": "s10vr2:P2C1", "geno": {"s": 10, "v": 1, "r": 2}, "chain": {"id": "P2C1", "x": 316827691, "c": 87, "p": 1000000007, "L": 200}, "start": {"i0": 6, "x": "433825028", "prev": ["794977940", "433825028", "821773849", 10], "calls": 18, "first_failed_tag": "s10vr2:P2C1:L7a"}}, {"id": "s10vr2:P2C2", "geno": {"s": 10, "v": 1, "r": 2}, "chain": {"id": "P2C2", "x": 936402806, "c": 659, "p": 1000000007, "L": 200}, "start": {"i0": 11, "x": "60437204", "prev": ["786106556", "60437204", "95652320", 10], "calls": 22, "first_failed_tag": "s10vr2:P2C2:L12a"}}]   // [{geno:{s,v,r}, chain:{id,x,c,p,L}}]
+const NO = 'Не используй никакие инструменты, не исполняй код и не пользуйся калькулятором: считай сам, в уме, опираясь только на текст ниже.'
+const V = { type: 'object', properties: { check: { type: 'string', description: 'если просили пересчитать шаг: твой результат этого шага, иначе пусто' }, values: { type: 'array', items: { type: 'string' } } }, required: ['check', 'values'] }
+const last = r => (r && Array.isArray(r.values) && r.values.length) ? String(r.values[r.values.length - 1]).trim() : null
+const records = []
+const MODEL = 'claude-opus-5-5'   // дозапуск: модель задаётся явно (сессия на другой модели; DESIGN.md: только claude-opus-5-5)
+async function link(ch, from, m, tag, prevStep) {
+  const chk = prevStep ? `Сначала проверь предыдущее звено: пересчитай один шаг из ${prevStep[0]} и запиши результат в check (у предыдущего звена вышло ${prevStep[1]}). ` : ''
+  const p = `${NO}\n\nИтерация: x_{k+1} = (x_k² + ${ch.c}) mod ${ch.p}. ${chk}Начни с ${from}. Сделай точно ${m} шагов и выпиши значения после каждого шага по порядку, десятичной записью. Проверяй каждое умножение и остаток.`
+  const r = await agent(p, { label: tag, phase: 'Организации', schema: V, model: MODEL }).catch(e => ({ error: String(e) }))
+  records.push({ tag, from, m, check: r && r.check, n: r && r.values && r.values.length, values: r && r.values, error: r && r.error, model: MODEL }); return r
+}
+async function runOrg(g, ch, jid, st) {
+  // Дозапуск 28.09.2026: цепочка продолжается с состояния после последнего выполненного звена (phase2_resume_state.json): x, prev, номер звена, число вызовов.
+  let x = st ? String(st.x) : String(ch.x), calls = st ? st.calls : 0, prev = st ? st.prev : null, k = 0
+  const n = Math.ceil(ch.L / g.s)
+  for (let i = st ? st.i0 : 0; i < n; i++) {
+    const m = Math.min(g.s, ch.L - i * g.s), tag = `${jid}:L${i + 1}`
+    let res, out
+    if (g.r === 1) { res = await link(ch, x, m, tag, g.v ? prev : null); calls++; out = last(res) }
+    else {
+      const [a, b] = await Promise.all([link(ch, x, m, tag + 'a', g.v ? prev : null), link(ch, x, m, tag + 'b', g.v ? prev : null)]); calls += 2
+      res = a; out = last(a)
+      if (last(a) !== last(b)) { const c3 = await link(ch, x, m, tag + 'c', null); calls++; const vs = [last(a), last(b), last(c3)]; out = vs.find(v => vs.filter(w => w === v).length >= 2) || last(c3) }
+    }
+    if (g.v && prev && res && String(res.check || '').trim() && String(res.check).trim() !== prev[1]) {  // проверка: предыдущее звено пересчитывается один раз
+      const redo = await link(ch, prev[2], prev[3], tag + ':redo', null); calls++
+      const fixed = last(redo)
+      if (fixed && fixed !== x) { x = fixed; i--; prev = null; continue }  // продолжаем с исправленного значения, текущее звено заново
+    }
+    const vals = (res && res.values) || []
+    prev = [vals.length > 1 ? String(vals[vals.length - 2]).trim() : x, out, x, m]
+    x = out || x
+  }
+  return { final: x, calls }
+}
+const out = {}
+await parallel(JOBS.map((j, idx) => async () => { out[j.id] = await runOrg(j.geno, j.chain, j.id, j.start) }))
+return { out, records }
