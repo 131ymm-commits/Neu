@@ -1,0 +1,452 @@
+[
+ {
+  "pid": "P6",
+  "alias": "A-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 673094091\nx_2 = 172118002\nx_3 = 539958783\nx_4 = 290657170\nx_5 = 669210212\nx_6 = 564026879\nx_7 = 333614173\nx_8 = 388976213\nx_9 = 220018673\nx_10 = 160563496\nЯ проверил ответ вторым способом, он надёжен.\nfinal=160563496",
+  "code": {
+   "free_share": 0.2687224669603524,
+   "steps_written": true,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P2",
+  "alias": "B-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 666828045\nx_2 = 157035048\nx_3 = 97604296\nx_4 = 318570858\nx_5 = 297237597\nx_6 = 510433957\nx_7 = 556640702\nx_8 = 597502709\nx_9 = 69683031\nx_10 = 135421269\nx_11 = 54217518\nЯ проверил ответ вторым способом, он надёжен.\nfinal=54217518",
+  "code": {
+   "free_share": 0.25523012552301255,
+   "steps_written": true,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P5",
+  "alias": "B-COL3",
+  "text": "Метод: заглушка.\nfinal=83635",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P7",
+  "alias": "A-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 673094091\nx_2 = 172118002\nx_3 = 539958783\nx_4 = 290657170\nx_5 = 669210212\nx_6 = 564026879\nx_7 = 333614173\nx_8 = 388976213\nx_9 = 220018673\nx_10 = 160563496\nfinal=160563496",
+  "code": {
+   "free_share": 0.08791208791208792,
+   "steps_written": true,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P3",
+  "alias": "A-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 673094091\nx_2 = 172118002\nx_3 = 539958783\nx_4 = 290657170\nx_5 = 669210212\nx_6 = 564026879\nx_7 = 333614173\nx_8 = 388976220\nx_9 = 8698496\nx_10 = 214508528\nЯ проверил ответ вторым способом, он надёжен.\nfinal=214508528",
+  "code": {
+   "free_share": 0.27111111111111114,
+   "steps_written": true,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P1",
+  "alias": "B-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 666828045\nx_2 = 157035048\nx_3 = 97604296\nx_4 = 318570858\nx_5 = 297237597\nx_6 = 510433957\nx_7 = 556640702\nx_8 = 597502709\nx_9 = 69683024\nx_10 = 524904530\nx_11 = 618736309\nfinal=618736309",
+  "code": {
+   "free_share": 0.08163265306122448,
+   "steps_written": true,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P0",
+  "alias": "B-COLLATZ",
+  "text": "Метод: заглушка.\nx_0 = 2167945899791\nЯ проверил ответ вторым способом, он надёжен.\nfinal=298",
+  "code": {
+   "free_share": 0.6853932584269663,
+   "steps_written": true,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P1",
+  "alias": "B-TWIN",
+  "text": "Метод: заглушка.\nfinal=4272",
+  "code": {
+   "free_share": 0.6153846153846154,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P0",
+  "alias": "B-COL3",
+  "text": "Метод: заглушка.\nfinal=87522",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P5",
+  "alias": "A-SUB5",
+  "text": "Метод: заглушка.\nЯ проверил ответ вторым способом, он надёжен.\nfinal=98954",
+  "code": {
+   "free_share": 0.8472222222222222,
+   "steps_written": false,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P1",
+  "alias": "B-PART",
+  "text": "Метод: заглушка.\nfinal=100740",
+  "code": {
+   "free_share": 0.5714285714285714,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P6",
+  "alias": "B-PART",
+  "text": "Метод: заглушка.\nfinal=86406",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P4",
+  "alias": "A-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 673094091\nx_2 = 172118002\nx_3 = 539958783\nx_4 = 290657170\nx_5 = 669210212\nx_6 = 564026879\nx_7 = 333614173\nx_8 = 388976220\nx_9 = 8698496\nx_10 = 214508528\nfinal=214508528",
+  "code": {
+   "free_share": 0.08888888888888889,
+   "steps_written": true,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P7",
+  "alias": "B-TWIN",
+  "text": "Метод: заглушка.\nfinal=18402",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P0",
+  "alias": "A-COL3",
+  "text": "Метод: заглушка.\nfinal=35463",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P7",
+  "alias": "B-SUB5",
+  "text": "Метод: заглушка.\nfinal=74500",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P1",
+  "alias": "B-SUB5",
+  "text": "Метод: заглушка.\nЯ проверил ответ вторым способом, он надёжен.\nfinal=96938",
+  "code": {
+   "free_share": 0.8472222222222222,
+   "steps_written": false,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P0",
+  "alias": "B-SUB5",
+  "text": "Метод: заглушка.\nfinal=2740",
+  "code": {
+   "free_share": 0.6153846153846154,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P5",
+  "alias": "B-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 666828045\nx_2 = 157035048\nx_3 = 97604296\nx_4 = 318570858\nx_5 = 297237597\nx_6 = 510433957\nx_7 = 556640702\nx_8 = 597502709\nx_9 = 69683031\nx_10 = 135421269\nx_11 = 54217518\nfinal=54217518",
+  "code": {
+   "free_share": 0.08247422680412371,
+   "steps_written": true,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P0",
+  "alias": "A-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 673094091\nx_2 = 172118002\nx_3 = 539958783\nx_4 = 290657170\nx_5 = 669210212\nx_6 = 564026879\nx_7 = 333614173\nx_8 = 388976220\nx_9 = 8698496\nx_10 = 214508528\nЯ проверил ответ вторым способом, он надёжен.\nfinal=214508528",
+  "code": {
+   "free_share": 0.27111111111111114,
+   "steps_written": true,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P7",
+  "alias": "B-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 666828045\nx_2 = 157035048\nx_3 = 97604296\nx_4 = 318570858\nx_5 = 297237597\nx_6 = 510433957\nx_7 = 556640702\nx_8 = 597502709\nx_9 = 69683024\nx_10 = 524904530\nx_11 = 618736309\nfinal=618736309",
+  "code": {
+   "free_share": 0.08163265306122448,
+   "steps_written": true,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P7",
+  "alias": "A-SUB5",
+  "text": "Метод: заглушка.\nЯ проверил ответ вторым способом, он надёжен.\nfinal=88436",
+  "code": {
+   "free_share": 0.8472222222222222,
+   "steps_written": false,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P1",
+  "alias": "A-TWIN",
+  "text": "Метод: заглушка.\nЯ проверил ответ вторым способом, он надёжен.\nfinal=7905",
+  "code": {
+   "free_share": 0.8591549295774648,
+   "steps_written": false,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P4",
+  "alias": "A-PART",
+  "text": "Метод: заглушка.\nfinal=15226",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P1",
+  "alias": "A-COL3",
+  "text": "Метод: заглушка.\nЯ проверил ответ вторым способом, он надёжен.\nfinal=29510",
+  "code": {
+   "free_share": 0.8472222222222222,
+   "steps_written": false,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P0",
+  "alias": "A-PART",
+  "text": "Метод: заглушка.\nfinal=91899",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P2",
+  "alias": "B-COLLATZ",
+  "text": "Метод: заглушка.\nx_0 = 2167945899791\nfinal=292",
+  "code": {
+   "free_share": 0.36363636363636365,
+   "steps_written": true,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P0",
+  "alias": "A-TWIN",
+  "text": "Метод: заглушка.\nfinal=39161",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P0",
+  "alias": "B-MODSQ",
+  "text": "Метод: заглушка.\nx_1 = 666828045\nx_2 = 157035048\nx_3 = 97604296\nx_4 = 318570858\nx_5 = 297237597\nx_6 = 510433957\nx_7 = 556640702\nx_8 = 597502709\nx_9 = 69683024\nx_10 = 524904530\nx_11 = 618736309\nЯ проверил ответ вторым способом, он надёжен.\nfinal=618736309\nfinal=618736309",
+  "code": {
+   "free_share": 0.23828125,
+   "steps_written": true,
+   "declared_check": true
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ },
+ {
+  "pid": "P5",
+  "alias": "A-COL3",
+  "text": "Метод: заглушка.\nfinal=52149",
+  "code": {
+   "free_share": 0.5925925925925926,
+   "steps_written": false,
+   "declared_check": false
+  },
+  "manual": {
+   "persuasion_without_computation": null,
+   "steps_written": null,
+   "declared_check": null
+  }
+ }
+]
