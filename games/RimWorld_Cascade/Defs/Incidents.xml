@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <IncidentDef>
+    <defName>Cascade_StormIncident</defName>
+    <label>каскад</label>
+    <category>Misc</category>
+    <targetTags><li>Map_PlayerHome</li></targetTags>
+    <workerClass>Cascade.IncidentWorker_Cascade</workerClass>
+    <gameCondition>Cascade_Storm</gameCondition>
+    <durationDays>7~11</durationDays>
+    <baseChance>0.6</baseChance>
+    <minRefireDays>90</minRefireDays>
+    <earliestDay>25</earliestDay>
+    <minThreatPoints>250</minThreatPoints>
+    <letterLabel>Каскад: аномалия растёт</letterLabel>
+    <letterDef>ThreatBig</letterDef>
+  </IncidentDef>
+</Defs>

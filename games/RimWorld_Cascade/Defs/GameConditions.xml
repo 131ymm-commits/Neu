@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <GameConditionDef>
+    <defName>Cascade_Storm</defName>
+    <conditionClass>Cascade.GameCondition_Cascade</conditionClass>
+    <label>каскад</label>
+    <description>Геомагнитная аномалия нарастает над колонией. Стадия 1 — наводки: провода искрят, свет мигает. Стадия 2 — перегрузка: батареи теряют заряд, кабели взрываются. Стадия 3 — ионный купол: незаземлённая сеть отключается на часы. Стадия 4 — разряды: молнии бьют в самые мощные электрические постройки. Заземляющие контуры защищают всё в своём радиусе, экранированный кабель не искрит, молниеотвод притягивает разряды.</description>
+    <endMessage>Каскад утих. Небо снова спокойно.</endMessage>
+    <letterText>Приборы фиксируют рост геомагнитной аномалии. Провода начинают гудеть. Это только начало: аномалия будет нарастать несколько дней, и каждую стадию сеть переживёт хуже предыдущей, если не заземлить её.</letterText>
+    <canBeVisible>true</canBeVisible>
+    <defaultDraw>false</defaultDraw>
+    <allowUnderground>false</allowUnderground>
+    <natural>true</natural>
+    <preventRain>false</preventRain>
+    <weatherDef>Cascade_Aurora</weatherDef>
+  </GameConditionDef>
+
+  <WeatherDef ParentName="WeatherBase" Name="Cascade_AuroraBase" Abstract="True">
+    <label>ионное сияние</label>
+    <description>Небо переливается; воздух потрескивает от статики.</description>
+    <windSpeedFactor>1.2</windSpeedFactor>
+    <accuracyMultiplier>0.9</accuracyMultiplier>
+    <favorability>Bad</favorability>
+    <perceivePriority>1.5</perceivePriority>
+    <skyColorsNightMid><sky>(0.35,0.55,0.75)</sky><shadow>(0.55,0.55,0.75)</shadow><overlay>(0.55,0.65,0.9)</overlay><saturation>1.2</saturation></skyColorsNightMid>
+    <skyColorsNightEdge><sky>(0.4,0.6,0.7)</sky><shadow>(0.6,0.6,0.75)</shadow><overlay>(0.6,0.7,0.9)</overlay><saturation>1.2</saturation></skyColorsNightEdge>
+    <skyColorsDay><sky>(0.8,0.85,1)</sky><shadow>(0.8,0.8,0.9)</shadow><overlay>(0.85,0.9,1)</overlay><saturation>1.1</saturation></skyColorsDay>
+    <skyColorsDusk><sky>(0.7,0.75,0.95)</sky><shadow>(0.7,0.7,0.85)</shadow><overlay>(0.75,0.8,1)</overlay><saturation>1.1</saturation></skyColorsDusk>
+  </WeatherDef>
+  <WeatherDef ParentName="Cascade_AuroraBase">
+    <defName>Cascade_Aurora</defName>
+    <commonality>0</commonality>
+    <isBad>true</isBad>
+  </WeatherDef>
+</Defs>

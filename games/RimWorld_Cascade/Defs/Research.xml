@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ResearchTabDef>
+    <defName>Cascade</defName>
+    <label>Каскад</label>
+  </ResearchTabDef>
+  <ResearchProjectDef>
+    <defName>Cascade_Grounding</defName>
+    <label>заземление</label>
+    <description>Заземляющий контур: отводит наводки в землю. Всё электрическое в радиусе 12 клеток не искрит и не взрывается во время каскада.</description>
+    <baseCost>600</baseCost>
+    <techLevel>Industrial</techLevel>
+    <prerequisites><li>Electricity</li></prerequisites>
+    <tab>Cascade</tab>
+    <researchViewX>0</researchViewX>
+    <researchViewY>1</researchViewY>
+  </ResearchProjectDef>
+  <ResearchProjectDef>
+    <defName>Cascade_Shielding</defName>
+    <label>экранированный кабель</label>
+    <description>Кабель в оплётке: не искрит, не взрывается и передаёт ток даже под ионным куполом — если хотя бы один конец сети заземлён.</description>
+    <baseCost>1200</baseCost>
+    <techLevel>Industrial</techLevel>
+    <prerequisites><li>Cascade_Grounding</li></prerequisites>
+    <tab>Cascade</tab>
+    <researchViewX>1</researchViewX>
+    <researchViewY>1</researchViewY>
+  </ResearchProjectDef>
+  <ResearchProjectDef>
+    <defName>Cascade_LightningRod</defName>
+    <label>молниеотвод</label>
+    <description>Высокая мачта с заземлением: разряды четвёртой стадии бьют в неё, а не в генераторы. Одна мачта прикрывает радиус 20 клеток.</description>
+    <baseCost>1800</baseCost>
+    <techLevel>Industrial</techLevel>
+    <prerequisites><li>Cascade_Shielding</li></prerequisites>
+    <tab>Cascade</tab>
+    <researchViewX>2</researchViewX>
+    <researchViewY>1</researchViewY>
+  </ResearchProjectDef>
+</Defs>

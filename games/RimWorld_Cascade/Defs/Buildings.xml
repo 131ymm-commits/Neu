@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ThingDef ParentName="BuildingBase">
+    <defName>Cascade_GroundingRod</defName>
+    <label>заземляющий контур</label>
+    <description>Штырь и петля из стали, вбитые в землю. Пока подключён к сети и получает 40 Вт, всё электрическое в радиусе 12 клеток защищено от наводок каскада.</description>
+    <thingClass>Building</thingClass>
+    <graphicData>
+      <texPath>Cascade/GroundingRod</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,1)</drawSize>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>PassThroughOnly</passability>
+    <pathCost>30</pathCost>
+    <blockWind>false</blockWind>
+    <fillPercent>0.4</fillPercent>
+    <statBases>
+      <MaxHitPoints>150</MaxHitPoints>
+      <WorkToBuild>1200</WorkToBuild>
+      <Flammability>0</Flammability>
+      <Beauty>-2</Beauty>
+    </statBases>
+    <size>(1,1)</size>
+    <costList><Steel>60</Steel></costList>
+    <designationCategory>Power</designationCategory>
+    <rotatable>false</rotatable>
+    <terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+    <researchPrerequisites><li>Cascade_Grounding</li></researchPrerequisites>
+    <comps>
+      <li Class="CompProperties_Power">
+        <compClass>CompPowerTrader</compClass>
+        <basePowerConsumption>40</basePowerConsumption>
+        <shortCircuitInRain>false</shortCircuitInRain>
+      </li>
+      <li Class="CompProperties_Flickable"/>
+      <li Class="Cascade.CompProperties_Grounding">
+        <radius>12</radius>
+      </li>
+    </comps>
+    <placeWorkers><li>Cascade.PlaceWorker_ShowGroundingRadius</li></placeWorkers>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>Cascade_LightningRod</defName>
+    <label>молниеотвод</label>
+    <description>Стальная мачта высотой с дом. Во время четвёртой стадии каскада разряды в радиусе 20 клеток бьют в неё. Мачта выдерживает удары, но требует ремонта.</description>
+    <thingClass>Building</thingClass>
+    <graphicData>
+      <texPath>Cascade/LightningRod</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <drawSize>(1,2)</drawSize>
+      <drawOffset>(0,0,0.5)</drawOffset>
+    </graphicData>
+    <altitudeLayer>Building</altitudeLayer>
+    <passability>Impassable</passability>
+    <fillPercent>0.5</fillPercent>
+    <statBases>
+      <MaxHitPoints>400</MaxHitPoints>
+      <WorkToBuild>2400</WorkToBuild>
+      <Flammability>0</Flammability>
+      <Beauty>0</Beauty>
+    </statBases>
+    <size>(1,1)</size>
+    <costList><Steel>150</Steel><ComponentIndustrial>2</ComponentIndustrial></costList>
+    <designationCategory>Power</designationCategory>
+    <rotatable>false</rotatable>
+    <terrainAffordanceNeeded>Heavy</terrainAffordanceNeeded>
+    <researchPrerequisites><li>Cascade_LightningRod</li></researchPrerequisites>
+    <comps>
+      <li Class="Cascade.CompProperties_LightningRod">
+        <radius>20</radius>
+      </li>
+    </comps>
+    <placeWorkers><li>Cascade.PlaceWorker_ShowLightningRadius</li></placeWorkers>
+  </ThingDef>
+
+  <ThingDef ParentName="PowerConduit">
+    <defName>Cascade_ShieldedConduit</defName>
+    <label>экранированный кабель</label>
+    <description>Кабель в стальной оплётке. Не искрит и не взрывается при каскаде; под ионным куполом продолжает передавать ток, если сеть заземлена.</description>
+    <costList><Steel>3</Steel></costList>
+    <statBases>
+      <MaxHitPoints>120</MaxHitPoints>
+      <WorkToBuild>60</WorkToBuild>
+      <Flammability>0.3</Flammability>
+    </statBases>
+    <researchPrerequisites><li>Cascade_Shielding</li></researchPrerequisites>
+    <comps>
+      <li Class="Cascade.CompProperties_Shielded"/>
+    </comps>
+  </ThingDef>
+</Defs>

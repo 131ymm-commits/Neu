@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Сборка: dotnet build -c Release -p:RimWorldDir="C:\Program Files (x86)\Steam\steamapps\common\RimWorld"
+       Результат кладётся в ../Assemblies/Cascade.dll. Нужны 0Harmony.dll (мод Harmony), Assembly-CSharp.dll, UnityEngine.CoreModule.dll из игры. -->
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>Cascade</AssemblyName>
+    <RootNamespace>Cascade</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <OutputPath>../Assemblies/</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <DebugType>none</DebugType>
+    <RimWorldDir Condition="'$(RimWorldDir)'==''">C:\Program Files (x86)\Steam\steamapps\common\RimWorld</RimWorldDir>
+    <Managed>$(RimWorldDir)\RimWorldWin64_Data\Managed</Managed>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp"><HintPath>$(Managed)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(Managed)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(RimWorldDir)\Mods\Harmony\Current\Assemblies\0Harmony.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LanguageData>
+  <Cascade_Stage>стадия {0}</Cascade_Stage>
+  <Cascade_StageLetterLabel>Каскад: стадия {0}</Cascade_StageLetterLabel>
+  <Cascade_StageDesc1>Стадия 1 — наводки. Провода гудят, электрические постройки искрят. Заземляющий контур снимает наводки в радиусе 12 клеток.</Cascade_StageDesc1>
+  <Cascade_StageDesc2>Стадия 2 — перегрузка. Батареи теряют заряд, незащищённые кабели взрываются, искры зажигают огонь. Экранированный кабель не взрывается.</Cascade_StageDesc2>
+  <Cascade_StageDesc3>Стадия 3 — ионный купол. Незаземлённые сети отключаются волнами по три часа из четырёх. Сеть с заземлением и экранированным кабелем живёт.</Cascade_StageDesc3>
+  <Cascade_StageDesc4>Стадия 4 — разряды. Молнии бьют в самые мощные электрические постройки. Молниеотвод притягивает удары в радиусе 20 клеток; заземление отводит большинство остальных в поле.</Cascade_StageDesc4>
+  <Cascade_GroundingActive>Заземление действует: радиус {0}</Cascade_GroundingActive>
+  <Cascade_GroundingInactive>Нет питания — контур не защищает</Cascade_GroundingInactive>
+  <Cascade_SparkMsg>Искрит: {0}</Cascade_SparkMsg>
+  <Cascade_ConduitMsg>Кабель взорвался от перегрузки</Cascade_ConduitMsg>
+  <Cascade_RodMsg>Молниеотвод принял удар</Cascade_RodMsg>
+</LanguageData>
