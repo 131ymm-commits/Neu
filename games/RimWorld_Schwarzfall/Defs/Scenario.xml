@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ScenarioDef>
+    <defName>Schwarzfall_Germany</defName>
+    <label>Schwarzfall: Германия, первая ночь</label>
+    <description>Посёлок под Кёльном, октябрь. В 22:14 гаснет свет по всей Европе. У вас: дом, четверо соседей, машина с половиной бака, содержимое холодильника и кладовой, аптечка, садовый инвентарь, радиоприёмник на батарейках. Телефоны молчат к утру, вода из крана идёт ещё сутки. Вы знаете, как что устроено, но не умеете этого чинить — пока.</description>
+    <scenario>
+      <summary>Германия наших дней. Общеевропейский блэкаут в первую ночь; дальше — по хронологии реальной катастрофы.</summary>
+      <playerFaction>
+        <def>PlayerFaction</def>
+        <factionDef>PlayerColony</factionDef>
+      </playerFaction>
+      <parts>
+        <li Class="ScenPart_ConfigPage_ConfigureStartingPawns"><def>ConfigPage_ConfigureStartingPawns</def><pawnCount>4</pawnCount><pawnChoiceCount>8</pawnChoiceCount></li>
+        <li Class="ScenPart_PlayerPawnsArriveMethod"><def>PlayerPawnsArriveMethod</def><method>Standing</method></li>
+        <li Class="ScenPart_ForcedTrait"><def>ForcedTrait</def><trait>Industriousness</trait><degree>0</degree><chance>0</chance></li>
+        <li Class="ScenPart_StartingResearch"><def>StartingResearch</def><project>Electricity</project></li>
+        <li Class="ScenPart_StartingResearch"><def>StartingResearch</def><project>Batteries</project></li>
+        <li Class="ScenPart_StartingResearch"><def>StartingResearch</def><project>ComplexClothing</project></li>
+        <li Class="ScenPart_StartingResearch"><def>StartingResearch</def><project>Stonecutting</project></li>
+        <li Class="ScenPart_StartingThing_Defined"><def>StartingThing_Defined</def><thingDef>MealSurvivalPack</thingDef><count>30</count></li>
+        <li Class="ScenPart_StartingThing_Defined"><def>StartingThing_Defined</def><thingDef>Chemfuel</thingDef><count>60</count></li>
+        <li Class="ScenPart_StartingThing_Defined"><def>StartingThing_Defined</def><thingDef>MedicineIndustrial</thingDef><count>6</count></li>
+        <li Class="ScenPart_StartingThing_Defined"><def>StartingThing_Defined</def><thingDef>ComponentIndustrial</thingDef><count>8</count></li>
+        <li Class="ScenPart_StartingThing_Defined"><def>StartingThing_Defined</def><thingDef>Steel</thingDef><count>200</count></li>
+        <li Class="ScenPart_StartingThing_Defined"><def>StartingThing_Defined</def><thingDef>WoodLog</thingDef><count>300</count></li>
+        <li Class="ScenPart_StartingThing_Defined"><def>StartingThing_Defined</def><thingDef>Silver</thingDef><count>150</count></li>
+        <li Class="ScenPart_StartingThing_Defined"><def>StartingThing_Defined</def><thingDef>Schwarzfall_Radio</thingDef><count>1</count></li>
+        <li Class="ScenPart_GameStartDialog"><def>GameStartDialog</def><text>22:14. Лампы мигнули дважды и погасли. Из окна видно, что темно не только у вас — темно до горизонта. Радио на батарейках ловит одну станцию: «…нарушение частоты… отключение потребителей по всей континентальной Европе… оставайтесь дома». Утром телефоны молчат. Через сутки перестаёт идти вода.</text></li>
+        <li Class="ScenPart_CreateIncident"><def>CreateIncident</def><incident>Schwarzfall_Blackout</incident><delayDays>0.02</delayDays><repeat>false</repeat></li>
+        <li Class="ScenPart_DisableIncident"><def>DisableIncident</def><incident>SolarFlare</incident></li>
+        <li Class="ScenPart_DisableIncident"><def>DisableIncident</def><incident>ShipChunkDrop</incident></li>
+        <li Class="ScenPart_DisableIncident"><def>DisableIncident</def><incident>PsychicDrone</incident></li>
+        <li Class="ScenPart_DisableIncident"><def>DisableIncident</def><incident>PsychicSoothe</incident></li>
+        <li Class="ScenPart_DisableIncident"><def>DisableIncident</def><incident>Infestation</incident></li>
+        <li Class="ScenPart_DisableIncident"><def>DisableIncident</def><incident>MechCluster</incident></li>
+        <li Class="ScenPart_DisableIncident"><def>DisableIncident</def><incident>ToxicFallout</incident></li>
+        <li Class="ScenPart_DisableIncident"><def>DisableIncident</def><incident>VolcanicWinter</incident></li>
+      </parts>
+    </scenario>
+  </ScenarioDef>
+</Defs>

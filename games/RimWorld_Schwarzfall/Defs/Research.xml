@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <ResearchTabDef><defName>Schwarzfall</defName><label>Schwarzfall</label></ResearchTabDef>
+  <ResearchProjectDef>
+    <defName>SF_UPS</defName><label>ИБП из автомобильных аккумуляторов</label>
+    <description>Снятые с машин аккумуляторы и инвертор из гаража: несколько часов света и зарядки радио. Первый шаг: пережить ночи.</description>
+    <baseCost>200</baseCost><techLevel>Industrial</techLevel><tab>Schwarzfall</tab><researchViewX>0</researchViewX><researchViewY>1</researchViewY>
+  </ResearchProjectDef>
+  <ResearchProjectDef>
+    <defName>SF_Aggregat</defName><label>Notstromaggregat</label>
+    <description>Дизельный генератор из хозмагазина: 1200 Вт, пока есть топливо. Топливо кончается на третий день по всей стране — сифон, бак машины, солярка из котельной.</description>
+    <baseCost>500</baseCost><techLevel>Industrial</techLevel><prerequisites><li>SF_UPS</li></prerequisites><tab>Schwarzfall</tab><researchViewX>1</researchViewX><researchViewY>1</researchViewY>
+  </ResearchProjectDef>
+  <ResearchProjectDef>
+    <defName>SF_Solar</defName><label>солнечная крыша без сети</label>
+    <description>Панели на крышах есть у каждого третьего дома, но их инверторы отключаются без сети — так велит норма. Перепрошивка на автономный режим: днём свет, вечером — если есть ИБП.</description>
+    <baseCost>900</baseCost><techLevel>Industrial</techLevel><prerequisites><li>SF_Aggregat</li></prerequisites><tab>Schwarzfall</tab><researchViewX>2</researchViewX><researchViewY>1</researchViewY>
+  </ResearchProjectDef>
+  <ResearchProjectDef>
+    <defName>SF_Inselnetz</defName><label>островная сеть посёлка</label>
+    <description>Контроллер островной сети: генератор, солнце и аккумуляторы держат частоту вместе, нагрузка распределяется по приоритетам. Посёлок живёт как маленькая страна.</description>
+    <baseCost>1600</baseCost><techLevel>Industrial</techLevel><prerequisites><li>SF_Solar</li></prerequisites><tab>Schwarzfall</tab><researchViewX>3</researchViewX><researchViewY>1</researchViewY>
+  </ResearchProjectDef>
+  <ResearchProjectDef>
+    <defName>SF_Sync</defName><label>синхронизация с общей сетью</label>
+    <description>Когда сеть начнут возвращать по часам в сутки, островную сеть надо уметь подключить без обрыва: синхроноскоп, автомат обратной мощности. С этого момента ваш сетевой ввод снова живёт в окна подачи, а излишки уходят соседям.</description>
+    <baseCost>2200</baseCost><techLevel>Industrial</techLevel><prerequisites><li>SF_Inselnetz</li></prerequisites><tab>Schwarzfall</tab><researchViewX>4</researchViewX><researchViewY>1</researchViewY>
+  </ResearchProjectDef>
+</Defs>

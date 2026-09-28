@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!-- Сетевой ввод: даровые 2000 Вт, пока сеть жива; при блэкауте мёртв, в окна подачи — жив, если исследована синхронизация -->
+  <ThingDef ParentName="BuildingBase">
+    <defName>Schwarzfall_Netzanschluss</defName>
+    <label>сетевой ввод (Netzanschluss)</label>
+    <description>Щиток и счётчик: 2000 Вт из европейской сети, пока она есть. Во время блэкаута мёртв. После исследования синхронизации оживает в окна подачи, когда сеть возвращают по частям.</description>
+    <thingClass>Building</thingClass>
+    <graphicData><texPath>Schwarzfall/Aggregat</texPath><graphicClass>Graphic_Single</graphicClass><drawSize>(1,1)</drawSize></graphicData>
+    <altitudeLayer>Building</altitudeLayer><passability>PassThroughOnly</passability><fillPercent>0.3</fillPercent>
+    <statBases><MaxHitPoints>100</MaxHitPoints><WorkToBuild>400</WorkToBuild><Flammability>0.5</Flammability></statBases>
+    <size>(1,1)</size><costList><Steel>25</Steel><ComponentIndustrial>1</ComponentIndustrial></costList>
+    <designationCategory>Power</designationCategory><rotatable>false</rotatable>
+    <comps>
+      <li Class="CompProperties_Power"><compClass>Schwarzfall.CompPowerPlantGrid</compClass><basePowerConsumption>-2000</basePowerConsumption><transmitsPower>true</transmitsPower></li>
+      <li Class="CompProperties_Flickable"/>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>Schwarzfall_UPS</defName>
+    <label>ИБП (аккумуляторы + инвертор)</label>
+    <description>Четыре автомобильных аккумулятора и инвертор. Хранит 600 Вт·ч, при зарядке теряет треть. Дешёвая ночь света.</description>
+    <thingClass>Building_Battery</thingClass>
+    <graphicData><texPath>Schwarzfall/Aggregat</texPath><graphicClass>Graphic_Single</graphicClass><drawSize>(1,1)</drawSize></graphicData>
+    <altitudeLayer>Building</altitudeLayer><passability>PassThroughOnly</passability><fillPercent>0.4</fillPercent>
+    <statBases><MaxHitPoints>80</MaxHitPoints><WorkToBuild>500</WorkToBuild><Flammability>0.8</Flammability></statBases>
+    <size>(1,1)</size><costList><Steel>30</Steel><ComponentIndustrial>1</ComponentIndustrial></costList>
+    <designationCategory>Power</designationCategory><rotatable>false</rotatable>
+    <researchPrerequisites><li>SF_UPS</li></researchPrerequisites>
+    <comps>
+      <li Class="CompProperties_Battery"><storedEnergyMax>600</storedEnergyMax><efficiency>0.66</efficiency><transmitsPower>true</transmitsPower></li>
+      <li Class="CompProperties_Explosive"><explosiveRadius>1.5</explosiveRadius><explosiveDamageType>Flame</explosiveDamageType><requiredDamageTypeToExplode>Flame</requiredDamageTypeToExplode></li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>Schwarzfall_Aggregat</defName>
+    <label>Notstromaggregat</label>
+    <description>Дизельный генератор: 1200 Вт, жрёт 4 л топлива в сутки, шумит, греет. Топливо — chemfuel (солярка из баков, котельных, заправок).</description>
+    <thingClass>Building</thingClass>
+    <graphicData><texPath>Schwarzfall/Aggregat</texPath><graphicClass>Graphic_Single</graphicClass><drawSize>(2,2)</drawSize></graphicData>
+    <altitudeLayer>Building</altitudeLayer><passability>Impassable</passability><fillPercent>1</fillPercent><blockWind>true</blockWind>
+    <statBases><MaxHitPoints>200</MaxHitPoints><WorkToBuild>1500</WorkToBuild><Flammability>1</Flammability></statBases>
+    <size>(2,2)</size><costList><Steel>90</Steel><ComponentIndustrial>2</ComponentIndustrial></costList>
+    <designationCategory>Power</designationCategory><rotatable>false</rotatable>
+    <researchPrerequisites><li>SF_Aggregat</li></researchPrerequisites>
+    <comps>
+      <li Class="CompProperties_Power"><compClass>CompPowerPlant</compClass><basePowerConsumption>-1200</basePowerConsumption><transmitsPower>true</transmitsPower></li>
+      <li Class="CompProperties_Refuelable"><fuelConsumptionRate>4.0</fuelConsumptionRate><fuelCapacity>40.0</fuelCapacity><fuelFilter><thingDefs><li>Chemfuel</li></thingDefs></fuelFilter><consumeFuelOnlyWhenUsed>false</consumeFuelOnlyWhenUsed></li>
+      <li Class="CompProperties_Flickable"/>
+      <li Class="CompProperties_HeatPusher"><heatPerSecond>5</heatPerSecond></li>
+      <li Class="CompProperties_Breakdownable"/>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>Schwarzfall_SolarRoof</defName>
+    <label>солнечная крыша (автономный режим)</label>
+    <description>Перепрошитые панели с крыши: до 900 Вт в ясный день, ничего ночью. Ставится под открытым небом.</description>
+    <thingClass>Building</thingClass>
+    <graphicData><texPath>Things/Building/Power/SolarGenerator</texPath><graphicClass>Graphic_Single</graphicClass><drawSize>(4,4)</drawSize></graphicData>
+    <altitudeLayer>Building</altitudeLayer><passability>PassThroughOnly</passability><fillPercent>0.3</fillPercent>
+    <statBases><MaxHitPoints>200</MaxHitPoints><WorkToBuild>1800</WorkToBuild><Flammability>0.5</Flammability></statBases>
+    <size>(4,4)</size><costList><Steel>60</Steel><ComponentIndustrial>3</ComponentIndustrial></costList>
+    <designationCategory>Power</designationCategory><rotatable>false</rotatable>
+    <researchPrerequisites><li>SF_Solar</li></researchPrerequisites>
+    <comps>
+      <li Class="CompProperties_Power"><compClass>CompPowerPlantSolar</compClass><basePowerConsumption>-900</basePowerConsumption><transmitsPower>true</transmitsPower></li>
+    </comps>
+    <placeWorkers><li>PlaceWorker_NotUnderRoof</li></placeWorkers>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>Schwarzfall_Inselnetz</defName>
+    <label>контроллер островной сети</label>
+    <description>Держит частоту в посёлке. Пока подключён и работает, сеть в радиусе 25 клеток считается «островом»: генераторы не отключаются при перегрузке, а батареи не теряют заряд в стадии холода. С исследованием синхронизации подключает сетевой ввод в окна подачи.</description>
+    <thingClass>Building</thingClass>
+    <graphicData><texPath>Schwarzfall/Mast</texPath><graphicClass>Graphic_Single</graphicClass><drawSize>(1,2)</drawSize><drawOffset>(0,0,0.5)</drawOffset></graphicData>
+    <altitudeLayer>Building</altitudeLayer><passability>Impassable</passability><fillPercent>0.6</fillPercent>
+    <statBases><MaxHitPoints>250</MaxHitPoints><WorkToBuild>3000</WorkToBuild><Flammability>0.4</Flammability></statBases>
+    <size>(1,1)</size><costList><Steel>120</Steel><ComponentIndustrial>4</ComponentIndustrial></costList>
+    <designationCategory>Power</designationCategory><rotatable>false</rotatable>
+    <researchPrerequisites><li>SF_Inselnetz</li></researchPrerequisites>
+    <comps>
+      <li Class="CompProperties_Power"><compClass>CompPowerTrader</compClass><basePowerConsumption>60</basePowerConsumption></li>
+      <li Class="CompProperties_Flickable"/>
+      <li Class="Schwarzfall.CompProperties_Inselnetz"><radius>25</radius></li>
+    </comps>
+  </ThingDef>
+
+  <ThingDef ParentName="ResourceBase">
+    <defName>Schwarzfall_Radio</defName>
+    <label>радиоприёмник на батарейках</label>
+    <description>Единственный голос снаружи. Раз в сутки — сводка: что уже отказало и когда обещают сеть.</description>
+    <graphicData><texPath>Things/Item/Resource/Component</texPath><graphicClass>Graphic_Single</graphicClass></graphicData>
+    <stackLimit>1</stackLimit><statBases><MaxHitPoints>50</MaxHitPoints><MarketValue>40</MarketValue><Mass>0.5</Mass></statBases>
+    <thingCategories><li>Items</li></thingCategories>
+  </ThingDef>
+</Defs>

@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Сборка: dotnet build -c Release -p:RimWorldDir="C:\Program Files (x86)\Steam\steamapps\common\RimWorld"
-       Результат кладётся в ../Assemblies/Cascade.dll. Нужны 0Harmony.dll (мод Harmony), Assembly-CSharp.dll, UnityEngine.CoreModule.dll из игры. -->
+       Результат кладётся в ../Assemblies/Schwarzfall.dll. Нужны 0Harmony.dll (мод Harmony), Assembly-CSharp.dll, UnityEngine.CoreModule.dll из игры. -->
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <AssemblyName>Cascade</AssemblyName>
-    <RootNamespace>Cascade</RootNamespace>
+    <AssemblyName>Schwarzfall</AssemblyName>
+    <RootNamespace>Schwarzfall</RootNamespace>
     <LangVersion>latest</LangVersion>
     <OutputPath>../Assemblies/</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

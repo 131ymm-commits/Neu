@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Defs>
+  <!-- Само условие: блэкаут. Стадии по игровым дням от начала (хронология реального обвала сети). -->
+  <GameConditionDef>
+    <defName>Schwarzfall_Blackout</defName>
+    <conditionClass>Schwarzfall.GameCondition_Blackout</conditionClass>
+    <label>блэкаут</label>
+    <description>Европейская сеть лежит. Сетевой ввод (Netzanschluss) мёртв, всё, что питалось от него, стоит. Стадии: ночь 1 — темнота; сутки 1–2 — вода и связь; дни 3–5 — топливо и магазины; дни 6–14 — холод, мародёры, больницы; недели 3–4 — АЭС без солярки для насосов; после — сеть возвращают по частям: сначала на часы в сутки, потом насовсем. Своя энергия — ИБП, аггрегат, солнце, островная сеть — работает всегда.</description>
+    <endMessage>Сеть восстановлена. Диспетчер сообщает: частота 50,00 Гц, все регионы синхронизированы.</endMessage>
+    <letterText>22:14. Частота сети упала ниже 49,8 Гц, автоматика отключила потребителей по всей континентальной Европе. Свет погас от Гамбурга до Мюнхена. Радио: «оставайтесь дома». Сетевой ввод мёртв; всё, что вы построите на своей энергии, будет работать.</letterText>
+    <canBeVisible>true</canBeVisible>
+    <natural>false</natural>
+    <allowUnderground>true</allowUnderground>
+  </GameConditionDef>
+
+  <IncidentDef>
+    <defName>Schwarzfall_Blackout</defName>
+    <label>блэкаут</label>
+    <category>Misc</category>
+    <targetTags><li>Map_PlayerHome</li></targetTags>
+    <workerClass>IncidentWorker_MakeGameCondition</workerClass>
+    <gameCondition>Schwarzfall_Blackout</gameCondition>
+    <durationDays>40~55</durationDays>
+    <baseChance>0</baseChance>
+    <letterLabel>Schwarzfall: Европа без света</letterLabel>
+    <letterDef>ThreatBig</letterDef>
+  </IncidentDef>
+
+  <!-- Угроза с АЭС: радиоактивное облако на 5–8 дней (переиспользуем механику токсичных осадков) -->
+  <GameConditionDef ParentName="ToxicFallout" Name="Schwarzfall_FalloutBase" Abstract="True"/>
+  <GameConditionDef>
+    <defName>Schwarzfall_NuclearCloud</defName>
+    <conditionClass>GameCondition_ToxicFallout</conditionClass>
+    <label>облако с АЭС</label>
+    <description>На АЭС кончилась солярка для аварийных насосов. Пар сбросили через фильтры, но ветер несёт облако на вас. Не выходить без нужды, крыша — защита.</description>
+    <endMessage>Ветер сменился. Облако ушло к морю.</endMessage>
+    <letterText>Радио: «…аварийный сброс давления на энергоблоке… населению закрыть окна и не покидать помещения». Облако будет над вами несколько дней.</letterText>
+    <canBeVisible>true</canBeVisible>
+    <defaultDraw>true</defaultDraw>
+    <weatherDef>Fog</weatherDef>
+    <exclusiveConditions><li>ToxicFallout</li></exclusiveConditions>
+  </GameConditionDef>
+  <IncidentDef>
+    <defName>Schwarzfall_NuclearCloud</defName>
+    <label>облако с АЭС</label>
+    <category>Misc</category>
+    <targetTags><li>Map_PlayerHome</li></targetTags>
+    <workerClass>IncidentWorker_MakeGameCondition</workerClass>
+    <gameCondition>Schwarzfall_NuclearCloud</gameCondition>
+    <durationDays>5~8</durationDays>
+    <baseChance>0</baseChance>
+    <letterLabel>Облако с АЭС</letterLabel>
+    <letterDef>ThreatBig</letterDef>
+  </IncidentDef>
+</Defs>
