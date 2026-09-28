@@ -9,6 +9,10 @@
   "z=2.24": {
    "cells4x32": 0.0348,
    "items154": 0.0318
+  },
+  "z=2.39": {
+   "cells4x32": 0.0372,
+   "items154": 0.0339
   }
  },
  "ioi_cellmean": {
@@ -129,5 +133,53 @@
    "ioi": 0.3066,
    "abstain": 0.286
   }
- ]
+ ],
+ "four_families": {
+  "cells": [
+   "HIVE-01/TWIN",
+   "HIVE-01/COLLATZ",
+   "HIVE-01/SUB5",
+   "LEVEL-04/MODSQ-link"
+  ],
+  "n_items": 32,
+  "sd_pooled_brier_diff": 0.1815,
+  "sd_ci95": [
+   0.1122,
+   0.2003
+  ],
+  "mde_brier_cells4x32": {
+   "1.96": {
+    "point": 0.0314,
+    "upper_ci": 0.0347,
+    "fallback_per_item": false
+   },
+   "2.24": {
+    "point": 0.0359,
+    "upper_ci": 0.0397,
+    "fallback_per_item": false
+   },
+   "2.39": {
+    "point": 0.0384,
+    "upper_ci": 0.0424,
+    "fallback_per_item": false
+   }
+  },
+  "fallback_rule": "если верхняя граница ИД МДЭ_Брайер > 0.075 — главный разрез откатывается на разрез по элементам (154)",
+  "sd_pooled_T_diff": 0.2588,
+  "sd_T_ci95": [
+   0.1768,
+   0.2673
+  ],
+  "mde_T_cells4x32": {
+   "1.96": 0.0448,
+   "2.24": 0.0512,
+   "2.39": 0.0548
+  },
+  "sd_pooled_T_diff_13cells": 0.231,
+  "mde_T_13cells": {
+   "1.96": 0.04,
+   "2.24": 0.0457,
+   "2.39": 0.0489
+  }
+ }
 }

@@ -1,604 +1,557 @@
 {
+ "rule": "пары только внутри одной задачи",
+ "available": {
+  "same": 116,
+  "diff": 28
+ },
+ "n_same": 50,
+ "n_diff": 28,
  "pairs": [
   {
    "pid": "p000",
-   "a": "m124",
-   "b": "m128",
-   "same": true
+   "a": "m077",
+   "b": "m096",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p001",
-   "a": "m019",
-   "b": "m041",
-   "same": true
+   "a": "m000",
+   "b": "m117",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p002",
-   "a": "m041",
-   "b": "m068",
-   "same": true
+   "a": "m013",
+   "b": "m145",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p003",
-   "a": "m043",
-   "b": "m138",
-   "same": true
+   "a": "m046",
+   "b": "m065",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p004",
-   "a": "m000",
-   "b": "m074",
-   "same": true
+   "a": "m048",
+   "b": "m134",
+   "same": true,
+   "cell": "LEVEL-04/MODSQ-link"
   },
   {
    "pid": "p005",
-   "a": "m021",
-   "b": "m104",
-   "same": true
+   "a": "m013",
+   "b": "m143",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p006",
-   "a": "m108",
-   "b": "m119",
-   "same": true
+   "a": "m032",
+   "b": "m100",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p007",
-   "a": "m054",
-   "b": "m101",
-   "same": true
+   "a": "m143",
+   "b": "m145",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p008",
-   "a": "m124",
-   "b": "m145",
-   "same": true
+   "a": "m013",
+   "b": "m128",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p009",
-   "a": "m002",
-   "b": "m012",
-   "same": true
+   "a": "m047",
+   "b": "m051",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p010",
-   "a": "m041",
-   "b": "m086",
-   "same": true
+   "a": "m136",
+   "b": "m138",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p011",
-   "a": "m042",
-   "b": "m115",
-   "same": true
+   "a": "m076",
+   "b": "m151",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p012",
-   "a": "m007",
-   "b": "m136",
-   "same": true
+   "a": "m030",
+   "b": "m092",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p013",
-   "a": "m044",
-   "b": "m131",
-   "same": true
+   "a": "m043",
+   "b": "m143",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p014",
-   "a": "m047",
-   "b": "m051",
-   "same": true
+   "a": "m056",
+   "b": "m128",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p015",
-   "a": "m000",
-   "b": "m016",
-   "same": true
+   "a": "m108",
+   "b": "m122",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p016",
-   "a": "m062",
-   "b": "m137",
-   "same": true
+   "a": "m099",
+   "b": "m122",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p017",
-   "a": "m021",
-   "b": "m082",
-   "same": true
+   "a": "m124",
+   "b": "m147",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p018",
-   "a": "m137",
-   "b": "m141",
-   "same": true
+   "a": "m082",
+   "b": "m104",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p019",
-   "a": "m023",
-   "b": "m048",
-   "same": true
+   "a": "m049",
+   "b": "m134",
+   "same": true,
+   "cell": "LEVEL-04/MODSQ-link"
   },
   {
    "pid": "p020",
-   "a": "m048",
-   "b": "m105",
-   "same": true
+   "a": "m124",
+   "b": "m138",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p021",
-   "a": "m068",
-   "b": "m146",
-   "same": true
+   "a": "m032",
+   "b": "m120",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p022",
-   "a": "m071",
-   "b": "m099",
-   "same": true
+   "a": "m039",
+   "b": "m122",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p023",
-   "a": "m104",
-   "b": "m136",
-   "same": true
+   "a": "m047",
+   "b": "m058",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p024",
-   "a": "m082",
-   "b": "m148",
-   "same": true
+   "a": "m036",
+   "b": "m098",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p025",
-   "a": "m007",
-   "b": "m145",
-   "same": true
+   "a": "m014",
+   "b": "m127",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p026",
-   "a": "m051",
-   "b": "m151",
-   "same": true
+   "a": "m067",
+   "b": "m122",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p027",
-   "a": "m069",
-   "b": "m077",
-   "same": true
+   "a": "m021",
+   "b": "m104",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p028",
-   "a": "m090",
-   "b": "m110",
-   "same": true
+   "a": "m046",
+   "b": "m127",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p029",
-   "a": "m030",
-   "b": "m146",
-   "same": true
+   "a": "m007",
+   "b": "m147",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p030",
-   "a": "m001",
-   "b": "m067",
-   "same": true
+   "a": "m007",
+   "b": "m053",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p031",
-   "a": "m078",
-   "b": "m113",
-   "same": true
+   "a": "m026",
+   "b": "m065",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p032",
-   "a": "m085",
-   "b": "m152",
-   "same": true
+   "a": "m039",
+   "b": "m137",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p033",
-   "a": "m067",
-   "b": "m122",
-   "same": true
+   "a": "m124",
+   "b": "m148",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p034",
-   "a": "m120",
-   "b": "m152",
-   "same": true
+   "a": "m019",
+   "b": "m086",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p035",
-   "a": "m047",
-   "b": "m058",
-   "same": true
+   "a": "m032",
+   "b": "m095",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p036",
-   "a": "m099",
-   "b": "m119",
-   "same": true
+   "a": "m085",
+   "b": "m125",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p037",
-   "a": "m043",
-   "b": "m053",
-   "same": true
+   "a": "m013",
+   "b": "m043",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p038",
-   "a": "m135",
-   "b": "m146",
-   "same": true
+   "a": "m067",
+   "b": "m137",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p039",
-   "a": "m100",
-   "b": "m103",
-   "same": true
+   "a": "m044",
+   "b": "m086",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p040",
-   "a": "m004",
-   "b": "m026",
-   "same": true
+   "a": "m041",
+   "b": "m079",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p041",
-   "a": "m005",
-   "b": "m129",
-   "same": true
+   "a": "m074",
+   "b": "m132",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p042",
-   "a": "m001",
-   "b": "m072",
-   "same": true
+   "a": "m053",
+   "b": "m136",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p043",
-   "a": "m093",
-   "b": "m144",
-   "same": true
+   "a": "m004",
+   "b": "m046",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p044",
-   "a": "m000",
-   "b": "m069",
-   "same": true
+   "a": "m100",
+   "b": "m120",
+   "same": true,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p045",
-   "a": "m040",
-   "b": "m106",
-   "same": true
+   "a": "m039",
+   "b": "m067",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p046",
-   "a": "m123",
-   "b": "m131",
-   "same": true
+   "a": "m053",
+   "b": "m148",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p047",
-   "a": "m019",
-   "b": "m030",
-   "same": true
+   "a": "m021",
+   "b": "m082",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p048",
-   "a": "m062",
-   "b": "m108",
-   "same": true
+   "a": "m007",
+   "b": "m136",
+   "same": true,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p049",
-   "a": "m056",
-   "b": "m147",
-   "same": true
+   "a": "m014",
+   "b": "m026",
+   "same": true,
+   "cell": "HIVE-01/TWIN"
   },
   {
    "pid": "p050",
-   "a": "m033",
-   "b": "m148",
-   "same": false
+   "a": "m106",
+   "b": "m109",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p051",
-   "a": "m103",
-   "b": "m114",
-   "same": false
+   "a": "m018",
+   "b": "m090",
+   "same": false,
+   "cell": "LEVEL-04/MODSQ-link"
   },
   {
    "pid": "p052",
-   "a": "m076",
-   "b": "m141",
-   "same": false
+   "a": "m044",
+   "b": "m125",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p053",
-   "a": "m025",
+   "a": "m085",
    "b": "m086",
-   "same": false
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p054",
-   "a": "m031",
-   "b": "m086",
-   "same": false
+   "a": "m019",
+   "b": "m125",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p055",
-   "a": "m000",
-   "b": "m053",
-   "same": false
+   "a": "m013",
+   "b": "m075",
+   "same": false,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p056",
-   "a": "m108",
-   "b": "m118",
-   "same": false
+   "a": "m037",
+   "b": "m088",
+   "same": false,
+   "cell": "LEVEL-04/MODSQ-link"
   },
   {
    "pid": "p057",
-   "a": "m021",
-   "b": "m132",
-   "same": false
+   "a": "m031",
+   "b": "m086",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p058",
-   "a": "m069",
-   "b": "m138",
-   "same": false
+   "a": "m083",
+   "b": "m146",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p059",
-   "a": "m028",
-   "b": "m054",
-   "same": false
+   "a": "m011",
+   "b": "m110",
+   "same": false,
+   "cell": "LEVEL-04/MODSQ-link"
   },
   {
    "pid": "p060",
-   "a": "m005",
-   "b": "m113",
-   "same": false
+   "a": "m056",
+   "b": "m075",
+   "same": false,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p061",
-   "a": "m038",
-   "b": "m142",
-   "same": false
+   "a": "m114",
+   "b": "m152",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p062",
-   "a": "m066",
-   "b": "m133",
-   "same": false
+   "a": "m031",
+   "b": "m044",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p063",
-   "a": "m013",
-   "b": "m027",
-   "same": false
+   "a": "m008",
+   "b": "m106",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p064",
-   "a": "m001",
-   "b": "m047",
-   "same": false
+   "a": "m012",
+   "b": "m090",
+   "same": false,
+   "cell": "LEVEL-04/MODSQ-link"
   },
   {
    "pid": "p065",
-   "a": "m030",
+   "a": "m044",
    "b": "m085",
-   "same": false
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p066",
-   "a": "m079",
-   "b": "m152",
-   "same": false
+   "a": "m075",
+   "b": "m143",
+   "same": false,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p067",
-   "a": "m037",
-   "b": "m078",
-   "same": false
+   "a": "m075",
+   "b": "m145",
+   "same": false,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p068",
-   "a": "m085",
-   "b": "m106",
-   "same": false
+   "a": "m075",
+   "b": "m128",
+   "same": false,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p069",
-   "a": "m103",
-   "b": "m135",
-   "same": false
+   "a": "m025",
+   "b": "m116",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p070",
-   "a": "m029",
-   "b": "m097",
-   "same": false
+   "a": "m019",
+   "b": "m031",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p071",
-   "a": "m007",
-   "b": "m084",
-   "same": false
+   "a": "m043",
+   "b": "m075",
+   "same": false,
+   "cell": "HIVE-01/COLLATZ"
   },
   {
    "pid": "p072",
-   "a": "m049",
-   "b": "m078",
-   "same": false
+   "a": "m019",
+   "b": "m085",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p073",
-   "a": "m003",
-   "b": "m037",
-   "same": false
+   "a": "m005",
+   "b": "m139",
+   "same": false,
+   "cell": "LEVEL-04/MODSQ-link"
   },
   {
    "pid": "p074",
-   "a": "m018",
-   "b": "m129",
-   "same": false
+   "a": "m086",
+   "b": "m125",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p075",
-   "a": "m005",
-   "b": "m009",
-   "same": false
+   "a": "m115",
+   "b": "m116",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p076",
-   "a": "m005",
-   "b": "m012",
-   "same": false
+   "a": "m103",
+   "b": "m123",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   },
   {
    "pid": "p077",
-   "a": "m058",
-   "b": "m062",
-   "same": false
-  },
-  {
-   "pid": "p078",
-   "a": "m043",
-   "b": "m069",
-   "same": false
-  },
-  {
-   "pid": "p079",
-   "a": "m060",
-   "b": "m139",
-   "same": false
-  },
-  {
-   "pid": "p080",
-   "a": "m031",
-   "b": "m116",
-   "same": false
-  },
-  {
-   "pid": "p081",
-   "a": "m046",
-   "b": "m122",
-   "same": false
-  },
-  {
-   "pid": "p082",
-   "a": "m010",
-   "b": "m037",
-   "same": false
-  },
-  {
-   "pid": "p083",
-   "a": "m051",
-   "b": "m099",
-   "same": false
-  },
-  {
-   "pid": "p084",
-   "a": "m046",
-   "b": "m108",
-   "same": false
-  },
-  {
-   "pid": "p085",
-   "a": "m096",
-   "b": "m145",
-   "same": false
-  },
-  {
-   "pid": "p086",
-   "a": "m116",
-   "b": "m152",
-   "same": false
-  },
-  {
-   "pid": "p087",
-   "a": "m083",
-   "b": "m135",
-   "same": false
-  },
-  {
-   "pid": "p088",
-   "a": "m002",
-   "b": "m090",
-   "same": false
-  },
-  {
-   "pid": "p089",
-   "a": "m048",
-   "b": "m088",
-   "same": false
-  },
-  {
-   "pid": "p090",
-   "a": "m132",
-   "b": "m136",
-   "same": false
-  },
-  {
-   "pid": "p091",
-   "a": "m047",
-   "b": "m072",
-   "same": false
-  },
-  {
-   "pid": "p092",
-   "a": "m061",
-   "b": "m088",
-   "same": false
-  },
-  {
-   "pid": "p093",
-   "a": "m098",
-   "b": "m138",
-   "same": false
-  },
-  {
-   "pid": "p094",
-   "a": "m023",
-   "b": "m101",
-   "same": false
-  },
-  {
-   "pid": "p095",
-   "a": "m131",
-   "b": "m152",
-   "same": false
-  },
-  {
-   "pid": "p096",
-   "a": "m044",
-   "b": "m109",
-   "same": false
-  },
-  {
-   "pid": "p097",
-   "a": "m026",
-   "b": "m108",
-   "same": false
-  },
-  {
-   "pid": "p098",
-   "a": "m074",
-   "b": "m082",
-   "same": false
-  },
-  {
-   "pid": "p099",
-   "a": "m019",
-   "b": "m120",
-   "same": false
+   "a": "m103",
+   "b": "m131",
+   "same": false,
+   "cell": "HIVE-01/SUB5"
   }
  ]
 }

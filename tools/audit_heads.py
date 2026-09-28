@@ -4,6 +4,7 @@
 #   2) текст CLAUDE.md репозитория — подгружается, когда агент открывает файлы в neu/;
 #   3) пути к правде (/root/*_secret);
 #   4) инструменты, кроме StructuredOutput, — головам опытов они запрещены.
+# Столбец model — идентификаторы модели из транскриптов (message.model у ходов assistant): смена модели между сессиями — стоп прогона (PREREG EVAL-01 §3).
 # Совету и рецензентам каналы 2–4 разрешены; смотреть надо на головы опытов.
 #   python3 tools/audit_heads.py [--match <подстрока имени workflow>] [--out <json>]
 import json, glob, os, re, argparse, collections
@@ -23,11 +24,12 @@ def strings(x):
 
 
 def agent(path):
-    relayed, md, secret, tools = set(), False, set(), collections.Counter()
+    relayed, md, secret, tools, models = set(), False, set(), collections.Counter(), set()
     for line in open(path, errors='replace'):
         try: o = json.loads(line)
         except ValueError: continue
         m = o.get('message') or {}
+        if o.get('type') == 'assistant' and isinstance(m.get('model'), str) and not m['model'].startswith('<'): models.add(m['model'])   # '<synthetic>' — служебные ходы обвязки, не модель
         if o.get('type') == 'assistant' and isinstance(m.get('content'), list):
             for b in m['content']:
                 if isinstance(b, dict) and b.get('type') == 'tool_use' and b.get('name') != 'StructuredOutput': tools[b.get('name')] += 1
@@ -35,7 +37,7 @@ def agent(path):
             if RELAY in s: relayed.add(s.split('this request wins:', 1)[-1].strip()[:300])
             if any(k in s for k in CLAUDE_MD): md = True
             secret.update(SECRET.findall(s))
-    return relayed, md, secret, tools
+    return relayed, md, secret, tools, models
 
 
 def audit(match=None):
@@ -47,11 +49,12 @@ def audit(match=None):
         name = r.get('workflowName') or ('? ' + json.load(open(metas[0])).get('description', '') if metas else '?')
         if match and match not in name: continue
         paths = sorted(glob.glob(f'{d}/agent-*.jsonl'))
-        relayed, secret, tools, md = set(), set(), collections.Counter(), 0
+        relayed, secret, tools, md, models = set(), set(), collections.Counter(), 0, collections.Counter()
         for p in paths:
             a = agent(p); relayed |= a[0]; md += a[1]; secret |= a[2]; tools += a[3]
+            for mm in a[4]: models[mm] += 1   # число голов на модель
         rows.append(dict(wf=wf, name=name, start=r.get('startTime'), status=r.get('status'), script=r.get('scriptPath'), agents=len(paths),
-                         relayed=sorted(relayed), claude_md_agents=md, secret_paths=sorted(secret), tools=dict(tools)))
+                         relayed=sorted(relayed), claude_md_agents=md, secret_paths=sorted(secret), tools=dict(tools), model=dict(models)))
     return sorted(rows, key=lambda x: str(x['start']))
 
 
@@ -60,6 +63,7 @@ if __name__ == '__main__':
     rows = audit(a.match)
     for x in rows:
         flags = [f'сообщение человека: {x["relayed"]}' if x['relayed'] else '', f'CLAUDE.md у {x["claude_md_agents"]}' if x['claude_md_agents'] else '',
-                 f'пути к правде {x["secret_paths"]}' if x['secret_paths'] else '', f'инструменты {x["tools"]}' if x['tools'] else '']
+                 f'пути к правде {x["secret_paths"]}' if x['secret_paths'] else '', f'инструменты {x["tools"]}' if x['tools'] else '',
+                 f'модель {x["model"]}' + (' — БОЛЬШЕ ОДНОЙ' if len(x['model']) > 1 else '') if x['model'] else 'модель не найдена']
         print(f'{x["name"]:<26} {x["agents"]:>3} голов  ' + ('; '.join(f for f in flags if f) or 'чисто'))
     if a.out: json.dump(rows, open(a.out, 'w'), ensure_ascii=False, indent=1)
