@@ -7,14 +7,14 @@
  "rows": [
   {
    "cell": "calib",
-   "what": "калибровка: 8 сборок + 4 TR на C10",
+   "what": "калибровка 2 (новые зёрна): 20 сборок + 12×(P, TR) M=10 + 12 M=5",
    "seeds": 1,
-   "per_seed_min": 12,
-   "per_seed_exp": 12,
-   "per_seed_max": 12,
-   "total_min": 12,
-   "total_exp": 12,
-   "total_max": 12
+   "per_seed_min": 56,
+   "per_seed_exp": 56,
+   "per_seed_max": 56,
+   "total_min": 56,
+   "total_exp": 56,
+   "total_max": 56
   },
   {
    "cell": "b20",
@@ -95,10 +95,10 @@
   }
  ],
  "total": {
-  "min": 1154,
-  "exp": 1521.5,
-  "p95": 1574,
-  "p99": 1595,
-  "max": 1994
+  "min": 1198,
+  "exp": 1565.5,
+  "p95": 1618,
+  "p99": 1639,
+  "max": 2038
  }
 }

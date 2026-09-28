@@ -1,7 +1,7 @@
 {
  "tag": "orgmock",
- "frozen_sha256": "273464608c86fb21204dd691905a0f78bb13174c34f5863225e79049ca09c90b",
- "eps_per_matrix": 0.0284,
+ "frozen_sha256": "dd7b04c2463db6616d841d45bb6c9e3349bec232b75d9190962dc2a5ef3bdd54",
+ "eps_per_matrix": 0.067,
  "cells": {
   "b5": {
    "n": 10,
@@ -11,7 +11,7 @@
    "fmt": 2,
    "refused": 0,
    "M": 50,
-   "M_eps": 1.42,
+   "M_eps": 3.35,
    "wilson95": [
     0.108,
     0.603
@@ -28,7 +28,7 @@
    "fmt": 3,
    "refused": 0,
    "M": 100,
-   "M_eps": 2.84,
+   "M_eps": 6.7,
    "wilson95": [
     0.057,
     0.51
@@ -45,7 +45,7 @@
    "fmt": 5,
    "refused": 0,
    "M": 200,
-   "M_eps": 5.67,
+   "M_eps": 13.39,
    "wilson95": [
     0.0,
     0.278
@@ -62,7 +62,7 @@
    "fmt": 2,
    "refused": 0,
    "M": 50,
-   "M_eps": 1.42,
+   "M_eps": 3.35,
    "wilson95": [
     0.0,
     0.278
@@ -79,7 +79,7 @@
    "fmt": 3,
    "refused": 0,
    "M": 100,
-   "M_eps": 2.84,
+   "M_eps": 6.7,
    "wilson95": [
     0.0,
     0.278
@@ -96,7 +96,7 @@
    "fmt": 6,
    "refused": 0,
    "M": 200,
-   "M_eps": 5.67,
+   "M_eps": 13.39,
    "wilson95": [
     0.0,
     0.278
@@ -113,7 +113,7 @@
    "fmt": 1,
    "refused": 0,
    "M": 100,
-   "M_eps": 2.84,
+   "M_eps": 6.7,
    "wilson95": [
     0.0,
     0.278
@@ -130,7 +130,7 @@
    "fmt": 0,
    "refused": 0,
    "M": 50,
-   "M_eps": 1.42,
+   "M_eps": 3.35,
    "wilson95": [
     0.018,
     0.404
@@ -147,7 +147,7 @@
    "fmt": 1,
    "refused": 1,
    "M": 100,
-   "M_eps": 2.84,
+   "M_eps": 6.7,
    "wilson95": [
     0.0,
     0.278
@@ -164,7 +164,7 @@
    "fmt": 0,
    "refused": 2,
    "M": 200,
-   "M_eps": 5.67,
+   "M_eps": 13.39,
    "wilson95": [
     0.0,
     0.278
@@ -181,7 +181,7 @@
    "fmt": 0,
    "refused": 0,
    "M": 100,
-   "M_eps": 2.84,
+   "M_eps": 6.7,
    "wilson95": [
     0.071,
     0.591
@@ -514,70 +514,70 @@
   "a5": {
    "observed": 0.0,
    "n": 10,
-   "pred_plugin": 0.2373,
-   "pred_obs_90": [
-    0.0,
-    0.7
-   ],
-   "inside": true
-  },
-  "a10": {
-   "observed": 0.0,
-   "n": 10,
-   "pred_plugin": 0.0563,
-   "pred_obs_90": [
-    0.0,
-    0.5
-   ],
-   "inside": true
-  },
-  "a20": {
-   "observed": 0.0,
-   "n": 10,
-   "pred_plugin": 0.0032,
+   "pred_plugin": 0.0205,
    "pred_obs_90": [
     0.0,
     0.2
    ],
    "inside": true
   },
+  "a10": {
+   "observed": 0.0,
+   "n": 10,
+   "pred_plugin": 0.0004,
+   "pred_obs_90": [
+    0.0,
+    0.0
+   ],
+   "inside": true
+  },
+  "a20": {
+   "observed": 0.0,
+   "n": 10,
+   "pred_plugin": 0.0,
+   "pred_obs_90": [
+    0.0,
+    0.0
+   ],
+   "inside": true
+  },
   "b5": {
    "observed": 0.3,
    "n": 10,
-   "pred_plugin": 1.0,
-   "pred_obs_90": [
-    0.0,
-    0.9
-   ],
-   "inside": true
-  },
-  "b10": {
-   "observed": 0.2,
-   "n": 10,
-   "pred_plugin": 1.0,
-   "pred_obs_90": [
-    0.0,
-    0.8
-   ],
-   "inside": true
-  },
-  "b20": {
-   "observed": 0.0,
-   "n": 10,
-   "pred_plugin": 1.0,
+   "pred_plugin": 0.2543,
    "pred_obs_90": [
     0.0,
     0.6
    ],
    "inside": true
   },
+  "b10": {
+   "observed": 0.2,
+   "n": 10,
+   "pred_plugin": 0.0582,
+   "pred_obs_90": [
+    0.0,
+    0.3
+   ],
+   "inside": true
+  },
+  "b20": {
+   "observed": 0.0,
+   "n": 10,
+   "pred_plugin": 0.0031,
+   "pred_obs_90": [
+    0.0,
+    0.1
+   ],
+   "inside": true
+  },
   "c10": {
    "observed": 0.0,
    "n": 10,
-   "pred_plugin": 0.0563,
+   "pred_plugin": 0.001,
    "pred_obs_90": [
     0.0,
-    0.7
+    0.1
    ],
    "inside": true
   }

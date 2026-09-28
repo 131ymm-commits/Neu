@@ -10,7 +10,7 @@
 #   python3 tasks.py salt                                  → создать соль (если её нет), записать salt_sha256.txt
 #   python3 tasks.py nested <tag> <ns> <n> [<offset>]      → n вложенных задач из зёрен HMAC(salt, ns:i), i = offset…
 #                                                           ns: eval (оценка), hold (отложенные), mock (сухой прогон)
-#   python3 tasks.py asm <tag> <n>                         → n задач калибровки ε сборки (одно произведение A·B, числа < p)
+#   python3 tasks.py calib2 <tag>                          → калибровка на новых зёрнах: 20 сборок, 12 задач M=10, 12 задач M=5
 #   python3 tasks.py <tag> <seed> <N> [<N> ...]            → старый формат (smoke/calib), оставлен для воспроизводимости
 import json, os, sys, random, hmac, hashlib
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -104,18 +104,31 @@ def nested(tag, ns, n, offset=0):
     json.dump(pub, open(f'{HERE}/tasks/{tag}.json', 'w')); json.dump(dict(ns=ns, tasks=sec), open(f'{SECRET}/{tag}.json', 'w'))
     print(f'{n} вложенных задач ({pub[0]["id"]}…{pub[-1]["id"]}, ns={ns}) → tasks/{tag}.json; правда (asserts прошли) → {SECRET}/{tag}.json')
 
-def asm(tag, n):
-    """Калибровка ε сборки: одно произведение двух матриц 2×2 с элементами < p (как выходы листьев). Зёрна — отдельное пространство."""
+def calib2(tag, n_asm=20, n10=12, n5=12):
+    """Калибровка перед заморозкой макромодели, на НОВЫХ зёрнах (пространство 'L5cal2', не пересекается с оценкой (HMAC соли),
+    с прежней калибровкой ('L5:<seed>:<N>', C*-70x) и с моками):
+      A0…A{n_asm−1}   — одно произведение A·B, элементы < p (как входы сборки)            → ε сборки
+      T0…T{n10−1}     — 10 матриц (как лист): первичный путь P и путь TR                 → ε листа, ε_TR, ρ(P, TR)
+      F0…F{n5−1}      — 5 матриц (как половина листа)                                     → ε₅ (путь «половины»)"""
     os.makedirs(SECRET, mode=0o700, exist_ok=True); os.makedirs(f'{HERE}/tasks', exist_ok=True)
-    pub, sec = [], {}
-    for i in range(n):
-        r = random.Random(f'L5asm:{i}'); p = r.randrange(10**8, 10**9)
+    def prime(r):
+        p = r.randrange(10**8, 10**9)
         while not is_prime(p): p += 1
+        return p
+    pub, sec = [], {}
+    for i in range(n_asm):
+        r = random.Random(f'L5cal2:asm:{i}'); p = prime(r)
         A, B = ([[r.randrange(0, p), r.randrange(0, p)], [r.randrange(0, p), r.randrange(0, p)]] for _ in range(2))
-        t = mul(A, B, p); assert t == prod_lr([A, B], p) == tr(mul(tr(B), tr(A), p))
-        tid = f'A{i}'; pub.append(dict(id=tid, p=p, matrices=[A, B])); sec[tid] = dict(p=p, truth=t)
-    json.dump(pub, open(f'{HERE}/tasks/{tag}.json', 'w')); json.dump(dict(ns='asm', tasks=sec), open(f'{SECRET}/{tag}.json', 'w'))
-    print(f'{n} задач сборки → tasks/{tag}.json; правда → {SECRET}/{tag}.json')
+        tt = mul(A, B, p); assert tt == prod_lr([A, B], p) == tr(mul(tr(B), tr(A), p))
+        pub.append(dict(id=f'A{i}', kind='asm', p=p, matrices=[A, B])); sec[f'A{i}'] = dict(p=p, truth=tt)
+    for M, pre, n in ((10, 'T', n10), (5, 'F', n5)):
+        for i in range(n):
+            r = random.Random(f'L5cal2:{M}:{i}'); p = prime(r)
+            Ms = [[[r.randrange(0, 1000), r.randrange(0, 1000)], [r.randrange(0, 1000), r.randrange(0, 1000)]] for _ in range(M)]
+            tt = prod_lr(Ms, p); assert tt == prod_tree(Ms, p) == tr(prod_lr([tr(X) for X in reversed(Ms)], p))
+            pub.append(dict(id=f'{pre}{i}', kind=f'm{M}', p=p, matrices=Ms)); sec[f'{pre}{i}'] = dict(p=p, truth=tt)
+    json.dump(pub, open(f'{HERE}/tasks/{tag}.json', 'w')); json.dump(dict(ns='L5cal2', tasks=sec), open(f'{SECRET}/{tag}.json', 'w'))
+    print(f'калибровка: {n_asm} сборок, {n10} задач M=10, {n5} задач M=5 → tasks/{tag}.json; правда (asserts прошли) → {SECRET}/{tag}.json')
 
 # --- старый формат (smoke, calib) — не менялся ---
 def make(seed, N):
@@ -131,7 +144,7 @@ if __name__ == '__main__':
     a = sys.argv[1:]
     if a[0] == 'salt': make_salt()
     elif a[0] == 'nested': nested(a[1], a[2], int(a[3]), int(a[4]) if len(a) > 4 else 0)
-    elif a[0] == 'asm': asm(a[1], int(a[2]))
+    elif a[0] == 'calib2': calib2(a[1])
     else:
         tag, seed, Ns = a[0], int(a[1]), [int(x) for x in a[2:]]
         os.makedirs(SECRET, exist_ok=True); os.makedirs('tasks', exist_ok=True)

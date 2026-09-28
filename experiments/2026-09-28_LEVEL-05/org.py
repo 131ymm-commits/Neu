@@ -1,6 +1,6 @@
 # LEVEL-05, ветвь организаций: план и смета, сборка сценариев, заморозка макромодели, анализ, сухой прогон на моках.
 #   python3 org.py plan                                  → смета вызовов по ячейкам (run/budget.json)
-#   python3 org.py build-calib <tag> <asm_tag>           → run/<tag>.js: 8 сборок (ε сборки) + 4 пути TR на задачах C10 калибровки (ρ)
+#   python3 org.py build-calib <tag> <calib_tag>         → run/<tag>.js: 56 вызовов калибровки 2 (tasks.py calib2)
 #   python3 org.py freeze <frozen_tag> <calib2_out.json> → run/macro_frozen_<frozen_tag>.json (параметры, формула, интервалы) + sha256
 #   python3 org.py build <tag>                           → run/<tag>.js: все ячейки плана на задачах tasks/<tag>.json
 #   python3 org.py analyze <tag> <out.json> <frozen_tag> → run/<tag>_analysis.json, печать таблиц и сертификата
@@ -31,11 +31,11 @@ def calls_b(N, mism):
     """Вызовы дерева b на N листьях при числе расхождений P≠TR mism: 2 на лист + 3 на расхождение + N−1 сборок."""
     return 2 * N + 3 * mism + (N - 1)
 
-def budget(eps_leaf=0.25, n_seeds=10, n_self=8, target=1600, calib=12, sims=20000):
+def budget(eps_leaf=0.25, n_seeds=10, n_self=8, target=1600, calib=56, sims=20000):
     pm = 1 - (1 - eps_leaf) ** 2          # вероятность расхождения P и TR при независимости (ρ = 0 — худший случай для сметы)
     def table(a20):
         rows = []
-        rows.append(('калибровка: 8 сборок + 4 TR на C10', 'calib', 1, calib, calib, calib, calib))
+        rows.append(('калибровка 2 (новые зёрна): 20 сборок + 12×(P, TR) M=10 + 12 M=5', 'calib', 1, calib, calib, calib, calib))
         rows.append(('b: дерево + проверка другим путём, N=20 (N=5,10 — поддеревья)', 'b20', n_seeds, calls_b(20, 0), calls_b(20, 20 * pm), None, calls_b(20, 20)))
         rows.append(('a: дерево без защиты N=20 (листья общие с b)', 'a20', a20, 19, 19, 19, 19))
         if a20 < n_seeds: rows.append(('a: дерево без защиты N=10 (листья общие с b)', 'a10', n_seeds - a20, 9, 9, 9, 9))
@@ -77,13 +77,21 @@ def write_script(tag, tasks, jobs):
     os.makedirs(f'{HERE}/run', exist_ok=True); open(f'{HERE}/run/{tag}.js', 'w').write(src)
     print(f'run/{tag}.js: заданий {len(jobs)}, sha256 {hashlib.sha256(src.encode()).hexdigest()[:16]}')
 
-def build_calib(tag, asm_tag):
-    asm = json.load(open(f'{HERE}/tasks/{asm_tag}.json')); cal = [t for t in json.load(open(f'{HERE}/tasks/calib.json')) if t['M'] == 10]
-    tasks = {t['id']: dict(p=t['p'], matrices=t['matrices']) for t in asm + cal}
-    jobs = [dict(id=f'asm-{t["id"]}', kind='prod', task=t['id'], **{'from': 0, 'to': 2}, variant='lr') for t in asm]
-    jobs += [dict(id=f'tr-{t["id"]}', kind='prod', task=t['id'], **{'from': 0, 'to': 10}, variant='tr') for t in cal]
-    json.dump(dict(asm_tag=asm_tag), open(f'{HERE}/run/{tag}_meta.json', 'w'))
-    write_script(tag, tasks, jobs)
+def calib_jobs(ctasks):
+    """56 вызовов: сборка A·B (20), лист M=10 путём P и путём TR (12 × 2), половина M=5 (12)."""
+    J = []
+    for t in ctasks:
+        if t['kind'] == 'asm': J.append(dict(id=f'asm-{t["id"]}', kind='prod', task=t['id'], **{'from': 0, 'to': 2}, variant='lr'))
+        elif t['kind'] == 'm10':
+            J.append(dict(id=f'p10-{t["id"]}', kind='prod', task=t['id'], **{'from': 0, 'to': 10}, variant='lr'))
+            J.append(dict(id=f'tr10-{t["id"]}', kind='prod', task=t['id'], **{'from': 0, 'to': 10}, variant='tr'))
+        elif t['kind'] == 'm5': J.append(dict(id=f'p5-{t["id"]}', kind='prod', task=t['id'], **{'from': 0, 'to': 5}, variant='lr'))
+    return J
+def build_calib(tag, ctag):
+    ct = json.load(open(f'{HERE}/tasks/{ctag}.json'))
+    jobs = calib_jobs(ct)
+    json.dump(dict(calib_tag=ctag, calls=len(jobs)), open(f'{HERE}/run/{tag}_meta.json', 'w'))
+    write_script(tag, {t['id']: dict(p=t['p'], matrices=t['matrices']) for t in ct}, jobs)
 
 def build(tag, n_self=8, a20_seeds=None):
     tasks = json.load(open(f'{HERE}/tasks/{tag}.json'))
@@ -108,30 +116,21 @@ def model_P(N, cell, eL, e5, eA, eT, rho):
     return pl ** N * (1 - eA) ** (N - 1)
 
 def calib_counts(calib2_out):
-    """Счётчики (ошибок, n) для ε_leaf, ε_5 (первая калибровка, по одному вызову на задачу: копии побитово одинаковы),
-    ε_asm, ε_TR и ρ (вторая калибровка)."""
-    c1 = json.load(open(f'{HERE}/run/calib_out.json')); c1 = c1.get('out', c1); t1 = json.load(open(f'{SECRET}/calib.json'))
-    def wrong(o, truth):
-        if not o: return True
-        try: return [[int(o['a']), int(o['b'])], [int(o['c']), int(o['d'])]] != truth
-        except Exception: return True
-    cnt = {}
-    for M, name in ((10, 'eL'), (5, 'e5')):
-        ids = [k for k in t1 if k.startswith(f'C{M}-')]
-        cnt[name] = [sum(wrong(c1.get(f'{i}#0'), t1[i]) for i in ids), len(ids)]
-    o2 = json.load(open(calib2_out)); outs = o2['out']
+    """Счётчики (ошибок, n) — только из калибровки 2 (новые зёрна): εL (путь P, M=10), εT (путь TR, M=10, ключ уже переставлен
+    обратно в сценарии), ρ = P(TR даёт тот же неверный ответ | P неверен), ε5 (M=5), εA (сборка). Сбой формата = ошибка.
+    Первая калибровка (C*-70x) в заморозку не входит — только для справки (calib_analysis.json)."""
+    O = json.load(open(calib2_out)); outs = O['out']
     meta = json.load(open(calib2_out.replace('_out.json', '_meta.json')))
-    ta = json.load(open(f'{SECRET}/{meta["asm_tag"]}.json'))['tasks']
-    asm = [(j, v) for j, v in outs.items() if j.startswith('asm-')]
-    cnt['eA'] = [sum(v.get('key') != key(ta[v['task']]['truth']) for _, v in asm), len(asm)]
-    trs = [(j, v) for j, v in outs.items() if j.startswith('tr-')]
-    cnt['eT'] = [sum(v.get('key') != key(t1[v['task']]) for _, v in trs), len(trs)]
-    same, nwrong = 0, 0
-    for _, v in trs:
-        o = c1.get(f'{v["task"]}#0')
-        if wrong(o, t1[v['task']]):
-            nwrong += 1
-            if o and v.get('key') == ','.join(str(int(o[x])) for x in 'abcd'): same += 1
+    truth = json.load(open(f'{SECRET}/{meta["calib_tag"]}.json'))['tasks']
+    bad = lambda v: v is None or v.get('key') is None or v['key'] != key(truth[v['task']]['truth'])
+    grp = lambda pre: [v for j, v in outs.items() if j.startswith(pre + '-')]
+    cnt = {'eL': grp('p10'), 'eT': grp('tr10'), 'e5': grp('p5'), 'eA': grp('asm')}
+    cnt = {k: [sum(bad(v) for v in vs), len(vs)] for k, vs in cnt.items()}
+    same = nwrong = 0
+    for j, v in outs.items():
+        if j.startswith('p10-') and bad(v):
+            nwrong += 1; w = outs.get('tr10-' + j[4:])
+            if v.get('key') is not None and w and w.get('key') == v['key']: same += 1
     cnt['rho'] = [same, nwrong]
     return cnt
 
@@ -385,8 +384,8 @@ def mockchain():
     """Тег сухого прогона — orgmock (не путать с run/mock_out.json матрёшки). Зёрна — пространство 'mock' соли, не пересекается с eval/hold."""
     sh('python3', 'tasks.py', 'salt')
     sh('python3', 'tasks.py', 'nested', 'orgmock', 'mock', '10')
-    sh('python3', 'tasks.py', 'asm', 'orgmock_asm', '8')
-    sh('python3', 'org.py', 'build-calib', 'orgmock_calib2', 'orgmock_asm')
+    sh('python3', 'tasks.py', 'calib2', 'orgmock_ctasks')
+    sh('python3', 'org.py', 'build-calib', 'orgmock_calib2', 'orgmock_ctasks')
     sh('node', 'run/mock_org.mjs', 'run/orgmock_calib2.js', 'run/orgmock_calib2_out.json')
     sh('python3', 'org.py', 'freeze', 'orgmock', 'run/orgmock_calib2_out.json')
     sh('python3', 'org.py', 'build', 'orgmock')
