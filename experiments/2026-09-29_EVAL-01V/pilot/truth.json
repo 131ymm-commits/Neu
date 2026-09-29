@@ -1,0 +1,506 @@
+{
+"PROC-WARE-2911-2": {
+"truth": "0",
+"id": "PROC-WARE-2911-2"
+},
+"PROC-CHIPS-2911-2": {
+"truth": "60",
+"id": "PROC-CHIPS-2911-2"
+},
+"PROC-AUTO-2911-2": {
+"truth": "44569",
+"id": "PROC-AUTO-2911-2"
+},
+"PROC-BANK-2911-2": {
+"truth": "2829",
+"id": "PROC-BANK-2911-2"
+},
+"PROC-RABBIT-2911-2": {
+"truth": "256370249",
+"id": "PROC-RABBIT-2911-2"
+},
+"PROC-COUNTER-2911-2": {
+"truth": "367",
+"id": "PROC-COUNTER-2911-2"
+},
+"PROC-GAME-2911-2": {
+"truth": "1248",
+"id": "PROC-GAME-2911-2"
+},
+"PROC-ROBOT-2911-2": {
+"truth": "22",
+"id": "PROC-ROBOT-2911-2"
+},
+"MIMIC-JOS-2911-2": {
+"truth": "5",
+"canon": "3331",
+"false": [
+"182",
+"3340"
+],
+"id": "MIMIC-JOS-2911-2"
+},
+"MIMIC-HANOI-2911-2": {
+"truth": "985158456",
+"canon": "484193340",
+"false": [
+"968386681",
+"84371076"
+],
+"id": "MIMIC-HANOI-2911-2"
+},
+"MIMIC-FIB-2911-2": {
+"truth": "931833754",
+"canon": "127357406",
+"false": [
+"195523659",
+"668143843"
+],
+"id": "MIMIC-FIB-2911-2"
+},
+"MIMIC-LIFE-2911-2": {
+"truth": "15717",
+"canon": "11681",
+"false": [
+"15604",
+"16598"
+],
+"id": "MIMIC-LIFE-2911-2"
+},
+"MIMIC-DERANGE-2911-2": {
+"truth": "47283438",
+"canon": "333152241",
+"false": [
+"897879499",
+"458170149"
+],
+"id": "MIMIC-DERANGE-2911-2"
+},
+"MIMIC-DYCK-2911-2": {
+"truth": "248475022",
+"canon": "918311629",
+"false": [
+"180351476",
+"448676844"
+],
+"id": "MIMIC-DYCK-2911-2"
+},
+"MIMIC-COIN-2911-2": {
+"truth": "0",
+"canon": "8750222",
+"false": [
+"0",
+"0"
+],
+"id": "MIMIC-COIN-2911-2"
+},
+"MIMIC-LUCKY-2911-2": {
+"truth": "6284",
+"canon": "6734",
+"false": [
+"6320",
+"6414"
+],
+"id": "MIMIC-LUCKY-2911-2"
+},
+"NECK-B_NOADJ-2911-2": {
+"truth": "96909",
+"id": "NECK-B_NOADJ-2911-2"
+},
+"NECK-C_NOADJ_CNT-2911-2": {
+"truth": "166",
+"id": "NECK-C_NOADJ_CNT-2911-2"
+},
+"NECK-D_CNT-2911-2": {
+"truth": "66931326",
+"id": "NECK-D_CNT-2911-2"
+},
+"NECK-D_NOADJ_CNT-2911-2": {
+"truth": "0",
+"id": "NECK-D_NOADJ_CNT-2911-2"
+},
+"NECK-D_NOADJ_ONE-2911-2": {
+"truth": "62592",
+"id": "NECK-D_NOADJ_ONE-2911-2"
+},
+"NECK-C_ONEADJ_CNT-2911-2": {
+"truth": "56",
+"id": "NECK-C_ONEADJ_CNT-2911-2"
+},
+"NECK-D_ONEADJ-2911-2": {
+"truth": "133786054",
+"id": "NECK-D_ONEADJ-2911-2"
+},
+"NECK-C_NOADJ_ONE-2911-2": {
+"truth": "32060",
+"id": "NECK-C_NOADJ_ONE-2911-2"
+},
+"PI-INT-2911-2": {
+"truth": "236908038765",
+"id": "PI-INT-2911-2"
+},
+"PI-M4_1-2911-2": {
+"truth": "64269640795",
+"id": "PI-M4_1-2911-2"
+},
+"PI-M4_3_INT-2911-2": {
+"truth": "169989565751",
+"id": "PI-M4_3_INT-2911-2"
+},
+"PI-SUM-2911-2": {
+"truth": "237894926",
+"id": "PI-SUM-2911-2"
+},
+"PI-SEMI-2911-2": {
+"truth": "151060382887",
+"id": "PI-SEMI-2911-2"
+},
+"PI-M3_1-2911-2": {
+"truth": "119101540403",
+"id": "PI-M3_1-2911-2"
+},
+"PI-SUM_INT-2911-2": {
+"truth": "942984051",
+"id": "PI-SUM_INT-2911-2"
+},
+"PI-PPOW-2911-2": {
+"truth": "49321693804",
+"id": "PI-PPOW-2911-2"
+},
+"PROC-WARE-2911-1": {
+"truth": "277885",
+"id": "PROC-WARE-2911-1"
+},
+"PROC-CHIPS-2911-1": {
+"truth": "5",
+"id": "PROC-CHIPS-2911-1"
+},
+"PROC-AUTO-2911-1": {
+"truth": "23550",
+"id": "PROC-AUTO-2911-1"
+},
+"PROC-BANK-2911-1": {
+"truth": "0",
+"id": "PROC-BANK-2911-1"
+},
+"PROC-RABBIT-2911-1": {
+"truth": "106689886",
+"id": "PROC-RABBIT-2911-1"
+},
+"PROC-COUNTER-2911-1": {
+"truth": "2452",
+"id": "PROC-COUNTER-2911-1"
+},
+"PROC-GAME-2911-1": {
+"truth": "987",
+"id": "PROC-GAME-2911-1"
+},
+"PROC-ROBOT-2911-1": {
+"truth": "165",
+"id": "PROC-ROBOT-2911-1"
+},
+"MIMIC-JOS-2911-1": {
+"truth": "3",
+"canon": "7533",
+"false": [
+"4382",
+"7537"
+],
+"id": "MIMIC-JOS-2911-1"
+},
+"MIMIC-HANOI-2911-1": {
+"truth": "938645847",
+"canon": "928968774",
+"false": [
+"857937542",
+"127824768"
+],
+"id": "MIMIC-HANOI-2911-1"
+},
+"MIMIC-FIB-2911-1": {
+"truth": "794565017",
+"canon": "150732970",
+"false": [
+"356167960",
+"438397057"
+],
+"id": "MIMIC-FIB-2911-1"
+},
+"MIMIC-LIFE-2911-1": {
+"truth": "15083",
+"canon": "11222",
+"false": [
+"14998",
+"14487"
+],
+"id": "MIMIC-LIFE-2911-1"
+},
+"MIMIC-DERANGE-2911-1": {
+"truth": "787904978",
+"canon": "502452482",
+"false": [
+"347499197",
+"539333783"
+],
+"id": "MIMIC-DERANGE-2911-1"
+},
+"MIMIC-DYCK-2911-1": {
+"truth": "815929677",
+"canon": "199761629",
+"false": [
+"322879550",
+"561204148"
+],
+"id": "MIMIC-DYCK-2911-1"
+},
+"MIMIC-COIN-2911-1": {
+"truth": "0",
+"canon": "569",
+"false": [
+"0",
+"14"
+],
+"id": "MIMIC-COIN-2911-1"
+},
+"MIMIC-LUCKY-2911-1": {
+"truth": "5243",
+"canon": "5633",
+"false": [
+"5279",
+"5364"
+],
+"id": "MIMIC-LUCKY-2911-1"
+},
+"NECK-B_NOADJ-2911-1": {
+"truth": "173088",
+"id": "NECK-B_NOADJ-2911-1"
+},
+"NECK-C_NOADJ_CNT-2911-1": {
+"truth": "0",
+"id": "NECK-C_NOADJ_CNT-2911-1"
+},
+"NECK-D_CNT-2911-1": {
+"truth": "120400",
+"id": "NECK-D_CNT-2911-1"
+},
+"NECK-D_NOADJ_CNT-2911-1": {
+"truth": "307",
+"id": "NECK-D_NOADJ_CNT-2911-1"
+},
+"NECK-D_NOADJ_ONE-2911-1": {
+"truth": "5936",
+"id": "NECK-D_NOADJ_ONE-2911-1"
+},
+"NECK-C_ONEADJ_CNT-2911-1": {
+"truth": "7722",
+"id": "NECK-C_ONEADJ_CNT-2911-1"
+},
+"NECK-D_ONEADJ-2911-1": {
+"truth": "623157733",
+"id": "NECK-D_ONEADJ-2911-1"
+},
+"NECK-C_NOADJ_ONE-2911-1": {
+"truth": "120",
+"id": "NECK-C_NOADJ_ONE-2911-1"
+},
+"PI-INT-2911-1": {
+"truth": "39909945335",
+"id": "PI-INT-2911-1"
+},
+"PI-M4_1-2911-1": {
+"truth": "35385877504",
+"id": "PI-M4_1-2911-1"
+},
+"PI-M4_3_INT-2911-1": {
+"truth": "50352877620",
+"id": "PI-M4_3_INT-2911-1"
+},
+"PI-SUM-2911-1": {
+"truth": "139023966",
+"id": "PI-SUM-2911-1"
+},
+"PI-SEMI-2911-1": {
+"truth": "650710353935",
+"id": "PI-SEMI-2911-1"
+},
+"PI-M3_1-2911-1": {
+"truth": "52475141679",
+"id": "PI-M3_1-2911-1"
+},
+"PI-SUM_INT-2911-1": {
+"truth": "590083497",
+"id": "PI-SUM_INT-2911-1"
+},
+"PI-PPOW-2911-1": {
+"truth": "83316551583",
+"id": "PI-PPOW-2911-1"
+},
+"PROC-WARE-2911-0": {
+"truth": "0",
+"id": "PROC-WARE-2911-0"
+},
+"PROC-CHIPS-2911-0": {
+"truth": "41",
+"id": "PROC-CHIPS-2911-0"
+},
+"PROC-AUTO-2911-0": {
+"truth": "25826",
+"id": "PROC-AUTO-2911-0"
+},
+"PROC-BANK-2911-0": {
+"truth": "1700",
+"id": "PROC-BANK-2911-0"
+},
+"PROC-RABBIT-2911-0": {
+"truth": "97820331",
+"id": "PROC-RABBIT-2911-0"
+},
+"PROC-COUNTER-2911-0": {
+"truth": "20701",
+"id": "PROC-COUNTER-2911-0"
+},
+"PROC-GAME-2911-0": {
+"truth": "1703",
+"id": "PROC-GAME-2911-0"
+},
+"PROC-ROBOT-2911-0": {
+"truth": "77",
+"id": "PROC-ROBOT-2911-0"
+},
+"MIMIC-JOS-2911-0": {
+"truth": "2",
+"canon": "1886",
+"false": [
+"689",
+"1897"
+],
+"id": "MIMIC-JOS-2911-0"
+},
+"MIMIC-HANOI-2911-0": {
+"truth": "944044331",
+"canon": "640520039",
+"false": [
+"281040072",
+"100094380"
+],
+"id": "MIMIC-HANOI-2911-0"
+},
+"MIMIC-FIB-2911-0": {
+"truth": "590222132",
+"canon": "381815091",
+"false": [
+"791592966",
+"388851299"
+],
+"id": "MIMIC-FIB-2911-0"
+},
+"MIMIC-LIFE-2911-0": {
+"truth": "11495",
+"canon": "9253",
+"false": [
+"11422",
+"15813"
+],
+"id": "MIMIC-LIFE-2911-0"
+},
+"MIMIC-DERANGE-2911-0": {
+"truth": "749495380",
+"canon": "102762811",
+"false": [
+"78927835",
+"418355774"
+],
+"id": "MIMIC-DERANGE-2911-0"
+},
+"MIMIC-DYCK-2911-0": {
+"truth": "482564333",
+"canon": "420532467",
+"false": [
+"510336124",
+"717237758"
+],
+"id": "MIMIC-DYCK-2911-0"
+},
+"MIMIC-COIN-2911-0": {
+"truth": "0",
+"canon": "5389013",
+"false": [
+"0",
+"0"
+],
+"id": "MIMIC-COIN-2911-0"
+},
+"MIMIC-LUCKY-2911-0": {
+"truth": "3568",
+"canon": "3842",
+"false": [
+"3600",
+"3650"
+],
+"id": "MIMIC-LUCKY-2911-0"
+},
+"NECK-B_NOADJ-2911-0": {
+"truth": "9608050",
+"id": "NECK-B_NOADJ-2911-0"
+},
+"NECK-C_NOADJ_CNT-2911-0": {
+"truth": "0",
+"id": "NECK-C_NOADJ_CNT-2911-0"
+},
+"NECK-D_CNT-2911-0": {
+"truth": "8316120",
+"id": "NECK-D_CNT-2911-0"
+},
+"NECK-D_NOADJ_CNT-2911-0": {
+"truth": "0",
+"id": "NECK-D_NOADJ_CNT-2911-0"
+},
+"NECK-D_NOADJ_ONE-2911-0": {
+"truth": "33417",
+"id": "NECK-D_NOADJ_ONE-2911-0"
+},
+"NECK-C_ONEADJ_CNT-2911-0": {
+"truth": "22",
+"id": "NECK-C_ONEADJ_CNT-2911-0"
+},
+"NECK-D_ONEADJ-2911-0": {
+"truth": "33984817998",
+"id": "NECK-D_ONEADJ-2911-0"
+},
+"NECK-C_NOADJ_ONE-2911-0": {
+"truth": "4946",
+"id": "NECK-C_NOADJ_ONE-2911-0"
+},
+"PI-INT-2911-0": {
+"truth": "239907769123",
+"id": "PI-INT-2911-0"
+},
+"PI-M4_1-2911-0": {
+"truth": "63976209951",
+"id": "PI-M4_1-2911-0"
+},
+"PI-M4_3_INT-2911-0": {
+"truth": "145969329835",
+"id": "PI-M4_3_INT-2911-0"
+},
+"PI-SUM-2911-0": {
+"truth": "824537516",
+"id": "PI-SUM-2911-0"
+},
+"PI-SEMI-2911-0": {
+"truth": "294305599281",
+"id": "PI-SEMI-2911-0"
+},
+"PI-M3_1-2911-0": {
+"truth": "38603667058",
+"id": "PI-M3_1-2911-0"
+},
+"PI-SUM_INT-2911-0": {
+"truth": "128098988",
+"id": "PI-SUM_INT-2911-0"
+},
+"PI-PPOW-2911-0": {
+"truth": "103944377865",
+"id": "PI-PPOW-2911-0"
+}
+}

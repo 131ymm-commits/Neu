@@ -1,0 +1,868 @@
+{
+"out": {
+"PROC-WARE-2911-0": {
+"answer": "0",
+"spec": "Days 1..50904, starting stock 398. Each day d, in this order: (1) if d%6==0, add 73 to stock; (2) cap stock at 306, which also applies on day 1, so 398 drops to 306; (3) demand q = 6 + d%5; (4) if stock >= q, subtract q; otherwise the shortage counter grows by q - stock and stock becomes 0; (5) if d%12==0, stock -= floor(stock/10). The answer is the shortage counter after day 50904. Over any 12 days, deliveries bring 146 units, demand averages 96 and spoilage is at most about 30, so stock never runs out.",
+"code": "import time\nt=time.time()\ns=398;D=0\nfor d in range(1,50905):\n    if d%6==0: s+=73\n    if s>306: s=306\n    q=6+d%5\n    if s>=q: s-=q\n    else: D+=q-s; s=0\n    if d%12==0: s-=s//10\nprint(D, time.time()-t)",
+"runtime_s": 0.01,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-WARE-2911-1": {
+"answer": "277885",
+"spec": "Дни 1..41491, начальный запас 125, счётчик дефицита 0. Каждый день d по порядку: если d%5==0, запас +40; затем запас обрезается до 182 (min(запас,182)); спрос 13+d%4; если запас >= спроса, запас -= спрос, иначе дефицит += спрос - запас и запас = 0; вечером, если d%10==0, запас -= floor(запас/10). Ответ — значение счётчика дефицита после дня 41491. Прямая симуляция всех дней.",
+"code": "import time\nt=time.time()\ns=125;df=0\nfor d in range(1,41492):\n    if d%5==0: s+=40\n    if s>182: s=182\n    q=13+d%4\n    if s>=q: s-=q\n    else: df+=q-s; s=0\n    if d%10==0: s-=s//10\nprint(df, time.time()-t)\n",
+"runtime_s": 0.014,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-WARE-2911-2": {
+"answer": "0",
+"spec": "Days d=1..22023, initial stock 336, deficit=0. Each day: if d%3==0 add 49; clip stock to 244; demand=14+d%5; if stock>=demand subtract it, else deficit+=demand-stock, stock=0; if d%7==0 stock -= stock//10. Output the final deficit counter. Check: the smallest value of (stock - demand) over all days is 8 > 0, so a shortage never happens (the stock settles near equilibrium, and the final stock is 44).",
+"code": "import time\nt=time.time()\ns=336;D=0\nfor d in range(1,22024):\n    if d%3==0: s+=49\n    if s>244: s=244\n    q=14+d%5\n    if s>=q: s-=q\n    else: D+=q-s; s=0\n    if d%7==0: s-=s//10\nprint(D, time.time()-t)",
+"runtime_s": 0.007,
+"timed_out": false,
+"n_runs": 2,
+"caveats": ""
+},
+"PROC-CHIPS-2911-0": {
+"answer": "41",
+"spec": "There are 69 players in a circle. At the start, player i has (i*11) mod 14 chips. Each round runs on the chip counts at the start of that round. Every player with at least 2 chips gives 1 chip to the left neighbour (i-1, wrapping so that 1's left neighbour is 69) and 1 chip to the right neighbour (i+1, wrapping so that 69's right neighbour is 1). All gifts happen at the same time. After the gifts, every chip above 9 goes to the bank and the player keeps 9. The bank starts at 0. The program plays exactly 6321 rounds and outputs the bank's running total.",
+"code": "import time\nt=time.time()\nN=69\na=[(i*11)%14 for i in range(1,N+1)]\nbank=0\nfor r in range(6321):\n    g=[1 if x>=2 else 0 for x in a]\n    b=[a[k]-2*g[k]+g[(k-1)%N]+g[(k+1)%N] for k in range(N)]\n    for k in range(N):\n        if b[k]>9: bank+=b[k]-9; b[k]=9\n    a=b\nprint(bank, sum(a), time.time()-t)",
+"runtime_s": 0.1,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-CHIPS-2911-1": {
+"answer": "5",
+"spec": "35 players in a circle. Player i starts with (i*10) mod 16 chips. The left neighbour of i is i-1 (cyclic) and the right neighbour is i+1 (cyclic). In each round, every player who has at least 2 chips at the start of the round gives 1 chip to each neighbour; all players do this at the same time, based on start-of-round counts. After the transfers, anyone holding more than 13 chips sends the excess to the bank and keeps 13. The bank starts at 0. The program runs 3341 rounds and outputs the bank total. Conservation check: bank plus chips left on the table equals the initial total.",
+"code": "import time\nt=time.time()\nN=35\na=[(i*10)%16 for i in range(1,N+1)]\nbank=0\nfor r in range(3341):\n    g=[1 if x>=2 else 0 for x in a]\n    b=[a[i]-2*g[i]+g[(i-1)%N]+g[(i+1)%N] for i in range(N)]\n    for i in range(N):\n        if b[i]>13: bank+=b[i]-13; b[i]=13\n    a=b\nprint(bank, sum(a), time.time()-t)\n",
+"runtime_s": 0.02,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-CHIPS-2911-2": {
+"answer": "60",
+"spec": "There are 57 players in a circle, indexed 1..57, and the circle wraps around. Player i starts with (13*i) mod 20 chips, so the starting total is 549. In each round every player reads their chip count at the start of the round, and all players act at once. A player with at least 2 chips gives 1 chip to the left neighbour (i-1) and 1 to the right neighbour (i+1). A player with fewer than 2 chips gives nothing. After all transfers, any player holding more than 13 chips puts the excess over 13 into the bank and keeps 13. The bank starts at 0. The answer is the bank total after 3259 rounds.",
+"code": "import time\nt=time.time()\nN=57\na=[(i*13)%20 for i in range(1,N+1)]\nbank=0\nfor r in range(3259):\n    g=[1 if x>=2 else 0 for x in a]\n    b=[a[k]-2*g[k]+g[(k-1)%N]+g[(k+1)%N] for k in range(N)]\n    for k in range(N):\n        if b[k]>13: bank+=b[k]-13; b[k]=13\n    a=b\nprint(bank, sum(a), time.time()-t)",
+"runtime_s": 0.034,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-AUTO-2911-0": {
+"answer": "25826",
+"spec": "Ring of N=81 cells (indices mod 81). At t=0, cell i is alive iff (4i mod 28) < 5. All cells update at once from the current state. A dead cell becomes alive iff exactly one neighbour is alive. A live cell survives iff it has 0 or 2 live neighbours, and dies if it has exactly 1. This is rule 150: new = s XOR l XOR r. The answer is the total count of live cells over t=1..642; t=0 is not counted.",
+"code": "import time\nt=time.time()\nN=81\ns=[1 if (i*4)%28<5 else 0 for i in range(N)]\ntot=0\nfor step in range(642):\n    n=[]\n    for i in range(N):\n        l=s[(i-1)%N]; r=s[(i+1)%N]; c=s[i]\n        k=l+r\n        if c==0: v=1 if k==1 else 0\n        else: v=1 if k!=1 else 0\n        n.append(v)\n    s=n; tot+=sum(s)\nprint(tot, time.time()-t)",
+"runtime_s": 0.015,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-AUTO-2911-1": {
+"answer": "23550",
+"spec": "The ring has 60 cells, numbered 0 to 59, with cyclic neighbours (i±1) mod 60. At time 0, cell i is alive exactly when (4i) mod 14 < 5. All cells update at the same time. A dead cell becomes alive if exactly one neighbour is alive. A live cell dies if exactly one neighbour is alive, and stays alive if 0 or 2 neighbours are alive. This is equivalent to rule 150: new = c XOR L XOR R. The answer is the total number of live cells summed over times 1 to 785; time 0 is not counted.",
+"code": "import time\nt=time.time()\nN=60\ns=[1 if (i*4)%14<5 else 0 for i in range(N)]\ntot=0\nfor _ in range(785):\n    n=[]\n    for i in range(N):\n        L=s[(i-1)%N];R=s[(i+1)%N];c=s[i];k=L+R\n        if c==0: n.append(1 if k==1 else 0)\n        else: n.append(0 if k==1 else 1)\n    s=n; tot+=sum(s)\nprint(tot, time.time()-t)",
+"runtime_s": 0.013,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-AUTO-2911-2": {
+"answer": "44569",
+"spec": "Ring of N=67 cells, neighbors are (i±1) mod 67. At time 0, cell i is alive iff (6i mod 23) < 5. Update is synchronous. A dead cell becomes alive iff exactly one neighbor is alive. A live cell survives iff it has 0 or 2 live neighbors, and dies with exactly 1. Together this is rule 150: new = left XOR self XOR right. The answer is the sum of live-cell counts at times 1..1319; time 0 is excluded.",
+"code": "import time\nt=time.time()\nN=67\ns=[1 if (i*6)%23<5 else 0 for i in range(N)]\ntot=0\nfor step in range(1,1320):\n    n=[]\n    for i in range(N):\n        l=s[(i-1)%N]; r=s[(i+1)%N]; c=s[i]; k=l+r\n        if c==0: v=1 if k==1 else 0\n        else: v=0 if k==1 else 1\n        n.append(v)\n    s=n; tot+=sum(s)\nprint(tot, time.time()-t)",
+"runtime_s": 0.05,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-BANK-2911-0": {
+"answer": "1700",
+"spec": "5100 клиентов. Приход: a1=0, ai=a(i-1)+1+((3i) mod 6). Обслуживание: si=1+((15i) mod 9). Два одинаковых окна, одна общая очередь FIFO. Начало обслуживания клиента i = max(ai, самый ранний момент освобождения окна). Если окно освобождается ровно в момент прихода, клиента берут без ожидания (ожидание 0). Если свободны оба окна, берёт окно 1 (выбор окна на ожидание не влияет, окна одинаковые). Ожидание = начало обслуживания − приход. Ответ — сумма ожиданий всех клиентов.",
+"code": "import time\nt0=time.time()\nN=5100\nfree=[0,0]\na=0;tot=0\nfor i in range(1,N+1):\n    if i>1: a=a+1+((i*3)%6)\n    s=1+((i*15)%9)\n    st=max(a,min(free))\n    w=0 if free[0]<=st else 1\n    tot+=st-a\n    free[w]=st+s\nprint(tot, time.time()-t0)",
+"runtime_s": 0.0024,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-BANK-2911-1": {
+"answer": "0",
+"spec": "N=6307 клиентов. Приход: a1=0, a_i=a_{i-1}+1+((5i) mod 11). Обслуживание s_i=1+((5i) mod 7), от 1 до 7. Одна общая очередь FIFO, 2 окна; окно, освободившееся в момент t, может в тот же момент t взять клиента, пришедшего в t (ожидание 0). При двух свободных окнах берёт окно 1. Ожидание = начало обслуживания − приход; ответ — сумма по всем клиентам. Проверка: минимальный интервал a_k − a_{k-2} равен 7 и не меньше максимальной длительности обслуживания 7, поэтому третий клиент никогда не застаёт оба окна занятыми (при равенстве окно освобождается раньше, чем клиент приходит) — все ожидания равны 0.",
+"code": "import time\nt0=time.time()\nN=6307\nfree=[0,0]\narr=0;tot=0\nfor i in range(1,N+1):\n    if i>1: arr+=1+((i*5)%11)\n    s=1+((i*5)%7)\n    w=min(range(2),key=lambda k:(max(free[k],arr),k))\n    st=max(free[w],arr)\n    tot+=st-arr\n    free[w]=st+s\nprint(tot,time.time()-t0)",
+"runtime_s": 0.01,
+"timed_out": false,
+"n_runs": 2,
+"caveats": "Ответ 0 опирается на правило 2 (освобождение раньше прихода): минимальный интервал a_k − a_{k-2} = 7 совпадает с максимальным временем обслуживания 7. Если бы при одновременности окно считалось освободившимся после прихода клиента, в этих граничных случаях ожидание всё равно было бы нулевым по времени, так что ответ устойчив."
+},
+"PROC-BANK-2911-2": {
+"answer": "2829",
+"spec": "N=5502. Arrival: a1=0, a_i=a_{i-1}+1+((12i) mod 10). Service s_i=1+((4i) mod 14). One FIFO queue shared by 2 windows. A window that frees at time t counts as free for a client arriving at t. Clients are served in arrival order. Each client goes to a window that is free on arrival, window 1 first if both are free. If no window is free, the client goes to the one that frees first (window 1 on a tie). Start = max(arrival, that window's free time). Answer = sum of (start - arrival) over all clients.",
+"code": "import time\nt0=time.time()\nN=5502\nf=[0,0]; a=0; tot=0\nfor i in range(1,N+1):\n    if i>1: a=a+1+((i*12)%10)\n    s=1+((i*4)%14)\n    if f[0]<=a: w=0\n    elif f[1]<=a: w=1\n    else: w=0 if f[0]<=f[1] else 1\n    st=max(a,f[w]); tot+=st-a; f[w]=st+s\nprint(tot, time.time()-t0)",
+"runtime_s": 0.003,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-RABBIT-2911-0": {
+"answer": "97820331",
+"spec": "Start (month 0): 4 pairs, all age 0. For each month k = 1..287, in this order: (1) every pair ages by 1; (2) pairs that have just reached age 11 die, so ages 0..10 remain; (3) each pair aged 2 or more produces one new pair aged 0; (4) if k mod 8 == 0, P is the total number of pairs, newborns included, and floor(P/10) pairs are removed starting from the oldest age and moving down. The answer is the total number of pairs after month 287, taken mod 1e9+7. The simulation uses exact Python integers, so each floor is computed on the real count, not on a value already reduced mod p. Total count before the mod is 27547008482708627810257334360319453331979292301630571832401.",
+"code": "import time\nt=time.time()\na=[0]*11; a[0]=4\nfor k in range(1,288):\n    a=[0]+a[:10]          # aging; the old age-10 pairs reach 11 and die\n    a[0]=sum(a[2:])       # births from pairs aged >=2\n    if k%8==0:\n        e=sum(a)//10\n        for i in range(10,-1,-1):\n            x=min(e,a[i]); a[i]-=x; e-=x\nprint(sum(a)%1000000007, sum(a), time.time()-t)\n",
+"runtime_s": 0.0005,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-RABBIT-2911-1": {
+"answer": "106689886",
+"spec": "Start: month 0, one pair of age 0. Each month k = 1..286 runs these steps in order: (1) every pair ages by 1; (2) pairs that reach age 6 die; (3) every pair aged 2 to 5 gives birth to one new pair of age 0; (4) if k mod 7 == 0, let P be the total number of pairs, newborns included. Remove floor(P/10) pairs, taking the oldest first (age 5, then 4, and so on). Within one age it doesn't matter which pairs go, so only the counts per age are tracked. The answer is the total number of pairs after month 286, taken mod 1000000007. All counts are exact big integers, and the mod is applied only at the end, because the floor in step 4 needs the true value of P.",
+"code": "import time\nt=time.time()\nc=[0]*7; c[0]=1\nfor k in range(1,287):\n    c=[0]+c[:6]\n    c[6]=0\n    b=sum(c[2:6]); c[0]+=b\n    if k%7==0:\n        P=sum(c); e=P//10\n        for a in range(5,-1,-1):\n            x=min(e,c[a]); c[a]-=x; e-=x\nprint(sum(c)%1000000007, sum(c).bit_length(), time.time()-t)",
+"runtime_s": 0.0003,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-RABBIT-2911-2": {
+"answer": "256370249",
+"spec": "Start: 4 pairs aged 0 at month 0. For each k=1..214: (1) every pair's age goes up by 1; (2) pairs that are now age 14 die; (3) each pair aged 2 to 13 has one new pair aged 0; (4) if k mod 6 == 0, remove floor(P/10) pairs, where P is the total including the newborns, taking the oldest ages first. The program tracks the exact count of pairs at each age with Python big integers and takes the total mod 1e9+7 only at the end.",
+"code": "import time\nt=time.time()\nc=[0]*15; c[0]=4\nfor k in range(1,215):\n    c=[0]+c[:14]\n    c[14]=0\n    c[0]=sum(c[2:14])\n    if k%6==0:\n        e=sum(c)//10\n        for a in range(14,-1,-1):\n            x=min(e,c[a]); c[a]-=x; e-=x\n            if e==0: break\nprint(sum(c)%1000000007, sum(c).bit_length(), time.time()-t)",
+"runtime_s": 0.001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-COUNTER-2911-0": {
+"answer": "20701",
+"spec": "Начальное значение 0, выполняется 53194 такта. Каждый такт: прибавить 39, затем прибавлять по 1, пока в десятичной записи есть цифра 1. Звонок звенит один раз за такт, если x//100 после такта строго больше, чем x//100 до такта. Считаем количество тактов со звонком.",
+"code": "import time\nt=time.time()\nx=0;c=0\nfor _ in range(53194):\n    old=x//100\n    x+=39\n    while '1' in str(x): x+=1\n    if x//100>old: c+=1\nprint(c,x,time.time()-t)",
+"runtime_s": 0.22,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-COUNTER-2911-1": {
+"answer": "2452",
+"spec": "Табло начинается с x=0. Каждый такт: b = x//1000; x += 28; затем, пока в десятичной записи x есть цифра 2, x += 1. Звонок звенит (один раз за такт), если x//1000 > b. Считаем число звонков за 78793 тактов. Прямая симуляция, итоговое x = 4435643.",
+"code": "import time\nt=time.time()\nx=0;c=0\nfor _ in range(78793):\n    b=x//1000\n    x+=28\n    while '2' in str(x): x+=1\n    if x//1000>b: c+=1\nprint(c,x,time.time()-t)",
+"runtime_s": 0.22,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-COUNTER-2911-2": {
+"answer": "367",
+"spec": "Табло начинается с 0. Каждый такт: к числу прибавляется 8, затем, пока в десятичной записи есть цифра 6, прибавляется 1. Звонок звенит, если x//1000 после такта больше, чем до такта (один раз за такт, даже если пройдено несколько кратных 1000). Считаем количество звонков за 39636 тактов. Итоговое число на табло — 448003.",
+"code": "import time\nt=time.time()\nx=0;c=0\nfor _ in range(39636):\n    b=x//1000\n    x+=8\n    while '6' in str(x): x+=1\n    if x//1000>b: c+=1\nprint(c, x, time.time()-t)",
+"runtime_s": 0.025,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-GAME-2911-0": {
+"answer": "1703",
+"spec": "One pile of n stones. A move takes 3, 4 or 10 stones, never more than remain. A player may not take the same amount the opponent took on the move just before. The first move of the game has no restriction. A player who cannot move loses. The state is (n, the opponent's last amount), where the last amount is none, 3, 4 or 10. I solved it with DP from n=0 upward. n=0 is a loss for the player to move. I count n in 1..3972 where the state (n, no restriction) is a loss for the first player.",
+"code": "import time\nt=time.time()\nN=3972; M=[3,4,10]\nkeys=[0,3,4,10]\nwin=[[False]*4 for _ in range(N+1)]\nfor n in range(N+1):\n    for li,l in enumerate(keys):\n        r=False\n        for m in M:\n            if m<=n and m!=l and not win[n-m][keys.index(m)]:\n                r=True;break\n        win[n][li]=r\nprint(sum(1 for n in range(1,N+1) if not win[n][0]), time.time()-t)",
+"runtime_s": 0.012,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-GAME-2911-1": {
+"answer": "987",
+"spec": "A single pile of n stones. On each move a player takes 4, 8 or 10 stones, and cannot take more than are left. A player may not take the same amount the opponent took on the move just before. The first move of the game has no such restriction. A player who cannot move loses. The state is (n, the opponent's last take), with 0 meaning no restriction. The program counts the n from 1 to 3452 where the first player loses with the starting state (n, 0). When n is less than 4 there is no legal move, so the first player loses.",
+"code": "import time\nt=time.time()\nN=3452; M=[4,8,10]\nW=[dict() for _ in range(N+1)]\nfor n in range(N+1):\n    for last in (0,4,8,10):\n        W[n][last]=any(not W[n-m][m] for m in M if m<=n and m!=last)\nprint(sum(1 for n in range(1,N+1) if not W[n][0]))\nprint(time.time()-t)",
+"runtime_s": 0.007,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-GAME-2911-2": {
+"answer": "1248",
+"spec": "Одна кучка из n камней. За ход можно взять 1, 3 или 6 камней, но не больше, чем осталось в кучке. Нельзя брать столько же, сколько соперник взял своим предыдущим ходом; на первом ходе партии ограничений нет. Кто не может сделать ход, тот проигрывает. Позиция задаётся парой (остаток камней, последний ход соперника). Считаем, для скольких n от 1 до 4994 включительно позиция (n, без ограничения) проигрышная для того, кто ходит первым. Граничный случай: при остатке 0 ходов нет, и ходящий проигрывает.",
+"code": "import time\nt=time.time()\nN=4994\nM=[1,3,6]\n# W[n][last] last in {0,1,3,6}; 0 = no restriction\nW=[{} for _ in range(N+1)]\nfor n in range(N+1):\n    for last in (0,1,3,6):\n        W[n][last]=any(m<=n and m!=last and not W[n-m][m] for m in M)\nprint(sum(1 for n in range(1,N+1) if not W[n][0]))\nprint(time.time()-t)\n",
+"runtime_s": 0.01,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-ROBOT-2911-0": {
+"answer": "77",
+"spec": "The board is a 65x67 torus, with 0<=x<65 and 0<=y<67. A cell is an obstacle when (8x+9y) mod 8 == 0, which is the same as y mod 8 == 0 (the rows y=0,8,...,64). Cell (1,1) is always free. The robot starts at (1,1) facing north, where north means y+1. On each tick: if the cell ahead, taken with torus wrap-around, is an obstacle, the robot turns right and the tick ends. Otherwise it moves into that cell, and if the new cell's x+y is divisible by 6, it turns left. The program runs 9994 ticks and counts the distinct cells visited, including the start.",
+"code": "import time\nt=time.time()\nW,H=65,67\ndef obs(x,y):\n    if (x,y)==(1,1): return False\n    return (8*x+9*y)%8==0\ndirs=[(0,1),(1,0),(0,-1),(-1,0)]\nx,y,d=1,1,0\nseen={(x,y)}\nfor _ in range(9994):\n    nx,ny=(x+dirs[d][0])%W,(y+dirs[d][1])%H\n    if obs(nx,ny): d=(d+1)%4; continue\n    x,y=nx,ny; seen.add((x,y))\n    if (x+y)%6==0: d=(d-1)%4\nprint(len(seen),time.time()-t)",
+"runtime_s": 0.005,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-ROBOT-2911-1": {
+"answer": "165",
+"spec": "The torus is 63x61 cells, and coordinates wrap around. A cell is an obstacle when (3x+2y) mod 13 == 0, except (1,1), which is always free. The robot starts at (1,1) facing north (N=(0,+1), E=(+1,0)). Each tick: if the cell ahead is an obstacle, the robot turns right and the tick ends. Otherwise it moves into that cell, and if x+y of the new cell is divisible by 6, it turns left. The program runs 22444 ticks and counts distinct visited cells, including the starting one.",
+"code": "import time\nt=time.time()\nW,H=63,61\ndef obs(x,y):\n    if (x,y)==(1,1): return False\n    return (3*x+2*y)%13==0\ndirs=[(0,1),(1,0),(0,-1),(-1,0)]\nx,y,d=1,1,0\nvis={(x,y)}\nfor _ in range(22444):\n    nx,ny=(x+dirs[d][0])%W,(y+dirs[d][1])%H\n    if obs(nx,ny): d=(d+1)%4; continue\n    x,y=nx,ny; vis.add((x,y))\n    if (x+y)%6==0: d=(d-1)%4\nprint(len(vis), time.time()-t)\n",
+"runtime_s": 0.01,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PROC-ROBOT-2911-2": {
+"answer": "22",
+"spec": "Тор 72x67. Препятствие: (6x+5y) mod 10 == 0, кроме (1,1). Старт в (1,1), направление север (+y). За такт: если клетка впереди (по модулю тора) — препятствие, поворот направо и конец такта; иначе шаг вперёд, затем если (x+y) новой клетки % 4 == 0, поворот налево. Делается 21919 тактов; считается число различных посещённых клеток, включая стартовую. Такты с поворотом тоже учитываются в 21919.",
+"code": "import time\nt=time.time()\nW,H=72,67\ndef obst(x,y):\n    if (x,y)==(1,1): return False\n    return (6*x+5*y)%10==0\ndirs=[(0,1),(1,0),(0,-1),(-1,0)]\nx,y,d=1,1,0\nvis={(x,y)}\nfor _ in range(21919):\n    nx,ny=(x+dirs[d][0])%W,(y+dirs[d][1])%H\n    if obst(nx,ny):\n        d=(d+1)%4; continue\n    x,y=nx,ny; vis.add((x,y))\n    if (x+y)%4==0: d=(d-1)%4\nprint(len(vis)); print(time.time()-t)\n",
+"runtime_s": 0.011,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Робот быстро попадает в короткий цикл, поэтому посещённых клеток мало."
+},
+"MIMIC-JOS-2911-0": {
+"answer": "2",
+"spec": "n=2028 people numbered 1..2028 clockwise; k=11. Counting starts at person 1, who is counted as 1, going clockwise, and the 11th person is eliminated. After each elimination the direction flips. The new count starts at the nearest remaining person in the new direction from the eliminated one, and that person counts as 1. This repeats until one person is left. In the program, with a list of size m, start index i and direction d=±1, the removed index is j=(i+d*10) mod m. If the next direction is clockwise, the next start is j mod (m-1); if it is counterclockwise, it is (j-1) mod (m-1).",
+"code": "def solve(n,k):\n    a=list(range(1,n+1)); i=0; d=1\n    while len(a)>1:\n        m=len(a); j=(i+d*(k-1))%m\n        a.pop(j); m-=1; d=-d\n        i = j%m if d==1 else (j-1)%m\n    return a[0]\nprint(solve(5,2), solve(2028,11))",
+"runtime_s": 0.001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The simulation is exact. I checked the rules by hand on a small case: n=5, k=2 gives 1, and so does the program."
+},
+"MIMIC-JOS-2911-1": {
+"answer": "3",
+"spec": "n=8773, k=4. Люди 1..n стоят по кругу по часовой. Счёт начинается с 1 (он первый), идёт по часовой, 4-й выбывает. После каждого выбывания направление меняется на противоположное; новый счёт начинается с ближайшего к выбывшему оставшегося человека в новом направлении (он считается первым). Моделирование списком: при счёте по часовой j=(i+k-1)%m, после удаления старт = (j-1)%m (сосед против часовой); при счёте против часовой j=(i-k+1)%m, после удаления старт = j%m (сосед по часовой). Проверено вручную на n=5,k=2 (ответ 1).",
+"code": "import time\nt=time.time()\ndef solve(n,k):\n    L=list(range(1,n+1)); i=0; d=1\n    while len(L)>1:\n        m=len(L)\n        if d==1:\n            j=(i+k-1)%m\n            L.pop(j); m-=1\n            i=(j-1)%m; d=-1\n        else:\n            j=(i-(k-1))%m\n            L.pop(j); m-=1\n            i=j%m; d=1\n    return L[0]\nprint(solve(5,2))\nprint(solve(8773,4), time.time()-t)\n",
+"runtime_s": 0.003,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-JOS-2911-2": {
+"answer": "5",
+"spec": "n=5383 people in a circle, numbered 1..n clockwise, k=9. Counting starts at person 1, who is count 1, and goes clockwise. The 9th person counted is eliminated. After each elimination the direction reverses. The next count starts at the nearest remaining person to the eliminated one in the new direction, and that person is count 1. This repeats until one person is left. The answer is that person's original number.",
+"code": "import time\nt=time.time()\ndef solve(n,k):\n    a=list(range(1,n+1)); i=0; d=1\n    while len(a)>1:\n        m=len(a); j=(i+d*(k-1))%m\n        a.pop(j); m-=1\n        d=-d\n        i = (j-1)%m if d==-1 else j%m\n    return a[0]\ndef brute(n,k):\n    alive=[True]*(n+1); cur=1; d=1; left=n\n    def step(p):\n        while True:\n            p=(p-1+d)%n+1\n            if alive[p]: return p\n    while left>1:\n        p=cur\n        for _ in range(k-1): p=step(p)\n        alive[p]=False; left-=1; d=-d\n        if left>=1: cur=step(p)\n    return next(i for i in range(1,n+1) if alive[i])\nassert all(solve(n,k)==brute(n,k) for n in range(1,40) for k in range(1,12))\nprint(solve(5383,9), time.time()-t)",
+"runtime_s": 0.015,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-HANOI-2911-0": {
+"answer": "944044331",
+"spec": "n=75 дисков на A, B и C пусты. Ход: переносим верхний диск только по циклу A→B→C→A, больший на меньший класть нельзя. Ищем минимальное число ходов, чтобы вся башня оказалась на B (это один шаг по циклу), ответ берём по модулю 1e9+7. Рекуррентные формулы: Q(n) — перенос на один шаг по циклу, R(n) — на два шага. Q(n)=2R(n-1)+1, R(n)=2R(n-1)+Q(n-1)+2, Q(0)=R(0)=0. Для n=1..8 формулы сверены с полным перебором BFS по состояниям.",
+"code": "import time\nfrom collections import deque\nt=time.time()\ndef bfs(n):\n    start=tuple([0]*n); goal=tuple([1]*n)\n    d={start:0}; q=deque([start])\n    while q:\n        s=q.popleft()\n        if s==goal: return d[s]\n        top={}\n        for i in range(n-1,-1,-1): top[s[i]]=i  # smallest disk index 0 is smallest\n        for p,i in top.items():\n            np_=(p+1)%3\n            if np_ in top and top[np_]<i: continue\n            t2=list(s); t2[i]=np_; t2=tuple(t2)\n            if t2 not in d: d[t2]=d[s]+1; q.append(t2)\ndef rec(n,mod=None):\n    Q,R=0,0\n    for _ in range(n):\n        Q,R=2*R+1,2*R+Q+2\n    return Q if mod is None else Q%mod\nfor n in range(1,9): assert bfs(n)==rec(n),(n,bfs(n),rec(n))\nprint(rec(75)%1000000007, time.time()-t)\n",
+"runtime_s": 0.011,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-HANOI-2911-1": {
+"answer": "938645847",
+"spec": "Башня из n=207 дисков стоит на A. Ходы разрешены только по кругу A->B, B->C, C->A, класть больший диск на меньший нельзя. Нужно найти наименьшее число ходов, чтобы перенести всю башню с A на B (один шаг по кругу), и дать ответ по модулю 1e9+7. Рекуррентные формулы: Q(n) — перенос на один шаг по кругу, R(n) — на два шага. Q(n)=2R(n-1)+1, R(n)=2R(n-1)+Q(n-1)+2, Q(0)=R(0)=0. Ответ равен Q(207) mod 1e9+7.",
+"code": "import time\nfrom collections import deque\nt=time.time()\ndef rec(n,mod=None):\n    Q,R=0,0\n    for _ in range(n):\n        Q,R=2*R+1,2*R+Q+2\n        if mod: Q%=mod;R%=mod\n    return Q\ndef bfs(n):\n    start=tuple([0]*n); goal=tuple([1]*n)\n    d={start:0};dq=deque([start])\n    while dq:\n        s=dq.popleft()\n        if s==goal: return d[s]\n        top={}\n        for i in range(n-1,-1,-1): top[s[i]]=i\n        for p,i in top.items():\n            q=(p+1)%3\n            if q in top and top[q]<i: continue\n            ns=list(s);ns[i]=q;ns=tuple(ns)\n            if ns not in d: d[ns]=d[s]+1;dq.append(ns)\nfor n in range(1,8): assert bfs(n)==rec(n),(n,bfs(n),rec(n))\nprint(rec(207,10**9+7), time.time()-t)\n",
+"runtime_s": 0.004,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-HANOI-2911-2": {
+"answer": "985158456",
+"spec": "There are n=263 disks on peg A. Only one direction of move is allowed: A->B, B->C, C->A. The task is the minimum number of moves to take the whole tower from A to B, which is one step along the cycle, reported mod 1e9+7. Let Q(n) be the minimum moves to shift n disks one step clockwise and R(n) the minimum to shift them two steps. Then Q(n)=2R(n-1)+1 and R(n)=2R(n-1)+Q(n-1)+2, with Q(0)=R(0)=0. The answer is Q(263) mod 1e9+7.",
+"code": "import time\nfrom collections import deque\nt=time.time()\nM=10**9+7\ndef rec(n,m=None):\n    q=r=0\n    for _ in range(n):\n        q,r=2*r+1,2*r+q+2\n        if m: q%=m; r%=m\n    return q\ndef bfs(n):\n    s=tuple([0]*n); g=tuple([1]*n)\n    d={s:0}; dq=deque([s])\n    while dq:\n        x=dq.popleft()\n        if x==g: return d[x]\n        top={}\n        for i in range(n):\n            if x[i] not in top: top[x[i]]=i\n        for p,i in top.items():\n            np=(p+1)%3\n            if np in top and top[np]<i: continue\n            y=list(x); y[i]=np; y=tuple(y)\n            if y not in d: d[y]=d[x]+1; dq.append(y)\nfor n in range(1,9): assert bfs(n)==rec(n),(n,bfs(n),rec(n))\nprint(rec(263,M), time.time()-t)\n",
+"runtime_s": 0.013,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-FIB-2911-0": {
+"answer": "590222132",
+"spec": "F0=0, F1=1. Sum F_i over even i with 0<=i<=29617397 (the upper bound is odd, so the last term is F_29617396), taken mod 1e9+7. Closed form: F0+F2+...+F_2m = F_{2m+1}-1, which gives F_29617397 - 1 mod p. The F0=0 term changes nothing.",
+"code": "import time\nt=time.time()\nM=10**9+7; N=29617397\ndef fib(n):\n    if n==0: return (0,1)\n    a,b=fib(n>>1); c=a*(2*b-a)%M; d=(a*a+b*b)%M\n    return (d,(c+d)%M) if n&1 else (c,d)\ntop=N if N%2==0 else N-1\nclosed=(fib(top+1)[0]-1)%M\n# brute check\ns=0;a,b=0,1\nfor i in range(top+1):\n    if i%2==0: s+=a\n    a,b=b,(a+b)%M\ns%=M\nprint(closed,s,time.time()-t)\n",
+"runtime_s": 5.04,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-FIB-2911-1": {
+"answer": "794565017",
+"spec": "F0=0, F1=1. Sum of F_n over even n from 0 to 2854984 inclusive (1427493 terms, F0=0 included), taken mod 1e9+7. The identity sum_{k=0..M} F_{2k} = F_{2M+1} - 1 serves as a cross-check.",
+"code": "import time\nt=time.time()\nP=10**9+7; N=2854984\na,b=0,1; s=0\nfor n in range(N+1):\n    if n%2==0: s=(s+a)%P\n    a,b=b,(a+b)%P\ndef fib(n):\n    if n==0: return (0,1)\n    x,y=fib(n>>1); c=x*(2*y-x)%P; d=(x*x+y*y)%P\n    return (d,(c+d)%P) if n&1 else (c,d)\nprint(s,(fib(N+1)[0]-1)%P,time.time()-t)",
+"runtime_s": 0.41,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-FIB-2911-2": {
+"answer": "931833754",
+"spec": "F0=0, F1=1. Sum F_i over even i with 0<=i<=255404919, i.e. F0+F2+...+F_255404918 (255404919 is odd, so the last term is F_255404918). The identity sum_{j=0..k} F_{2j} = F_{2k+1} - 1 gives the answer as F_255404919 - 1 mod 1e9+7. F_n mod p is computed by fast doubling.",
+"code": "import time\nt=time.time()\nM=10**9+7\ndef fib(n):\n    if n==0: return (0,1)\n    a,b=fib(n>>1)\n    c=a*((2*b-a)%M)%M; d=(a*a+b*b)%M\n    return (d,(c+d)%M) if n&1 else (c,d)\ndef S(N):  # sum F_i, i even, 0<=i<=N\n    k=N if N%2==0 else N-1\n    return (fib(k+1)[0]-1)%M\ndef brute(N):\n    a,b=0,1;s=0\n    for i in range(N+1):\n        if i%2==0: s+=a\n        a,b=b,a+b\n    return s%M\nfor N in range(0,300): assert S(N)==brute(N)\nprint(S(255404919), time.time()-t)\n",
+"runtime_s": 0.003,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-LIFE-2911-0": {
+"answer": "11495",
+"spec": "The board is a 25x25 torus with the given starting field as generation 0. Each cell counts its 8 neighbours, with the edges wrapping around. A live cell survives with 2 or 3 live neighbours and dies otherwise. A dead cell becomes alive with exactly 3 or exactly 6 live neighbours. All cells update at the same time. The answer is the sum of live-cell counts for generations 1 through 120; generation 0 is not counted.",
+"code": "import numpy as np,time\nt0=time.time()\nrows=\"\"\"0000101111000001110001011\n0100100111111101101111000\n1000100001000000100010000\n0000100101001001000000100\n0110000110001000000010001\n1000010110100001000100101\n1100010110001000011001100\n0101001000000100110010111\n1000100001110001000001000\n0010000001000001100001100\n0000000010110100001000100\n1101111110100101010000100\n0110100000000000101110011\n1010001000000000010001000\n0000000101000110111001010\n1000111010100001110010111\n0000011101000000100110101\n0010100000111100010001000\n1000010001001011101100000\n0001010100100000001011000\n0011100100010100001000001\n1000111100001001000000001\n0000100000110000001000010\n0000000100101110100010011\n0011000000010010100100110\"\"\".split()\ng=np.array([[int(c) for c in r] for r in rows],dtype=np.int64)\nassert g.shape==(25,25)\ns=0\nfor t in range(1,121):\n    n=sum(np.roll(np.roll(g,i,0),j,1) for i in (-1,0,1) for j in (-1,0,1) if (i,j)!=(0,0))\n    g=(((g==1)&((n==2)|(n==3)))|((g==0)&((n==3)|(n==6)))).astype(np.int64)\n    s+=int(g.sum())\nprint(s,time.time()-t0)\n",
+"runtime_s": 0.02,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-LIFE-2911-1": {
+"answer": "15083",
+"spec": "Tor 24x24, 8 sosedey (Moore, s zatsiklivaniem kraev). Rozhdenie: mertvaya kletka ozhivaet pri rovno 3 ili 6 zhivyh sosedyah (B36). Vyzhivanie: zhivaya ostaetsya pri 2 ili 3 (S23). Sinhronnoe obnovlenie. Pokolenie 0 - zadannoe pole (v summu ne vhodit). Schitaetsya summa chisla zhivyh kletok v pokoleniyah 1..137.",
+"code": "import numpy as np, time\nt0=time.time()\nrows=\"\"\"011000101100100000010001\n010000000000000000110000\n010010100010100000000000\n010010000001100110000010\n100111000100000011100110\n011101000100100000011010\n111100000000010110000100\n000111101100000011000100\n111010001100101101100001\n001000010100010001000010\n000100010010101100000010\n000010001110000000000010\n111001000100000010000000\n001111011001100010010100\n000010001111000101100001\n111110100010010000100000\n011110111000000010000000\n000101000010001011000000\n001000010001010001000110\n000000010101000001000100\n000000001010000001100111\n001010101001101011100001\n000000111000001000100000\n000110100110001001001000\"\"\".split()\nassert len(rows)==24 and all(len(r)==24 for r in rows)\ng=np.array([[int(c) for c in r] for r in rows],dtype=np.int8)\ns=0\nfor t in range(1,138):\n    n=sum(np.roll(np.roll(g,dy,0),dx,1) for dy in(-1,0,1) for dx in(-1,0,1) if (dy,dx)!=(0,0))\n    g=(((g==1)&((n==2)|(n==3)))|((g==0)&((n==3)|(n==6)))).astype(np.int8)\n    s+=int(g.sum())\nprint(s, time.time()-t0)\n",
+"runtime_s": 0.017,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-LIFE-2911-2": {
+"answer": "15717",
+"spec": "The board is a 28x28 torus with the given initial grid as generation 0. The Moore neighbourhood has 8 neighbours with wraparound. A dead cell becomes alive with exactly 3 or 6 live neighbours. A live cell survives with 2 or 3 live neighbours and dies otherwise. All cells update at the same time. The answer is the sum of live-cell counts over generations 1 to 104. Generation 0 is not included.",
+"code": "import numpy as np,time\nt0=time.time()\nrows=\"\"\"0100000001011010000010100011\n1100000011000010101000010000\n0000101000010000101101101100\n0110101110010000010000010010\n1100001100010000001000001100\n0000101001110100000101011100\n1100000000001011110001000001\n0010100101010110011000101001\n0101110001000101010010000011\n1001001101101010000000100100\n0100100111011110110011010001\n0001000001010000001011000010\n1001000111110000010000001111\n0100011001001010000000100001\n1001110010010010000000010100\n0000011111101000001000111011\n0010101000101100011000100001\n1110011101000000001000100100\n0010000010001110011110000101\n1001000000001000111001001000\n0001000000100001100010100011\n1111010111000000000010110101\n0000000101000000100100110010\n1101010011010101000100000000\n0001000000001000001000010101\n1110000000010001100010001000\n0000011000011000010111100001\n1010010100101101000100100010\"\"\".split()\ng=np.array([[int(c) for c in r] for r in rows],dtype=np.int64)\nassert g.shape==(28,28)\ns=0\nfor t in range(1,105):\n    n=sum(np.roll(np.roll(g,i,0),j,1) for i in(-1,0,1) for j in(-1,0,1) if (i,j)!=(0,0))\n    g=((g==1)&((n==2)|(n==3))|(g==0)&((n==3)|(n==6))).astype(np.int64)\n    s+=int(g.sum())\nprint(s,time.time()-t0)",
+"runtime_s": 0.014,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-DERANGE-2911-0": {
+"answer": "749495380",
+"spec": "Count permutations π of {1..128} with π(i)≠i for all i and π(i)≠i+1 for i=1..127 (no wraparound: π(128)=1 is allowed). Answer mod 1e9+7. The forbidden cells form a staircase path of 2n-1 cells, and its rook numbers are r_k=C(2n-k,k). Inclusion-exclusion gives sum_k (-1)^k C(2n-k,k)(n-k)!.",
+"code": "import itertools,time\nfrom math import comb,factorial\nt=time.time()\ndef f(n,M=None):\n    s=sum((-1)**k*comb(2*n-k,k)*factorial(n-k) for k in range(n+1))\n    return s%M if M else s\ndef brute(n):\n    return sum(all(p[i]!=i and p[i]!=i+1 for i in range(n)) for p in itertools.permutations(range(n)))\nfor n in range(1,9): assert f(n)==brute(n),n\nprint(f(128,10**9+7), time.time()-t)",
+"runtime_s": 0.05,
+"timed_out": false,
+"n_runs": 2,
+"caveats": "The formula was checked against brute force for n=1..8. The first run failed because of a wrong binomial index. That was fixed before the answer was computed."
+},
+"MIMIC-DERANGE-2911-1": {
+"answer": "787904978",
+"spec": "Count the permutations π of {1..59} with π(i)≠i for every i and π(i)≠i+1 for i=1..58, and give the count mod 1e9+7. The forbidden cells form a staircase board of 2n-1=117 cells that can be ordered in a chain where only neighbouring cells conflict (they share a row or column). So the rook numbers are r_k=C(2n-k,k), and inclusion-exclusion gives the count as sum_k (-1)^k C(2n-k,k)(n-k)!. The formula was checked against brute force for n=1..8.",
+"code": "import time,itertools\nfrom math import comb,factorial\nt=time.time()\ndef f(n):\n    m=2*n-1\n    return sum((-1)**k*comb(m-k+1,k)*factorial(n-k) for k in range(n+1))\ndef brute(n):\n    return sum(all(p[i]!=i and p[i]!=i+1 for i in range(n)) for p in itertools.permutations(range(n)))\nfor n in range(1,9): assert f(n)==brute(n),n\nprint(f(59)%1000000007, time.time()-t)\n",
+"runtime_s": 0.02,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-DERANGE-2911-2": {
+"answer": "47283438",
+"spec": "n=173. Count permutations π of {1..n} with π(i)≠i for all i and π(i)≠i+1 for i=1..n-1; result mod 1e9+7. Forbidden cells form a staircase path of 2n-1 cells, (1,1),(1,2),(2,2),(2,3),...,(n,n), in which cells next to each other on the path share a row or column. So the rook numbers are r_k=C(2n-k,k), and inclusion-exclusion gives the answer sum_k (-1)^k C(2n-k,k)(n-k)!. The formula was checked against brute force for n=1..7.",
+"code": "import itertools,time\nfrom math import comb,factorial\nt=time.time()\ndef f(n,M=None):\n    s=sum((-1)**k*comb(2*n-k,k)*factorial(n-k) for k in range(n+1))\n    return s%M if M else s\ndef brute(n):\n    return sum(all(p[i]!=i and p[i]!=i+1 for i in range(n)) for p in itertools.permutations(range(n)))\nfor n in range(1,8): assert f(n)==brute(n),(n,f(n),brute(n))\nprint(f(173,10**9+7),time.time()-t)",
+"runtime_s": 0.004,
+"timed_out": false,
+"n_runs": 2,
+"caveats": ""
+},
+"MIMIC-DYCK-2911-0": {
+"answer": "482564333",
+"spec": "Count Dyck paths with 436 steps (218 up and 218 down). Each path starts and ends at height 0, and its height stays between 0 and 7 inclusive at every point. The program uses a DP over height with exact integers, then takes the result mod 1000000007.",
+"code": "import time\nt=time.time()\nn=218;H=7;M=10**9+7\nd=[1]+[0]*H\nfor _ in range(2*n):\n    d=[((d[h-1] if h>0 else 0)+(d[h+1] if h<H else 0)) for h in range(H+1)]\nprint(d[0]%M, d[0]>M)\nprint(time.time()-t)",
+"runtime_s": 0.001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-DYCK-2911-1": {
+"answer": "815929677",
+"spec": "Пути из 568 шагов: 284 шага +1 и 284 шага −1. Путь стартует с высоты 0 и заканчивается на 0. Высота в каждой точке должна быть в пределах от 0 до 11 включительно. Считаем количество таких путей по модулю 1000000007. Решение: динамическое программирование по высоте на 568 шагах, ответ — dp[0] на последнем шаге. Вычисления идут на точных целых Python, по модулю число приводится один раз в конце.",
+"code": "import time\nt=time.time()\nn=284;H=11;M=10**9+7\nd=[0]*(H+1);d[0]=1\nfor _ in range(2*n):\n    e=[0]*(H+1)\n    for h in range(H+1):\n        if d[h]:\n            if h+1<=H:e[h+1]+=d[h]\n            if h>0:e[h-1]+=d[h]\n    d=e\nprint(d[0]%M, time.time()-t)",
+"runtime_s": 0.0012,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-DYCK-2911-2": {
+"answer": "248475022",
+"spec": "Пути длины 640: 320 шагов +1 и 320 шагов −1. Путь начинается на высоте 0 и заканчивается на ней же. Высота на каждом шаге лежит в пределах 0..10 включительно. Считаем число таких путей и берём его по модулю 1e9+7. Решение — динамика по высоте с точной целочисленной арифметикой; остаток берётся один раз, в конце.",
+"code": "import time\nt=time.time()\nn=320;H=10;M=10**9+7\nd=[1]+[0]*H\nfor _ in range(2*n):\n    e=[0]*(H+1)\n    for h in range(H+1):\n        if d[h]:\n            if h+1<=H:e[h+1]+=d[h]\n            if h>0:e[h-1]+=d[h]\n    d=e\nprint(d[0]%M, d[0].bit_length())\nprint(time.time()-t)",
+"runtime_s": 0.001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-COIN-2911-0": {
+"answer": "0",
+"spec": "Монеты достоинств 5,12,20,31,35,36,38,50,59, каждую можно взять 0, 1 или 2 раза; порядок не важен (считаются мультимножества). Нужно число способов набрать ровно 877, по модулю 1e9+7. Максимально возможная сумма равна 2*286=572 < 877, поэтому способов нет и ответ 0.",
+"code": "import time, itertools\nt=time.time()\ncoins=[5,12,20,31,35,36,38,50,59]; N=877\ndp=[0]*(N+1); dp[0]=1\nfor c in coins:\n    nd=[0]*(N+1)\n    for s in range(N+1):\n        if dp[s]:\n            for k in range(3):\n                if s+k*c<=N: nd[s+k*c]+=dp[s]\n    dp=nd\nbf=sum(1 for ks in itertools.product(range(3),repeat=9) if sum(k*c for k,c in zip(ks,coins))==N)\nprint(dp[N]%1000000007, bf, time.time()-t)\n",
+"runtime_s": 0.014,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"MIMIC-COIN-2911-1": {
+"answer": "0",
+"spec": "Монеты достоинств 5,16,20,33,37,56; каждое достоинство используется 0,1 или 2 раза; считаются неупорядоченные наборы (мультимножества) с суммой ровно 295; ответ по модулю 1e9+7. Максимальная сумма 2*167=334, так что 295 в принципе достижимо по величине, но ни одна комбинация не даёт ровно 295.",
+"code": "import itertools,time\nt=time.time()\nc=[5,16,20,33,37,56]\ndp=[0]*296;dp[0]=1\nfor x in c:\n    n=[0]*296\n    for s in range(296):\n        for k in range(3):\n            if s-k*x>=0: n[s]+=dp[s-k*x]\n    dp=n\nb=sum(1 for ks in itertools.product(range(3),repeat=6) if sum(k*x for k,x in zip(ks,c))==295)\nprint(dp[295]%1000000007,b,time.time()-t)\n",
+"runtime_s": 0.0015,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Ответ 0 подтверждён двумя независимыми методами (ДП и полный перебор 3^6 вариантов)."
+},
+"MIMIC-COIN-2911-2": {
+"answer": "0",
+"spec": "Нужно набрать сумму 874 монетами достоинств 4, 7, 25, 30, 33, 41, 46, 48, 50. Порядок монет не важен, каждое достоинство берётся 0, 1 или 2 раза. Считаем число таких наборов (кратностей) по модулю 1000000007. Граничный случай: даже если взять все монеты по два раза, получится 2*284 = 568 < 874, поэтому набрать сумму нельзя и ответ 0.",
+"code": "import time\nt=time.time()\ncoins=[4,7,25,30,33,41,46,48,50];S=874\ndp=[0]*(S+1);dp[0]=1\nfor c in coins:\n    n=[0]*(S+1)\n    for s in range(S+1):\n        if dp[s]:\n            for k in range(3):\n                if s+k*c<=S:n[s+k*c]+=dp[s]\n    dp=n\nprint(dp[S]%1000000007,time.time()-t)",
+"runtime_s": 0.001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Ответ 0, потому что максимальная сумма равна 568, а это меньше 874. Отдельная проверка вручную подтверждает этот результат."
+},
+"MIMIC-LUCKY-2911-0": {
+"answer": "3568",
+"spec": "Start with the numbers 1..40036. Step 1 removes every 3rd number (positions 3, 6, 9, ...), and 3 counts as a used step. After that, the rule is: take the first remaining number v > 1 that has not yet been used as a step (going left to right from the position of the previous v), mark it as used, and remove every v-th element of the current list (positions v, 2v, ...). Stop when v is greater than the number of remaining elements, or when the list runs out. After step 1, v = 2, and 2 is removed by its own step. The next v is taken from the same position, which now holds 4. Then v = 7, 13, and so on. Answer: how many numbers remain.",
+"code": "import time\nt=time.time()\nN=40036\nL=list(range(1,N+1))\ndel L[2::3]\nused={3}\ni=1\nwhile i<len(L):\n    v=L[i]\n    if v in used: i+=1; continue\n    if v>len(L): break\n    used.add(v)\n    del L[v-1::v]\n    i=L.index(v)+1 if v in L else i\nprint(len(L), L[:15], time.time()-t)",
+"runtime_s": 0.003,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The statement is ambiguous at one point. Once every 3rd number is removed, the first remaining v > 1 is 2, and I took it as the next step (it removes every 2nd element, including 2 itself). The start of the sequence came out as 1, 4, 7, 13, 16, 19, 28, 31, ..."
+},
+"MIMIC-LUCKY-2911-1": {
+"answer": "5243",
+"spec": "Начинаем с ряда 1..61240. Шаг 1: вычёркиваются числа на позициях 3, 6, 9, … (каждое третье); число 3 считается уже использованным как шаг. Дальше повторяем: берём наименьшее оставшееся v > 1, которое ещё не было шагом; если v больше текущего количества оставшихся, останавливаемся. Иначе вычёркиваем каждое v-е число оставшегося списка (позиции v, 2v, …) и отмечаем v как использованное. Второй шаг идёт с v=2: число 2 стоит на позиции 2 и поэтому само вычёркивается. Правило «ещё не использовалось» позволяет затем взять v=4, 7, 13, … Считаем, сколько чисел осталось в конце.",
+"code": "import time\nt=time.time()\nN=61240\nL=[x for i,x in enumerate(range(1,N+1)) if (i+1)%3]\nused={3}\nwhile True:\n    c=[x for x in L if x>1 and x not in used]\n    if not c: break\n    v=c[0]\n    if v>len(L): break\n    used.add(v)\n    L=[x for i,x in enumerate(L) if (i+1)%v]\nprint(len(L),L[:12],time.time()-t)",
+"runtime_s": 0.28,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Условие можно понять двумя способами. Здесь v=2 применяется как шаг и вычёркивает само число 2, так как оно стоит на позиции 2. При другом прочтении ответ может быть другим."
+},
+"MIMIC-LUCKY-2911-2": {
+"answer": "6284",
+"spec": "Start with the list 1..74714. Step 1: delete every 3rd number, meaning positions 3, 6, 9, and so on; the value 3 is marked as already used as a step. After that, repeat: take the smallest remaining v > 1 that has not yet been used as a step, then delete every v-th number among those still remaining (positions v, 2v, and so on in the current list). Stop when v is greater than the number of remaining numbers or when no such v exists. Count what is left. After step 1, v = 2 (the list is 1,2,4,5,7,8,...), which gives 1,4,7,10,13,...; next come v = 4, 7, 13, and so on.",
+"code": "import time\nt=time.time()\nN=74714\nL=list(range(1,N+1))\ndel L[2::3]\nused={3}\nwhile True:\n    v=next((x for x in L if x>1 and x not in used),None)\n    if v is None or v>len(L): break\n    used.add(v)\n    del L[v-1::v]\nprint(len(L),L[:15],time.time()-t)",
+"runtime_s": 0.01,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The rule was read to mean that after the first step (every 3rd), the next step is v = 2, since 2 remains in the list and has not yet been used as a step. The resulting list begins 1,4,7,13,16,19,28,..."
+},
+"NECK-B_NOADJ-2911-0": {
+"answer": "9608050",
+"spec": "14 beads sit on a cycle (bead 14 is next to bead 1). Each bead gets one of 5 colours, and not every colour has to be used. Two beads next to each other must not share a colour. Colourings count as the same if a rotation or reflection of the circle turns one into the other (dihedral group D14, 28 elements). The task is the number of orbits, i.e. distinct bracelets. Method: Burnside's lemma. For each group element, the beads fall into orbits under that element. A fixed colouring is a proper colouring of the quotient graph built from those orbits. If two neighbouring beads land in the same orbit, the element fixes 0 colourings. This happens for rotations with gcd = 1 and for reflections whose axis passes through edges. The number of proper colourings of each quotient graph comes from deletion-contraction. Fixed counts: identity 4^14+4; rotation by 7 gives 4^7-4; 6 rotations with gcd 2 give 20 each; 7 reflections through beads give 5*4^7 each; all others give 0. Total = 269025400, and 269025400 / 28 = 9608050.",
+"code": "import itertools, time\nfrom functools import lru_cache\nfrom math import gcd\nt=time.time()\n@lru_cache(None)\ndef chrom(nv, edges, k):\n    if not edges: return k**nv\n    e=min(edges); a,b=e\n    rest=edges-{e}\n    d=chrom(nv,rest,k)\n    def m(x):\n        x=a if x==b else x\n        return x-1 if x>b else x\n    ne=set()\n    for (x,y) in rest:\n        x,y=m(x),m(y)\n        ne.add((min(x,y),max(x,y)))\n    return d-chrom(nv-1,frozenset(ne),k)\ndef count_fixed(n,k,perm):\n    par=list(range(n))\n    def f(x):\n        while par[x]!=x: x=par[x]\n        return x\n    for i in range(n): par[f(i)]=f(perm[i])\n    reps=sorted(set(f(i) for i in range(n))); idx={r:j for j,r in enumerate(reps)}\n    E=set()\n    for i in range(n):\n        a,b=idx[f(i)],idx[f((i+1)%n)]\n        if a==b: return 0\n        E.add((min(a,b),max(a,b)))\n    return chrom(len(reps),frozenset(E),k)\ndef burnside(n,k):\n    G=[[(i+r)%n for i in range(n)] for r in range(n)]+[[(r-i)%n for i in range(n)] for r in range(n)]\n    s=sum(count_fixed(n,k,p) for p in G); assert s%(2*n)==0; return s//(2*n)\ndef brute(n,k):\n    seen=set();c=0\n    for col in itertools.product(range(k),repeat=n):\n        if any(col[i]==col[(i+1)%n] for i in range(n)): continue\n        v=[tuple(col[(i+r)%n] for i in range(n)) for r in range(n)]\n        v+=[x[::-1] for x in v]\n        m=min(v)\n        if m not in seen: seen.add(m); c+=1\n    return c\nfor n in range(3,9):\n    for k in range(2,5): assert burnside(n,k)==brute(n,k),(n,k)\nn,k=14,5\nrot=sum(((k-1)**(gcd(n,r))+(k-1)*(-1)**(gcd(n,r))) if gcd(n,r)>1 else 0 for r in range(n))\ncf=(rot+(n//2)*k*(k-1)**(n//2))//(2*n)\nprint(burnside(n,k), cf, time.time()-t)\n",
+"runtime_s": 0.16,
+"timed_out": false,
+"n_runs": 4,
+"caveats": "Burnside with deletion-contraction was checked against brute force for n=3..8 and k=2..4, and every case matched. For n=14 it also matches the closed formula. The first run (a slow backtracking version) was stopped. In one run the closed formula had a bug (it used n/gcd instead of gcd), which was fixed."
+},
+"NECK-B_NOADJ-2911-1": {
+"answer": "173088",
+"spec": "Цикл из n=14 бусин, k=4 цвета, не обязательно все. Соседние бусины (включая 1 и 14) должны быть разного цвета. Считаем орбиты правильных раскрасок под действием группы диэдра D14 (28 элементов: повороты и отражения). Лемма Бернсайда: поворот на r фиксирует P(gcd(r,n)) раскрасок, где P(m)=(k-1)^m+(-1)^m(k-1) (правильные раскраски цикла C_m). Отражения с осью через 2 бусины (их 7): k(k-1)^7. Отражения с осью через рёбра (их 7) фиксируют 0 раскрасок, потому что две соседние бусины обязаны совпадать по цвету. Ответ: (сумма)/28.",
+"code": "import itertools,time\nfrom math import gcd\nt=time.time()\ndef burn(n,k):\n    P=lambda m:(k-1)**m+(-1)**m*(k-1)\n    rot=sum(P(gcd(r,n)) for r in range(n))\n    refl=(n//2)*k*(k-1)**(n//2) if n%2==0 else 0  # edge axes / odd axes force adjacent equal -> 0\n    return (rot+refl)//(2*n)\ndef brute(n,k):\n    seen=set();cnt=0\n    for c in itertools.product(range(k),repeat=n):\n        if any(c[i]==c[(i+1)%n] for i in range(n)) or c in seen: continue\n        cnt+=1\n        for r in range(n):\n            x=c[r:]+c[:r]; seen.add(x); seen.add(x[::-1])\n    return cnt\nfor n in range(3,11):\n    for k in (2,3,4):\n        assert burn(n,k)==brute(n,k),(n,k)\nprint(\"ok\");print(burn(14,4),time.time()-t)\n",
+"runtime_s": 1.04,
+"timed_out": false,
+"n_runs": 3,
+"caveats": "Для n=14 использована формула Бернсайда. Её проверил полным перебором при n=3..10 и k=2,3,4: все значения совпали. Прямой перебор для n=14 не уложился в лимит времени, и я его прервал."
+},
+"NECK-B_NOADJ-2911-2": {
+"answer": "96909",
+"spec": "n=22 бусины по кругу, k=3 цвета, соседние бусины (включая 1 и 22) разного цвета; не все цвета обязательно использовать. Считаются классы эквивалентности относительно группы диэдра D22 (22 поворота + 22 отражения). Подсчёт по лемме Бёрнсайда: поворот на r фиксирует (k-1)^g+(-1)^g(k-1) правильных раскрасок, g=gcd(r,n) (0 при g=1); для отражений строится фактор-граф орбит, при петле (соседние бусины меняются местами) — 0, иначе перебором считаются правильные раскраски фактор-графа.",
+"code": "import itertools, time\nfrom math import gcd\nt=time.time()\ndef burn(n,k):\n    tot=0\n    for r in range(n):\n        g=gcd(r,n)\n        tot+= (k-1)**g+(-1)**g*(k-1) if g>=2 else 0\n    for s in range(n):\n        par=list(range(n))\n        def f(x):\n            while par[x]!=x: x=par[x]\n            return x\n        for i in range(n): par[f(i)]=f((s-i)%n)\n        reps=sorted({f(i) for i in range(n)})\n        if any(f(i)==f((i+1)%n) for i in range(n)): continue\n        idx={r:j for j,r in enumerate(reps)}\n        edges={(idx[f(i)],idx[f((i+1)%n)]) for i in range(n)}\n        m=len(reps);cnt=0\n        for c in itertools.product(range(k),repeat=m):\n            if all(c[a]!=c[b] for a,b in edges): cnt+=1\n        tot+=cnt\n    assert tot%(2*n)==0\n    return tot//(2*n)\ndef brute(n,k):\n    seen=set();c=0\n    for col in itertools.product(range(k),repeat=n):\n        if any(col[i]==col[(i+1)%n] for i in range(n)): continue\n        cands=[]\n        for r in range(n):\n            x=col[r:]+col[:r]; cands+= [x, x[::-1]]\n        m=min(cands)\n        if m not in seen: seen.add(m); c+=1\n    return c\nfor n in range(3,11): assert burn(n,3)==brute(n,3),n\nprint(burn(22,3), time.time()-t)\n",
+"runtime_s": 3.2,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-C_NOADJ_CNT-2911-0": {
+"answer": "0",
+"spec": "Цикл из 15 бусин, 3 цвета; ровно 2 бусины цвета 1, 11 цвета 2, 2 цвета 3; соседние бусины (включая 15 и 1) должны быть разного цвета; ожерелья считаются с точностью до поворота (без отражений). В цикле C15 можно выбрать не больше 7 попарно несоседних бусин, а 11 бусин цвета 2 должны быть попарно несоседними. Значит, подходящих раскрасок нет, и ответ 0.",
+"code": "import itertools,time\nt=time.time();n=15\nseen=set()\nfor p in itertools.combinations(range(n),4):\n    for q in itertools.combinations(p,2):\n        s=[2]*n\n        for i in p: s[i]=3\n        for i in q: s[i]=1\n        if all(s[i]!=s[(i+1)%n] for i in range(n)):\n            c=min(tuple(s[k:]+s[:k]) for k in range(n))\n            seen.add(c)\nprint(len(seen),time.time()-t)",
+"runtime_s": 0.012,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-C_NOADJ_CNT-2911-1": {
+"answer": "0",
+"spec": "The input is a cycle of 26 beads (bead 26 is next to bead 1), coloured with 3 colours. Exactly 7 beads have colour 1, 3 have colour 2 and 16 have colour 3. No two neighbouring beads may share a colour. Two colourings count as the same necklace if a rotation turns one into the other; reflections are not identified. I count the necklaces with Burnside's lemma. For each rotation, I use a DP to count the proper colourings of the gcd-length cycle with the counts divided by 26/gcd. There is also a direct check: on a 26-bead cycle, beads of one colour can take at most 13 places without touching, so 16 beads of colour 3 cannot all be separated and the answer is 0.",
+"code": "import time\nfrom math import gcd\nfrom functools import lru_cache\nt=time.time()\nN=26; C=(7,3,16)\ndef cyc(n,cnt):\n    if any(c<0 for c in cnt): return 0\n    tot=0\n    for f in range(3):\n        if cnt[f]==0: continue\n        @lru_cache(None)\n        def g(pos,last,a,b,c):\n            if pos==n: return 1 if last!=f and (a,b,c)==(0,0,0) else 0\n            s=0\n            for k,r in enumerate((a,b,c)):\n                if k!=last and r>0:\n                    rr=[a,b,c]; rr[k]-=1\n                    s+=g(pos+1,k,*rr)\n            return s\n        r=list(cnt); r[f]-=1\n        tot+= g(1,f,*r) if n>1 else 0\n    return tot\nres=0\nfor k in range(N):\n    d=gcd(k,N); m=N//d\n    if all(c%m==0 for c in C):\n        res+=cyc(d,tuple(c//m for c in C))\nprint(res//N, res%N, time.time()-t)",
+"runtime_s": 0.001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-C_NOADJ_CNT-2911-2": {
+"answer": "166",
+"spec": "14 beads on a cycle, where bead 14 is adjacent to bead 1. Each bead gets one of 3 colors, with exactly 5 of color 1, 4 of color 2 and 5 of color 3. No two adjacent beads may share a color, and that includes the pair 14 and 1. Two colorings count as the same necklace if one can be rotated into the other (the cyclic group C14). Reflections are not identified and colors are not interchangeable. The count is the number of rotation-equivalence classes of valid colorings.",
+"code": "import time\nt=time.time()\nN=14; C=(5,4,5)\nres=[]\ndef dfs(seq,cnt):\n    if len(seq)==N:\n        if seq[-1]!=seq[0]: res.append(tuple(seq))\n        return\n    for c in range(3):\n        if cnt[c]<C[c] and (not seq or seq[-1]!=c):\n            cnt[c]+=1; seq.append(c); dfs(seq,cnt); seq.pop(); cnt[c]-=1\ndfs([],[0,0,0])\nS=set(res)\ncanon=set(min(s[i:]+s[:i] for i in range(N)) for s in S)\nb=sum(sum(1 for s in S if s[k:]+s[:k]==s) for k in range(N))\nprint(len(S),len(canon),b/N,time.time()-t)",
+"runtime_s": 0.03,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "There are 2324 valid colorings in total. Counting orbits by canonical form and by Burnside's lemma both give 166."
+},
+"NECK-D_CNT-2911-0": {
+"answer": "8316120",
+"spec": "Ожерелье из 21 бусины по кругу; группа симметрий — диэдральная D21 (21 поворот и 21 отражение, всего 42 элемента). Считаются орбиты раскрасок, где цвета 1, 2 и 3 встречаются ровно 6, 7 и 8 раз соответственно (6+7+8=21). Применяется лемма Бёрнсайда. Повороты: нетривиальный поворот разбивает бусины на циклы длины L>1, где L делит 21, а 6, 7 и 8 одновременно на L не делятся. Значит, вклад даёт только тождественный поворот: 21!/(6!7!8!). Отражения (n нечётно): у каждого одна неподвижная бусина и 10 пар. Неподвижная бусина обязана быть цвета 2 (только у него нечётное количество), остальные распределяются парами как 3,3,4, что даёт 10!/(3!3!4!)=4200 раскрасок; таких отражений 21. Ответ = (21!/(6!7!8!) + 21*4200)/42.",
+"code": "from math import factorial, gcd\nimport time\nt=time.time()\nn=21; cnt=(6,7,8)\ndef multi(k,parts):\n    r=factorial(k)\n    for p in parts: r//=factorial(p)\n    return r\ntot=0\n# rotations\nfor s in range(n):\n    d=gcd(s,n); L=n//d  # d cycles of length L\n    if all(c%L==0 for c in cnt): tot+=multi(d,[c//L for c in cnt])\n# reflections, n odd: 1 fixed point + 10 two-cycles; n reflections\nref=0\nfor f in range(3):\n    c=list(cnt); c[f]-=1\n    if all(x>=0 and x%2==0 for x in c): ref+=multi(10,[x//2 for x in c])\ntot+=n*ref\nassert tot%(2*n)==0\nprint(tot//(2*n), time.time()-t)\n",
+"runtime_s": 0.0001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_CNT-2911-1": {
+"answer": "120400",
+"spec": "На круге 17 бусин, 3 цвета, ровно 4 бусины цвета 1, 7 цвета 2 и 6 цвета 3. Две раскраски считаются одинаковыми, если одна переходит в другую поворотом или отражением, то есть действием диэдральной группы D17 порядка 34. Считаем орбиты по лемме Бернсайда. Тождественный поворот: 17!/(4!7!6!) = 4084080 раскрасок. Остальные 16 поворотов неподвижных раскрасок не дают, потому что 17 простое, а количества бусин каждого цвета не делятся на 17. У каждого из 17 отражений ось проходит через одну бусину (n нечётное). Неподвижная раскраска возможна, только если нечётное количество ровно у одного цвета: здесь это 7. Тогда бусина на оси цвета 2, а остальные 8 пар распределяются как 2, 3, 3: 8!/(2!3!3!) = 560. Итого (4084080 + 17*560)/34 = 120400.",
+"code": "from math import factorial as f\nfrom itertools import permutations\nn=17; cnt=[4,7,6]\ndef multi(c): \n    s=sum(c); r=f(s)\n    for x in c: r//=f(x)\n    return r\ntot=0\nfrom math import gcd\nfor k in range(n):\n    d=gcd(k,n); L=n//d\n    if all(c%L==0 for c in cnt): tot+=multi([c//L for c in cnt])\n# reflections (n odd): one fixed bead\nfor i in range(n):\n    odd=[j for j,c in enumerate(cnt) if c%2]\n    if len(odd)==1:\n        c2=cnt[:]; c2[odd[0]]-=1\n        tot+=multi([c//2 for c in c2])\nprint(tot//(2*n), tot%(2*n))\n",
+"runtime_s": 0.014,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_CNT-2911-2": {
+"answer": "66931326",
+"spec": "Circle of 24 beads, colors 1..3 with exact counts 8, 5, 11. Count orbits under the dihedral group D24 (24 rotations and 24 reflections) using Burnside's lemma. Rotations: only the identity fixes anything, since gcd(8,5,11)=1, so it contributes the multinomial 24!/(8!5!11!). Reflections: the 12 axes through edges fix nothing, because the counts are odd. The 12 axes through two opposite beads fix colorings where the two beads on the axis take the two odd colors (2 and 3, in either order) and the remaining 11 pairs have counts 4, 2, 5, giving the multinomial 11!/(4!2!5!).",
+"code": "from math import comb, factorial, gcd\nfrom fractions import Fraction\nimport time\nt=time.time()\nn=24; c=[8,5,11]\ndef mult(k,parts):\n    if any(p%k for p in parts): return 0\n    m=sum(parts)//k; r=factorial(m)\n    for p in parts: r//=factorial(p//k)\n    return r\ntot=0\nfor s in range(n):\n    d=gcd(s,n); tot+=mult(n//d,c)\nrefl=0\nfor i in range(3):\n    for j in range(3):\n        cc=c[:]; cc[i]-=1; cc[j]-=1\n        if min(cc)<0: continue\n        refl+=(n//2)*mult(2,cc)\nrefl+=(n//2)*mult(2,c)\ntot+=refl\nprint(Fraction(tot,2*n), time.time()-t)\n",
+"runtime_s": 0.001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_NOADJ_CNT-2911-0": {
+"answer": "0",
+"spec": "Цикл из 17 бусин, 3 цвета, ровно 2 бусины цвета 1, 13 цвета 2, 2 цвета 3; соседние бусины (включая 17 и 1) разного цвета; браслеты считаются с точностью до поворотов и отражений (группа D17). Ответ: 0. Причина: на цикле длины 17 одноцветные бусины без соседства занимают не более floor(17/2)=8 позиций, а цвета 2 нужно 13. Перебор всех раскрасок это подтверждает.",
+"code": "import itertools,time\nt=time.time();n=17\nseen=set()\nfor pos in itertools.combinations(range(n),4):\n    for ones in itertools.combinations(pos,2):\n        c=[2]*n\n        for p in pos: c[p]=3\n        for p in ones: c[p]=1\n        if any(c[i]==c[(i+1)%n] for i in range(n)): continue\n        vs=[]\n        for r in range(n):\n            a=tuple(c[(i+r)%n] for i in range(n)); vs.append(a); vs.append(a[::-1])\n        seen.add(min(vs))\nprint(len(seen),time.time()-t)",
+"runtime_s": 0.016,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_NOADJ_CNT-2911-1": {
+"answer": "307",
+"spec": "18 beads form a cycle, so bead 18 is next to bead 1. Each bead gets one of 3 colors, with exactly 7 beads of color 1, 4 of color 2 and 7 of color 3. No two neighbouring beads may share a color, and this includes beads 18 and 1. Two colorings count as the same if a rotation or a reflection (dihedral group D18, 36 elements) turns one into the other. We count the equivalence classes. The program enumerates every proper coloring by backtracking: there are 10512 as sequences. It then counts orbits in two ways, by canonical forms (the minimum over 36 images) and by Burnside's lemma. Both give 307.",
+"code": "import time\nt=time.time()\nn=18; need=(7,4,7)\nres=[]\ndef bt(seq,cnt):\n    if len(seq)==n:\n        if seq[-1]!=seq[0]: res.append(tuple(seq))\n        return\n    for c in range(3):\n        if cnt[c]<need[c] and (not seq or seq[-1]!=c):\n            cnt[c]+=1; seq.append(c); bt(seq,cnt); seq.pop(); cnt[c]-=1\nbt([],[0,0,0])\nN=len(res)\ndef canon(s):\n    best=None\n    for r in (s, s[::-1]):\n        for k in range(n):\n            x=r[k:]+r[:k]\n            if best is None or x<best: best=x\n    return best\norbits=len(set(canon(s) for s in res))\nG=[]\nfor k in range(n):\n    G.append([(i+k)%n for i in range(n)]); G.append([(k-i)%n for i in range(n)])\nfix=sum(sum(1 for s in res if all(s[g[i]]==s[i] for i in range(n))) for g in G)\nprint(N, orbits, fix/36, time.time()-t)\n",
+"runtime_s": 0.24,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_NOADJ_CNT-2911-2": {
+"answer": "0",
+"spec": "Цикл из 26 бусин, 3 цвета, ровно 9 бусин цвета 1, 3 цвета 2 и 14 цвета 3. Соседние бусины (включая 1 и 26) не должны совпадать по цвету. Браслеты считаются с точностью до группы диэдра D26 (повороты и отражения). Подсчёт по лемме Бёрнсайда. Граничный случай: на цикле из 26 бусин без соседей одного цвета может быть не больше 13 бусин одного цвета, а цвета 3 нужно 14, поэтому подходящих раскрасок нет и ответ 0.",
+"code": "from functools import lru_cache\nN=26; C=(9,3,14)\ndef fixed(perm):\n    seen=[-1]*N; orbs=[]\n    for i in range(N):\n        if seen[i]<0:\n            o=[];j=i\n            while seen[j]<0: seen[j]=len(orbs); o.append(j); j=perm[j]\n            orbs.append(o)\n    m=len(orbs)\n    for i in range(N):\n        if seen[i]==seen[(i+1)%N]: return 0\n    adj=[set() for _ in range(m)]\n    for i in range(N):\n        a,b=seen[i],seen[(i+1)%N]; adj[a].add(b); adj[b].add(a)\n    sz=[len(o) for o in orbs]\n    memo={}; col=[None]*m\n    def front(k):\n        return tuple((j,col[j]) for j in range(k) if any(t>=k for t in adj[j]))\n    def rec(k,rem):\n        if k==m: return 1 if rem==(0,0,0) else 0\n        key=(k,rem,front(k))\n        if key in memo: return memo[key]\n        s=0\n        for c in range(3):\n            if rem[c]<sz[k]: continue\n            if any(j<k and col[j]==c for j in adj[k]): continue\n            col[k]=c; r=list(rem); r[c]-=sz[k]\n            s+=rec(k+1,tuple(r)); col[k]=None\n        memo[key]=s; return s\n    return rec(0,C)\ntot=0\nfor k in range(N):\n    tot+=fixed([(i+k)%N for i in range(N)])\n    tot+=fixed([(k-i)%N for i in range(N)])\nprint(tot, tot%(2*N), tot//(2*N))",
+"runtime_s": 0.04,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_NOADJ_ONE-2911-0": {
+"answer": "33417",
+"spec": "n=24 бусин по кругу, 3 цвета, соседние бусины (включая 1 и 24) разного цвета, цвет 1 ровно у 6 бусин, остальные цвета в любом количестве. Считаются классы эквивалентности по диэдральной группе D24 (24 поворота и 24 отражения). Метод — лемма Бёрнсайда. Поворот на k: неподвижные раскраски — это правильные раскраски цикла C_d, d=gcd(k,24), в которых цвет 1 встречается 6d/24 раз (нужно целое число и d>=2). Их считаем как след производящей матрицы переходов. Отражения через две бусины (12 штук): считаем правильные раскраски пути из 13 бусин, у которых обе концевые бусины идут с весом 1, а внутренние с весом 2. Отражения через рёбра (12 штук) переставляют между собой две соседние бусины, поэтому неподвижных правильных раскрасок у них 0.",
+"code": "import itertools, time\nfrom math import gcd\nfrom sympy import symbols, Matrix, expand, Poly\nx=symbols('x')\ndef M(q):\n    return Matrix(q,q,lambda i,j: 0 if i==j else (x if j==0 else 1))\ndef coef(p,k):\n    return Poly(expand(p),x).coeff_monomial(x**k) if k>=0 else 0\ndef solve(n,q,m):\n    tot=0\n    A=M(q)\n    for k in range(n):\n        d=gcd(k,n)\n        if (m*d)%n: continue\n        if d<2: continue\n        tot+=coef((A**d).trace(), m*d//n)\n    if n%2==0:\n        h=n//2\n        v=Matrix([[x]+[1]*(q-1)])\n        B=Matrix(q,q,lambda i,j: 0 if i==j else (x**2 if j==0 else 1))\n        W=v*B**(h-1)*Matrix(q,q,lambda i,j:0 if i==j else (x if j==0 else 1))*Matrix([1]*q)\n        tot+= (n//2)*coef(W[0],m)\n    return tot/(2*n)\ndef brute(n,q,m):\n    seen=set();c=0\n    for col in itertools.product(range(q),repeat=n):\n        if col.count(0)!=m or any(col[i]==col[(i+1)%n] for i in range(n)): continue\n        imgs=[]\n        for r in range(n):\n            t=col[r:]+col[:r]; imgs+= [t,t[::-1]]\n        mn=min(imgs)\n        if mn not in seen: seen.add(mn); c+=1\n    return c\nt=time.time()\nfor n,q,m in [(6,3,2),(8,3,2),(9,3,3),(10,3,3),(10,4,2),(12,3,4),(11,3,3),(12,3,3)]:\n    print(n,q,m,solve(n,q,m),brute(n,q,m))\nprint(solve(24,3,6), time.time()-t)\n",
+"runtime_s": 1.4,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Формулу по Бёрнсайду проверил полным перебором на 8 маленьких случаях, включая нечётное n и q=4; все значения совпали."
+},
+"NECK-D_NOADJ_ONE-2911-1": {
+"answer": "5936",
+"spec": "Цикл из 22 бусин (бусины 1 и 22 соседние), 3 цвета, соседние бусины обязаны быть разного цвета, цвета 1 ровно 5 бусин, цвета 2 и 3 в любом количестве, в том числе 0. Браслеты считаются с точностью до группы диэдра D22 (22 поворота и 22 отражения, всего 44 элемента). Применяется лемма Бернсайда. Для тождественного элемента правильные раскраски цикла с ровно пятью бусинами цвета 1 считаются динамикой по состояниям (цвет, число бусин цвета 1). Для остальных элементов группы раскраски, переходящие в себя, перебираются по орбитам. Если в одной орбите оказались две соседние бусины, таких раскрасок 0. Сумма по всем элементам равна 261184, делим на 44.",
+"code": "import itertools, time\nt=time.time()\nn=22;K=3;T=5\nperms=[]\nfor r in range(n):\n    perms.append([(i+r)%n for i in range(n)])\n    perms.append([(r-i)%n for i in range(n)])\ndef fixed(p):\n    seen=[-1]*n; orbs=[]\n    for i in range(n):\n        if seen[i]<0:\n            o=[];j=i\n            while seen[j]<0: seen[j]=len(orbs);o.append(j);j=p[j]\n            orbs.append(o)\n    m=len(orbs)\n    for i in range(n):\n        if seen[i]==seen[(i+1)%n]: return 0\n    if m>13:\n        from collections import defaultdict\n        tot=0\n        for c0 in range(K):\n            st={(c0,1 if c0==0 else 0):1}\n            for i in range(1,n):\n                ns=defaultdict(int)\n                for (c,k),v in st.items():\n                    for d in range(K):\n                        if d!=c:\n                            k2=k+(d==0)\n                            if k2<=T: ns[(d,k2)]+=v\n                st=ns\n            tot+=sum(v for (c,k),v in st.items() if k==T and c!=c0)\n        return tot\n    cnt=0\n    for col in itertools.product(range(K),repeat=m):\n        c=[col[seen[i]] for i in range(n)]\n        if sum(1 for x in c if x==0)!=T: continue\n        if all(c[i]!=c[(i+1)%n] for i in range(n)): cnt+=1\n    return cnt\ns=sum(fixed(p) for p in perms)\nprint(s, s%(2*n), s//(2*n), time.time()-t)",
+"runtime_s": 8.5,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_NOADJ_ONE-2911-2": {
+"answer": "62592",
+"spec": "n=26 beads on a cycle (bead 26 is adjacent to bead 1), q=3 colors. A coloring counts only if no two adjacent beads share a color and exactly 6 beads have color 1 (colors 2 and 3 can appear any number of times, including 0). Colorings that map to each other under the dihedral group D26 (26 rotations and 26 reflections, 52 elements) are the same bracelet. I counted orbits with Burnside's lemma. For each group element I collapsed its bead cycles into a quotient graph. If any bead cycle contains two adjacent beads, that element fixes no proper coloring. Otherwise a DP over the quotient graph counts proper colorings where the total size of cycles colored 1 is exactly 6.",
+"code": "import itertools, time\nfrom math import gcd\ndef fixed(perm,n,q,k):\n    seen=[-1]*n; orbs=[]\n    for i in range(n):\n        if seen[i]<0:\n            o=[];j=i\n            while seen[j]<0: seen[j]=len(orbs);o.append(j);j=perm[j]\n            orbs.append(o)\n    m=len(orbs); adj=[set() for _ in range(m)]\n    for i in range(n):\n        a,b=seen[i],seen[(i+1)%n]\n        if a==b: return 0\n        adj[a].add(b);adj[b].add(a)\n    sz=[len(o) for o in orbs]\n    from functools import lru_cache\n    fr=[]\n    for idx in range(m):\n        fr.append(tuple(sorted(j for j in range(idx) if any(t>=idx for t in adj[j]))))\n    @lru_cache(None)\n    def go(idx,front,cnt):\n        if cnt>k: return 0\n        if idx==m: return 1 if cnt==k else 0\n        d=dict(front); tot=0\n        for c in range(q):\n            if any(d.get(j)==c for j in adj[idx] if j<idx): continue\n            d2=dict(d); d2[idx]=c\n            nf=tuple((j,d2[j]) for j in fr[idx+1]) if idx+1<m else ()\n            tot+=go(idx+1,nf,cnt+(sz[idx] if c==0 else 0))\n        return tot\n    return go(0,(),0)\ndef burnside(n,q,k):\n    t=0\n    for r in range(n):\n        t+=fixed([(i+r)%n for i in range(n)],n,q,k)\n        t+=fixed([(r-i)%n for i in range(n)],n,q,k)\n    assert t%(2*n)==0\n    return t//(2*n)\ndef brute(n,q,k):\n    S=set()\n    for c in itertools.product(range(q),repeat=n):\n        if c.count(0)!=k or any(c[i]==c[(i+1)%n] for i in range(n)): continue\n        S.add(min(min(tuple(c[(r+s*i)%n] for i in range(n)) for r in range(n)) for s in (1,-1)))\n    return len(S)\nfor n,q,k in [(6,3,2),(8,3,2),(9,3,3),(10,3,4),(10,4,3),(11,3,3)]:\n    assert burnside(n,q,k)==brute(n,q,k),(n,q,k)\nt=time.time();print(burnside(26,3,6),time.time()-t)",
+"runtime_s": 0.5,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The Burnside count matches brute-force enumeration on small cases (n up to 11, including one case with 4 colors). As an approximate check: there are 50388 ways to place six non-adjacent color-1 beads on the labeled cycle, and 2^6 ways to fill the gaps, for 3224832 colorings. Divided by 52 this gives about 62016, which is close to 62592; the difference is explained by symmetric colorings."
+},
+"NECK-C_ONEADJ_CNT-2911-0": {
+"answer": "22",
+"spec": "20 бусин стоят по кругу (бусины 1 и 20 соседние). Цвет 1 у 10 бусин, цвет 2 у 6, цвет 3 у 4. Никакие две соседние бусины не могут обе быть цвета 1. Ожерелья считаются одинаковыми, если одно получается из другого поворотом (группа C20). Отражения не учитываются. Раз 10 бусин цвета 1 стоят на 20 местах без соседства, они занимают либо все чётные, либо все нечётные позиции. На остальных 10 позициях выбираем 4 места для цвета 3: C(10,4)=210 способов, итого 420 раскрасок. По лемме Бернсайда раскраски сохраняют только тождественный поворот и поворот на 10 (он даёт 2*C(5,2)=20). Получаем (420+20)/20=22. Программа перебором это подтвердила.",
+"code": "import itertools,time\nt=time.time();n=20;seen=set()\nfor ones in [range(0,20,2),range(1,20,2)]:\n    rest=[i for i in range(n) if i not in ones]\n    for c3 in itertools.combinations(rest,4):\n        s=[2]*n\n        for i in ones:s[i]=1\n        for i in c3:s[i]=3\n        seen.add(min(tuple(s[k:]+s[:k]) for k in range(n)))\nprint(len(seen),time.time()-t)",
+"runtime_s": 0.004,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-C_ONEADJ_CNT-2911-1": {
+"answer": "7722",
+"spec": "Circle of 18 beads (bead 18 is next to bead 1). Exactly 5 beads are colour 1, 11 are colour 2 and 2 are colour 3. No two neighbouring beads may both be colour 1. Two colourings count as the same necklace if a rotation turns one into the other; reflections are not counted as the same. The program lists every valid colouring, then counts how many different ones remain after taking the smallest rotation of each as its representative.",
+"code": "import itertools,time\nt=time.time();n=18;seen=set();tot=0\nfor ones in itertools.combinations(range(n),5):\n    s=set(ones)\n    if any((i+1)%n in s for i in ones): continue\n    rest=[i for i in range(n) if i not in s]\n    for th in itertools.combinations(rest,2):\n        c=[2]*n\n        for i in ones:c[i]=1\n        for i in th:c[i]=3\n        tot+=1\n        seen.add(min(tuple(c[k:]+c[:k]) for k in range(n)))\nprint(tot,len(seen),time.time()-t)",
+"runtime_s": 1.01,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "A second calculation gives the same result. There are 1782 ways to place colour 1 with no two neighbours, times C(13,2)=78 ways to place colour 3, which gives 138996 valid colourings. The greatest common divisor of 5, 11 and 2 is 1, so no colouring looks the same after a non-trivial rotation. That gives 138996/18 = 7722."
+},
+"NECK-C_ONEADJ_CNT-2911-2": {
+"answer": "56",
+"spec": "15 beads on a cycle, colored with 3 colors. The counts are fixed: color 1 appears 7 times, color 2 appears 3 times, color 3 appears 5 times. No two adjacent beads (including beads 15 and 1) may both be color 1. Two colorings count as the same necklace if one is a rotation of the other; reflections are not allowed. The program counts the distinct orbits under rotation. Because gcd(7,3,5)=1, no nontrivial rotation leaves a valid coloring unchanged. So the answer equals (number of fixed colorings)/15 = 15·C(8,3)/15 = 56.",
+"code": "from itertools import combinations\nn=15;seen=set()\nfor ones in combinations(range(n),7):\n    s=set(ones)\n    if any((i+1)%n in s for i in s): continue\n    rest=[i for i in range(n) if i not in s]\n    for twos in combinations(rest,3):\n        c=[3]*n\n        for i in s:c[i]=1\n        for i in twos:c[i]=2\n        t=tuple(c);m=min(t[k:]+t[:k] for k in range(n))\n        seen.add(m)\nprint(len(seen))",
+"runtime_s": 0.02,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_ONEADJ-2911-0": {
+"answer": "33984817998",
+"spec": "n=21 beads on a cycle, 4 colors; forbidden: two adjacent beads both color 1 (including pair 21-1). Count orbits under the dihedral group D21 (42 elements: rotations and reflections). Burnside: rotation by r fixes trace(A^gcd(21,r)), where A is the 4x4 adjacency matrix of allowed neighbor pairs; since n is odd, each of the 21 reflections passes through one bead and the opposite edge, so fixed colorings are paths of 11 beads (axis bead ... bead 10) with the last bead not color 1 (beads 10 and 11 are equal and adjacent). Not all colors need to be used.",
+"code": "import time, itertools\nfrom math import gcd\nt=time.time()\ndef ok(a,b): return not(a==0 and b==0)\ndef cyc(d,k=4):\n    A=[[1 if ok(a,b) else 0 for b in range(k)] for a in range(k)]\n    M=[[int(i==j) for j in range(k)] for i in range(k)]\n    for _ in range(d): M=[[sum(M[i][l]*A[l][j] for l in range(k)) for j in range(k)] for i in range(k)]\n    return sum(M[i][i] for i in range(k))\ndef path(m,k=4):\n    v=[1]*k\n    for _ in range(m-1): v=[sum(v[a] for a in range(k) if ok(a,b)) for b in range(k)]\n    return sum(v[1:])\ndef burn(n,k=4):\n    s=sum(cyc(gcd(n,r),k) for r in range(n))\n    if n%2: s+=n*path((n+1)//2,k)\n    else:\n        def p2(m):\n            v=[1]*k\n            for _ in range(m-1): v=[sum(v[a] for a in range(k) if ok(a,b)) for b in range(k)]\n            return v\n        s+=n//2*sum(p2(n//2+1))\n        v=[1 if a else 0 for a in range(k)]\n        for _ in range(n//2-1): v=[sum(v[a] for a in range(k) if ok(a,b)) for b in range(k)]\n        s+=n//2*sum(v[1:])\n    return s//(2*n)\ndef brute(n,k=4):\n    seen=set();c=0\n    for x in itertools.product(range(k),repeat=n):\n        if any(x[i]==0 and x[(i+1)%n]==0 for i in range(n)): continue\n        r=[x[i:]+x[:i] for i in range(n)]; y=x[::-1]; r+=[y[i:]+y[:i] for i in range(n)]\n        m=min(r)\n        if m not in seen: seen.add(m);c+=1\n    return c\nfor n in range(3,9): assert burn(n)==brute(n),n\nprint(burn(21), time.time()-t)",
+"runtime_s": 0.32,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_ONEADJ-2911-1": {
+"answer": "623157733",
+"spec": "n=24 beads on a cycle (bead 24 is adjacent to bead 1), 3 colors, and not every color has to be used. Constraint: no two adjacent beads may both have color 1. We count orbits under the dihedral group D24 (12... in total 24 rotations and 24 reflections), using Burnside's lemma. For a rotation by r, the fixed colorings are the valid cyclic words of length gcd(r,n), counted as the trace of M^d where M is the 3x3 transfer matrix with a 0 only at (1,1). The case d=1 is correct: a single bead is adjacent to itself, so it cannot be color 1. For reflections, the program builds the cycles of the permutation, turns the adjacency into edges between cycles, and enumerates colorings of the cycles as \"1 / not 1\" with a weight of 2^(number of non-1 cycles). The method was checked against brute force over orbits for n=1..8, and all values match.",
+"code": "import itertools, time\nfrom math import gcd\nimport numpy as np\nt=time.time()\nM=[[0,1,1],[1,1,1],[1,1,1]]\ndef trace_pow(d):\n    A=np.array(M,dtype=object); R=np.identity(3,dtype=object)\n    for _ in range(d): R=R.dot(A)\n    return sum(R[i][i] for i in range(3))\ndef fixed_generic(perm,n):\n    seen=[False]*n; cyc=[]; idx=[0]*n\n    for i in range(n):\n        if not seen[i]:\n            c=[];j=i\n            while not seen[j]: seen[j]=True; idx[j]=len(cyc); c.append(j); j=perm[j]\n            cyc.append(c)\n    edges={(min(idx[i],idx[(i+1)%n]),max(idx[i],idx[(i+1)%n])) for i in range(n)}\n    k=len(cyc); cnt=0\n    for col in itertools.product((0,1),repeat=k):  # 0 = color1, 1 = other (2 choices)\n        if all(not(col[a]==0 and col[b]==0) for a,b in edges):\n            cnt+=2**sum(col)\n    return cnt\ndef count(n,brute_rot=False):\n    tot=0\n    for r in range(n):\n        tot+= fixed_generic([(i+r)%n for i in range(n)],n) if brute_rot else trace_pow(gcd(r,n))\n    for r in range(n):\n        tot+=fixed_generic([(r-i)%n for i in range(n)],n)\n    return tot//(2*n), tot%(2*n)\ndef brute(n):\n    s=set()\n    for c in itertools.product(range(3),repeat=n):\n        if any(c[i]==0 and c[(i+1)%n]==0 for i in range(n)): continue\n        vs=[]\n        for r in range(n):\n            x=c[r:]+c[:r]; vs.append(x); vs.append(x[::-1])\n        s.add(min(vs))\n    return len(s)\nfor n in range(1,9):\n    print(n,count(n),count(n,True),brute(n))\nprint(count(24),time.time()-t)\n",
+"runtime_s": 0.11,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-D_ONEADJ-2911-2": {
+"answer": "133786054",
+"spec": "The input is n=14 beads on a cycle, where bead 14 is adjacent to bead 1, and k=5 colors. A coloring is valid when no two adjacent beads both have color 1; not every color has to be used. Two colorings count as the same bracelet if a rotation or a reflection maps one onto the other, so the symmetry group is the dihedral group D14 of order 28. The task asks for the number of equivalence classes of valid colorings. I counted them with Burnside's lemma. For a rotation by r, the number of fixed valid colorings is trace(A^gcd(r,14)), where A is the 5x5 transfer matrix (all ones except A[1][1]=0). For each of the 14 reflections, I built the cycles of the permutation, went through every assignment of colors to the cycles, and checked the adjacency condition directly.",
+"code": "import itertools, time\nfrom math import gcd\nimport numpy as np\nt=time.time()\ndef perms(n):\n    G=[]\n    for r in range(n):\n        G.append([(i+r)%n for i in range(n)])\n        G.append([(r-i)%n for i in range(n)])\n    return G\ndef fixed(p,n,k):\n    seen=[-1]*n;c=0\n    for i in range(n):\n        if seen[i]<0:\n            j=i\n            while seen[j]<0: seen[j]=c; j=p[j]\n            c+=1\n    cnt=0\n    for a in itertools.product(range(k),repeat=c):\n        if all(not(a[seen[i]]==0 and a[seen[(i+1)%n]]==0) for i in range(n)): cnt+=1\n    return cnt\ndef burnside(n,k):\n    A=[[0 if (i==0 and j==0) else 1 for j in range(k)] for i in range(k)]\n    A=np.array(A,dtype=object)\n    tot=0\n    for r in range(n):\n        g=gcd(r,n); M=np.identity(k,dtype=object)\n        for _ in range(g): M=M.dot(A)\n        tot+=sum(M[i,i] for i in range(k))\n    for r in range(n):\n        tot+=fixed([(r-i)%n for i in range(n)],n,k)\n    assert tot%(2*n)==0\n    return tot//(2*n)\ndef brute(n,k):\n    G=perms(n);s=set()\n    for a in itertools.product(range(k),repeat=n):\n        if any(a[i]==0 and a[(i+1)%n]==0 for i in range(n)): continue\n        s.add(min(tuple(a[p[i]] for i in range(n)) for p in G))\n    return len(s)\nfor n in range(1,8):\n    for k in (2,3):\n        assert burnside(n,k)==brute(n,k),(n,k)\nprint(burnside(14,5), time.time()-t)",
+"runtime_s": 3.2,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"NECK-C_NOADJ_ONE-2911-0": {
+"answer": "4946",
+"spec": "Цикл из 18 бусин, 3 цвета, соседние бусины (включая 1 и 18) разного цвета, ровно 6 бусин цвета 1, цвета 2 и 3 в любом количестве. Ожерелья считаются с точностью до поворотов (группа C18, отражения не учитываются). Лемма Бернсайда: для поворота на d раскраска периодична с периодом g=gcd(d,18), неподвижные раскраски = правильные раскраски цикла длины g с ровно 6g/18 бусинами цвета 1 (если это целое). Для g=1 правильных раскрасок нет.",
+"code": "from math import gcd\nimport time\nt=time.time()\nN,K,C=18,6,3\ndef cyc(g,k):\n    # proper colorings of cycle length g with exactly k beads of color 0\n    if g<2: return 0\n    tot=0\n    for s in range(C):\n        dp={(s,1 if s==0 else 0):1}\n        for i in range(1,g):\n            nd={}\n            for (c,m),v in dp.items():\n                for c2 in range(C):\n                    if c2!=c:\n                        key=(c2,m+(c2==0)); nd[key]=nd.get(key,0)+v\n            dp=nd\n        tot+=sum(v for (c,m),v in dp.items() if c!=s and m==k)\n    return tot\nS=0\nfor d in range(N):\n    g=gcd(d,N)\n    if (K*g)%N==0: S+=cyc(g,K*g//N)\nprint(S//N, S%N, time.time()-t)\n",
+"runtime_s": 0.001,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Считаются только повороты, без отражений. Результат проверен вручную: 88704 + 240 + 72 + 12 = 89028, 89028 / 18 = 4946."
+},
+"NECK-C_NOADJ_ONE-2911-1": {
+"answer": "120",
+"spec": "Цикл из 14 бусин, 3 цвета; соседние бусины (включая 1 и 14) разного цвета; ровно 3 бусины цвета 1; ожерелья считаются с точностью до поворотов (без отражений). Считаются орбиты раскрасок под циклической группой C14.",
+"code": "import itertools,time\nt=time.time();n=14\nseen=set()\nfor c in itertools.product(range(3),repeat=n):\n    if c.count(0)!=3: continue\n    if any(c[i]==c[(i+1)%n] for i in range(n)): continue\n    seen.add(min(c[i:]+c[:i] for i in range(n)))\nprint(len(seen),time.time()-t)",
+"runtime_s": 1.09,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Проверено вручную: 210 способов поставить 3 несоседние бусины цвета 1 на цикл из 14, умноженные на 2^3 способов раскрасить промежутки, дают 1680 раскрасок; 3 не делит 14, поэтому все орбиты свободные и 1680/14 = 120."
+},
+"NECK-C_NOADJ_ONE-2911-2": {
+"answer": "32060",
+"spec": "n=22 бусины на цикле, 3 цвета. Соседние бусины (включая пару 22–1) должны быть разного цвета. Цвет 1 встречается ровно 6 раз, цвета 2 и 3 — сколько угодно раз. Ожерелья считаются с точностью до поворотов (группа C22), отражения не учитываются. Подсчёт по лемме Бёрнсайда. Поворот на k фиксирует раскраски с периодом g=gcd(k,22). Такая раскраска должна быть правильной раскраской цикла длины g, где цвет 1 встречается ровно 6g/22 раз, поэтому 6g/22 должно быть целым. При g=1 фиксированных раскрасок нет, потому что бусина соседствует сама с собой.",
+"code": "import time,itertools\nfrom math import gcd\nt=time.time()\ndef fixed(g,m,q=3):\n    if g==1: return 0\n    tot=0\n    for c0 in range(q):\n        dp={(c0,1 if c0==0 else 0):1}\n        for i in range(1,g):\n            nd={}\n            for (l,c),v in dp.items():\n                for x in range(q):\n                    if x!=l:\n                        k=(x,c+(x==0)); nd[k]=nd.get(k,0)+v\n            dp=nd\n        tot+=sum(v for (l,c),v in dp.items() if l!=c0 and c==m)\n    return tot\ndef neck(n,m):\n    s=0\n    for k in range(n):\n        g=gcd(k,n)\n        if (m*g)%n==0: s+=fixed(g,m*g//n)\n    assert s%n==0; return s//n\ndef brute(n,m):\n    seen=set();cnt=0\n    for c in itertools.product(range(3),repeat=n):\n        if c.count(0)!=m or any(c[i]==c[(i+1)%n] for i in range(n)): continue\n        r=min(c[i:]+c[:i] for i in range(n))\n        if r not in seen: seen.add(r);cnt+=1\n    return cnt\nfor n in range(2,11):\n    for m in range(0,n//2+1):\n        assert neck(n,m)==brute(n,m),(n,m)\nprint(neck(22,6),time.time()-t)\n",
+"runtime_s": 0.1,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Результат по Бёрнсайду сверен полным перебором для n от 2 до 10 при всех количествах бусин цвета 1; все значения совпали."
+},
+"PI-INT-2911-0": {
+"answer": "239907769123",
+"spec": "Count primes p with 39757421659 <= p <= 6891542968341, both endpoints included. The count is pi(6891542968341) - pi(39757421658), where pi is the prime-counting function. pi is computed with the Lucy_Hedgehog algorithm, vectorized with numpy.",
+"code": "import numpy as np, time\nfrom math import isqrt\ndef pi(n):\n    r=isqrt(n)\n    small=np.arange(-1,r,dtype=np.int64); small[0]=0  # small[v]=v-1\n    idx=np.arange(1,r+1,dtype=np.int64)\n    large=np.concatenate(([0],n//idx-1)).astype(np.int64)  # large[i]=S(n//i)\n    for p in range(2,r+1):\n        if small[p]==small[p-1]: continue\n        sp=small[p-1]; p2=p*p\n        lim=min(r,n//p2)\n        b=min(lim,r//p)\n        if b>=1:\n            i=np.arange(1,b+1); large[1:b+1]-=large[i*p]-sp\n        if lim>b:\n            i=np.arange(b+1,lim+1,dtype=np.int64); large[b+1:lim+1]-=small[n//(i*p)]-sp\n        if r>=p2:\n            v=np.arange(p2,r+1,dtype=np.int64); small[p2:r+1]-=small[v//p]-sp\n    return int(large[1])\nt=time.time()\nassert pi(10**6)==78498 and pi(10**9)==50847534 and pi(10**10)==455052511\nA,B=39757421659,6891542968341\nprint(pi(B)-pi(A-1), time.time()-t)\n",
+"runtime_s": 20.05,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The algorithm is exact. It was checked against the known values pi(10^6), pi(10^9) and pi(10^10)."
+},
+"PI-INT-2911-1": {
+"answer": "39909945335",
+"spec": "Count the primes p with 108711928562 <= p <= 1187478742324, both ends included. The answer is pi(1187478742324) - pi(108711928561), where pi is the prime-counting function. It is computed exactly with the Lucy_Hedgehog algorithm, vectorized with numpy. Taking pi(108711928561) instead of pi(108711928562) means a prime sitting exactly on the lower bound would still be counted.",
+"code": "import numpy as np, time, math\ndef primepi(n):\n    r=math.isqrt(n)\n    small=np.maximum(np.arange(r+1,dtype=np.int64)-1,0)\n    idx=np.arange(r+1,dtype=np.int64); idx[0]=1\n    large=n//idx-1; large[0]=0\n    for p in range(2,r+1):\n        if small[p]==small[p-1]: continue\n        sp=small[p-1]; p2=p*p\n        lim=min(r,n//p2)\n        m=min(lim,r//p)\n        i1=np.arange(1,m+1,dtype=np.int64)\n        large[1:m+1]-=large[i1*p]-sp\n        if lim>m:\n            i2=np.arange(m+1,lim+1,dtype=np.int64)\n            large[m+1:lim+1]-=small[n//(i2*p)]-sp\n        if p2<=r:\n            v=np.arange(p2,r+1,dtype=np.int64)\n            small[p2:r+1]-=small[v//p]-sp\n    return int(large[1])\nt=time.time()\nfor x in [100,10**6,10**9]: print(x,primepi(x))\na=primepi(1187478742324); b=primepi(108711928561)\nprint(a,b,a-b,time.time()-t)\n",
+"runtime_s": 5.8,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The same run checked the method against known values: pi(100)=25, pi(10^6)=78498 and pi(10^9)=50847534. It gave pi(1187478742324)=44371374687 and pi(108711928561)=4461429352."
+},
+"PI-INT-2911-2": {
+"answer": "236908038765",
+"spec": "Count the primes p with 11052735902 ≤ p ≤ 6767390865834, including both endpoints. The answer is π(6767390865834) − π(11052735901). π is computed exactly with the Lucy_Hedgehog prime-counting algorithm, vectorised with numpy. Results: π(6767390865834) = 237408707471 and π(11052735901) = 500668706.",
+"code": "import numpy as np, time, math\ndef pi(x):\n    r=math.isqrt(x)\n    small=np.arange(-1,r,dtype=np.int64)  # small[v]=v-1\n    small[0]=0\n    i=np.arange(1,r+1,dtype=np.int64)\n    large=np.zeros(r+1,dtype=np.int64); large[1:]=x//i-1\n    for p in range(2,r+1):\n        if small[p]==small[p-1]: continue\n        sp=int(small[p-1]); p2=p*p\n        if p2>x: break\n        imax=min(x//p2,r)\n        l1=min(imax,r//p)\n        idx=np.arange(1,imax+1,dtype=np.int64)\n        upd=np.empty(imax,dtype=np.int64)\n        upd[:l1]=large[p:l1*p+1:p]\n        if imax>l1:\n            upd[l1:]=small[x//(idx[l1:]*p)]\n        large[1:imax+1]-=upd-sp\n        if p2<=r:\n            v=np.arange(p2,r+1,dtype=np.int64)\n            small[p2:r+1]-=small[v//p]-sp\n    return int(large[1])\nt=time.time()\nassert pi(10**6)==78498 and pi(10**9)==50847534\nA=pi(6767390865834); B=pi(11052735901)\nprint(A,B,A-B,time.time()-t)\n",
+"runtime_s": 19.9,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The result is an exact count, not an estimate. The same run checked the implementation against the known values π(10^6) = 78498 and π(10^9) = 50847534."
+},
+"PI-M4_1-2911-0": {
+"answer": "63976209951",
+"spec": "Считаем количество простых p (p ≤ N = 3565189665262, граница включительно), для которых p mod 4 = 1. Простое 2 не подходит (2 mod 4 = 2). Для расчёта используется вариант алгоритма Lucy_Hedgehog, который отдельно ведёт счётчики для классов 1 и 3 по модулю 4.",
+"code": "import numpy as np, sys, time, math\ndef count(N):\n    r=math.isqrt(N)\n    iv=np.arange(0,r+1,dtype=np.int64); Lv=np.zeros(r+1,dtype=np.int64); Lv[1:]=N//iv[1:]\n    S1=np.maximum((iv-1)//4,0); S3=(iv+1)//4\n    L1=(Lv-1)//4; L3=(Lv+1)//4\n    for p in range(3,r+1,2):\n        if S1[p]+S3[p]==S1[p-1]+S3[p-1]: continue\n        a1=S1[p-1]; a3=S3[p-1]; p2=p*p\n        if p2>N: break\n        imax=min(r,N//p2)\n        i=np.arange(1,imax+1,dtype=np.int64); ip=i*p\n        m=ip<=r\n        d1=np.empty(imax,dtype=np.int64); d3=np.empty(imax,dtype=np.int64)\n        d1[m]=L1[ip[m]]; d3[m]=L3[ip[m]]\n        q=N//ip[~m]; d1[~m]=S1[q]; d3[~m]=S3[q]\n        d1-=a1; d3-=a3\n        if p%4==1: L1[1:imax+1]-=d1; L3[1:imax+1]-=d3\n        else: L1[1:imax+1]-=d3; L3[1:imax+1]-=d1\n        if p2<=r:\n            q=np.arange(p2,r+1,dtype=np.int64)//p\n            e1=S1[q]-a1; e3=S3[q]-a3\n            if p%4==1: S1[p2:]-=e1; S3[p2:]-=e3\n            else: S1[p2:]-=e3; S3[p2:]-=e1\n    return int(L1[1])\ndef brute(n):\n    s=bytearray([1])*(n+1); s[0]=s[1]=0\n    for k in range(2,math.isqrt(n)+1):\n        if s[k]: s[k*k::k]=bytearray(len(s[k*k::k]))\n    return sum(1 for k in range(1,n+1,4) if s[k])\nfor n in [10,100,1000,12345,10**6,999983]:\n    assert count(n)==brute(n),(n,count(n),brute(n))\nt=time.time(); print(count(3565189665262), time.time()-t)\n",
+"runtime_s": 21.8,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Расчёт точный. Перед основным вычислением программа сверила результат с прямым перебором решетом при n до 10^6, все проверки совпали. Порядок ответа согласуется с оценкой π(N)/2 ≈ 6.4e10."
+},
+"PI-M4_1-2911-1": {
+"answer": "35385877504",
+"spec": "Count primes p with p <= N = 1928383128631 and p mod 4 = 1. The prime 2 does not count, because 2 mod 4 = 2. The method is the Lucy_Hedgehog prime-counting sieve, vectorised with numpy. It computes two things: pi(N), and S = the sum of chi(p) over primes p <= N, where chi is the non-principal character mod 4. S equals pi_1 - pi_3, the number of primes that are 1 mod 4 minus the number that are 3 mod 4. The answer is pi_1 = (pi(N) - 1 + S) / 2. Here pi(N) = 70771791008 and S = -35999.",
+"code": "import numpy as np, math, time\nt=time.time()\nN=1928383128631\nr=math.isqrt(N)\nv_s=np.arange(r+1,dtype=np.int64)\nSc=np.maximum(v_s-1,0)\nSx=np.where((v_s%4==1)|(v_s%4==2),1,0).astype(np.int64)-1; Sx[0]=0\ni_l=np.arange(r+1,dtype=np.int64); i_l[0]=1\nvl=N//i_l\nLc=vl-1\nLx=np.where((vl%4==1)|(vl%4==2),1,0).astype(np.int64)-1\nfor p in range(2,r+1):\n    if Sc[p]==Sc[p-1]: continue\n    p2=p*p\n    if p2>N: break\n    c=1 if p%4==1 else (-1 if p%4==3 else 0)\n    cp=Sc[p-1]; xp=Sx[p-1]\n    imax=min(r,N//p2)\n    k=min(imax,r//p)\n    if k>=1:\n        idx=np.arange(1,k+1)*p\n        Lc[1:k+1]-= Lc[idx]-cp\n        if c: Lx[1:k+1]-= c*(Lx[idx]-xp)\n    if imax>k:\n        ii=np.arange(k+1,imax+1,dtype=np.int64)\n        w=N//(ii*p)\n        Lc[k+1:imax+1]-= Sc[w]-cp\n        if c: Lx[k+1:imax+1]-= c*(Sx[w]-xp)\n    if p2<=r:\n        vv=np.arange(p2,r+1)\n        q=vv//p\n        Sc[p2:]-= Sc[q]-cp\n        if c: Sx[p2:]-= c*(Sx[q]-xp)\npi=int(Lc[1]); sx=int(Lx[1])\nprint(pi,sx,(pi-1+sx)//2,time.time()-t)",
+"runtime_s": 9.8,
+"timed_out": false,
+"n_runs": 2,
+"caveats": "The same code was checked at N=10^6. It gave pi = 78498 and 39175 primes that are 1 mod 4, which match the known values."
+},
+"PI-M4_1-2911-2": {
+"answer": "64269640795",
+"spec": "Count primes p with p <= 3582153238159 (inclusive) and p ≡ 1 (mod 4). Computed pi(x) and D = sum over odd primes p <= x of chi4(p), using a Lucy_Hedgehog-style sieve vectorized with numpy. chi4 is the non-principal character mod 4. Then the count is (pi(x) - 1 + D)/2, where the -1 removes the prime 2. Results: pi(x) = 128539360711, D = -79120.",
+"code": "import numpy as np, time\nfrom math import isqrt\nt=time.time()\nx=3582153238159\nr=isqrt(x)\nv=np.arange(r+1,dtype=np.int64)\ni=np.arange(r+1,dtype=np.int64); i[0]=1\nL=x//i\ndef chisum(a): return np.where((a%4==1)|(a%4==2),1,0).astype(np.int64)-1\nPs=v-1; Ps[0]=0\nPl=L-1\nCs=chisum(v); Cs[0]=0\nCl=chisum(L)\nfor p in range(2,r+1):\n    if Ps[p]==Ps[p-1]: continue\n    p2=p*p\n    if p2>x: break\n    sp=Ps[p-1]; sc=Cs[p-1]; c=0 if p==2 else (1 if p%4==1 else -1)\n    m=min(r, x//p2)\n    idx=np.arange(1,m+1,dtype=np.int64)\n    ip=idx*p\n    k=min(m, r//p)\n    tp=np.empty(m,dtype=np.int64); tc=np.empty(m,dtype=np.int64)\n    tp[:k]=Pl[ip[:k]]; tc[:k]=Cl[ip[:k]]\n    q=x//ip[k:]\n    tp[k:]=Ps[q]; tc[k:]=Cs[q]\n    Pl[1:m+1]-=tp-sp\n    if c: Cl[1:m+1]-=c*(tc-sc)\n    if p2<=r:\n        vv=np.arange(p2,r+1,dtype=np.int64)\n        vp=vv//p\n        np_=Ps[vp]-sp; nc=Cs[vp]-sc\n        Ps[p2:]-=np_\n        if c: Cs[p2:]-=c*nc\npi=int(Pl[1]); D=int(Cl[1])\nprint(pi,D,(pi-1+D)//2,time.time()-t)\n",
+"runtime_s": 18.2,
+"timed_out": false,
+"n_runs": 4,
+"caveats": "I checked the method against a direct sympy count at x = 123457, 10^6 and 9999991, and all three matched. The result pi(10^6) = 78498 also matches the known value."
+},
+"PI-M4_3_INT-2911-0": {
+"answer": "145969329835",
+"spec": "Считаем простые p, для которых 87669240805 ≤ p ≤ 8492459796811 и p mod 4 = 3; оба конца отрезка включены. Ответ равен π(B;4,3) − π(A−1;4,3). Каждое слагаемое вычислено по методу Lucy_Hedgehog, который параллельно считает π(v) и сумму неглавного характера χ₄(p) по простым. Затем используется формула: число простых ≡3 (mod 4) = (π(x) − 1 − Σχ(p)) / 2, где вычитаемая единица — это простое 2.",
+"code": "import numpy as np, time\ndef cnt3(x):\n    # number of primes p<=x with p%4==3\n    if x<3: return 0\n    r=int(np.sqrt(x))\n    while r*r>x: r-=1\n    while (r+1)*(r+1)<=x: r+=1\n    def c1(v): # sum_{n=2..v} chi(n)\n        return np.where((v%4==1)|(v%4==2),1,0).astype(np.int64)-1\n    sv=np.arange(0,r+1,dtype=np.int64)          # small[v], v=0..r\n    lv=np.array([0]+[x//i for i in range(1,r+1)],dtype=np.int64)  # large[i]=x//i\n    S0=sv-1; S0[0]=0; L0=lv-1\n    S1=c1(sv); S1[0]=0; L1=c1(lv); L1[0]=0\n    for p in range(2,r+1):\n        if S0[p]==S0[p-1]: continue\n        chi=0 if p%2==0 else (1 if p%4==1 else -1)\n        p2=p*p\n        a0=S0[p-1]; a1=S1[p-1]\n        imax=min(r,x//p2)\n        i=np.arange(1,imax+1,dtype=np.int64)\n        ip=i*p\n        m=ip<=r\n        t0=np.empty(imax,dtype=np.int64); t1=np.empty(imax,dtype=np.int64)\n        t0[m]=L0[ip[m]]; t1[m]=L1[ip[m]]\n        q=x//ip[~m]\n        t0[~m]=S0[q]; t1[~m]=S1[q]\n        L0[1:imax+1]-=t0-a0\n        if chi: L1[1:imax+1]-=chi*(t1-a1)\n        if p2<=r:\n            v=np.arange(r,p2-1,-1,dtype=np.int64)\n            q=v//p\n            S0[v]-=S0[q]-a0\n            if chi: S1[v]-=chi*(S1[q]-a1)\n    pi=int(L0[1]); s=int(L1[1])\n    return (pi-1-s)//2\nt=time.time()\nfrom sympy import primerange\nfor X in [10,100,12345,10**6]:\n    assert cnt3(X)==sum(1 for p in primerange(2,X+1) if p%4==3),X\nprint(cnt3(10**12))\nA=87669240805; B=8492459796811\nprint(cnt3(B)-cnt3(A-1), time.time()-t)\n",
+"runtime_s": 55.4,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Счёт точный. Для проверки результат сверен с прямым перебором через sympy при x до 10^6. Кроме того, программа выдала π(10^12;4,3) = 18803987677; это совпадает с известным значением: вместе с 18803924340 для остатка 1 и простым 2 получается π(10^12) = 37607912018."
+},
+"PI-M4_3_INT-2911-1": {
+"answer": "50352877620",
+"spec": "Count primes p with 66587981662 <= p <= 2860899711642 (both ends included) and p mod 4 = 3. Answer = pi3(b) - pi3(a-1), where pi3(x) is the number of primes up to x that are 3 mod 4. To get pi3(x), a Lucy_Hedgehog prime-counting sieve tracks two sums at once: the prime count pi(x), and the sum of the character chi4(p) over odd primes p up to x. chi4 is completely multiplicative, so the same sieve works for it. Then pi3 = (pi(x) - 1 - sum chi4) / 2.",
+"code": "import numpy as np, time\ndef chisum(v):  # sum_{n=1..v} chi4(n)\n    m=v%4; return np.where((m==1)|(m==2),1,0).astype(np.int64)\ndef lucy(N):\n    r=int(N**0.5)\n    while r*r>N: r-=1\n    while (r+1)**2<=N: r+=1\n    vs=np.arange(r+1,dtype=np.int64)\n    Sc=vs-1; Sc[0]=0\n    Sx=chisum(vs)-1; Sx[0]=0\n    idx=np.arange(1,r+1,dtype=np.int64)\n    Lv=N//idx\n    Lc=np.zeros(r+1,dtype=np.int64); Lx=np.zeros(r+1,dtype=np.int64)\n    Lc[1:]=Lv-1; Lx[1:]=chisum(Lv)-1\n    for p in range(2,r+1):\n        if Sc[p]==Sc[p-1]: continue\n        cp=Sc[p-1]; xp=Sx[p-1]; chi=0 if p%2==0 else (1 if p%4==1 else -1)\n        p2=p*p\n        lim=min(r,N//p2)\n        i=np.arange(1,lim+1,dtype=np.int64)\n        ip=i*p\n        m=ip<=r\n        vc=np.empty(lim,dtype=np.int64); vx=np.empty(lim,dtype=np.int64)\n        vc[m]=Lc[ip[m]]; vx[m]=Lx[ip[m]]\n        q=N//ip[~m]\n        vc[~m]=Sc[q]; vx[~m]=Sx[q]\n        Lc[1:lim+1]-=vc-cp\n        if chi: Lx[1:lim+1]-=chi*(vx-xp)\n        if p2<=r:\n            v=np.arange(p2,r+1,dtype=np.int64); q=v//p\n            nc=Sc[p2:]-(Sc[q]-cp)\n            if chi: Sx[p2:]=Sx[p2:]-chi*(Sx[q]-xp)\n            Sc[p2:]=nc\n    return Lc[1],Lx[1]\ndef pi3(N):\n    c,x=lucy(N); return (c-1-x)//2\nt=time.time()\nfor N in [100,1000,10**6]:\n    import sympy\n    print(N,pi3(N),sum(1 for p in sympy.primerange(2,N+1) if p%4==3))\na,b=66587981662,2860899711642\nA=pi3(a-1);B=pi3(b)\nprint(A,B,B-A,time.time()-t)\n",
+"runtime_s": 21.2,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The method was checked against sympy brute force for N = 100, 1000 and 10^6, and all three matched. Intermediate values: pi3(a-1) = 1394466647 and pi3(b) = 51747344267."
+},
+"PI-M4_3_INT-2911-2": {
+"answer": "169989565751",
+"spec": "Count primes p with 52839852732 <= p <= 9884728154566 (both ends included) and p mod 4 = 3. Answer = F(9884728154566) - F(52839852731), where F(x) is the number of primes up to x with p ≡ 3 (mod 4). F comes from a Lucy_Hedgehog sieve that computes two sums: pi(x), and the sum of chi(p) over primes up to x, where chi is the non-principal character mod 4 (chi(2)=0). That gives F(x) = (pi(x) - 1 - sum chi(p)) / 2.",
+"code": "import numpy as np, time, math\ndef F(x):\n    # number of primes p<=x with p%4==3\n    if x<3: return 0\n    r=math.isqrt(x)\n    V=x//np.arange(1,r+1,dtype=np.int64)\n    s=np.arange(0,r+1,dtype=np.int64)\n    def chis(v): return np.where((v%4==1)|(v%4==2),1,0)-1   # sum chi(n), 2<=n<=v\n    S0s=s-1; S0s[0]=0; S0l=V-1\n    S1s=chis(s); S1s[0]=0; S1l=chis(V)\n    for p in range(2,r+1):\n        if S0s[p]==S0s[p-1]: continue\n        c=0 if p==2 else (1 if p%4==1 else -1)\n        a0=S0s[p-1]; a1=S1s[p-1]; p2=p*p\n        m=min(r,x//p2)\n        ip=np.arange(1,m+1,dtype=np.int64)*p\n        k=ip<=r\n        t0=np.empty(m,dtype=np.int64); t1=np.empty(m,dtype=np.int64)\n        t0[k]=S0l[ip[k]-1]; t1[k]=S1l[ip[k]-1]\n        q=x//ip[~k]\n        t0[~k]=S0s[q]; t1[~k]=S1s[q]\n        S0l[:m]-=t0-a0\n        if c: S1l[:m]-=c*(t1-a1)\n        if p2<=r:\n            v=np.arange(p2,r+1)//p\n            n0=S0s[v]-a0; n1=S1s[v]-a1\n            S0s[p2:]-=n0\n            if c: S1s[p2:]-=c*n1\n    pi=int(S0l[0]); ch=int(S1l[0])\n    return (pi-1-ch)//2\ndef brute(x):\n    import sympy\n    return sum(1 for p in sympy.primerange(2,x+1) if p%4==3)\nfor x in [3,10,100,1000,12345,10**6+7]:\n    assert F(x)==brute(x),x\nt=time.time()\nL,R=52839852732,9884728154566\nans=F(R)-F(L-1)\nprint(ans,time.time()-t)\n",
+"runtime_s": 47.1,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The method is exact. I checked it against a brute-force count with sympy for x up to about 10^6, and the result is close to the expected value of about pi(R)/2."
+},
+"PI-SUM-2911-0": {
+"answer": "824537516",
+"spec": "N = 3144595747937. Считается сумма всех простых p, где 2 ≤ p ≤ N (N включительно), по модулю 1000000007. Метод: решето Lucy_Hedgehog для суммы простых. Для каждого значения v из множества {N//i} считаются S(v) = сумма простых ≤ v; все вычисления ведутся по модулю M в int64 с векторизацией numpy.",
+"code": "import numpy as np, sys, time\nfrom math import isqrt\nM=10**9+7\ndef T(v):  # v int64 array -> (sum 2..v) mod M\n    v=v.astype(np.int64); a=v.copy(); b=v+1\n    ev=(a%2==0); a=np.where(ev,a//2,a); b=np.where(ev,b,b//2)\n    return ((a%M)*(b%M)-1)%M\ndef primesum(N):\n    r=isqrt(N)\n    small=T(np.arange(r+1)); small[0]=0; small[1]=0\n    idx=np.arange(1,r+1,dtype=np.int64)\n    large=np.zeros(r+1,dtype=np.int64); large[1:]=T(N//idx)\n    for p in range(2,r+1):\n        if small[p]==small[p-1]: continue\n        sp=int(small[p-1]); p2=p*p\n        if p2>N: break\n        lim=min(r,N//p2)\n        i=np.arange(1,lim+1,dtype=np.int64)\n        ip=i*p\n        k=min(lim,r//p)\n        d=np.empty(lim,dtype=np.int64)\n        d[:k]=large[ip[:k]]\n        d[k:]=small[N//ip[k:]]\n        large[1:lim+1]=(large[1:lim+1]-p*((d-sp)%M))%M\n        if p2<=r:\n            v=np.arange(r,p2-1,-1,dtype=np.int64)\n            small[v]=(small[v]-p*((small[v//p]-sp)%M))%M\n    return int(large[1])\nif __name__==\"__main__\":\n    from sympy import primerange\n    for n in [10,100,1000,12345,10**6+3]:\n        assert primesum(n)==sum(primerange(2,n+1))%M, n\n    t=time.time(); print(primesum(3144595747937), time.time()-t)\n",
+"runtime_s": 21.1,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PI-SUM-2911-1": {
+"answer": "139023966",
+"spec": "Take the sum of all primes p with 2 ≤ p ≤ N, where N = 3172307738488, and give it mod 1000000007. Primes equal to N are included. The prime sum is found with the Lucy_Hedgehog method: arrays hold S(v) for every v = N//i, all values are kept mod M, and numpy does the updates.",
+"code": "import numpy as np, sys, time, math\nM=1000000007\ndef solve(N):\n    r=math.isqrt(N)\n    def T(v):\n        v=np.asarray(v,dtype=np.int64)\n        a=np.where(v%2==0,v//2,v)%M; b=np.where(v%2==0,v+1,(v+1)//2)%M\n        return (a*b-1)%M\n    small=T(np.arange(0,r+1)); small[0]=0; small[1]=0 if r>=1 else 0\n    I=np.arange(0,r+1,dtype=np.int64); I[0]=1\n    large=T(N//I); large[0]=0\n    for p in range(2,r+1):\n        if small[p]==small[p-1]: continue\n        sp=int(small[p-1]); p2=p*p\n        if p2>N: break\n        lim=min(r,N//p2); k=min(lim,r//p)\n        if k>=1:\n            large[1:k+1]=(large[1:k+1]-p*((large[p:k*p+1:p]-sp)%M))%M\n        if lim>k:\n            ii=np.arange(k+1,lim+1,dtype=np.int64)\n            large[k+1:lim+1]=(large[k+1:lim+1]-p*((small[N//(ii*p)]-sp)%M))%M\n        if p2<=r:\n            vv=np.arange(p2,r+1,dtype=np.int64)\n            small[p2:r+1]=(small[p2:r+1]-p*((small[vv//p]-sp)%M))%M\n    return int(large[1]) if N>=1 else 0\ndef brute(n):\n    from sympy import primerange\n    return sum(primerange(2,n+1))%M\nfor n in [1,2,3,10,100,1000,12345,10**6,999983,10**7+3]:\n    assert solve(n)==brute(n),n\nt=time.time(); print(solve(3172307738488), time.time()-t)\n",
+"runtime_s": 25.4,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The same program was checked against a sympy brute-force sum for small N, up to about 1e7, and all results matched. In int64, the largest intermediate product is about p*M ≈ 1.8e15, so there is no overflow."
+},
+"PI-SUM-2911-2": {
+"answer": "237894926",
+"spec": "Compute (sum of all primes p with p <= N) mod 1000000007, where N = 4346553753206 and p = N counts if N is prime. I used the Lucy_Hedgehog prime-sum sieve, O(N^{3/4}), with numpy. Because the recurrence is linear, every step is done mod M. I checked it against brute force for N in {2, 3, 10, 100, 1000, 12345, 10^6+3}. For N = 1e9 it matches the known sum 24739512092254535 mod M.",
+"code": "import numpy as np, sys, time, math\nM=10**9+7\ndef tri(v):  # (v(v+1)/2 - 1) mod M, vectorized on int64 array\n    a=v.copy(); b=v+1\n    ev=(a%2==0)\n    a=np.where(ev,a//2,a); b=np.where(ev,b,b//2)\n    return ((a%M)*(b%M)-1)%M\ndef primesum(N):\n    r=math.isqrt(N)\n    small=tri(np.arange(0,r+1,dtype=np.int64)); small[0]=0\n    idx=np.arange(1,r+1,dtype=np.int64)\n    large=np.zeros(r+1,dtype=np.int64); large[1:]=tri(N//idx)\n    for p in range(2,r+1):\n        if small[p]==small[p-1]: continue\n        sp=int(small[p-1]); p2=p*p\n        imax=min(r,N//p2)\n        i=np.arange(1,imax+1,dtype=np.int64)\n        ip=i*p\n        k1=ip<=r\n        vals=np.empty(imax,dtype=np.int64)\n        vals[k1]=large[ip[k1]]\n        vals[~k1]=small[N//ip[~k1]]\n        large[1:imax+1]=(large[1:imax+1]-p*((vals-sp)%M))%M\n        if p2<=r:\n            v=np.arange(p2,r+1,dtype=np.int64)\n            small[p2:r+1]=(small[p2:r+1]-p*((small[v//p]-sp)%M))%M\n    return int(large[1])\ndef brute(n):\n    s=bytearray([1])*(n+1); s[0]=s[1]=0\n    for i in range(2,math.isqrt(n)+1):\n        if s[i]: s[i*i::i]=bytearray(len(range(i*i,n+1,i)))\n    return sum(i for i in range(n+1) if s[i])%M\nfor n in [2,3,10,100,1000,12345,10**6+3]:\n    assert primesum(n)==brute(n),n\nprint(\"sum primes <=1e9 raw check:\", primesum(10**9), 24739512092254535%M)\nt=time.time(); print(primesum(4346553753206)); print(time.time()-t)\n",
+"runtime_s": 29.1,
+"timed_out": false,
+"n_runs": 1,
+"caveats": ""
+},
+"PI-SEMI-2911-0": {
+"answer": "294305599281",
+"spec": "Count n with 1 ≤ n ≤ N = 2293140264337 such that n = p*q, where p and q are primes and p < q. Squares of primes such as p^2 do not count. The count is the sum over primes p ≤ sqrt(N) of (pi(N//p) - pi(p)), taking only the terms where N//p > p. Values of pi(N//k) come from the Lucy_Hedgehog prime-counting method, vectorised with numpy.",
+"code": "import numpy as np, time\nfrom math import isqrt\nt=time.time()\nN=2293140264337\nr=isqrt(N)\nsmall=np.arange(-1,r+1,dtype=np.int64); small[0]=0  # small[v]=v-1\nsmall[0]=0\nlarge=np.zeros(r+1,dtype=np.int64)\nidx=np.arange(1,r+1,dtype=np.int64)\nlarge[1:]=N//idx-1\nfor p in range(2,r+1):\n    if small[p]==small[p-1]: continue\n    sp=small[p-1]; p2=p*p\n    lim=min(r,N//p2)\n    i=np.arange(1,lim+1,dtype=np.int64)\n    ip=i*p\n    m=ip<=r\n    val=np.empty(lim,dtype=np.int64)\n    val[m]=large[ip[m]]\n    val[~m]=small[N//ip[~m]]\n    large[1:lim+1]-=val-sp\n    if p2<=r:\n        v=np.arange(p2,r+1,dtype=np.int64)\n        small[p2:r+1]-=small[v//p]-sp\ndef pi(x): return small[x] if x<=r else large[N//x]\nans=0\nfor p in range(2,r+1):\n    if small[p]!=small[p-1]:\n        q=N//p\n        if q<=p: break\n        ans+=int(pi(q))-int(small[p])\nprint(ans, time.time()-t)",
+"runtime_s": 10,
+"timed_out": false,
+"n_runs": 4,
+"caveats": "I checked the method against sympy brute force for N = 1000, 99991 and 1234567, and all three matched."
+},
+"PI-SEMI-2911-1": {
+"answer": "650710353935",
+"spec": "Count n <= N = 5175268333101 with n = p*q for primes p < q (squarefree semiprimes; p^2 is excluded). Count = sum over primes p with p*p < N of (pi(N//p) - pi(p)). pi values at N//k come from the Lucy_Hedgehog prime-counting sieve, vectorized with numpy.",
+"code": "import numpy as np, time\nfrom math import isqrt\nt=time.time()\nN=5175268333101\nr=isqrt(N)\nsmall=np.arange(-1,r,dtype=np.int64); small[0]=0  # small[v]=v-1\nidx=np.arange(1,r+1,dtype=np.int64)\nlarge=np.zeros(r+1,dtype=np.int64); large[1:]=N//idx-1\nfor p in range(2,r+1):\n    if small[p]==small[p-1]: continue\n    sp=small[p-1]; p2=p*p\n    if p2>N: break\n    lim=min(r,N//p2)\n    i=np.arange(1,lim+1,dtype=np.int64)\n    ip=i*p\n    m=ip<=r\n    vals=np.empty(lim,dtype=np.int64)\n    vals[m]=large[ip[m]]\n    vals[~m]=small[N//ip[~m]]\n    large[1:lim+1]-=vals-sp\n    if p2<=r:\n        v=np.arange(p2,r+1)\n        small[p2:]-=small[v//p]-sp\nans=0\nfor p in range(2,r+1):\n    if small[p]!=small[p-1] and p*p<N:\n        ans+=int(large[p])-int(small[p])\nprint(ans, time.time()-t)\n",
+"runtime_s": 20.4,
+"timed_out": false,
+"n_runs": 2,
+"caveats": "I checked the method against a sympy brute-force count for N = 1000, 99991 and 1000003, and the results matched each time."
+},
+"PI-SEMI-2911-2": {
+"answer": "151060382887",
+"spec": "Count n ≤ N = 1156409518805 with n = p·q, where p < q are both prime (squarefree semiprimes; p^2 is not counted). Formula: sum over primes p with p < N/p of (pi(floor(N/p)) − pi(p)). pi is computed with the Lucy_Hedgehog prime-counting sieve, vectorized with numpy.",
+"code": "import numpy as np, time\nfrom math import isqrt\nt=time.time()\nN=1156409518805\nr=isqrt(N)\nsmall=np.arange(-1,r,dtype=np.int64); small[0]=0  # small[v]=v-1\nsmall[0]=0\nks=np.arange(0,r+1,dtype=np.int64); large=np.zeros(r+1,dtype=np.int64)\nlarge[1:]=N//ks[1:]-1\nfor p in range(2,r+1):\n    if small[p]==small[p-1]: continue\n    sp=small[p-1]; p2=p*p\n    if p2>N: break\n    kmax=min(r,N//p2)\n    k1=min(kmax,r//p)\n    if k1>=1:\n        large[1:k1+1]-=large[p:k1*p+1:p]-sp\n    if kmax>k1:\n        kk=np.arange(k1+1,kmax+1,dtype=np.int64)\n        large[k1+1:kmax+1]-=small[N//(kk*p)]-sp\n    if p2<=r:\n        vv=np.arange(p2,r+1,dtype=np.int64)\n        small[p2:r+1]-=small[vv//p]-sp\ndef pi(x):\n    return int(small[x]) if x<=r else int(large[N//x])\ntot=0\nfor p in range(2,r+1):\n    if small[p]==small[p-1]: continue\n    if p*p>=N: break\n    q=N//p\n    if q<=p: break\n    tot+=pi(q)-pi(p)\nprint(tot, time.time()-t)\n",
+"runtime_s": 5.05,
+"timed_out": false,
+"n_runs": 2,
+"caveats": "The same code was checked against a brute-force sympy count for N = 1000, 99991 and 1000000. All three matched."
+},
+"PI-M3_1-2911-0": {
+"answer": "38603667058",
+"spec": "Count primes p with p <= N = 2110725682128 and p mod 3 == 1 (inclusive bound). Method: Lucy_Hedgehog prime-counting sieve run in parallel for the plain count pi(N) and the character-weighted sum S = sum over primes p<=N of chi(p), where chi is the nontrivial character mod 3 (completely multiplicative, chi(3)=0). Then #(p≡1) = (pi(N) - 1 + S)/2; the -1 removes the prime 3. The primes 2 and 3 are not ≡1 mod 3.",
+"code": "import numpy as np, math, time\nt=time.time()\nN=2110725682128\ndef run(N):\n    r=math.isqrt(N)\n    idx=np.arange(1,r+1,dtype=np.int64)\n    Vl=N//idx\n    Vs=np.arange(0,r+1,dtype=np.int64)\n    L0=Vl-1; S0=Vs-1; S0[0]=0\n    def chi_init(v): return ((v+2)//3-1)-((v+1)//3)\n    L1=chi_init(Vl); S1=chi_init(Vs); S1[0]=0\n    for p in range(2,r+1):\n        if S0[p]==S0[p-1]: continue\n        c=int(p%3); ch=0 if c==0 else (1 if c==1 else -1)\n        sp0=int(S0[p-1]); sp1=int(S1[p-1]); p2=p*p\n        lim=min(r,N//p2)\n        b=min(lim,r//p)\n        if b>=1:\n            d=np.arange(1,b+1,dtype=np.int64)*p\n            L0[:b]-=L0[d-1]-sp0\n            if ch: L1[:b]-=ch*(L1[d-1]-sp1)\n        if lim>b:\n            i=np.arange(b+1,lim+1,dtype=np.int64)\n            q=N//(i*p)\n            L0[b:lim]-=S0[q]-sp0\n            if ch: L1[b:lim]-=ch*(S1[q]-sp1)\n        if r>=p2:\n            q=Vs[p2:]//p\n            S0[p2:]-=S0[q]-sp0\n            if ch: S1[p2:]-=ch*(S1[q]-sp1)\n    return int(L0[0]),int(L1[0])\ndef brute(n):\n    s=bytearray([1])*(n+1); s[0]=s[1]=0\n    for i in range(2,math.isqrt(n)+1):\n        if s[i]: s[i*i::i]=bytearray(len(s[i*i::i]))\n    return sum(1 for k in range(n+1) if s[k] and k%3==1)\nfor n in [10,100,12345,10**6+7]:\n    a,b=run(n); assert (a-1+b)//2==brute(n),n\na,b=run(10**9); print(\"pi(1e9)\",a)\na,b=run(N); print(a,b,(a-1+b)//2, time.time()-t)\n",
+"runtime_s": 10.1,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Checked against a brute-force sieve for small n and against pi(1e9)=50847534. For N the program gives pi(N)=77207385920 and sum chi(p)=-51803."
+},
+"PI-M3_1-2911-1": {
+"answer": "52475141679",
+"spec": "Count the primes p with p ≤ N = 2902663136956 (the bound is included) and p mod 3 = 1. p=3 does not count. Method: the Lucy_Hedgehog prime-counting sieve, run twice. The first run gives π(N). The second run gives S = sum of χ(p) over primes p ≤ N, where χ is the non-principal character mod 3. Since χ is completely multiplicative, the same recurrence works for it. Then π1 = (π(N) - 1 + S)/2, where the -1 removes p=3.",
+"code": "import numpy as np, time, sys\nt=time.time()\nN=int(sys.argv[1]) if len(sys.argv)>1 else 2902663136956\nr=int(N**0.5)\nwhile r*r>N: r-=1\nwhile (r+1)**2<=N: r+=1\ns=np.ones(r+1,bool); s[:2]=False\nfor i in range(2,int(r**0.5)+1):\n    if s[i]: s[i*i::i]=False\nprimes=np.nonzero(s)[0]\ndef run(chi):\n    v=np.arange(r+1,dtype=np.int64)\n    I=np.arange(1,r+1,dtype=np.int64)\n    hv=np.zeros(r+1,dtype=np.int64); hv[1:]=N//I\n    f=(lambda x: np.where(x%3==1,1,0)-1) if chi else (lambda x: x-1)\n    lo=f(v); lo[0]=0\n    hi=np.zeros(r+1,dtype=np.int64); hi[1:]=f(hv[1:])\n    for p in primes.tolist():\n        c=(1 if p%3==1 else (-1 if p%3==2 else 0)) if chi else 1\n        if c==0: continue\n        sp=int(lo[p-1]); p2=p*p\n        m=min(r,N//p2); k=min(m,r//p)\n        a=hi[p:k*p+1:p].copy()\n        if m>k:\n            idx2=np.arange(k+1,m+1,dtype=np.int64)\n            b=lo[N//(idx2*p)]\n        hi[1:k+1]-=c*(a-sp)\n        if m>k: hi[k+1:m+1]-=c*(b-sp)\n        if p2<=r:\n            vv=np.arange(p2,r+1,dtype=np.int64)\n            lo[p2:r+1]-=c*(lo[vv//p]-sp)\n    return int(hi[1])\npi=run(False); S=run(True)\npi1=(pi-1+S)//2\nprint(pi,S,pi1,time.time()-t)\nif N<10**7:\n    from sympy import primerange\n    print(sum(1 for q in primerange(2,N+1) if q%3==1))\n",
+"runtime_s": 18.9,
+"timed_out": false,
+"n_runs": 3,
+"caveats": "The program was checked against a direct sympy count for N=10^6 and N=9999991, and both matched. For the real bound it gives π(N)=104950349660 and S=-66301."
+},
+"PI-M3_1-2911-2": {
+"answer": "119101540403",
+"spec": "Count primes p with p <= 6790861820752 and p mod 3 == 1. The primes 2 and 3 are not counted (2 mod 3 = 2, 3 mod 3 = 0). Method: a Lucy_Hedgehog prime-counting sieve that tracks the residue classes 1 and 2 mod 3 separately, using the multiplicative structure of those classes, vectorised with numpy.",
+"code": "import numpy as np, time, math\nt=time.time()\nx=6790861820752\nr=math.isqrt(x)\nv=np.arange(r+1,dtype=np.int64)\ns1=(v+2)//3-1; s1[0]=0\ns2=(v+1)//3\ni=np.arange(r+1,dtype=np.int64); i[0]=1\nlv=x//i\nl1=(lv+2)//3-1; l2=(lv+1)//3\nl1[0]=0;l2[0]=0\nfor p in range(2,r+1):\n    if p==3: continue\n    if s1[p]+s2[p]==s1[p-1]+s2[p-1]: continue  # not prime\n    pp=p*p\n    if pp>x: break\n    a1=s1[p-1]; a2=s2[p-1]\n    m=min(r, x//pp)\n    ii=np.arange(1,m+1,dtype=np.int64)\n    ip=ii*p\n    k=min(m, r//p)\n    q1=np.empty(m,dtype=np.int64); q2=np.empty(m,dtype=np.int64)\n    q1[:k]=l1[ip[:k]]; q2[:k]=l2[ip[:k]]\n    idx=x//ip[k:]\n    q1[k:]=s1[idx]; q2[k:]=s2[idx]\n    if p%3==1:\n        l1[1:m+1]-=q1-a1; l2[1:m+1]-=q2-a2\n    else:\n        l1[1:m+1]-=q2-a2; l2[1:m+1]-=q1-a1\n    if pp<=r:\n        vv=np.arange(pp,r+1,dtype=np.int64); d=vv//p\n        t1=s1[d]-a1; t2=s2[d]-a2\n        if p%3==1: s1[pp:]-=t1; s2[pp:]-=t2\n        else: s1[pp:]-=t2; s2[pp:]-=t1\nprint(int(l1[1]), int(l2[1]), int(l1[1]+l2[1]+1), time.time()-t)",
+"runtime_s": 27.1,
+"timed_out": false,
+"n_runs": 3,
+"caveats": "The same code was checked against sympy for N=10^6 and N=10^7, and both matched. The full run gives pi(x) = 238203130765, which is the sum of the two class counts plus 1 for the prime 3."
+},
+"PI-SUM_INT-2911-0": {
+"answer": "128098988",
+"spec": "Sum all primes p with 266568738188 <= p <= 2870606052259, both ends included, and reduce the sum mod 1000000007. It is computed as S(B) - S(A-1) mod M, where S(n) is the sum of primes <= n from the Lucy_Hedgehog prime-sum sieve (O(n^{3/4})). The sieve runs entirely in arithmetic mod M using numpy int64.",
+"code": "import numpy as np, time\nfrom math import isqrt\nM=10**9+7\ndef init(v):\n    v=np.asarray(v,dtype=np.int64)\n    ev=(v%2==0)\n    a=np.where(ev,v//2,v)%M; b=np.where(ev,v+1,(v+1)//2)%M\n    return (a*b-1)%M\ndef primesum(n):\n    if n<2: return 0\n    r=isqrt(n)\n    idx=np.arange(1,r+1,dtype=np.int64)\n    L=np.zeros(r+1,np.int64); L[1:]=init(n//idx)\n    Sm=np.zeros(r+1,np.int64); Sm[1:]=init(idx)\n    sieve=np.ones(r+1,bool); sieve[:2]=False\n    for i in range(2,isqrt(r)+1):\n        if sieve[i]: sieve[i*i::i]=False\n    for p in np.nonzero(sieve)[0]:\n        p=int(p)\n        if p*p>n: break\n        c=Sm[p-1]\n        imax=min(r,n//(p*p))\n        k=min(imax,r//p)\n        i1=np.arange(1,k+1,dtype=np.int64)\n        X1=L[i1*p]\n        i2=np.arange(k+1,imax+1,dtype=np.int64)\n        X2=Sm[n//(i2*p)]\n        X=np.concatenate([X1,X2])\n        L[1:imax+1]=(L[1:imax+1]-p*((X-c)%M))%M\n        if p*p<=r:\n            v=np.arange(p*p,r+1,dtype=np.int64)\n            Sm[p*p:]=(Sm[p*p:]-p*((Sm[v//p]-c)%M))%M\n    return int(L[1])\ndef brute(n):\n    s=np.ones(n+1,bool);s[:2]=False\n    for i in range(2,isqrt(n)+1):\n        if s[i]: s[i*i::i]=False\n    return int(np.nonzero(s)[0].sum())%M\nt=time.time()\nfor n in [10,100,12345,10**6,999983,3*10**6+7]:\n    assert primesum(n)==brute(n),n\nA=266568738188; B=2870606052259\nprint((primesum(B)-primesum(A-1))%M, time.time()-t)\n",
+"runtime_s": 20.4,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "The method was checked against a brute-force sieve for n up to 3e6, and those checks passed. The full-size run itself has no independent cross-check."
+},
+"PI-SUM_INT-2911-1": {
+"answer": "590083497",
+"spec": "Сумма всех простых p с 722214026479 <= p <= 2377276154062 (обе границы включены), взятая по модулю 1000000007. Считается как F(b) - F(a-1) (mod M), где F(n) — сумма простых <= n по модулю M. F вычисляется методом Lucy_Hedgehog, векторизованным через numpy, со всей арифметикой по модулю M.",
+"code": "import numpy as np, time, math\nM=10**9+7\ndef tri(v):\n    v=np.asarray(v,dtype=np.int64); a=v.copy(); b=v+1\n    ev=(a%2==0); a=np.where(ev,a//2,a); b=np.where(ev,b,b//2)\n    return ((a%M)*(b%M)-1)%M\ndef F(n):\n    if n<2: return 0\n    r=math.isqrt(n)\n    idx=np.arange(1,r+1,dtype=np.int64)\n    L=np.zeros(r+1,dtype=np.int64); L[1:]=tri(n//idx)\n    S=np.zeros(r+1,dtype=np.int64); S[1:]=tri(idx)\n    for p in range(2,r+1):\n        if S[p]==S[p-1]: continue\n        sp=int(S[p-1]); p2=p*p\n        if p2>n: break\n        imax=min(r,n//p2)\n        i=np.arange(1,imax+1,dtype=np.int64)\n        ip=i*p\n        t=np.empty(imax,dtype=np.int64)\n        m=ip<=r\n        t[m]=L[ip[m]]\n        t[~m]=S[n//ip[~m]]\n        L[1:imax+1]=(L[1:imax+1]-p*((t-sp)%M))%M\n        if p2<=r:\n            k=np.arange(p2,r+1,dtype=np.int64)\n            S[p2:]=(S[p2:]-p*((S[k//p]-sp)%M))%M\n    return int(L[1])\ndef brute(n):\n    s=bytearray([1])*(n+1); s[0]=s[1]=0\n    for i in range(2,math.isqrt(n)+1):\n        if s[i]: s[i*i::i]=bytearray(len(s[i*i::i]))\n    return sum(i for i in range(n+1) if s[i])%M\nfor n in [10,100,12345,10**6,999983]: assert F(n)==brute(n),n\nt=time.time()\na,b=722214026479,2377276154062\nprint((F(b)-F(a-1))%M, time.time()-t)\n",
+"runtime_s": 24.4,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Проверено сравнением с решетом при n до 10^6. Переполнения int64 нет: все произведения меньше 1.6e6 * 1e9."
+},
+"PI-SUM_INT-2911-2": {
+"answer": "942984051",
+"spec": "Сумма всех простых p, для которых 44298153396 <= p <= 1546567819529 (обе границы включены), взятая по модулю 1000000007. Вычисляется как (S(B) - S(A-1)) mod M, где S(N) — сумма простых чисел <= N. S(N) считается алгоритмом Lucy_Hedgehog, все вычисления по модулю M.",
+"code": "import numpy as np, math, time, sys\nM=10**9+7\ndef S(N):\n    if N<2: return 0\n    r=math.isqrt(N)\n    v=np.arange(r+1,dtype=object)\n    sm=np.array([(x*(x+1)//2-1)%M for x in range(r+1)],dtype=np.int64); sm[0]=0\n    lg=np.zeros(r+1,dtype=np.int64)\n    for i in range(1,r+1):\n        x=N//i; lg[i]=(x*(x+1)//2-1)%M\n    for p in range(2,r+1):\n        if sm[p]==sm[p-1]: continue\n        sp=int(sm[p-1]); p2=p*p\n        lim=min(r,N//p2)\n        i=np.arange(1,lim+1,dtype=np.int64)\n        ip=i*p\n        a=ip<=r\n        vals=np.empty(lim,dtype=np.int64)\n        vals[a]=lg[ip[a]]\n        nb=~a\n        vals[nb]=sm[N//ip[nb]]\n        lg[1:lim+1]=(lg[1:lim+1]-p*((vals-sp)%M))%M\n        if p2<=r:\n            vv=np.arange(p2,r+1,dtype=np.int64)\n            sm[p2:r+1]=(sm[p2:r+1]-p*((sm[vv//p]-sp)%M))%M\n    return int(lg[1])\nt=time.time()\nfrom sympy import primerange\nfor n in [10,100,12345,10**6+3]:\n    assert S(n)==sum(primerange(2,n+1))%M,n\nA=44298153396;B=1546567819529\nprint((S(B)-S(A-1))%M, time.time()-t)\n",
+"runtime_s": 13.8,
+"timed_out": false,
+"n_runs": 1,
+"caveats": "Метод Lucy_Hedgehog проверен на малых N по sympy (N=10, 100, 12345 и 1000003), результаты совпали. Проверки на полном диапазоне не было: прямой перебор простых там невозможен."
+},
+"PI-PPOW-2911-0": {
+"answer": "103944377865",
+"spec": "Count integers n with 1 <= n <= N = 2873796323575 of the form n = p^k, where p is prime and k >= 1. Primes themselves count (k=1). n=1 does not count. Each such n has a unique representation, so the answer is the sum over k>=1 of pi(floor(N^(1/k))). Integer k-th roots are computed exactly by binary search. pi is computed with the Lucy_Hedgehog prime-counting algorithm, vectorised with numpy.",
+"code": "import numpy as np, time\nfrom math import isqrt\nt=time.time()\nN=2873796323575\nr=isqrt(N)\n# large[i] = pi(N//i), i=1..r ; small[v]=pi(v), v=0..r\nii=np.arange(r+1,dtype=np.int64)\nlarge=np.zeros(r+1,dtype=np.int64); large[1:]=N//ii[1:]-1\nsmall=ii-1; small[0]=0\nfor p in range(2,r+1):\n    if small[p]==small[p-1]: continue\n    sp=small[p-1]; p2=p*p\n    lim=min(r,N//p2)\n    b=min(lim, r//p)\n    if b>=1:\n        large[1:b+1]-= large[p:b*p+1:p]-sp\n    if lim>b:\n        i=ii[b+1:lim+1]\n        large[b+1:lim+1]-= small[N//(i*p)]-sp\n    if r>=p2:\n        v=ii[p2:r+1]\n        small[p2:r+1]-= small[v//p]-sp\nprint(\"pi(N)\",large[1], time.time()-t)\ndef pi(x):\n    return int(small[x]) if x<=r else int(large[N//x])\ntot=0;k=1\nwhile 2**k<=N:\n    lo,hi=1,2\n    while hi**k<=N: hi*=2\n    while hi-lo>1:\n        m=(lo+hi)//2\n        if m**k<=N: lo=m\n        else: hi=m\n    tot+=pi(lo); k+=1\nprint(tot, time.time()-t)\n",
+"runtime_s": 6.7,
+"timed_out": false,
+"n_runs": 3,
+"caveats": "pi(N) = 103944247993. The same code with N=10^12 gives pi = 37607912018, which matches the known value of pi(10^12). An earlier, slower version was stopped before it finished, so its run is counted but produced no answer."
+},
+"PI-PPOW-2911-1": {
+"answer": "83316551583",
+"spec": "Count the n with 1 <= n <= N = 2284333773949 that can be written as n = p^k, where p is prime and k >= 1. n = 1 is not counted. Each such n has only one representation, so the count is the sum over k >= 1 of pi(floor(N^(1/k))). pi(N) = 83316434631 was computed with the Lucy_Hedgehog method. The prime powers with k >= 2 add 116952 more, counted with a sieve up to sqrt(N).",
+"code": "import numpy as np, time, sys\nfrom math import isqrt\nt=time.time()\nN=int(sys.argv[1]) if len(sys.argv)>1 else 2284333773949\nr=isqrt(N)\nsmall=np.arange(-1,r,dtype=np.int64); small[0]=0\nlarge=np.zeros(r+1,dtype=np.int64)\nii=np.arange(1,r+1,dtype=np.int64)\nlarge[1:]=N//ii-1\nfor p in range(2,r+1):\n    if small[p]==small[p-1]: continue\n    p2=p*p\n    if p2>N: break\n    sp=small[p-1]\n    lim=min(r,N//p2)\n    b=min(lim,r//p)\n    if b>=1:\n        large[1:b+1]-=large[p:b*p+1:p]-sp\n    if lim>b:\n        i=ii[b:lim]\n        large[b+1:lim+1]-=small[N//(i*p)]-sp\n    if p2<=r:\n        v=np.arange(p2,r+1)\n        small[p2:]-=small[v//p]-sp\npi_N=int(large[1])\nsv=np.ones(r+1,bool); sv[:2]=False\nfor i in range(2,isqrt(r)+1):\n    if sv[i]: sv[i*i::i]=False\nprimes=[int(x) for x in np.nonzero(sv)[0]]\ntot=pi_N; extra={}\nfor k in range(2,64):\n    c=0\n    for p in primes:\n        if p**k<=N: c+=1\n        else: break\n    if c==0: break\n    extra[k]=c; tot+=c\nprint(pi_N,extra,tot,round(time.time()-t,2))\n",
+"runtime_s": 7,
+"timed_out": false,
+"n_runs": 5,
+"caveats": "I checked the method two ways. For N = 10^6 it matches sympy (78734). For N = 10^12 it gives pi(N) = 37607912018, which is the known value."
+},
+"PI-PPOW-2911-2": {
+"answer": "49321693804",
+"spec": "Count integers n with 1 ≤ n ≤ N = 1325386088586 such that n = p^k, where p is prime and k ≥ 1. Primes (k=1) count, and so does every higher power of a prime. n = 1 is not counted. Each n is counted once; the representation is unique. The answer is pi(N) + sum over k≥2 of pi(floor(N^(1/k))).",
+"code": "import numpy as np, time, math\nt=time.time()\nN=1325386088586\ndef lucy(n):\n    r=math.isqrt(n)\n    V=[n//i for i in range(1,r+1)]\n    V+=list(range(V[-1]-1,0,-1))\n    V=np.array(V,dtype=np.int64)\n    S=V-1\n    L=len(V)\n    negV=-V\n    for p in range(2,r+1):\n        ip=L-p\n        if S[ip]==S[ip+1]: continue\n        sp=S[ip+1]; p2=p*p\n        m=int(np.searchsorted(negV,-p2,side='right'))\n        k1=min(m,r//p)\n        if k1>0:\n            S[:k1]-=S[p-1:k1*p:p]-sp\n        if m>k1:\n            S[k1:m]-=S[L-V[k1:m]//p]-sp\n    return int(S[0])\ndef pi_small(x):\n    s=np.ones(x+1,bool); s[:2]=False\n    for i in range(2,math.isqrt(x)+1):\n        if s[i]: s[i*i::i]=False\n    return int(s.sum())\ndef iroot(n,k):\n    x=int(round(n**(1/k)))\n    while x**k>n: x-=1\n    while (x+1)**k<=n: x+=1\n    return x\nassert lucy(10**6)==78498 and lucy(10**9)==50847534\npiN=lucy(N)\ntot=piN; k=2\nwhile 2**k<=N:\n    tot+=pi_small(iroot(N,k)); k+=1\nprint(piN,tot,time.time()-t)\n",
+"runtime_s": 4.2,
+"timed_out": false,
+"n_runs": 2,
+"caveats": "pi(N) = 49321602709, computed with the Lucy_Hedgehog method. The prime powers with k ≥ 2 add 91095. A first, slower version of the program took 145 s but gave the same result. The method was checked against pi(10^6) and pi(10^9)."
+}
+}
+}
