@@ -65,23 +65,5 @@
    "p_boot": 1.0
   }
  },
- "holm": {
-  "alpha": 0.025,
-  "m": 2,
-  "table": {
-   "brier": {
-    "p": 1.0,
-    "rank": 1,
-    "threshold": 0.0125,
-    "reject": false
-   },
-   "ioi": {
-    "p": 1.0,
-    "rank": 2,
-    "threshold": 0.025,
-    "reject": false
-   }
-  }
- },
  "verdict": "совет не подтверждён"
 }

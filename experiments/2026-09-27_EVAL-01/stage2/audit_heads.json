@@ -1,0 +1,32 @@
+[
+ {
+  "wf": "wf_c0c0bbae-f1c",
+  "name": "eval01-stage2-part1",
+  "start": 1790697481897,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-27_EVAL-01/stage2/eval01_stage2_part1.js",
+  "agents": 600,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {},
+  "model": {
+   "claude-opus-5-5": 600
+  }
+ },
+ {
+  "wf": "wf_734b8c75-d83",
+  "name": "eval01-stage2-part2",
+  "start": 1790697481979,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-27_EVAL-01/stage2/eval01_stage2_part2.js",
+  "agents": 600,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {},
+  "model": {
+   "claude-opus-5-5": 600
+  }
+ }
+]
