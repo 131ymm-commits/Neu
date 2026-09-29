@@ -1,0 +1,19 @@
+[
+ {
+  "wf": "wf_0f5129b7-76a",
+  "name": "eval01b-pilot",
+  "start": 1790702645045,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-29_EVAL-01B/pilot/eval01b_pilot.js",
+  "agents": 100,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 103
+  },
+  "model": {
+   "claude-opus-5-5": 100
+  }
+ }
+]

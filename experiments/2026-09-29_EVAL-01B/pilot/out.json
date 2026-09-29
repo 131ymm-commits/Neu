@@ -1,0 +1,604 @@
+{
+"out": {
+"TWIN-2901-000": {
+"answer": "482",
+"spec": "Считаем простые q с 28580483378 ≤ q ≤ 28580583378 (обе границы включены), для которых q−2 или q+2 тоже простое. Второе число пары может лежать за пределами отрезка, поэтому сегментное решето построено на [A−2, B+2]. Каждое q учитывается один раз, даже если оно входит в две пары. Результат перепроверен независимо через sympy.isprime, оба способа дали 482.",
+"code": "import time\nfrom sympy import isprime\nt=time.time()\nA,B=28580483378,28580583378\nimport numpy as np\nlo,hi=A-2,B+2\nimport math\nr=int(math.isqrt(hi))+1\ns=np.ones(r+1,bool);s[:2]=False\nfor i in range(2,int(r**.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(hi-lo+1,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(lo+p-1)//p*p)\n    seg[st-lo::p]=False\npr=lambda n: seg[n-lo]\nc=0;c2=0\nfor q in range(A,B+1):\n    if pr(q) and (pr(q-2) or pr(q+2)): c+=1\n    if isprime(q) and (isprime(q-2) or isprime(q+2)): c2+=1\nprint(c,c2,time.time()-t)\n",
+"runtime_s": 0.32
+},
+"TWIN-2901-001": {
+"answer": "3648",
+"spec": "Count primes q with 513045036062 <= q <= 513046036062 (both ends inclusive) such that q-2 or q+2 is prime; the partner may lie outside the interval. Each q is counted once, even if both q-2 and q+2 are prime. Method: a segmented sieve of Eratosthenes over [L-2, R+2], using the base primes up to sqrt(R+2).",
+"code": "import numpy as np, time\nt=time.time()\nL=513045036062; R=513046036062\nlo=L-2; hi=R+2\nn=hi-lo+1\nseg=np.ones(n,dtype=bool)\nlim=int(hi**0.5)+1\ns=np.ones(lim+1,dtype=bool); s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nfor p in np.nonzero(s)[0]:\n    p=int(p); st=max(p*p,((lo+p-1)//p)*p)\n    seg[st-lo::p]=False\noff=L-lo; m=R-L+1\nq=seg[off:off+m]; a=seg[off-2:off-2+m]; b=seg[off+2:off+2+m]\nprint(int(np.sum(q&(a|b))), time.time()-t)\n",
+"runtime_s": 0.054
+},
+"TWIN-2901-002": {
+"answer": "4130",
+"spec": "Count the primes q with 74998814109 <= q <= 74999814109, both ends included, where q-2 or q+2 is also prime. The other number in the pair may lie outside the interval, so the program sieves the wider range [L-2, R+2]. Each q counts once, even if both q-2 and q+2 are prime. The method is a segmented sieve of Eratosthenes using the primes up to sqrt(R+2).",
+"code": "import numpy as np, math, time\nt=time.time()\nL,R=74998814109,74999814109\nlo,hi=L-2,R+2\nn=hi-lo+1\nlim=math.isqrt(hi)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,math.isqrt(lim)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(n,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(lo+p-1)//p*p)\n    seg[st-lo::p]=False\nif lo<2: seg[:max(0,2-lo)]=False\nidx=np.arange(2,n-2)\nm=seg[idx]&(seg[idx-2]|seg[idx+2])\nprint(int(m.sum()),time.time()-t)\n",
+"runtime_s": 0.21
+},
+"TWIN-2901-003": {
+"answer": "21719",
+"spec": "Count primes p where p+2 is also prime, with L=53028845347 <= p and p+2 <= R=53038845347. So p runs from L to R-2 and both p and p+2 lie in [L, R]. Method: a segmented sieve of Eratosthenes over [L, R], using base primes up to sqrt(R). Then count the indices i where seg[i] and seg[i+2] are both prime.",
+"code": "import numpy as np, time\nt=time.time()\nL=53028845347; R=53038845347\nlim=int(R**0.5)+2\ns=np.ones(lim+1,bool); s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(R-L+1,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,((L+p-1)//p)*p)\n    seg[st-L::p]=False\nif L<2: seg[:2-L]=False\nc=int(np.count_nonzero(seg[:-2]&seg[2:]))\nprint(c, time.time()-t)\n",
+"runtime_s": 0.15
+},
+"TWIN-2901-004": {
+"answer": "23869",
+"spec": "Count primes p where p+2 is also prime, with L=19128171377 <= p and p+2 <= R=19138171377, so both twins lie inside [L, R] and both endpoints count. The method is a segmented sieve of Eratosthenes over [L, R], using base primes up to sqrt(R). The answer is the number of indices i where seg[i] and seg[i+2] are both prime.",
+"code": "import numpy as np, time\nt=time.time()\nL=19128171377; R=19138171377\nlim=int(R**0.5)+1\ns=np.ones(lim+1,bool); s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(R-L+1,bool)\nfor p in ps:\n    p=int(p)\n    st=max(p*p,((L+p-1)//p)*p)\n    seg[st-L::p]=False\ncnt=int(np.count_nonzero(seg[:-2]&seg[2:]))\nprint(cnt, time.time()-t)\n",
+"runtime_s": 0.18
+},
+"TWIN-2901-005": {
+"answer": "562",
+"spec": "Count the primes p with p+2 also prime (twin-prime pairs), where 2805597 ≤ p and p+2 ≤ 2905597, so p runs from 2805597 to 2905595 inclusive. Each pair is counted once, by its smaller member p. Method: a numpy sieve of Eratosthenes up to 2905597, then counting every p in the range where both p and p+2 are prime.",
+"code": "import numpy as np, time\nt=time.time()\nL,R=2805597,2905597\nN=R+1\ns=np.ones(N,bool); s[:2]=False\nfor i in range(2,int(N**0.5)+1):\n    if s[i]: s[i*i::i]=False\np=np.arange(L,R-1)\nc=int(np.sum(s[p]&s[p+2]))\nprint(c, time.time()-t)\n",
+"runtime_s": 0.011
+},
+"TWIN-2901-006": {
+"answer": "31882",
+"spec": "Count primes p such that p+2 is also prime (twin prime pairs, counted by their smaller member p), with 637878868 <= p and p+2 <= 647878868. Method: segmented sieve of Eratosthenes over [637878868, 647878868] using base primes up to sqrt(647878868). The count is the number of positions i where both seg[i] (value p) and seg[i+2] (value p+2) are prime, with p+2 inside the interval. Both endpoints are included. Sanity check: the Hardy-Littlewood estimate is about 32,100, which is close to the result.",
+"code": "import numpy as np, time\nt=time.time()\nL,R=637878868,647878868\nlim=int(R**0.5)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(R-L+1,bool)\nfor p in ps:\n    p=int(p);st=max(p*p,((L+p-1)//p)*p)\n    seg[st-L::p]=False\nc=int(np.count_nonzero(seg[:-2]&seg[2:]))\nprint(c,time.time()-t)\n",
+"runtime_s": 0.15
+},
+"TWIN-2901-007": {
+"answer": "22413",
+"spec": "Count primes p where p+2 is also prime (twin prime pairs), with L=34914249848 ≤ p and p+2 ≤ R=34924249848. So p runs from L to R-2. Method: a segmented sieve of Eratosthenes over [L, R], using base primes up to sqrt(R). Then count the positions i where both L+i and L+i+2 are prime.",
+"code": "import numpy as np, time\nt=time.time()\nL=34914249848; R=34924249848\nlim=int(R**0.5)+1\ns=np.ones(lim+1,bool); s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(R-L+1,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(L+p-1)//p*p)\n    seg[st-L::p]=False\nidx=np.nonzero(seg[:-2]&seg[2:])[0]\nprint(len(idx), time.time()-t)\n",
+"runtime_s": 0.1
+},
+"TWIN-2901-008": {
+"answer": "12788",
+"spec": "Нужно посчитать простые q, для которых 1413054 ≤ q ≤ 2413054 (обе границы включены) и хотя бы одно из чисел q−2 или q+2 тоже простое. Второе число пары может лежать за пределами отрезка. Каждое q считается один раз, даже если оба соседа простые. Для этого строится решето Эратосфена до 2413057, чтобы покрыть q+2 у самого правого конца отрезка.",
+"code": "import numpy as np, time\nt=time.time()\nA,B=1413054,2413054\nN=B+3\ns=np.ones(N+1,bool); s[:2]=False\nfor i in range(2,int(N**0.5)+1):\n    if s[i]: s[i*i::i]=False\nq=np.arange(A,B+1)\nm=s[q]&(s[q-2]|s[q+2])\nprint(int(m.sum()), time.time()-t)\n",
+"runtime_s": 0.09
+},
+"TWIN-2901-009": {
+"answer": "108228",
+"spec": "Count primes q with 2016817 <= q <= 12016817 (both ends included) where q-2 or q+2 is also prime. The partner can fall outside the interval. Each q is counted once, even if it belongs to two twin pairs (for example 5). Method: an Eratosthenes sieve up to 12016820, done with numpy.",
+"code": "import numpy as np, time\nt=time.time()\nA,B=2016817,12016817\nN=B+3\ns=np.ones(N+1,dtype=bool); s[:2]=False\nfor i in range(2,int(N**0.5)+1):\n    if s[i]: s[i*i::i]=False\nq=np.arange(A,B+1)\nm=s[q]&(s[q-2]|s[q+2])\nprint(int(m.sum()), time.time()-t)\n",
+"runtime_s": 1.32
+},
+"TWIN-2901-010": {
+"answer": "420",
+"spec": "Считаем простые q, где 33709473886 <= q <= 33709573886 (оба конца включены), такие что q-2 или q+2 тоже простое. Второе число пары может выходить за границы отрезка, поэтому решето строится на [A-2, B+2]. Каждое q считается один раз, даже если оно входит в две пары. Решение: сегментированное решето по простым до sqrt(B+2), затем проверка через sympy.isprime. Оба способа дали 420.",
+"code": "import time, math\nfrom sympy import isprime\nt=time.time()\nA,B=33709473886,33709573886\nlo,hi=A-2,B+2\nn=hi-lo+1\nseg=bytearray([1])*n\nr=math.isqrt(hi)+1\nsv=bytearray([1])*(r+1); sv[0]=sv[1]=0\nfor i in range(2,math.isqrt(r)+1):\n    if sv[i]: sv[i*i::i]=bytearray(len(sv[i*i::i]))\nfor p in range(2,r+1):\n    if sv[p]:\n        s=max(p*p,(lo+p-1)//p*p)\n        if s<=hi: seg[s-lo::p]=bytearray(len(seg[s-lo::p]))\nP=lambda x: seg[x-lo]==1\nc=0\nfor q in range(A,B+1):\n    if P(q) and (P(q-2) or P(q+2)): c+=1\n# verify with sympy\nc2=sum(1 for q in range(A,B+1) if seg[q-lo] and (isprime(q-2) or isprime(q+2)) and isprime(q))\nprint(c,c2,time.time()-t)\n",
+"runtime_s": 0.06
+},
+"TWIN-2901-011": {
+"answer": "45888",
+"spec": "Count the primes q with 24729301974 <= q <= 24739301974 (both ends included) where q-2 or q+2 is also prime. The other number in the pair may lie outside the range, so the sieve covers [L-2, R+2]. Each q is counted once, even if both q-2 and q+2 are prime. Method: a segmented sieve of Eratosthenes using numpy, with base primes up to sqrt(R+2).",
+"code": "import numpy as np, time\nt=time.time()\nL,R=24729301974,24739301974\nlo,hi=L-2,R+2\nn=hi-lo+1\nlim=int(hi**0.5)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(n,bool)\nfor p in ps:\n    p=int(p)\n    st=max(p*p,((lo+p-1)//p)*p)\n    seg[st-lo::p]=False\nisq=seg[2:n-2]\ntw=seg[0:n-4]|seg[4:n]\nprint(int(np.count_nonzero(isq&tw)), time.time()-t)\n",
+"runtime_s": 0.72
+},
+"TWIN-2901-012": {
+"answer": "3766",
+"spec": "Count primes p with p+2 also prime (twin prime pairs by lower member), subject to 130460571 <= p and p+2 <= 131460571, i.e. p in [130460571, 131460569]. Both bounds are inclusive. A sieve of Eratosthenes up to 131460571 is used; for each p in that range it checks that both p and p+2 are prime.",
+"code": "import numpy as np, time\nt=time.time()\nL,H=130460571,131460571\nN=H+1\ns=np.ones(N,dtype=bool); s[:2]=False\nfor i in range(2,int(N**0.5)+1):\n    if s[i]: s[i*i::i]=False\nm=s[L:H-1]&s[L+2:H+1]\nprint(int(m.sum()), time.time()-t)\n",
+"runtime_s": 2.3
+},
+"TWIN-2901-013": {
+"answer": "174614",
+"spec": "Count primes p where p+2 is also prime, with 257220199 <= p and p+2 <= 307220199. So p runs from 257220199 to 307220197 inclusive, and each twin pair is counted once, by its smaller member p. Method: a numpy sieve of Eratosthenes up to 307220200, then count the positions where both s[p] and s[p+2] are true.",
+"code": "import numpy as np, time\nt=time.time()\nL,R=257220199,307220199\nN=R+1\ns=np.ones(N+1,dtype=bool); s[:2]=False\nfor i in range(2,int(N**0.5)+1):\n    if s[i]: s[i*i::i]=False\np=np.arange(L,R-1)\nm=s[L:R-1]&s[L+2:R+1]\nprint(int(m.sum()), time.time()-t)\n",
+"runtime_s": 9.7
+},
+"TWIN-2901-014": {
+"answer": "290",
+"spec": "The program counts primes p where p+2 is also prime (twin prime pairs) and both numbers lie in the range: 1126246820 ≤ p and p+2 ≤ 1126346820. So p runs from 1126246820 to 1126346818. Each pair (p, p+2) is counted once, by its smaller member p. Method: a segmented Sieve of Eratosthenes over [L, R] using primes up to sqrt(R). I checked the result separately with sympy.isprime and got 290 again.",
+"code": "import numpy as np, time\nt=time.time()\nL,R=1126246820,1126346820\nlim=int(R**0.5)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(R-L+1,bool)\nfor p in ps:\n    st=max(p*p,(L+p-1)//p*p)\n    seg[st-L::p]=False\nc=int(np.sum(seg[:-2]&seg[2:]))\nprint(c, time.time()-t)\n",
+"runtime_s": 0.004
+},
+"TWIN-2901-015": {
+"answer": "298038",
+"spec": "Считаются простые q с 1326410751 ≤ q ≤ 1376410751 (обе границы включены), для которых q−2 или q+2 тоже простое. Второе число пары может лежать за пределами отрезка, поэтому просеивается расширенный интервал [L−2, R+2]. Каждое q считается один раз, даже если оно входит в две пары. Способ: сегментное решето Эратосфена на numpy с простыми до sqrt(R+2).",
+"code": "import numpy as np, time\nt=time.time()\nL,R=1326410751,1376410751\nlo,hi=L-2,R+2\nr=int(hi**0.5)+1\ns=np.ones(r+1,bool);s[:2]=False\nfor i in range(2,int(r**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(hi-lo+1,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,((lo+p-1)//p)*p)\n    seg[st-lo::p]=False\nq=seg[2:hi-lo-1]            # L..R\ntw=seg[0:hi-lo-3]|seg[4:hi-lo+1]  # q-2 or q+2 prime\nprint(int(np.count_nonzero(q&tw)), time.time()-t)\n",
+"runtime_s": 3.9
+},
+"TWIN-2901-016": {
+"answer": "3630",
+"spec": "Count primes q with 461924460394 <= q <= 461925460394 (inclusive) such that q-2 or q+2 is prime; the partner may lie outside the interval (so the sieve covers [L-2, R+2]). Each q is counted once, even if both q-2 and q+2 are prime. Method: segmented sieve of Eratosthenes over [L-2, R+2] using base primes up to sqrt(R+2). Sanity check: a Hardy-Littlewood estimate predicts about 3660, which is close to the result.",
+"code": "import numpy as np, time, math\nt=time.time()\nL,R=461924460394,461925460394\nlo,hi=L-2,R+2\nn=hi-lo+1\nlim=math.isqrt(hi)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,math.isqrt(lim)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(n,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(lo+p-1)//p*p)\n    seg[st-lo::p]=False\ncnt=0\nfor q in range(L,R+1):\n    if seg[q-lo] and (seg[q-2-lo] or seg[q+2-lo]): cnt+=1\nprint(cnt, time.time()-t)\n",
+"runtime_s": 0.17
+},
+"TWIN-2901-017": {
+"answer": "214",
+"spec": "Count primes p where p+2 is also prime, 49235944296 <= p and p+2 <= 49236044296. So p runs from 49235944296 to 49236044294. I used a segmented sieve over [L, H] with base primes up to sqrt(H), and counted the positions i where both L+i and L+i+2 are prime.",
+"code": "import numpy as np, time\nt=time.time()\nL,H=49235944296,49236044296\nr=int(H**0.5)+2\ns=np.ones(r+1,bool);s[:2]=False\nfor i in range(2,int(r**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(H-L+1,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(L+p-1)//p*p)\n    seg[st-L::p]=False\nc=int(np.sum(seg[:-2]&seg[2:]))\nprint(c, time.time()-t)\n",
+"runtime_s": 0.016
+},
+"TWIN-2901-018": {
+"answer": "95004",
+"spec": "Count the primes p where p+2 is also prime and both lie in [L, R], with L=291562120286 and R=291612120286. That means p runs over [L, R-2], both ends included. Method: a segmented sieve over [L, R] that uses the base primes up to sqrt(R). Then count the positions i where seg[i] and seg[i+2] are both prime. Each pair (p, p+2) is counted once, by its smaller member p.",
+"code": "import numpy as np, time\nt=time.time()\nL=291562120286; R=291612120286\nn=R-L+1\nseg=np.ones(n,dtype=bool)\nlim=int(R**0.5)+1\ns=np.ones(lim+1,dtype=bool); s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nfor p in np.nonzero(s)[0]:\n    p=int(p); st=max(p*p,(L+p-1)//p*p)\n    seg[st-L::p]=False\n# p in [L, R-2], p and p+2 prime\nc=int(np.count_nonzero(seg[:-2]&seg[2:]))\nprint(c, time.time()-t)\n",
+"runtime_s": 1.18
+},
+"TWIN-2901-019": {
+"answer": "177200",
+"spec": "Считаются простые q, для которых L=679139819382 ≤ q ≤ R=679189819382 (обе границы включены) и хотя бы одно из чисел q−2 или q+2 тоже простое. Второе число пары может лежать вне отрезка: q−2 при q около L или q+2 при q около R. Каждое q считается один раз, даже если оно входит в две пары. Решение: сегментированное решето Эратосфена на [L−2, R+2] с простыми делителями до sqrt(R+2). Проверка: для первых 2000 чисел сегмента количество простых совпало с sympy.isprime.",
+"code": "import numpy as np, time\nt=time.time()\nL,R=679139819382,679189819382\nlo,hi=L-2,R+2\nn=hi-lo+1\nlim=int(hi**0.5)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(n,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(lo+p-1)//p*p)\n    seg[st-lo::p]=False\nidx=np.nonzero(seg)[0]\ncnt=0\nfor i in idx:\n    q=lo+int(i)\n    if L<=q<=R and ((i>=2 and seg[i-2]) or (i+2<n and seg[i+2])): cnt+=1\nprint(cnt, time.time()-t)\nimport sympy\nprint(sympy.isprime(lo+int(idx[5])), sum(1 for x in range(lo,lo+2000) if sympy.isprime(x))==np.count_nonzero(seg[:2000]))\n",
+"runtime_s": 1.62
+},
+"TWIN-2901-020": {
+"answer": "4934",
+"spec": "Считаем простые q с L=11488275939 <= q <= R=11489275939 (оба конца включены), у которых q-2 или q+2 простое. Второе число пары может лежать вне отрезка, поэтому просеиваем расширенный отрезок [L-2, R+2]. Каждое q считается один раз, даже если оно входит в две пары. Способ: сегментное решето Эратосфена на numpy по простым до sqrt(R+2). Проверка по порядку величины: около 2*1.32*1e6/ln^2(1.15e10), то есть примерно 4926 чисел, результат с этим согласуется.",
+"code": "import numpy as np, time, math\nt=time.time()\nL,R=11488275939,11489275939\nlo,hi=L-2,R+2\nlim=math.isqrt(hi)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,math.isqrt(lim)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(hi-lo+1,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(lo+p-1)//p*p)\n    seg[st-lo::p]=False\nn=R-L+1\nm=seg[2:2+n]\ntw=m & (seg[0:n] | seg[4:4+n])\nprint(int(tw.sum()), time.time()-t)\n",
+"runtime_s": 0.014
+},
+"TWIN-2901-021": {
+"answer": "5334",
+"spec": "Count primes p where p+2 is also prime (twin-prime pairs), with 7392201 <= p and p+2 <= 8392201, so p runs over [7392201, 8392199]. Each pair is counted once, by its smaller member p. The method is a sieve of Eratosthenes up to 8392201.",
+"code": "import numpy as np, time\nt=time.time()\nL,H=7392201,8392201\ns=np.ones(H+1,bool);s[:2]=False\nfor i in range(2,int(H**0.5)+1):\n    if s[i]: s[i*i::i]=False\np=np.arange(L,H-1)\nm=s[p]&s[p+2]\nprint(int(m.sum()), time.time()-t)\n",
+"runtime_s": 0.13
+},
+"TWIN-2901-022": {
+"answer": "3786",
+"spec": "Count the primes q with 176874569640 <= q <= 176875569640, both ends included, where q-2 or q+2 is also prime. The other number in the pair may lie just outside the interval, so the sieve covers [L-2, R+2]. Each q is counted once, even if both q-2 and q+2 are prime. The program uses a segmented sieve of Eratosthenes, with base primes up to sqrt(R+2).",
+"code": "import numpy as np, time\nt=time.time()\nL,R=176874569640,176875569640\nlo,hi=L-2,R+2\nlim=int(hi**0.5)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,int(lim**0.5)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(hi-lo+1,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(lo+p-1)//p*p)\n    seg[st-lo::p]=False\ncnt=0\nfor q in range(L,R+1):\n    i=q-lo\n    if seg[i] and (seg[i-2] or seg[i+2]): cnt+=1\nprint(cnt, time.time()-t)\n",
+"runtime_s": 0.11
+},
+"TWIN-2901-023": {
+"answer": "199570",
+"spec": "Count primes q with 140395286728 <= q <= 140445286728 (inclusive) such that q-2 or q+2 is prime; the partner may lie outside the interval. Each such q is counted once, even if both q-2 and q+2 are prime. Method: segmented sieve over [L-2, R+2]. The interval contains 1947690 primes.",
+"code": "import numpy as np, time, math\nt=time.time()\nL,R=140395286728,140445286728\nlo,hi=L-2,R+2\nlim=math.isqrt(hi)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,math.isqrt(lim)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(hi-lo+1,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(lo+p-1)//p*p)\n    seg[st-lo::p]=False\ndef isp(n): return seg[n-lo]\nidx=np.nonzero(seg)[0]+lo\nidx=idx[(idx>=L)&(idx<=R)]\nc=0\nfor q in idx.tolist():\n    if isp(q-2) or isp(q+2): c+=1\nprint(c, len(idx), time.time()-t)\n",
+"runtime_s": 1.55
+},
+"TWIN-2901-024": {
+"answer": "44442",
+"spec": "Count the primes q with 37584877314 <= q <= 37594877314, both ends included, where q-2 or q+2 is also prime. The other number of the pair may fall outside the range, so the sieve covers [L-2, R+2]. Each q is counted once, even when both q-2 and q+2 are prime. Method: a segmented sieve of Eratosthenes using all primes up to sqrt(R+2).",
+"code": "import numpy as np, time, math\nt=time.time()\nL,R=37584877314,37594877314\nlo,hi=L-2,R+2\nn=hi-lo+1\nlim=math.isqrt(hi)+1\ns=np.ones(lim+1,bool);s[:2]=False\nfor i in range(2,math.isqrt(lim)+1):\n    if s[i]: s[i*i::i]=False\nps=np.nonzero(s)[0]\nseg=np.ones(n,bool)\nfor p in ps:\n    p=int(p); st=max(p*p,(lo+p-1)//p*p)\n    seg[st-lo::p]=False\n# lo>1 so no 0/1 issue\na=seg[2:n-2]  # q in [L,R]\ntw=seg[0:n-4]|seg[4:n]\nprint(int(np.count_nonzero(a&tw)), time.time()-t)\n",
+"runtime_s": 0.19
+},
+"COLLATZ-2901-000": {
+"answer": "26561880462561856",
+"spec": "Starting number is 5823192742397291. One step: if n is even, n becomes n/2; otherwise n becomes 3n+1. The sequence runs until 1 appears for the first time. The answer is the largest value in the sequence, counting the starting number too. The program uses exact integer arithmetic. Reaching 1 took 536 steps.",
+"code": "import time\nt=time.time()\nn=5823192742397291\nm=n;steps=0\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    if n>m: m=n\n    steps+=1\nprint(m,steps,time.time()-t)\n",
+"runtime_s": 0.0002
+},
+"COLLATZ-2901-001": {
+"answer": "378",
+"spec": "Start with n = 770497115095801. One step: if n is even, n becomes n/2; if n is odd, n becomes 3n+1. Count the steps until n first equals 1. The starting number is not counted as a step; the step that produces 1 is counted. The value is computed exactly with Python big integers.",
+"code": "import time\nt=time.time()\nn=770497115095801\ns=0\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    s+=1\nprint(s, time.time()-t)\n",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-002": {
+"answer": "123",
+"spec": "Start n=16748276074. One step: even n -> n/2; odd n -> (3n+1)/2, and that whole thing counts as a single step. The count is the number of steps until n first equals 1. If the start were already 1, the count would be 0.",
+"code": "import time\nt=time.time()\nn=16748276074;c=0\nwhile n!=1:\n    n = n//2 if n%2==0 else (3*n+1)//2\n    c+=1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-003": {
+"answer": "12076219953448",
+"spec": "Start value n0 = 1590284109095. One step (Collatz): if n is even, n becomes n/2; if n is odd, n becomes 3n+1. The steps run until the first time n equals 1. The answer is the largest value on that path, counting the start value itself and the final 1. Python integers are exact, so there is no overflow.",
+"code": "import time\nt=time.time()\nn=1590284109095; m=n\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    if n>m: m=n\nprint(m, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-004": {
+"answer": "228",
+"spec": "Start at n=2577928003. One step: if n is even, n becomes n/2; otherwise n becomes 3n+1. Count the steps until n first equals 1, with each application of the rule counting as one step and the starting value not counted. If the start were 1 the answer would be 0. Exact integer arithmetic is used.",
+"code": "import time\nt=time.time()\nn=2577928003;s=0\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    s+=1\nprint(s, time.time()-t)",
+"runtime_s": 0.0002
+},
+"COLLATZ-2901-005": {
+"answer": "304",
+"spec": "Start at n=147306416 and apply the Collatz step: if n is even, n becomes n/2; otherwise n becomes 3n+1. Count how many steps it takes until n equals 1 for the first time. The start value is not 1, so there is no zero-step edge case.",
+"code": "import time\nt=time.time()\nn=147306416;c=0\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    c+=1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-006": {
+"answer": "950255620",
+"spec": "Start at n=844671660. Each step: if n is even, n becomes n/2; if n is odd, n becomes 3n+1. The path runs from the start number up to the first time it reaches 1. The answer is the largest value on that path, and the start number itself counts as part of the path. The start number is even, so it is halved first. The largest value found is 950255620, which is bigger than the start number.",
+"code": "import time\nt=time.time()\nn=844671660; m=n\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    if n>m: m=n\nprint(m, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-007": {
+"answer": "210995080",
+"spec": "Start at n=46887795. Each step: if n is even, n becomes n/2; if n is odd, n becomes 3n+1. Keep stepping until n first equals 1. The answer is the largest value on that path, counting the start value 46887795 itself.",
+"code": "import time\nt=time.time()\nn=46887795; m=n\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    m=max(m,n)\nprint(m, time.time()-t)",
+"runtime_s": 3e-05
+},
+"COLLATZ-2901-008": {
+"answer": "183",
+"spec": "Start n=1234165137805. One step: if n is even, n -> n/2; if n is odd, n -> (3n+1)/2. The shortcut Collatz map counts as one step. Count the steps until n first equals 1. The start is not 1, so the count is at least 1.",
+"code": "import time\nt=time.time()\nn=1234165137805;c=0\nwhile n!=1:\n    n = n//2 if n%2==0 else (3*n+1)//2\n    c+=1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-009": {
+"answer": "112",
+"spec": "Start n=64630272351. Step rule: if n is even, n becomes n/2; if n is odd, n becomes 3n+1. The path goes from the start up to the first 1, and both ends are included. I count every odd number in the path, repeats included. That means the odd starting number counts, and the final 1 counts too.",
+"code": "import time\nt=time.time()\nn=64630272351\nc=0\nwhile True:\n    if n%2: c+=1\n    if n==1: break\n    n = n//2 if n%2==0 else 3*n+1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-010": {
+"answer": "19444081617078960",
+"spec": "Начинаем с n0 = 19444081617078960. Шаг: если n чётно, n -> n/2, иначе n -> 3n+1. Идём до первого появления 1. Ищем максимум по всем числам траектории, включая само n0 и конечную 1. Ни один член траектории не превысил начальное число, поэтому ответ равен n0.",
+"code": "import time\nt=time.time()\nn=19444081617078960\nm=n\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    if n>m: m=n\nprint(m, time.time()-t)\n",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-011": {
+"answer": "123",
+"spec": "Start is n=201839849. One step works like this: if n is even, n becomes n/2. If n is odd, n becomes (3n+1)/2, and that whole move counts as a single step. The answer is the number of steps until n equals 1 for the first time. The start number itself is step 0. If the start were already 1, the answer would be 0.",
+"code": "import time\nt=time.time()\nn=201839849;c=0\nwhile n!=1:\n    n = n//2 if n%2==0 else (3*n+1)//2\n    c+=1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-012": {
+"answer": "149",
+"spec": "Start value n0 = 18870161788980. One step is the shortcut Collatz map: if n is even, n becomes n/2. If n is odd, n becomes (3n+1)/2, and that counts as one step. Steps are applied until n equals 1 for the first time, and the answer is the number of steps. The start value is not 1, so at least one step is needed. The count stops when 1 is first reached, so the 1 -> 2 -> 1 cycle is never counted.",
+"code": "import time\nt=time.time()\nn=18870161788980\nc=0\nwhile n!=1:\n    n = n//2 if n%2==0 else (3*n+1)//2\n    c+=1\nprint(c, time.time()-t)\n",
+"runtime_s": 3e-05
+},
+"COLLATZ-2901-013": {
+"answer": "364",
+"spec": "Start n=2014199405577. One step: if n is even, n -> n/2; otherwise n -> 3n+1. Count the steps until n first equals 1. The start number is not 1, so the count begins at 0 and goes up by 1 for each rule application.",
+"code": "import time\nt=time.time()\nn=2014199405577\ns=0\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    s+=1\nprint(s, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-014": {
+"answer": "4909221084736768",
+"spec": "Start n0=3272814056491178. Step: even n -> n/2, odd n -> 3n+1. Iterate until the first time 1 appears. Answer is the maximum of all values on this path, counting n0 and the final 1. Uses exact integer arithmetic.",
+"code": "import time\nt=time.time()\nn=3272814056491178\nm=n\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    if n>m: m=n\nprint(m)\nprint(time.time()-t)\n",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-015": {
+"answer": "280",
+"spec": "Start: n0 = 28747710194241344. One step (one application of the rule) is n -> n/2 if n is even, and n -> (3n+1)/2 if n is odd. An odd step counts as a single application. The answer is the number of steps until n first equals 1. The start value is not 1, so the count is at least 1. Exact integer arithmetic is used.",
+"code": "import time\nt=time.time()\nn=28747710194241344\nc=0\nwhile n!=1:\n    n = n//2 if n%2==0 else (3*n+1)//2\n    c+=1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-016": {
+"answer": "163",
+"spec": "Start n=70194794502106592 (Collatz: even -> n/2, odd -> 3n+1). Path from start to the first 1, both ends included (475 steps, 476 numbers). Count the odd numbers in the path, repeats included. The final 1 counts as odd. The start number is even.",
+"code": "import time\nt=time.time()\nn=70194794502106592\nodd=0\nsteps=0\nwhile True:\n    if n%2==1: odd+=1\n    if n==1: break\n    n = n//2 if n%2==0 else 3*n+1\n    steps+=1\nprint(odd, steps, time.time()-t)\n",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-017": {
+"answer": "3423140397131092",
+"spec": "Start is n0 = 400696818319868. One step (Collatz): if n is even, n -> n/2; if n is odd, n -> 3n+1. I follow the path from n0 until 1 first appears and take the maximum over every value on it, counting n0 itself and the final 1. Integer arithmetic is exact (Python big ints). The answer is the largest value on that path.",
+"code": "import time\nt=time.time()\nn=400696818319868\nm=n\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    if n>m: m=n\nprint(m)\nprint(time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-018": {
+"answer": "47",
+"spec": "Start n=3984458683. Step: if n is even, n -> n/2; if n is odd, n -> 3n+1. The path runs from the start up to the first 1, and both ends are included. Count every odd number in the path, with repeats. The start number is odd, so it counts, and the final 1 counts too.",
+"code": "import time\nt=time.time()\nn=3984458683\nc=0\nwhile True:\n    if n%2: c+=1\n    if n==1: break\n    n = n//2 if n%2==0 else 3*n+1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-019": {
+"answer": "119",
+"spec": "Start n=29593243696555620. Step: if n is even, n -> n/2; if n is odd, n -> 3n+1. The path runs from the start number to the first 1, and both ends are included. The answer is the number of odd numbers in the path, counting repeats. The final 1 is odd and is counted. The start number is even, so it is not counted.",
+"code": "import time\nt=time.time()\nn=29593243696555620\nodd=0\nwhile True:\n    if n%2: odd+=1\n    if n==1: break\n    n = n//2 if n%2==0 else 3*n+1\nprint(odd, time.time()-t)\n",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-020": {
+"answer": "208",
+"spec": "Start at n = 150290867752. One step: if n is even, n becomes n/2; if n is odd, n becomes 3n+1. Count the steps until n first equals 1. The start number is not 1, so the count cannot be 0. I used exact integer arithmetic.",
+"code": "import time\nt=time.time()\nn=150290867752;c=0\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    c+=1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-021": {
+"answer": "139",
+"spec": "Start n=579274652894. Step: if n is even, n becomes n/2; if odd, n becomes 3n+1. The path runs from the start to the first 1, and both ends are included. Count the odd numbers on the path, repeats included. The final 1 is odd and is counted. The start number is even, so it is not counted.",
+"code": "import time\nt=time.time()\nn=579274652894\nc=0\nwhile True:\n    if n%2: c+=1\n    if n==1: break\n    n = n//2 if n%2==0 else 3*n+1\nprint(c, time.time()-t)",
+"runtime_s": 0.0001
+},
+"COLLATZ-2901-022": {
+"answer": "143",
+"spec": "Start at n=465264595274234944. Apply the Collatz rule (even n goes to n/2, odd n goes to 3n+1) until 1 appears for the first time. The path counts both ends: the starting number and the final 1. The answer is the number of odd values on the path, repeats included. The final 1 is odd, so it counts. The start is even. The path has 426 steps (427 numbers), and 143 of them are odd.",
+"code": "import time\nt=time.time()\nn=465264595274234944\nodd=0;steps=0\nwhile True:\n    if n%2: odd+=1\n    if n==1: break\n    n = n//2 if n%2==0 else 3*n+1\n    steps+=1\nprint(odd,steps,time.time()-t)\n",
+"runtime_s": 0.0002
+},
+"COLLATZ-2901-023": {
+"answer": "216",
+"spec": "Start n=4044413. One step: if n is even, n becomes n/2; if n is odd, n becomes 3n+1. Count how many steps it takes until n equals 1 for the first time (total stopping time). The starting number is not 1, so the count is at least 1.",
+"code": "import time\nt=time.time()\nn=4044413;c=0\nwhile n!=1:\n    n = n//2 if n%2==0 else 3*n+1\n    c+=1\nprint(c, time.time()-t)",
+"runtime_s": 3e-05
+},
+"COLLATZ-2901-024": {
+"answer": "86",
+"spec": "Start n=134988901876. Step: n even -> n/2, n odd -> 3n+1. The path runs from the start value up to the first 1, and both ends are included. Count the odd numbers in the path, counting repeats. The final 1 is odd and is counted. The start value is even, so it is not counted.",
+"code": "import time\nt=time.time()\nn=134988901876\nodd=0\nwhile True:\n    if n%2: odd+=1\n    if n==1: break\n    n = n//2 if n%2==0 else 3*n+1\nprint(odd, time.time()-t)",
+"runtime_s": 0.0001
+},
+"SUBK-2901-000": {
+"answer": "3530",
+"spec": "Count 4-element subsets {a<b<c<d} of {1..58} with a+b+c+d=98 and consecutive sorted elements differing by at least 2 (no two elements adjacent integers). Unordered subsets, distinct elements. Brute force over all C(58,4) combinations.",
+"code": "import itertools,time\nt=time.time()\nc=0\nfor s in itertools.combinations(range(1,59),4):\n    if sum(s)==98 and all(s[i+1]-s[i]>1 for i in range(3)): c+=1\nprint(c, time.time()-t)",
+"runtime_s": 0.08
+},
+"SUBK-2901-001": {
+"answer": "23425",
+"spec": "Count the unordered sets {a,b,c,d} of distinct integers with 1<=a<b<c<d<=153 and a+b+c+d=155. The order of the elements does not matter and they must all be different. I solved it with a 0/1 knapsack DP over the number of elements and their sum. A separate brute-force count over a<b<c with d determined gave the same result.",
+"code": "import time\nt=time.time()\nN,S,K=153,155,4\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        for s in range(S,x-1,-1):\n            dp[k][s]+=dp[k-1][s-x]\n# brute check\nc=0\nfor a in range(1,N+1):\n    for b in range(a+1,N+1):\n        if a+b>S: break\n        for cc in range(b+1,N+1):\n            d=S-a-b-cc\n            if d<=cc: break\n            if d<=N: c+=1\nprint(dp[K][S],c,time.time()-t)\n",
+"runtime_s": 0.008
+},
+"SUBK-2901-002": {
+"answer": "1048755",
+"spec": "Count the 4-element subsets (unordered, all elements distinct) of {1..136} whose element sum is 9 mod 13. Method: DP over the elements, with state (number chosen k, sum mod 13). Checked against brute force for N=40 (both gave 7030).",
+"code": "import time\nt=time.time()\nN,K,M,R=136,4,13,9\n# dp[k][r]\ndp=[[0]*M for _ in range(K+1)]; dp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        new=[dp[k][r]+dp[k-1][(r-x)%M] for r in range(M)]\n        dp[k]=new\nprint(dp[K][R], time.time()-t)\n",
+"runtime_s": 0.001
+},
+"SUBK-2901-003": {
+"answer": "57131877",
+"spec": "Count unordered 6-element subsets {a1<...<a6} of {1..160} where the elements sum to exactly 433 and a_{i+1}-a_i >= 2, meaning no two elements are consecutive integers. The main method is a DP over x=1..160 with states (count chosen, sum, whether x-1 was chosen); an element x may be added only when x-1 was not chosen. As a cross-check, the shift b_i=a_i-(i-1) gives a bijection to 6-subsets of {1..155} with sum 433-15=418, and both methods give the same number.",
+"code": "import time\nt=time.time()\nN,K,S=160,6,433\nq=[[0]*(S+1) for _ in range(K+1)]; p=[[0]*(S+1) for _ in range(K+1)]\nq[0][0]=1\nfor x in range(1,N+1):\n    np_=[[0]*(S+1) for _ in range(K+1)]; nq=[[0]*(S+1) for _ in range(K+1)]\n    for k in range(K+1):\n        for s in range(S+1):\n            v=p[k][s]+q[k][s]\n            nq[k][s]=v\n            if k<K and s+x<=S and q[k][s]: np_[k+1][s+x]+=q[k][s]\n    p,q=np_,nq\nans=p[K][S]+q[K][S]\n# check via transform: 6-subsets of {1..155} sum 418\nd=[[0]*(419) for _ in range(7)]; d[0][0]=1\nfor x in range(1,156):\n    for k in range(6,0,-1):\n        for s in range(418,x-1,-1): d[k][s]+=d[k-1][s-x]\nprint(ans,d[6][418],time.time()-t)\n",
+"runtime_s": 0.22
+},
+"SUBK-2901-004": {
+"answer": "123025",
+"spec": "Count the unordered 4-element subsets {a,b,c,d} of {1,...,77} with distinct elements where a+b+c+d ≡ 0 (mod 11). A DP over the elements tracks subset size and sum mod 11. A brute-force check over all C(77,4) combinations gives the same result.",
+"code": "import time\nt=time.time()\n# dp[k][r] = number of k-subsets with sum ≡ r mod 11\ndp=[[0]*11 for _ in range(5)]\ndp[0][0]=1\nfor x in range(1,78):\n    for k in range(4,0,-1):\n        for r in range(11):\n            dp[k][(r+x)%11]+=dp[k-1][r]\nprint(dp[4][0])\nfrom itertools import combinations\nprint(sum(1 for c in combinations(range(1,78),4) if sum(c)%11==0))\nprint(time.time()-t)\n",
+"runtime_s": 0.12
+},
+"SUBK-2901-005": {
+"answer": "0",
+"spec": "The task asks for the number of 5-element subsets of {1..87} whose elements are all odd, distinct, and sum to exactly 246. Order does not matter. The odd numbers available are 1,3,...,87 (44 of them). The program counts these with a 0/1 knapsack DP over the number of elements and the sum. It also follows from parity: five odd numbers always add up to an odd number, and 246 is even, so the answer is 0.",
+"code": "import time\nt=time.time()\nodds=list(range(1,88,2))\ndp=[[0]*247 for _ in range(6)]\ndp[0][0]=1\nfor x in odds:\n    for k in range(5,0,-1):\n        for s in range(246,x-1,-1):\n            dp[k][s]+=dp[k-1][s-x]\nprint(dp[5][246], time.time()-t)\n",
+"runtime_s": 0.004
+},
+"SUBK-2901-006": {
+"answer": "919924",
+"spec": "Считаем неупорядоченные 6-элементные подмножества различных нечётных чисел из {1,3,...,135} (68 чисел) с суммой ровно 410. Использовано ДП по количеству и сумме элементов, в стиле рюкзака 0/1. Сумма шести нечётных чисел чётна, поэтому 410 достижима.",
+"code": "import time\nt=time.time()\nodds=range(1,136,2)\nK,S=6,410\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in odds:\n    for k in range(K,0,-1):\n        a=dp[k];b=dp[k-1]\n        for s in range(S,x-1,-1):\n            a[s]+=b[s-x]\nprint(dp[K][S]); print(time.time()-t)\n",
+"runtime_s": 0.014
+},
+"SUBK-2901-007": {
+"answer": "33544145",
+"spec": "Count the 6-element subsets of {1..146} whose elements sum to exactly 497, where no two elements are consecutive integers (every pair differs by at least 2). Order does not matter. Method: a dynamic program over the numbers 1..146. The state tracks how many elements have been taken, the running sum, and whether the previous number was taken. As a cross-check, the map b_i = a_i - (i-1) turns each valid set into an ordinary 6-subset of {1..141} with sum 497 - 15 = 482. Both methods give 33544145.",
+"code": "import time\nt=time.time()\nN,K,S=146,6,497\nA=[[0]*(S+1) for _ in range(K+1)]  # prev not taken\nB=[[0]*(S+1) for _ in range(K+1)]  # prev taken\nA[0][0]=1\nfor x in range(1,N+1):\n    nA=[[A[k][s]+B[k][s] for s in range(S+1)] for k in range(K+1)]\n    nB=[[0]*(S+1) for _ in range(K+1)]\n    for k in range(1,K+1):\n        for s in range(x,S+1):\n            nB[k][s]=A[k-1][s-x]\n    A,B=nA,nB\nans=A[K][S]+B[K][S]\n# check via bijection: 6-subsets of 1..141 with sum 482\nM,T=N-K+1,S-K*(K-1)//2\nd=[[0]*(T+1) for _ in range(K+1)];d[0][0]=1\nfor x in range(1,M+1):\n    for k in range(K,0,-1):\n        for s in range(T,x-1,-1):\n            d[k][s]+=d[k-1][s-x]\nprint(ans,d[K][T],time.time()-t)\n",
+"runtime_s": 0.1
+},
+"SUBK-2901-008": {
+"answer": "4123",
+"spec": "Count unordered sets {a,b,c,d} of distinct integers with 1<=a<b<c<d<=57 and a+b+c+d=98. Order does not matter and repetition is not allowed. Solved with a subset-sum DP where dp[k][s] is the number of k-element subsets with sum s, adding each x from 1 to 57 once. The result was checked against a brute-force count over all combinations.",
+"code": "import time\nt=time.time()\nN,K,S=57,4,98\n# dp[k][s] = number of k-subsets with sum s\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        for s in range(S,x-1,-1):\n            dp[k][s]+=dp[k-1][s-x]\nfrom itertools import combinations\nbf=sum(1 for c in combinations(range(1,N+1),K) if sum(c)==S)\nassert bf==dp[K][S]\nprint(dp[K][S], time.time()-t)\n",
+"runtime_s": 0.03
+},
+"SUBK-2901-009": {
+"answer": "4231",
+"spec": "Count the unordered 4-element subsets {a,b,c,d} with distinct elements from {1,...,109}, where every element is odd (so each comes from 1,3,...,109, which is 55 numbers) and a+b+c+d = 214 exactly. The sum of four odd numbers is even, so a total of 214 is possible. I counted with a DP over the number of elements chosen and their running sum, and cross-checked it with a full brute force over itertools.combinations. Both gave 4231.",
+"code": "import time\nt=time.time()\nodds=list(range(1,110,2))\ndp=[[0]*215 for _ in range(5)]\ndp[0][0]=1\nfor x in odds:\n    for k in range(4,0,-1):\n        for s in range(214,x-1,-1):\n            dp[k][s]+=dp[k-1][s-x]\nfrom itertools import combinations\nbf=sum(1 for c in combinations(odds,4) if sum(c)==214)\nprint(dp[4][214],bf,time.time()-t)\n",
+"runtime_s": 0.03
+},
+"SUBK-2901-010": {
+"answer": "162014",
+"spec": "Считаем неупорядоченные 5-элементные подмножества {a1<a2<a3<a4<a5} из {1..88} с суммой ровно 177, где a_{i+1}-a_i>=2 для всех i (никакие два элемента не отличаются на 1). Порядок не важен, элементы различны. Два независимых метода: рекурсивный ДП по (текущее число, сколько ещё взять, остаток суммы) с шагом +2 после выбора и перебор всех 4-подмножеств с однозначно определённым пятым элементом. Оба дают 162014.",
+"code": "import time\nt=time.time()\nN,K,S=88,5,177\nfrom functools import lru_cache\nimport sys\nsys.setrecursionlimit(10000)\n@lru_cache(None)\ndef f(i,k,s):\n    # choose k elements from {i..N}, nonadjacent, sum s\n    if k==0: return 1 if s==0 else 0\n    if i>N or s<=0: return 0\n    return f(i+1,k,s)+f(i+2,k-1,s-i)\na=f(1,K,S)\n# brute check\nfrom itertools import combinations\nb=0\nfor c in combinations(range(1,89),4):\n    if sum(c)>=177: continue\n    e=177-sum(c)\n    if e<=c[-1] or e>88: continue\n    cc=c+(e,)\n    if all(cc[j+1]-cc[j]>1 for j in range(4)): b+=1\nprint(a,b,time.time()-t)\n",
+"runtime_s": 0.61
+},
+"SUBK-2901-011": {
+"answer": "7787",
+"spec": "Нужно посчитать неупорядоченные 4-элементные подмножества {a<b<c<d} множества {1..97}, в которых все элементы различны и a+b+c+d=109. Ответ получен двумя способами: динамикой по числу выбранных элементов и их сумме (каждый элемент используется не больше одного раза) и полным перебором через itertools.combinations. Оба дали 7787.",
+"code": "import time\nt=time.time()\nN,K,S=97,4,109\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        for s in range(S,x-1,-1):\n            dp[k][s]+=dp[k-1][s-x]\nfrom itertools import combinations\nb=sum(1 for c in combinations(range(1,98),4) if sum(c)==109)\nprint(dp[K][S],b,time.time()-t)\n",
+"runtime_s": 0.27
+},
+"SUBK-2901-012": {
+"answer": "6043883",
+"spec": "Считаем неупорядоченные подмножества из ровно 6 различных чисел из {1..98}, сумма которых равна ровно 303. Метод: динамика по количеству выбранных элементов и сумме, как в задаче о рюкзаке 0/1: dp[k][s] — число k-элементных подмножеств с суммой s, каждое x добавляется не более одного раза (цикл по k и s идёт в обратном порядке). В ответ идёт dp[6][303].",
+"code": "import time\nt=time.time()\nN,K,S=98,6,303\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        a=dp[k];b=dp[k-1]\n        for s in range(S,x-1,-1):\n            a[s]+=b[s-x]\nprint(dp[K][S]); print(time.time()-t)\n",
+"runtime_s": 0.02
+},
+"SUBK-2901-013": {
+"answer": "2684",
+"spec": "Нужно посчитать 4-элементные подмножества множества {1..108}, у которых все элементы нечётные (всего 54 нечётных числа: 1, 3, …, 107), а сумма ровно 158. Подмножества неупорядоченные, элементы в них различны. Сумма четырёх нечётных чисел всегда чётна, поэтому 158 как сумма возможна. Программа перебирает все сочетания по 4 из нечётных чисел.",
+"code": "import time\nfrom itertools import combinations\nt=time.time()\nodds=[x for x in range(1,109) if x%2]\nc=sum(1 for s in combinations(odds,4) if sum(s)==158)\nprint(c, time.time()-t)",
+"runtime_s": 0.018
+},
+"SUBK-2901-014": {
+"answer": "3266197",
+"spec": "Нужно посчитать неупорядоченные 6-элементные подмножества {1..61} с различными элементами, у которых сумма ≡ 11 (mod 17). Способ: ДП по элементам x = 1..61, состояние dp[k][r] — число подмножеств размера k с суммой ≡ r (mod 17). Ответ — dp[6][11]. Проверка на правдоподобие: C(61,6)/17 ≈ 3266198,4, результат близок к этому значению.",
+"code": "import time\nt=time.time()\nN,K,M,R=61,6,17,11\ndp=[[0]*M for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        for r in range(M):\n            dp[k][(r+x)%M]+=dp[k-1][r]\nprint(dp[K][R])\nprint(time.time()-t)",
+"runtime_s": 0.0013
+},
+"SUBK-2901-015": {
+"answer": "4896546",
+"spec": "Count the unordered subsets of {1..94} that have exactly 6 distinct elements summing to exactly 284. Order does not matter and no element may repeat. The count uses a 0/1 knapsack DP with state (number of elements taken, sum), processing each x from 1 to 94 once.",
+"code": "import time\nt=time.time()\nN,K,S=94,6,284\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        a=dp[k];b=dp[k-1]\n        for s in range(S,x-1,-1):\n            a[s]+=b[s-x]\nprint(dp[K][S])\nprint(time.time()-t)\n",
+"runtime_s": 0.011
+},
+"SUBK-2901-016": {
+"answer": "36706448",
+"spec": "Count the 6-element subsets {a1<...<a6} of {1,...,147} whose elements add up to exactly 399 and where a_{i+1}-a_i >= 2 for every i, so no two elements are consecutive integers. Order does not matter (these are subsets) and all elements are distinct. Method 1: a DP over x = 1..147 that tracks the number of elements taken, the running sum, and whether x-1 was taken. Method 2 (check): the substitution b_i = a_i-(i-1) turns the problem into plain 6-subsets of {1..142} with sum 399-15=384, counted with a subset DP. Both methods give 36706448.",
+"code": "import time\nt=time.time()\nN,K,S=147,6,399\nA=[[0]*(S+1) for _ in range(K+1)]  # previous number not taken\nB=[[0]*(S+1) for _ in range(K+1)]  # previous number taken\nA[0][0]=1\nfor x in range(1,N+1):\n    nA=[[A[k][s]+B[k][s] for s in range(S+1)] for k in range(K+1)]\n    nB=[[0]*(S+1) for _ in range(K+1)]\n    for k in range(1,K+1):\n        for s in range(x,S+1):\n            nB[k][s]=A[k-1][s-x]\n    A,B=nA,nB\nr1=A[K][S]+B[K][S]\n# check via transform: 6-subsets of {1..142} sum 384\nM,T=N-(K-1),S-K*(K-1)//2\nd=[[0]*(T+1) for _ in range(K+1)];d[0][0]=1\nfor x in range(1,M+1):\n    for k in range(K,0,-1):\n        for s in range(T,x-1,-1):\n            d[k][s]+=d[k-1][s-x]\nprint(r1,d[K][T],time.time()-t)\n",
+"runtime_s": 0.1
+},
+"SUBK-2901-017": {
+"answer": "307630",
+"spec": "Подсчитываем неупорядоченные подмножества из 6 различных элементов множества нечётных чисел {1,3,...,115} (всего 58 чисел), сумма которых ровно 288. Используется DP по элементам: dp[k][s] = число способов выбрать k различных элементов с суммой s. Проверка чётности: сумма шести нечётных чисел чётна, так что 288 достижимо.",
+"code": "import time\nt=time.time()\nodds=list(range(1,116,2))\nK,S=6,288\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in odds:\n    for k in range(K,0,-1):\n        a=dp[k];b=dp[k-1]\n        for s in range(S,x-1,-1):\n            a[s]+=b[s-x]\nprint(dp[K][S])\nprint(time.time()-t)\n",
+"runtime_s": 0.0065
+},
+"SUBK-2901-018": {
+"answer": "38300",
+"spec": "Count unordered 4-element subsets {a<b<c<d} of the set {1..117}. The elements are distinct and order doesn't matter. The count is of subsets whose elements add up to exactly 203. I computed it with a 0/1 knapsack DP over (number of elements, sum). To check the DP, I also ran a brute-force loop over a<b<c and set d=203-a-b-c, with the conditions c<d<=117. Both methods gave 38300.",
+"code": "import time\nt=time.time()\nN,K,S=117,4,203\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        for s in range(S,x-1,-1):\n            dp[k][s]+=dp[k-1][s-x]\n# brute check\nc=0\nfor a in range(1,N+1):\n    for b in range(a+1,N+1):\n        for cc in range(b+1,N+1):\n            d=S-a-b-cc\n            if d>cc and d<=N: c+=1\nprint(dp[K][S],c,time.time()-t)\n",
+"runtime_s": 0.06
+},
+"SUBK-2901-019": {
+"answer": "83015284",
+"spec": "Count the 6-element subsets of {1..89} (unordered, all elements distinct) whose element sum is ≡ 2 (mod 7). I used a DP over the elements, where the state is (number of elements chosen, sum mod 7). As a check, the counts over all residues add up to C(89,6) = 581106988.",
+"code": "import time\nt=time.time()\nN,K,M,R=89,6,7,2\ndp=[[0]*M for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    new=[row[:] for row in dp]\n    for k in range(1,K+1):\n        for r in range(M):\n            new[k][(r+x)%M]+=dp[k-1][r]\n    dp=new\nprint(dp[K][R])\nfrom math import comb\nprint(comb(89,6), sum(dp[K]))\nprint(time.time()-t)",
+"runtime_s": 0.002
+},
+"SUBK-2901-020": {
+"answer": "67683",
+"spec": "Count the unordered 4-element subsets {a,b,c,d} of {1,...,74} with distinct elements where (a+b+c+d) mod 17 = 2. I used a DP over elements that tracks (subset size, sum mod 17), and checked it with a brute-force pass over all C(74,4) combinations. Both gave 67683.",
+"code": "import time\nt=time.time()\ndp=[[0]*17 for _ in range(5)]\ndp[0][0]=1\nfor x in range(1,75):\n    for k in range(4,0,-1):\n        for r in range(17):\n            dp[k][(r+x)%17]+=dp[k-1][r]\nfrom itertools import combinations\nbf=sum(1 for c in combinations(range(1,75),4) if sum(c)%17==2)\nprint(dp[4][2],bf,time.time()-t)\n",
+"runtime_s": 0.1
+},
+"SUBK-2901-021": {
+"answer": "0",
+"spec": "Считаем 6-элементные подмножества (порядок не важен, элементы различны) множества {1..149}, у которых все элементы нечётны (то есть берутся из 1,3,...,149, всего 75 чисел), а сумма ровно 341. Сумма шести нечётных чисел чётна, а 341 нечётно, поэтому ответ 0. Это подтверждает DP-подсчёт в стиле рюкзака 0/1 по числу выбранных элементов и их сумме.",
+"code": "import time\nt=time.time()\nodds=[x for x in range(1,150) if x%2]\nK,S=6,341\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in odds:\n    for k in range(K,0,-1):\n        for s in range(S,x-1,-1):\n            dp[k][s]+=dp[k-1][s-x]\nprint(dp[K][S], time.time()-t)\n",
+"runtime_s": 0.013
+},
+"SUBK-2901-022": {
+"answer": "2520104",
+"spec": "Считаем неупорядоченные подмножества {a1<a2<a3<a4<a5} из {1..152}, где все элементы различны и a1+...+a5=390. Решение: DP по элементам x=1..152, dp[k][s] — сколько k-элементных подмножеств из уже просмотренных чисел дают сумму s. Каждое x берётся не больше одного раза, поэтому k и s обходятся по убыванию. Ответ — dp[5][390].",
+"code": "import time\nt=time.time()\nN,K,S=152,5,390\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        a=dp[k];b=dp[k-1]\n        for s in range(S,x-1,-1):\n            a[s]+=b[s-x]\nprint(dp[K][S])\nprint(time.time()-t)\n",
+"runtime_s": 0.035
+},
+"SUBK-2901-023": {
+"answer": "273972",
+"spec": "Count the unordered subsets of 5 distinct elements from {1..106} whose elements sum to exactly 181. Order does not matter and no element may repeat. Every element is at most 106, which is below 181, so the upper bound of the set is a real limit here. The program uses a 0/1 knapsack DP, dp[k][s], counting subsets of size k with sum s.",
+"code": "import time\nt=time.time()\nN,K,S=106,5,181\ndp=[[0]*(S+1) for _ in range(K+1)]\ndp[0][0]=1\nfor x in range(1,N+1):\n    for k in range(K,0,-1):\n        for s in range(S,x-1,-1):\n            dp[k][s]+=dp[k-1][s-x]\nprint(dp[K][S])\nprint(time.time()-t)\n",
+"runtime_s": 0.01
+},
+"SUBK-2901-024": {
+"answer": "1860601",
+"spec": "Count 5-element subsets {a1<...<a5} of {1..145} with a1+...+a5=360 and a_{i+1}-a_i>=2 for all i, meaning no two elements are consecutive integers. Order does not matter and all elements are distinct. Method 1 is a DP over x=1..145 with state (count, sum, whether x-1 was taken). Method 2 is a cross-check with the bijection b_i=a_i-(i-1). That turns the problem into counting 5-subsets of {1..141} with sum 360-10=350. Both methods give 1860601.",
+"code": "import time\nt=time.time()\nN,K,S=145,5,360\nA=[[0]*(S+1) for _ in range(K+1)]  # last not taken\nB=[[0]*(S+1) for _ in range(K+1)]  # last taken\nA[0][0]=1\nfor x in range(1,N+1):\n    nA=[[A[k][s]+B[k][s] for s in range(S+1)] for k in range(K+1)]\n    nB=[[0]*(S+1) for _ in range(K+1)]\n    for k in range(1,K+1):\n        for s in range(x,S+1):\n            nB[k][s]=A[k-1][s-x]\n    A,B=nA,nB\nr=A[K][S]+B[K][S]\n# check via transform: b_i=a_i-(i-1), distinct 5-subsets of {1..141} sum 350\nD=[[0]*(351) for _ in range(6)];D[0][0]=1\nfor x in range(1,142):\n    for k in range(5,0,-1):\n        for s in range(350,x-1,-1):\n            D[k][s]+=D[k-1][s-x]\nprint(r,D[5][350],time.time()-t)\n",
+"runtime_s": 0.08
+},
+"MODSQ-2901-000": {
+"answer": "127064892116",
+"spec": "x0=103989241762, m=264463181371, x_{i+1}=x_i^2 mod m, so x_n = x0^(2^n) mod m with n=1718496863231. m=19*109*2473*51637 (square-free). For each prime p: if p divides x0, the residue is 0; otherwise it is x0^(2^n mod (p-1)) mod p (Fermat). The residues are combined with the CRT. Checked against direct iteration for n=50.",
+"code": "import time; t=time.time()\nfrom sympy import factorint\nfrom sympy.ntheory.modular import crt\nx0=103989241762; m=264463181371; n=1718496863231\nf=factorint(m); mods=[];res=[]\nfor p,k in f.items():\n    q=p**k\n    if x0%p==0: r=0  # 2^n >= k\n    else:\n        phi=q//p*(p-1)\n        r=pow(x0,pow(2,n,phi),q)\n    mods.append(q);res.append(r)\nans=int(crt(mods,res)[0])\nx=x0\nfor i in range(50): x=x*x%m\ndef f2(N):\n    rr=[]\n    for p,k in f.items():\n        q=p**k\n        rr.append(0 if x0%p==0 else pow(x0,pow(2,N,q//p*(p-1)),q))\n    return int(crt(mods,rr)[0])\nassert f2(50)==x\nprint(f,ans,time.time()-t)\n",
+"runtime_s": 0.26
+},
+"MODSQ-2901-001": {
+"answer": "277341060406",
+"spec": "x0=179656373509, M=323596407365, x_{i+1}=x_i^2 mod M, so x_n = x0^(2^n) mod M, n=677189301073795968. M=5*7*11*840510149 (squarefree). Exponent reduction via the Carmichael function: for E>=T (T=64 >= max prime exponent), x^E ≡ x^(T + (E-T) mod λ(M)) (mod M), which holds even when gcd(x,M)>1. E=2^n is computed mod λ(M) with pow. Checked against direct iteration for i<200.",
+"code": "import time\nfrom sympy import factorint\nfrom sympy.ntheory import reduced_totient\nt0=time.time()\nx0=179656373509; M=323596407365; n=677189301073795968\nL=int(reduced_totient(M)); T=64\ne=T+(pow(2,n,L)-T)%L\nans=pow(x0,e,M)\nx=x0\nfor i in range(1,200):\n    x=x*x%M\n    if (1<<i)>=T:\n        assert pow(x0,T+(pow(2,i,L)-T)%L,M)==x\nprint(factorint(M),ans,time.time()-t0)\n",
+"runtime_s": 0.0013
+},
+"MODSQ-2901-002": {
+"answer": "7033438",
+"spec": "x0=5540278, x_{i+1}=(x_i^2+4073271) mod 10769753. Need x_N for N=709540412448 (0-based index, x0 is index 0). The sequence is eventually periodic, so I store every value until the first repeat. That gives the tail length mu=2594 and the cycle length lambda=1915. Since N>=mu, x_N = x_{mu+((N-mu) mod lambda)}.",
+"code": "import time\nt=time.time()\nx0=5540278; C=4073271; M=10769753; N=709540412448\nseen={}; seq=[]; x=x0; i=0\nwhile x not in seen:\n    seen[x]=i; seq.append(x); x=(x*x+C)%M; i+=1\nmu=seen[x]; lam=i-mu\nans = seq[N] if N<len(seq) else seq[mu+(N-mu)%lam]\nprint(ans, mu, lam, time.time()-t)\n",
+"runtime_s": 0.0013
+},
+"MODSQ-2901-003": {
+"answer": "5471182",
+"spec": "x0=5344309, x_{i+1}=(x_i^2+9713070) mod 13627593. Нужно x_N при N=272961678737 (x0 имеет индекс 0). Последовательность со временем зацикливается: ищем цикл, запоминая индекс первого появления каждого значения. Предпериод mu=77, длина цикла lam=420. При N>=mu ответ равен x_{mu+(N-mu) mod lam}.",
+"code": "import time\nt=time.time()\nx0,c,m,N=5344309,9713070,13627593,272961678737\nseen={};seq=[];x=x0;i=0\nwhile x not in seen:\n    seen[x]=i;seq.append(x);x=(x*x+c)%m;i+=1\nmu=seen[x];lam=i-mu\nans=seq[N] if N<len(seq) else seq[mu+(N-mu)%lam]\nprint(ans,mu,lam,time.time()-t)\n",
+"runtime_s": 0.0002
+},
+"MODSQ-2901-004": {
+"answer": "371688751928",
+"spec": "x_0 = 61445142196, x_{i+1} = x_i^2 mod m, m = 913887975266 = 2·7·131·2633·189253 (squarefree). The task asks for x_n with n = 2504518547659582. By induction x_n = x0^(2^n) mod m. The exponent 2^n is huge, so it is reduced with the Carmichael function λ(m) = 1156329720. For any a and E ≥ (the largest prime exponent in m), a^E ≡ a^(λ + (E mod λ)) (mod m). Here m is squarefree, so the condition holds for every E ≥ 1, and the program uses the rule only for n ≥ 64. So x_n = pow(x0, (2^n mod λ) + λ, m). This also works when gcd(x0, m) > 1. The formula was checked by direct squaring for i = 64..199.",
+"code": "import time; t=time.time()\nfrom sympy import factorint\nfrom sympy.ntheory import reduced_totient\nx0=61445142196; m=913887975266; n=2504518547659582\nL=int(reduced_totient(m))\ndef f(n):\n    if n<64: return pow(x0,2**n,m)\n    return pow(x0,pow(2,n,L)+L,m)\n# check vs brute\nx=x0\nfor i in range(200):\n    assert x==pow(x0,pow(2,i,L)+L,m) or i<64\n    if i>=64: assert f(i)==x\n    x=x*x%m\nprint(factorint(m),L)\nprint(f(n)); print(time.time()-t)\n",
+"runtime_s": 0.23
+},
+"MODSQ-2901-005": {
+"answer": "19485014925",
+"spec": "x0=8703146307; step x_{i+1}=(x_i^2+2152760751) mod 30159378753; need x_N for N=36919867141 (x0 has index 0). The map is deterministic on a finite set, so the sequence becomes periodic. I recorded the index at which each value first appeared, which gave a pre-period of mu=157 and a cycle length of lambda=8772. Since N>=mu, x_N = x_{mu + (N-mu) mod lambda}.",
+"code": "import time\nt=time.time()\nx0=8703146307; c=2152760751; M=30159378753; N=36919867141\nf=lambda x:(x*x+c)%M\nseen={}; seq=[]; x=x0; i=0\nwhile x not in seen:\n    seen[x]=i; seq.append(x); x=f(x); i+=1\nmu=seen[x]; lam=i-mu\nans=seq[N] if N<len(seq) else seq[mu+(N-mu)%lam]\nprint(mu,lam,ans,time.time()-t)\n",
+"runtime_s": 0.004
+},
+"MODSQ-2901-006": {
+"answer": "1125611600",
+"spec": "x0=164032372, x_{i+1}=(x_i^2+753856751) mod 1687029792. Need x_N at N=15120542343952 (0-based, x0 is index 0). The sequence is deterministic on a finite set, so it becomes periodic. The program stores values until the first repeat: the pre-period is mu=97 and the cycle length is lambda=390. Then x_N = x_{mu+(N-mu) mod lambda}.",
+"code": "import time\nt=time.time()\nx0=164032372; c=753856751; M=1687029792; N=15120542343952\nf=lambda x:(x*x+c)%M\nseen={}; seq=[]; x=x0; i=0\nwhile x not in seen:\n    seen[x]=i; seq.append(x); x=f(x); i+=1\nmu=seen[x]; lam=i-mu\nans = seq[N] if N<len(seq) else seq[mu+(N-mu)%lam]\nprint(mu,lam,ans,time.time()-t)\n",
+"runtime_s": 0.0002
+},
+"MODSQ-2901-007": {
+"answer": "312238032856",
+"spec": "x_0 = 45882917406, and each step is x_{i+1} = x_i^2 mod 943069250980. That gives x_n = x0^(2^n) mod m. We need n = 4089964186015. The modulus factors as m = 2^2 * 5 * 5503 * 8568683. For each prime power q = p^k: if p does not divide x0, the exponent 2^n is reduced mod phi(q), which is exact because x0 is coprime to q. If p divides x0 (here p = 2), then x0^(2^n) ≡ 0 mod q once n is large enough, and it is. The residues are combined with CRT. I checked the method against direct iteration for n = 0..199.",
+"code": "import time\nfrom sympy import factorint\nt=time.time()\nx0=45882917406; m=943069250980; N=4089964186015\ndef solve(n):\n    res=0; mod=1\n    for p,k in factorint(m).items():\n        q=p**k\n        if x0%p==0:\n            e=pow(2,n) if n<64 else None\n            r = pow(x0,e,q) if e is not None else 0\n        else:\n            ph=q//p*(p-1)\n            r=pow(x0,pow(2,n,ph),q)\n        res=res+mod*((r-res)*pow(mod,-1,q)%q); mod*=q\n    return res%m\nx=x0\nfor i in range(200):\n    assert solve(i)==x,(i); x=x*x%m\nprint(factorint(m), solve(N), time.time()-t)",
+"runtime_s": 0.012
+},
+"MODSQ-2901-008": {
+"answer": "20914796",
+"spec": "x0=6761176, x_{i+1}=(x_i^2+24223907) mod 30647640; find x_N with N=2195285924 (x0 is index 0). The sequence is eventually periodic: tail length mu=10, cycle length lambda=96. The answer is seq[mu+(N-mu) mod lambda].",
+"code": "import time\nt=time.time()\nx0=6761176;A=24223907;M=30647640;N=2195285924\nseen={};seq=[];x=x0;i=0\nwhile x not in seen:\n    if i==N: break\n    seen[x]=i;seq.append(x);x=(x*x+A)%M;i+=1\nif i==N: ans=x\nelse:\n    mu=seen[x];lam=i-mu\n    ans=seq[mu+(N-mu)%lam]\nprint(ans, mu, lam, time.time()-t)\n",
+"runtime_s": 0.0001
+},
+"MODSQ-2901-009": {
+"answer": "2280002",
+"spec": "x0=20501189, x_{i+1}=(x_i^2+16888473) mod 31098928; find x_N for N=116028462462833 (0-indexed, x0 is index 0). The sequence is eventually periodic. Iterate, storing the first index of each value, until a value repeats: pre-period mu=56, cycle length lambda=102. Since N>=mu, x_N = x_{mu+(N-mu) mod lambda}.",
+"code": "import time\nt=time.time()\nx0,c,m,N=20501189,16888473,31098928,116028462462833\nseen={}\nseq=[]\nx=x0\nwhile x not in seen:\n    seen[x]=len(seq); seq.append(x); x=(x*x+c)%m\nmu=seen[x]; lam=len(seq)-mu\nans=seq[N] if N<len(seq) else seq[mu+(N-mu)%lam]\nprint(ans,mu,lam,time.time()-t)\n",
+"runtime_s": 0.0001
+},
+"MODSQ-2901-010": {
+"answer": "2900574",
+"spec": "Начальное значение x0 = 2654790. Шаг: x_{i+1} = (x_i^2 + 2017181) mod 3378824. Нужно найти x_N при N = 266573514730, где x0 имеет индекс 0. Возможных значений конечное число, поэтому последовательность становится периодической. Программа находит начало цикла mu = 286 и длину цикла lam = 892. Для N >= mu выполняется x_N = x_{mu + (N - mu) mod lam`}. Если бы N оказалось меньше mu, программа вернула бы x_N, вычисленный напрямую.",
+"code": "import time\nt=time.time()\nx0=2654790;A=2017181;M=3378824;N=266573514730\nseen={};x=x0;i=0\nwhile x not in seen:\n    if i==N: break\n    seen[x]=i; x=(x*x+A)%M; i+=1\nif i==N: ans=x\nelse:\n    mu=seen[x]; lam=i-mu\n    idx=mu+(N-mu)%lam\n    y=x0\n    for _ in range(idx): y=(y*y+A)%M\n    ans=y\n    print(\"mu\",mu,\"lam\",lam)\nprint(ans, time.time()-t)\n",
+"runtime_s": 0.0005
+},
+"MODSQ-2901-011": {
+"answer": "31530964",
+"spec": "x0=52334271; x_{i+1}=(x_i^2+44251088) mod 61464545; find x_N for N=12143421685819 (x0 is index 0). The sequence is deterministic over a finite set, so it becomes periodic. I stored the first index of each value until a value repeated. That gives the tail length mu=52 and the cycle length lam=396. If N<mu the answer is x_N; otherwise it is x_{mu+(N-mu) mod lam}.",
+"code": "import time\nt=time.time()\nx0,c,m,N=52334271,44251088,61464545,12143421685819\nseen={}\nx=x0;i=0\nwhile x not in seen:\n    seen[x]=i; x=(x*x+c)%m; i+=1\nmu=seen[x]; lam=i-mu\nif N<mu: idx=N\nelse: idx=mu+(N-mu)%lam\ninv={v:k for k,v in seen.items()}\nprint(inv[idx],mu,lam,time.time()-t)\n",
+"runtime_s": 0.0002
+},
+"MODSQ-2901-012": {
+"answer": "161245996297",
+"spec": "x0=134402039707, m=207878754388, x_{i+1}=x_i^2 mod m, так что x_n = x0^(2^n) mod m при n=24957353793. Разложение m=2^2*41999*1237403, λ(m)=25984204598. Для любого основания a и показателей E≥T (T=64, это не меньше максимальной степени простого в m) выполняется a^E ≡ a^(((E-T) mod λ)+T) (mod m). Поэтому E=2^n сводим через pow(2,n,λ). Для k от 6 до 299 проверил совпадение с прямой итерацией.",
+"code": "import time\nfrom sympy import factorint\nfrom sympy.ntheory import reduced_totient\nt=time.time()\nx0,m,n=134402039707,207878754388,24957353793\nf=factorint(m); L=int(reduced_totient(m)); T=64  # T >= max prime exponent\n# E=2^n huge; E' = ((E-T) mod L)+T is congruent exponent valid for all bases\nEp=((pow(2,n,L)-T)%L)+T\nans=pow(x0,Ep,m)\n# check against direct iteration for small n\ndef chk(k):\n    x=x0\n    for _ in range(k): x=x*x%m\n    Ek=((pow(2,k,L)-T)%L)+T\n    return x==pow(x0,Ek,m) if 2**k>=T else True\nassert all(chk(k) for k in range(6,300))\nprint(f,L,ans,time.time()-t)\n",
+"runtime_s": 0.006
+},
+"MODSQ-2901-013": {
+"answer": "143530085",
+"spec": "x0=139233746, x_{i+1}=(x_i^2+228662341) mod 282726645; find x_N for N=76626961136847872 (x0 has index 0). The sequence is eventually periodic. I found the cycle by recording each value's first index: the pre-period is mu=12 and the cycle length is lam=300. For N>=mu the index reduces to mu+(N-mu) mod lam.",
+"code": "import time\nt=time.time()\nx0,c,m,N=139233746,228662341,282726645,76626961136847872\nf=lambda x:(x*x+c)%m\nseen={}\nx=x0;i=0\nwhile x not in seen:\n    seen[x]=i; x=f(x); i+=1\nmu=seen[x]; lam=i-mu\nif N<mu: idx=N\nelse: idx=mu+(N-mu)%lam\ninv={v:k for k,v in seen.items()}\nprint(mu,lam,inv[idx],time.time()-t)\n",
+"runtime_s": 0.0002
+},
+"MODSQ-2901-014": {
+"answer": "10313197",
+"spec": "x0 = 3163731598; step x_{i+1} = (x_i^2 + 5678495797) mod 5680314481. Apply the step 6296345 times starting from x0 and return x_6296345, where x0 has index 0. Direct iteration with Python's exact big integers; no cycle detection needed.",
+"code": "import time\nt=time.time()\nx=3163731598; c=5678495797; m=5680314481\nfor _ in range(6296345):\n    x=(x*x+c)%m\nprint(x, time.time()-t)",
+"runtime_s": 1.08
+},
+"MODSQ-2901-015": {
+"answer": "16954282",
+"spec": "x0=3981602, x_{i+1}=(x_i^2+5272917) mod 22695233; find x_N for N=7981357030972536 (0-based index, x0 is index 0). Iterate, record the first index of each value, and detect the cycle: pre-period mu=8, cycle length lambda=198. Then x_N = x_{mu+(N-mu) mod lambda}.",
+"code": "import time\nt=time.time()\nx0,c,m,N=3981602,5272917,22695233,7981357030972536\nseen={}\nx=x0;i=0\nwhile x not in seen:\n    if i==N: break\n    seen[x]=i; x=(x*x+c)%m; i+=1\nif i==N: print(x)\nelse:\n    mu=seen[x]; lam=i-mu\n    idx=mu+(N-mu)%lam\n    y=x0\n    for _ in range(idx): y=(y*y+c)%m\n    print(y, mu, lam)\nprint(time.time()-t)\n",
+"runtime_s": 0.0002
+},
+"MODSQ-2901-016": {
+"answer": "720009016113",
+"spec": "x_0 = 429877406843, x_{i+1} = x_i^2 mod m, where m = 860310645368. Find x_n for n = 226970731486097. This gives x_n = x0^(2^n) mod m. Factor m = 2^3 * 37 * 5393 * 538931 and solve for each prime power q = p^k separately. If p divides x0 and 2^n >= k, the residue mod q is 0 (for small n it is computed directly). Otherwise, by Euler's theorem, the residue is x0^(2^n mod phi(q)) mod q. The residues are then combined with the CRT. The method was checked against direct iteration for n = 0..59.",
+"code": "import time\nfrom sympy import factorint\nfrom sympy.ntheory.modular import crt\nt=time.time()\nx0=429877406843; m=860310645368; n=226970731486097\nf=factorint(m); mods=[];res=[]\nfor p,k in f.items():\n    q=p**k\n    if x0%p==0:\n        r=0 if n>=10 else pow(x0,2**n,q)  # 2^n>=k -> 0\n    else:\n        ph=q//p*(p-1)\n        r=pow(x0%q,pow(2,n,ph),q)\n    mods.append(q);res.append(r)\nans=int(crt(mods,res)[0])\ndef direct(N):\n    x=x0\n    for _ in range(N): x=x*x%m\n    return x\ndef fast(N):\n    rr=[]\n    for p,k in f.items():\n        q=p**k\n        if x0%p==0: rr.append(pow(x0,2**N,q) if N<10 else 0)\n        else: rr.append(pow(x0%q,pow(2,N,q//p*(p-1)),q))\n    return int(crt(mods,rr)[0])\nassert all(direct(N)==fast(N) for N in range(60))\nprint(f,ans,time.time()-t)\n",
+"runtime_s": 0.002
+},
+"MODSQ-2901-017": {
+"answer": "8624112598",
+"spec": "Start with x0 = 106548060716. Each step is x_{i+1} = x_i^2 mod m, where m = 111422563803. We need x_n for n = 8585208976 (x0 counts as index 0). This means x_n = x0^(2^n) mod m. Factoring m gives 3^2 * 17 * 728252051. For each prime power q = p^k: if p divides x0, the residue is 0, since 2^n >= k. Otherwise, by Euler's theorem, the residue is x0^(2^n mod phi(q)) mod q. The residues are then combined with the Chinese remainder theorem (CRT). As a check, this method matches a direct loop for n = 5..199.",
+"code": "import time; t=time.time()\nfrom sympy import factorint\nfrom sympy.ntheory.modular import crt\nx0=106548060716; m=111422563803; n=8585208976\nf=factorint(m); print(f)\nmods=[];res=[]\nfor p,k in f.items():\n    q=p**k\n    if x0%p==0: r=0  # 2^n >= k\n    else:\n        ph=q//p*(p-1); r=pow(x0,pow(2,n,ph),q)\n    mods.append(q);res.append(r)\nans=int(crt(mods,res)[0])\ndef brute(N):\n    x=x0\n    for _ in range(N): x=x*x%m\n    return x\ndef fast(N):\n    rr=[]\n    for p,k in f.items():\n        q=p**k\n        rr.append(0 if x0%p==0 else pow(x0,pow(2,N,q//p*(p-1)),q))\n    return int(crt(mods,rr)[0])\nassert all(brute(N)==fast(N) for N in range(5,200))\nprint(ans, time.time()-t)\n",
+"runtime_s": 0.46
+},
+"MODSQ-2901-018": {
+"answer": "590421179",
+"spec": "x0 = 732121165; x_{i+1} = (x_i^2 + 845474369) mod 1050524513. Нужен x с индексом 17069305 (x0 имеет индекс 0), то есть надо применить шаг 17069305 раз. Посчитано прямым перебором в цикле.",
+"code": "import time\nt=time.time()\nx=732121165;c=845474369;m=1050524513\nfor _ in range(17069305):\n    x=(x*x+c)%m\nprint(x, time.time()-t)",
+"runtime_s": 1.78
+},
+"MODSQ-2901-019": {
+"answer": "2311826803",
+"spec": "x0=708922829, x_{i+1}=(x_i^2+1446511846) mod 2884949332, индексация с 0; нужен x_N при N=16032280719238334. Последовательность детерминирована на конечном множестве, поэтому она попадает в цикл: предпериод mu=1022, длина цикла lam=16489. Поскольку N>=mu, ответ равен x_{mu+((N-mu) mod lam)}.",
+"code": "import time\nt=time.time()\nx0,c,m=708922829,1446511846,2884949332\nN=16032280719238334\nseen={}\nx=x0;i=0\nseq=[]\nwhile x not in seen:\n    if i==N: break\n    seen[x]=i; seq.append(x); x=(x*x+c)%m; i+=1\nif i==N: print(x)\nelse:\n    mu=seen[x]; lam=i-mu\n    print(seq[mu+(N-mu)%lam] if N>=mu else seq[N], mu, lam)\nprint(time.time()-t)\n",
+"runtime_s": 0.008
+},
+"MODSQ-2901-020": {
+"answer": "391929761611",
+"spec": "x0=238024115151, m=605227079057, x_{i+1}=x_i^2 mod m; find x_n for n=187899314, so x_n = x0^(2^n) mod m. m = 3499*172971443 (squarefree), so the exponent 2^n can be reduced modulo the Carmichael function lambda(m)=302527052058, keeping the exponent >= the maximum prime-power multiplicity (1) so that the case gcd(x0,m)>1 is also correct. Checked against direct iteration for n=1000.",
+"code": "import time; t=time.time()\nfrom sympy import factorint\nfrom sympy.ntheory import reduced_totient\nx0=238024115151; m=605227079057; n=187899314\nf=factorint(m); lam=int(reduced_totient(m))\nmaxk=max(f.values())\ne=pow(2,n,lam)\nwhile e<maxk: e+=lam\nans=pow(x0,e,m)\nx=x0\nfor i in range(1000): x=x*x%m\ne2=pow(2,1000,lam)\nwhile e2<maxk: e2+=lam\nassert x==pow(x0,e2,m)\nprint(f,lam,ans,time.time()-t)\n",
+"runtime_s": 0.3
+},
+"MODSQ-2901-021": {
+"answer": "405894395557",
+"spec": "Start with x0 = 308009310653 and m = 558862875129. Each step is x_{i+1} = x_i^2 mod m. We need x_n for n = 8209707 (x0 is index 0, so this takes exactly 8209707 squarings). The value x_n equals x0^(2^n) mod m. The program does all 8209707 squarings directly, then checks the result with pow(x0, 2^n, m). Both methods give the same number.",
+"code": "import time\nt=time.time()\nx=308009310653; m=558862875129; n=8209707\nfor _ in range(n): x=x*x%m\ny=pow(308009310653, pow(2,n), m)  # independent check: x0^(2^n) mod m\nprint(x, y, time.time()-t)",
+"runtime_s": 2
+},
+"MODSQ-2901-022": {
+"answer": "434102607994",
+"spec": "x0=271138797414, N=993909821251, x_{i+1}=x_i^2 mod N, find x_n for n=11915824841286144 (x0 is index 0). Then x_n = x0^(2^n) mod N. N = 17*347*499*337651 is squarefree, λ(N) = Carmichael function. The exponent e ≡ 2^n (mod λ(N)) is taken large enough (plus 64·λ) that elements not coprime to N are also handled correctly. Checked against direct squaring for n=1..199.",
+"code": "import time; t=time.time()\nfrom sympy import factorint\nfrom sympy.ntheory import reduced_totient\nx0=271138797414; N=993909821251; n=11915824841286144\nL=int(reduced_totient(N))\ne=pow(2,n,L)+L*64  # e ≡ 2^n mod λ(N), e large enough for non-unit parts\nans=pow(x0,e,N)\ndef brute(k):\n    x=x0\n    for _ in range(k): x=x*x%N\n    return x\nfor k in range(1,200): assert pow(x0,pow(2,k,L)+L*64,N)==brute(k)\nprint(factorint(N),ans,time.time()-t)\n",
+"runtime_s": 0.28
+},
+"MODSQ-2901-023": {
+"answer": "452902630419",
+"spec": "Inputs: x0 = 271353387099, m = 495452703078, and x_{i+1} = x_i^2 mod m. Indexing starts at 0, so x_n = x0^(2^n) mod m. The target is x_n for n = 29892450679089940. Method: factor m = 2 * 3^4 * 47 * 59 * 1102903 and solve each prime power q = p^k separately. If p divides x0, the residue is 0, because 2^n is far larger than k. Otherwise the exponent 2^n is reduced modulo phi(q) (phi(q) is added so the exponent stays positive), and the residue is x0^e mod q. The residues are combined with CRT. The method was checked against direct iteration for n = 1..79 and matched every time.",
+"code": "import time\nfrom sympy import factorint\nfrom sympy.ntheory.modular import crt\nt=time.time()\nx0=271353387099; m=495452703078; n=29892450679089940\ndef brute(k):\n    x=x0\n    for _ in range(k): x=x*x%m\n    return x\ndef fast(n):\n    f=factorint(m); mods=[];res=[]\n    for p,k in f.items():\n        q=p**k; phi=q-q//p\n        if x0%p==0:\n            r = 0 if (1<<min(n,64))>=k else pow(x0,2**n,q)\n        else:\n            r=pow(x0,pow(2,n,phi)+phi,q)\n        mods.append(q);res.append(r)\n    return int(crt(mods,res)[0])%m, f\nfor k in range(1,80): assert fast(k)[0]==brute(k),k\na,f=fast(n); print(f,a,time.time()-t)\n",
+"runtime_s": 0.004
+},
+"MODSQ-2901-024": {
+"answer": "1769025",
+"spec": "x0=1811841, x_{i+1}=(x_i^2+894761) mod 3473004; нужно x_N при N=2735501688 (x0 имеет индекс 0). Значения берутся по модулю 3473004, поэтому последовательность со временем зацикливается. Программа находит предпериод mu и длину цикла L через словарь уже виденных значений. Затем делает (N-mu) mod L дополнительных шагов от первого повторившегося значения. Если N меньше mu, результат получается прямым перебором.",
+"code": "import time\nt=time.time()\nx=1811841;a=894761;m=3473004;N=2735501688\nseen={};i=0\nwhile i<N:\n    if x in seen:\n        mu=seen[x];L=i-mu\n        r=(N-mu)%L\n        for _ in range(r): x=(x*x+a)%m\n        i=N;break\n    seen[x]=i\n    x=(x*x+a)%m;i+=1\nprint(x,time.time()-t)\n",
+"runtime_s": 0.0002
+}
+}
+}
