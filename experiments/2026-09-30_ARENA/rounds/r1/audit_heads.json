@@ -1,0 +1,53 @@
+[
+ {
+  "wf": "wf_1f8a7c03-16f",
+  "name": "arena-dry",
+  "start": 1790746963854,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/dry/arena_dry.js",
+  "agents": 36,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 20
+  },
+  "model": {
+   "claude-opus-5-5": 36
+  }
+ },
+ {
+  "wf": "wf_e42b5857-f26",
+  "name": "arena-attack-r1",
+  "start": 1790747336398,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/rounds/r1/attack.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 5
+  },
+  "model": {
+   "claude-opus-5-5": 2
+  }
+ },
+ {
+  "wf": "wf_e561c523-1b3",
+  "name": "arena-defend-r1",
+  "start": 1790747571933,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/rounds/r1/defend.js",
+  "agents": 70,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 51
+  },
+  "model": {
+   "claude-opus-5-5": 70
+  }
+ }
+]
