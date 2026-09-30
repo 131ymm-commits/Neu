@@ -1,0 +1,9 @@
+---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 2026-09-30
+  Features:
+    - Magnetic technology branch: ferrite, coils, magnet alloy, superconducting cable, flux crystals, ferrofluid and liquid nitrogen.
+    - 26 buildings: sintering kiln, induction furnace, coil winder, cryo chamber, flux resonator, magnetic separator, magnetic mining drill, maglev belt, underground belt and splitter (75 items/s), coil capacitor, superconducting accumulator, superconducting pylon, MHD generator, flux dynamo, geomagnetic coil, ferrite/magnet/superconducting walls, magnet and superconducting gates, mend coil, coilgun, gauss turret, arc emitter, rail cannon.
+    - 14 technologies from red to yellow science; English, Russian and German locale.
+  Compatibility:
+    - Works on the base game alone and with Space Age, Quality and Elevated Rails.
