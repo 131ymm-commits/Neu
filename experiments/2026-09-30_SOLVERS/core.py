@@ -8,13 +8,14 @@ def gen_maxsat(seed, n, ratio=4.3, k=3, wmax=100):
     for _ in range(m):
         vs = r.sample(range(1, n + 1), k); cl.append([v if r.random() < .5 else -v for v in vs])
     return dict(cls='MAXSAT', seed=seed, n=n, clauses=cl, weights=[r.randint(1, wmax) for _ in range(m)])
-def gen_mkp(seed, n, K, tight=0.5):
+def gen_mkp(seed, n, K, tight=0.5, corr='weak'):
     r = random.Random(seed); w = [r.randint(10, 1000) for _ in range(n)]
-    v = [max(1, int(x * r.uniform(0.6, 1.4) + r.randint(-50, 50))) for x in w]   # коррелированные ценности — трудные экземпляры
+    if corr == 'strong': v = [int(x * r.uniform(0.95, 1.05)) + 50 for x in w]           # сильно коррелированные — трудные
+    else: v = [max(1, int(x * r.uniform(0.6, 1.4) + r.randint(-50, 50))) for x in w]   # слабо коррелированные
     cap_total = int(sum(w) * tight); caps = []
     for i in range(K):
         caps.append(cap_total // K + r.randint(-cap_total // (4 * K), cap_total // (4 * K)))
-    return dict(cls='MKP', seed=seed, n=n, K=K, weights=w, values=v, caps=caps)
+    return dict(cls='MKP', seed=seed, n=n, K=K, weights=w, values=v, caps=caps, tight=tight, corr=corr)
 
 def score(inst, sol):
     """→ (допустимо, целевая функция). Решение MAXSAT: список 0/1 длины n (значение переменной i+1). MKP: список длины n, элемент — номер рюкзака 0..K-1 или -1."""
@@ -113,21 +114,29 @@ def main():
 main()
 '''
 
-def run_solver(src, inst, cpu_s=10, mem_mb=1024, args=()):
-    """исполнить код решателя: stdin — экземпляр JSON, stdout — решение JSON. Лимит CPU и памяти, без сети, пустой каталог."""
+def run_solver(src, inst, cpu_s=10, mem_mb=1024, args=(), core=None):
+    """исполнить код решателя: stdin — экземпляр JSON, stdout — решение JSON. Лимит CPU и памяти, без сети, пустой каталог; core — ядро (taskset); cpu — процессорное время процесса."""
     def lim():
         resource.setrlimit(resource.RLIMIT_CPU, (cpu_s + 1, cpu_s + 2)); resource.setrlimit(resource.RLIMIT_AS, (mem_mb << 20, mem_mb << 20)); os.setsid()
     with tempfile.TemporaryDirectory() as d:
         f = os.path.join(d, 'solver.py'); open(f, 'w').write(src)
-        env = {'PATH': '/usr/bin:/bin', 'HOME': d, 'PYTHONHASHSEED': '0', 'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1'}
-        t0 = time.time()
-        try:
-            cp = subprocess.run([sys.executable, f, *map(str, args)], input=json.dumps(inst), cwd=d, env=env, capture_output=True, text=True, timeout=cpu_s * 3 + 10, preexec_fn=lim)
-        except subprocess.TimeoutExpired: return dict(ok=False, value=0, err='время по часам', wall=time.time() - t0)
-        try: sol = json.loads(cp.stdout.strip().splitlines()[-1])
-        except Exception: return dict(ok=False, value=0, err=(cp.stderr or 'нет вывода')[-300:], wall=time.time() - t0)
+        env = {'PATH': '/usr/bin:/bin', 'HOME': d, 'PYTHONHASHSEED': '0', 'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1'}
+        cmd = ([ 'taskset', '-c', str(core)] if core is not None else []) + [sys.executable, f, *map(str, args)]
+        t0 = time.time(); inp = os.path.join(d, 'in.json'); open(inp, 'w').write(json.dumps(inst))
+        outp = os.path.join(d, 'out.txt'); errp = os.path.join(d, 'err.txt')
+        with open(inp) as fi, open(outp, 'w') as fo, open(errp, 'w') as fe:
+            p = subprocess.Popen(cmd, stdin=fi, stdout=fo, stderr=fe, cwd=d, env=env, preexec_fn=lim)
+            deadline = t0 + cpu_s * 3 + 10; st = None
+            while st is None:
+                pid, status, ru = os.wait4(p.pid, os.WNOHANG)
+                if pid: st = status; break
+                if time.time() > deadline: os.killpg(p.pid, 9); pid, status, ru = os.wait4(p.pid, 0); st = status; break
+                time.sleep(0.05)
+        cpu = ru.ru_utime + ru.ru_stime; wall = time.time() - t0
+        try: sol = json.loads(open(outp).read().strip().splitlines()[-1])
+        except Exception: return dict(ok=False, value=0, err=(open(errp).read() or 'нет вывода')[-300:], wall=wall, cpu=cpu)
         ok, val = score(inst, sol)
-        return dict(ok=ok, value=val if ok else 0, err=None if ok else 'недопустимое решение', wall=time.time() - t0)
+        return dict(ok=ok, value=val if ok else 0, err=None if ok else 'недопустимое решение', wall=wall, cpu=cpu)
 def greedy(inst, cpu_s=10, seed=0): return run_solver(GREEDY_SRC, inst, cpu_s, args=(cpu_s - 0.5, seed))
 def gap(ref, x, gr):
     """g = (ref − x)/(ref − greedy): 0 — как эталон, 1 — как жадный, > 1 — хуже жадного, < 0 — лучше эталона"""

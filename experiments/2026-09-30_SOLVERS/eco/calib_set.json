@@ -1,0 +1,42 @@
+[
+ {
+  "seed": 800000,
+  "klass": 0,
+  "greedy": 48178
+ },
+ {
+  "seed": 800001,
+  "klass": 0,
+  "greedy": 52279
+ },
+ {
+  "seed": 800010,
+  "klass": 1,
+  "greedy": 47164
+ },
+ {
+  "seed": 800011,
+  "klass": 1,
+  "greedy": 46028
+ },
+ {
+  "seed": 800020,
+  "klass": 2,
+  "greedy": 83782
+ },
+ {
+  "seed": 800021,
+  "klass": 2,
+  "greedy": 81896
+ },
+ {
+  "seed": 800030,
+  "klass": 3,
+  "greedy": 89457
+ },
+ {
+  "seed": 800031,
+  "klass": 3,
+  "greedy": 81215
+ }
+]
