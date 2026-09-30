@@ -1,0 +1,184 @@
+{
+ "out": {
+  "15|solo": {
+   "p_accept": 0.45,
+   "p_reject": 0.1,
+   "p_other": 0.45,
+   "predicted_reply": "ок. А можно научить проверку пропускать эти три коммита, чтобы она не повторялась каждый раз?"
+  },
+  "15|ex": {
+   "p_accept": 0.28,
+   "p_reject": 0.14,
+   "p_other": 0.58,
+   "predicted_reply": "Ок. А что нашел в интернете? Кто-то предлагает такую систему бесплатно?"
+  },
+  "16|solo": {
+   "p_accept": 0.45,
+   "p_reject": 0.15,
+   "p_other": 0.4,
+   "predicted_reply": "ок, продолжай. Про эти три коммита больше не пиши, если нет новых."
+  },
+  "16|ex": {
+   "p_accept": 0.2,
+   "p_reject": 0.1,
+   "p_other": 0.7,
+   "predicted_reply": "Хватит про коммиты, перепиши их и забудь. Давай следующий эксперимент, придумай сам что-нибудь интересное."
+  },
+  "17|solo": {
+   "p_accept": 0.5,
+   "p_reject": 0.08,
+   "p_other": 0.42,
+   "predicted_reply": "продолжи. И коротко: что вышло по S1, подтвердилось или нет?"
+  },
+  "17|ex": {
+   "p_accept": 0.3,
+   "p_reject": 0.07,
+   "p_other": 0.63,
+   "predicted_reply": "Ок. А что это значит простыми словами? Давай ещё эксперимент в другой сфере."
+  },
+  "18|solo": {
+   "p_accept": 0.55,
+   "p_reject": 0.08,
+   "p_other": 0.37,
+   "predicted_reply": "продолжи"
+  },
+  "18|ex": {
+   "p_accept": 0.4,
+   "p_reject": 0.07,
+   "p_other": 0.53,
+   "predicted_reply": "Продолжи. И что получилось в итоге, коротко объясни результат простыми словами."
+  },
+  "19|solo": {
+   "p_accept": 0.45,
+   "p_reject": 0.1,
+   "p_other": 0.45,
+   "predicted_reply": "ок, оставь. продолжай следующий опыт"
+  },
+  "19|ex": {
+   "p_accept": 0.2,
+   "p_reject": 0.07,
+   "p_other": 0.73,
+   "predicted_reply": "Ок. Что показал эксперимент S1? Давай следующий эксперимент в другой сфере."
+  },
+  "20|solo": {
+   "p_accept": 0.4,
+   "p_reject": 0.1,
+   "p_other": 0.5,
+   "predicted_reply": "ок, оставь как есть. продолжай эксперимент"
+  },
+  "20|ex": {
+   "p_accept": 0.15,
+   "p_reject": 0.05,
+   "p_other": 0.8,
+   "predicted_reply": "Ок. Давай проверим на эксперименте, учитывает ли ИИ логическое ударение в русском тексте."
+  },
+  "21|solo": {
+   "p_accept": 0.4,
+   "p_reject": 0.15,
+   "p_other": 0.45,
+   "predicted_reply": "да, делай. и пиши по-русски, пожалуйста"
+  },
+  "21|ex": {
+   "p_accept": 0.3,
+   "p_reject": 0.1,
+   "p_other": 0.6,
+   "predicted_reply": "Ок. А где можно посмотреть? Дай ссылку, хочу сам попробовать угадать."
+  },
+  "22|solo": {
+   "p_accept": 0.4,
+   "p_reject": 0.15,
+   "p_other": 0.45,
+   "predicted_reply": "ок, делай. Когда будет готово — дай ссылку, посмотрю."
+  },
+  "22|ex": {
+   "p_accept": 0.15,
+   "p_reject": 0.05,
+   "p_other": 0.8,
+   "predicted_reply": "Base directory for this skill: /tmp/claude-0/bundled-skills/.../artifact-design — (служебная вставка навыка вместо ответа автора; если отвечает сам автор, то что-то вроде «Хорошо, делай страницу и выложи ссылку».)"
+  },
+  "23|solo": {
+   "p_accept": 0.45,
+   "p_reject": 0.12,
+   "p_other": 0.43,
+   "predicted_reply": "да, делай. и пиши по-русски"
+  },
+  "23|ex": {
+   "p_accept": 0.1,
+   "p_reject": 0.03,
+   "p_other": 0.87,
+   "predicted_reply": "Base directory for this skill: /tmp/claude-0/bundled-skills/2.1.281/.../artifact-design  # Artifact design ..."
+  },
+  "24|solo": {
+   "p_accept": 0.45,
+   "p_reject": 0.1,
+   "p_other": 0.45,
+   "predicted_reply": "да, делай. и дай ссылку, когда будет готово"
+  },
+  "24|ex": {
+   "p_accept": 0.12,
+   "p_reject": 0.03,
+   "p_other": 0.85,
+   "predicted_reply": "Base directory for this skill: /tmp/claude-0/bundled-skills/2.1.281/.../artifact-design — # Artifact design ... (the loaded skill text arrives in place of the author's reply)"
+  },
+  "25|solo": {
+   "p_accept": 0.45,
+   "p_reject": 0.1,
+   "p_other": 0.45,
+   "predicted_reply": "продолжи"
+  },
+  "25|ex": {
+   "p_accept": 0.25,
+   "p_reject": 0.07,
+   "p_other": 0.68,
+   "predicted_reply": "Дай ссылку, я сам посмотрю. И сделай вариант на английском, чтобы можно было разместить."
+  },
+  "26|solo": {
+   "p_accept": 0.45,
+   "p_reject": 0.1,
+   "p_other": 0.45,
+   "predicted_reply": "продолжи"
+  },
+  "26|ex": {
+   "p_accept": 0.1,
+   "p_reject": 0.05,
+   "p_other": 0.85,
+   "predicted_reply": "[Image: original 820x5265, displayed at 311x2000. Multiply coordinates by 2.64 to map to original image.]"
+  },
+  "27|solo": {
+   "p_accept": 0.5,
+   "p_reject": 0.08,
+   "p_other": 0.42,
+   "predicted_reply": "ок, жду"
+  },
+  "27|ex": {
+   "p_accept": 0.3,
+   "p_reject": 0.05,
+   "p_other": 0.65,
+   "predicted_reply": "Хорошо. А дай ссылку где можно посмотреть страницу, и сделай вариант на русском чтобы разместить."
+  },
+  "28|solo": {
+   "p_accept": 0.45,
+   "p_reject": 0.2,
+   "p_other": 0.35,
+   "predicted_reply": "ок, продолжай. Когда проверка закончится, пришли результаты."
+  },
+  "28|ex": {
+   "p_accept": 0.2,
+   "p_reject": 0.1,
+   "p_other": 0.7,
+   "predicted_reply": "Почему страница на английском? Сделай на русском и на других языках, чтобы люди кликали."
+  },
+  "29|solo": {
+   "p_accept": 0.35,
+   "p_reject": 0.15,
+   "p_other": 0.5,
+   "predicted_reply": "продолжи"
+  },
+  "29|ex": {
+   "p_accept": 0.07,
+   "p_reject": 0.18,
+   "p_other": 0.75,
+   "predicted_reply": "Почему опять на английском? Пиши по-русски."
+  }
+ }
+}
