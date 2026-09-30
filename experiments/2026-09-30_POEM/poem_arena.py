@@ -12,9 +12,9 @@ from poemlib import LIB, base_ok, lines, words, letters
 from interp import run_check
 from sandbox import run_check_py
 import poem_prompts as P
-ATT = 2; NO = 4; MAX_REP = 3; MIN_REJECT = 0.5
+ATT = int(os.environ.get('POEM_ATT', 2)); NO = int(os.environ.get('POEM_NO', 4)); MAX_REP = 3; MIN_REJECT = 0.5
 ARMS = ['solo', 'team', 'solo_lib', 'team_lib']
-def rd(r): d = os.path.join(HERE, 'rounds', f'r{r}'); os.makedirs(d, exist_ok=True); return d
+def rd(r): d = os.path.join(HERE, os.environ.get('POEM_DIR', 'rounds'), f'r{r}'); os.makedirs(d, exist_ok=True); return d
 def J(p): return json.load(open(p))
 def W(p, o): json.dump(o, open(p, 'w'), ensure_ascii=False, indent=1)
 def unwrap(p): d = J(p); return d.get('out', d)
@@ -89,7 +89,8 @@ def history(r, k):
     return h
 def attack(r):
     jobs = [dict(id=f'att{k}_r{r}', schema='A', prompt=P.attacker(k, r, NO, history(r, k))) for k in range(1, ATT + 1)]
-    open(os.path.join(rd(r), 'attack.js'), 'w').write(wf(f'poem-attack-r{r}', f'Арена стихов, раунд {r}: нападающие', jobs, {'A': ATT_S}))
+    tag = os.environ.get('POEM_DIR', 'rounds')
+    open(os.path.join(rd(r), 'attack.js'), 'w').write(wf(f'poem-{tag}-attack-r{r}', f'Арена стихов ({tag}), раунд {r}: нападающие', jobs, {'A': ATT_S}))
 def wf(name, desc, jobs, schemas):
     return (f"export const meta = {{ name: '{name}', description: '{desc}', phases: [{{ title: 'Ход' }}] }}\n"
             f"const JOBS = {json.dumps(jobs, ensure_ascii=False)}\nconst S = {json.dumps(schemas, ensure_ascii=False)}\nphase('Ход')\n"
