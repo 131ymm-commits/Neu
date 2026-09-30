@@ -1,0 +1,35 @@
+{
+ "type": "GenericCrafter",
+ "size": 2,
+ "health": 320,
+ "category": "crafting",
+ "requirements": [
+  "copper/45",
+  "lead/30"
+ ],
+ "craftTime": 50,
+ "consumes": {
+  "items": {
+   "items": [
+    "sand/2",
+    "lead/1"
+   ]
+  },
+  "power": 0.5
+ },
+ "research": "graphite-press",
+ "craftEffect": "smeltsmoke",
+ "drawer": {
+  "type": "DrawMulti",
+  "drawers": [
+   {
+    "type": "DrawDefault"
+   },
+   {
+    "type": "DrawFlame",
+    "flameColor": "8fb4ff"
+   }
+  ]
+ },
+ "outputItem": "ferrite/2"
+}

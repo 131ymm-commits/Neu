@@ -1,0 +1,47 @@
+{
+ "health": 190,
+ "speed": 3.1,
+ "hitSize": 10,
+ "armor": 1,
+ "engineOffset": 6,
+ "engineSize": 2.5,
+ "drag": 0.04,
+ "accel": 0.09,
+ "itemCapacity": 15,
+ "circleTarget": true,
+ "weapons": [
+  {
+   "x": 3,
+   "y": 1,
+   "reload": 16,
+   "mirror": true,
+   "alternate": true,
+   "bullet": {
+    "type": "BasicBulletType",
+    "speed": 4,
+    "damage": 11,
+    "lifetime": 40,
+    "width": 6,
+    "height": 9,
+    "frontColor": "e3ecff",
+    "backColor": "6d86c9",
+    "hitEffect": "hitBulletSmall",
+    "shootEffect": "shootSmall",
+    "pierce": true,
+    "pierceCap": 2
+   },
+   "shootSound": "pew"
+  }
+ ],
+ "type": "flying",
+ "flying": true,
+ "research": "magnet-factory",
+ "requirements": {
+  "block": "magnetics-magnet-factory",
+  "time": 900,
+  "requirements": [
+   "silicon/20",
+   "coil/10"
+  ]
+ }
+}

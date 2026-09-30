@@ -1,0 +1,23 @@
+{
+ "type": "ConsumeGenerator",
+ "size": 2,
+ "health": 400,
+ "category": "power",
+ "requirements": [
+  "copper/60",
+  "lead/60",
+  "silicon/40",
+  "coil/30"
+ ],
+ "powerProduction": 14,
+ "itemDuration": 120,
+ "consumes": {
+  "item": "pyratite",
+  "liquid": {
+   "liquid": "cryofluid",
+   "amount": 0.06
+  }
+ },
+ "research": "steam-generator",
+ "generateEffect": "generatespark"
+}

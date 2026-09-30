@@ -1,0 +1,11 @@
+{
+ "type": "Router",
+ "health": 120,
+ "category": "distribution",
+ "requirements": [
+  "copper/3",
+  "magnet-alloy/2"
+ ],
+ "speed": 4,
+ "research": "mag-junction"
+}

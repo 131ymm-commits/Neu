@@ -1,0 +1,12 @@
+{
+ "type": "Wall",
+ "size": 2,
+ "health": 2560,
+ "category": "defense",
+ "requirements": [
+  "magnet-alloy/24"
+ ],
+ "research": "magnet-wall",
+ "chanceDeflect": 5,
+ "flashHit": true
+}

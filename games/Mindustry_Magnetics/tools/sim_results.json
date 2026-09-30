@@ -1,0 +1,251 @@
+{
+ "prod": {
+  "sintering-kiln": {
+   "t": 50,
+   "out": {
+    "ferrite": [
+     84,
+     2
+    ]
+   }
+  },
+  "induction-furnace": {
+   "t": 60,
+   "out": {
+    "magnet-alloy": [
+     35,
+     1
+    ]
+   }
+  },
+  "coil-winder": {
+   "t": 45,
+   "out": {
+    "coil": [
+     94,
+     2
+    ]
+   }
+  },
+  "cryo-chamber": {
+   "t": 90,
+   "out": {
+    "superconductor": [
+     23,
+     1
+    ]
+   }
+  },
+  "flux-resonator": {
+   "t": 120,
+   "out": {
+    "flux-crystal": [
+     17,
+     1
+    ]
+   }
+  },
+  "magnetic-separator": {
+   "t": 60,
+   "out": {
+    "copper": [
+     70,
+     2
+    ],
+    "lead": [
+     35,
+     1
+    ],
+    "titanium": [
+     35,
+     1
+    ]
+   }
+  },
+  "mhd-generator": {
+   "eff": 1
+  },
+  "flux-dynamo": {
+   "eff": 1
+  },
+  "drill_water": {
+   "magnetic": 121,
+   "laser": 101
+  },
+  "drill": {
+   "magnetic": 47,
+   "laser": 39
+  },
+  "factory": {
+   "spark": 2,
+   "progress": 291.99127197265625
+  },
+  "mend": {
+   "wall_hp": 640,
+   "from": 100
+  },
+  "shield": {
+   "broken": false,
+   "radscl": 0.9999996423721313,
+   "eff": 1
+  },
+  "ticks": 2369.551632221788,
+  "t0": 299.86124239116907
+ },
+ "A": {
+  "5": {
+   "coilgun": {
+    "alive": 4,
+    "hp_left": 502
+   },
+   "duo": {
+    "alive": 4,
+    "hp_left": 528
+   },
+   "gauss": {
+    "alive": 4,
+    "hp_left": 2094
+   },
+   "lancer": {
+    "alive": 4,
+    "hp_left": 2064
+   },
+   "salvo": {
+    "alive": 4,
+    "hp_left": 2152
+   }
+  },
+  "10": {
+   "coilgun": {
+    "alive": 2,
+    "hp_left": 230
+   },
+   "duo": {
+    "alive": 3,
+    "hp_left": 306
+   },
+   "gauss": {
+    "alive": 3,
+    "hp_left": 1438
+   },
+   "lancer": {
+    "alive": 3,
+    "hp_left": 1378
+   },
+   "salvo": {
+    "alive": 3,
+    "hp_left": 1458
+   }
+  },
+  "20": {
+   "coilgun": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "duo": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "gauss": {
+    "alive": 1,
+    "hp_left": 232
+   },
+   "lancer": {
+    "alive": 1,
+    "hp_left": 6
+   },
+   "salvo": {
+    "alive": 1,
+    "hp_left": 230
+   }
+  }
+ },
+ "B": {
+  "5": {
+   "arc-emitter": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "arc": {
+    "alive": 1,
+    "hp_left": 10
+   },
+   "maglev-flak": {
+    "alive": 1,
+    "hp_left": -18
+   },
+   "scatter": {
+    "alive": 5,
+    "hp_left": 376
+   }
+  },
+  "10": {
+   "arc-emitter": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "arc": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "maglev-flak": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "scatter": {
+    "alive": 0,
+    "hp_left": 0
+   }
+  },
+  "20": {
+   "arc-emitter": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "arc": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "maglev-flak": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "scatter": {
+    "alive": 0,
+    "hp_left": 0
+   }
+  }
+ },
+ "C": {
+  "5": {
+   "railgun": {
+    "alive": 4,
+    "hp_left": 2516
+   },
+   "ripple": {
+    "alive": 5,
+    "hp_left": 4459
+   }
+  },
+  "10": {
+   "railgun": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "ripple": {
+    "alive": 5,
+    "hp_left": 4450
+   }
+  },
+  "20": {
+   "railgun": {
+    "alive": 0,
+    "hp_left": 0
+   },
+   "ripple": {
+    "alive": 5,
+    "hp_left": 4379
+   }
+  }
+ }
+}

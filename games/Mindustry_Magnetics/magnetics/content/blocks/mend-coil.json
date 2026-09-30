@@ -1,0 +1,20 @@
+{
+ "type": "MendProjector",
+ "size": 2,
+ "health": 240,
+ "category": "effect",
+ "requirements": [
+  "lead/40",
+  "silicon/30",
+  "coil/20"
+ ],
+ "reload": 200,
+ "range": 90,
+ "healPercent": 14,
+ "phaseBoost": 10,
+ "phaseRangeBoost": 20,
+ "consumes": {
+  "power": 0.45
+ },
+ "research": "mender"
+}

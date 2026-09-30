@@ -1,0 +1,12 @@
+{
+ "type": "Wall",
+ "size": 1,
+ "health": 640,
+ "category": "defense",
+ "requirements": [
+  "magnet-alloy/6"
+ ],
+ "research": "titanium-wall",
+ "chanceDeflect": 5,
+ "flashHit": true
+}

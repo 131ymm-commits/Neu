@@ -1,0 +1,39 @@
+{
+ "type": "GenericCrafter",
+ "size": 3,
+ "health": 720,
+ "category": "crafting",
+ "requirements": [
+  "copper/100",
+  "titanium/60",
+  "ferrite/80"
+ ],
+ "craftTime": 60,
+ "consumes": {
+  "items": {
+   "items": [
+    "scrap/3"
+   ]
+  },
+  "power": 1.5
+ },
+ "research": "separator",
+ "craftEffect": "smeltsmoke",
+ "drawer": {
+  "type": "DrawMulti",
+  "drawers": [
+   {
+    "type": "DrawDefault"
+   },
+   {
+    "type": "DrawFlame",
+    "flameColor": "8fb4ff"
+   }
+  ]
+ },
+ "outputItems": [
+  "copper/2",
+  "lead/1",
+  "titanium/1"
+ ]
+}

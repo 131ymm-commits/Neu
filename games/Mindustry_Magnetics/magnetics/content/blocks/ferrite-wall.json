@@ -1,0 +1,10 @@
+{
+ "type": "Wall",
+ "size": 1,
+ "health": 360,
+ "category": "defense",
+ "requirements": [
+  "ferrite/6"
+ ],
+ "research": "copper-wall"
+}

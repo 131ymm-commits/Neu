@@ -1,0 +1,33 @@
+{
+ "type": "PowerTurret",
+ "size": 2,
+ "health": 900,
+ "category": "turret",
+ "requirements": [
+  "copper/100",
+  "lead/80",
+  "silicon/60",
+  "coil/50"
+ ],
+ "range": 115,
+ "reload": 32,
+ "recoil": 1,
+ "rotateSpeed": 8,
+ "shootSound": "spark",
+ "research": "arc",
+ "targetAir": false,
+ "consumes": {
+  "power": 3.5,
+  "coolant": {
+   "amount": 0.2
+  }
+ },
+ "shootType": {
+  "type": "LightningBulletType",
+  "damage": 26,
+  "lightningLength": 20,
+  "collidesAir": false,
+  "lightningColor": "9fe8ff",
+  "ammoMultiplier": 1
+ }
+}

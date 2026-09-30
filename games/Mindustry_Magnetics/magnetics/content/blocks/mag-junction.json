@@ -1,0 +1,12 @@
+{
+ "type": "Junction",
+ "health": 120,
+ "category": "distribution",
+ "requirements": [
+  "copper/3",
+  "magnet-alloy/2"
+ ],
+ "speed": 12,
+ "capacity": 8,
+ "research": "mag-conveyor"
+}

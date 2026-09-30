@@ -1,0 +1,42 @@
+{
+ "type": "GenericCrafter",
+ "size": 3,
+ "health": 720,
+ "category": "crafting",
+ "requirements": [
+  "lead/120",
+  "titanium/100",
+  "silicon/80",
+  "plastanium/40",
+  "magnet-alloy/60"
+ ],
+ "craftTime": 90,
+ "consumes": {
+  "items": {
+   "items": [
+    "magnet-alloy/2",
+    "plastanium/1"
+   ]
+  },
+  "power": 3,
+  "liquid": {
+   "liquid": "cryofluid",
+   "amount": 0.12
+  }
+ },
+ "research": "coil-winder",
+ "craftEffect": "smeltsmoke",
+ "drawer": {
+  "type": "DrawMulti",
+  "drawers": [
+   {
+    "type": "DrawDefault"
+   },
+   {
+    "type": "DrawFlame",
+    "flameColor": "8fb4ff"
+   }
+  ]
+ },
+ "outputItem": "superconductor/1"
+}

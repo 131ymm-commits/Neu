@@ -1,0 +1,17 @@
+{
+ "type": "Battery",
+ "size": 1,
+ "health": 120,
+ "category": "power",
+ "requirements": [
+  "copper/8",
+  "lead/30",
+  "coil/6"
+ ],
+ "consumes": {
+  "powerBuffered": 4000
+ },
+ "research": "battery",
+ "emptyLightColor": "3a4a7a",
+ "fullLightColor": "9fe8ff"
+}

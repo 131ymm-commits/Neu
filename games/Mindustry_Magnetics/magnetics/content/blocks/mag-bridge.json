@@ -1,0 +1,14 @@
+{
+ "type": "BufferedItemBridge",
+ "health": 150,
+ "category": "distribution",
+ "requirements": [
+  "lead/8",
+  "graphite/6",
+  "magnet-alloy/6"
+ ],
+ "range": 8,
+ "speed": 90,
+ "bufferCapacity": 20,
+ "research": "mag-router"
+}

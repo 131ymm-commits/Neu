@@ -1,0 +1,52 @@
+{
+ "type": "ItemTurret",
+ "size": 3,
+ "health": 2400,
+ "category": "turret",
+ "requirements": [
+  "copper/300",
+  "titanium/200",
+  "plastanium/120",
+  "superconductor/150"
+ ],
+ "range": 420,
+ "reload": 210,
+ "recoil": 5,
+ "rotateSpeed": 2.2,
+ "shake": 4,
+ "shootSound": "railgun",
+ "research": "ripple",
+ "targetAir": true,
+ "consumes": {
+  "power": 8,
+  "coolant": {
+   "amount": 0.4
+  }
+ },
+ "coolantMultiplier": 3,
+ "ammoTypes": {
+  "superconductor": {
+   "type": "RailBulletType",
+   "length": 420,
+   "damage": 700,
+   "pierceDamageFactor": 0.5,
+   "shootEffect": "railShoot",
+   "hitEffect": "hitBulletBig",
+   "pointEffect": "railTrail",
+   "pierceEffect": "railHit",
+   "ammoMultiplier": 1
+  },
+  "flux-crystal": {
+   "type": "RailBulletType",
+   "length": 460,
+   "damage": 1200,
+   "pierceDamageFactor": 0.6,
+   "shootEffect": "railShoot",
+   "hitEffect": "hitBulletBig",
+   "pointEffect": "railTrail",
+   "pierceEffect": "railHit",
+   "ammoMultiplier": 2,
+   "rangeChange": 40
+  }
+ }
+}

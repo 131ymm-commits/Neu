@@ -1,0 +1,12 @@
+{
+ "type": "Wall",
+ "size": 2,
+ "health": 4000,
+ "category": "defense",
+ "requirements": [
+  "superconductor/24"
+ ],
+ "research": "superconducting-wall",
+ "absorbLasers": true,
+ "insulated": true
+}

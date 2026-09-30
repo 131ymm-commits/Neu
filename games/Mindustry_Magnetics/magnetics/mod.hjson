@@ -1,6 +1,6 @@
 name: "magnetics"
 displayName: "Magnetics"
 author: "Claude (Neu)"
-description: "Магнитная ветка технологий для Серпуло: магнитный сплав, сверхпроводник, индукционная печь, криокамера, магнитная лента, магнитные стены, турель «Гаусс», сверхпроводящие узел и батарея.\nA magnetic tech branch for Serpulo."
-version: "0.1.0"
+description: "Магнитная эра для Серпуло: 5 предметов, 30 построек, 3 летающих юнита — от ферритовых стен до рельсотрона и реактора потока. Все модели нарисованы заново.\nA magnetic era for Serpulo: 5 items, 30 buildings, 3 aircraft."
+version: "1.0.0"
 minGameVersion: 146

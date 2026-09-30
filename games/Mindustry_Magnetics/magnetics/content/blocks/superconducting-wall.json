@@ -1,0 +1,12 @@
+{
+ "type": "Wall",
+ "size": 1,
+ "health": 1000,
+ "category": "defense",
+ "requirements": [
+  "superconductor/6"
+ ],
+ "research": "magnet-wall",
+ "absorbLasers": true,
+ "insulated": true
+}

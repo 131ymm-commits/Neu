@@ -1,0 +1,21 @@
+{
+ "type": "ForceProjector",
+ "size": 3,
+ "health": 900,
+ "category": "effect",
+ "requirements": [
+  "lead/120",
+  "titanium/90",
+  "silicon/100",
+  "superconductor/40"
+ ],
+ "radius": 110,
+ "shieldHealth": 1100,
+ "cooldownNormal": 2.2,
+ "cooldownBrokenBase": 0.45,
+ "phaseRadiusBoost": 40,
+ "consumes": {
+  "power": 5
+ },
+ "research": "force-projector"
+}
