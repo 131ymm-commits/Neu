@@ -1,0 +1,5 @@
+{"id": "p001", "made_before_reply_to": "p001_message.md", "observer": "одна голова Opus 5.5 (подагент), без инструментов",
+ "caveat": "по моей ошибке (ERRORS №56) голова получила промпт без текста моего сообщения (незаполненный шаблон) и предсказывала только по контексту и базовым частотам",
+ "p_accept": 0.27, "p_reject": 0.10, "p_other": 0.63,
+ "predicted_reply": "Хорошо. А теперь пусть наблюдатель сам оценивает головы, и посмотрим насколько он совпадает со мной",
+ "direction": "He will push to plug the human-evaluator emulator straight into the council of heads, so it judges and selects their outputs (competition for a resource), and to check it against his real verdicts. He will not want more literature review."}
