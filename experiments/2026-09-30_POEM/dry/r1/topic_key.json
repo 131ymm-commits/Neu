@@ -1,0 +1,20 @@
+{
+ "r1a1o0|topic|solo": 1,
+ "r1a1o0|topic|team": 2,
+ "r1a1o0|topic|solo_lib": 3,
+ "r1a1o0|topic|team_lib": 3,
+ "r1a1o0|topic|witness": 1,
+ "r1a1o0|topic|witness_shuffled": 3,
+ "r1a1o1|topic|solo": 1,
+ "r1a1o1|topic|team": 1,
+ "r1a1o1|topic|solo_lib": 3,
+ "r1a1o1|topic|team_lib": 2,
+ "r1a1o1|topic|witness": 2,
+ "r1a1o1|topic|witness_shuffled": 3,
+ "r1a1o2|topic|solo": 1,
+ "r1a1o2|topic|team": 3,
+ "r1a1o2|topic|solo_lib": 3,
+ "r1a1o2|topic|team_lib": 2,
+ "r1a1o2|topic|witness": 2,
+ "r1a1o2|topic|witness_shuffled": 1
+}
