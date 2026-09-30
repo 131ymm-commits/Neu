@@ -1,0 +1,10 @@
+{
+ "n": 30,
+ "fair": 30,
+ "solo_ok": 30,
+ "learn_ok": 30,
+ "team_ok": 30,
+ "team_changed": 0,
+ "removed": 0,
+ "invalid": 0
+}

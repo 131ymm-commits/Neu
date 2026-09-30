@@ -1,0 +1,121 @@
+[
+ {
+  "wf": "wf_1f8a7c03-16f",
+  "name": "arena-dry",
+  "start": 1790746963854,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/dry/arena_dry.js",
+  "agents": 36,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 20
+  },
+  "model": {
+   "claude-opus-5-5": 36
+  }
+ },
+ {
+  "wf": "wf_e42b5857-f26",
+  "name": "arena-attack-r1",
+  "start": 1790747336398,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/rounds/r1/attack.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 5
+  },
+  "model": {
+   "claude-opus-5-5": 2
+  }
+ },
+ {
+  "wf": "wf_e561c523-1b3",
+  "name": "arena-defend-r1",
+  "start": 1790747571933,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/rounds/r1/defend.js",
+  "agents": 70,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 51
+  },
+  "model": {
+   "claude-opus-5-5": 70
+  }
+ },
+ {
+  "wf": "wf_887d4ea7-e0d",
+  "name": "arena-attack-r2",
+  "start": 1790747990738,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/rounds/r2/attack.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 9
+  },
+  "model": {
+   "claude-opus-5-5": 2
+  }
+ },
+ {
+  "wf": "wf_89a94b4e-d55",
+  "name": "arena-defend-r2",
+  "start": 1790748275351,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/rounds/r2/defend.js",
+  "agents": 70,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 56
+  },
+  "model": {
+   "claude-opus-5-5": 70
+  }
+ },
+ {
+  "wf": "wf_2f0dbf96-883",
+  "name": "arena-attack-r3",
+  "start": 1790748706469,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/rounds/r3/attack.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 12
+  },
+  "model": {
+   "claude-opus-5-5": 2
+  }
+ },
+ {
+  "wf": "wf_6779089d-874",
+  "name": "arena-defend-r3",
+  "start": 1790749245090,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_ARENA/rounds/r3/defend.js",
+  "agents": 70,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 47
+  },
+  "model": {
+   "claude-opus-5-5": 70
+  }
+ }
+]
