@@ -1,0 +1,46 @@
+[
+ {
+  "seed": 9101,
+  "greedy_seeds": [
+   73840,
+   73840,
+   73840
+  ],
+  "ref": 73894,
+  "bound": 73919.0,
+  "optimal": false
+ },
+ {
+  "seed": 9102,
+  "greedy_seeds": [
+   72320,
+   72320,
+   72320
+  ],
+  "ref": 72460,
+  "bound": 72486.0,
+  "optimal": false
+ },
+ {
+  "seed": 9103,
+  "greedy_seeds": [
+   74333,
+   74345,
+   74333
+  ],
+  "ref": 74443,
+  "bound": 74458.0,
+  "optimal": false
+ },
+ {
+  "seed": 9104,
+  "greedy_seeds": [
+   74267,
+   74267,
+   74267
+  ],
+  "ref": 74373,
+  "bound": 74394.0,
+  "optimal": false
+ }
+]

@@ -1,0 +1,12 @@
+[{"cls":"MKP","n":100,"K":3,"seed":9001,"greedy":30924,"ref":30997,"bound":31013.0,"optimal":false},
+{"cls":"MKP","n":100,"K":3,"seed":9002,"greedy":24844,"ref":24951,"bound":24967.0,"optimal":false},
+{"cls":"MKP","n":200,"K":5,"seed":9001,"greedy":63396,"ref":63461,"bound":63488.0,"optimal":false},
+{"cls":"MKP","n":200,"K":5,"seed":9002,"greedy":58328,"ref":58367,"bound":58403.0,"optimal":false},
+{"cls":"MKP","n":400,"K":10,"seed":9001,"greedy":120763,"ref":120810,"bound":120911.0,"optimal":false},
+{"cls":"MKP","n":400,"K":10,"seed":9002,"greedy":115602,"ref":115665,"bound":115752.0,"optimal":false},
+{"cls":"MAXSAT","n":80,"seed":9001,"greedy":16804,"ref":16804,"bound":16804.0,"optimal":true},
+{"cls":"MAXSAT","n":80,"seed":9002,"greedy":17546,"ref":17546,"bound":17546.0,"optimal":true},
+{"cls":"MAXSAT","n":150,"seed":9001,"greedy":33361,"ref":33361,"bound":33361.0,"optimal":true},
+{"cls":"MAXSAT","n":150,"seed":9002,"greedy":33159,"ref":33162,"bound":33162.0,"optimal":true},
+{"cls":"MAXSAT","n":600,"seed":9001,"greedy":130944,"ref":130949,"bound":130980.0,"optimal":false},
+{"cls":"MAXSAT","n":600,"seed":9002,"greedy":130673,"ref":130716,"bound":130749.0,"optimal":false}]
