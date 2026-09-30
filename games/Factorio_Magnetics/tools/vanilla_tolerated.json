@@ -1,0 +1,254 @@
+[
+[
+"неизвестное свойство для AmmoType",
+"type"
+],
+[
+"неизвестное свойство для Animation",
+"disable_shadow_distortion_beginning_at_frame"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"artillery-shell"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"beam"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"biological"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"bullet"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"cannon-shell"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"capsule"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"electric"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"flamethrower"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"grenade"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"landmine"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"laser"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"melee"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"rocket"
+],
+[
+"неизвестное свойство для BonusGuiOrdering",
+"shotgun-shell"
+],
+[
+"неизвестное свойство для CoverGraphicProcessionLayer",
+"end_time"
+],
+[
+"неизвестное свойство для CoverGraphicProcessionLayer",
+"name"
+],
+[
+"неизвестное свойство для CoverGraphicProcessionLayer",
+"start_time"
+],
+[
+"неизвестное свойство для CraftingMachineGraphicsSet",
+"integration_patch"
+],
+[
+"неизвестное свойство для CraftingMachineGraphicsSet",
+"integration_patch_render_layer"
+],
+[
+"неизвестное свойство для PodAnimationProcessionLayer",
+"end_time"
+],
+[
+"неизвестное свойство для PodAnimationProcessionLayer",
+"name"
+],
+[
+"неизвестное свойство для PodAnimationProcessionLayer",
+"start_time"
+],
+[
+"неизвестное свойство для PodOpacityProcessionBezierControlPoint",
+"environment_muffle_intensity"
+],
+[
+"неизвестное свойство для PodOpacityProcessionBezierControlPoint",
+"environment_volume"
+],
+[
+"неизвестное свойство для ProcessionAudioEvent",
+"timestamp"
+],
+[
+"неизвестное свойство для ProcessionGraphicCatalogueItem",
+"type"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"duplicate_first_direction"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"east"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"north"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"north_east"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"north_west"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"south"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"south_east"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"south_west"
+],
+[
+"неизвестное свойство для RotatedAnimation",
+"west"
+],
+[
+"неизвестное свойство для RotatedAnimation8Way",
+"layers"
+],
+[
+"неизвестное свойство для SingleGraphicProcessionLayer",
+"end_time"
+],
+[
+"неизвестное свойство для SingleGraphicProcessionLayer",
+"name"
+],
+[
+"неизвестное свойство для SingleGraphicProcessionLayer",
+"start_time"
+],
+[
+"неизвестное свойство для Sound",
+"switch_vibration_data"
+],
+[
+"неизвестное свойство для Sprite",
+"direction_count"
+],
+[
+"неизвестное свойство для Sprite",
+"east"
+],
+[
+"неизвестное свойство для Sprite",
+"line_length"
+],
+[
+"неизвестное свойство для Sprite",
+"north"
+],
+[
+"неизвестное свойство для Sprite",
+"south"
+],
+[
+"неизвестное свойство для Sprite",
+"type"
+],
+[
+"неизвестное свойство для Sprite",
+"west"
+],
+[
+"неизвестное свойство для Sprite4Way",
+"layers"
+],
+[
+"неизвестное свойство для SpriteNWaySheet",
+"frame_repeat"
+],
+[
+"неизвестное свойство для SpriteNWaySheet",
+"line_length"
+],
+[
+"неизвестное свойство для ThrusterGraphicsSet",
+"integration_patch"
+],
+[
+"неизвестное свойство для ThrusterGraphicsSet",
+"integration_patch_render_layer"
+],
+[
+"неизвестное свойство для ToolPrototype",
+"factoriopedia_durability_description_key"
+],
+[
+"неизвестное свойство для UtilityConstants",
+"gui_move_switch_vibration"
+],
+[
+"ожидалась строка, получено dict",
+"build_sound"
+],
+[
+"ожидалась таблица DamageEntityTriggerEffectItem, получено list",
+"target_effects"
+],
+[
+"ожидалась таблица DirectTriggerItem, получено list",
+"action"
+],
+[
+"ожидалась таблица DirectTriggerItem, получено list",
+"created_effect"
+],
+[
+"ожидалась таблица LayeredSprite, получено list",
+"picture"
+],
+[
+"ожидалась таблица SpriteVariations, получено list",
+"pictures"
+],
+[
+"ожидалось 'build-entity', получено 'rotate-entity'",
+"type"
+]
+]
