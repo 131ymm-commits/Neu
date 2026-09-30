@@ -1,0 +1,161 @@
+{
+ "round": 1,
+ "orders": [
+  {
+   "oid": "r1a1o0",
+   "attacker": 1,
+   "title": "Лист без «а»",
+   "kind": "буквенный",
+   "theme": "осенний лес ночью",
+   "bet": "Защитники пропустят букву «а» в каком-нибудь слове (падежные окончания, союз «а», «как», «над») или ошибутся в числе «о» в строке, спутав её с «ё» или пропустив «о» в предлогах и приставках (по-, про-, о).",
+   "accept": "ok",
+   "reject_share": 0.7333333333333333,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a1o1",
+   "attacker": 1,
+   "title": "Лестница гласных",
+   "kind": "слоговой",
+   "theme": "зимняя дорога",
+   "bet": "Защитники будут считать слоги по метру или ударению и собьются на единицу в какой-нибудь строке (пропустят «й»-слоги или посчитают «ё» и «я» неверно), либо машинально поставят предлог «в», «с» или «к», а в нём нет гласной.",
+   "accept": "ok",
+   "reject_share": 0.7666666666666667,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a1o2",
+   "attacker": 1,
+   "title": "Маяк на закрытых слогах",
+   "kind": "рифменный",
+   "theme": "морской маяк ночью",
+   "bet": "Защитники возьмут привычные рифмы на открытый слог или на одну согласную («свет/нет», «волна/луна»), у которых tail короче 3 букв, или рифмы на звук, а не на буквы («сад/взгляд», «ночь/дочь» при разных хвостах). Ещё ожидаю, что число гласных в строке уйдёт от 8, когда рифмовое слово подгоняют под размер.",
+   "accept": "ok",
+   "reject_share": 0.6666666666666666,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": false,
+     "failed1": [],
+     "base1": false,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": false,
+     "failed1": [],
+     "base1": false,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  }
+ ]
+}
