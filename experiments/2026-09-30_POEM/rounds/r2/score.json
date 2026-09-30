@@ -1,0 +1,423 @@
+{
+ "round": 2,
+ "orders": [
+  {
+   "oid": "r2a1o0",
+   "attacker": 1,
+   "title": "Роща без «а»",
+   "kind": "буквенный",
+   "theme": "поздняя осень в роще",
+   "bet": "Без инструментов защитники ошибутся в подсчёте букв в строке (ровно 26) и в общем числе «о» (13); кто-то посчитает «ё» за «о» или пропустит «а» в каком-нибудь слове.",
+   "accept": "ok",
+   "reject_share": 0.8,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r2a1o1",
+   "attacker": 1,
+   "title": "Ночной поезд",
+   "kind": "слоговой",
+   "theme": "ночной поезд в пути",
+   "bet": "Ошибка в точном числе гласных по строкам (особенно «й» за гласную, пропуск «ё») и главное — в общем числе букв 94, которое без счёта почти невозможно угадать.",
+   "accept": "ok",
+   "reject_share": 0.9,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r2a1o2",
+   "attacker": 1,
+   "title": "Зимний вечер",
+   "kind": "рифменный",
+   "theme": "зимний вечер дома",
+   "bet": "Защитники возьмут рифмы на открытый слог или на «-ой/-ый» (хвост 2 буквы, как «ночи», «окно», «мой») или на «-ость» (хвост 4 буквы) и собьются с ровно 7 гласных в строке.",
+   "accept": "ok",
+   "reject_share": 0.7,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r2a1o3",
+   "attacker": 1,
+   "title": "Растущие слова",
+   "kind": "словесный",
+   "theme": "утро у моря",
+   "bet": "Ошибутся в длинах слов: два соседних слова равной длины (например 6 и 6) или спутают длину слова с «й»/«ь»; дефисное слово («где-то») разобьётся на короткие слова; проскользнёт предлог короче 4 букв.",
+   "accept": "ok",
+   "reject_share": 0.6333333333333333,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r2a2o0",
+   "attacker": 2,
+   "title": "Ночной вокзал без «е»",
+   "kind": "буквенный",
+   "theme": "ночной вокзал, ушедший поезд",
+   "bet": "Буква «е» пролезет в служебные слова и окончания (не, где, её, -ет, -ем), либо в строке окажется 29/31 буква или 3/5 букв «о»: без инструментов точно посчитать 30 букв и 4 «о» в каждой строке почти невозможно.",
+   "accept": "ok",
+   "reject_share": 0.9333333333333333,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r2a2o1",
+   "attacker": 2,
+   "title": "Горное утро: чередование слогов",
+   "kind": "слоговой",
+   "theme": "утро в горах",
+   "bet": "Рядом окажутся два двусложных слова (туман горит, заря встаёт) или «и снег», «как дым» (1+1); трёхсложное слово проскользнёт; при починке соседства собьётся точная лестница 7..12 гласных; к тому же приходится экономить «в», «и», «с», «к» — их нельзя больше 3 раз.",
+   "accept": "ok",
+   "reject_share": 0.7,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r2a2o2",
+   "attacker": 2,
+   "title": "Трёхбуквенные рифмы",
+   "kind": "рифменный",
+   "theme": "звёздная ночь над деревней",
+   "bet": "Появятся рифмы на гласную (луна/стена — хвост «на», 2 буквы) или на одну согласную (свет/нет — 2 буквы), либо фонетические рифмы (идёт/лёд, пруд/ждут) с разными хвостами; кроме того, у кого-то в строке будет 10 или 12 гласных, а не 11.",
+   "accept": "ok",
+   "reject_share": 0.7,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": false,
+     "failed1": [
+      5
+     ],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r2a2o3",
+   "attacker": 2,
+   "title": "Цепочка ледохода",
+   "kind": "словесный",
+   "theme": "весенний ледоход на реке",
+   "bet": "Проскочат короткие служебные слова (в, и, на, не, по) или повтор слова; слово с дефисом распадётся на части и собьёт счёт «5 слов» и длину ≥3; строка кончится на «ь»/«ы», и цепочку не продолжить; итог по буквам не будет ровно 146.",
+   "accept": "ok",
+   "reject_share": 0.8666666666666667,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  }
+ ]
+}

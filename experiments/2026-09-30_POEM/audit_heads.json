@@ -1,0 +1,194 @@
+[
+ {
+  "wf": "wf_fb9cb7b5-d82",
+  "name": "poem-dry-attack-r1",
+  "start": 1790748786618,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/dry/r1/attack.js",
+  "agents": 1,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 10
+  },
+  "model": {
+   "claude-opus-5-5": 1
+  }
+ },
+ {
+  "wf": "wf_1bb80956-d8d",
+  "name": "poem-dry-stage1-r1",
+  "start": 1790748940338,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/dry/r1/stage1.js",
+  "agents": 33,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 23
+  },
+  "model": {
+   "claude-opus-5-5": 33
+  }
+ },
+ {
+  "wf": "wf_ef51fc60-d47",
+  "name": "poem-dry-stage2-r1",
+  "start": 1790749244956,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/dry/r1/stage2.js",
+  "agents": 4,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {},
+  "model": {
+   "claude-opus-5-5": 4
+  }
+ },
+ {
+  "wf": "wf_fc3a53a8-ac0",
+  "name": "poem-dry-stage3-r1",
+  "start": 1790749277514,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/dry/r1/stage3.js",
+  "agents": 18,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {},
+  "model": {
+   "claude-opus-5-5": 18
+  }
+ },
+ {
+  "wf": "wf_65e94169-7d2",
+  "name": "poem-rounds-attack-r1",
+  "start": 1790749340531,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/rounds/r1/attack.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 25
+  },
+  "model": {
+   "claude-opus-5-5": 2
+  }
+ },
+ {
+  "wf": "wf_22b68977-7c4",
+  "name": "poem-stage1-r1",
+  "start": 1790749538139,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/rounds/r1/stage1.js",
+  "agents": 88,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 55
+  },
+  "model": {
+   "claude-opus-5-5": 88
+  }
+ },
+ {
+  "wf": "wf_e08e0c23-889",
+  "name": "poem-stage2-r1",
+  "start": 1790750238655,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/rounds/r1/stage2.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {},
+  "model": {
+   "claude-opus-5-5": 2
+  }
+ },
+ {
+  "wf": "wf_312a7b96-164",
+  "name": "poem-stage3-r1",
+  "start": 1790750266707,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/rounds/r1/stage3.js",
+  "agents": 48,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {},
+  "model": {
+   "claude-opus-5-5": 48
+  }
+ },
+ {
+  "wf": "wf_a3e35bc6-b23",
+  "name": "poem-rounds-attack-r2",
+  "start": 1790750372246,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/rounds/r2/attack.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 24
+  },
+  "model": {
+   "claude-opus-5-5": 2
+  }
+ },
+ {
+  "wf": "wf_6aab0cd1-184",
+  "name": "poem-stage1-r2",
+  "start": 1790750747089,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/rounds/r2/stage1.js",
+  "agents": 88,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 72
+  },
+  "model": {
+   "claude-opus-5-5": 88
+  }
+ },
+ {
+  "wf": "wf_fa3d525e-e56",
+  "name": "poem-stage2-r2",
+  "start": 1790751779696,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/rounds/r2/stage2.js",
+  "agents": 2,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {},
+  "model": {
+   "claude-opus-5-5": 2
+  }
+ },
+ {
+  "wf": "wf_63ad6683-3c5",
+  "name": "poem-stage3-r2",
+  "start": 1790751811136,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-30_POEM/rounds/r2/stage3.js",
+  "agents": 48,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {},
+  "model": {
+   "claude-opus-5-5": 48
+  }
+ }
+]

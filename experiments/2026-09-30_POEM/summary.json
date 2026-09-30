@@ -1,0 +1,32 @@
+{
+ "n": 16,
+ "fair": 16,
+ "arms": {
+  "solo": {
+   "first": 15,
+   "final": 16,
+   "topic": 15
+  },
+  "team": {
+   "first": 15,
+   "final": 16,
+   "topic": 15
+  },
+  "solo_lib": {
+   "first": 16,
+   "final": 16,
+   "topic": 16
+  },
+  "team_lib": {
+   "first": 16,
+   "final": 16,
+   "topic": 16
+  }
+ },
+ "discordant_final": 0,
+ "discordant_first": 2,
+ "calib": {
+  "witness": 15,
+  "shuffled": 15
+ }
+}
