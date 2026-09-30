@@ -1,0 +1,270 @@
+[
+ {
+  "scores": [
+   {
+    "design": "design_engine.md",
+    "score": 8.5,
+    "fatal_flaws": [
+     "None that would break loading or vanilla. Every entity is a same-type deepcopy: furnace←stone-furnace/electric-furnace, AM←AM2/AM3/chem/centrifuge, burner-generator←base hidden burner-generator (entities.lua:9945), EEI←base EEI, turrets←gun/laser. Clearing the inherited next_upgrade matters: stone-furnace.next_upgrade = steel-furnace in raw_base.json.",
+     "Balance (not load): the coilgun's hitscan `line` ammo (range 24, 3 shots/s, A+L science) hits EVERY enemy in the line with no pierce cap. Against columns of biters this is far above the gun turret (50 dps); the other designs cap pierce with piercing_damage.",
+     "Balance: in base, maglev 75/s sits at A+L+C+P, right after logistics-3, so belts jump 45→75 with no utility-science gate (the design admits this as R5).",
+     "Balance: calutron p(U-235)=0.01 per 10 ore gives 43% more U-235 per ore than vanilla uranium-processing (0.007) before Kovarex. It undercuts a vanilla progression step.",
+     "Mend coil: 4% max HP per scan to every damaged own-force entity (characters and vehicles included, no type filter) and up to 250 HP/s per coil on 500 kW. That is generous. Each scan is an unfiltered radius-12 area query, which costs UPS in dense bases; the U1 budget covers this only if the test is honest.",
+     "Test P4 (SMES charged from the base EEI) will read 0. Our own pilot2.json shows a vanilla accumulator stayed at 0 J for 20 s on a network fed by the base EEI: both are `tertiary` (entities.lua:8557, 5370), and accumulators do not charge from tertiary sources."
+    ],
+    "best_ideas": [
+     "Same-type deepcopy for every entity; no type conversion, no sprite scaling. This is the lowest load risk and keeps tint and upgrade validity.",
+     "It is grounded in a real 2.0.77 pilot (pilot.json: AM2 about 1.5/s, drill 0.5/s with a 5×5 area, express 45/s, EEI ΔE about 2.45 MJ) and in raw_base/raw_sa dumps; it reuses the existing tools/run.py and check_props.py.",
+     "12 named pilots (load order, resistance formula, EEI units, ammo-turret energy_per_shot in base, line force/width, chain semantics, EEI secondary-input buffer), each with a fallback and each run before registration.",
+     "S7 is a field-level JSON diff of every vanilla prototype with and without the mod, against a whitelist. S12 checks tint isolation: no tint on vanilla leaves (the shared express animation-set trap) and none on shadow leaves. S11 checks furnace input uniqueness. S3 checks property typos.",
+     "`auto_barrel = false` on the fluid. It is the only design that noticed base data-updates would create `empty-magnetics-*-barrel` and break the prefix rule.",
+     "The bonus append at data-updates reads SA's already-edited modifiers. It adds `turret-attack` for the coilgun and rail cannon, which mirrors how the gun-turret really scales (combat.md §14.2).",
+     "The arc emitter uses ammo_category `laser`, so it gets vanilla laser upgrades with no appended effects. Chain damage is instant and the beam is visual only (action=nil), so it is deterministic.",
+     "The `/magnetics-showroom` screenshot command in the test mod lets the author see every world model in the graphical client.",
+     "Deepcopies are made in data.lua after SA (via `? space-age`), so they inherit heating_energy and the stone-furnace pressure condition. This is correct because SA runs base-data-updates from SA/data.lua:65, which I verified."
+    ]
+   },
+   {
+    "design": "design_balance.md",
+    "score": 7,
+    "fatal_flaws": [
+     "Fluid `magnetics-cryo-coolant` has no `auto_barrel = false`. base/data-updates.lua:169 then generates recipe `empty-magnetics-cryo-coolant-barrel`, which breaks the prefix rule and the design's own S2 name audit.",
+     "Test K10 (and the claim that slug weapons scale exactly like bullets) is wrong. physical-projectile-damage-N gives the gun-turret both `ammo-damage bullet` and `turret-attack gun-turret` (combat.md §14.2). The design mirrors only ammo-damage and gun-speed, so the coilgun-to-gun-turret ratio changes after research and K10 fails as written.",
+     "Four type conversions: kiln and induction furnace (furnace art as assembling-machine), gauss (laser-turret as ammo-turret), and mass driver (flamethrower fluid-turret as a 2×3 directional electric-turret). The flamethrower carries about 15 fluid-turret-only keys (muzzle shifts, fuel indicators, fluid_box). This is the highest load and visual risk among the three, although fallbacks are listed.",
+     "Arc emitter damage is delivered through beams with duration = damage_interval = 20 ('hits once [pilot]'). Beam tick timing is undocumented (combat.md §8), so per-shot damage is not reliably testable. Instant damage with a cosmetic beam, as in the other two designs, is the fix.",
+     "Gauss damage relies on attack_parameters.damage_modifier = 3 applied to projectile deliveries, and wall reflection relies on the attack_reaction formula. Both are undocumented (combat.md §16); both are marked pilot and have fallbacks.",
+     "Only 2 test configurations (B and S). There is no quality-only (BQ) run, so the recycling and quality-lock paths without SA go untested.",
+     "E1/E2 accumulator charge tests would read 0 if charged from the base (tertiary) EEI (pilot2.json acc_energy_20s = 0)."
+    ],
+    "best_ideas": [
+     "An energy-negative flux loop with complete, API-verified exploit locks: crafting_speed_quality_multiplier[q]=1 (the field exists, changelog.txt:521), module_slots 0, effect_receiver uses_module/beacon/surface_effects=false, charging recipe allow_productivity=false and allow_quality=false, item auto_recycle=false (ItemPrototype.auto_recycle exists). A legendary-resonator round-trip test (E6) is a release blocker.",
+     "Walls take the previous tier as an ingredient, and a magnet-gate tier (gate.next_upgrade; gate FRG 'wall', same box) avoids a weak spot in upgraded walls.",
+     "Mend coil: at most 25 coils per 30 ticks, so the cost is independent of coil count. Targets are type-filtered (walls, gates, turrets, radar). Tests cover save/load mid-heal (R9) and determinism by hash (R8).",
+     "Pylon reach 48, chosen so that legendary quality (+2 per level) stays at 58, under the API max of 64 (ElectricPolePrototype.maximum_wire_distance).",
+     "In base, maglev is gated behind utility science; under SA it costs 2× the turbo tech.",
+     "SA machines join the Magnetics chains: the EM plant gets winding, the cryogenic plant cryogenics, the foundry sintering and induction.",
+     "The separator gets magnetic-field ≥ 50 under SA, which keeps it from bypassing Gleba/Vulcanus. Its niche is numerically worse than mining.",
+     "Coil capacitor: little storage, high power flow, a burst-load niche priced above the accumulator per MJ.",
+     "The S4 vanilla-parity dump and the K7 paired DPS ratios against vanilla controls."
+    ]
+   },
+   {
+    "design": "design_appeal.md",
+    "score": 5,
+    "fatal_flaws": [
+     "The flux loop produces about 40× more energy than it consumes. A recharge costs 50 MJ of resonator power + 20 ferrofluid (2 ferrite + 20 light oil) + 20 LN2 (made from power alone, about 1.2 MJ) and returns a 2 GJ crystal at p = 0.9. One 5 MW resonator recharging a crystal every 10 s feeds 20 flux dynamos (200 MW). Crystal creation also allows productivity, with 4 module slots. This is practically free power, and the same crystals are premium locomotive fuel (2 GJ, top speed ×1.3). Clearly unbalanced.",
+     "Fluid `magnetics-ferrofluid` keeps auto_barrel = true, so base generates `empty-magnetics-ferrofluid-barrel` (base/data-updates.lua:169). That breaks the prefix rule and the design's own S0 test.",
+     "Pylon maximum_wire_distance = 64 is the documented API max ('Max value is 64'). Quality adds 2×level (QualityPrototype.electric_pole_wire_reach_bonus), so a legendary pylon reaches 74. That is beyond the documented limit and the behaviour is unverified.",
+     "Type conversions (kiln and induction furnace as assembling-machines) plus scaled vanilla sprites (capacitor ×0.5; SMES and rail cannon ×1.5, which needs new 3×3 boxes). The look is unverifiable headless and the design itself flags it as blurry.",
+     "Upgrade mirroring copies only ammo-damage and gun-speed. The coilgun misses the `turret-attack` share that the gun-turret gets (combat.md §14.2), so it falls behind vanilla at high research levels.",
+     "Extra vanilla edits beyond next_upgrade: magnetics-flux added to the locomotive's fuel_categories, and a new category on the character. Both are additive, but they widen the S3 whitelist. The SA-only scrap separation doubles holmium per scrap, which changes Fulgora's main bottleneck.",
+     "The MHD generator from the Mindustry theme is dropped."
+    ],
+    "best_ideas": [
+     "Geomagnetic coil: a solar-panel with solar_coefficient_property = 'magnetic-field' and performance_at_night = 1. All fields exist in the API, and 'magnetic-field' is a BASE surface property (base/prototypes/planet/surface-property.lua:14, default 90), so it loads without SA. It is testable via LuaSurface.set_property on the lab surface. It gives Fulgora (99) a strong niche, and it is the most Factorio-native new mechanic of all three designs.",
+     "Event-driven mend coil: on_entity_damaged with LuaEntityDamagedEventFilter type/final-health filters (verified in runtime-api.json), a queue capped at 200 per 30 ticks, zero idle cost, and a spatial grid instead of find_entities in steady state. It is the best UPS profile.",
+     "Four load configurations (B, BQ, BE, SA).",
+     "Ferrofluid as the maglev counterpart of lubricant (mirrors the express belt's 20 lubricant), provided it is non-barrelled or the barrel names are whitelisted.",
+     "Flux crystals as locomotive fuel via fuel_top_speed_multiplier. This is safe for the engine, since burners without a burnt inventory void burnt results (changelog.txt:3672). It is acceptable only if crystal energy is priced honestly.",
+     "Arc emitter: the base `electric-mini-stun` sticker (verified: 40 ticks, movement ×0.2), with the chain nested first, as the tesla does.",
+     "Under SA, a magnetic-field ≥ 10 placement condition keeps Magnetics hardware off space platforms and leaves platform balance untouched.",
+     "Rail cannon health_penalty = -1, like the railgun.",
+     "The magnet slug is the second ammo tier on one coilgun (the Factorio convention)."
+    ]
+   }
+  ],
+  "winner": "design_engine.md",
+  "must_fix": [
+   "Every new fluid gets `auto_barrel = false`, or else the spec whitelists the generated names. Otherwise base/data-updates.lua:169 creates `empty-magnetics-<fluid>-barrel`, which breaks the magnetics- prefix rule and the S2 name audit. This affects balance (cryo-coolant) and appeal (ferrofluid).",
+   "If the spec keeps a rechargeable flux crystal (burnt_result loop), it must be energy-negative: energy put into charging ≥ fuel_value/0.8. Adopt balance §7.4 in full: module_slots=0; effect_receiver uses_module/beacon/surface_effects=false; crafting_speed_quality_multiplier[q]=1 for every data.raw.quality in data-final-fixes; charging recipe allow_productivity=false and allow_quality=false; item and recipe auto_recycle=false. Make the legendary-resonator round-trip test (< 1.0) a release blocker. Appeal's 2 GJ recharge for about 50 MJ is rejected.",
+   "Bonus mirroring appends `turret-attack` effects (turret_id = our ammo turrets) wherever vanilla gives turret-attack gun-turret, as the engine design does. Fix balance K10, whose expected ratio is wrong without this.",
+   "Keep base wire reach plus the quality bonus (2×level, legendary +10) ≤ 64, i.e. base reach ≤ 54 (balance's 48 is fine; appeal's 64 is not).",
+   "Bound the coilgun's pierce. Either use a projectile with direction_only and piercing_damage (balance/appeal), or shorten and narrow the line. Register the pilot-measured pierce count. Keep unlimited line damage only for the late rail cannon/mass driver.",
+   "Every copy resets the inherited `next_upgrade` (stone-furnace→steel-furnace in raw_base) and `fast_replaceable_group` (gun-turret 'ammo-turret', laser-turret 'laser-turret', stone/electric furnace 'furnace') unless it is an intended upgrade. The S6 test checks same box, mask and FRG for each vanilla→Magnetics link.",
+   "Prefer same-type deepcopies. If the kiln must take 2 ingredients, build it as an assembling-machine from AM art, or keep the engine's single-input furnace. Drop the fluid-turret→electric-turret mass driver and the laser→ammo-turret gauss conversions unless PILOT load checks pass in all 4 configs. No sprite scaling unless a load and look pilot passes.",
+   "All chain/arc damage is instant trigger damage; beams are cosmetic (action = nil). Beam damage_interval timing is undocumented (combat.md §8).",
+   "Mend coil: type-filtered targets (walls, gates, turrets; not characters or vehicles) and bounded work per tick (balance cap, or appeal's event queue with LuaEntityDamagedEventFilter). Energy per HP is charged from the EEI buffer. Pilot the secondary-input EEI buffer charging with energy_usage = 0 (engine PILOT-10). Add save/load and double-run hash determinism tests plus a --benchmark UPS budget.",
+   "Accumulator/SMES/capacitor charge tests must use a non-tertiary source (e.g. a test-mod EEI with usage_priority 'primary-output', or a burner-generator). pilot2.json shows a vanilla accumulator stayed at 0 J for 20 s on a network fed by the base EEI; the base EEI and the hidden EEI are both tertiary (entities.lua:8557, :5370).",
+   "Gate base maglev behind utility science (balance/appeal), not just logistics-3. Under SA: turbo belt ingredients, a turbo-transport-belt prerequisite, and `turbo-*.next_upgrade`. Belt speed 0.15625 (40/256) → 75/s.",
+   "Calutron: drop it, or set p(U-235) ≤ 0.007 so it does not beat vanilla ore efficiency before Kovarex.",
+   "Guard every surface_conditions and heating_energy write with `mods['space-age']` / feature_flags (both have space_age visibility in prototype-api.json). Rely on `? space-age` load order for inherited SA fields and confirm it with PILOT-1. SA runs base-data-updates from SA/data.lua:65, so copies made in our data.lua inherit.",
+   "Test matrix: load and static checks in B, BQ, BE and SA; functional tests in B and SA; quality-lock and recycling checks in BQ and SA. The vanilla field-level JSON diff (engine S7) and tint isolation (engine S12) are mandatory.",
+   "Pilot the undocumented semantics on a separate seed before PREREG: resistance order (stone-wall damage(100, physical) = 77.6?), damage_modifier/turret-attack/ammo-damage combination, attack_reaction targeting and formula (if walls reflect), line trigger `force` and width, chain jumps, the solar_coefficient_property scaling (if the geomagnetic coil is grafted), and energy units."
+  ],
+  "notes": "I read all three designs in full and checked their claims against /opt/factorio-api/prototype-api.json, runtime-api.json, the game Lua, changelog.txt, raw_base.json and pilot.json/pilot2.json.\n\nConfirmed facts:\n- These fields all exist: SolarPanelPrototype.solar_coefficient_property, performance_at_night, CraftingMachinePrototype.crafting_speed_quality_multiplier and quality_affects_energy_usage, AssemblingMachinePrototype.fixed_recipe, AmmoTurretPrototype.energy_source and energy_per_shot, EntityWithHealthPrototype.attack_reaction, ProjectilePrototype.force_condition, piercing_damage and direction_only, TriggerItem.force, BaseAttackParameters.turn_range (on the attack parameters, not on TurretPrototype), AmmoType.range_modifier, Fluid auto_barrel, Item/Recipe auto_recycle, EffectReceiver.uses_* and the chain-active-trigger fields.\n- maximum_wire_distance is documented with 'Max value is 64'.\n- surface_conditions and heating_energy carry space_age visibility.\n- 'magnetic-field' is a base surface property with default 90.\n- The global helpers accumulator_picture, make_electric_beam and append_base_electric_beam_graphics exist in base.\n- The electric-mini-stun sticker exists (40 ticks, ×0.2).\n- The base hidden burner-generator (steam-engine art, 3×5) exists.\n- Burnt results are voided in burners without a burnt inventory since 2.0.7.\n- Every vanilla tech named as a prerequisite exists in both configs; turbo-transport-belt and electromagnetic-science-pack exist only in SA.\n\nVerdict under the engine and testability lens:\n- **design_engine.md wins.** It uses only same-type deepcopies, is pilot-grounded, lists 12 pilots with fallbacks, runs the strongest vanilla-untouched and tint-isolation tests, and has a showroom for the author's pictures. Its weaknesses are balance tuning: an uncapped line-pierce coilgun, purple-tier maglev in base, a generous and unfiltered mend coil, and the calutron.\n- **design_balance.md** has the best balance reasoning and the only complete, API-verified protection against flux energy exploits. It is weakened by four type conversions, beam-timed arc damage, a wrong K10 expectation (missing turret-attack) and the barrel prefix leak.\n- **design_appeal.md** has the most memorable Factorio-native idea (the geomagnetic coil, which is solar_coefficient_property = magnetic-field and loads in base) and the best UPS design for the mend coil. It is disqualified as the base by an energy-positive flux loop (about 40×: one resonator feeds about 200 MW of dynamos) and the barrel prefix leak.\n\nRecommended final spec: the engine design as the skeleton. Graft from balance:\n- the flux quality/energy locks, if a recharge loop is wanted;\n- wall-tier-as-ingredient and the magnet gate;\n- the pylon reach rule;\n- utility-science gating of maglev in base;\n- SA machine category inserts;\n- the separator's magnetic-field condition;\n- mend-coil type filtering and save/load tests.\n\nGraft from appeal:\n- the geomagnetic coil;\n- the event-filtered mend coil queue;\n- the 4-config test matrix;\n- magnet slugs on one coilgun.\n\nA new harness issue found in pilot2.json (written after the designs) applies to all three: an accumulator on a network fed only by the base tertiary EEI does not charge, so the storage tests need a primary- or secondary-output source."
+ },
+ {
+  "scores": [
+   {
+    "design": "design_balance.md",
+    "score": 8,
+    "fatal_flaws": [
+     "No load-breaking or vanilla-breaking flaw found. Every numeric claim I re-derived checks out: ratios in §3.3, P1-P7, M1, E4-E6 and the wall/biter arithmetic against combat.md §12 (stone 69.6/bite and SC 53.3/bite vs a behemoth).",
+     "Upgrade mirroring is incomplete. Every physical-projectile-damage-N also gives `turret-attack turret_id=gun-turret` (+0.1/+0.1/+0.2/+0.2/+0.2/+0.4/+0.7; combat.md §14.2, 'a new bullet-category turret would get only ammo-damage[bullet] and gun-speed[bullet]'). The design copies only ammo-damage and gun-speed, so coilgun and gauss fall behind gun turrets as research grows. Test K10 ('ratio identical') would fail as written.",
+     "Several unlocked recipes need items whose tech is not in the prerequisite chain (combat.md/tech.md §3 prereqs). T12 builds the SC accumulator from `accumulator` but lacks electric-energy-accumulators. T13 builds the resonator from `centrifuge` but lacks uranium-processing, a trigger tech. T15 uses refined-concrete but lacks `concrete`. T9 uses repair-pack for the mend coil but lacks the `repair-pack` tech.",
+     "The cryo coolant does not set `auto_barrel = false`. base/data-updates.lua:169 then auto-generates the recipe `empty-magnetics-cryo-coolant-barrel`, which breaks the magnetics- prefix rule, and the design's own test S2 would fail. The opt-out is at line 279.",
+     "The arc emitter has no real niche: 25 + 3×15 at range 18, versus laser range 24 (combat.md §5) and the laser's 800 kJ/shot. It is strictly a shorter-range, weaker laser with a small splash, so it needs retuning against a measured laser control.",
+     "Gauss range 32 outranges medium worms (30, base/prototypes/entity/enemy-constants.lua:135) and the flamethrower (30, combat.md §5) at blue+military. This is the first base turret to out-range medium worms. The design acknowledges it; the council should decide it explicitly or cap it at 30.",
+     "Four entities are type-converted clones: kiln and induction furnace (furnace art as assembling-machine), gauss (laser art as ammo-turret) and mass driver (fluid-turret flamethrower art as electric-turret). This raises the load risk (R1). There is also no explicit pilot for `energy_per_shot` on an ammo-turret in base (so far only the SA railgun uses it, combat.md §5.4), nor for an EEI buffer charging with energy_usage 0."
+    ],
+    "best_ideas": [
+     "The flux loop is framed as energy transport, not generation: 125.25 MJ in and 100 MJ out, so the round trip is at most 80%. It has a hard lock set: 0 module slots, effect_receiver all false, allow_productivity/allow_quality false, `crafting_speed_quality_multiplier`=1 per quality (the field exists in the API, crafting.md §4) and auto_recycle false. A legendary-resonator release-blocker test backs it.",
+     "Every building answers 'why build this over vanilla?' with a trade-off. The magnetic drill runs at 0.75 (0.083 ore/s per footprint tile, below the SA big drill's 2.5/25 = 0.1; mining.md §1) and keeps the EMD's 20 pollution/min per unit speed. The separator is deliberately worse than mining. The MHD keeps the boiler's 16.7 pollution/min per MW of fuel (30/min per 1.8 MW, power.md §2.6).",
+     "The SA recipe surface condition magnetic-field ≥ 50 on stone separation stops a stone→iron bypass of Gleba's biological iron (power.md §11.6: Gleba 25, Nauvis 90, Fulgora 99).",
+     "The pylon reach of 48 is chosen so legendary (+2×5) gives 58 ≤ the API max of 64 (power.md §3.1). The SC accumulator keeps vanilla's 16.7 s full-discharge time and is an in-place upgrade.",
+     "A per-building SA coexistence table. SA machines gain Magnetics categories in data-updates (EM plant winding, cryogenic plant cryogenics, foundry sintering/induction), which is the native 'specialist machine' reward (crafting.md §3). Maglev comes after turbo in SA and is gated at utility science in base. The arc emitter and mass driver are explicitly weaker than tesla and railgun.",
+     "Wall tiers take the previous wall as an ingredient, like gate←stone-wall (combat.md §11.3), and a magnet gate is added so the wall tier has no weak spot.",
+     "S4 vanilla parity diff: all vanilla recipes and techs must be identical except a whitelist."
+    ]
+   },
+   {
+    "design": "design_engine.md",
+    "score": 6.5,
+    "fatal_flaws": [
+     "Base maglev (75/s) comes at A+L+C+P 400×30. That is the same pack set as logistics-3, which gives express 45/s (tech.md §3: 300×15 A+L+C+P), and the recipe is cheap (2 express + 1 SC + 2 coil + 40 lubricant → 2 belts). Express and a +67% belt arrive together, so express becomes a stepping stone.",
+     "The magnetic drill has mining_speed 1.0 and 4 modules at blue science. That is 1.0/9 = 0.111 ore/s per footprint tile, above the SA big drill's 2.5/25 = 0.1 (mining.md §1), and it erodes the Vulcanus reward.",
+     "Coilgun ammo is a hitscan `line` with unlimited pierce. At A+L the ferrite slug does 15 dmg ×3/s to every enemy in a 24-tile line (test T2: five biters die to one shot). At A+L+M the alloy slug does 40 ×3 = 120 dps per target, against piercing rounds' 8 dmg ×10/s = 80 dps single-target (combat.md §5, §6.2). This is clear creep over the gun turret.",
+     "The MHD pollutes 20/min for 3.75 MW of fuel (5.3/min per MW). The boiler pollutes 30/min per 1.8 MW (16.7/min per MW; power.md §2.6). At blue science this cuts power-plant pollution by about 3× and weakens vanilla biter pressure. It should be about 62.5/min.",
+     "The SC wall (1400 HP, physical 10/45, laser and electric 100%) arrives at A+L+M+C, before purple and yellow science. It takes about 8× the big-biter bites of a stone wall (127 vs 16, the design's own §7.2), while the other tiers stay cheap.",
+     "Flux rail slug `range_modifier` 1.1 gives a turret range of 39.6, which outranges big worms (38, enemy-constants.lua:136). That allows turret creep on big nests without artillery.",
+     "The calutron gives p(U-235) = 0.01 against uranium-processing's 0.007, with productivity allowed (+43% U-235 per ore). Magnetite recovery (3 iron ore per 10 stone) has no SA surface condition, so it opens the Gleba iron bypass.",
+     "Tech gap: the T14 maglev splitter needs processing-unit, which is not in T14's chain (logistics-3 ← production-science-pack, lubricant; tech.md §3). The design's own S5 test would catch this.",
+     "The mend coil heals 4% of max HP per 2 s on every entity within r=12, limited only by energy (500 kW = 250 HP/s per coil), and it scans `find_entities_filtered` with no type filter. It is strong at A+L+M and has a UPS risk in dense bases."
+    ],
+    "best_ideas": [
+     "Same-type deepcopy only, which gives the lowest load risk. An explicit PILOT-1..12 table with fallbacks: load order after SA, resistance anchor stone-wall 77.6, units of energy_usage, base_effect productivity in base, `energy_per_shot` on an ammo-turret in base, and the EEI `secondary-input` buffer with energy_usage 0.",
+     "Correct upgrade mirroring. For each tech it reads the bullet `ammo-damage` and the `turret-attack gun-turret` modifier at data-updates time and appends both for its own turrets, so SA's index edits are picked up (combat.md §14.2-14.3).",
+     "Static test S5 checks tech reachability: every ingredient of an unlocked recipe is unlocked in the transitive prerequisites. S7 is a field-level vanilla diff against a whitelist. S11 checks furnace input uniqueness. S12 checks tint isolation and catches the shared `express_belt_animation_set` trap (logistics.md §0).",
+     "`auto_barrel = false` on the new fluid, justified by the non-prefixed `empty-…-barrel` name (base/data-updates.lua:169, 279).",
+     "The arc chain uses instant delivery and fork_chance 0, so damage per bounce is deterministic and independent of the undocumented beam damage_interval. There is a laser control turret in the same run (T-L1) with a [0.5×, 1.5×] niche band, and a wave scenario T-W compares variants.",
+     "The flux crystal as a one-shot 1 GJ consumable (2 SC + 3 U-238 + 1 PU) sits honestly between chemical fuel and nuclear. It is a sink for surplus U-238 and has no energy loop at all.",
+     "A `/magnetics-showroom` command in the test mod lets the author screenshot every world model in the graphical client."
+    ]
+   },
+   {
+    "design": "design_appeal.md",
+    "score": 3.5,
+    "fatal_flaws": [
+     "The flux recharge loop is a near-free energy source. Recharge costs 10 s × 5 MW = 50 MJ plus 20 ferrofluid (2 ferrite + 20 light oil) plus 20 LN2, and returns 0.9 × 2 GJ = 1.8 GJ: about 36× the electricity in. By contrast, 20 light oil makes 2 solid fuel = 24 MJ (power.md §9.2: 12 MJ). The design itself calls it '≈3% overhead'. The dynamo gives 10 MW in 3×3 with 0 pollution from purple science on, which obsoletes steam, solar and nuclear.",
+     "The flux crystal as locomotive fuel gives 2 GJ with top speed ×1.3, against nuclear fuel's 1.21 GJ and ×1.15 (power.md §9.2). It needs no U-235, so it obsoletes nuclear fuel for trains.",
+     "The geomagnetic coil (a solar-panel with `solar_coefficient_property = magnetic-field` and performance_at_night = 1) gives a constant 36-40 kW in 3×3 at A+L 150×30. The vanilla solar panel peaks at 60 kW and gives 0 at night (power.md §5: performance_at_night defaults to 0), so it needs accumulators. The coil dominates solar plus accumulators on Nauvis (field 90). On Fulgora it gives about 3.3× solar peak and bypasses the lightning and accumulator puzzle.",
+     "The SC wall arrives at A+L+C with no military science: 1500 HP, physical 15/50 and 25 electric thorns per bite. A big biter (30 dmg, 375 HP; combat.md §12) deals 7.5 per bite and dies from thorns in 15 bites. With mend coils this is a turret-free self-sustaining line against medium and big biters at blue science, as the design itself claims.",
+     "The coilgun with the magnet slug does 45 ×3/s = 135 dps with a 300 pierce budget at range 24 and A+L+M. The same-tier gun turret with piercing rounds does 80 dps at range 18 (combat.md §5, §6.2), and the slug gives about 4-5× the damage per ore.",
+     "The magnetic drill has speed 1.0, a 7×7 area and 4 modules at blue science. That is 0.111 ore/s per footprint tile, above the big drill's 0.1 (mining.md §1). The coil winder has +50% built-in productivity at green science, equal to the SA EM plant's bonus (crafting.md §1).",
+     "The pylon reach of 64 is the API maximum, and quality adds +2 per level (power.md §3.1), giving 74 at legendary. The behaviour above 64 after quality is not in the sources (power.md §14).",
+     "Ferrofluid keeps auto_barrel = true, so base generates `empty-magnetics-ferrofluid-barrel` (base/data-updates.lua:169). This breaks the magnetics- prefix and the design's own test S0.",
+     "Tech gaps: T12 SMES needs processing-unit and T12/T14 need concrete or refined-concrete, none of which are in their chains. The mend coil needs repair-pack. The turret-attack mirror is missing (combat.md §14.2).",
+     "Arithmetic error: the design says '12 electric kills a small biter (15 HP) on its first bite', but 12 < 15 (combat.md §12). SA scrap separation doubles holmium per scrap (0.02 vs 0.01), and holmium is Fulgora's bottleneck, so this is a direct change to SA pacing."
+    ],
+    "best_ideas": [
+     "The event-driven mend coil costs 0 when idle. It uses `on_entity_damaged` with type filters and final-health > 0, so biters never reach Lua, and the handler is registered only while coils exist, re-registered in on_load from storage (the deterministic pattern). It has a per-entity cap, so overlapping coils do not stack.",
+     "Ferrofluid as the maglev tier's 'lubricant' matches express's 20 lubricant per belt (logistics.md §6), which gives a Factorio-native fluid chain. Liquid nitrogen is made 'from air' with an empty ingredient list.",
+     "The geomagnetic coil as a native surface-property mechanic (fields verified in the prototype API) is worth grafting only with heavy nerfs: constant output well below solar's average, for example 15-20 kW, so it is a no-night niche, not a replacement.",
+     "A 4-configuration test matrix (B, BQ, BE, SA) and an electric-resistance ordering test for walls.",
+     "The arc chain uses `fork_chance_increase_per_quality_level`, and the wall thorns use `attack_reaction` (the field exists on EntityWithHealthPrototype)."
+    ]
+   }
+  ],
+  "winner": "design_balance.md",
+  "must_fix": [
+   "Append `turret-attack` effects for every Magnetics ammo-turret (coilgun, gauss; the mass driver if it keeps the slug category). Mirror each `turret-attack turret_id=gun-turret` in physical-projectile-damage-1..7 (+0.1/+0.1/+0.2/+0.2/+0.2/+0.4/+0.7; SA gives 0.2 at -6/-7, combat.md §14.2-14.3), in data-final-fixes after SA. Rewrite test K10 so the coilgun/gun-turret ratio stays constant.",
+   "Close the tech-prerequisite gaps. T12 gets electric-energy-accumulators (the SC accumulator consumes an accumulator). T13 gets uranium-processing (the resonator consumes a centrifuge). T15 gets concrete (refined-concrete). T9 gets repair-pack (mend coil). Add engine's static S5 check: every ingredient of every unlocked recipe must be reachable in the tech's transitive prerequisites, in all 4 configs.",
+   "Set `auto_barrel = false` on magnetics-cryo-coolant and on every new fluid. Otherwise base/data-updates.lua:169 creates `empty-magnetics-…-barrel`, which violates the prefix rule.",
+   "Run the pilots on a separate seed before PREREG, using engine's list: load order after SA; resistance formula anchored on stone-wall physical 100 → 77.6; `energy_per_shot` on an ammo-turret in base; EEI `secondary-input` buffer charging with energy_usage 0; `damage_modifier` on projectile deliveries; `attack_reaction` semantics; `piercing_damage` accounting; `products_finished` for multi-product recipes. Write the resolved numbers into the spec.",
+   "Reduce type-conversion risk. Prefer same-type bases: gauss on gun-turret art (ammo-turret→ammo-turret), and the mass driver as an ammo-turret or electric-turret on gun or laser art instead of the flamethrower fluid-turret. Keep the kiln and induction furnace conversions only if the pilot load passes in B and SA, with the listed fallbacks.",
+   "Retune the arc emitter so it has a niche. Target range about 20-22 and measured single-target DPS 0.5-1.0× a laser-turret control in the same run (engine's T-L1), with chain total per shot below tesla (120/hit, 10 jumps, range 30; combat.md §5.5). The current 25 + 3×15 at range 18 is a strictly worse laser.",
+   "Decide gauss range 32 explicitly (it outranges medium worms at 30 and the flamethrower at 30; enemy-constants.lua:135, combat.md §5) or cap it at 30. No turret may reach 38 (big worm) before artillery. Keep the mass driver at 36.",
+   "Keep all balance anchors from the winner. Magnetic drill 0.75 (not 1.0; per footprint tile it must stay below the big drill's 0.1 ore/s). Base maglev gated at utility science; SA maglev after turbo. MHD at 16.7 pollution/min per MW of fuel. Pylon 48. Flux round trip ≤ 0.8, with the quality/module/productivity/recycling locks and the legendary-resonator release-blocker test. Stone separation with magnetic-field ≥ 50 under SA.",
+   "Do not graft appeal's rechargeable 2 GJ crystal, locomotive fuel, uncapped geomagnetic coil, thorns-at-blue SC wall or 135-dps magnet slug. Do not graft engine's unlimited-pierce hitscan slugs, 3×-cleaner MHD, purple-tier base maglev or 2× drill. If the geomagnetic coil is added, keep it at or below about 20 kW constant.",
+   "Mend coil: adopt appeal's event-driven damaged queue (on_entity_damaged filters plus conditional registration mirrored in on_load), or keep the type-filtered scan. Add engine's on_configuration_changed rebuild test (D7), the determinism test and a UPS budget test.",
+   "Expand the test matrix to 4 configurations (base, base+quality, base+elevated-rails, full SA). Add engine's S7 field-level vanilla diff and S12 tint isolation (shared express belt animation set), and an explicit check that no Magnetics hardware changes SA platform balance."
+  ],
+  "notes": "The lens was balance and progression against vanilla 2.0.77 and Space Age. I read all three documents in full. I checked the claims against recon (power.md §0.6, §1, §2.6, §3.1, §5, §9.2, §11.6; combat.md §5, §6.2, §12, §14.2-14.3; crafting.md §1, §3, §4, §11.3; mining.md §1, §9.2; logistics.md §0, §2; tech.md §3, §4.3). I also checked game files directly: base/data-updates.lua:169 and 279 for barrel naming, and base/prototypes/entity/enemy-constants.lua:134-137 for worm ranges 25/30/38/48. In the API I confirmed that LuaWireConnector.can_wire_reach, CraftingMachinePrototype.crafting_speed_quality_multiplier, EntityWithHealthPrototype.attack_reaction and SolarPanelPrototype.solar_coefficient_property/performance_at_night all exist, so no design fails on a missing field.\n\nI re-derived all three designs' test expectations. The arithmetic is correct apart from appeal's small-biter thorns claim.\n\nRanking rationale. design_balance is the only one that consistently keeps each Magnetics building a side-grade or a late priced tier, and it locks the energy loop. design_engine has the strongest engineering and test discipline: same-type clones, a pilot table, reachability and diff tests, and the correct turret-attack mirroring. It loses on several creep numbers: base maglev at purple, a 2× drill above big-drill density, unlimited-pierce slugs, a 3× cleaner MHD, the SC wall at blue+military, and flux slugs outranging big worms. design_appeal has the most memorable ideas, but its flux recharge loop is effectively free energy (about 36× return), and the geomagnetic coil, locomotive fuel, thorns SC wall at blue and magnet slug each break a vanilla trade-off.\n\nRecommended final spec: design_balance as the base, plus engine's pilots, S5/S7/S12 tests, turret-attack mirroring and auto_barrel fix, plus appeal's event-driven mend coil and 4-config matrix."
+ },
+ {
+  "scores": [
+   {
+    "design": "design_appeal.md",
+    "score": 7.5,
+    "fatal_flaws": [
+     "Name-prefix violation. The design gives `magnetics-ferrofluid` the default auto_barrel = true, so base/data-updates.lua:169 generates the recipe `empty-magnetics-ferrofluid-barrel`. That breaks the hard 'magnetics-' prefix rule, and the design's own S0 test would fail. Fix: set auto_barrel = false, or define the mod's own magnetics-* barrel recipes.",
+     "Flux energy loop gives near-free power. A 2 GJ recharge costs 50 MJ of resonator power (5 MW × 10 s) plus 20 ferrofluid and 20 LN2. LN2 is made from power alone, with no ingredients. Even counting the 10% crystal loss, the output is about 30× the electric input. The result is a pollution-free 10 MW dynamo on 9 tiles at production-pack tier, running on a trickle of light oil and U-238. That is clearly unbalanced against nuclear power, even as a generator.",
+     "The geomagnetic coil makes solar obsolete on Nauvis. It gives a constant 36–40 kW on 3×3 at red+green tier with no accumulators. Solar gives 60 kW peak, about 42 kW on average, and needs about 0.84 accumulators per panel, which pulls in the battery/oil chain. The coil beats solar per tile (4.0 vs about 3.4 kW/tile with accumulators) at a similar ore cost. The mechanic itself is valid in base: base/prototypes/planet/surface-property.lua sets the magnetic-field default to 90, and space-age/prototypes/surface.lua:13 gives platforms 0. Only the number is broken.",
+     "The magnet slug unlocks at the same tech as the ferrite slug (red+green+military) with 45 × 3/s = 135 dps and a pierce budget of 300. Piercing magazines do 80 dps, and against medium biters the slug does about 3× their damage. That is creep in the mid game.",
+     "Pylon maximum_wire_distance is 64, which is the API maximum for the prototype. Quality adds +2 per level (power.md:212), so a legendary pylon would reach 74. The recon (power.md:861) has no data on what the engine does above 64.",
+     "Tech tree is not reachable as written. T5 uses a gun-turret, but the gun-turret tech is not a prerequisite (tech.md:287). T6 mend coil needs repair-pack without that tech. T12 (SMES, SC wall) needs processing units and concrete with neither tech as an ancestor. T14 resonator and dynamo need processing units, concrete and refined concrete with no ancestor tech. The design has no reachability test.",
+     "A +50% base-productivity coil winder in the base game (vanilla base has no such machine), plus a 2× speed, 7×7-area, 4-module drill at blue science, add up to more creep than the design admits.",
+     "It drops the MHD generator, part of the Mindustry set, and has no magnet gate, so a wall tier without a gate leaves a weak spot."
+    ],
+    "best_ideas": [
+     "A thematic fluid chain. Ferrofluid is to the maglev tier what lubricant is to the express tier (20 per belt). LN2 comes from 'air liquefaction', an energy-only recipe with an empty ingredient list, which the API allows.",
+     "Flux crystal as locomotive fuel (top speed ×1.3, acceleration 1.8) as the Factorio-native replacement for Mindustry's air units ('maglev trains'). The burnt result is voided in locomotives since 2.0.7 (power.md:130), so it works without editing the locomotive's inventory.",
+     "Geomagnetic coil using solar_coefficient_property = 'magnetic-field' with performance_at_night = 1 (both fields verified in prototype-api.json). This makes Fulgora (field 99) special. It needs a nerf.",
+     "Electrified thorn walls via attack_reaction (API-verified field; base ships the template commented out at entities.lua:3385-3410).",
+     "Rail slug and flux rail slug. This keeps Mindustry's railgun ammo exactly (superconductor + flux crystal) and the name 'Rail cannon'.",
+     "SA Fulgoran content (magnetic scrap separation echoing Mindustry's scrap separator, a Fulgora-only holmium flux recipe), gated behind electromagnetic science.",
+     "A magnetic-field ≥ 10 placement condition under SA, which keeps turrets, the dynamo and the mend coil off platforms and leaves platform balance untouched.",
+     "Uses the Mindustry palette hexes from spec.py for icons. Arc emitter with the electric-mini-stun sticker (exists at base entities.lua:8047) and deterministic fork_chance = 0.",
+     "An event-driven mend-coil queue through on_entity_damaged filters, with zero idle cost and no area scans.",
+     "A four-configuration load matrix (B, BQ, BE, SA). An 'eight signature moments' pitch that directly answers 'огромный мод, поменяй всё'."
+    ]
+   },
+   {
+    "design": "design_engine.md",
+    "score": 7,
+    "fatal_flaws": [
+     "No load-breaking flaw found. Every entity is a same-type deepcopy, and the fluid has auto_barrel = false (the design notes the empty-* prefix trap itself).",
+     "R19 (magnetic drill) needs an electric-mining-drill, but the electric-mining-drill tech is not among T7's transitive prerequisites. The design's own S5 reachability test would fail. Easy fix.",
+     "The coilgun unlocks at red+green (T4) and fires a hitscan line slug that hits every enemy in a 24-tile line for 15 × 3/s. Test T2 expects one shot to kill a column of 5 small biters. The alloy slug does 97 dps against medium biters, while piercing magazines do 36. That is early-defense creep.",
+     "In base, maglev (75/s) sits at purple science (A+L+C+P), the same tier as logistics-3 / express (45/s), which is a 67% jump with no later gate. It belongs at utility science.",
+     "The SMES is a strict in-place upgrade of the accumulator (2× storage, 8× flow, no trade-off). The calutron gives 1% U-235 per ore against vanilla's 0.7%, a better per-ore route that bypasses vanilla uranium processing.",
+     "The theme is thin for players. Walls have no special behaviour. Ferrite is just iron ore run through a tinted stone furnace, so stone plays no part. 'Cryofluid' sits at 15 °C (SA fluoroketone-cold already proves −150 is valid). The rail cannon is a 2×2 tinted gun turret. The Mindustry coil battery (1×1) is dropped."
+    ],
+    "best_ideas": [
+     "Same-type deepcopy only, through one `make()` procedure: clear next_upgrade and factoriopedia_simulation, set a fast_replaceable_group per entity, and tint with a walker that skips shadow, glow, light and runtime-tint layers. This carries the lowest load risk of the three.",
+     "The `/magnetics-showroom` command (test mod) places one of every entity and calls game.take_screenshot in the author's graphical Steam client. It is the only proposal that gives real world pictures of every model.",
+     "The strongest proof-by-test pipeline. S5 checks tech reachability. S7 compares every vanilla prototype field by field against a whitelist. S11 checks that each furnace's recipes have unique inputs. S12 checks tint isolation, which catches the shared express belt animation set. Twelve named pilots run before PREREG. T-W is a wave scenario across wall and turret variants.",
+     "Calutron (uranium-ore → U-235/U-238 in the magnetic separator) as a Factorio-native, historically real magnetic separation.",
+     "The arc emitter uses ammo_category 'laser', so vanilla laser bonuses apply in both configurations. Hitscan line ammo with force = 'enemy' is deterministic and never hurts the mod's own walls.",
+     "Mindustry continuity details. The SC wall has 100% laser and electric resistance ('absorbs lasers and lightning'). The flux crystal is both reactor fuel and rail ammo. SC substation reach 24 is close to the Mindustry node's 22. The coil recipe keeps Mindustry's shape (alloy + copper → 2). The MHD generator is kept.",
+     "One spec.py generates Lua, locale, icons and expected values, matching the Mindustry pipeline. It builds on the existing tools/run.py, check_props.py and iconkit.py."
+    ]
+   },
+   {
+    "design": "design_balance.md",
+    "score": 6.5,
+    "fatal_flaws": [
+     "Name-prefix violation. `magnetics-cryo-coolant` does not set auto_barrel = false, so base/data-updates.lua:169 creates `empty-magnetics-cryo-coolant-barrel`, which breaks the prefix rule and fails the design's own S2 audit. Barrelling a −150 °C coolant also makes no sense.",
+     "Tech tree is not reachable as written. T13 flux resonator needs a centrifuge, but uranium-processing is not an ancestor (the utility-science-pack chain is robotics, processing-unit and low-density-structure, tech.md:297). T12 SC accumulator needs an accumulator without electric-energy-accumulators. T15 SC wall needs refined concrete, and concrete is not an ancestor of military-4 (tech.md:291). T9 mend coil lacks repair-pack.",
+     "Four type-converted clones rely on undocumented graphics sharing: kiln and induction furnace (furnace → assembling-machine), gauss (laser → ammo-turret), and mass driver (fluid-turret flamethrower → electric-turret with a built-in direction/line ammo_type). Fallbacks are named, but these are the most likely load failures among the three designs.",
+     "The flux crystal, Mindustry's signature item ('reactor fuel and railgun ammo'), becomes a lossy (≤80%) portable battery, and the mass driver takes no ammo. Renaming 'Railgun' to 'Mass driver' breaks continuity where 'Rail cannon' would keep it. The stated philosophy ('side-grades, never replacements', 'adds no new end-game goal') works against 'огромный мод, поменяй всё'."
+    ],
+    "best_ideas": [
+     "The most complete 1:1 Mindustry port: 24 buildings. The gauss stays a separate long-range turret (range 32, outranging medium worms). The MHD generator is kept. The coil capacitor (1×1, 1 MJ, 1 MW flow) has a burst niche. The superconducting accumulator is an in-place upgrade.",
+     "A magnet gate, so the wall tier has no weak spot, plus wall recipes that take the previous tier (as vanilla's gate takes a stone wall).",
+     "Energy-exploit locks: resonator crafting_speed_quality_multiplier = 1 (field verified), no module, beacon or surface effects, allow_productivity/allow_quality/auto_recycle = false. A legendary-resonator round-trip test is a release blocker.",
+     "SA category inserts in data-updates: the EM plant gets winding, the cryogenic plant gets cryogenics, and the foundry gets sintering and induction, so SA machines become the natural upgrade path. The kiln and MHD get the pressure ≥ 10 condition, and stone separation gets magnetic-field ≥ 50 (not on Gleba or Vulcanus).",
+     "Pylon reach 48, chosen so that a legendary pylon (+10) stays at 58, under the API maximum of 64.",
+     "Placeable items go into vanilla subgroups next to their analogues. Mirrored upgrade effects are appended in data-final-fixes. There is a vanilla-parity dump test (S4), R8/R9 determinism and save/load tests, and a bounded mend-coil budget (at most 25 coils per 30 ticks).",
+     "A per-entity picture card: icon + 'vanilla base: X, tint (r,g,b)' + swatch, alongside the icon showcase."
+    ]
+   }
+  ],
+  "winner": "design_appeal.md",
+  "must_fix": [
+   "Every fluid gets auto_barrel = false, or its own magnetics-* barrel recipes. The S0/S2 name audit must include auto-generated names, because base/data-updates.lua:169 prefixes 'empty-'. This applies to ferrofluid and LN2 (appeal) and cryo coolant (balance).",
+   "Tech reachability: every ingredient of every unlocked recipe must come from a tech in the transitive prerequisites. Add electric-mining-drill, gun-turret, repair-pack, concrete, processing-unit, uranium-processing and electric-energy-accumulators wherever missing. Adopt the engine design's S5 static test.",
+   "Flux energy must not be a free generator. Either make the crystal a costly consumable, as in the engine design (Mindustry 'flux reactor' fuel), or scale recharge energy and fluids so that one cycle costs a meaningful share of 2 GJ. In both cases apply the balance design's quality, module, beacon and productivity locks on the resonator and run the legendary-resonator test.",
+   "Geomagnetic coil: cut Nauvis output to about 15–20 kW, or move it to a later tier or cost, so that it does not dominate solar plus accumulators. Settle the output-scaling question (v/100 vs v/90) in a pilot before registration.",
+   "Pylon (or SC substation) wire reach must be ≤ 54, so that the legendary value (+2 per level × 5) stays ≤ 64.",
+   "Turret DPS discipline: the ferrite slug should be about 1.0–1.3× the contemporaneous vanilla ammo. The magnet/alloy slug unlocks one tech later (blue + military). For hitscan line slugs, cap the targets per shot or the damage, so that a green-tier coilgun does not delete biter columns.",
+   "In base, gate maglev (75/s) at utility science, not purple. Under SA keep it after turbo and require the turbo tech.",
+   "Base-game productivity creep: the coil winder gets at most +25% base productivity in base, or none, leaving +50% to the SA EM plant. The magnetic drill gets 2× speed OR a larger area, not both, plus 4 modules.",
+   "Use same-type deepcopies wherever possible (engine design's make() procedure). Any type conversion (kiln → assembler for the stone ingredient, gauss, a directional turret) only after a load pilot, with the fallback written into PREREG.",
+   "Keep Mindustry continuity: Rail cannon (not Mass driver); the flux crystal as both fuel and rail ammo; restore the MHD generator (the appeal design dropped it) and the coil capacitor (the engine design dropped it); add a magnet gate; the SC wall absorbs laser and electric damage; display name 'Superconducting cable' to avoid SA's 'Superconductor'; en/ru/de locale.",
+   "'Pictures of every model': a PIL icon for every item, entity, fluid, multi-product recipe and tech (256 px); a showcase sheet; a per-entity card (icon + vanilla base + tint swatch); and the engine design's /magnetics-showroom + take_screenshot command for the author's Steam client, because headless servers cannot render world sprites.",
+   "Test matrix and proof: load in B, BQ, BE and SA; runtime tests in B and SA. The engine design's S7 field-level vanilla diff with an explicit whitelist (next_upgrade links, category inserts, appended upgrade effects, locomotive fuel category) and S12 tint isolation. Determinism, save/load and UPS budgets for the mend coil. The T-W wave scenario. All pilots run on a separate seed before PREREG."
+  ],
+  "notes": "Lens used: player appeal, how coherent the theme is, continuity with Mindustry Magnetics (checked against games/Mindustry_Magnetics/tools/spec.py and README), and how well each design meets the author's asks ('огромный мод, поменяй всё', pictures of every model, quality proven by tests).\n\n**Checks against sources:**\n- magnetic-field is a base surface property with default 90 (base/prototypes/planet/surface-property.lua). Platform = 0 (space-age/prototypes/surface.lua:13). Planet values: Vulcanus and Gleba 25, Fulgora 99, Aquilo 10.\n- In 2.0.7+ a burnt result is voided in burners without a burnt inventory (power.md:130). The appeal design's locomotive fuel is therefore valid.\n- These fields exist in prototype-api.json: solar_coefficient_property, performance_at_night, attack_reaction (EntityWithHealth), AmmoTurret energy_source/energy_per_shot, crafting_speed_quality_multiplier, fork_chance_increase_per_quality_level, Projectile force_condition, TurretPrototype turret_base_has_direction.\n- electric-mini-stun (entities.lua:8047), make_electric_beam (beams.lua:372) and the hidden burner-generator (entities.lua:9946) all exist in base.\n- Auto-barrel names come from base/data-updates.lua:169 ('empty-' .. item).\n- Tech prerequisites come from tech.md:263-299.\n\n**Why the appeal design wins under this lens:**\n- It alone delivers 'change everything' in Factorio-native ways: a fluid chain, train fuel, a surface-property generator, thorn walls, chain lightning, a rail line shot and Fulgora content.\n- It keeps Mindustry's flux-crystal identity (fuel + rail ammo) and reuses the Mindustry palette.\n\n**Its weaknesses:**\n- Its problems are numbers and a prefix fix, not load-breaking. They must still be fixed before the spec.\n- For the final spec, the engine design should supply the chassis: same-type deepcopy, S5/S7/S12 tests, pilots and the showroom screenshots. The balance design should supply the number discipline and exploit locks, plus the MHD generator, gauss turret, magnet gate and SA foundry/EM/cryo category inserts.\n\n**Runner-up:** the engine design is close. It is the safest to ship and the best at proving quality by tests, but it is the least exciting for players.\n\n**Balance design:** it is the most faithful item-for-item port. It loses on appeal: the flux crystal becomes a lossy battery, 'Railgun' is renamed 'Mass driver', and the 'side-grades only' philosophy works against the author's ask. It also carries the most load risk from four type-converted clones.\n\n**Shared flaws:** none of the three designs fully passes a tech-reachability check. The appeal and balance designs both miss the auto-barrel prefix trap. Only the engine design handled the prefix trap explicitly."
+ }
+]
