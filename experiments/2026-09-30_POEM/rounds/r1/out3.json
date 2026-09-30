@@ -1,0 +1,148 @@
+{
+ "out": {
+  "r1a1o0|topic|solo": {
+   "choice": 5
+  },
+  "r1a1o0|topic|team": {
+   "choice": 2
+  },
+  "r1a1o0|topic|solo_lib": {
+   "choice": 3
+  },
+  "r1a1o0|topic|team_lib": {
+   "choice": 3
+  },
+  "r1a1o0|topic|witness": {
+   "choice": 3
+  },
+  "r1a1o0|topic|witness_shuffled": {
+   "choice": 1
+  },
+  "r1a1o1|topic|solo": {
+   "choice": 4
+  },
+  "r1a1o1|topic|team": {
+   "choice": 5
+  },
+  "r1a1o1|topic|solo_lib": {
+   "choice": 3
+  },
+  "r1a1o1|topic|team_lib": {
+   "choice": 5
+  },
+  "r1a1o1|topic|witness": {
+   "choice": 3
+  },
+  "r1a1o1|topic|witness_shuffled": {
+   "choice": 3
+  },
+  "r1a1o2|topic|solo": {
+   "choice": 1
+  },
+  "r1a1o2|topic|team": {
+   "choice": 4
+  },
+  "r1a1o2|topic|solo_lib": {
+   "choice": 4
+  },
+  "r1a1o2|topic|team_lib": {
+   "choice": 2
+  },
+  "r1a1o2|topic|witness": {
+   "choice": 4
+  },
+  "r1a1o2|topic|witness_shuffled": {
+   "choice": 5
+  },
+  "r1a1o3|topic|solo": {
+   "choice": 5
+  },
+  "r1a1o3|topic|team": {
+   "choice": 4
+  },
+  "r1a1o3|topic|solo_lib": {
+   "choice": 5
+  },
+  "r1a1o3|topic|team_lib": {
+   "choice": 4
+  },
+  "r1a1o3|topic|witness": {
+   "choice": 3
+  },
+  "r1a1o3|topic|witness_shuffled": {
+   "choice": 5
+  },
+  "r1a2o0|topic|solo": {
+   "choice": 2
+  },
+  "r1a2o0|topic|team": {
+   "choice": 4
+  },
+  "r1a2o0|topic|solo_lib": {
+   "choice": 5
+  },
+  "r1a2o0|topic|team_lib": {
+   "choice": 5
+  },
+  "r1a2o0|topic|witness": {
+   "choice": 5
+  },
+  "r1a2o0|topic|witness_shuffled": {
+   "choice": 1
+  },
+  "r1a2o1|topic|solo": {
+   "choice": 5
+  },
+  "r1a2o1|topic|team": {
+   "choice": 1
+  },
+  "r1a2o1|topic|solo_lib": {
+   "choice": 4
+  },
+  "r1a2o1|topic|team_lib": {
+   "choice": 4
+  },
+  "r1a2o1|topic|witness": {
+   "choice": 3
+  },
+  "r1a2o1|topic|witness_shuffled": {
+   "choice": 4
+  },
+  "r1a2o2|topic|solo": {
+   "choice": 5
+  },
+  "r1a2o2|topic|team": {
+   "choice": 5
+  },
+  "r1a2o2|topic|solo_lib": {
+   "choice": 5
+  },
+  "r1a2o2|topic|team_lib": {
+   "choice": 1
+  },
+  "r1a2o2|topic|witness": {
+   "choice": 4
+  },
+  "r1a2o2|topic|witness_shuffled": {
+   "choice": 5
+  },
+  "r1a2o3|topic|solo": {
+   "choice": 4
+  },
+  "r1a2o3|topic|team": {
+   "choice": 3
+  },
+  "r1a2o3|topic|solo_lib": {
+   "choice": 4
+  },
+  "r1a2o3|topic|team_lib": {
+   "choice": 4
+  },
+  "r1a2o3|topic|witness": {
+   "choice": 5
+  },
+  "r1a2o3|topic|witness_shuffled": {
+   "choice": 2
+  }
+ }
+}

@@ -1,0 +1,423 @@
+{
+ "round": 1,
+ "orders": [
+  {
+   "oid": "r1a1o0",
+   "attacker": 1,
+   "title": "Снег без «а»",
+   "kind": "буквенный",
+   "theme": "первый снег",
+   "bet": "Без инструментов защитники ошибутся в подсчёте букв: общее число 99 и ровно четыре «о» в строке; также пропустят «а» в частых словах (как, на, так).",
+   "accept": "ok",
+   "reject_share": 0.8333333333333334,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": false
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": false
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": false
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a1o1",
+   "attacker": 1,
+   "title": "Лестница дождя",
+   "kind": "слоговой",
+   "theme": "осенний дождь",
+   "bet": "Ошибка на единицу в числе гласных строки (ё, я, ю, е считаются гласными; слова вроде «тёмных» дают 2), а также лишнее или недостающее слово при счёте по words: дефис делит слово на два.",
+   "accept": "ok",
+   "reject_share": 0.6666666666666666,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a1o2",
+   "attacker": 1,
+   "title": "Ледоход",
+   "kind": "рифменный",
+   "theme": "весенний ледоход на реке",
+   "bet": "Слова рифмуются на слух, но не по хвостам tail: «лёд/идёт» (ёд и ёт), «лёд/мёд/вперёд» с «вот» (ё и о не совпадают), хвост короче 2 букв («река/нога» — ка и га); плюс неточный подсчёт 8 гласных.",
+   "accept": "ok",
+   "reject_share": 0.8666666666666667,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a1o3",
+   "attacker": 1,
+   "title": "Деревенское утро",
+   "kind": "словесный",
+   "theme": "утро в деревне",
+   "bet": "Защитники вставят короткие служебные слова («в», «и», «на», «по») или слово через дефис («из-за», «по-над»), которое words делит на части короче 3 букв; повторят предлог «над»/«как» в разных строках; ошибутся в длине последнего слова (например, «сарая» — это 5 букв).",
+   "accept": "ok",
+   "reject_share": 0.5666666666666667,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a2o0",
+   "attacker": 2,
+   "title": "Первый снег без «а»",
+   "kind": "буквенный",
+   "theme": "первый снег в городе",
+   "bet": "Ждём, что без инструментов ошибутся в точном счёте 30 букв в строке и пропустят «а» в частых словах (на, как, а, белая). Ещё ждём, что напишут «е» вместо «ё».",
+   "accept": "ok",
+   "reject_share": 0.7333333333333333,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": false,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a2o1",
+   "attacker": 2,
+   "title": "Осенний сад по гласным",
+   "kind": "слоговой",
+   "theme": "осенний сад",
+   "bet": "Ждём, что защитники поставят предлоги «в», «с», «к» (в них нет гласных), будут считать слоги на слух и ошибутся на «ё», «я», «ю». Ещё ждём, что в конце строки окажется слово на 3 слога.",
+   "accept": "ok",
+   "reject_share": 0.7666666666666667,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a2o2",
+   "attacker": 2,
+   "title": "Маяк и моряк",
+   "kind": "рифменный",
+   "theme": "морской маяк ночью",
+   "bet": "Ждём, что к «маяк» подберут рифму на слух: «мрак», «никак», «рыбак», «знак». У «маяк» хвост tail равен «як», а у этих слов «ак», так что по правилу Арены это не рифма. Ещё ждём ошибок в точном счёте 14 гласных в строке.",
+   "accept": "ok",
+   "reject_share": 0.7333333333333333,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": false,
+     "failed1": [
+      3
+     ],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  },
+  {
+   "oid": "r1a2o3",
+   "attacker": 2,
+   "title": "Лестница длин",
+   "kind": "словесный",
+   "theme": "дорога домой ночью",
+   "bet": "Ждём, что защитники поставят два соседних слова одной длины («города ночного» при равных длинах, «ждут меня»). Ещё ждём, что прорвутся короткие служебные слова («в», «и», «на»), повторятся слова между строками или окажется, что в слове через дефис на самом деле два слова.",
+   "accept": "ok",
+   "reject_share": 0.5,
+   "disagree": [],
+   "n_disagree": 0,
+   "status": "fair",
+   "arms": {
+    "solo": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "solo_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    },
+    "team_lib": {
+     "ok1": true,
+     "failed1": [],
+     "base1": true,
+     "final_ok": true,
+     "failed2": [],
+     "topic_ok": true
+    }
+   },
+   "calib": {
+    "witness": true,
+    "witness_shuffled": true
+   },
+   "points": 0
+  }
+ ]
+}

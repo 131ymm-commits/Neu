@@ -206,6 +206,7 @@ def score(r, p1, p2, p3):
         if len(c2) != len(o['checks']): dis.append('число пунктов у независимой проверки другое')
         else:
             for t in pool:
+                if len(lines(t)) < 2: continue   # не стихотворение по базовому условию (DEVIATIONS №1)
                 a = verdicts(o['checks'], t); b = verdicts(c2, t)
                 if a[0] == 'err': continue
                 if b[0] == 'err': dis.append('независимая проверка не исполняется: ' + b[1][:80]); break

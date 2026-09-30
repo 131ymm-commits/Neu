@@ -8,7 +8,7 @@ import ast, sys, json
 MAX_STEPS = 10_000_000
 MAX_DEPTH = 200
 BUILTINS = {'str', 'range', 'len', 'min', 'max', 'abs', 'sum', 'list', 'dict', 'sorted', 'reversed', 'enumerate', 'zip', 'int', 'bool', 'set', 'tuple', 'any', 'all', 'pow', 'divmod'}
-METHODS = {'append', 'pop', 'insert', 'extend', 'index', 'count', 'get', 'keys', 'values', 'items', 'add', 'remove', 'discard', 'copy', 'sort', 'reverse', 'setdefault'}
+METHODS = {'lower', 'upper', 'strip', 'lstrip', 'rstrip', 'startswith', 'endswith', 'split', 'join', 'replace', 'find', 'isalpha', 'isdigit', 'isspace', 'append', 'pop', 'insert', 'extend', 'index', 'count', 'get', 'keys', 'values', 'items', 'add', 'remove', 'discard', 'copy', 'sort', 'reverse', 'setdefault'}
 ALLOWED = (ast.Module, ast.FunctionDef, ast.arguments, ast.arg, ast.Return, ast.Assign, ast.AugAssign, ast.AnnAssign, ast.For, ast.While, ast.If,
            ast.Break, ast.Continue, ast.Pass, ast.Expr, ast.Name, ast.Load, ast.Store, ast.Del, ast.Delete, ast.Constant, ast.BinOp, ast.UnaryOp,
            ast.BoolOp, ast.Compare, ast.Call, ast.Attribute, ast.Subscript, ast.Slice, ast.List, ast.Tuple, ast.Dict, ast.Set, ast.IfExp,
