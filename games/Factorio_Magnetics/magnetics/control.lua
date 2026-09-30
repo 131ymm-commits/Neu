@@ -9,8 +9,9 @@
 --   storage.coils.index   unit_number -> номер записи в list;
 --   storage.grid          [surface_index]["cx,cy"] -> массив unit_number катушек в клетке CELL×CELL (порядок вставки);
 --   storage.force_coils   [force_index] -> число катушек силы;
---   storage.queue         массив {entity, unit} повреждённых целей;  storage.queued  unit -> true;
---   storage.cursor        позиция обхода очереди, когда в ней больше QUEUE_CAP записей;
+--   storage.queue         массив {entity, unit, cycle} повреждённых целей (cycle — тик последней обработки);
+--   storage.queued        unit -> true для целей в очереди;
+--   storage.cursor        с какой записи очереди начнётся следующий цикл (обход по кругу);
 --   storage.seq           счётчик порядка вставки катушек ("первая по порядку вставки" = наименьший seq).
 -- Обработчик on_entity_damaged зарегистрирован только пока есть хоть одна катушка; on_load повторяет это решение
 -- по storage (регистрация — чистая функция storage, как требует детерминизм мультиплеера).
@@ -18,7 +19,12 @@
 -- Фильтр урона (PILOT-24): в фильтрах событий "and" связывает сильнее "or" (runtime-api.json,
 -- LuaEntityDamagedEventFilter.mode), поэтому условие final-health > 0 стоит в паре с КАЖДЫМ типом:
 -- (wall and fh>0) or (gate and fh>0) or ... Запись "типы через or, затем один fh>0 с and" относила бы условие
--- только к последнему типу (radar); пилот 30.09.2026 это подтвердил (см. tools/magnetics-tests/mend_tests.lua).
+-- только к последнему типу (radar). Пилот на сервере 2.0.77 (30.09.2026, tools/magnetics-tests/mend_tests.lua)
+-- подтвердил: при записи "типы, затем fh>0 с and" смертельный урон по стене доходит до обработчика, а по радару нет;
+-- при парной записи не доходит ни тот, ни другой; кусаки и сборочные машины не доходят ни при какой записи.
+-- PILOT-10: катушка (EEI secondary-input, energy_usage = 0) заряжается от сети ровно на 200 кВт
+-- (3333.33 Дж/тик, полный буфер 1 МДж через 300 тиков), запасной путь не нужен.
+-- Здоровье хранится с округлением float32 (запись 505 читается как 505.0000305), поэтому "полное" сравнивается >=.
 
 local COIL = "magnetics-mend-coil"
 local RADIUS = 10                -- клеток, евклидово расстояние от позиции катушки до позиции цели
@@ -60,7 +66,7 @@ local function fresh_state()
 end
 
 local function cell_key(x, y)
-  return floor(x / CELL) .. "," .. floor(y / CELL)
+  return (floor(x / CELL) + 0) .. "," .. (floor(y / CELL) + 0)   -- "+ 0" превращает -0 в 0, как (cx + dx) в find_coil
 end
 
 ---------------------------------------------------------------------------------------------------------------------
@@ -207,8 +213,9 @@ end
 ---------------------------------------------------------------------------------------------------------------------
 -- Цикл лечения
 
--- Первая по порядку вставки подходящая катушка для цели и признак "цель вообще покрыта" (катушка своей силы,
--- на той же поверхности, в радиусе, существует — независимо от бюджета и энергии).
+-- Первая по порядку вставки подходящая катушка для цели; признак "цель вообще покрыта" (катушка своей силы,
+-- на той же поверхности, в радиусе, существует — независимо от бюджета и энергии); признак "покрывающая катушка
+-- уже истратила бюджет этого цикла" (значит, энергия у неё была — цель ждёт очереди, а не энергии).
 local function find_coil(target, tick)
   local grid = storage.grid[target.surface_index]
   if not grid then return nil, false end
@@ -217,7 +224,7 @@ local function find_coil(target, tick)
   local tx, ty = position.x, position.y
   local cx, cy = floor(tx / CELL), floor(ty / CELL)
   local list, index = storage.coils.list, storage.coils.index
-  local best, covered, dead = nil, false, nil
+  local best, covered, spent, dead = nil, false, false, nil
   for dx = -1, 1 do
     for dy = -1, 1 do
       local cell = grid[(cx + dx) .. "," .. (cy + dy)]
@@ -233,7 +240,11 @@ local function find_coil(target, tick)
                 covered = true
                 if not best or rec.seq < best.seq then
                   if rec.budget_tick ~= tick then rec.budget = COIL_BUDGET; rec.budget_tick = tick end
-                  if rec.budget > 0 and coil.energy >= J_PER_HP then best = rec end
+                  if rec.budget <= 0 then
+                    spent = true
+                  elseif coil.energy >= J_PER_HP then
+                    best = rec
+                  end
                 end
               else
                 dead = dead or {}
@@ -248,65 +259,91 @@ local function find_coil(target, tick)
   if dead then
     for i = 1, #dead do remove_coil(dead[i]) end        -- ленивое удаление недействительных записей
   end
-  return best, covered
+  return best, covered, spent
 end
 
+-- Одна запись очереди: вылечить цель первой подходящей катушкой.
+-- Возвращает (убрать_из_очереди, вылечена, ждёт_бюджета): ждёт бюджета цель, которую покрывает катушка с энергией,
+-- уже истратившая бюджет этого цикла на другие цели.
+local function heal_one(item, tick, may_draw)
+  local target = item.entity
+  if not target.valid then return true, false, false end
+  local health, max_health = target.health, target.max_health
+  if not health or health >= max_health then return true, false, false end
+  local rec, covered, spent = find_coil(target, tick)
+  if not rec then
+    return not covered, false, spent                   -- не покрыта никем: убрать; покрыта: ждать энергии или бюджета
+  end
+  local coil = rec.entity
+  local energy = coil.energy
+  local h = max_health - health
+  if h > TARGET_CAP then h = TARGET_CAP end
+  if h > rec.budget then h = rec.budget end
+  local affordable = floor(energy / J_PER_HP)
+  if h > affordable then h = affordable end
+  target.health = health + h                           -- запись ограничивается [0, max_health] движком
+  coil.energy = energy - h * J_PER_HP
+  rec.budget = rec.budget - h
+  if may_draw then
+    rendering.draw_line{surface = rec.surface, from = coil, to = target, color = LINE_COLOR,
+                        width = LINE_WIDTH, time_to_live = LINE_TTL}
+  end
+  return health + h >= max_health, true, false
+end
+
+-- Цикл: до QUEUE_CAP записей по кругу от cursor. Каждая запись за цикл обрабатывается не больше одного раза:
+-- она помечается тиком цикла (item.cycle), а запись, подтянутая swap-remove из уже пройденного хвоста, пропускается.
+-- Если за цикл пройдена вся очередь (она не длиннее QUEUE_CAP), следующий цикл начинается с первой записи этого
+-- цикла, ждавшей бюджета (иначе — на одну запись дальше): бюджет катушки достаётся её целям по очереди, а не всегда
+-- первым в массиве. Три стены у одной катушки лечатся 2 цикла из 3 каждая, и бюджет 10 HP расходуется весь.
+-- Цели, ждущие энергии (катушка без питания), на порядок не влияют.
 local function on_cycle(event)
   local queue = storage.queue
-  if not queue or #queue == 0 then return end
+  if not queue then return end
+  local n0 = #queue
+  if n0 == 0 then return end
   local tick = event.tick
   local queued = storage.queued
-  -- Если очередь помещается в QUEUE_CAP, обходим её всю с начала. Иначе продолжаем с cursor до конца массива,
-  -- не заворачивая в этом же цикле: так ни одна запись не обрабатывается дважды за цикл (swap-remove подтягивает
-  -- на место i запись из хвоста, ещё не обработанную).
-  local i = storage.cursor
-  if #queue <= QUEUE_CAP or i > #queue then i = 1 end
-  local done, lines = 0, 0
-  while done < QUEUE_CAP and i <= #queue do
-    done = done + 1
+  local limit = n0 < QUEUE_CAP and n0 or QUEUE_CAP
+  local start = storage.cursor
+  if start > n0 then start = 1 end
+  local i = start
+  local done, lines, steps, waiting = 0, 0, 0, nil
+  while done < limit and steps < 2 * QUEUE_CAP do     -- шагов не больше limit + число удалений <= 2 * QUEUE_CAP
+    local n = #queue
+    if n == 0 then break end
+    if i > n then i = 1 end
+    steps = steps + 1
     local item = queue[i]
-    local target = item.entity
-    local remove = false
-    if not target.valid then
-      remove = true
+    if item.cycle == tick then
+      i = i + 1
     else
-      local health, max_health = target.health, target.max_health
-      if not health or health >= max_health then
-        remove = true
+      item.cycle = tick
+      done = done + 1
+      local may_draw = lines < LINES_PER_CYCLE
+      local remove, healed, wants_budget = heal_one(item, tick, may_draw)
+      if healed then
+        if may_draw then lines = lines + 1 end
+      elseif wants_budget and not remove and not waiting then
+        waiting = item
+      end
+      if remove then
+        queued[item.unit] = nil
+        queue[i] = queue[n]
+        queue[n] = nil
       else
-        local rec, covered = find_coil(target, tick)
-        if rec then
-          local coil = rec.entity
-          local energy = coil.energy
-          local h = max_health - health
-          if h > TARGET_CAP then h = TARGET_CAP end
-          if h > rec.budget then h = rec.budget end
-          local affordable = floor(energy / J_PER_HP)
-          if h > affordable then h = affordable end
-          target.health = health + h
-          coil.energy = energy - h * J_PER_HP
-          rec.budget = rec.budget - h
-          if lines < LINES_PER_CYCLE then
-            lines = lines + 1
-            rendering.draw_line{surface = rec.surface, from = coil, to = target, color = LINE_COLOR,
-                                width = LINE_WIDTH, time_to_live = LINE_TTL}
-          end
-          if health + h >= max_health then remove = true end
-        elseif not covered then
-          remove = true                                 -- ни одна катушка не покрывает цель
-        end                                             -- иначе покрыта, но катушке не хватает энергии или бюджета
+        i = i + 1
       end
     end
-    if remove then
-      queued[item.unit] = nil
-      local last = #queue
-      queue[i] = queue[last]
-      queue[last] = nil
-    else
-      i = i + 1
+  end
+  if done >= n0 then
+    i = start + 1
+    if waiting then
+      for k = 1, #queue do
+        if queue[k] == waiting then i = k; break end
+      end
     end
   end
-  if i > #queue then i = 1 end
   storage.cursor = i
 end
 
@@ -351,6 +388,18 @@ script.on_event(defines.events.script_raised_teleported, on_teleported, COIL_FIL
 script.on_event(defines.events.on_object_destroyed, on_object_destroyed)
 script.on_event(defines.events.on_forces_merged, function()
   if storage.coils then refresh_forces() end
+end)
+-- Удалённая поверхность: убрать её катушки сразу, не полагаясь на on_object_destroyed (обход массива с конца;
+-- swap-remove подтягивает на место i уже просмотренную запись).
+script.on_event(defines.events.on_surface_deleted, function(event)
+  local coils = storage.coils
+  if not coils then return end
+  local list = coils.list
+  for i = #list, 1, -1 do
+    local rec = list[i]
+    if rec and rec.surface == event.surface_index then remove_coil(rec.unit) end
+  end
+  storage.grid[event.surface_index] = nil
 end)
 script.on_nth_tick(PERIOD, on_cycle)
 

@@ -76,6 +76,9 @@ script.on_init(function()
   end
 end)
 
+-- смена версии тестового мода между --create и --benchmark (прогон R9) вызывает on_configuration_changed
+script.on_configuration_changed(function() storage.config_changed = true end)
+
 local finish_tick = 1
 script.on_event(defines.events.on_tick, function(e)
   local t = e.tick

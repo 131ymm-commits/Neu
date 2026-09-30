@@ -218,9 +218,9 @@ class Pic:
         elif mode == 'h':
             b = lk + (dk - lk) * u
         elif mode == 'cyl':      # vertical cylinder: bright band at 30 % from the left
-            b = np.where(u < 0.3, dk * 0.35 + (lk - dk * 0.35) * (u / 0.3), lk + (dk - lk) * ((u - 0.3) / 0.7) ** 0.9)
+            b = np.where(u < 0.3, dk * 0.35 + (lk - dk * 0.35) * (u / 0.3), lk + (dk - lk) * (np.clip(u - 0.3, 0, None) / 0.7) ** 0.9)
         elif mode == 'cylh':     # horizontal cylinder: bright band at 30 % from the top
-            b = np.where(v < 0.3, dk * 0.35 + (lk - dk * 0.35) * (v / 0.3), lk + (dk - lk) * ((v - 0.3) / 0.7) ** 0.9)
+            b = np.where(v < 0.3, dk * 0.35 + (lk - dk * 0.35) * (v / 0.3), lk + (dk - lk) * (np.clip(v - 0.3, 0, None) / 0.7) ** 0.9)
         elif mode == 'rad':      # sphere-ish: light spot top-left
             d = np.hypot(u - 0.32, v - 0.3) / 0.95
             b = lk + (dk - lk) * np.clip(d, 0, 1)
