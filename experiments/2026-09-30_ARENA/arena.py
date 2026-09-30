@@ -4,7 +4,7 @@
 #   python3 arena.py merge_fix <r> <out.json>
 #   python3 arena.py defend <r>            → rounds/r<r>/defend.js           (панель ×3 + одиночка замороженный + учащийся + команда)
 #   python3 arena.py score <r> <out.json>  → rounds/r<r>/score.json
-import json, os, sys, hashlib
+import json, os, sys, hashlib, re, ast
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 from interp import run
 from sandbox import run_py
@@ -60,14 +60,24 @@ def check_task(t):
         res.append(a[1])
     return True, 'ok', res[0], [dict(p=p, ans=v) for p, v in zip(t['examples'], res[1:])]
 
+def prose_battle(prose):
+    # боевой вход, записанный нападающим в прозе литералом p = {...}: точные большие целые (JSON через JS теряет точность > 2^53)
+    for x in reversed(list(re.finditer(r"p\s*=\s*(\{[^{}]*(?:\[[^\]]*\][^{}]*)*\})", prose or ''))):
+        try: return ast.literal_eval(x.group(1))
+        except Exception: pass
+def fix_precision(t):
+    L = prose_battle(t.get('prose'))
+    if isinstance(L, dict) and isinstance(t.get('battle'), dict) and set(L) == set(t['battle']) and L != t['battle']:
+        t['battle_json'] = t['battle']; t['battle'] = L; return True
+    return False
 def accept(r, path):
     out = unwrap(path); tasks = []; fix = []
     for k in range(1, ATT + 1):
         sub = (out.get(f'att{k}_r{r}') or {}).get('tasks', [])[:NT]
         for i, t in enumerate(sub):
-            tid = f'r{r}a{k}t{i}'; ok, msg, truth, ex = check_task(t)
+            tid = f'r{r}a{k}t{i}'; fixedp = fix_precision(t); ok, msg, truth, ex = check_task(t)
             tasks.append(dict(tid=tid, attacker=k, round=r, **{x: t.get(x) for x in ('title', 'prose', 'rules', 'battle', 'bet')}, examples_in=t.get('examples'),
-                              examples=ex, truth=truth, accept=msg, fixed=False))
+                              examples=ex, truth=truth, accept=msg, fixed=False, battle_from_prose=fixedp, battle_json=t.get('battle_json')))
             if not ok and not msg.startswith('DEFECT'):
                 fix.append(dict(id=f'fix_{tid}', schema='T', prompt=P.attacker(k, r, []).split('Сдай ровно 5 задач.')[0] +
                     f"Твоя задача «{t.get('title')}» не прошла приёмку: {msg}. У тебя одна попытка исправить её. Сдай исправленную задачу (одну) в том же формате.\n\nИсходная задача:\n{json.dumps(t, ensure_ascii=False)[:6000]}"))
@@ -80,7 +90,7 @@ def merge_fix(r, path):
     for t in tasks:
         f = out.get(f"fix_{t['tid']}")
         if t['accept'] == 'ok' or not f: continue
-        ok, msg, truth, ex = check_task(f)
+        fix_precision(f); ok, msg, truth, ex = check_task(f)
         t.update({x: f.get(x) for x in ('title', 'prose', 'rules', 'battle', 'bet')}, examples_in=f.get('examples'), examples=ex, truth=truth, accept=msg, fixed=True)
     W(os.path.join(rd(r), 'tasks.json'), tasks)
     print('принято кодом после исправления', sum(t['accept'] == 'ok' for t in tasks), 'из', len(tasks))
