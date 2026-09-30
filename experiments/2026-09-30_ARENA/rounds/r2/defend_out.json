@@ -1,0 +1,364 @@
+{
+ "out": {
+  "r2a1t1|team1": {
+   "answer": "917977473",
+   "program": "def f(p):\n    n=int(p['n']); M=10**9+7\n    def mul(A,B):\n        return [[(A[0][0]*B[0][0]+A[0][1]*B[1][0])%M,(A[0][0]*B[0][1]+A[0][1]*B[1][1])%M],\n                [(A[1][0]*B[0][0]+A[1][1]*B[1][0])%M,(A[1][0]*B[0][1]+A[1][1]*B[1][1])%M]]\n    if n==0: return 1\n    # S_n=(1+r3)^n+(1-r3)^n, S0=2,S1=2, S_n=2S_{n-1}+2S_{n-2}\n    # floor = S_n for odd n (since (1-r3)^n in (-1,0)), S_n-1 for even n\n    R=[[1,0],[0,1]]; T=[[2,2],[1,0]]; e=n-1\n    while e:\n        if e&1: R=mul(R,T)\n        T=mul(T,T); e>>=1\n    S=(R[0][0]*2+R[0][1]*2)%M\n    return (S-1)%M if n%2==0 else S\n",
+   "runs": 1
+  },
+  "r2a1t0|team1": {
+   "answer": "61728394506172839449",
+   "program": "from math import isqrt, gcd\nimport sys\nsys.setrecursionlimit(10000)\n\ndef fl(k, a, b, c):\n    # floor(k*(a+b*sqrt2)/c), c>0, exact\n    m = k * b\n    if m >= 0:\n        t = isqrt(2 * m * m)\n    else:\n        r = isqrt(2 * m * m)\n        t = -r if r * r == 2 * m * m else -r - 1\n    return (k * a + t) // c\n\ndef norm(a, b, c):\n    if c < 0:\n        a, b, c = -a, -b, -c\n    g = gcd(gcd(abs(a), abs(b)), c)\n    return a // g, b // g, c // g\n\ndef S(a, b, c, n):\n    # sum_{k=1}^n floor(k*alpha), alpha=(a+b*sqrt2)/c > 0 irrational\n    if n <= 0:\n        return 0\n    q = fl(1, a, b, c)\n    res = q * n * (n + 1) // 2\n    a -= q * c\n    m = fl(n, a, b, c)\n    if m == 0:\n        return res\n    d = a * a - 2 * b * b\n    A, B, C = norm(c * a, -c * b, d)\n    return res + n * m - S(A, B, C, m)\n\ndef f(p):\n    n = int(p['n'])\n    # floor(x) mod 2 = floor(x) - 2*floor(x/2)\n    return n - S(0, 1, 1, n) + 2 * S(0, 1, 2, n)\n",
+   "runs": 1
+  },
+  "r2a1t2|team1": {
+   "answer": "3",
+   "program": "def f(p):\n    n = p['n']\n    k = 1\n    while n > k * 9**k:\n        n -= k * 9**k\n        k += 1\n    idx, off = divmod(n - 1, k)\n    d = []\n    for _ in range(k):\n        d.append(idx % 9 + 1); idx //= 9\n    d.reverse()\n    return d[off]\n",
+   "runs": 1
+  },
+  "r2a1t4|team1": {
+   "answer": "2",
+   "program": "import sys\nfrom functools import lru_cache\ndef f(p):\n    h0=tuple(p['h']); n=len(h0)\n    sys.setrecursionlimit(100000)\n    @lru_cache(None)\n    def win(h,fb):\n        for i in range(n):\n            if i==fb: continue\n            for k in range(1,h[i]+1):\n                g=list(h); g[i]-=k\n                if not win(tuple(g),i): return True\n        return False\n    c=0\n    for i in range(n):\n        for k in range(1,h0[i]+1):\n            g=list(h0); g[i]-=k\n            if not win(tuple(g),i): c+=1\n    return c\n",
+   "runs": 1
+  },
+  "r2a1t3|team1": {
+   "answer": "975000000000000000",
+   "program": "def f(p):\n    n = p['n']; m = p['m']\n    L = m // 2  # smallest k with 2k+1 >= m\n    if L == 0:\n        return n\n    if n <= L:\n        return n * n // m - 1 // m + 1\n    return L * L // m - 1 // m + 1 + (n - L)\n",
+   "runs": 1
+  },
+  "r2a2t0|team1": {
+   "answer": "527",
+   "program": "def f(p):\n    # round half up using exact integer arithmetic: floor(100k/n + 1/2)\n    return sum((200*k + n)//(2*n) for k, n in zip(p['ks'], p['ns']))\n",
+   "runs": 1
+  },
+  "r2a2t1|team1": {
+   "answer": "178883744991383743",
+   "program": "def f(p):\n    x = p['x']\n    for m, c, d in zip(p['ms'], p['cs'], p['ds']):\n        n = x * m - c\n        q = abs(n) // abs(d)\n        x = q if (n >= 0) == (d > 0) or q == 0 else -q\n    return x\n",
+   "runs": 1
+  },
+  "r2a2t2|team1": {
+   "answer": "123456789012345677",
+   "program": "from math import isqrt\n\ndef f(p):\n    n = int(p['n'])\n    if n <= 0:\n        return 0\n    k = (isqrt(8 * n + 1) - 1) // 2\n    while (k + 1) * (k + 2) // 2 <= n:\n        k += 1\n    while k * (k + 1) // 2 > n:\n        k -= 1\n    return n - k * (k + 1) // 2\n",
+   "runs": 1
+  },
+  "r2a2t3|team1": {
+   "answer": "379",
+   "program": "import bisect\ndef f(p):\n    n,a,A,C,M=p['n'],p['a0'],p['A'],p['C'],p['M']\n    t=[]\n    for i in range(n):\n        k=bisect.bisect_right(t,a)\n        if k==len(t): t.append(a)\n        else: t[k]=a\n        a=(a*A+C)%M\n    return len(t)\n",
+   "runs": 1
+  },
+  "r2a2t4|team1": {
+   "answer": "13316",
+   "program": "def f(p):\n    N = p['N']\n    c = 0\n    for k in range(1, N + 1):\n        s = bin(k)[2:]\n        c += sum(1 for i in range(len(s) - 2) if s[i:i+3] == '101')\n    return c\n",
+   "runs": 1
+  },
+  "r2a1t0|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Условие однозначно. k натуральное, поэтому k·√2 > 0, и целая часть в любом смысле, как округление вниз или как отбрасывание дробной части, даёт одно и то же число. Диапазон 1 ≤ k ≤ n задан явно. «Чётное» здесь понимается однозначно: 0 не встречается, потому что уже при k = 1 целая часть равна 1. Правила нападающего я сверил с перебором через math.isqrt(2k²) % 2 для всех n от 1 до 2999, совпадение полное. На боевом входе они дают 61728394506172839449. Другого разумного прочтения, которое меняло бы ответ, я не нашёл."
+  },
+  "r2a1t0|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. Условие задаёт всё явно: k идёт от 1 до n включительно, «целая часть» определена прямо в тексте как наибольшее целое, не превосходящее k·√2 (k·√2 > 0, поэтому пол и отбрасывание дробной части совпадают), а чётность целого числа понимается однозначно. Программу нападающего я сверил с полным перебором для всех n < 3000, расхождений нет. На боевом входе она даёт 61728394506172839449."
+  },
+  "r2a1t0|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "No other reasonable reading. The statement fixes the range (integers k with 1 ≤ k ≤ n), defines the integer part explicitly (floor(k·√2), the largest integer not exceeding it), and asks for the count of even values. Since k ≥ 1 and √2 > 1, floor(k·√2) ≥ 1, so whether zero counts as even never comes up. Irrationality of √2 means there are no boundary or rounding cases. I checked the attacker's program against brute force (isqrt(2k²) % 2 == 0) for every n from 1 to 2999 and it matches. It gives 5 for n=10 and 15 for n=30, and 61728394506172839449 on the combat input. Every faithful reading of the text gives the same number."
+  },
+  "r2a1t0|solo": {
+   "answer": "61728394506172839449",
+   "program": "from math import isqrt, gcd\ndef f(p):\n    n=int(p['n'])\n    def fl(a,b,c):\n        s = isqrt(2*b*b) if b>=0 else -isqrt(2*b*b)-1\n        return (a+s)//c\n    def norm(a,b,c):\n        if c<0: a,b,c=-a,-b,-c\n        g=gcd(gcd(a,b),c); return a//g,b//g,c//g\n    def S(a,b,c,n):\n        tot=0; sign=1\n        while n>0:\n            q=fl(a,b,c)\n            if q>=1:\n                tot+=sign*q*n*(n+1)//2; a-=q*c; continue\n            m=fl(a*n,b*n,c)\n            tot+=sign*n*m; sign=-sign\n            d=a*a-2*b*b\n            a,b,c=norm(c*a,-c*b,d); n=m\n        return tot\n    odd=S(0,1,1,n)-2*S(0,1,2,n)\n    return n-odd\n",
+   "runs": 1
+  },
+  "r2a1t0|learn": {
+   "answer": "61728394506172839449",
+   "program": "from math import isqrt\ndef f(p):\n    n=p['n']\n    def S2(n):\n        # sum_{k=1..n} floor(k*sqrt2)\n        r=0;sg=1\n        while n>0:\n            m=isqrt(2*n*n)-n\n            r+=sg*(n*(n+1)//2+n*m-m*(m+1)//2)\n            sg=-sg; n=m\n        return r\n    m=isqrt(n*n//2)\n    Sh=n*m-S2(m)  # sum floor(k/sqrt2)\n    odd=S2(n)-2*Sh\n    return n-odd\n",
+   "runs": 1
+  },
+  "r2a1t1|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения нет. Целая часть (1+√3)^n для натурального n определена однозначно, а модуль 1000000007 и диапазон ответа указаны прямо. Правила нападающего вычисляют L_n = (1+√3)^n + (1−√3)^n, где L_n = 2L_{n−1} + 2L_{n−2}, и вычитают 1 при чётном n, потому что тогда 0 < (1−√3)^n < 1. Я сверил их с точным вычислением через целочисленный квадратный корень (floor(x + y√3) = x + isqrt(3y²)) для всех n от 1 до 399: совпадают. На боевом входе ответ 917977473. Малые примеры (n=4 → 55, n=7 → 1136) выполняются. Спорных мест в условии нет: «натуральное» и «целая часть» здесь понимаются однозначно, а число положительное, поэтому вопрос об округлении отрицательных не возникает."
+  },
+  "r2a1t1|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. Условие однозначно: «целая часть» здесь прямо определена как floor, наибольшее целое, не превосходящее (1+√3)^n. Само число положительное, поэтому floor и отбрасывание дробной части совпадают. «Натуральное n» и «остаток от деления на 1000000007» с диапазоном ответа 0..1000000006 тоже однозначны. Правила нападающего считают L_n = (1+√3)^n + (1-√3)^n как рекуррентность L_n = 2L_{n-1} + 2L_{n-2}. Поскольку |1-√3| < 1, floor равен L_n - 1 при чётном n и L_n при нечётном. Я проверил: программа совпадает с прямым вычислением floor с высокой точностью (Decimal, 200 знаков) для всех n от 1 до 79."
+  },
+  "r2a1t1|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. Условие однозначно. Число L_n = (1+√3)^n + (1−√3)^n целое, а |1−√3| < 1. При чётном n имеем (1−√3)^n ∈ (0,1), поэтому целая часть равна L_n − 1. При нечётном n имеем (1−√3)^n ∈ (−1,0), поэтому целая часть равна L_n. (1+√3)^n положительно, так что «целая часть» и «отбрасывание дробной части» совпадают. Остаток по модулю 1000000007 явно задан в диапазоне 0..1000000006. «Натуральное n» не создаёт двусмысленности: боевое n = 999999999999999999 ≥ 1 и нечётное."
+  },
+  "r2a1t1|solo": {
+   "answer": "917977473",
+   "program": "def f(p):\n    n=int(p['n']); M=1000000007\n    def mul(A,B):\n        return [[(A[0][0]*B[0][0]+A[0][1]*B[1][0])%M,(A[0][0]*B[0][1]+A[0][1]*B[1][1])%M],\n                [(A[1][0]*B[0][0]+A[1][1]*B[1][0])%M,(A[1][0]*B[0][1]+A[1][1]*B[1][1])%M]]\n    if n==0: return 1\n    # S_k=(1+r3)^k+(1-r3)^k: S_k = 2S_{k-1}+2S_{k-2}, S0=2, S1=2\n    # odd n: (1-r3)^n in (-1,0) -> floor = S_n; even n: in (0,1) -> floor = S_n - 1\n    R=[[1,0],[0,1]]; A=[[2,2],[1,0]]; e=n-1\n    while e:\n        if e&1: R=mul(R,A)\n        A=mul(A,A); e>>=1\n    S=(R[0][0]*2+R[0][1]*2)%M\n    if n%2==0: S=(S-1)%M\n    return S\n",
+   "runs": 1
+  },
+  "r2a1t1|learn": {
+   "answer": "917977473",
+   "program": "def f(p):\n    n=int(p['n']); M=1000000007\n    # S_n=(1+r3)^n+(1-r3)^n integer, S_n=2S_{n-1}+2S_{n-2}; |1-r3|<1\n    # n odd: (1-r3)^n in (-1,0) -> floor=S_n ; n even: in (0,1) -> floor=S_n-1\n    if n==0: return 1\n    def mul(A,B):\n        return [[(A[0][0]*B[0][0]+A[0][1]*B[1][0])%M,(A[0][0]*B[0][1]+A[0][1]*B[1][1])%M],\n                [(A[1][0]*B[0][0]+A[1][1]*B[1][0])%M,(A[1][0]*B[0][1]+A[1][1]*B[1][1])%M]]\n    R=[[1,0],[0,1]]; A=[[2,2],[1,0]]; e=n-1\n    while e:\n        if e&1: R=mul(R,A)\n        A=mul(A,A); e>>=1\n    S=(R[0][0]*2+R[0][1]*2)%M\n    if n%2==0: S=(S-1)%M\n    return S\n",
+   "runs": 1
+  },
+  "r2a1t2|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения я не нашёл. В условии однозначно заданы все параметры: набор чисел (натуральные числа, в десятичной записи которых нет цифры 0), порядок (по возрастанию), склейка без разделителей и нумерация позиций с 1. Это подтверждено явным примером (позиция 10 — первая цифра числа 11). Я сравнил правила нападающего с прямым перебором: они совпадают на каждой позиции строки, собранной из всех чисел меньше 300000. Прочтение, где позиции нумеруются с 0, противоречит примеру; 0 не натуральное число и к тому же содержит цифру 0. На боевом входе n = 10^18 правила дают ответ 3."
+  },
+  "r2a1t2|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. Условие задаёт всё однозначно. Строка состоит из чисел без нуля, выписанных по возрастанию; пример начала строки это подтверждает. Нумерация позиций идёт с 1, и это закреплено двумя примерами: позиция 1 — цифра 1, позиция 10 — первая цифра числа 11. Спрашивается одна цифра на позиции n. Программа нападающего верно считает, что L-значных чисел без нуля ровно 9^L, и находит j-е из них через запись j в системе по основанию 9, прибавляя 1 к каждой цифре. Так получается единственный ответ."
+  },
+  "r2a1t2|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения я не нашёл. В условии всё задано явно: какие числа берутся (натуральные без цифры 0), в каком порядке они идут (по возрастанию), как склеиваются (без разделителей), как нумеруются позиции (с 1, есть два примера-якоря: на позиции 1 стоит 1, на позиции 10 — первая цифра числа 11) и что именно спрашивается (одна цифра). Я сравнил программу нападающего с перебором: склеил строку из всех таких чисел меньше 300000 и проверил каждую позицию. Расхождений нет. На малых примерах программа выдаёт 1, 2 и 4, как и заявлено. На боевом входе n = 10^18 она отвечает 3."
+  },
+  "r2a1t2|learn": {
+   "answer": "3",
+   "program": "def f(p):\n    n=int(p['n'])\n    d=1\n    while n>d*9**d:\n        n-=d*9**d; d+=1\n    k=(n-1)//d; pos=(n-1)%d\n    digs=[]\n    for _ in range(d):\n        digs.append(k%9+1); k//=9\n    digs.reverse()\n    return digs[pos]\n",
+   "runs": 1
+  },
+  "r2a1t2|solo": {
+   "answer": "3",
+   "program": "def f(p):\n    n=int(p['n'])\n    d=1\n    while n> d*9**d:\n        n-=d*9**d; d+=1\n    k=(n-1)//d; pos=(n-1)%d\n    digs=[]\n    for _ in range(d):\n        digs.append(k%9+1); k//=9\n    digs.reverse()\n    return digs[pos]\n",
+   "runs": 1
+  },
+  "r2a1t3|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. В условии всё задано однозначно: k идёт от 1 до n включительно, floor(k²/m) — обычная целая часть неотрицательного числа, а считать нужно число различных значений. Правила нападающего я сверил с полным перебором при всех m от 1 до 59 и n от 1 до 149: расхождений 0. На боевом входе правила дают 975000000000000000, и это верный ответ. Выражение «натуральные n, m» на ответ не влияет, потому что k начинается с 1."
+  },
+  "r2a1t3|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения нет. В условии прямо сказано, что k пробегает значения 1..n, что считается целая часть k²/m и что нужно число различных значений. Двусмысленных мест в тексте не нашлось. Формула нападающего сверена с перебором при m от 1 до 59 и n от 1 до 199: расхождений 0. Она следует и из рассуждения. Пусть t = m//2. При k < t шаг (k+1)² − k² = 2k+1 меньше m, поэтому значения растут не больше чем на 1 и покрывают все числа от floor(1/m) до floor(t²/m). Начиная с k = t шаг не меньше m, и каждое следующее k даёт новое значение."
+  },
+  "r2a1t3|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. Условие однозначно: k пробегает 1..n, берётся floor(k²/m) для положительного числа (поэтому не важно, как именно понимать «целую часть»), и считается число различных значений. Правило нападающего я проверил перебором по всем n<120 и m<60: оно совпадает с прямым подсчётом. Для k ≤ m//2 соседние значения отличаются не больше чем на 1, поэтому получаются все числа от floor(1/m) до floor(t²/m). Дальше каждое значение новое. Ни «натуральные», ни «различных значений» не дают расхождения на боевом входе."
+  },
+  "r2a1t3|solo": {
+   "answer": "975000000000000000",
+   "program": "def f(p):\n    n = p['n']; m = p['m']\n    # For k <= s-1 we have 2k+1 <= m, so consecutive values differ by at most 1:\n    # values for k=1..s are all integers from floor(1/m) to floor(s^2/m).\n    # For k > s, each step increases by >= 1, so each k gives a new value.\n    s = min(n, (m + 1) // 2)\n    return s * s // m - 1 // m + 1 + (n - s)\n",
+   "runs": 1
+  },
+  "r2a1t4|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения я не нашёл. Условие прямо определяет каждую часть задачи, и программа нападающего следует ему. Запрет касается только кучки с тем же номером, из которой соперник брал своим непосредственно предыдущим ходом; на первом ходу запретов нет. Опустевшая кучка остаётся на своём месте и по-прежнему может быть запрещённой. Кто не может сделать ход, проигрывает. Первый ход считается как пара (номер кучки, сколько камней взять), а кучки различаются по номеру, даже если их размеры совпадают. Программа нападающего задаёт состояние как (размеры кучек, номер последней кучки) и перебирает именно такие пары. Я проверил и другие варианты: собственная прошлая кучка игрока, запрет на несколько ходов, отождествление кучек одного размера. Все они прямо противоречат тексту условия."
+  },
+  "r2a1t3|learn": {
+   "answer": "975000000000000000",
+   "program": "def f(p):\n    n = int(p['n']); m = int(p['m'])\n    # for k < t, step (2k+1)/m < 1: values cover a contiguous range; for k >= t every step gives a new value\n    t = max(1, m // 2)\n    if n <= t:\n        return n * n // m - 1 // m + 1\n    return t * t // m - 1 // m + 1 + (n - t)\n",
+   "runs": 1
+  },
+  "r2a1t4|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения нет. Каждое место, где можно было бы понять текст иначе, закрыто самим условием. Кучки различаются по номеру, пустая кучка остаётся на своём месте. Запрет касается ровно одной кучки — той, из которой соперник брал непосредственно предыдущим ходом; запрет не накапливается и не распространяется на кучки с тем же размером. На первом ходу запретов нет. Тот, кто не может сходить, проигрывает, даже если камни ещё остались. Первые ходы считаются как пары (номер кучки, сколько взять). Программа нападающего реализует именно это: на малых примерах она даёт 1, 4 и 0, на боевом входе [3,5,7,9] — 2."
+  },
+  "r2a1t4|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. Условие однозначно задаёт все пункты. Кучки различаются по номеру. Опустевшая кучка остаётся на месте, и её номер может оставаться запрещённым. Запрет действует только на номер кучки, из которой брал соперник своим непосредственно предыдущим ходом, и только на один ход. На первом ходу запретов нет. Кто не может сделать ход, тот проигрывает, даже если камни ещё остались. Первые ходы считаются как пары (кучка, сколько взять). Программа нападающего реализует ровно это: она совпадает со всеми малыми примерами (1, 4, 0) и на боевом входе [3,5,7,9] даёт 2. Альтернативы вроде «запрет на собственную прошлую кучку», «запрет, пока кучка непуста» или «кучки неразличимы» прямо противоречат тексту."
+  },
+  "r2a1t4|solo": {
+   "answer": "2",
+   "program": "import sys\nfrom functools import lru_cache\ndef f(p):\n    h=tuple(p['h']); n=len(h)\n    sys.setrecursionlimit(100000)\n    @lru_cache(None)\n    def win(s,fb):\n        for i in range(n):\n            if i==fb: continue\n            for k in range(1,s[i]+1):\n                t=s[:i]+(s[i]-k,)+s[i+1:]\n                if not win(t,i): return True\n        return False\n    c=0\n    for i in range(n):\n        for k in range(1,h[i]+1):\n            t=h[:i]+(h[i]-k,)+h[i+1:]\n            if not win(t,i): c+=1\n    return c\n",
+   "runs": 1
+  },
+  "r2a1t4|learn": {
+   "answer": "2",
+   "program": "import sys\nfrom functools import lru_cache\ndef f(p):\n    h=tuple(p['h']); n=len(h)\n    sys.setrecursionlimit(100000)\n    @lru_cache(maxsize=None)\n    def win(s,forb):\n        for i in range(n):\n            if i==forb: continue\n            for k in range(1,s[i]+1):\n                t=list(s); t[i]-=k\n                if not win(tuple(t),i): return True\n        return False\n    c=0\n    for i in range(n):\n        for k in range(1,h[i]+1):\n            t=list(h); t[i]-=k\n            if not win(tuple(t),i): c+=1\n    return c\n",
+   "runs": 1
+  },
+  "r2a2t0|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения нет. В условии прямо сказано, как округлять: к ближайшему целому, а ровно половина округляется вверх (приведены примеры 12,5 → 13, 62,5 → 63, 28,5 → 29). Это исключает и банковское округление, и отбрасывание дробной части. Все проценты неотрицательны, поэтому вопроса о том, куда идёт «вверх» для отрицательных чисел, не возникает. Ответ однозначно определён как сумма по всем i, и формула нападающего (200k+n)//(2n) в точности реализует это правило."
+  },
+  "r2a2t0|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. В условии прямо сказано: каждое 100·ks[i]/ns[i] округляется до ближайшего целого, при дробной части ровно 1/2 — вверх, затем округлённые значения суммируются. Все ks и ns неотрицательные, поэтому «вверх» и «от нуля» дают одно и то же. Банковское округление и округление вниз противоречат прямому указанию, а примеры 12,5 → 13, 62,5 → 63 и 28,5 → 29 совпадают с половинными случаями боевого входа. Вариант «сначала сложить, потом округлить» противоречит формулировке «сумма округлённых процентов». Формула нападающего (200k+n)//(2n) точно вычисляет floor(100k/n + 1/2)."
+  },
+  "r2a2t0|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения нет. В условии прямо сказано, что при дробной части ровно 1/2 округление идёт вверх, и это подтверждено тремя примерами (12,5 → 13, 62,5 → 63, 28,5 → 29). Поэтому ни банковское округление, ни отбрасывание дробной части не подходят. Все ks и ns неотрицательны, так что вопрос, в какую сторону «вверх» для отрицательных чисел, не возникает. Сказано также, что округляется каждый процент отдельно, а затем проценты суммируются, а не округляется общая сумма. Программа нападающего (200k+n)//(2n) в точности реализует это правило; на боевом входе по ней получается 13+63+29+78+83+13+53+46+63+43+43 = 527."
+  },
+  "r2a2t0|solo": {
+   "answer": "527",
+   "program": "def f(p):\n    # exact integer round-half-up of 100*k/n: floor((200k + n) / (2n))\n    return sum((200 * k + n) // (2 * n) for k, n in zip(p['ks'], p['ns']))\n",
+   "runs": 1
+  },
+  "r2a2t0|learn": {
+   "answer": "527",
+   "program": "def f(p):\n    # exact integer round-half-up of 100*k/n: floor((200k + n) / (2n))\n    return sum((200 * k + n) // (2 * n) for k, n in zip(p['ks'], p['ns']))\n",
+   "runs": 1
+  },
+  "r2a2t1|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения нет. Формула записана со скобками: (x·ms[i] − cs[i]) / ds[i]. Округление к нулю задано явно и показано на примерах для всех комбинаций знаков: 7/2 → 3, −7/2 → −3, 7/(−2) → −3. Порядок шагов тоже задан: i = 0, 1, 2, ... последовательно. Сказано, что вычисления точные и в целых числах. Правила нападающего в точности реализуют этот текст, и ни одно место условия не допускает иного толкования."
+  },
+  "r2a2t1|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения я не нашёл. В условии прямо задана формула (x·ms[i] − cs[i]) / ds[i]: скобки однозначно фиксируют порядок действий. Округление к нулю закреплено словами «дробная часть отбрасывается» и тремя примерами на разные знаки (7/2 → 3, −7/2 → −3, 7/(−2) → −3). Шаги идут строго по порядку i = 0, 1, 2, ..., вычисления точные в целых числах, ответ — итоговое x. Округление вниз (floor) и евклидово деление примерами исключены. Разбор приоритетов вроде x·ms[i] − (cs[i]/ds[i]) или x·(ms[i] − cs[i]) исключён скобками. Функция tdiv нападающего через abs(a)//abs(b) с поправкой знака верно реализует деление с округлением к нулю."
+  },
+  "r2a2t1|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения нет. В условии прямо сказано, что округление идёт к нулю, и это подкреплено примерами для всех комбинаций знаков: 7/2 → 3, −7/2 → −3, 7/(−2) → −3. Числитель взят в скобки: (x·ms[i] − cs[i]). Порядок шагов i = 0, 1, 2, ... тоже задан явно. Правила нападающего (деление модулей и смена знака, если знаки делимого и делителя различаются) точно реализуют этот текст. Прочтения с округлением вниз, от нуля или вверх противоречат явной формулировке и приведённым примерам."
+  },
+  "r2a2t1|solo": {
+   "answer": "178883744991383743",
+   "program": "def f(p):\n    x = int(p['x'])\n    for m, c, d in zip(p['ms'], p['cs'], p['ds']):\n        n = x * m - c\n        q = abs(n) // abs(d)\n        x = q if (n >= 0) == (d > 0) or q == 0 else -q\n    return x\n",
+   "runs": 1
+  },
+  "r2a2t1|learn": {
+   "answer": "178883744991383743",
+   "program": "def f(p):\n    x = p['x']\n    for m, c, d in zip(p['ms'], p['cs'], p['ds']):\n        n = x * m - c\n        q = abs(n) // abs(d)\n        if (n < 0) != (d < 0):\n            q = -q\n        x = q\n    return x\n",
+   "runs": 1
+  },
+  "r2a2t2|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения я не нашёл. Столбики идут строго 1, 2, 3, …, k. Столбик строят только целиком, и после первого столбика, на который не хватает кубиков, стройка заканчивается. Значит, всего уйдёт k(k+1)/2 кубиков, где k — наибольшее число, при котором k(k+1)/2 ≤ n, а ответ равен n − k(k+1)/2. Попробовать пропущенный столбик и строить дальше меньшие нельзя: условие прямо говорит, что стройка заканчивается. Спросить, как понимать «остаток», тоже нельзя: условие само определяет ответ как неиспользованные кубики. Если n — точное треугольное число, ответ 0, и это совпадает с примером n=10. Программа нападающего выполняет двоичный поиск наибольшего k, и для большого n она это делает правильно."
+  },
+  "r2a2t2|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "I found no other reasonable reading; the statement is unambiguous. The columns go 1, 2, ..., k. You build while the next column fits completely, so you build the largest k with k(k+1)/2 <= n, and the answer is the leftover, n - k(k+1)/2. The small examples fix both edge cases. For n=0, nothing is built and 0 is left over. For n=10, the ladder uses exactly 10 cubes, so an exact fit gives 0. For the real input, k = 123456789012345677, and the leftover is also 123456789012345677, which equals k. That can't build the next column (k+1), so the stopping rule doesn't change the answer. The only coincidence is that the leftover equals the number of columns. But returning the number of columns is not a reading of \"how many cubes are left unused\", and it already gives the wrong answer on n=10 (it would say 4, not 0). The attacker's program (binary search) matches an exact isqrt check."
+  },
+  "r2a2t2|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. В условии однозначно сказано: k-й столбик состоит ровно из k кубиков, следующий строят, только если остатка хватает на него целиком, и стройка заканчивается на первом столбике, на который не хватает. Ответ — n - k(k+1)/2 при наибольшем k, для которого k(k+1)/2 <= n. Программа нападающего так и считает. На боевом входе k = 123456789012345677 и остаток тоже 123456789012345677, то есть ровно на один кубик меньше, чем нужно следующему столбику (k+1). Малый пример n=20 устроен так же: остаток 5, а следующему столбику нужно 6. Поэтому граница «хватает / не хватает» закреплена примерами, и смещение на единицу в этом месте уже расходится с примером n=20."
+  },
+  "r2a2t2|solo": {
+   "answer": "123456789012345677",
+   "program": "from math import isqrt\ndef f(p):\n    n=int(p['n'])\n    if n<=0: return 0\n    k=(isqrt(8*n+1)-1)//2\n    while k*(k+1)//2>n: k-=1\n    while (k+1)*(k+2)//2<=n: k+=1\n    return n-k*(k+1)//2\n",
+   "runs": 1
+  },
+  "r2a2t2|learn": {
+   "answer": "123456789012345677",
+   "program": "from math import isqrt\ndef f(p):\n    n=int(p['n'])\n    if n<=0: return 0\n    k=(isqrt(8*n+1)-1)//2\n    while (k+1)*(k+2)//2<=n: k+=1\n    while k*(k+1)//2>n: k-=1\n    return n-k*(k+1)//2\n",
+   "runs": 1
+  },
+  "r2a2t3|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения не нашёл. В условии прямо сказано, что членов n и a0 входит в их число, что подпоследовательность неубывающая, то есть равные элементы допускаются, и что берётся её длина. Все значения неотрицательные, потому что mod M даёт числа от 0 до M-1, так что вопроса о знаке остатка не возникает. На боевом входе последовательность повторяется с периодом 8: 7, 30, 1, 8, 27, 10, 21, 28. Программа нападающего даёт 379; я пересчитал отдельно через bisect_right и получил тот же ответ."
+  },
+  "r2a2t3|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "I found no other reasonable reading. The statement pins down everything that matters. It says there are n terms counting a0. The recurrence is given explicitly. All inputs are non-negative, so mod works the same in any convention. The subsequence keeps the original order but need not be contiguous. \"Non-decreasing\" is spelled out as \"greater than or equal to\". The battle input produces a sequence with period 8: 7,30,1,8,27,10,21,28,... Any faithful reading of the text computes the longest non-decreasing subsequence of that sequence, which is exactly what the attacker's program does."
+  },
+  "r2a2t3|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "I found no other reasonable reading. The statement fixes every point that could be read two ways. \"Non-decreasing\" is spelled out as \"each next taken element is greater than or equal to the previous one\", so a strict reading, which gives 8, is ruled out. \"n terms, counting a0\" sets the length exactly. The formula (a_prev·A + C) mod M has explicit parentheses, and all values are non-negative, so how mod treats signs does not matter. The subsequence is defined as elements in original order, not necessarily adjacent, which excludes a contiguous-run reading. On the full input the sequence has period 8: 7, 30, 1, 8, 27, 10, 21, 28. The attacker's program gives 379, and that is the only answer consistent with the text."
+  },
+  "r2a2t3|solo": {
+   "answer": "379",
+   "program": "import bisect\ndef f(p):\n    n,a,A,C,M=p['n'],p['a0'],p['A'],p['C'],p['M']\n    t=[]\n    for i in range(n):\n        k=bisect.bisect_right(t,a)\n        if k==len(t): t.append(a)\n        else: t[k]=a\n        a=(a*A+C)%M\n    return len(t)\n",
+   "runs": 1
+  },
+  "r2a2t3|learn": {
+   "answer": "379",
+   "program": "import bisect\ndef f(p):\n    n,a,A,C,M=p['n'],p['a0'],p['A'],p['C'],p['M']\n    t=[]\n    for i in range(n):\n        k=bisect.bisect_right(t,a)\n        if k==len(t): t.append(a)\n        else: t[k]=a\n        a=(a*A+C)%M\n    return len(t)\n",
+   "runs": 1
+  },
+  "r2a2t4|alt0": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения условия не нашлось. Шаблон 101 — палиндром, поэтому порядок чтения битов не важен: в программе нападающего биты идут от младшего к старшему, но ответ от этого не меняется. Перекрытия прямо разрешены примером «в записи 10101 таких позиций две». Сказано «без ведущих нулей», поэтому дополнять запись нулями до фиксированной длины нельзя. Границы заданы как «от 1 до N включительно». Считать нужно позиции, а не числа k: текст прямо говорит «общее количество таких позиций». Двоичная система указана явно. Программа нападающего — единственное честное прочтение текста."
+  },
+  "r2a2t4|alt1": {
+   "found": false,
+   "rules": "",
+   "reading": "Условие однозначно. Шаблон 101 — палиндром, поэтому порядок чтения битов (слева направо или справа налево) на ответ не влияет. Перекрытия прямо разрешены на примере 10101. Диапазон 1..N включительно, запись без ведущих нулей. «Общее количество позиций по всем k» — это сумма по всем k. Прочтение «число различных номеров позиций» сюда не подходит из-за слова «общее», и к тому же зависит от того, откуда считать номера. Если считать слева, оно даёт 1 на N=10, а ожидается 2. Другого разумного прочтения, которое совпадает с ответами на малых примерах и расходится на N=10000, не нашлось."
+  },
+  "r2a2t4|alt2": {
+   "found": false,
+   "rules": "",
+   "reading": "Другого разумного прочтения я не нашёл. Шаблон 101 — палиндром, поэтому неважно, читать ли биты слева направо или справа налево и откуда нумеровать позиции. Перекрытия прямо разрешены примером 10101, где позиций две. Значит, прочтения «без перекрытий» и «считать числа k, а не позиции» противоречат тексту. Прочтение «считать различные номера позиций по всем k» не сходится с примером N=10: вышло бы 1 вместо 2. Слова «общее количество по всем k» однозначно означают сумму по всем k. Записи без ведущих нулей тоже заданы однозначно."
+  },
+  "r2a2t4|solo": {
+   "answer": "13316",
+   "program": "def f(p):\n    N = int(p['N']); t = 0\n    for k in range(1, N + 1):\n        s = bin(k)[2:]\n        t += sum(1 for i in range(len(s) - 2) if s[i:i+3] == '101')\n    return t\n",
+   "runs": 1
+  },
+  "r2a2t4|learn": {
+   "answer": "13316",
+   "program": "def f(p):\n    N = p['N']\n    c = 0\n    for k in range(1, N + 1):\n        s = bin(k)[2:]\n        c += sum(1 for i in range(len(s) - 2) if s[i:i+3] == '101')\n    return c\n",
+   "runs": 1
+  },
+  "r2a1t1|chk": {
+   "answer": "917977473",
+   "program": "def f(p):\n    n=int(p['n']); M=10**9+7\n    def mul(A,B):\n        return [[(A[0][0]*B[0][0]+A[0][1]*B[1][0])%M,(A[0][0]*B[0][1]+A[0][1]*B[1][1])%M],\n                [(A[1][0]*B[0][0]+A[1][1]*B[1][0])%M,(A[1][0]*B[0][1]+A[1][1]*B[1][1])%M]]\n    if n==0: return 1\n    R=[[1,0],[0,1]]; T=[[2,2],[1,0]]; e=n-1\n    while e:\n        if e&1: R=mul(R,T)\n        T=mul(T,T); e>>=1\n    S=(R[0][0]*2+R[0][1]*2)%M\n    return (S-1)%M if n%2==0 else S\n",
+   "runs": 1,
+   "changed": false
+  },
+  "r2a1t0|chk": {
+   "answer": "61728394506172839449",
+   "program": "from math import isqrt, gcd\nimport sys\nsys.setrecursionlimit(10000)\n\ndef fl(k, a, b, c):\n    m = k * b\n    if m >= 0:\n        t = isqrt(2 * m * m)\n    else:\n        r = isqrt(2 * m * m)\n        t = -r if r * r == 2 * m * m else -r - 1\n    return (k * a + t) // c\n\ndef norm(a, b, c):\n    if c < 0:\n        a, b, c = -a, -b, -c\n    g = gcd(gcd(abs(a), abs(b)), c)\n    return a // g, b // g, c // g\n\ndef S(a, b, c, n):\n    if n <= 0:\n        return 0\n    q = fl(1, a, b, c)\n    res = q * n * (n + 1) // 2\n    a -= q * c\n    m = fl(n, a, b, c)\n    if m == 0:\n        return res\n    d = a * a - 2 * b * b\n    A, B, C = norm(c * a, -c * b, d)\n    return res + n * m - S(A, B, C, m)\n\ndef f(p):\n    n = int(p['n'])\n    return n - S(0, 1, 1, n) + 2 * S(0, 1, 2, n)\n",
+   "runs": 1,
+   "changed": false
+  },
+  "r2a1t2|chk": {
+   "answer": "3",
+   "program": "def f(p):\n    n = p['n']\n    k = 1\n    while n > k * 9**k:\n        n -= k * 9**k\n        k += 1\n    idx, off = divmod(n - 1, k)\n    d = []\n    for _ in range(k):\n        d.append(idx % 9 + 1); idx //= 9\n    d.reverse()\n    return d[off]\n",
+   "runs": 1,
+   "changed": false
+  },
+  "r2a1t4|chk": {
+   "answer": "2",
+   "program": "import sys\nfrom functools import lru_cache\ndef f(p):\n    h0=tuple(p['h']); n=len(h0)\n    sys.setrecursionlimit(100000)\n    @lru_cache(None)\n    def win(h,fb):\n        for i in range(n):\n            if i==fb: continue\n            for k in range(1,h[i]+1):\n                g=list(h); g[i]-=k\n                if not win(tuple(g),i): return True\n        return False\n    c=0\n    for i in range(n):\n        for k in range(1,h0[i]+1):\n            g=list(h0); g[i]-=k\n            if not win(tuple(g),i): c+=1\n    return c\n",
+   "runs": 1,
+   "changed": false
+  },
+  "r2a2t0|chk": {
+   "answer": "527",
+   "program": "def f(p):\n    return sum((200*k + n)//(2*n) for k, n in zip(p['ks'], p['ns']))",
+   "runs": 0,
+   "changed": false
+  },
+  "r2a1t3|chk": {
+   "answer": "975000000000000000",
+   "program": "def f(p):\n    n = p['n']; m = p['m']\n    L = m // 2\n    if L == 0:\n        return n\n    if n <= L:\n        return n * n // m - 1 // m + 1\n    return L * L // m - 1 // m + 1 + (n - L)",
+   "runs": 1,
+   "changed": false
+  },
+  "r2a2t2|chk": {
+   "answer": "123456789012345677",
+   "program": "from math import isqrt\n\ndef f(p):\n    n = int(p['n'])\n    if n <= 0:\n        return 0\n    k = (isqrt(8 * n + 1) - 1) // 2\n    while (k + 1) * (k + 2) // 2 <= n:\n        k += 1\n    while k * (k + 1) // 2 > n:\n        k -= 1\n    return n - k * (k + 1) // 2\n",
+   "runs": 1,
+   "changed": false
+  },
+  "r2a2t1|chk": {
+   "answer": "178883744991383743",
+   "program": "def f(p):\n    x = p['x']\n    for m, c, d in zip(p['ms'], p['cs'], p['ds']):\n        n = x * m - c\n        q = abs(n) // abs(d)\n        x = q if (n >= 0) == (d > 0) or q == 0 else -q\n    return x",
+   "runs": 1,
+   "changed": false
+  },
+  "r2a2t3|chk": {
+   "answer": "379",
+   "program": "import bisect\ndef f(p):\n    n,a,A,C,M=p['n'],p['a0'],p['A'],p['C'],p['M']\n    t=[]\n    for i in range(n):\n        k=bisect.bisect_right(t,a)\n        if k==len(t): t.append(a)\n        else: t[k]=a\n        a=(a*A+C)%M\n    return len(t)\n",
+   "runs": 1,
+   "changed": false
+  },
+  "r2a2t4|chk": {
+   "answer": "13316",
+   "program": "def f(p):\n    N = p['N']\n    c = 0\n    for k in range(1, N + 1):\n        s = bin(k)[2:]\n        c += sum(1 for i in range(len(s) - 2) if s[i:i+3] == '101')\n    return c\n",
+   "runs": 1,
+   "changed": false
+  }
+ }
+}
