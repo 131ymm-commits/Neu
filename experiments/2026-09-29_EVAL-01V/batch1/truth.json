@@ -1,0 +1,506 @@
+{
+"PI-INT-2912-1": {
+"id": "PI-INT-2912-1",
+"truth": "5295779835099"
+},
+"PI-M4_1-2912-1": {
+"id": "PI-M4_1-2912-1",
+"truth": "181602351346"
+},
+"PI-M4_3_INT-2912-1": {
+"id": "PI-M4_3_INT-2912-1",
+"truth": "715429996605"
+},
+"PI-SUM-2912-1": {
+"id": "PI-SUM-2912-1",
+"truth": "42417245"
+},
+"PI-SEMI-2912-1": {
+"id": "PI-SEMI-2912-1",
+"truth": "1257438136940"
+},
+"PI-M3_1-2912-1": {
+"id": "PI-M3_1-2912-1",
+"truth": "2555899739376"
+},
+"PI-SUM_INT-2912-1": {
+"id": "PI-SUM_INT-2912-1",
+"truth": "254132362"
+},
+"PI-PPOW-2912-1": {
+"id": "PI-PPOW-2912-1",
+"truth": "631286638604"
+},
+"PI-INT-2912-0": {
+"id": "PI-INT-2912-0",
+"truth": "5361489949910"
+},
+"PI-M4_1-2912-0": {
+"id": "PI-M4_1-2912-0",
+"truth": "824805071635"
+},
+"PI-M4_3_INT-2912-0": {
+"id": "PI-M4_3_INT-2912-0",
+"truth": "872066583005"
+},
+"PI-SUM-2912-0": {
+"id": "PI-SUM-2912-0",
+"truth": "265808755"
+},
+"PI-SEMI-2912-0": {
+"id": "PI-SEMI-2912-0",
+"truth": "6830005845930"
+},
+"PI-M3_1-2912-0": {
+"id": "PI-M3_1-2912-0",
+"truth": "186017188215"
+},
+"PI-SUM_INT-2912-0": {
+"id": "PI-SUM_INT-2912-0",
+"truth": "432887328"
+},
+"PI-PPOW-2912-0": {
+"id": "PI-PPOW-2912-0",
+"truth": "1294608689258"
+},
+"PI-INT-2912-2": {
+"id": "PI-INT-2912-2",
+"truth": "5104806215662"
+},
+"PI-M4_1-2912-2": {
+"id": "PI-M4_1-2912-2",
+"truth": "1135859444748"
+},
+"PI-M4_3_INT-2912-2": {
+"id": "PI-M4_3_INT-2912-2",
+"truth": "1362116884562"
+},
+"PI-SUM-2912-2": {
+"id": "PI-SUM-2912-2",
+"truth": "23852850"
+},
+"PI-SEMI-2912-2": {
+"id": "PI-SEMI-2912-2",
+"truth": "2166318671302"
+},
+"PI-M3_1-2912-2": {
+"id": "PI-M3_1-2912-2",
+"truth": "361175057042"
+},
+"PI-SUM_INT-2912-2": {
+"id": "PI-SUM_INT-2912-2",
+"truth": "293539445"
+},
+"PI-PPOW-2912-2": {
+"id": "PI-PPOW-2912-2",
+"truth": "4208737559610"
+},
+"PROC-WARE-2912-0": {
+"truth": "596166",
+"id": "PROC-WARE-2912-0"
+},
+"PROC-WARE-2912-2": {
+"truth": "0",
+"id": "PROC-WARE-2912-2"
+},
+"PROC-CHIPS-2912-1": {
+"truth": "1078",
+"id": "PROC-CHIPS-2912-1"
+},
+"PROC-AUTO-2912-0": {
+"truth": "1932404",
+"id": "PROC-AUTO-2912-0"
+},
+"PROC-AUTO-2912-2": {
+"truth": "3444041",
+"id": "PROC-AUTO-2912-2"
+},
+"PROC-BANK-2912-1": {
+"truth": "51480",
+"id": "PROC-BANK-2912-1"
+},
+"PROC-RABBIT-2912-0": {
+"truth": "217090517",
+"id": "PROC-RABBIT-2912-0"
+},
+"PROC-RABBIT-2912-2": {
+"truth": "354225496",
+"id": "PROC-RABBIT-2912-2"
+},
+"PROC-COUNTER-2912-1": {
+"truth": "10075",
+"id": "PROC-COUNTER-2912-1"
+},
+"PROC-GAME-2912-0": {
+"truth": "7428",
+"id": "PROC-GAME-2912-0"
+},
+"PROC-GAME-2912-2": {
+"truth": "17935",
+"id": "PROC-GAME-2912-2"
+},
+"PROC-ROBOT-2912-1": {
+"truth": "18",
+"id": "PROC-ROBOT-2912-1"
+},
+"MIMIC-JOS-2912-0": {
+"truth": "1",
+"canon": "168246",
+"false": [
+"175653",
+"168250"
+],
+"id": "MIMIC-JOS-2912-0"
+},
+"MIMIC-JOS-2912-2": {
+"truth": "2",
+"canon": "239191",
+"false": [
+"166828",
+"239197"
+],
+"id": "MIMIC-JOS-2912-2"
+},
+"MIMIC-HANOI-2912-1": {
+"truth": "428286465",
+"canon": "19999551",
+"false": [
+"39999103",
+"878638604"
+],
+"id": "MIMIC-HANOI-2912-1"
+},
+"MIMIC-FIB-2912-0": {
+"truth": "682699086",
+"canon": "822915002",
+"false": [
+"140215916",
+"542483170"
+],
+"id": "MIMIC-FIB-2912-0"
+},
+"MIMIC-FIB-2912-2": {
+"truth": "852500233",
+"canon": "712929687",
+"false": [
+"860429461",
+"992070779"
+],
+"id": "MIMIC-FIB-2912-2"
+},
+"MIMIC-LIFE-2912-1": {
+"truth": "69935",
+"canon": "54077",
+"false": [
+"69909",
+"65695"
+],
+"id": "MIMIC-LIFE-2912-1"
+},
+"MIMIC-DERANGE-2912-0": {
+"truth": "259134022",
+"canon": "175934886",
+"false": [
+"747098617",
+"132616175"
+],
+"id": "MIMIC-DERANGE-2912-0"
+},
+"MIMIC-DERANGE-2912-2": {
+"truth": "724582471",
+"canon": "947939729",
+"false": [
+"222326631",
+"404698712"
+],
+"id": "MIMIC-DERANGE-2912-2"
+},
+"MIMIC-DYCK-2912-1": {
+"truth": "945923941",
+"canon": "145649488",
+"false": [
+"184181112",
+"497385933"
+],
+"id": "MIMIC-DYCK-2912-1"
+},
+"MIMIC-COIN-2912-0": {
+"truth": "0",
+"canon": "352935943",
+"false": [
+"0",
+"0"
+],
+"id": "MIMIC-COIN-2912-0"
+},
+"MIMIC-COIN-2912-2": {
+"truth": "0",
+"canon": "100990591",
+"false": [
+"0",
+"0"
+],
+"id": "MIMIC-COIN-2912-2"
+},
+"MIMIC-LUCKY-2912-1": {
+"truth": "128296",
+"canon": "135354",
+"false": [
+"128955",
+"130447"
+],
+"id": "MIMIC-LUCKY-2912-1"
+},
+"NECK-B_NOADJ-2912-0": {
+"truth": "17920860",
+"id": "NECK-B_NOADJ-2912-0"
+},
+"NECK-B_NOADJ-2912-2": {
+"truth": "3617214681",
+"id": "NECK-B_NOADJ-2912-2"
+},
+"NECK-C_NOADJ_CNT-2912-1": {
+"truth": "0",
+"id": "NECK-C_NOADJ_CNT-2912-1"
+},
+"NECK-D_CNT-2912-0": {
+"truth": "4047676404408",
+"id": "NECK-D_CNT-2912-0"
+},
+"NECK-D_CNT-2912-2": {
+"truth": "50943421620",
+"id": "NECK-D_CNT-2912-2"
+},
+"NECK-D_NOADJ_CNT-2912-1": {
+"truth": "0",
+"id": "NECK-D_NOADJ_CNT-2912-1"
+},
+"NECK-D_NOADJ_ONE-2912-0": {
+"truth": "782",
+"id": "NECK-D_NOADJ_ONE-2912-0"
+},
+"NECK-D_NOADJ_ONE-2912-2": {
+"truth": "532",
+"id": "NECK-D_NOADJ_ONE-2912-2"
+},
+"NECK-C_ONEADJ_CNT-2912-1": {
+"truth": "68415146800",
+"id": "NECK-C_ONEADJ_CNT-2912-1"
+},
+"NECK-D_ONEADJ-2912-0": {
+"truth": "1050480738511374",
+"id": "NECK-D_ONEADJ-2912-0"
+},
+"NECK-D_ONEADJ-2912-2": {
+"truth": "1771659938569391186457",
+"id": "NECK-D_ONEADJ-2912-2"
+},
+"NECK-C_NOADJ_ONE-2912-1": {
+"truth": "6888960",
+"id": "NECK-C_NOADJ_ONE-2912-1"
+},
+"PROC-WARE-2912-1": {
+"truth": "994407",
+"id": "PROC-WARE-2912-1"
+},
+"PROC-CHIPS-2912-0": {
+"truth": "0",
+"id": "PROC-CHIPS-2912-0"
+},
+"PROC-CHIPS-2912-2": {
+"truth": "600",
+"id": "PROC-CHIPS-2912-2"
+},
+"PROC-AUTO-2912-1": {
+"truth": "1678788",
+"id": "PROC-AUTO-2912-1"
+},
+"PROC-BANK-2912-0": {
+"truth": "17774",
+"id": "PROC-BANK-2912-0"
+},
+"PROC-BANK-2912-2": {
+"truth": "4543685931",
+"id": "PROC-BANK-2912-2"
+},
+"PROC-RABBIT-2912-1": {
+"truth": "34462994",
+"id": "PROC-RABBIT-2912-1"
+},
+"PROC-COUNTER-2912-0": {
+"truth": "43496",
+"id": "PROC-COUNTER-2912-0"
+},
+"PROC-COUNTER-2912-2": {
+"truth": "2671",
+"id": "PROC-COUNTER-2912-2"
+},
+"PROC-GAME-2912-1": {
+"truth": "11535",
+"id": "PROC-GAME-2912-1"
+},
+"PROC-ROBOT-2912-0": {
+"truth": "16",
+"id": "PROC-ROBOT-2912-0"
+},
+"PROC-ROBOT-2912-2": {
+"truth": "22",
+"id": "PROC-ROBOT-2912-2"
+},
+"MIMIC-JOS-2912-1": {
+"truth": "4",
+"canon": "34873",
+"false": [
+"12925",
+"34879"
+],
+"id": "MIMIC-JOS-2912-1"
+},
+"MIMIC-HANOI-2912-0": {
+"truth": "300228920",
+"canon": "832598597",
+"false": [
+"665197188",
+"226549837"
+],
+"id": "MIMIC-HANOI-2912-0"
+},
+"MIMIC-HANOI-2912-2": {
+"truth": "105700182",
+"canon": "158644019",
+"false": [
+"317288039",
+"780990184"
+],
+"id": "MIMIC-HANOI-2912-2"
+},
+"MIMIC-FIB-2912-1": {
+"truth": "502768669",
+"canon": "574930069",
+"false": [
+"72161400",
+"933375939"
+],
+"id": "MIMIC-FIB-2912-1"
+},
+"MIMIC-LIFE-2912-0": {
+"truth": "160592",
+"canon": "130126",
+"false": [
+"160481",
+"163076"
+],
+"id": "MIMIC-LIFE-2912-0"
+},
+"MIMIC-LIFE-2912-2": {
+"truth": "73356",
+"canon": "76836",
+"false": [
+"73301",
+"79401"
+],
+"id": "MIMIC-LIFE-2912-2"
+},
+"MIMIC-DERANGE-2912-1": {
+"truth": "543214471",
+"canon": "220633886",
+"false": [
+"140743877",
+"123277483"
+],
+"id": "MIMIC-DERANGE-2912-1"
+},
+"MIMIC-DYCK-2912-0": {
+"truth": "952110252",
+"canon": "332673577",
+"false": [
+"834219051",
+"216374655"
+],
+"id": "MIMIC-DYCK-2912-0"
+},
+"MIMIC-DYCK-2912-2": {
+"truth": "64542530",
+"canon": "94261267",
+"false": [
+"361391588",
+"275087321"
+],
+"id": "MIMIC-DYCK-2912-2"
+},
+"MIMIC-COIN-2912-1": {
+"truth": "0",
+"canon": "433521291",
+"false": [
+"0",
+"0"
+],
+"id": "MIMIC-COIN-2912-1"
+},
+"MIMIC-LUCKY-2912-0": {
+"truth": "40566",
+"canon": "43033",
+"false": [
+"40793",
+"41307"
+],
+"id": "MIMIC-LUCKY-2912-0"
+},
+"MIMIC-LUCKY-2912-2": {
+"truth": "102968",
+"canon": "108742",
+"false": [
+"103496",
+"104714"
+],
+"id": "MIMIC-LUCKY-2912-2"
+},
+"NECK-B_NOADJ-2912-1": {
+"truth": "4806078",
+"id": "NECK-B_NOADJ-2912-1"
+},
+"NECK-C_NOADJ_CNT-2912-0": {
+"truth": "94516136",
+"id": "NECK-C_NOADJ_CNT-2912-0"
+},
+"NECK-C_NOADJ_CNT-2912-2": {
+"truth": "156",
+"id": "NECK-C_NOADJ_CNT-2912-2"
+},
+"NECK-D_CNT-2912-1": {
+"truth": "5463276",
+"id": "NECK-D_CNT-2912-1"
+},
+"NECK-D_NOADJ_CNT-2912-0": {
+"truth": "1257644",
+"id": "NECK-D_NOADJ_CNT-2912-0"
+},
+"NECK-D_NOADJ_CNT-2912-2": {
+"truth": "0",
+"id": "NECK-D_NOADJ_CNT-2912-2"
+},
+"NECK-D_NOADJ_ONE-2912-1": {
+"truth": "432224",
+"id": "NECK-D_NOADJ_ONE-2912-1"
+},
+"NECK-C_ONEADJ_CNT-2912-0": {
+"truth": "219905829000",
+"id": "NECK-C_ONEADJ_CNT-2912-0"
+},
+"NECK-C_ONEADJ_CNT-2912-2": {
+"truth": "1535403870",
+"id": "NECK-C_ONEADJ_CNT-2912-2"
+},
+"NECK-D_ONEADJ-2912-1": {
+"truth": "129742792826224820571",
+"id": "NECK-D_ONEADJ-2912-1"
+},
+"NECK-C_NOADJ_ONE-2912-0": {
+"truth": "13463424",
+"id": "NECK-C_NOADJ_ONE-2912-0"
+},
+"NECK-C_NOADJ_ONE-2912-2": {
+"truth": "332966400",
+"id": "NECK-C_NOADJ_ONE-2912-2"
+}
+}

@@ -1,0 +1,19 @@
+[
+ {
+  "wf": "wf_81dbd9e7-535",
+  "name": "eval01v-batch1-resume",
+  "start": 1790724902846,
+  "status": "completed",
+  "script": "/home/user/neu/experiments/2026-09-29_EVAL-01V/batch1/eval01v_batch1_resume.js",
+  "agents": 18,
+  "relayed": [],
+  "claude_md_agents": 0,
+  "secret_paths": [],
+  "tools": {
+   "Bash": 87
+  },
+  "model": {
+   "claude-opus-5-5": 18
+  }
+ }
+]
