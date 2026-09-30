@@ -47,6 +47,8 @@ ROWS = [
     ('OBSERVER', '(а) эталоны снижают логпотерю (ex < solo)', 'PREREG-OBSERVER', 'вероятность', 0.6, 0, 'p 0,052 — на грани, не подтверждено'),
     ('OBSERVER', '(б) ex обходит последовательную базу', 'PREREG-OBSERVER', 'вероятность', 0.45, 0, '0,777 против 0,812, p 0,59'),
     ('OBSERVER', 'solo обходит «Ганса»', 'PREREG-OBSERVER', 'вероятность', 0.6, 0, '0,893 против 0,969, p 0,54 — не значимо'),
+    ('OBSERVER-STREAM', 'A: REJECT подтверждён за 300 точек (e ≥ 20 против трёх баз)', 'PREREG-OBSERVER-STREAM', 'вероятность', 0.3, None, 'ждёт'),
+    ('OBSERVER-STREAM', 'B: OTHER против ACCEPT подтверждён', 'PREREG-OBSERVER-STREAM', 'вероятность', 0.25, None, 'ждёт'),
 ]
 
 
