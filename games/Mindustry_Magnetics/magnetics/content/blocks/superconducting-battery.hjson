@@ -1,0 +1,9 @@
+type: Battery
+size: 3
+health: 800
+category: power
+requirements: [ "lead/60", "titanium/40", "silicon/40", "superconductor/30" ]
+consumes: { powerBuffered: 150000 }
+emptyLightColor: 3a4a7a
+fullLightColor: 9fe8ff
+research: battery-large

@@ -1,0 +1,53 @@
+type: ItemTurret
+size: 2
+health: 1200
+category: turret
+requirements: [ "copper/120", "titanium/80", "silicon/60", "magnet-alloy/80" ]
+range: 280
+reload: 70
+recoil: 3
+rotateSpeed: 4
+shake: 1.5
+targetAir: true
+targetGround: true
+shootSound: railgun
+consumes: { coolant: { amount: 0.2 } }
+coolantMultiplier: 4
+ammoTypes: {
+  magnet-alloy: {
+    type: BasicBulletType
+    speed: 12
+    damage: 110
+    lifetime: 24
+    pierce: true
+    pierceCap: 3
+    pierceBuilding: false
+    width: 8
+    height: 18
+    ammoMultiplier: 2
+    frontColor: e3ecff
+    backColor: 6d86c9
+    trailLength: 6
+    trailWidth: 2
+    trailColor: 8fb4ff
+    hitEffect: hitBulletBig
+    shootEffect: shootBig
+  }
+  thorium: {
+    type: BasicBulletType
+    speed: 10
+    damage: 150
+    lifetime: 28
+    pierce: true
+    pierceCap: 2
+    width: 9
+    height: 18
+    ammoMultiplier: 1
+    reloadMultiplier: 0.8
+    frontColor: ffd0f0
+    backColor: f9a3c7
+    hitEffect: hitBulletBig
+    shootEffect: shootBig
+  }
+}
+research: lancer

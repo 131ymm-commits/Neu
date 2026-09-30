@@ -1,0 +1,20 @@
+type: GenericCrafter
+size: 2
+health: 280
+category: crafting
+requirements: [ "copper/60", "lead/50", "titanium/60", "silicon/40" ]
+craftTime: 60
+craftEffect: smeltsmoke
+outputItem: magnet-alloy/1
+consumes: {
+  items: { items: [ "titanium/2", "silicon/1" ] }
+  power: 1.2
+}
+drawer: {
+  type: DrawMulti
+  drawers: [
+    { type: "DrawDefault" }
+    { type: "DrawFlame", flameColor: "8fb4ff" }
+  ]
+}
+research: silicon-smelter

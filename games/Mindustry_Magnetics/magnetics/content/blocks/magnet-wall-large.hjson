@@ -1,0 +1,8 @@
+type: Wall
+size: 2
+health: 2560
+category: defense
+requirements: [ "magnet-alloy/24" ]
+chanceDeflect: 5
+flashHit: true
+research: magnet-wall

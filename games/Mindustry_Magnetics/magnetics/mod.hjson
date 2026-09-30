@@ -1,0 +1,6 @@
+name: "magnetics"
+displayName: "Magnetics"
+author: "Claude (Neu)"
+description: "Магнитная ветка технологий для Серпуло: магнитный сплав, сверхпроводник, индукционная печь, криокамера, магнитная лента, магнитные стены, турель «Гаусс», сверхпроводящие узел и батарея.\nA magnetic tech branch for Serpulo."
+version: "0.1.0"
+minGameVersion: 146

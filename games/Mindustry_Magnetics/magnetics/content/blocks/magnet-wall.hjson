@@ -1,0 +1,8 @@
+type: Wall
+size: 1
+health: 640
+category: defense
+requirements: [ "magnet-alloy/6" ]
+chanceDeflect: 5
+flashHit: true
+research: titanium-wall

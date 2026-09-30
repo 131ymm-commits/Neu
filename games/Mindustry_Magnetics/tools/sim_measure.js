@@ -1,0 +1,2 @@
+var m=function(n){return Vars.content.block("magnetics-"+n)},I=function(n){return Vars.content.item("magnetics-"+n)};var v=function(x,y){return Vars.world.tile(x,y).build};
+"tick="+Vars.state.tick+" | furnace_vault_alloy="+v(13,11).items.get(I("magnet-alloy"))+" eff="+v(10,10).efficiency+" | cryo_vault_sc="+v(13,25).items.get(I("superconductor"))+" cryo_eff="+v(10,25).efficiency+" | mag_conv_copper="+v(52,40).items.get(Items.copper)+" | ti_conv_copper="+v(52,50).items.get(Items.copper)

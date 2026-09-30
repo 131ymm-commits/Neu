@@ -1,0 +1,7 @@
+type: Conveyor
+health: 90
+category: distribution
+requirements: [ "copper/1", "lead/1", "magnet-alloy/1" ]
+speed: 0.11
+displayedSpeed: 16
+research: titanium-conveyor
