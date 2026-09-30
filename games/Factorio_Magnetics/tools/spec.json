@@ -1,0 +1,2806 @@
+{
+ "version": "1.0.0",
+ "items": {
+  "magnetics-ferrite": {
+   "stack": 100,
+   "order": "a[ferrite]"
+  },
+  "magnetics-coil": {
+   "stack": 200,
+   "order": "b[coil]"
+  },
+  "magnetics-magnet-alloy": {
+   "stack": 100,
+   "order": "c[magnet-alloy]"
+  },
+  "magnetics-superconducting-cable": {
+   "stack": 200,
+   "order": "d[superconducting-cable]",
+   "auto_recycle": false
+  },
+  "magnetics-flux-crystal-uncharged": {
+   "stack": 20,
+   "order": "e[flux-crystal-uncharged]",
+   "auto_recycle": false
+  },
+  "magnetics-flux-crystal": {
+   "stack": 20,
+   "order": "f[flux-crystal]",
+   "auto_recycle": false,
+   "fuel_category": "magnetics-flux",
+   "fuel_value": "100MJ",
+   "burnt_result": "magnetics-flux-crystal-uncharged"
+  }
+ },
+ "ammo": {
+  "magnetics-ferrite-slug": {
+   "category": "magnetics-slug",
+   "magazine": 10,
+   "stack": 100,
+   "order": "m[magnetics]-a[ferrite-slug]",
+   "projectile": "magnetics-ferrite-slug-projectile",
+   "damage": 20,
+   "piercing": 30,
+   "tint": "6E5A62",
+   "speed": 1,
+   "max_range": 24
+  },
+  "magnetics-magnet-slug": {
+   "category": "magnetics-slug",
+   "magazine": 10,
+   "stack": 100,
+   "order": "m[magnetics]-b[magnet-slug]",
+   "projectile": "magnetics-magnet-slug-projectile",
+   "damage": 32,
+   "piercing": 150,
+   "tint": "6D86C9",
+   "speed": 1,
+   "max_range": 24
+  },
+  "magnetics-gauss-slug": {
+   "category": "magnetics-gauss",
+   "magazine": 4,
+   "stack": 50,
+   "order": "m[magnetics]-c[gauss-slug]",
+   "projectile": "magnetics-gauss-slug-projectile",
+   "damage": 90,
+   "piercing": 400,
+   "tint": "9FB4FF",
+   "speed": 1.5,
+   "max_range": 34
+  },
+  "magnetics-rail-slug": {
+   "category": "magnetics-rail",
+   "magazine": 1,
+   "stack": 20,
+   "order": "m[magnetics]-d[rail-slug]",
+   "line": {
+    "range": 36,
+    "width": 1.5,
+    "damage": [
+     [
+      1200,
+      "physical"
+     ]
+    ]
+   }
+  },
+  "magnetics-flux-rail-slug": {
+   "category": "magnetics-rail",
+   "magazine": 3,
+   "stack": 10,
+   "order": "m[magnetics]-e[flux-rail-slug]",
+   "line": {
+    "range": 36,
+    "width": 2,
+    "damage": [
+     [
+      1800,
+      "physical"
+     ],
+     [
+      600,
+      "electric"
+     ]
+    ]
+   }
+  }
+ },
+ "ammo_categories": {
+  "magnetics-slug": {
+   "bonus_gui_order": "l-m1"
+  },
+  "magnetics-gauss": {
+   "bonus_gui_order": "l-m2"
+  },
+  "magnetics-rail": {
+   "bonus_gui_order": "l-m3"
+  }
+ },
+ "fuel_categories": [
+  "magnetics-flux"
+ ],
+ "recipe_categories": [
+  "magnetics-sintering",
+  "magnetics-induction",
+  "magnetics-winding",
+  "magnetics-cryogenics",
+  "magnetics-resonance",
+  "magnetics-separation"
+ ],
+ "fluids": {
+  "magnetics-ferrofluid": {
+   "default_temperature": 25,
+   "base_color": [
+    0.07,
+    0.06,
+    0.09
+   ],
+   "flow_color": [
+    0.48,
+    0.36,
+    0.72
+   ],
+   "order": "a[fluid]-b[oil]-f[magnetics-ferrofluid]"
+  },
+  "magnetics-liquid-nitrogen": {
+   "default_temperature": -196,
+   "base_color": [
+    0.75,
+    0.9,
+    1.0
+   ],
+   "flow_color": [
+    0.94,
+    0.98,
+    1.0
+   ],
+   "order": "a[fluid]-z[magnetics-liquid-nitrogen]"
+  }
+ },
+ "recipes": {
+  "magnetics-ferrite": {
+   "category": "magnetics-sintering",
+   "ing": [
+    {
+     "type": "item",
+     "name": "iron-ore",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "stone",
+     "amount": 1
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-ferrite",
+     "amount": 1
+    }
+   ],
+   "energy": 3.2,
+   "prod": true,
+   "ar": false
+  },
+  "magnetics-coil": {
+   "category": "magnetics-winding",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-ferrite",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "copper-cable",
+     "amount": 4
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 1
+    }
+   ],
+   "energy": 1.6,
+   "prod": true,
+   "ar": true
+  },
+  "magnetics-magnet-alloy": {
+   "category": "magnetics-induction",
+   "ing": [
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-ferrite",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "copper-plate",
+     "amount": 1
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 1
+    }
+   ],
+   "energy": 6.4,
+   "prod": true,
+   "ar": false
+  },
+  "magnetics-ferrofluid": {
+   "category": "chemistry",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-ferrite",
+     "amount": 1
+    },
+    {
+     "type": "fluid",
+     "name": "light-oil",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "fluid",
+     "name": "magnetics-ferrofluid",
+     "amount": 10
+    }
+   ],
+   "energy": 1,
+   "prod": true,
+   "ar": false,
+   "tint": {
+    "primary": [
+     0.07,
+     0.06,
+     0.09
+    ],
+    "secondary": [
+     0.48,
+     0.36,
+     0.72
+    ],
+    "tertiary": [
+     0.3,
+     0.25,
+     0.4
+    ],
+    "quaternary": [
+     0.15,
+     0.1,
+     0.2
+    ]
+   }
+  },
+  "magnetics-liquid-nitrogen": {
+   "category": "magnetics-cryogenics",
+   "ing": [],
+   "res": [
+    {
+     "type": "fluid",
+     "name": "magnetics-liquid-nitrogen",
+     "amount": 50
+    }
+   ],
+   "energy": 2,
+   "prod": false,
+   "ar": false,
+   "own_icon": true,
+   "subgroup": "fluid-recipes",
+   "order": "z[magnetics-liquid-nitrogen]",
+   "tint": {
+    "primary": [
+     0.75,
+     0.9,
+     1.0
+    ],
+    "secondary": [
+     0.94,
+     0.98,
+     1.0
+    ],
+    "tertiary": [
+     0.6,
+     0.8,
+     0.95
+    ],
+    "quaternary": [
+     0.85,
+     0.95,
+     1.0
+    ]
+   }
+  },
+  "magnetics-superconducting-cable": {
+   "category": "magnetics-cryogenics",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "copper-cable",
+     "amount": 6
+    },
+    {
+     "type": "item",
+     "name": "plastic-bar",
+     "amount": 1
+    },
+    {
+     "type": "fluid",
+     "name": "magnetics-liquid-nitrogen",
+     "amount": 20
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 2
+    }
+   ],
+   "energy": 10,
+   "prod": true,
+   "ar": false
+  },
+  "magnetics-flux-crystal-growth": {
+   "category": "magnetics-cryogenics",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "processing-unit",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "uranium-238",
+     "amount": 1
+    },
+    {
+     "type": "fluid",
+     "name": "magnetics-ferrofluid",
+     "amount": 20
+    },
+    {
+     "type": "fluid",
+     "name": "magnetics-liquid-nitrogen",
+     "amount": 50
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-flux-crystal-uncharged",
+     "amount": 1
+    }
+   ],
+   "energy": 20,
+   "prod": true,
+   "ar": false,
+   "allow_quality": false,
+   "own_icon": true,
+   "subgroup": "magnetics-intermediate",
+   "order": "z-a"
+  },
+  "magnetics-flux-crystal-charging": {
+   "category": "magnetics-resonance",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-flux-crystal-uncharged",
+     "amount": 1
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-flux-crystal",
+     "amount": 1
+    }
+   ],
+   "energy": 25,
+   "prod": false,
+   "ar": false,
+   "allow_quality": false,
+   "own_icon": true,
+   "subgroup": "magnetics-intermediate",
+   "order": "z-b"
+  },
+  "magnetics-stone-separation": {
+   "category": "magnetics-separation",
+   "ing": [
+    {
+     "type": "item",
+     "name": "stone",
+     "amount": 10
+    },
+    {
+     "type": "fluid",
+     "name": "magnetics-ferrofluid",
+     "amount": 5
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "iron-ore",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "copper-ore",
+     "amount": 1,
+     "probability": 0.5
+    }
+   ],
+   "energy": 5,
+   "prod": true,
+   "ar": false,
+   "own_icon": true,
+   "subgroup": "magnetics-intermediate",
+   "order": "z-c",
+   "sa_magnetic_field_min": 50
+  },
+  "magnetics-ferrite-slug": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-ferrite",
+     "amount": 6
+    },
+    {
+     "type": "item",
+     "name": "copper-plate",
+     "amount": 2
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-ferrite-slug",
+     "amount": 1
+    }
+   ],
+   "energy": 3,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-magnet-slug": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-ferrite-slug",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 1
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-slug",
+     "amount": 1
+    }
+   ],
+   "energy": 5,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-gauss-slug": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 1
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-gauss-slug",
+     "amount": 1
+    }
+   ],
+   "energy": 6,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-rail-slug": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 2
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-rail-slug",
+     "amount": 1
+    }
+   ],
+   "energy": 10,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-flux-rail-slug": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-rail-slug",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-flux-crystal",
+     "amount": 1
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-flux-rail-slug",
+     "amount": 1
+    }
+   ],
+   "energy": 15,
+   "prod": false,
+   "ar": false
+  },
+  "magnetics-sintering-kiln": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "stone-furnace",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "iron-gear-wheel",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "stone-brick",
+     "amount": 5
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-sintering-kiln",
+     "amount": 1
+    }
+   ],
+   "energy": 2,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-induction-furnace": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "advanced-circuit",
+     "amount": 5
+    },
+    {
+     "type": "item",
+     "name": "stone-brick",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-induction-furnace",
+     "amount": 1
+    }
+   ],
+   "energy": 5,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-coil-winder": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "assembling-machine-2",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-ferrite",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "copper-cable",
+     "amount": 20
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-coil-winder",
+     "amount": 1
+    }
+   ],
+   "energy": 3,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-cryo-chamber": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "chemical-plant",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "pipe",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-cryo-chamber",
+     "amount": 1
+    }
+   ],
+   "energy": 5,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-flux-resonator": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "centrifuge",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 50
+    },
+    {
+     "type": "item",
+     "name": "processing-unit",
+     "amount": 20
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-flux-resonator",
+     "amount": 1
+    }
+   ],
+   "energy": 10,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-magnetic-separator": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "advanced-circuit",
+     "amount": 5
+    },
+    {
+     "type": "item",
+     "name": "iron-gear-wheel",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-magnetic-separator",
+     "amount": 1
+    }
+   ],
+   "energy": 5,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-magnetic-drill": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "electric-mining-drill",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 5
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 5
+    },
+    {
+     "type": "item",
+     "name": "advanced-circuit",
+     "amount": 2
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-magnetic-drill",
+     "amount": 1
+    }
+   ],
+   "energy": 2,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-maglev-transport-belt": {
+   "category": "crafting-with-fluid",
+   "ing": [
+    {
+     "type": "item",
+     "name": "TOP-transport-belt",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 1
+    },
+    {
+     "type": "fluid",
+     "name": "magnetics-ferrofluid",
+     "amount": 20
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-maglev-transport-belt",
+     "amount": 1
+    }
+   ],
+   "energy": 0.5,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-maglev-underground-belt": {
+   "category": "crafting-with-fluid",
+   "ing": [
+    {
+     "type": "item",
+     "name": "TOP-underground-belt",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 10
+    },
+    {
+     "type": "fluid",
+     "name": "magnetics-ferrofluid",
+     "amount": 40
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-maglev-underground-belt",
+     "amount": 2
+    }
+   ],
+   "energy": 2,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-maglev-splitter": {
+   "category": "crafting-with-fluid",
+   "ing": [
+    {
+     "type": "item",
+     "name": "TOP-splitter",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 5
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "processing-unit",
+     "amount": 2
+    },
+    {
+     "type": "fluid",
+     "name": "magnetics-ferrofluid",
+     "amount": 80
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-maglev-splitter",
+     "amount": 1
+    }
+   ],
+   "energy": 2,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-coil-capacitor": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 5
+    },
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "electronic-circuit",
+     "amount": 2
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-coil-capacitor",
+     "amount": 1
+    }
+   ],
+   "energy": 5,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-superconducting-accumulator": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "accumulator",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 5
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-accumulator",
+     "amount": 1
+    }
+   ],
+   "energy": 10,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-superconducting-pylon": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "big-electric-pole",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 2
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-pylon",
+     "amount": 1
+    }
+   ],
+   "energy": 1,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-mhd-generator": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "advanced-circuit",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-mhd-generator",
+     "amount": 1
+    }
+   ],
+   "energy": 10,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-flux-dynamo": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "processing-unit",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-flux-dynamo",
+     "amount": 1
+    }
+   ],
+   "energy": 10,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-geomagnetic-coil": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 4
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 5
+    },
+    {
+     "type": "item",
+     "name": "electronic-circuit",
+     "amount": 5
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-geomagnetic-coil",
+     "amount": 1
+    }
+   ],
+   "energy": 10,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-ferrite-wall": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "stone-wall",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-ferrite",
+     "amount": 2
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-ferrite-wall",
+     "amount": 1
+    }
+   ],
+   "energy": 0.5,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-magnet-wall": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-ferrite-wall",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 1
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-wall",
+     "amount": 1
+    }
+   ],
+   "energy": 1,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-superconducting-wall": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-wall",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "refined-concrete",
+     "amount": 4
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-wall",
+     "amount": 1
+    }
+   ],
+   "energy": 2,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-magnet-gate": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-wall",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 2
+    },
+    {
+     "type": "item",
+     "name": "electronic-circuit",
+     "amount": 2
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-gate",
+     "amount": 1
+    }
+   ],
+   "energy": 0.5,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-superconducting-gate": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "magnetics-magnet-gate",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "refined-concrete",
+     "amount": 4
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-gate",
+     "amount": 1
+    }
+   ],
+   "energy": 1,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-mend-coil": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "repair-pack",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "advanced-circuit",
+     "amount": 5
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-mend-coil",
+     "amount": 1
+    }
+   ],
+   "energy": 10,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-coilgun-turret": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "gun-turret",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "magnetics-ferrite",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "electronic-circuit",
+     "amount": 5
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-coilgun-turret",
+     "amount": 1
+    }
+   ],
+   "energy": 8,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-gauss-turret": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 10
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "advanced-circuit",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-gauss-turret",
+     "amount": 1
+    }
+   ],
+   "energy": 20,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-arc-emitter": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "laser-turret",
+     "amount": 1
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-arc-emitter",
+     "amount": 1
+    }
+   ],
+   "energy": 20,
+   "prod": false,
+   "ar": true
+  },
+  "magnetics-rail-cannon": {
+   "category": "crafting",
+   "ing": [
+    {
+     "type": "item",
+     "name": "steel-plate",
+     "amount": 40
+    },
+    {
+     "type": "item",
+     "name": "magnetics-superconducting-cable",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "magnetics-coil",
+     "amount": 30
+    },
+    {
+     "type": "item",
+     "name": "magnetics-magnet-alloy",
+     "amount": 20
+    },
+    {
+     "type": "item",
+     "name": "processing-unit",
+     "amount": 10
+    }
+   ],
+   "res": [
+    {
+     "type": "item",
+     "name": "magnetics-rail-cannon",
+     "amount": 1
+    }
+   ],
+   "energy": 30,
+   "prod": false,
+   "ar": true
+  }
+ },
+ "entities": {
+  "magnetics-sintering-kiln": {
+   "kind": "kiln",
+   "type": "assembling-machine",
+   "base_type": "furnace",
+   "base": "stone-furnace",
+   "tint": [
+    0.8,
+    0.62,
+    0.66
+   ],
+   "frg": "magnetics-sintering-kiln",
+   "hp": 200,
+   "set": {
+    "crafting_speed": 1,
+    "energy_usage": "90kW",
+    "crafting_categories": [
+     "magnetics-sintering"
+    ],
+    "fixed_recipe": "magnetics-ferrite",
+    "module_slots": 0,
+    "energy_source": {
+     "type": "burner",
+     "fuel_categories": [
+      "chemical"
+     ],
+     "effectivity": 1,
+     "fuel_inventory_size": 1,
+     "emissions_per_minute": {
+      "pollution": 2
+     }
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "smelting-machine",
+    "order": "a[stone-furnace]-m[magnetics-sintering-kiln]"
+   },
+   "heat": null,
+   "cond": [
+    [
+     "pressure",
+     10
+    ]
+   ]
+  },
+  "magnetics-induction-furnace": {
+   "kind": "crafter",
+   "type": "assembling-machine",
+   "base_type": "furnace",
+   "base": "electric-furnace",
+   "tint": [
+    0.62,
+    0.72,
+    1.0
+   ],
+   "frg": "magnetics-induction-furnace",
+   "hp": 350,
+   "set": {
+    "crafting_speed": 2,
+    "energy_usage": "240kW",
+    "crafting_categories": [
+     "magnetics-sintering",
+     "magnetics-induction"
+    ],
+    "module_slots": 2,
+    "allowed_effects": [
+     "consumption",
+     "speed",
+     "productivity",
+     "pollution",
+     "quality"
+    ],
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-input",
+     "drain": "8kW",
+     "emissions_per_minute": {
+      "pollution": 1
+     }
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "smelting-machine",
+    "order": "c[electric-furnace]-m[magnetics-induction-furnace]"
+   },
+   "heat": "100kW"
+  },
+  "magnetics-coil-winder": {
+   "kind": "crafter",
+   "type": "assembling-machine",
+   "base": "assembling-machine-2",
+   "tint": [
+    1.0,
+    0.72,
+    0.5
+   ],
+   "frg": "magnetics-coil-winder",
+   "hp": 350,
+   "set": {
+    "crafting_speed": 1,
+    "energy_usage": "150kW",
+    "crafting_categories": [
+     "magnetics-winding"
+    ],
+    "module_slots": 2,
+    "allowed_effects": [
+     "consumption",
+     "speed",
+     "productivity",
+     "pollution",
+     "quality"
+    ],
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-input",
+     "drain": "5kW",
+     "emissions_per_minute": {
+      "pollution": 3
+     }
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "production-machine",
+    "order": "m[magnetics]-a[coil-winder]"
+   },
+   "heat": "100kW"
+  },
+  "magnetics-cryo-chamber": {
+   "kind": "crafter",
+   "type": "assembling-machine",
+   "base": "chemical-plant",
+   "tint": [
+    0.7,
+    0.95,
+    1.0
+   ],
+   "frg": "magnetics-cryo-chamber",
+   "hp": 350,
+   "set": {
+    "crafting_speed": 1,
+    "energy_usage": "300kW",
+    "crafting_categories": [
+     "magnetics-cryogenics"
+    ],
+    "module_slots": 3,
+    "allowed_effects": [
+     "consumption",
+     "speed",
+     "productivity",
+     "pollution",
+     "quality"
+    ],
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-input",
+     "drain": "10kW",
+     "emissions_per_minute": {
+      "pollution": 3
+     }
+    }
+   },
+   "item": {
+    "stack": 10,
+    "subgroup": "production-machine",
+    "order": "m[magnetics]-b[cryo-chamber]"
+   },
+   "heat": "100kW"
+  },
+  "magnetics-flux-resonator": {
+   "kind": "crafter",
+   "type": "assembling-machine",
+   "base": "centrifuge",
+   "tint": [
+    0.82,
+    0.64,
+    1.0
+   ],
+   "frg": "magnetics-flux-resonator",
+   "hp": 350,
+   "set": {
+    "crafting_speed": 1,
+    "energy_usage": "5MW",
+    "crafting_categories": [
+     "magnetics-resonance"
+    ],
+    "fixed_recipe": "magnetics-flux-crystal-charging",
+    "module_slots": 0,
+    "effect_receiver": {
+     "uses_module_effects": false,
+     "uses_beacon_effects": false,
+     "uses_surface_effects": false
+    },
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-input",
+     "drain": "10kW",
+     "emissions_per_minute": {
+      "pollution": 0
+     }
+    }
+   },
+   "item": {
+    "stack": 20,
+    "subgroup": "production-machine",
+    "order": "m[magnetics]-c[flux-resonator]"
+   },
+   "heat": "100kW"
+  },
+  "magnetics-magnetic-separator": {
+   "kind": "crafter",
+   "type": "assembling-machine",
+   "base": "assembling-machine-3",
+   "tint": [
+    0.68,
+    0.78,
+    0.88
+   ],
+   "frg": "magnetics-magnetic-separator",
+   "hp": 400,
+   "set": {
+    "crafting_speed": 1,
+    "energy_usage": "250kW",
+    "crafting_categories": [
+     "magnetics-separation"
+    ],
+    "module_slots": 2,
+    "allowed_effects": [
+     "consumption",
+     "speed",
+     "productivity",
+     "pollution",
+     "quality"
+    ],
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-input",
+     "drain": "8.333kW",
+     "emissions_per_minute": {
+      "pollution": 4
+     }
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "production-machine",
+    "order": "m[magnetics]-d[magnetic-separator]"
+   },
+   "heat": "100kW"
+  },
+  "magnetics-magnetic-drill": {
+   "kind": "drill",
+   "type": "mining-drill",
+   "base": "electric-mining-drill",
+   "tint": [
+    0.6,
+    0.72,
+    1.0
+   ],
+   "frg": "mining-drill",
+   "hp": 400,
+   "set": {
+    "mining_speed": 0.75,
+    "energy_usage": "150kW",
+    "resource_searching_radius": 2.49,
+    "resource_categories": [
+     "basic-solid"
+    ],
+    "module_slots": 3,
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-input",
+     "emissions_per_minute": {
+      "pollution": 15
+     }
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "extraction-machine",
+    "order": "a[items]-b[electric-mining-drill]-m[magnetics]"
+   },
+   "heat": "100kW",
+   "upgrade_from": [
+    "electric-mining-drill"
+   ]
+  },
+  "magnetics-maglev-transport-belt": {
+   "kind": "belt",
+   "type": "transport-belt",
+   "base": "express-transport-belt",
+   "tint": [
+    0.9,
+    0.62,
+    1.0
+   ],
+   "frg": "transport-belt",
+   "hp": 180,
+   "set": {
+    "speed": 0.15625
+   },
+   "item": {
+    "stack": 100,
+    "subgroup": "belt",
+    "order": "a[transport-belt]-e[magnetics-maglev]"
+   },
+   "heat": "10kW",
+   "upgrade_from": [
+    "TOP-transport-belt"
+   ]
+  },
+  "magnetics-maglev-underground-belt": {
+   "kind": "belt",
+   "type": "underground-belt",
+   "base": "express-underground-belt",
+   "tint": [
+    0.9,
+    0.62,
+    1.0
+   ],
+   "frg": "transport-belt",
+   "hp": 180,
+   "set": {
+    "speed": 0.15625,
+    "max_distance": 13
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "belt",
+    "order": "b[underground-belt]-e[magnetics-maglev]"
+   },
+   "heat": "250kW",
+   "upgrade_from": [
+    "TOP-underground-belt"
+   ]
+  },
+  "magnetics-maglev-splitter": {
+   "kind": "belt",
+   "type": "splitter",
+   "base": "express-splitter",
+   "tint": [
+    0.9,
+    0.62,
+    1.0
+   ],
+   "frg": "transport-belt",
+   "hp": 200,
+   "set": {
+    "speed": 0.15625
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "belt",
+    "order": "c[splitter]-e[magnetics-maglev]"
+   },
+   "heat": "40kW",
+   "upgrade_from": [
+    "TOP-splitter"
+   ]
+  },
+  "magnetics-coil-capacitor": {
+   "kind": "capacitor",
+   "type": "accumulator",
+   "base": "accumulator",
+   "tint": [
+    1.0,
+    0.75,
+    0.55
+   ],
+   "frg": "magnetics-coil-capacitor",
+   "hp": 100,
+   "set": {
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "tertiary",
+     "buffer_capacity": "1MJ",
+     "input_flow_limit": "1MW",
+     "output_flow_limit": "1MW"
+    },
+    "collision_box": [
+     [
+      -0.4,
+      -0.4
+     ],
+     [
+      0.4,
+      0.4
+     ]
+    ],
+    "selection_box": [
+     [
+      -0.5,
+      -0.5
+     ],
+     [
+      0.5,
+      0.5
+     ]
+    ]
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "energy",
+    "order": "e[accumulator]-b[magnetics-coil-capacitor]"
+   },
+   "heat": null
+  },
+  "magnetics-superconducting-accumulator": {
+   "kind": "accumulator",
+   "type": "accumulator",
+   "base": "accumulator",
+   "tint": [
+    0.65,
+    0.95,
+    1.0
+   ],
+   "frg": "accumulator",
+   "hp": 250,
+   "set": {
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "tertiary",
+     "buffer_capacity": "20MJ",
+     "input_flow_limit": "1.2MW",
+     "output_flow_limit": "1.2MW"
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "energy",
+    "order": "e[accumulator]-c[magnetics-superconducting-accumulator]"
+   },
+   "heat": null,
+   "upgrade_from": [
+    "accumulator"
+   ]
+  },
+  "magnetics-superconducting-pylon": {
+   "kind": "pole",
+   "type": "electric-pole",
+   "base": "big-electric-pole",
+   "tint": [
+    0.65,
+    0.95,
+    1.0
+   ],
+   "frg": "big-electric-pole",
+   "hp": 250,
+   "set": {
+    "maximum_wire_distance": 48,
+    "supply_area_distance": 2
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "energy-pipe-distribution",
+    "order": "a[energy]-c[big-electric-pole]-m[magnetics]"
+   },
+   "heat": null,
+   "upgrade_from": [
+    "big-electric-pole"
+   ]
+  },
+  "magnetics-mhd-generator": {
+   "kind": "generator",
+   "type": "burner-generator",
+   "base": "burner-generator",
+   "tint": [
+    1.0,
+    0.6,
+    0.45
+   ],
+   "frg": "magnetics-mhd-generator",
+   "hp": 400,
+   "set": {
+    "max_power_output": "5.4MW",
+    "burner": {
+     "type": "burner",
+     "fuel_categories": [
+      "chemical"
+     ],
+     "effectivity": 0.9,
+     "fuel_inventory_size": 2,
+     "emissions_per_minute": {
+      "pollution": 100
+     }
+    },
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-output"
+    }
+   },
+   "item": {
+    "stack": 10,
+    "subgroup": "energy",
+    "order": "b[steam-power]-m[magnetics-mhd-generator]"
+   },
+   "heat": "50kW",
+   "cond": [
+    [
+     "pressure",
+     10
+    ]
+   ]
+  },
+  "magnetics-flux-dynamo": {
+   "kind": "generator",
+   "type": "burner-generator",
+   "base": "burner-generator",
+   "tint": [
+    0.8,
+    0.6,
+    1.0
+   ],
+   "frg": "magnetics-flux-dynamo",
+   "hp": 500,
+   "set": {
+    "max_power_output": "10MW",
+    "burner": {
+     "type": "burner",
+     "fuel_categories": [
+      "magnetics-flux"
+     ],
+     "effectivity": 1,
+     "fuel_inventory_size": 1,
+     "burnt_inventory_size": 1,
+     "emissions_per_minute": {
+      "pollution": 0
+     }
+    },
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-output"
+    }
+   },
+   "item": {
+    "stack": 10,
+    "subgroup": "energy",
+    "order": "f[nuclear-energy]-m[magnetics-flux-dynamo]"
+   },
+   "heat": "50kW"
+  },
+  "magnetics-geomagnetic-coil": {
+   "kind": "geomagnetic",
+   "type": "solar-panel",
+   "base": "solar-panel",
+   "tint": [
+    0.82,
+    0.75,
+    1.0
+   ],
+   "frg": "magnetics-geomagnetic-coil",
+   "hp": 200,
+   "set": {
+    "production": "20kW",
+    "solar_coefficient_property": "magnetic-field",
+    "performance_at_day": 1,
+    "performance_at_night": 1
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "energy",
+    "order": "d[solar-panel]-m[magnetics-geomagnetic-coil]"
+   },
+   "heat": null
+  },
+  "magnetics-ferrite-wall": {
+   "kind": "wall",
+   "type": "wall",
+   "base": "stone-wall",
+   "tint": [
+    0.62,
+    0.55,
+    0.6
+   ],
+   "frg": "wall",
+   "hp": 500,
+   "set": {
+    "resistances": [
+     {
+      "type": "physical",
+      "decrease": 3,
+      "percent": 25
+     },
+     {
+      "type": "impact",
+      "decrease": 45,
+      "percent": 60
+     },
+     {
+      "type": "explosion",
+      "decrease": 10,
+      "percent": 30
+     },
+     {
+      "type": "fire",
+      "decrease": 0,
+      "percent": 100
+     },
+     {
+      "type": "acid",
+      "decrease": 0,
+      "percent": 80
+     },
+     {
+      "type": "laser",
+      "decrease": 0,
+      "percent": 70
+     },
+     {
+      "type": "electric",
+      "decrease": 0,
+      "percent": 30
+     }
+    ]
+   },
+   "item": {
+    "stack": 100,
+    "subgroup": "defensive-structure",
+    "order": "a[stone-wall]-b[magnetics-ferrite-wall]"
+   },
+   "heat": null,
+   "upgrade_from": [
+    "stone-wall"
+   ]
+  },
+  "magnetics-magnet-wall": {
+   "kind": "wall",
+   "type": "wall",
+   "base": "stone-wall",
+   "tint": [
+    0.6,
+    0.7,
+    1.0
+   ],
+   "frg": "wall",
+   "hp": 800,
+   "thorns": 5,
+   "set": {
+    "resistances": [
+     {
+      "type": "physical",
+      "decrease": 5,
+      "percent": 30
+     },
+     {
+      "type": "impact",
+      "decrease": 50,
+      "percent": 65
+     },
+     {
+      "type": "explosion",
+      "decrease": 15,
+      "percent": 35
+     },
+     {
+      "type": "fire",
+      "decrease": 0,
+      "percent": 100
+     },
+     {
+      "type": "acid",
+      "decrease": 0,
+      "percent": 85
+     },
+     {
+      "type": "laser",
+      "decrease": 0,
+      "percent": 75
+     },
+     {
+      "type": "electric",
+      "decrease": 0,
+      "percent": 50
+     }
+    ]
+   },
+   "item": {
+    "stack": 100,
+    "subgroup": "defensive-structure",
+    "order": "a[stone-wall]-c[magnetics-magnet-wall]"
+   },
+   "heat": null,
+   "upgrade_from": [
+    "magnetics-ferrite-wall"
+   ]
+  },
+  "magnetics-superconducting-wall": {
+   "kind": "wall",
+   "type": "wall",
+   "base": "stone-wall",
+   "tint": [
+    0.7,
+    0.95,
+    1.0
+   ],
+   "frg": "wall",
+   "hp": 1500,
+   "thorns": 10,
+   "set": {
+    "resistances": [
+     {
+      "type": "physical",
+      "decrease": 8,
+      "percent": 35
+     },
+     {
+      "type": "impact",
+      "decrease": 60,
+      "percent": 70
+     },
+     {
+      "type": "explosion",
+      "decrease": 20,
+      "percent": 40
+     },
+     {
+      "type": "fire",
+      "decrease": 0,
+      "percent": 100
+     },
+     {
+      "type": "acid",
+      "decrease": 0,
+      "percent": 90
+     },
+     {
+      "type": "laser",
+      "decrease": 0,
+      "percent": 100
+     },
+     {
+      "type": "electric",
+      "decrease": 0,
+      "percent": 100
+     }
+    ]
+   },
+   "item": {
+    "stack": 100,
+    "subgroup": "defensive-structure",
+    "order": "a[stone-wall]-d[magnetics-superconducting-wall]"
+   },
+   "heat": null,
+   "upgrade_from": [
+    "magnetics-magnet-wall"
+   ]
+  },
+  "magnetics-magnet-gate": {
+   "kind": "gate",
+   "type": "gate",
+   "base": "gate",
+   "tint": [
+    0.6,
+    0.7,
+    1.0
+   ],
+   "frg": "wall",
+   "hp": 800,
+   "thorns": 5,
+   "set": {
+    "resistances": [
+     {
+      "type": "physical",
+      "decrease": 5,
+      "percent": 30
+     },
+     {
+      "type": "impact",
+      "decrease": 50,
+      "percent": 65
+     },
+     {
+      "type": "explosion",
+      "decrease": 15,
+      "percent": 35
+     },
+     {
+      "type": "fire",
+      "decrease": 0,
+      "percent": 100
+     },
+     {
+      "type": "acid",
+      "decrease": 0,
+      "percent": 85
+     },
+     {
+      "type": "laser",
+      "decrease": 0,
+      "percent": 75
+     },
+     {
+      "type": "electric",
+      "decrease": 0,
+      "percent": 50
+     }
+    ]
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "defensive-structure",
+    "order": "a[wall]-c[magnetics-magnet-gate]"
+   },
+   "heat": null,
+   "upgrade_from": [
+    "gate"
+   ]
+  },
+  "magnetics-superconducting-gate": {
+   "kind": "gate",
+   "type": "gate",
+   "base": "gate",
+   "tint": [
+    0.7,
+    0.95,
+    1.0
+   ],
+   "frg": "wall",
+   "hp": 1500,
+   "thorns": 10,
+   "set": {
+    "resistances": [
+     {
+      "type": "physical",
+      "decrease": 8,
+      "percent": 35
+     },
+     {
+      "type": "impact",
+      "decrease": 60,
+      "percent": 70
+     },
+     {
+      "type": "explosion",
+      "decrease": 20,
+      "percent": 40
+     },
+     {
+      "type": "fire",
+      "decrease": 0,
+      "percent": 100
+     },
+     {
+      "type": "acid",
+      "decrease": 0,
+      "percent": 90
+     },
+     {
+      "type": "laser",
+      "decrease": 0,
+      "percent": 100
+     },
+     {
+      "type": "electric",
+      "decrease": 0,
+      "percent": 100
+     }
+    ]
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "defensive-structure",
+    "order": "a[wall]-d[magnetics-superconducting-gate]"
+   },
+   "heat": null,
+   "upgrade_from": [
+    "magnetics-magnet-gate"
+   ]
+  },
+  "magnetics-mend-coil": {
+   "kind": "mend",
+   "type": "electric-energy-interface",
+   "base": "electric-energy-interface",
+   "tint": [
+    0.6,
+    1.0,
+    0.7
+   ],
+   "frg": "magnetics-mend-coil",
+   "hp": 300,
+   "set": {
+    "gui_mode": "none",
+    "allow_copy_paste": false,
+    "energy_production": "0W",
+    "energy_usage": "0W",
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "secondary-input",
+     "buffer_capacity": "1MJ",
+     "input_flow_limit": "200kW",
+     "output_flow_limit": "0W"
+    }
+   },
+   "item": {
+    "stack": 20,
+    "subgroup": "defensive-structure",
+    "order": "e[magnetics-mend-coil]"
+   },
+   "heat": null
+  },
+  "magnetics-coilgun-turret": {
+   "kind": "ammo-turret",
+   "type": "ammo-turret",
+   "base": "gun-turret",
+   "tint": [
+    1.0,
+    0.7,
+    0.5
+   ],
+   "frg": "magnetics-coilgun-turret",
+   "hp": 500,
+   "attack": {
+    "ammo_category": "magnetics-slug",
+    "cooldown": 24,
+    "range": 20
+   },
+   "set": {
+    "inventory_size": 1,
+    "automated_ammo_count": 10,
+    "rotation_speed": 0.015,
+    "energy_per_shot": "40kJ",
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "primary-input",
+     "buffer_capacity": "200kJ",
+     "input_flow_limit": "250kW"
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "turret",
+    "order": "b[turret]-m[magnetics]-a[coilgun]"
+   },
+   "heat": "50kW"
+  },
+  "magnetics-gauss-turret": {
+   "kind": "ammo-turret",
+   "type": "ammo-turret",
+   "base": "gun-turret",
+   "tint": [
+    0.55,
+    0.65,
+    1.0
+   ],
+   "frg": "magnetics-gauss-turret",
+   "hp": 800,
+   "attack": {
+    "ammo_category": "magnetics-gauss",
+    "cooldown": 60,
+    "range": 30
+   },
+   "set": {
+    "automated_ammo_count": 8,
+    "rotation_speed": 0.008,
+    "energy_per_shot": "250kJ",
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "primary-input",
+     "buffer_capacity": "1MJ",
+     "input_flow_limit": "1MW"
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "turret",
+    "order": "b[turret]-m[magnetics]-b[gauss]"
+   },
+   "heat": "50kW"
+  },
+  "magnetics-arc-emitter": {
+   "kind": "arc",
+   "type": "electric-turret",
+   "base": "laser-turret",
+   "tint": [
+    0.6,
+    0.95,
+    1.0
+   ],
+   "frg": "magnetics-arc-emitter",
+   "hp": 1000,
+   "attack": {
+    "ammo_category": "laser",
+    "cooldown": 60,
+    "range": 20,
+    "energy": "1MJ",
+    "damage": 45,
+    "chain_jumps": 4,
+    "chain_range": 6,
+    "chain_damage": 30,
+    "beam_length": 22
+   },
+   "set": {
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "primary-input",
+     "buffer_capacity": "2MJ",
+     "input_flow_limit": "3MW",
+     "drain": "24kW"
+    }
+   },
+   "item": {
+    "stack": 50,
+    "subgroup": "turret",
+    "order": "b[turret]-m[magnetics]-c[arc-emitter]"
+   },
+   "heat": "50kW"
+  },
+  "magnetics-rail-cannon": {
+   "kind": "ammo-turret",
+   "type": "ammo-turret",
+   "base": "gun-turret",
+   "tint": [
+    0.78,
+    0.55,
+    1.0
+   ],
+   "frg": "magnetics-rail-cannon",
+   "hp": 2000,
+   "attack": {
+    "ammo_category": "magnetics-rail",
+    "cooldown": 150,
+    "range": 36,
+    "min_range": 4,
+    "health_penalty": -1
+   },
+   "set": {
+    "automated_ammo_count": 5,
+    "rotation_speed": 0.005,
+    "energy_per_shot": "4MJ",
+    "energy_source": {
+     "type": "electric",
+     "usage_priority": "primary-input",
+     "buffer_capacity": "8MJ",
+     "input_flow_limit": "2MW"
+    }
+   },
+   "item": {
+    "stack": 10,
+    "subgroup": "turret",
+    "order": "b[turret]-m[magnetics]-d[rail-cannon]"
+   },
+   "heat": "50kW"
+  }
+ },
+ "techs": {
+  "magnetics-ferrite-sintering": {
+   "prereq": [
+    "automation-science-pack",
+    "stone-wall"
+   ],
+   "count": 30,
+   "time": 10,
+   "packs": [
+    "automation-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-sintering-kiln",
+    "magnetics-ferrite",
+    "magnetics-ferrite-wall"
+   ],
+   "sa": null
+  },
+  "magnetics-electromagnetic-coils": {
+   "prereq": [
+    "magnetics-ferrite-sintering",
+    "automation-2"
+   ],
+   "count": 75,
+   "time": 15,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-coil-winder",
+    "magnetics-coil"
+   ],
+   "sa": null
+  },
+  "magnetics-coilgun": {
+   "prereq": [
+    "magnetics-electromagnetic-coils",
+    "gun-turret",
+    "military-2"
+   ],
+   "count": 100,
+   "time": 15,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-coilgun-turret",
+    "magnetics-ferrite-slug"
+   ],
+   "sa": null
+  },
+  "magnetics-induction-smelting": {
+   "prereq": [
+    "magnetics-electromagnetic-coils",
+    "advanced-material-processing-2"
+   ],
+   "count": 250,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-induction-furnace",
+    "magnetics-magnet-alloy"
+   ],
+   "sa": null
+  },
+  "magnetics-magnetic-mining": {
+   "prereq": [
+    "magnetics-induction-smelting",
+    "electric-mining-drill"
+   ],
+   "count": 250,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-magnetic-drill"
+   ],
+   "sa": null
+  },
+  "magnetics-magnetic-power": {
+   "prereq": [
+    "magnetics-induction-smelting",
+    "solar-energy",
+    "electric-energy-accumulators"
+   ],
+   "count": 250,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-mhd-generator",
+    "magnetics-coil-capacitor",
+    "magnetics-geomagnetic-coil"
+   ],
+   "sa": null
+  },
+  "magnetics-magnetic-separation": {
+   "prereq": [
+    "magnetics-induction-smelting",
+    "advanced-oil-processing"
+   ],
+   "count": 150,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-ferrofluid",
+    "magnetics-magnetic-separator",
+    "magnetics-stone-separation"
+   ],
+   "sa": null
+  },
+  "magnetics-magnetic-fortifications": {
+   "prereq": [
+    "magnetics-coilgun",
+    "magnetics-induction-smelting",
+    "military-3",
+    "gate",
+    "repair-pack"
+   ],
+   "count": 250,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack",
+    "military-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-magnet-wall",
+    "magnetics-magnet-gate",
+    "magnetics-magnet-slug",
+    "magnetics-gauss-turret",
+    "magnetics-gauss-slug",
+    "magnetics-mend-coil"
+   ],
+   "sa": null
+  },
+  "magnetics-arc-emitter": {
+   "prereq": [
+    "magnetics-induction-smelting",
+    "laser-turret"
+   ],
+   "count": 200,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack",
+    "military-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-arc-emitter"
+   ],
+   "sa": null
+  },
+  "magnetics-superconductivity": {
+   "prereq": [
+    "magnetics-induction-smelting",
+    "production-science-pack"
+   ],
+   "count": 300,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack",
+    "production-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-cryo-chamber",
+    "magnetics-liquid-nitrogen",
+    "magnetics-superconducting-cable"
+   ],
+   "sa": null
+  },
+  "magnetics-superconducting-power": {
+   "prereq": [
+    "magnetics-superconductivity",
+    "electric-energy-distribution-2",
+    "electric-energy-accumulators"
+   ],
+   "count": 300,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack",
+    "production-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-superconducting-accumulator",
+    "magnetics-superconducting-pylon"
+   ],
+   "sa": null
+  },
+  "magnetics-flux-energy": {
+   "prereq": [
+    "magnetics-superconducting-power",
+    "magnetics-magnetic-separation",
+    "utility-science-pack",
+    "uranium-processing"
+   ],
+   "count": 500,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack",
+    "production-science-pack",
+    "utility-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-flux-resonator",
+    "magnetics-flux-dynamo",
+    "magnetics-flux-crystal-growth",
+    "magnetics-flux-crystal-charging"
+   ],
+   "sa": null
+  },
+  "magnetics-maglev-logistics": {
+   "prereq": [
+    "logistics-3",
+    "magnetics-superconductivity",
+    "magnetics-magnetic-separation",
+    "utility-science-pack"
+   ],
+   "count": 600,
+   "time": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack",
+    "production-science-pack",
+    "utility-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-maglev-transport-belt",
+    "magnetics-maglev-underground-belt",
+    "magnetics-maglev-splitter"
+   ],
+   "sa": {
+    "extra_prereq": [
+     "turbo-transport-belt",
+     "electromagnetic-science-pack"
+    ],
+    "count": 1000,
+    "time": 60,
+    "packs": [
+     "automation-science-pack",
+     "logistic-science-pack",
+     "chemical-science-pack",
+     "production-science-pack",
+     "utility-science-pack",
+     "space-science-pack",
+     "metallurgic-science-pack",
+     "electromagnetic-science-pack"
+    ]
+   }
+  },
+  "magnetics-superconducting-defense": {
+   "prereq": [
+    "magnetics-magnetic-fortifications",
+    "magnetics-flux-energy",
+    "military-4",
+    "concrete"
+   ],
+   "count": 500,
+   "time": 45,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack",
+    "chemical-science-pack",
+    "military-science-pack",
+    "production-science-pack",
+    "utility-science-pack"
+   ],
+   "unlocks": [
+    "magnetics-superconducting-wall",
+    "magnetics-superconducting-gate",
+    "magnetics-rail-cannon",
+    "magnetics-rail-slug",
+    "magnetics-flux-rail-slug"
+   ],
+   "sa": null
+  }
+ },
+ "sa_magnetic_field_min": 10
+}

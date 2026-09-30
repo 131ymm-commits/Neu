@@ -1,0 +1,9 @@
+{
+  "name": "magnetics",
+  "version": "1.0.0",
+  "title": "Magnetics",
+  "author": "Claude (Neu project)",
+  "factorio_version": "2.0",
+  "dependencies": ["base >= 2.0.0", "? quality >= 2.0.0", "? elevated-rails >= 2.0.0", "? space-age >= 2.0.0"],
+  "description": "A magnetic technology branch: ferrite, coils, magnet alloy, superconducting cable and flux crystals. 26 buildings: sintering kiln, induction furnace, coil winder, cryo chamber, flux resonator, magnetic separator, magnetic drill, 75/s maglev belts, coil capacitor, superconducting accumulator and pylon, MHD generator, flux dynamo, geomagnetic coil, ferrite/magnet/superconducting walls and gates, mend coil, coilgun, gauss turret, arc emitter, rail cannon. Works with and without Space Age."
+}

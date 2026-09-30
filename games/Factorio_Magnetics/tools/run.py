@@ -13,24 +13,27 @@ TESTS_SRC = os.path.join(HERE, 'magnetics-tests')
 def mod_version(path):
     return json.load(open(os.path.join(path, 'info.json')))['version']
 
-def prepare(cfg, work, with_tests=True, extra_mods=()):
+def prepare(cfg, work, with_tests=True, extra_mods=(), select=None):
     os.makedirs(work, exist_ok=True)
     mods = os.path.join(work, 'mods'); shutil.rmtree(mods, ignore_errors=True); os.makedirs(mods)
     shutil.copytree(MOD_SRC, os.path.join(mods, f'magnetics_{mod_version(MOD_SRC)}'))
     if with_tests:
-        shutil.copytree(TESTS_SRC, os.path.join(mods, f'magnetics-tests_{mod_version(TESTS_SRC)}'))
+        td = os.path.join(mods, f'magnetics-tests_{mod_version(TESTS_SRC)}')
+        shutil.copytree(TESTS_SRC, td)
+        if select is not None:
+            open(os.path.join(td, 'cells', '_select.lua'), 'w').write('return {' + ', '.join('"%s"' % s for s in select) + '}\n')
     for m in extra_mods: shutil.copytree(m, os.path.join(mods, os.path.basename(m)))
-    dlc = cfg == 'sa'
-    lst = [{'name': 'base', 'enabled': True}] + [{'name': n, 'enabled': dlc} for n in ('elevated-rails', 'quality', 'space-age')]
+    on = {'base': (), 'bq': ('quality',), 'be': ('elevated-rails',), 'sa': ('elevated-rails', 'quality', 'space-age')}[cfg]
+    lst = [{'name': 'base', 'enabled': True}] + [{'name': n, 'enabled': n in on} for n in ('elevated-rails', 'quality', 'space-age')]
     lst += [{'name': 'magnetics', 'enabled': True}, {'name': 'magnetics-tests', 'enabled': with_tests}]
     json.dump({'mods': lst}, open(os.path.join(mods, 'mod-list.json'), 'w'))
     wd = os.path.join(work, 'wd'); shutil.rmtree(wd, ignore_errors=True)
     open(os.path.join(work, 'config.ini'), 'w').write(f'[path]\nread-data={FACTORIO}/data\nwrite-data={wd}\n')
     return mods, wd
 
-def run(cfg='base', ticks=600, work=None, with_tests=True, keep=False, extra_mods=()):
+def run(cfg='base', ticks=600, work=None, with_tests=True, keep=False, extra_mods=(), select=None):
     work = work or tempfile.mkdtemp(prefix=f'mgn_{cfg}_')
-    mods, wd = prepare(cfg, work, with_tests, extra_mods)
+    mods, wd = prepare(cfg, work, with_tests, extra_mods, select)
     base = [BIN, '-c', os.path.join(work, 'config.ini'), '--mod-directory', mods]
     save = os.path.join(work, 'test.zip')
     r1 = subprocess.run(base + ['--create', save], capture_output=True, text=True, timeout=600)
@@ -59,7 +62,13 @@ def run(cfg='base', ticks=600, work=None, with_tests=True, keep=False, extra_mod
 if __name__ == '__main__':
     cfg = sys.argv[1] if len(sys.argv) > 1 else 'base'
     ticks = int(sys.argv[2]) if len(sys.argv) > 2 else 600
-    r = run(cfg, ticks)
+    select = sys.argv[3].split(',') if len(sys.argv) > 3 else None
+    r = run(cfg, ticks, select=select)
+    res = r['output'].get('magnetics-results.json')
+    if isinstance(res, dict):
+        print('pass', res['pass'], 'fail', res['fail'])
+        for x in res['results']:
+            if not x['pass']: print('  FAIL', x['group'], x['name'], 'got', x.get('got'), 'exp', x.get('expected'), x.get('note') or '')
     print('create_ok', r['create_ok'], 'bench_ok', r.get('bench_ok'))
     for e in r['errors'][:30]: print('ERR', e)
     for w in r['warnings'][:10]: print('WARN', w)
