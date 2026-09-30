@@ -24,6 +24,7 @@ def wf(name, desc, jobs, schemas):
 TASK_S = {'type': 'object', 'properties': {'title': {'type': 'string'}, 'prose': {'type': 'string'}, 'rules': {'type': 'string'}, 'battle': {'type': 'object'},
           'examples': {'type': 'array', 'items': {'type': 'object'}}, 'bet': {'type': 'string'}}, 'required': ['title', 'prose', 'rules', 'battle', 'examples', 'bet']}
 ATT_S = {'type': 'object', 'properties': {'tasks': {'type': 'array', 'items': TASK_S}}, 'required': ['tasks']}
+ALT_S = {'type': 'object', 'properties': {'found': {'type': 'boolean'}, 'rules': {'type': 'string'}, 'reading': {'type': 'string'}}, 'required': ['found', 'rules', 'reading']}
 TR_S = {'type': 'object', 'properties': {'rules': {'type': 'string'}, 'doubts': {'type': 'string'}}, 'required': ['rules', 'doubts']}
 DEF_S = {'type': 'object', 'properties': {'answer': {'type': 'string'}, 'program': {'type': 'string'}, 'runs': {'type': 'integer'}}, 'required': ['answer', 'program', 'runs']}
 CHK_S = {'type': 'object', 'properties': {'answer': {'type': 'string'}, 'program': {'type': 'string'}, 'runs': {'type': 'integer'}, 'changed': {'type': 'boolean'}}, 'required': ['answer', 'program', 'runs', 'changed']}
@@ -90,21 +91,21 @@ def learn_hist(r):
         s = os.path.join(rd(q), 'score.json')
         if not os.path.exists(s): continue
         for t in J(s)['tasks']:
-            if t['status'] in ('A', 'B', 'A1') and t.get('learn'):
+            if t['status'] == 'fair' and t.get('learn'):
                 L = t['learn']; h.append(dict(title=t['title'], given=L['given'], truth=t['truth'], kind='верно' if L['ok'] else f"ошибка: {L['kind']}"))
     return h
 
 def defend(r):
     tasks = [t for t in J(os.path.join(rd(r), 'tasks.json')) if t['accept'] == 'ok']; jobs = []; team = []
     for t in tasks:
-        for j in range(3): jobs.append(dict(id=f"{t['tid']}|tr{j}", schema='TR', prompt=P.translator(t, j)))
+        for j in range(3): jobs.append(dict(id=f"{t['tid']}|alt{j}", schema='ALT', prompt=P.alt_reader(t, j)))
         jobs.append(dict(id=f"{t['tid']}|solo", schema='D', prompt=P.solo(t, 2 * K, None, 'solo')))
         jobs.append(dict(id=f"{t['tid']}|learn", schema='D', prompt=P.solo(t, 2 * K, learn_hist(r), 'learn')))
         mark = '@@SOL@@'; c = P.checker(t, K, {'answer': mark, 'program': mark})
         a, b, rest = c.split(mark, 2)[0], c.split(mark, 2)[1], c.split(mark, 2)[2]
         team.append(dict(id=t['tid'], solver=P.solo(t, K, None, 'team1'), c1=a, c2=b, c3=rest))
     js = (f"export const meta = {{ name: 'arena-defend-r{r}', description: 'Арена, раунд {r}: панель, одиночки и команда', phases: [{{ title: 'Ход' }}] }}\n"
-          f"const JOBS = {json.dumps(jobs, ensure_ascii=False)}\nconst TEAM = {json.dumps(team, ensure_ascii=False)}\nconst S = {json.dumps({'TR': TR_S, 'D': DEF_S, 'C': CHK_S}, ensure_ascii=False)}\nphase('Ход')\n"
+          f"const JOBS = {json.dumps(jobs, ensure_ascii=False)}\nconst TEAM = {json.dumps(team, ensure_ascii=False)}\nconst S = {json.dumps({'ALT': ALT_S, 'D': DEF_S, 'C': CHK_S}, ensure_ascii=False)}\nphase('Ход')\n"
           "const out = {}\n"
           "const th = TEAM.map(t => async () => { const s = await agent(t.solver, {label: t.id + '|team1', phase: 'Ход', schema: S.D}); out[t.id + '|team1'] = s;\n"
           "  const c = await agent(t.c1 + String(s ? s.answer : '') + t.c2 + String(s ? s.program : '') + t.c3, {label: t.id + '|chk', phase: 'Ход', schema: S.C}); out[t.id + '|chk'] = c })\n"
@@ -145,15 +146,16 @@ def score(r, path_def, path_chk):
         e = dict(tid=t['tid'], attacker=t['attacker'], round=r, title=t['title'], truth=t['truth'], bet=t['bet'], accept=t['accept'])
         if t['accept'] != 'ok':
             e['status'] = 'defect' if t['accept'].startswith('DEFECT') else 'invalid'; e['points'] = 0; res.append(e); continue
-        tr = []
+        alts = []
         for j in range(3):
-            x = out.get(f"{t['tid']}|tr{j}") or {}; a = run(x.get('rules') or '', t['battle'])
-            exs = [run(x.get('rules') or '', q['p']) for q in t['examples']]
-            tr.append(dict(battle=a[1] if a[0] == 'ok' else None, ex_ok=all(z[0] == 'ok' and z[1] == q['ans'] for z, q in zip(exs, t['examples'])), doubts=x.get('doubts', ''), status=a[0]))
-        agree = sum(z['battle'] == t['truth'] for z in tr); e['panel'] = tr; e['agree'] = agree
-        if agree == 3: e['status'] = 'A'
-        elif agree == 2: e['status'] = 'A1' if any(z['battle'] != t['truth'] and not z['ex_ok'] for z in tr) else 'B'
-        else: e['status'] = 'removed'
+            x = out.get(f"{t['tid']}|alt{j}") or {}
+            if x.get('found') and x.get('rules'):
+                b = run_py(x['rules'], t['battle']); exs = [run_py(x['rules'], q['p']) for q in t['examples']]
+                valid = b[0] == 'ok' and b[1] != t['truth'] and all(z[0] == 'ok' and z[1] == q['ans'] for z, q in zip(exs, t['examples']))
+                alts.append(dict(found=True, valid=valid, battle=b[1] if b[0] == 'ok' else b[0], reading=x.get('reading', '')))
+            else: alts.append(dict(found=False, valid=False, reading=x.get('reading', '')))
+        e['panel'] = alts; e['alt_valid'] = sum(z['valid'] for z in alts)
+        e['status'] = 'removed' if e['alt_valid'] else 'fair'
         e['solo'] = judge_def(t, out.get(f"{t['tid']}|solo")); e['learn'] = judge_def(t, out.get(f"{t['tid']}|learn"))
         e['team_solver'] = judge_def(t, out.get(f"{t['tid']}|team1")); e['team'] = judge_def(t, out.get(f"{t['tid']}|chk"))
         e['team_changed'] = (out.get(f"{t['tid']}|chk") or {}).get('changed')
@@ -162,7 +164,7 @@ def score(r, path_def, path_chk):
     W(os.path.join(rd(r), 'score.json'), dict(round=r, tasks=res))
     for e in res:
         s = e.get('solo', {}); tm = e.get('team', {})
-        print(e['tid'], e['status'], e.get('agree'), 'одиночка', s.get('kind'), '| учащийся', e.get('learn', {}).get('kind'), '| команда', tm.get('kind'), '| очки', e['points'], '|', e['title'][:40])
+        print(e['tid'], e['status'], e.get('alt_valid'), 'одиночка', s.get('kind'), '| учащийся', e.get('learn', {}).get('kind'), '| команда', tm.get('kind'), '| очки', e['points'], '|', e['title'][:40])
 
 if __name__ == '__main__':
     c = sys.argv[1]; r = int(sys.argv[2])

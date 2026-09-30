@@ -1,0 +1,219 @@
+[
+ {
+  "tid": "D1",
+  "kind": "clean",
+  "truth": 14352,
+  "translations": [
+   [
+    14352,
+    true
+   ],
+   [
+    14352,
+    true
+   ],
+   [
+    14352,
+    true
+   ]
+  ],
+  "agree": 3,
+  "mode1": "A",
+  "alts": [
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ]
+  ],
+  "mode2": "fair"
+ },
+ {
+  "tid": "D2",
+  "kind": "clean",
+  "truth": 6,
+  "translations": [
+   [
+    6,
+    true
+   ],
+   [
+    6,
+    true
+   ],
+   [
+    6,
+    true
+   ]
+  ],
+  "agree": 3,
+  "mode1": "A",
+  "alts": [
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ]
+  ],
+  "mode2": "fair"
+ },
+ {
+  "tid": "D3",
+  "kind": "clean",
+  "truth": 7200,
+  "translations": [
+   [
+    "reject",
+    false
+   ],
+   [
+    "reject",
+    false
+   ],
+   [
+    "reject",
+    false
+   ]
+  ],
+  "agree": 0,
+  "mode1": "removed",
+  "alts": [
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ]
+  ],
+  "mode2": "fair",
+  "mode1_fixed": "A (переводы, исполненные CPython: 7200 ×3)"
+ },
+ {
+  "tid": "A1",
+  "kind": "ambiguous",
+  "truth": 97,
+  "translations": [
+   [
+    97,
+    true
+   ],
+   [
+    97,
+    true
+   ],
+   [
+    97,
+    true
+   ]
+  ],
+  "agree": 3,
+  "mode1": "A",
+  "alts": [
+   [
+    "valid",
+    98
+   ],
+   [
+    "valid",
+    98
+   ],
+   [
+    "valid",
+    98
+   ]
+  ],
+  "mode2": "removed"
+ },
+ {
+  "tid": "A2",
+  "kind": "ambiguous",
+  "truth": 33,
+  "translations": [
+   [
+    65,
+    true
+   ],
+   [
+    65,
+    true
+   ],
+   [
+    65,
+    true
+   ]
+  ],
+  "agree": 0,
+  "mode1": "removed",
+  "alts": [
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ],
+   [
+    "valid",
+    65
+   ]
+  ],
+  "mode2": "removed"
+ },
+ {
+  "tid": "A3",
+  "kind": "ambiguous",
+  "truth": 763,
+  "translations": [
+   [
+    763,
+    true
+   ],
+   [
+    763,
+    true
+   ],
+   [
+    763,
+    true
+   ]
+  ],
+  "agree": 3,
+  "mode1": "A",
+  "alts": [
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ],
+   [
+    "none",
+    null
+   ]
+  ],
+  "mode2": "fair"
+ }
+]
