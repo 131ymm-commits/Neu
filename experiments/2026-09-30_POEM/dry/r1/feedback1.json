@@ -1,0 +1,78 @@
+{
+ "r1a1o0|solo": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o0|team": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o0|solo_lib": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o0|team_lib": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o1|solo": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o1|team": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o1|solo_lib": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o1|team_lib": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o2|solo": {
+  "ok": false,
+  "failed": [],
+  "base_bad": [
+   "полн"
+  ],
+  "base_ok": false
+ },
+ "r1a1o2|team": {
+  "ok": false,
+  "failed": [],
+  "base_bad": [
+   "полн"
+  ],
+  "base_ok": false
+ },
+ "r1a1o2|solo_lib": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ },
+ "r1a1o2|team_lib": {
+  "ok": true,
+  "failed": [],
+  "base_bad": [],
+  "base_ok": true
+ }
+}
