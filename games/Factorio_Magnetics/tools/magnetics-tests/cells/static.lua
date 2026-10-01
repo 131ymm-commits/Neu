@@ -113,7 +113,8 @@ local DOC = {}
 -- постройки: тип, основа, клетки, HP, группа быстрой замены, ключевые числа
 DOC.entities = {
   ["magnetics-sintering-kiln"] = { type = "assembling-machine", w = 2, h = 2, hp = 200, frg = "magnetics-sintering-kiln",
-    speed = 1, kw = 90, burner = { "chemical", 1, 1, 0 }, pollution = 2, fixed = "magnetics-ferrite", cats = { "magnetics-sintering" }, modules = 0 },
+    speed = 1, kw = 90, burner = { "chemical", 1, 1, 0 }, pollution = 2, fixed = "magnetics-ferrite", cats = { "magnetics-sintering" }, modules = 0,
+    er = { false, false, true } },
   ["magnetics-induction-furnace"] = { type = "assembling-machine", w = 3, h = 3, hp = 350, frg = "magnetics-induction-furnace",
     speed = 2, kw = 240, drain_kw = 8, pollution = 1, cats = { "magnetics-sintering", "magnetics-induction" }, modules = 2 },
   ["magnetics-coil-winder"] = { type = "assembling-machine", w = 3, h = 3, hp = 350, frg = "magnetics-coil-winder",
@@ -122,7 +123,7 @@ DOC.entities = {
     speed = 1, kw = 300, drain_kw = 10, pollution = 3, cats = { "magnetics-cryogenics" }, modules = 3 },
   ["magnetics-flux-resonator"] = { type = "assembling-machine", w = 3, h = 3, hp = 350, frg = "magnetics-flux-resonator",
     speed = 1, kw = 5000, drain_kw = 10, pollution = 0, cats = { "magnetics-resonance" }, modules = 0,
-    fixed = "magnetics-flux-crystal-charging" },
+    fixed = "magnetics-flux-crystal-charging", er = { false, false, false } },
   ["magnetics-magnetic-separator"] = { type = "assembling-machine", w = 3, h = 3, hp = 400, frg = "magnetics-magnetic-separator",
     speed = 1, kw = 250, drain_kw = 8.33, pollution = 4, cats = { "magnetics-separation" }, modules = 2 },
   ["magnetics-magnetic-drill"] = { type = "mining-drill", w = 3, h = 3, hp = 400, frg = "mining-drill",
@@ -154,7 +155,8 @@ DOC.entities = {
   ["magnetics-gauss-turret"] = { type = "ammo-turret", w = 2, h = 2, hp = 800, frg = "magnetics-gauss-turret",
     ammo = "magnetics-gauss", cooldown = 60, range = 30, buffer_kj = 1000, in_kw = 1000, priority = "primary-input", aac = 8 },
   ["magnetics-arc-emitter"] = { type = "electric-turret", w = 2, h = 2, hp = 1000, frg = "magnetics-arc-emitter",
-    ammo = "laser", cooldown = 60, range = 20, buffer_kj = 2000, in_kw = 3000, drain_kw = 24, priority = "primary-input",
+    ammo = "laser", cooldown = 120, range = 20,  -- §15: 60 → 120 (PILOT-15)
+    buffer_kj = 2000, in_kw = 3000, drain_kw = 24, priority = "primary-input",
     shot_mj = 1, damage = 45 },
   ["magnetics-rail-cannon"] = { type = "ammo-turret", w = 2, h = 2, hp = 2000, frg = "magnetics-rail-cannon",
     ammo = "magnetics-rail", cooldown = 150, range = 36, min_range = 4, health_penalty = -1, buffer_kj = 8000, in_kw = 2000,
@@ -185,8 +187,9 @@ DOC.ammo = {
   ["magnetics-ferrite-slug"] = { cat = "magnetics-slug", mag = 10, speed = 1, max_range = 24 },
   ["magnetics-magnet-slug"] = { cat = "magnetics-slug", mag = 10, speed = 1, max_range = 24 },
   ["magnetics-gauss-slug"] = { cat = "magnetics-gauss", mag = 4, speed = 1.5, max_range = 34 },
-  ["magnetics-rail-slug"] = { cat = "magnetics-rail", mag = 1, line = { range = 36, width = 1.5, dmg = { { 1200, "physical" } } } },
-  ["magnetics-flux-rail-slug"] = { cat = "magnetics-rail", mag = 3, line = { range = 36, width = 2, dmg = { { 1800, "physical" }, { 600, "electric" } } } },
+  ["magnetics-rail-slug"] = { cat = "magnetics-rail", mag = 1, line = { range = 34.60625,  -- §15: 36 от центра (PILOT-8)
+    width = 1.5, dmg = { { 1200, "physical" } } } },
+  ["magnetics-flux-rail-slug"] = { cat = "magnetics-rail", mag = 3, line = { range = 34.60625, width = 2, dmg = { { 1800, "physical" }, { 600, "electric" } } } },
 }
 DOC.chain = { max_jumps = 4, max_range_per_jump = 6, jump_delay_ticks = 3, fork_chance = 0, max_forks = 2 }
 -- §7.4 подогрев (кВт; нет в списке — 0)
@@ -394,7 +397,7 @@ local function s4_entity(name, d)
     local ar = p.attack_reaction or {}
     chk(id, name .. " attack_reaction count", #ar == 1, #ar, 1)
     local r1 = ar[1] or {}
-    eq(id, name .. " attack_reaction range", r1.range, 2)
+    eq(id, name .. " attack_reaction range", r1.range, 3)   -- §15: 2 → 3 (большие жуки кусают с 2,07–2,16)
     eq(id, name .. " attack_reaction reaction_modifier", r1.reaction_modifier, 0)
     eq(id, name .. " attack_reaction damage_type", r1.damage_type and r1.damage_type.name, "physical")
     local dmg = first_damage(r1.action)
@@ -446,6 +449,11 @@ local function s4_doc_entity(name, d)
   if d.fixed then eq(id, n .. " fixed_recipe", p.fixed_recipe, d.fixed) end
   if d.cats then seteq(id, n .. " crafting categories", keys(p.crafting_categories, { parameters = true }), d.cats) end
   if d.modules then eq(id, n .. " module slots", p.module_inventory_size or 0, d.modules) end
+  if d.er then
+    local er = p.effect_receiver or {}
+    eq(id, n .. " effect_receiver modules/beacons/surface", join({ tostring(er.uses_module_effects), tostring(er.uses_beacon_effects), tostring(er.uses_surface_effects) }),
+      join({ tostring(d.er[1]), tostring(d.er[2]), tostring(d.er[3]) }))
+  end
   if d.mining_speed then eq(id, n .. " mining_speed", p.mining_speed, d.mining_speed) end
   if d.radius then eq(id, n .. " mining radius", p.get_mining_drill_radius(), d.radius) end
   if d.res_cats then seteq(id, n .. " resource categories", keys(p.resource_categories), d.res_cats) end
@@ -484,6 +492,7 @@ local function s4_doc_entity(name, d)
   end
   if d.ammo then
     local a = p.attack_parameters or {}
+    if d.type == "ammo-turret" then eq(id, n .. " attack type (kept from gun-turret)", a.type, "projectile") end
     listeq(id, n .. " ammo category", a.ammo_categories or {}, { d.ammo })
     eq(id, n .. " cooldown", a.cooldown, d.cooldown)
     eq(id, n .. " range", a.range, d.range)
@@ -1232,13 +1241,67 @@ return {
     end },
   { id = "S5", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S5", "S5", s5) end },
   { id = "S6", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S6", "S6", s6) end },
+  -- S6, часть времени игры (PILOT-25 для стен, ворот, бура, аккумулятора, опоры и лент): планировщик улучшений с
+  -- отображениями «откуда → куда» для каждой связи §7.2 помечает постройку к улучшению именно в цель.
+  -- Отрицательный контроль: AM2 → намоточный станок (связи нет) не помечается.
+  { id = "S6R", slots = 1, check_at = 2,
+    setup = function(ctx)
+      begin(ctx)
+      local S, o, s = ctx.S, ctx.origin, ctx.state
+      local all = {}
+      for _, l in ipairs(vanilla_links()) do all[#all + 1] = l end
+      for _, l in ipairs(DOC.links_internal) do all[#all + 1] = l end
+      s.links, s.ents = all, {}
+      local inv = game.create_inventory(2)
+      inv.insert { name = "upgrade-planner", count = 2 }
+      local good, bad = inv[1], inv[2]
+      s.set_errors = {}
+      for i, l in ipairs(all) do
+        local proto = prototypes.entity[l[1]]
+        local cx, cy = o.x + 4 + (i - 1) * 6, o.y + 8
+        local pos = { x = cx + ((proto.tile_width % 2 == 1) and 0.5 or 0), y = cy + ((proto.tile_height % 2 == 1) and 0.5 or 0) }
+        local params = { name = l[1], position = pos, force = "player" }
+        if proto.type == "underground-belt" then params.type = "input" end
+        s.ents[i] = S.create_entity(params)
+        local ok, err = pcall(function()
+          good.set_mapper(i, "from", { type = "entity", name = l[1] })
+          good.set_mapper(i, "to", { type = "entity", name = l[2] })
+        end)
+        if not ok then s.set_errors[#s.set_errors + 1] = l[1] .. ": " .. tostring(err) end
+      end
+      s.neg = S.create_entity { name = "assembling-machine-2", position = { o.x + 10.5, o.y + 20.5 }, force = "player" }
+      s.neg_set_ok = pcall(function()
+        bad.set_mapper(1, "from", { type = "entity", name = "assembling-machine-2" })
+        bad.set_mapper(1, "to", { type = "entity", name = "magnetics-coil-winder" })
+      end)
+      local ok1, e1 = pcall(function() S.upgrade_area { area = { { o.x, o.y + 4 }, { o.x + 127, o.y + 12 } }, force = "player", item = good } end)
+      local ok2, e2 = pcall(function() S.upgrade_area { area = { { o.x + 7, o.y + 17 }, { o.x + 14, o.y + 24 } }, force = "player", item = bad } end)
+      s.area_ok = { ok1, ok1 and "" or tostring(e1), ok2, ok2 and "" or tostring(e2) }
+      inv.destroy()
+    end,
+    check = function(ctx)
+      begin(ctx)
+      local s = ctx.state
+      chk("S6", "runtime: upgrade planner mappers accepted", #s.set_errors == 0, s.set_errors, {})
+      chk("S6", "runtime: upgrade_area ran", s.area_ok[1], s.area_ok[2], "")
+      for i, l in ipairs(s.links) do
+        local e = s.ents[i]
+        local tg = e and e.valid and e.get_upgrade_target()
+        local got = { marked = e and e.valid and e.to_be_upgraded() or false, target = tg and tg.name or "nil" }
+        chk("S6", "runtime (PILOT-25): upgrade planner " .. l[1] .. " -> " .. l[2], got.marked and got.target == l[2], got,
+            { marked = true, target = l[2] })
+      end
+      local marked = s.neg and s.neg.valid and s.neg.to_be_upgraded() or false
+      chk("S6", "runtime negative control: AM2 -> coil winder not marked", not marked,
+          { marked = marked, set_ok = s.neg_set_ok, area_ok = s.area_ok[3] }, { marked = false })
+    end },
   { id = "S8", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S8", "S8", s8) end },
   { id = "S9", slots = 0, check_at = 1, configs = { "bq", "sa" }, check = function(ctx) begin(ctx); section("S9", "S9", s9) end },
   { id = "S10", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S10", "S10", s10) end },
   { id = "S14", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S14", "S14", s14) end },
   { id = "S15", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S15", "S15", s15) end },
   { id = "S16", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S16", "S16", s16) end },
-  { id = "G3", slots = 0, check_at = 120,
+  { id = "G3", slots = 0, check_at = 600,
     setup = function(ctx)
       begin(ctx)
       local ok, r = pcall(showroom.build, { force = "magnetics-showroom-test" })
@@ -1267,7 +1330,7 @@ return {
         if not (x.b and x.b.valid) then invalid[#invalid + 1] = x.base .. " (base of " .. x.name .. ")" end
       end
       seteq("G3", "every Magnetics entity once", names, keys(DOC.entities))
-      chk("G3", "all placed entities still valid after 120 ticks", #invalid == 0, invalid, {})
+      chk("G3", "all placed entities still valid after 600 ticks", #invalid == 0, invalid, {})
       local names_of = {}
       for k, v in pairs(defines.entity_status) do names_of[v] = k end
       local st = {}
@@ -1275,6 +1338,14 @@ return {
         if x.e and x.e.valid then st[#st + 1] = x.name .. "=" .. tostring(x.e.status and names_of[x.e.status] or "-") end
       end
       L.check("G3", "statuses (справочно)", true, nil, nil, table.concat(st, "; "))
+      -- PILOT-2 (часть «один крафт»): печь и индукционная печь — сборочные машины на графике печей — крафтят
+      -- (витрина: печь на угле, ferrite; индукционная печь на magnet-alloy; 600 тиков = 10 с; крафт 3.2 с каждый)
+      for _, x in ipairs(s.entities) do
+        if x.name == "magnetics-sintering-kiln" or x.name == "magnetics-induction-furnace" then
+          local n = x.e and x.e.valid and x.e.products_finished or 0
+          chk("PILOT-2", x.name .. " finished >= 1 craft in the showroom (600 ticks)", n >= 1, n, ">= 1")
+        end
+      end
       local S = game.surfaces["magnetics-showroom"]
       local n = S and S.count_entities_filtered { name = keys(DOC.entities) } or 0
       chk("G3", "surface magnetics-showroom holds 26 Magnetics entities", n == 26, n, 26)

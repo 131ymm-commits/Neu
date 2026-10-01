@@ -58,14 +58,14 @@ return {
       magazine = 1,
       stack = 20,
       order = "m[magnetics]-d[rail-slug]",
-      line = {range = 36, width = 1.5, damage = {{1200, "physical"}}}
+      line = {range = 34.60625, width = 1.5, damage = {{1200, "physical"}}}
     },
     ["magnetics-flux-rail-slug"] = {
       category = "magnetics-rail",
       magazine = 3,
       stack = 10,
       order = "m[magnetics]-e[flux-rail-slug]",
-      line = {range = 36, width = 2, damage = {{1800, "physical"}, {600, "electric"}}}
+      line = {range = 34.60625, width = 2, damage = {{1800, "physical"}, {600, "electric"}}}
     }
   },
   ammo_categories = {
@@ -1127,7 +1127,7 @@ return {
       hp = 1000,
       attack = {
         ammo_category = "laser",
-        cooldown = 60,
+        cooldown = 120,
         range = 20,
         energy = "1MJ",
         damage = 45,

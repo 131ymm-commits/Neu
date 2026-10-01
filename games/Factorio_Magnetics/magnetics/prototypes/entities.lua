@@ -117,7 +117,7 @@ end
 -- шипы: на укус отвечают фиксированным электрическим уроном (attack_reaction, как закомментировано у каменной стены в base)
 local function thorns(amount)
   return { {
-    range = 2, damage_type = "physical", reaction_modifier = 0,
+    range = 3, damage_type = "physical", reaction_modifier = 0,   -- большие и гигантские жуки кусают с 2,07–2,16 клетки (пилот боя)
     action = { type = "direct", action_delivery = { type = "instant",
       target_effects = { { type = "damage", damage = { amount = amount, type = "electric" } } } } },
   } }

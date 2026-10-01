@@ -75,7 +75,7 @@
    "stack": 20,
    "order": "m[magnetics]-d[rail-slug]",
    "line": {
-    "range": 36,
+    "range": 34.60625,
     "width": 1.5,
     "damage": [
      [
@@ -91,7 +91,7 @@
    "stack": 10,
    "order": "m[magnetics]-e[flux-rail-slug]",
    "line": {
-    "range": 36,
+    "range": 34.60625,
     "width": 2,
     "damage": [
      [
@@ -2438,7 +2438,7 @@
    "hp": 1000,
    "attack": {
     "ammo_category": "laser",
-    "cooldown": 60,
+    "cooldown": 120,
     "range": 20,
     "energy": "1MJ",
     "damage": 45,

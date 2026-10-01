@@ -12,7 +12,12 @@
 --   storage.queue         массив {entity, unit, cycle} повреждённых целей (cycle — тик последней обработки);
 --   storage.queued        unit -> true для целей в очереди;
 --   storage.cursor        с какой записи очереди начнётся следующий цикл (обход по кругу);
---   storage.seq           счётчик порядка вставки катушек ("первая по порядку вставки" = наименьший seq).
+--   storage.seq           счётчик порядка вставки катушек ("первая по порядку вставки" = наименьший seq);
+--   storage.coils_version растёт при каждом добавлении/удалении катушки и слиянии сил: записи очереди хранят список
+--                         покрывающих катушек (cov, по возрастанию seq) с версией cov_v и пересчитывают его при смене версии.
+-- Скорость (замер UPS 01.10.2026, tools/ups.py): прежний цикл заново обходил все катушки соседних клеток сетки и читал
+-- у цели неизменные поля через API на каждой записи — 100 катушек при 50 уронах/с стоили ~0,16 мс/тик. Теперь
+-- неизменные поля цели (позиция, поверхность, сила, макс. здоровье) читаются один раз при постановке в очередь.
 -- Обработчик on_entity_damaged зарегистрирован только пока есть хоть одна катушка; on_load повторяет это решение
 -- по storage (регистрация — чистая функция storage, как требует детерминизм мультиплеера).
 --
@@ -63,6 +68,7 @@ local function fresh_state()
   storage.queued = {}
   storage.cursor = 1
   storage.seq = 0
+  storage.coils_version = (storage.coils_version or 0) + 1
 end
 
 local function cell_key(x, y)
@@ -72,17 +78,25 @@ end
 ---------------------------------------------------------------------------------------------------------------------
 -- Очередь повреждённых целей
 
+-- Запись очереди: цель и её неизменные поля (стены, ворота, турели и радары не двигаются).
+local function new_item(entity, unit, force_index)
+  local position = entity.position
+  return {entity = entity, unit = unit, x = position.x, y = position.y, surface = entity.surface_index,
+          force = force_index, max_health = entity.max_health}
+end
+
 local function on_damaged(event)
   if event.final_health <= 0 then return end          -- страховка; фильтр уже отсёк смертельный урон
   local entity = event.entity
-  if not storage.force_coils[entity.force_index] then return end
+  local force_index = entity.force_index
+  if not storage.force_coils[force_index] then return end
   local unit = entity.unit_number
   if not unit then return end
   local queued = storage.queued
   if queued[unit] then return end
   queued[unit] = true
   local queue = storage.queue
-  queue[#queue + 1] = {entity = entity, unit = unit}
+  queue[#queue + 1] = new_item(entity, unit, force_index)
 end
 
 -- Поставить в очередь найденную поиском цель, если она повреждена.
@@ -93,7 +107,7 @@ local function enqueue_if_damaged(entity)
   if not health or health <= 0 or health >= entity.max_health then return end
   storage.queued[unit] = true
   local queue = storage.queue
-  queue[#queue + 1] = {entity = entity, unit = unit}
+  queue[#queue + 1] = new_item(entity, unit, entity.force_index)
 end
 
 ---------------------------------------------------------------------------------------------------------------------
@@ -141,6 +155,7 @@ local function add_coil(entity)
   cell[#cell + 1] = unit
 
   storage.force_coils[force_index] = (storage.force_coils[force_index] or 0) + 1
+  storage.coils_version = (storage.coils_version or 0) + 1
   script.register_on_object_destroyed(entity)
   update_registration()
 
@@ -178,6 +193,7 @@ local function remove_coil(unit)
 
   local count = (storage.force_coils[rec.force] or 1) - 1
   storage.force_coils[rec.force] = count > 0 and count or nil
+  storage.coils_version = (storage.coils_version or 0) + 1
   update_registration()
 end
 
@@ -208,6 +224,13 @@ local function refresh_forces()
     counts[rec.force] = (counts[rec.force] or 0) + 1
   end
   storage.force_coils = counts
+  storage.coils_version = (storage.coils_version or 0) + 1
+  -- силы целей в очереди тоже могли смениться: перечитать
+  local queue = storage.queue
+  for i = 1, #queue do
+    local item = queue[i]
+    if item.entity.valid then item.force = item.entity.force_index end
+  end
 end
 
 ---------------------------------------------------------------------------------------------------------------------
@@ -216,43 +239,74 @@ end
 -- Первая по порядку вставки подходящая катушка для цели; признак "цель вообще покрыта" (катушка своей силы,
 -- на той же поверхности, в радиусе, существует — независимо от бюджета и энергии); признак "покрывающая катушка
 -- уже истратила бюджет этого цикла" (значит, энергия у неё была — цель ждёт очереди, а не энергии).
-local function find_coil(target, tick)
-  local grid = storage.grid[target.surface_index]
-  if not grid then return nil, false end
-  local force_index = target.force_index
-  local position = target.position
-  local tx, ty = position.x, position.y
-  local cx, cy = floor(tx / CELL), floor(ty / CELL)
-  local list, index = storage.coils.list, storage.coils.index
-  local best, covered, spent, dead = nil, false, false, nil
-  for dx = -1, 1 do
-    for dy = -1, 1 do
-      local cell = grid[(cx + dx) .. "," .. (cy + dy)]
-      if cell then
-        for i = 1, #cell do
-          local slot = index[cell[i]]
-          local rec = slot and list[slot]
-          if rec and rec.force == force_index then
-            local ddx, ddy = rec.x - tx, rec.y - ty
-            if ddx * ddx + ddy * ddy <= RADIUS_SQ then
-              local coil = rec.entity
-              if coil.valid then
-                covered = true
-                if not best or rec.seq < best.seq then
-                  if rec.budget_tick ~= tick then rec.budget = COIL_BUDGET; rec.budget_tick = tick end
-                  if rec.budget <= 0 then
-                    spent = true
-                  elseif coil.energy >= J_PER_HP then
-                    best = rec
-                  end
-                end
-              else
-                dead = dead or {}
-                dead[#dead + 1] = rec.unit
-              end
+local function by_seq(a, b) return a.seq < b.seq end
+
+-- Список покрывающих катушек цели (своя сила, та же поверхность, в радиусе) по возрастанию seq; пересчёт по сетке
+-- только при смене storage.coils_version.
+local function covering(item)
+  local version = storage.coils_version
+  if item.cov_v == version then return item.cov end
+  if item.x == nil then                                  -- запись из старой версии мода: дочитать поля
+    local target = item.entity
+    local position = target.position
+    item.x, item.y, item.surface, item.force, item.max_health =
+      position.x, position.y, target.surface_index, target.force_index, target.max_health
+  end
+  local recs = {}
+  local grid = storage.grid[item.surface]
+  if grid then
+    local tx, ty, force_index = item.x, item.y, item.force
+    local cx, cy = floor(tx / CELL), floor(ty / CELL)
+    local list, index = storage.coils.list, storage.coils.index
+    for dx = -1, 1 do
+      for dy = -1, 1 do
+        local cell = grid[(cx + dx) .. "," .. (cy + dy)]
+        if cell then
+          for i = 1, #cell do
+            local slot = index[cell[i]]
+            local rec = slot and list[slot]
+            if rec and rec.force == force_index then
+              local ddx, ddy = rec.x - tx, rec.y - ty
+              if ddx * ddx + ddy * ddy <= RADIUS_SQ then recs[#recs + 1] = rec end
             end
           end
         end
+      end
+    end
+  end
+  table.sort(recs, by_seq)                               -- seq уникальны: порядок однозначен
+  local cov = {}
+  for i = 1, #recs do cov[i] = recs[i].unit end
+  item.cov, item.cov_v = cov, version
+  return cov
+end
+
+-- Первая по порядку вставки подходящая катушка для цели (бюджет цикла не исчерпан, энергии хватает на 1 HP);
+-- признак "цель вообще покрыта" (существующая катушка своей силы на той же поверхности в радиусе — независимо от
+-- бюджета и энергии); признак "покрывающая катушка уже истратила бюджет этого цикла" (энергия у неё была — цель ждёт
+-- очереди, а не энергии). Тот же выбор, что и прежний полный обход клеток: первая по seq подходящая.
+local function find_coil(item, tick)
+  local cov = covering(item)
+  local list, index = storage.coils.list, storage.coils.index
+  local covered, spent, dead = false, false, nil
+  local best = nil
+  for i = 1, #cov do
+    local slot = index[cov[i]]
+    local rec = slot and list[slot]
+    if rec then
+      local coil = rec.entity
+      if coil.valid then
+        covered = true
+        if rec.budget_tick ~= tick then rec.budget = COIL_BUDGET; rec.budget_tick = tick end
+        if rec.budget <= 0 then
+          spent = true
+        elseif coil.energy >= J_PER_HP then
+          best = rec
+          break
+        end
+      else
+        dead = dead or {}
+        dead[#dead + 1] = rec.unit
       end
     end
   end
@@ -268,9 +322,10 @@ end
 local function heal_one(item, tick, may_draw)
   local target = item.entity
   if not target.valid then return true, false, false end
-  local health, max_health = target.health, target.max_health
+  local health = target.health
+  local max_health = item.max_health or target.max_health
   if not health or health >= max_health then return true, false, false end
-  local rec, covered, spent = find_coil(target, tick)
+  local rec, covered, spent = find_coil(item, tick)
   if not rec then
     return not covered, false, spent                   -- не покрыта никем: убрать; покрыта: ждать энергии или бюджета
   end

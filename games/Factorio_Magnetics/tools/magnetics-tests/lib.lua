@@ -2,6 +2,8 @@
 local L = {}
 
 L.results = {}
+-- крючки событий урона и смерти: ячейки добавляют function(e) при загрузке модуля; состояние — в storage
+L.on_damaged, L.on_died = {}, {}
 function L.check(group, name, ok, got, expected, note)
   L.results[#L.results + 1] = { group = group, name = name, pass = ok and true or false, got = got, expected = expected, note = note }
 end
@@ -65,8 +67,8 @@ function L.topup(e, recipe)
   end
   local fb = e.fluidbox
   for i = 1, #fb do
-    local p = fb.get_prototype(i)
-    local proto = p[1] or p
+    local proto = fb.get_prototype(i)
+    if proto.object_name == nil then proto = proto[1] end   -- бывает один прототип или список
     if proto.production_type == "input" then
       local f = fb.get_filter(i)
       if f then fb[i] = { name = f.name, amount = proto.volume } end
@@ -85,8 +87,8 @@ function L.drain(e, counter)
   end
   local fb = e.fluidbox
   for i = 1, #fb do
-    local p = fb.get_prototype(i)
-    local proto = p[1] or p
+    local proto = fb.get_prototype(i)
+    if proto.object_name == nil then proto = proto[1] end
     if proto.production_type == "output" and fb[i] then
       counter[fb[i].name] = (counter[fb[i].name] or 0) + fb[i].amount
       fb[i] = nil

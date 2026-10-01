@@ -10,6 +10,12 @@ ctx: S (поверхность-лаборатория), origin {x,y} (левый
 Какие модули грузить — cells/_select.lua (пишет tools/run.py), по умолчанию все из cells/_all.lua.
 Результат: script-output/magnetics-results.json ]]
 local L = require("lib")
+local showroom = require("showroom")
+commands.add_command("magnetics-showroom", "Magnetics: витрина 26 построек рядом с ванильными основами (FINAL_SPEC §6.3)", function(cmd)
+  local p = cmd.player_index and game.get_player(cmd.player_index)
+  local r = showroom.build { player_index = cmd.player_index, force = p and p.force or "player", teleport = true }
+  ;(p or game).print("magnetics-showroom: построек " .. r.count .. "/26, основ " .. r.base_count .. "/26, ошибок " .. #r.errors .. ", снимков " .. r.screenshots)
+end)
 local ok_sel, SEL = pcall(require, "cells._select")
 if not ok_sel then SEL = require("cells._all") end
 
@@ -110,3 +116,11 @@ script.on_event(defines.events.on_tick, function(e)
     helpers.write_file("magnetics-done.txt", "done at tick " .. t, false)
   end
 end)
+
+-- рассылка событий урона ячейкам (обработчик ставится, только если хоть одна ячейка подписалась: UPS в U1/U2)
+if #L.on_damaged > 0 then
+  script.on_event(defines.events.on_entity_damaged, function(e) for _, f in ipairs(L.on_damaged) do f(e) end end)
+end
+if #L.on_died > 0 then
+  script.on_event(defines.events.on_entity_died, function(e) for _, f in ipairs(L.on_died) do f(e) end end)
+end

@@ -5,7 +5,8 @@ Headless: только расстановка (тест G3 в cells/static.lua).
 
 Использование:  local showroom = require("showroom")
                 local r = showroom.build{player_index = <номер или nil>, force = <сила или имя; по умолчанию "player">,
-                                         enable_recipes = <true по умолчанию: показательные рецепты открываются для силы>}
+                                         enable_recipes = <true по умолчанию: показательные рецепты открываются для силы>,
+                                         teleport = <true: перенести игрока player_index на витрину>}
 Если силы с таким именем нет, она создаётся (тест G3 строит на отдельной силе, чтобы не трогать силу player других ячеек).
 Возвращает {surface = имя, placed = {{name, base, unit_ok, base_ok, x, y}}, count = число построек Magnetics,
             base_count = число ванильных, errors = {строки}, screenshots = число}.
@@ -153,7 +154,7 @@ local function screenshots(r, S, player_index, bounds)
   local cx = (bounds.x1 + bounds.x2) / 2
   local cy = (bounds.y1 + bounds.y2) / 2
   local ok, err = pcall(game.take_screenshot, { player = player, surface = S, position = { cx, cy },
-    resolution = { 3840, 2160 }, zoom = 0.5, path = "magnetics/showroom.png", show_entity_info = true, daytime = 0 })
+    resolution = { 2560, 2560 }, zoom = 1, path = "magnetics/showroom.png", show_entity_info = true, daytime = 0 })
   if ok then n = n + 1 else add_error(r, "screenshot: " .. tostring(err)) end
   for i, rec in ipairs(r.placed) do
     local ok2, err2 = pcall(game.take_screenshot, { player = player, surface = S, position = { rec.x + M.DX / 2, rec.y },
@@ -248,6 +249,8 @@ function M.build(opts)
   end
 
   r.screenshots = screenshots(r, S, opts.player_index, bounds)
+  local player = opts.teleport and opts.player_index and game.get_player(opts.player_index)
+  if player then player.teleport({ 0, bounds.y1 + 4 }, S) end
   return r
 end
 

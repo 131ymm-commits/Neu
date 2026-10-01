@@ -36,7 +36,7 @@ def run(cfg='base', ticks=600, work=None, with_tests=True, keep=False, extra_mod
     mods, wd = prepare(cfg, work, with_tests, extra_mods, select)
     base = [BIN, '-c', os.path.join(work, 'config.ini'), '--mod-directory', mods]
     save = os.path.join(work, 'test.zip')
-    r1 = subprocess.run(base + ['--create', save], capture_output=True, text=True, timeout=600)
+    r1 = subprocess.run(base + ['--create', save, '--map-gen-seed', '20260930'], capture_output=True, text=True, timeout=600)
     log1 = open(os.path.join(wd, 'factorio-current.log'), encoding='utf-8', errors='replace').read()
     res = dict(cfg=cfg, work=work, create_ok=r1.returncode == 0 and os.path.exists(save), create_log=log1)
     if res['create_ok'] and ticks:
