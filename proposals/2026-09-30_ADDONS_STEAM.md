@@ -42,3 +42,7 @@
 Довести Schwarzfall до рабочего состояния: автор ставит мод, присылает лог — я правлю, выпускаем в Workshop. Это проверит весь конвейер на готовом моде за 1–2 дня. Параллельно: выбрать вторую игру (Skyrim — из-за Creations, или Stellaris — из-за текста и кода).
 
 Источники: Nexus Mods — Donation Points (https://next.nexusmods.com/about/donation-points); Bethesda Creations — Creation Club (https://en.wikipedia.org/wiki/Creation_Club), TweakTown о платных модах (https://www.tweaktown.com/news/112692/bethesdas-paid-mods-inspired-by-custom-d-and-d-campaigns-thats-the-spirit-of-creation/index.html); Paradox Content Creator Packs (https://www.paradoxinteractive.com/games/cities-skylines-ii/news/supply-chains-skyscrapers-available-now); Train Sim World — сторонние студии (https://train-sim-world.fandom.com/wiki/Release_History_%26_DLC).
+
+## Статус 01.10.2026
+- Mindustry: мод Magnetics 1.0 (`games/Mindustry_Magnetics/`).
+- Factorio: мод Magnetics 1.0 (`games/Factorio_Magnetics/`) — 26 построек, base и Space Age, 12 960 проверок мода на сервере 2.0.77, независимое ревью. Ждёт проверки автором в игре (вид моделей) и публикации на mods.factorio.com. Передача — `games/Factorio_Magnetics/NEXT.md`.

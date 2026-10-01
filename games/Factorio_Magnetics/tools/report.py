@@ -65,5 +65,9 @@ for k in ('U1', 'U2'):
     rule = (f"порог спецификации {f(v['limit'], 3)} различим (≥ 3× шума)" if v['resolvable'] else
             f"порог спецификации {f(v['limit'], 3)} меньше трёх шумов, по правилу PILOT-20 сравнение с 3× шума = {f(v['effective_limit'], 3)}")
     L.append(f"- {k}: Δ {f(v['delta'], 3)} мс/тик; {rule}: {'проходит' if v['ok'] else '**не проходит**'}.")
+if U.get('U2_script_ms_per_tick'):
+    sp = U['U2_script_ms_per_tick']
+    L.append(f"- Цена самого скрипта ремонтной катушки на карте U2 (профайлер Factorio, медиана {len(sp['runs'])} прогонов): "
+             f"{f(sp['median'], 3)} мс/тик при пороге {f(sp['limit'], 2)} (до ускорения цикла 01.10.2026 было около 0,16).")
 open(OUT, 'w', encoding='utf-8').write('\n'.join(L) + '\n')
 print('\n'.join(L))

@@ -2,7 +2,8 @@
 Вызовы инструментов показаны одной строкой (что делалось), их выводы и системные вставки не включаются."""
 import json, sys, re
 src, dst = sys.argv[1], sys.argv[2]
-out = ['# Журнал чата сессии\n\nСессия: https://claude.ai/code/session_01EAUcgUVu3BhYQ16NUm8BDT\n'
+SESSION = sys.argv[3] if len(sys.argv) > 3 else 'session_01EAUcgUVu3BhYQ16NUm8BDT'   # третий аргумент — id сессии
+out = ['# Журнал чата сессии\n\nСессия: https://claude.ai/code/' + SESSION + '\n'
        'Формат: реплики человека — полностью (длинные вставки сокращены до начала), ответы Claude — полностью, '
        'действия — одной строкой. Выводы инструментов и служебные сообщения среды не включены.\n']
 def clean(t):
