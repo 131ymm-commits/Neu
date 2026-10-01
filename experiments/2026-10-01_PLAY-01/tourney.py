@@ -269,6 +269,39 @@ def replay(stage):
     print(f'повтор: {len(out) - len(bad)} из {len(out)} цепочек совпали' + (f'; расхождения: {bad}' if bad else ''))
 
 
+def _rebuild_one(a):
+    stage, ck, c, ticks = a
+    work = os.path.join(rd(stage, 'work'), f'{ck}_rebuild')
+    save_in, sha_in, out = c['init_save'], c['init_sha'], []
+    for h in c['hist']:
+        sv = os.path.join(rd(stage, 'saves'), f'{ck}_r{h["round"]}_rb.zip')
+        r = game.round_unit(save_in, sha_in, h['actions'], ticks, sv, os.path.join(work, f'w{h["round"]}'))
+        out.append(dict(state_hash=r['state_hash'], sha=r['sha'], save=sv, balance=r['balance'], violations=r['violations'], obs=r['observe']))
+        save_in, sha_in = sv, r['sha']
+    shutil.rmtree(work, ignore_errors=True)
+    return ck, out
+
+
+def rebuild(stage):
+    """Пересборка цепочек после исправления учёта в моде (не меняет игру): тот же журнал с исходного сейва; хеши состояния
+    обязаны совпасть с живой партией — тогда сейвы заменяются, сверка пересчитывается, старая сверка сохраняется в balance_old."""
+    st = load(stage); cfg = st['cfg']
+    jobs = [(stage, ck, c, cfg['round_ticks']) for ck, c in sorted(st['chains'].items()) if c['hist']]
+    with _pool() as pool:
+        res = dict(pool.map(_rebuild_one, jobs))
+    bad = []
+    for ck, out in res.items():
+        c = st['chains'][ck]
+        if [o['state_hash'] for o in out] != c['state_hash'][1:]: bad.append(ck); continue
+        for h, o in zip(c['hist'], out):
+            h['balance_old'], h['balance'], h['violations'], h['sha'] = h['balance'], o['balance'], o['violations'], o['sha']
+            h['rebuilt'] = True
+        c['save'], c['sha'] = out[-1]['save'], out[-1]['sha']
+    if bad: print('хеши НЕ совпали, цепочки не тронуты:', bad)
+    save(stage, st)
+    print(f'пересобрано {len(res) - len(bad)} из {len(res)}; сверка: ' + json.dumps({ck: [h['balance'] for h in st['chains'][ck]['hist']] for ck in res if any(h['balance'] for h in st['chains'][ck]['hist'])}, ensure_ascii=False))
+
+
 def status(stage):
     st = load(stage); cfg = st['cfg']
     print(json.dumps({k: v for k, v in cfg.items() if k != 'prompt_hashes'}, ensure_ascii=False))
@@ -291,3 +324,4 @@ if __name__ == '__main__':
     elif a.cmd == 'score': score(a.stage)
     elif a.cmd == 'replay': replay(a.stage)
     elif a.cmd == 'status': status(a.stage)
+    elif a.cmd == 'rebuild': rebuild(a.stage)

@@ -96,8 +96,21 @@ end
 -- 01.10.2026). Выход считаем сами: крафт идёт с головы очереди, за тик завершается не больше одного (рецепты base ≥ 0,5 с).
 local function qsig()
   local t = {}
-  for i, e in ipairs(C().crafting_queue or {}) do t[i] = { recipe = e.recipe, count = e.count } end
+  for i, e in ipairs(C().crafting_queue or {}) do t[i] = { recipe = e.recipe, count = e.count, pre = e.prerequisite or false } end
   return t
+end
+-- Удержано очередью ручного крафта (для сверки баланса): begin_crafting сразу снимает сырьё с инвентаря, промежуточные
+-- предметы (шестерни под бур) живут внутри очереди, а статистика пишет расход только по завершении крафта (замер 01.10.2026).
+local function qheld_add(name, k)
+  storage.qheld = storage.qheld or {}
+  local v = (storage.qheld[name] or 0) + k
+  storage.qheld[name] = v ~= 0 and v or nil
+end
+local function inv_delta(a, b)   -- b − a по предметам
+  local d = {}
+  for n, k in pairs(b) do if k ~= (a[n] or 0) then d[n] = k - (a[n] or 0) end end
+  for n, k in pairs(a) do if b[n] == nil then d[n] = -k end end
+  return d
 end
 -- Триггер «craft-item» технологий 2.0 (например, automation-science-pack: скрафтить лабораторию) у персонажа без игрока
 -- от ручного крафта не срабатывает (замер 01.10.2026; от выплавки в печи срабатывает). Мод считает ручной крафт сам:
@@ -121,11 +134,16 @@ local function hand_trigger(item, k)
     end
   end
 end
-local function hand_add(recipe, k)
-  for _, pr in ipairs(prototypes.recipe[recipe].products) do
+local function hand_add(recipe, k, pre)
+  local rp = prototypes.recipe[recipe]
+  for _, ing in ipairs(rp.ingredients) do
+    if ing.type == "item" then qheld_add(ing.name, -ing.amount * k) end      -- расход записан статистикой
+  end
+  for _, pr in ipairs(rp.products) do
     if pr.type == "item" then
       if pr.amount == nil or (pr.probability or 1) ~= 1 then violation("ручной крафт с вероятностным выходом: " .. recipe) end
       storage.hand[pr.name] = (storage.hand[pr.name] or 0) + (pr.amount or 0) * k
+      if pre then qheld_add(pr.name, (pr.amount or 0) * k) end               -- промежуточный предмет остаётся в очереди
       hand_trigger(pr.name, (pr.amount or 0) * k)
     end
   end
@@ -146,7 +164,7 @@ local function track_crafting()
       if prev[i + 1].recipe ~= now[i].recipe or prev[i + 1].count ~= now[i].count then ok = false; break end end
     end
   end
-  if ok then hand_add(prev[1].recipe, 1) else violation("очередь крафта изменилась не по правилам") end
+  if ok then hand_add(prev[1].recipe, 1, prev[1].pre) else violation("очередь крафта изменилась не по правилам") end
   storage.prev_q = now
 end
 
@@ -159,7 +177,9 @@ function I.craft(a)
   local n = (num(a.n) and a.n >= 1) and math.floor(a.n) or 1
   local r = force().recipes[a.recipe]
   if not r.enabled then return false, "рецепт не открыт" end
+  local inv0 = inv_table(c.get_main_inventory())
   local ok, started = pcall(c.begin_crafting, { recipe = a.recipe, count = n, silent = true })
+  for name, k in pairs(inv_delta(inv0, inv_table(c.get_main_inventory()))) do qheld_add(name, -k) end   -- снято в очередь
   storage.prev_q = qsig()
   if not ok then return false, "крафт невозможен: " .. tostring(started) end
   if started == 0 then return false, "не хватает ингредиентов или рецепт не для ручного крафта" end
@@ -623,7 +643,10 @@ local function world_items(include_character)
   for _, ie in ipairs(S().find_entities_filtered { type = "item-entity" }) do
     if ie.stack and ie.stack.valid_for_read then add(ie.stack.name, ie.stack.count) end
   end
-  if include_character then add_inventories(C(), add) end
+  if include_character then
+    add_inventories(C(), add)
+    for n, k in pairs(storage.qheld or {}) do add(n, k) end
+  end
   return t
 end
 local function value(items)
@@ -675,7 +698,7 @@ remote.add_interface("neu_play", {
     for _, it in ipairs(START_ITEMS) do storage.c.insert { name = it[1], count = it[2] } end
     storage.prices = ps.generate_price_list()
     storage.log, storage.violations, storage.frozen = {}, {}, false
-    storage.hand, storage.prev_q = {}, {}
+    storage.hand, storage.prev_q, storage.qheld = {}, {}, {}
     storage.start_items = world_items(true)
     return json { ok = true, x = pos.x, y = pos.y }
   end,
@@ -711,11 +734,14 @@ remote.add_interface("neu_play", {
     storage.queue, storage.cur = {}, nil
     c.walking_state = { walking = false }
     c.mining_state = { mining = false }
+    local inv0 = inv_table(c.get_main_inventory())
     local q = c.crafting_queue
     while q and #q > 0 do
       c.cancel_crafting { index = #q, count = q[#q].count }
       q = c.crafting_queue
     end
+    for name, k in pairs(inv_delta(inv0, inv_table(c.get_main_inventory()))) do qheld_add(name, -k) end   -- возвращено из очереди
+    if next(storage.qheld or {}) then violation("после отмены очереди крафта осталось удержанным: " .. serpent.line(storage.qheld)) end
     storage.prev_q = qsig()
     storage.frozen = true
     storage.freeze_stats = stat_counts()
