@@ -1347,6 +1347,9 @@ def main():
                         return hashlib.sha256(json.dumps(x, sort_keys=True).encode()).hexdigest()[:16] if x is not None else None
                     h1, h2 = h(r1_), h(r2_)
                     R.add(c, 'R10', 'mend: two fresh runs give byte-identical results (sha256)', h1 is not None and h1 == h2, h2, h1)
+            tw = out.get('magnetics-combat-tw.json')
+            if isinstance(tw, dict):
+                json.dump(tw, open(os.path.join(a.out, f'tw_results_{c}.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
             exp = out.get('magnetics-static-export.json')
             if isinstance(exp, dict) and W is not None:
                 guard(c, 'S4', t_s4_doc, R, c, exp, W, WO, doc, api)
