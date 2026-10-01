@@ -4,8 +4,11 @@ local L = {}
 L.results = {}
 -- крючки событий урона и смерти: ячейки добавляют function(e) при загрузке модуля; состояние — в storage
 L.on_damaged, L.on_died = {}, {}
-function L.check(group, name, ok, got, expected, note)
-  L.results[#L.results + 1] = { group = group, name = name, pass = ok and true or false, got = got, expected = expected, note = note }
+-- kind: "mod" (по умолчанию) — проверка мода; "harness" — самопроверка стенда (провал тоже валит прогон);
+-- "info" — справочная запись без проверки (в счёт прошло/не прошло не входит)
+function L.check(group, name, ok, got, expected, note, kind)
+  L.results[#L.results + 1] = { group = group, name = name, pass = ok and true or false, got = got, expected = expected, note = note,
+                                kind = kind or "mod" }
 end
 function L.near(got, exp, rel, abs)
   if type(got) ~= "number" or type(exp) ~= "number" then return got == exp end
