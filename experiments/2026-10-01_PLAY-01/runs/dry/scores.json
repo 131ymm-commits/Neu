@@ -1,0 +1,546 @@
+{
+ "bot_s9101": {
+  "queue_empty": true,
+  "s_auto": 1665.9535589952939,
+  "s_auto_lua": 1665.9535589952939,
+  "s_prime": 1665.9535589952939,
+  "s_prime_lua": 1665.9535589952939,
+  "stripped": {},
+  "stock_gain": 1665.9535589952939,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "0a7c2da0",
+  "totals": {
+   "ok": true,
+   "tick": 82811,
+   "researched": 1,
+   "stats": {
+    "item_in": {
+     "coal": 197,
+     "stone": 60,
+     "iron-ore": 710,
+     "iron-plate": 710
+    },
+    "item_out": {
+     "stone-furnace": 6,
+     "coal": 161,
+     "stone": 60,
+     "iron-ore": 710,
+     "iron-plate": 54,
+     "iron-gear-wheel": 18
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 12,
+   "violations": {},
+   "world_items": {
+    "stone-furnace": 7,
+    "coal": 36,
+    "iron-plate": 664,
+    "burner-mining-drill": 7,
+    "wood": 1
+   }
+  },
+  "deltas": {
+   "item": {
+    "coal": {
+     "produced": 0,
+     "consumed": 73,
+     "price": 3
+    },
+    "iron-ore": {
+     "produced": 333,
+     "consumed": 333,
+     "price": 3.1
+    },
+    "iron-plate": {
+     "produced": 335,
+     "consumed": 0,
+     "price": 5.626727041776997
+    }
+   },
+   "fluid": {}
+  }
+ },
+ "rand_s9101": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "0bf57300",
+  "totals": {
+   "ok": true,
+   "tick": 82811,
+   "researched": 0,
+   "stats": {
+    "item_in": {
+     "coal": 5,
+     "stone": 46,
+     "iron-ore": 30
+    },
+    "item_out": {
+     "stone": 25,
+     "iron-plate": 8,
+     "iron-gear-wheel": 2
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 1,
+   "violations": {},
+   "world_items": {
+    "stone-furnace": 6,
+    "transport-belt": 4,
+    "burner-mining-drill": 1,
+    "wood": 1,
+    "coal": 5,
+    "stone": 21,
+    "iron-ore": 30,
+    "iron-gear-wheel": 1
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ },
+ "idle_s9101": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "423c7f10",
+  "totals": {
+   "ok": true,
+   "tick": 82811,
+   "researched": 0,
+   "stats": {
+    "item_in": {},
+    "item_out": {},
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 0,
+   "violations": {},
+   "world_items": {
+    "burner-mining-drill": 1,
+    "stone-furnace": 1,
+    "wood": 1,
+    "iron-plate": 8
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ },
+ "cheat_s9101": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "a8a89bc0",
+  "totals": {
+   "ok": true,
+   "tick": 82811,
+   "researched": 0,
+   "stats": {
+    "item_in": {},
+    "item_out": {
+     "iron-plate": 8
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 0,
+   "violations": {},
+   "world_items": {
+    "burner-mining-drill": 1,
+    "stone-furnace": 1,
+    "wood": 1,
+    "iron-gear-wheel": 4
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ },
+ "bot_s9102": {
+  "queue_empty": true,
+  "s_auto": 184.18890054574888,
+  "s_auto_lua": 184.18890054574888,
+  "s_prime": 184.18890054574888,
+  "s_prime_lua": 184.18890054574888,
+  "stripped": {},
+  "stock_gain": 184.188900545749,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "97a9c0e0",
+  "totals": {
+   "ok": true,
+   "tick": 82815,
+   "researched": 1,
+   "stats": {
+    "item_in": {
+     "coal": 42,
+     "stone": 21,
+     "iron-ore": 113,
+     "iron-plate": 113
+    },
+    "item_out": {
+     "coal": 26,
+     "stone": 20,
+     "iron-ore": 113
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 2,
+   "violations": {},
+   "world_items": {
+    "stone-furnace": 5,
+    "coal": 16,
+    "iron-plate": 121,
+    "burner-mining-drill": 1,
+    "wood": 1,
+    "stone": 1
+   }
+  },
+  "deltas": {
+   "item": {
+    "coal": {
+     "produced": 0,
+     "consumed": 8,
+     "price": 3
+    },
+    "iron-ore": {
+     "produced": 36,
+     "consumed": 36,
+     "price": 3.1
+    },
+    "iron-plate": {
+     "produced": 37,
+     "consumed": 0,
+     "price": 5.626727041776997
+    }
+   },
+   "fluid": {}
+  }
+ },
+ "rand_s9102": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "14485f88",
+  "totals": {
+   "ok": true,
+   "tick": 82815,
+   "researched": 0,
+   "stats": {
+    "item_in": {
+     "iron-ore": 86
+    },
+    "item_out": {
+     "iron-plate": 8
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 0,
+   "violations": {},
+   "world_items": {
+    "iron-chest": 1,
+    "burner-mining-drill": 1,
+    "stone-furnace": 1,
+    "wood": 1,
+    "iron-ore": 86
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ },
+ "idle_s9102": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "f3408470",
+  "totals": {
+   "ok": true,
+   "tick": 82815,
+   "researched": 0,
+   "stats": {
+    "item_in": {},
+    "item_out": {},
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 0,
+   "violations": {},
+   "world_items": {
+    "burner-mining-drill": 1,
+    "stone-furnace": 1,
+    "wood": 1,
+    "iron-plate": 8
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ },
+ "cheat_s9102": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "eb40acf0",
+  "totals": {
+   "ok": true,
+   "tick": 82815,
+   "researched": 0,
+   "stats": {
+    "item_in": {},
+    "item_out": {
+     "iron-plate": 8
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 0,
+   "violations": {},
+   "world_items": {
+    "burner-mining-drill": 1,
+    "stone-furnace": 1,
+    "wood": 1,
+    "iron-gear-wheel": 4
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ },
+ "bot_s9103": {
+  "queue_empty": true,
+  "s_auto": 1110.3868573580473,
+  "s_auto_lua": 1110.3868573580473,
+  "s_prime": 1110.3868573580473,
+  "s_prime_lua": 1110.3868573580473,
+  "stripped": {},
+  "stock_gain": 1110.3868573580469,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "13051418",
+  "totals": {
+   "ok": true,
+   "tick": 82813,
+   "researched": 1,
+   "stats": {
+    "item_in": {
+     "coal": 114,
+     "stone": 40,
+     "iron-ore": 385,
+     "iron-plate": 385
+    },
+    "item_out": {
+     "stone-furnace": 4,
+     "coal": 88,
+     "stone": 40,
+     "iron-ore": 385,
+     "iron-plate": 36,
+     "iron-gear-wheel": 12
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 6,
+   "violations": {},
+   "world_items": {
+    "stone-furnace": 5,
+    "coal": 26,
+    "iron-plate": 357,
+    "burner-mining-drill": 5,
+    "wood": 1
+   }
+  },
+  "deltas": {
+   "item": {
+    "coal": {
+     "produced": 0,
+     "consumed": 50,
+     "price": 3
+    },
+    "iron-ore": {
+     "produced": 221,
+     "consumed": 221,
+     "price": 3.1
+    },
+    "iron-plate": {
+     "produced": 224,
+     "consumed": 0,
+     "price": 5.626727041776997
+    }
+   },
+   "fluid": {}
+  }
+ },
+ "rand_s9103": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "bf3f24c0",
+  "totals": {
+   "ok": true,
+   "tick": 82813,
+   "researched": 0,
+   "stats": {
+    "item_in": {},
+    "item_out": {
+     "iron-plate": 8,
+     "iron-gear-wheel": 2
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 2,
+   "violations": {},
+   "world_items": {
+    "burner-inserter": 2,
+    "burner-mining-drill": 1,
+    "stone-furnace": 1,
+    "wood": 1,
+    "iron-gear-wheel": 1
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ },
+ "idle_s9103": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "097a34e8",
+  "totals": {
+   "ok": true,
+   "tick": 82813,
+   "researched": 0,
+   "stats": {
+    "item_in": {},
+    "item_out": {},
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 0,
+   "violations": {},
+   "world_items": {
+    "burner-mining-drill": 1,
+    "stone-furnace": 1,
+    "wood": 1,
+    "iron-plate": 8
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ },
+ "cheat_s9103": {
+  "queue_empty": true,
+  "s_auto": 0.0,
+  "s_auto_lua": 0,
+  "s_prime": 0.0,
+  "s_prime_lua": 0,
+  "stripped": {},
+  "stock_gain": 0.0,
+  "balance": {},
+  "balance_strip": {},
+  "violations": 0,
+  "state_hash": "3360c778",
+  "totals": {
+   "ok": true,
+   "tick": 82813,
+   "researched": 0,
+   "stats": {
+    "item_in": {},
+    "item_out": {
+     "iron-plate": 8
+    },
+    "fluid_in": {},
+    "fluid_out": {}
+   },
+   "entities": 0,
+   "violations": {},
+   "world_items": {
+    "burner-mining-drill": 1,
+    "stone-furnace": 1,
+    "wood": 1,
+    "iron-gear-wheel": 4
+   }
+  },
+  "deltas": {
+   "item": {},
+   "fluid": {}
+  }
+ }
+}

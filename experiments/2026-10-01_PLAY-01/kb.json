@@ -1,0 +1,1114 @@
+{
+ "recipes": [
+  {
+   "name": "wooden-chest",
+   "ingredients": [
+    [
+     "wood",
+     2
+    ]
+   ],
+   "products": [
+    [
+     "wooden-chest",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": true,
+   "hand": true
+  },
+  {
+   "name": "iron-chest",
+   "ingredients": [
+    [
+     "iron-plate",
+     8
+    ]
+   ],
+   "products": [
+    [
+     "iron-chest",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": true,
+   "hand": true
+  },
+  {
+   "name": "stone-furnace",
+   "ingredients": [
+    [
+     "stone",
+     5
+    ]
+   ],
+   "products": [
+    [
+     "stone-furnace",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": true,
+   "hand": true
+  },
+  {
+   "name": "burner-mining-drill",
+   "ingredients": [
+    [
+     "iron-plate",
+     3
+    ],
+    [
+     "iron-gear-wheel",
+     3
+    ],
+    [
+     "stone-furnace",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "burner-mining-drill",
+     1
+    ]
+   ],
+   "seconds": 2,
+   "category": "crafting",
+   "enabled_at_start": true,
+   "hand": true
+  },
+  {
+   "name": "iron-gear-wheel",
+   "ingredients": [
+    [
+     "iron-plate",
+     2
+    ]
+   ],
+   "products": [
+    [
+     "iron-gear-wheel",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": true,
+   "hand": true
+  },
+  {
+   "name": "iron-stick",
+   "ingredients": [
+    [
+     "iron-plate",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "iron-stick",
+     2
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "railway",
+   "hand": true
+  },
+  {
+   "name": "copper-cable",
+   "ingredients": [
+    [
+     "copper-plate",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "copper-cable",
+     2
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "electronics",
+   "hand": true
+  },
+  {
+   "name": "electronic-circuit",
+   "ingredients": [
+    [
+     "iron-plate",
+     1
+    ],
+    [
+     "copper-cable",
+     3
+    ]
+   ],
+   "products": [
+    [
+     "electronic-circuit",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "electronics",
+   "hand": true
+  },
+  {
+   "name": "transport-belt",
+   "ingredients": [
+    [
+     "iron-plate",
+     1
+    ],
+    [
+     "iron-gear-wheel",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "transport-belt",
+     2
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": true,
+   "hand": true
+  },
+  {
+   "name": "underground-belt",
+   "ingredients": [
+    [
+     "iron-plate",
+     10
+    ],
+    [
+     "transport-belt",
+     5
+    ]
+   ],
+   "products": [
+    [
+     "underground-belt",
+     2
+    ]
+   ],
+   "seconds": 1,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "logistics",
+   "hand": true
+  },
+  {
+   "name": "splitter",
+   "ingredients": [
+    [
+     "iron-plate",
+     5
+    ],
+    [
+     "electronic-circuit",
+     5
+    ],
+    [
+     "transport-belt",
+     4
+    ]
+   ],
+   "products": [
+    [
+     "splitter",
+     1
+    ]
+   ],
+   "seconds": 1,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "logistics",
+   "hand": true
+  },
+  {
+   "name": "burner-inserter",
+   "ingredients": [
+    [
+     "iron-plate",
+     1
+    ],
+    [
+     "iron-gear-wheel",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "burner-inserter",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": true,
+   "hand": true
+  },
+  {
+   "name": "inserter",
+   "ingredients": [
+    [
+     "iron-plate",
+     1
+    ],
+    [
+     "iron-gear-wheel",
+     1
+    ],
+    [
+     "electronic-circuit",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "inserter",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "electronics",
+   "hand": true
+  },
+  {
+   "name": "long-handed-inserter",
+   "ingredients": [
+    [
+     "iron-plate",
+     1
+    ],
+    [
+     "iron-gear-wheel",
+     1
+    ],
+    [
+     "inserter",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "long-handed-inserter",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "automation",
+   "hand": true
+  },
+  {
+   "name": "pipe",
+   "ingredients": [
+    [
+     "iron-plate",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "pipe",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "steam-power",
+   "hand": true
+  },
+  {
+   "name": "pipe-to-ground",
+   "ingredients": [
+    [
+     "iron-plate",
+     5
+    ],
+    [
+     "pipe",
+     10
+    ]
+   ],
+   "products": [
+    [
+     "pipe-to-ground",
+     2
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "steam-power",
+   "hand": true
+  },
+  {
+   "name": "offshore-pump",
+   "ingredients": [
+    [
+     "iron-gear-wheel",
+     2
+    ],
+    [
+     "pipe",
+     3
+    ]
+   ],
+   "products": [
+    [
+     "offshore-pump",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "steam-power",
+   "hand": true
+  },
+  {
+   "name": "boiler",
+   "ingredients": [
+    [
+     "pipe",
+     4
+    ],
+    [
+     "stone-furnace",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "boiler",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "steam-power",
+   "hand": true
+  },
+  {
+   "name": "steam-engine",
+   "ingredients": [
+    [
+     "iron-plate",
+     10
+    ],
+    [
+     "iron-gear-wheel",
+     8
+    ],
+    [
+     "pipe",
+     5
+    ]
+   ],
+   "products": [
+    [
+     "steam-engine",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "steam-power",
+   "hand": true
+  },
+  {
+   "name": "small-electric-pole",
+   "ingredients": [
+    [
+     "wood",
+     1
+    ],
+    [
+     "copper-cable",
+     2
+    ]
+   ],
+   "products": [
+    [
+     "small-electric-pole",
+     2
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "electronics",
+   "hand": true
+  },
+  {
+   "name": "electric-mining-drill",
+   "ingredients": [
+    [
+     "iron-plate",
+     10
+    ],
+    [
+     "iron-gear-wheel",
+     5
+    ],
+    [
+     "electronic-circuit",
+     3
+    ]
+   ],
+   "products": [
+    [
+     "electric-mining-drill",
+     1
+    ]
+   ],
+   "seconds": 2,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "electric-mining-drill",
+   "hand": true
+  },
+  {
+   "name": "lab",
+   "ingredients": [
+    [
+     "iron-gear-wheel",
+     10
+    ],
+    [
+     "electronic-circuit",
+     10
+    ],
+    [
+     "transport-belt",
+     4
+    ]
+   ],
+   "products": [
+    [
+     "lab",
+     1
+    ]
+   ],
+   "seconds": 2,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "electronics",
+   "hand": true
+  },
+  {
+   "name": "automation-science-pack",
+   "ingredients": [
+    [
+     "copper-plate",
+     1
+    ],
+    [
+     "iron-gear-wheel",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "automation-science-pack",
+     1
+    ]
+   ],
+   "seconds": 5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "automation-science-pack",
+   "hand": true
+  },
+  {
+   "name": "logistic-science-pack",
+   "ingredients": [
+    [
+     "transport-belt",
+     1
+    ],
+    [
+     "inserter",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "logistic-science-pack",
+     1
+    ]
+   ],
+   "seconds": 6,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "logistic-science-pack",
+   "hand": true
+  },
+  {
+   "name": "assembling-machine-1",
+   "ingredients": [
+    [
+     "iron-plate",
+     9
+    ],
+    [
+     "iron-gear-wheel",
+     5
+    ],
+    [
+     "electronic-circuit",
+     3
+    ]
+   ],
+   "products": [
+    [
+     "assembling-machine-1",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "automation",
+   "hand": true
+  },
+  {
+   "name": "assembling-machine-2",
+   "ingredients": [
+    [
+     "steel-plate",
+     2
+    ],
+    [
+     "iron-gear-wheel",
+     5
+    ],
+    [
+     "electronic-circuit",
+     3
+    ],
+    [
+     "assembling-machine-1",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "assembling-machine-2",
+     1
+    ]
+   ],
+   "seconds": 0.5,
+   "category": "crafting",
+   "enabled_at_start": false,
+   "unlocked_by": "automation-2",
+   "hand": true
+  },
+  {
+   "name": "stone-brick",
+   "ingredients": [
+    [
+     "stone",
+     2
+    ]
+   ],
+   "products": [
+    [
+     "stone-brick",
+     1
+    ]
+   ],
+   "seconds": 3.2,
+   "category": "smelting",
+   "enabled_at_start": true,
+   "hand": false
+  },
+  {
+   "name": "steel-plate",
+   "ingredients": [
+    [
+     "iron-plate",
+     5
+    ]
+   ],
+   "products": [
+    [
+     "steel-plate",
+     1
+    ]
+   ],
+   "seconds": 16,
+   "category": "smelting",
+   "enabled_at_start": false,
+   "unlocked_by": "steel-processing",
+   "hand": false
+  },
+  {
+   "name": "iron-plate",
+   "ingredients": [
+    [
+     "iron-ore",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "iron-plate",
+     1
+    ]
+   ],
+   "seconds": 3.2,
+   "category": "smelting",
+   "enabled_at_start": true,
+   "hand": false
+  },
+  {
+   "name": "copper-plate",
+   "ingredients": [
+    [
+     "copper-ore",
+     1
+    ]
+   ],
+   "products": [
+    [
+     "copper-plate",
+     1
+    ]
+   ],
+   "seconds": 3.2,
+   "category": "smelting",
+   "enabled_at_start": true,
+   "hand": false
+  },
+  {
+   "name": "firearm-magazine",
+   "ingredients": [
+    [
+     "iron-plate",
+     4
+    ]
+   ],
+   "products": [
+    [
+     "firearm-magazine",
+     1
+    ]
+   ],
+   "seconds": 1,
+   "category": "crafting",
+   "enabled_at_start": true,
+   "hand": true
+  }
+ ],
+ "entities": [
+  {
+   "item": "wooden-chest",
+   "entity": "wooden-chest",
+   "type": "container",
+   "size": "1x1"
+  },
+  {
+   "item": "iron-chest",
+   "entity": "iron-chest",
+   "type": "container",
+   "size": "1x1"
+  },
+  {
+   "item": "stone-furnace",
+   "entity": "stone-furnace",
+   "type": "furnace",
+   "size": "2x2",
+   "crafting_speed": 1,
+   "energy_kw": 90,
+   "fuel": "burner"
+  },
+  {
+   "item": "burner-mining-drill",
+   "entity": "burner-mining-drill",
+   "type": "mining-drill",
+   "size": "2x2",
+   "mining_speed": 0.25,
+   "energy_kw": 150,
+   "fuel": "burner",
+   "mining_area": "1.98x1.98"
+  },
+  {
+   "item": "transport-belt",
+   "entity": "transport-belt",
+   "type": "transport-belt",
+   "size": "1x1",
+   "belt_items_per_s": 15
+  },
+  {
+   "item": "underground-belt",
+   "entity": "underground-belt",
+   "type": "underground-belt",
+   "size": "1x1",
+   "belt_items_per_s": 15
+  },
+  {
+   "item": "splitter",
+   "entity": "splitter",
+   "type": "splitter",
+   "size": "2x1",
+   "belt_items_per_s": 15
+  },
+  {
+   "item": "burner-inserter",
+   "entity": "burner-inserter",
+   "type": "inserter",
+   "size": "1x1",
+   "energy_kw": 144,
+   "fuel": "burner",
+   "rotation_turns_per_s": 0.7799999999999999
+  },
+  {
+   "item": "inserter",
+   "entity": "inserter",
+   "type": "inserter",
+   "size": "1x1",
+   "energy_kw": 14.700000000000001,
+   "fuel": "electric",
+   "rotation_turns_per_s": 0.8400000000000001
+  },
+  {
+   "item": "long-handed-inserter",
+   "entity": "long-handed-inserter",
+   "type": "inserter",
+   "size": "1x1",
+   "energy_kw": 21,
+   "fuel": "electric",
+   "rotation_turns_per_s": 1.2
+  },
+  {
+   "item": "pipe",
+   "entity": "pipe",
+   "type": "pipe",
+   "size": "1x1"
+  },
+  {
+   "item": "pipe-to-ground",
+   "entity": "pipe-to-ground",
+   "type": "pipe-to-ground",
+   "size": "1x1"
+  },
+  {
+   "item": "offshore-pump",
+   "entity": "offshore-pump",
+   "type": "offshore-pump",
+   "size": "1x1",
+   "energy_kw": 60,
+   "pump_per_s": 1200
+  },
+  {
+   "item": "boiler",
+   "entity": "boiler",
+   "type": "boiler",
+   "size": "3x2",
+   "energy_kw": 1800,
+   "fuel": "burner"
+  },
+  {
+   "item": "steam-engine",
+   "entity": "steam-engine",
+   "type": "generator",
+   "size": "3x5",
+   "fuel": "electric",
+   "max_output_kw": 900
+  },
+  {
+   "item": "small-electric-pole",
+   "entity": "small-electric-pole",
+   "type": "electric-pole",
+   "size": "1x1",
+   "supply_area": "5x5",
+   "wire_reach": 7.5
+  },
+  {
+   "item": "electric-mining-drill",
+   "entity": "electric-mining-drill",
+   "type": "mining-drill",
+   "size": "3x3",
+   "mining_speed": 0.5,
+   "energy_kw": 90,
+   "fuel": "electric",
+   "mining_area": "4.98x4.98"
+  },
+  {
+   "item": "lab",
+   "entity": "lab",
+   "type": "lab",
+   "size": "3x3",
+   "energy_kw": 60,
+   "fuel": "electric"
+  },
+  {
+   "item": "assembling-machine-1",
+   "entity": "assembling-machine-1",
+   "type": "assembling-machine",
+   "size": "3x3",
+   "crafting_speed": 0.5,
+   "energy_kw": 75,
+   "fuel": "electric"
+  },
+  {
+   "item": "assembling-machine-2",
+   "entity": "assembling-machine-2",
+   "type": "assembling-machine",
+   "size": "3x3",
+   "crafting_speed": 0.75,
+   "energy_kw": 150,
+   "fuel": "electric"
+  }
+ ],
+ "fuels": [
+  [
+   "wood",
+   2
+  ],
+  [
+   "coal",
+   4
+  ],
+  [
+   "solid-fuel",
+   12
+  ]
+ ],
+ "techs": [
+  {
+   "name": "steam-power",
+   "prerequisites": {},
+   "unlocks": [
+    "pipe",
+    "pipe-to-ground",
+    "offshore-pump",
+    "boiler",
+    "steam-engine"
+   ],
+   "trigger": "craft-item iron-plate x50"
+  },
+  {
+   "name": "electronics",
+   "prerequisites": {},
+   "unlocks": [
+    "copper-cable",
+    "electronic-circuit",
+    "lab",
+    "inserter",
+    "small-electric-pole"
+   ],
+   "trigger": "craft-item copper-plate x10"
+  },
+  {
+   "name": "automation-science-pack",
+   "prerequisites": [
+    "steam-power",
+    "electronics"
+   ],
+   "unlocks": [
+    "automation-science-pack"
+   ],
+   "trigger": "craft-item lab x1"
+  },
+  {
+   "name": "automation",
+   "prerequisites": [
+    "automation-science-pack"
+   ],
+   "unlocks": [
+    "assembling-machine-1",
+    "long-handed-inserter"
+   ],
+   "unit_seconds": 10,
+   "packs": [
+    "automation-science-pack"
+   ],
+   "units": 10
+  },
+  {
+   "name": "logistics",
+   "prerequisites": [
+    "automation-science-pack"
+   ],
+   "unlocks": [
+    "underground-belt",
+    "splitter"
+   ],
+   "unit_seconds": 15,
+   "packs": [
+    "automation-science-pack"
+   ],
+   "units": 20
+  },
+  {
+   "name": "logistic-science-pack",
+   "prerequisites": [
+    "automation-science-pack"
+   ],
+   "unlocks": [
+    "logistic-science-pack"
+   ],
+   "unit_seconds": 5,
+   "packs": [
+    "automation-science-pack"
+   ],
+   "units": 75
+  },
+  {
+   "name": "steel-processing",
+   "prerequisites": [
+    "automation-science-pack"
+   ],
+   "unlocks": [
+    "steel-plate",
+    "steel-chest"
+   ],
+   "unit_seconds": 5,
+   "packs": [
+    "automation-science-pack"
+   ],
+   "units": 50
+  },
+  {
+   "name": "electric-energy-distribution-1",
+   "prerequisites": [
+    "steel-processing",
+    "logistic-science-pack"
+   ],
+   "unlocks": [
+    "medium-electric-pole",
+    "big-electric-pole",
+    "iron-stick"
+   ],
+   "unit_seconds": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack"
+   ],
+   "units": 120
+  },
+  {
+   "name": "automation-2",
+   "prerequisites": [
+    "automation",
+    "steel-processing",
+    "logistic-science-pack"
+   ],
+   "unlocks": [
+    "assembling-machine-2"
+   ],
+   "unit_seconds": 15,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack"
+   ],
+   "units": 40
+  },
+  {
+   "name": "logistics-2",
+   "prerequisites": [
+    "logistics",
+    "logistic-science-pack"
+   ],
+   "unlocks": [
+    "fast-transport-belt",
+    "fast-underground-belt",
+    "fast-splitter"
+   ],
+   "unit_seconds": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack"
+   ],
+   "units": 200
+  },
+  {
+   "name": "fast-inserter",
+   "prerequisites": [
+    "automation-science-pack"
+   ],
+   "unlocks": [
+    "fast-inserter"
+   ],
+   "unit_seconds": 15,
+   "packs": [
+    "automation-science-pack"
+   ],
+   "units": 30
+  },
+  {
+   "name": "railway",
+   "prerequisites": [
+    "logistics-2",
+    "engine"
+   ],
+   "unlocks": [
+    "rail",
+    "locomotive",
+    "cargo-wagon",
+    "iron-stick"
+   ],
+   "unit_seconds": 30,
+   "packs": [
+    "automation-science-pack",
+    "logistic-science-pack"
+   ],
+   "units": 75
+  },
+  {
+   "name": "electric-mining-drill",
+   "prerequisites": [
+    "automation-science-pack"
+   ],
+   "unlocks": [
+    "electric-mining-drill"
+   ],
+   "unit_seconds": 10,
+   "packs": [
+    "automation-science-pack"
+   ],
+   "units": 25
+  }
+ ],
+ "character": {
+  "running_speed": 0.15,
+  "mining_speed": 0.5,
+  "build_distance": 10,
+  "reach_distance": 10,
+  "resource_reach": 2.7,
+  "inventory_slots": 80
+ },
+ "resource_mining_time": {
+  "iron-ore": 1,
+  "coal": 1,
+  "stone": 1,
+  "copper-ore": 1
+ }
+}

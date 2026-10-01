@@ -1,0 +1,9 @@
+{
+ "tamper": "пойман: сейв подменён: sha не совпадает с журналом",
+ "balance": {
+  "iron-plate": 50
+ },
+ "replay_hash": "6ff2a0e0",
+ "live_hash": "347abbd8",
+ "replay_caught": true
+}

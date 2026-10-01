@@ -124,7 +124,7 @@ class Server:
         try: self.p.wait(30)
         except Exception: self.p.kill()
 
-PORTS = iter(range(27100, 28000))
+PORTS = iter(range(27100, 28000))   # процессу-работнику пула задаётся свой диапазон (tourney.py)
 LIST_FIELDS = ('crafting_queue', 'entities', 'resources_within_48', 'resources_far', 'last_actions', 'obstacles_near')
 
 def norm_obs(o):
@@ -162,6 +162,17 @@ def create_initial(seed, out_save, work, setup=None):
     finally:
         srv.stop()
     return h, out
+
+def observe_save(save_in, sha_in, work):
+    """Наблюдение на сейве без хода игры (первое наблюдение партии)."""
+    if sha(save_in) != sha_in: raise RuntimeError('сейв подменён: sha не совпадает с журналом')
+    srv = Server(work, save_in, next(PORTS)).start()
+    try:
+        obs = norm_obs(json.loads(srv.r.call('observe')))
+        h = srv.r.call('hash')
+    finally:
+        srv.stop()
+    return obs, h
 
 def round_unit(save_in, sha_in, actions, ticks, save_out, work, observe_after=True):
     """Единица работы совета 24: загрузить сейв раунда (хеш сверяется) → подать действия → прогнать тики → закончить
@@ -238,28 +249,3 @@ def score_game(save_in, sha_in, ticks, work):
             'stripped': b['stripped'], 'stock_gain': stock_value(a['snap1']['world'], a['prices']) - stock_value(a['snap0']['world'], a['prices']),
             'balance': balance(a['snap0'], a['snap1']), 'balance_strip': balance(b['snap0'], b['snap1']),
             'violations': a['snap1']['violations'], 'state_hash': a['state_hash'], 'totals': a['totals'], 'deltas': a['lua']['deltas']}
-
-def freeze_window(save_in, sha_in, ticks, save_out, work):
-    """Окно W: персонаж заморожен (очередь крафта отменена, ходьба и добыча сброшены), игра идёт ticks тиков.
-    S_auto считается в Python по снимкам и сверяется с подсчётом мода; S′ = S_auto − max(0, V(запасы при заморозке) − V(в конце))."""
-    if sha(save_in) != sha_in: raise RuntimeError('сейв подменён: sha не совпадает с журналом')
-    srv = Server(work, save_in, next(PORTS)).start()
-    try:
-        fr = json.loads(srv.r.call('freeze'))
-        prices = json.loads(srv.r.call('prices'))
-        w0 = json.loads(srv.r.call('stock'))
-        snap0 = json.loads(srv.r.call('snapshot'))
-        srv.run_ticks(ticks)
-        snap1 = json.loads(srv.r.call('snapshot'))
-        w1 = json.loads(srv.r.call('stock'))
-        lua = json.loads(srv.r.call('score'))
-        tot = json.loads(srv.r.call('totals'))
-        h = srv.r.call('hash')
-        sha_out = srv.save_as(save_out)
-    finally:
-        srv.stop()
-    sa = s_auto(snap0, snap1, prices)
-    v0, v1 = stock_value(w0, prices), stock_value(w1, prices)
-    return {'queue_empty': fr['queue_empty'], 's_auto': sa, 's_auto_lua': lua['s_auto'], 'stock_freeze': v0, 'stock_end': v1,
-            's_prime': sa - max(0.0, v0 - v1), 'balance': balance(snap0, snap1), 'violations': snap1['violations'],
-            'state_hash': h, 'sha': sha_out, 'totals': tot, 'deltas': lua['deltas']}

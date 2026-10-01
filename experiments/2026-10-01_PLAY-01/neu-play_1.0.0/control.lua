@@ -11,6 +11,8 @@ local ps = require("production-score")
 local MAX_ACTIONS = 40
 local STUCK_TICKS = 30          -- «застрял»: за 30 тиков сдвиг меньше STUCK_DIST (выбор совета, не замер)
 local STUCK_DIST = 0.05
+local NO_PROGRESS_TICKS = 60    -- «застрял» и так: 60 тиков лучшее расстояние до цели не сократилось на 0,05 (скольжение вдоль преграды;
+                                -- сухой прогон 01.10.2026: персонаж скользил вдоль своих построек 10 000 тиков, правило 30 тиков не срабатывало)
 local ARRIVE = 0.3              -- клетки: персонаж дошёл
 local MINE_IDLE = 600           -- тиков без нового предмета при добыче — прекратить
 local START_ITEMS = { { "iron-plate", 8 }, { "wood", 1 }, { "burner-mining-drill", 1 }, { "stone-furnace", 1 } }
@@ -293,6 +295,11 @@ function D.walk_tick(a, st)
     if v > bv then bv, best = v, w[1] end
   end
   c.walking_state = { walking = true, direction = best }
+  if not st.best or d < st.best - STUCK_DIST then st.best, st.since = d, 0 else st.since = st.since + 1 end
+  if st.since > NO_PROGRESS_TICKS then
+    c.walking_state = { walking = false }
+    return "fail", string.format("застрял в (%.1f, %.1f): нет продвижения к цели", p.x, p.y)
+  end
   st.hist = st.hist or {}
   st.hist[#st.hist + 1] = { p.x, p.y }
   if #st.hist > STUCK_TICKS then
