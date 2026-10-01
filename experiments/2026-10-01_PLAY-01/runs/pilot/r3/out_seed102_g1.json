@@ -1,0 +1,1146 @@
+{
+ "stage": "pilot",
+ "round": 3,
+ "seed": 102,
+ "group": 1,
+ "retries": 0,
+ "out": {
+  "C": {
+   "roles": [
+    {
+     "actions": [
+      {
+       "a": "take",
+       "item": "coal",
+       "x": -39.5,
+       "y": 53.5
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -42,
+       "y": 44
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -44,
+       "y": 44
+      },
+      {
+       "a": "craft",
+       "recipe": "burner-mining-drill",
+       "n": 3
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -46,
+       "y": 46,
+       "dir": "north"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 8,
+       "x": -46,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "iron-ore",
+       "n": 2,
+       "x": -46,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 3,
+       "x": -46,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -42,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -44,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -42,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -44,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -41,
+       "y": 54
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -38,
+       "y": 53
+      },
+      {
+       "a": "walk",
+       "x": -39.5,
+       "y": 48
+      },
+      {
+       "a": "walk",
+       "x": -40,
+       "y": 41
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -41,
+       "y": 35
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -41,
+       "y": 37
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 3,
+       "x": -41,
+       "y": 35
+      },
+      {
+       "a": "walk",
+       "x": -40.5,
+       "y": 49.5
+      },
+      {
+       "a": "mine",
+       "x": -40.5,
+       "y": 50.5,
+       "n": 10
+      },
+      {
+       "a": "take",
+       "item": "coal",
+       "x": -39.5,
+       "y": 53.5
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -40,
+       "y": 52,
+       "dir": "south"
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -39,
+       "y": 55,
+       "dir": "north"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -40,
+       "y": 52
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -39,
+       "y": 55
+      },
+      {
+       "a": "walk",
+       "x": -56.5,
+       "y": 71.8
+      },
+      {
+       "a": "take",
+       "item": "stone",
+       "x": -56.5,
+       "y": 75.5
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -57,
+       "y": 74
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -55,
+       "y": 75,
+       "dir": "west"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -55,
+       "y": 75
+      },
+      {
+       "a": "craft",
+       "recipe": "burner-mining-drill",
+       "n": 2
+      },
+      {
+       "a": "mine",
+       "x": -56.5,
+       "y": 72.5,
+       "n": 5
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -58,
+       "y": 76,
+       "dir": "east"
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -56,
+       "y": 77,
+       "dir": "north"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -58,
+       "y": 76
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -56,
+       "y": 77
+      },
+      {
+       "a": "walk",
+       "x": -40.5,
+       "y": 49.5
+      },
+      {
+       "a": "craft",
+       "recipe": "stone-furnace",
+       "n": 3
+      },
+      {
+       "a": "mine",
+       "x": -40.5,
+       "y": 50.5,
+       "n": 70
+      }
+     ],
+     "predict": {
+      "inventory": {
+       "coal": 78,
+       "stone": 4,
+       "stone-furnace": 3,
+       "iron-plate": 3,
+       "wood": 1
+      },
+      "buildings": 18
+     },
+     "note": "R3: +бур(-46,46)N к печи(-46,44); уголь C(-40,52)S, D(-39,55)N в K(-39.5,53.5); камень: 4 бура вокруг сундука (-56.5,75.5). Стоянка H2(-40.5,49.5): достаёт K, A-D и пары -42/-44/-46; уголь руками на (-40.5,50.5). К буру1: H2->(-40,41) и назад по прямой (x>-40.7). Топлива у всех примерно на 1 раунд. R4: забрать пластины (~175), уголь из K (~170), камень (~160); строить пары бур S (X,39)->печь (X,41), X=-43,-45,-47, затем второй угольный хаб. Заправлять крупно (бур 15+, печь 8+): лимит 40 действий."
+    },
+    {
+     "actions": [
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -46,
+       "y": 46,
+       "dir": "north"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -46,
+       "y": 46
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -42,
+       "y": 44
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -44,
+       "y": 44
+      },
+      {
+       "a": "take",
+       "item": "coal",
+       "x": -39.5,
+       "y": 53.5
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -42,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -44,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 2,
+       "x": -46,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -42,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -44,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -41,
+       "y": 54
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -38,
+       "y": 53
+      },
+      {
+       "a": "craft",
+       "recipe": "burner-mining-drill",
+       "n": 3
+      },
+      {
+       "a": "mine",
+       "x": -42.5,
+       "y": 51.5,
+       "n": 6
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -40,
+       "y": 52,
+       "dir": "south"
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -39,
+       "y": 55,
+       "dir": "north"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -40,
+       "y": 52
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -39,
+       "y": 55
+      },
+      {
+       "a": "walk",
+       "x": -39.5,
+       "y": 48
+      },
+      {
+       "a": "walk",
+       "x": -40,
+       "y": 41
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -41,
+       "y": 35
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -41,
+       "y": 35
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -41,
+       "y": 37
+      },
+      {
+       "a": "walk",
+       "x": -39.5,
+       "y": 48
+      },
+      {
+       "a": "take",
+       "item": "coal",
+       "x": -39.5,
+       "y": 53.5
+      },
+      {
+       "a": "walk",
+       "x": -56.5,
+       "y": 71.8
+      },
+      {
+       "a": "take",
+       "item": "stone",
+       "x": -56.5,
+       "y": 75.5
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -57,
+       "y": 74
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -55,
+       "y": 75,
+       "dir": "west"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -55,
+       "y": 75
+      },
+      {
+       "a": "craft",
+       "recipe": "burner-mining-drill",
+       "n": 2
+      },
+      {
+       "a": "mine",
+       "x": -56.5,
+       "y": 72.5,
+       "n": 5
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -58,
+       "y": 76,
+       "dir": "east"
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -56,
+       "y": 77,
+       "dir": "north"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -58,
+       "y": 76
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -56,
+       "y": 77
+      },
+      {
+       "a": "walk",
+       "x": -42.5,
+       "y": 49.5
+      },
+      {
+       "a": "mine",
+       "x": -42.5,
+       "y": 51.5,
+       "n": 70
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -42,
+       "y": 44
+      },
+      {
+       "a": "craft",
+       "recipe": "burner-mining-drill",
+       "n": 3
+      }
+     ],
+     "predict": {
+      "inventory": {
+       "coal": 73,
+       "iron-plate": 21,
+       "stone": 3,
+       "burner-mining-drill": 2,
+       "wood": 1,
+       "iron-ore": 2
+      },
+      "buildings": 18
+     },
+     "note": "R3: 4-я пара бур(-46,46)N->печь(-46,44). Хаб K(-39.5,53.5)<-4 угольных бура A(-41,54)E,B(-38,53)W,C(-40,52)S,D(-39,55)N, ~1 уголь/с. Камень: сундук(-56.5,75.5)<-4 бура (-57,74)S,(-55,75)W,(-58,76)E,(-56,77)N; у них по 6 угля, к концу R3 кончится, в R4 дозаправить. Узкое место дальше - уголь: паре на весь остаток игры ~50 угля (бур 0,0375/с, печь ~0,018/с), нужны ещё угольные буры и второй сундук. R4: пластины из 5 печей, уголь из K, новые пары: бур S в (X,39), печь в (X,41), X=-43,-45,-47; путь от H на север через (-39.5,48). Финал: бур >=12 угля, печь >=6, выходы печей опустошить."
+    },
+    {
+     "actions": [
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -46,
+       "y": 46,
+       "dir": "north"
+      },
+      {
+       "a": "take",
+       "item": "coal",
+       "x": -39.5,
+       "y": 53.5
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 7,
+       "x": -46,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -42,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -44,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -42,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -44,
+       "y": 44
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -41,
+       "y": 54
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 4,
+       "x": -38,
+       "y": 53
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -42,
+       "y": 44
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -44,
+       "y": 44
+      },
+      {
+       "a": "craft",
+       "recipe": "burner-mining-drill",
+       "n": 3
+      },
+      {
+       "a": "walk",
+       "x": -39.5,
+       "y": 48
+      },
+      {
+       "a": "walk",
+       "x": -40,
+       "y": 41
+      },
+      {
+       "a": "take",
+       "item": "iron-plate",
+       "x": -41,
+       "y": 35
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -41,
+       "y": 37
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 3,
+       "x": -41,
+       "y": 35
+      },
+      {
+       "a": "walk",
+       "x": -39.5,
+       "y": 48
+      },
+      {
+       "a": "walk",
+       "x": -56.5,
+       "y": 71.8
+      },
+      {
+       "a": "mine",
+       "x": -56.5,
+       "y": 72.5,
+       "n": 4
+      },
+      {
+       "a": "take",
+       "item": "stone",
+       "x": -56.5,
+       "y": 75.5
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 6,
+       "x": -57,
+       "y": 74
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -55,
+       "y": 75,
+       "dir": "west"
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -58,
+       "y": 76,
+       "dir": "east"
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -56,
+       "y": 77,
+       "dir": "north"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -55,
+       "y": 75
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -58,
+       "y": 76
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -56,
+       "y": 77
+      },
+      {
+       "a": "craft",
+       "recipe": "burner-mining-drill",
+       "n": 2
+      },
+      {
+       "a": "craft",
+       "recipe": "stone-furnace",
+       "n": 1
+      },
+      {
+       "a": "walk",
+       "x": -42.5,
+       "y": 49.5
+      },
+      {
+       "a": "take",
+       "item": "coal",
+       "x": -39.5,
+       "y": 53.5
+      },
+      {
+       "a": "mine",
+       "x": -42.5,
+       "y": 50.5,
+       "n": 3
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -40,
+       "y": 52,
+       "dir": "south"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -40,
+       "y": 52
+      },
+      {
+       "a": "place",
+       "item": "burner-mining-drill",
+       "x": -48,
+       "y": 46,
+       "dir": "north"
+      },
+      {
+       "a": "place",
+       "item": "stone-furnace",
+       "x": -48,
+       "y": 44,
+       "dir": "north"
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 5,
+       "x": -48,
+       "y": 46
+      },
+      {
+       "a": "insert",
+       "item": "coal",
+       "n": 3,
+       "x": -48,
+       "y": 44
+      },
+      {
+       "a": "mine",
+       "x": -42.5,
+       "y": 50.5,
+       "n": 80
+      }
+     ],
+     "predict": {
+      "inventory": {
+       "coal": 80,
+       "stone": 11,
+       "iron-plate": 3,
+       "stone-furnace": 1,
+       "iron-ore": 2,
+       "wood": 1
+      },
+      "buildings": 19
+     },
+     "note": "R3: хаб камня — 4 бура вокруг сундука (-56.5,75.5), около 1 камня/с. В хаб угля добавлен C(-40,52)S, свободен D(-39,55)N. Новая пара (-48,46)N→(-48,44). Печь (-46,44) без дозаправки (2 угля) — заправить первой. Воды в наблюдении нет, поэтому электричество, лаборатории и сборщики недоступны; исследования не трогать, ставка на пары бур→печь. Узкое место — уголь: пара жжёт около 11 за раунд и ещё около 18 на финал. R4: снять пластины со всех печей и камень из хаба, скрафтить 5–7 пар (X=-50,-52 на y46/44 и ряд бур(X,39)S→печь(X,41)), бур D на уголь; заправлять по 8–10 угля."
+    }
+   ],
+   "final": {
+    "actions": [
+     {
+      "a": "take",
+      "item": "coal",
+      "x": -39.5,
+      "y": 53.5
+     },
+     {
+      "a": "take",
+      "item": "iron-plate",
+      "x": -42,
+      "y": 44
+     },
+     {
+      "a": "take",
+      "item": "iron-plate",
+      "x": -44,
+      "y": 44
+     },
+     {
+      "a": "craft",
+      "recipe": "burner-mining-drill",
+      "n": 3
+     },
+     {
+      "a": "place",
+      "item": "burner-mining-drill",
+      "x": -46,
+      "y": 46,
+      "dir": "north"
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 8,
+      "x": -46,
+      "y": 46
+     },
+     {
+      "a": "insert",
+      "item": "iron-ore",
+      "n": 2,
+      "x": -46,
+      "y": 44
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 3,
+      "x": -46,
+      "y": 44
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 5,
+      "x": -42,
+      "y": 46
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 5,
+      "x": -44,
+      "y": 46
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 4,
+      "x": -42,
+      "y": 44
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 4,
+      "x": -44,
+      "y": 44
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 4,
+      "x": -41,
+      "y": 54
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 4,
+      "x": -38,
+      "y": 53
+     },
+     {
+      "a": "walk",
+      "x": -39.5,
+      "y": 48
+     },
+     {
+      "a": "walk",
+      "x": -40,
+      "y": 41
+     },
+     {
+      "a": "take",
+      "item": "iron-plate",
+      "x": -41,
+      "y": 35
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 6,
+      "x": -41,
+      "y": 37
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 3,
+      "x": -41,
+      "y": 35
+     },
+     {
+      "a": "walk",
+      "x": -40.5,
+      "y": 49.5
+     },
+     {
+      "a": "mine",
+      "x": -40.5,
+      "y": 50.5,
+      "n": 10
+     },
+     {
+      "a": "take",
+      "item": "coal",
+      "x": -39.5,
+      "y": 53.5
+     },
+     {
+      "a": "place",
+      "item": "burner-mining-drill",
+      "x": -40,
+      "y": 52,
+      "dir": "south"
+     },
+     {
+      "a": "place",
+      "item": "burner-mining-drill",
+      "x": -39,
+      "y": 55,
+      "dir": "north"
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 6,
+      "x": -40,
+      "y": 52
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 6,
+      "x": -39,
+      "y": 55
+     },
+     {
+      "a": "walk",
+      "x": -56.5,
+      "y": 71.8
+     },
+     {
+      "a": "take",
+      "item": "stone",
+      "x": -56.5,
+      "y": 75.5
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 6,
+      "x": -57,
+      "y": 74
+     },
+     {
+      "a": "place",
+      "item": "burner-mining-drill",
+      "x": -55,
+      "y": 75,
+      "dir": "west"
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 6,
+      "x": -55,
+      "y": 75
+     },
+     {
+      "a": "craft",
+      "recipe": "burner-mining-drill",
+      "n": 2
+     },
+     {
+      "a": "mine",
+      "x": -56.5,
+      "y": 72.5,
+      "n": 5
+     },
+     {
+      "a": "place",
+      "item": "burner-mining-drill",
+      "x": -58,
+      "y": 76,
+      "dir": "east"
+     },
+     {
+      "a": "place",
+      "item": "burner-mining-drill",
+      "x": -56,
+      "y": 77,
+      "dir": "north"
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 6,
+      "x": -58,
+      "y": 76
+     },
+     {
+      "a": "insert",
+      "item": "coal",
+      "n": 6,
+      "x": -56,
+      "y": 77
+     },
+     {
+      "a": "walk",
+      "x": -40.5,
+      "y": 49.5
+     },
+     {
+      "a": "craft",
+      "recipe": "stone-furnace",
+      "n": 3
+     },
+     {
+      "a": "mine",
+      "x": -40.5,
+      "y": 50.5,
+      "n": 70
+     }
+    ],
+    "predict": {
+     "inventory": {
+      "coal": 80,
+      "stone": 4,
+      "stone-furnace": 3,
+      "iron-plate": 3,
+      "wood": 1
+     },
+     "buildings": 18
+    },
+    "note": "R3: пары железа бур(X,46)N→печь(X,44) X=-42,-44,-46 и бур1(-41,37)→печь(-41,35). Хаб угля K(-39.5,53.5)←A(-41,54)E,B(-38,53)W,C(-40,52)S,D(-39,55)N, ~1/с, к R4 ~150. Камень: сундук(-56.5,75.5)←4 бура. Стоянка H2(-40.5,49.5), уголь руками (-40.5,50.5); к буру1 через (-39.5,48)→(-40,41), назад прямо. Топлива у всех примерно до начала R4 — сперва заправить. R4: забрать K, пластины 4 печей, камень; новые пары X=-48,-50 (ряд 46/44) и ряд бур(X,50)N→печь(X,48) X=-46..-52 (не -44: там уголь); заправлять крупно (бур 12+, печь 7+): лимит 40 действий. Нужен 2-й угольный хаб. Финал: бур≥12, печь≥7."
+   }
+  },
+  "H": {
+   "final": {
+    "actions": [
+     {
+      "a": "walk",
+      "x": -38,
+      "y": 36
+     },
+     {
+      "a": "place",
+      "x": -40,
+      "y": 36,
+      "item": "burner-mining-drill",
+      "dir": "north"
+     },
+     {
+      "a": "insert",
+      "x": -40,
+      "y": 36,
+      "item": "coal",
+      "n": 2
+     },
+     {
+      "a": "insert",
+      "x": -40,
+      "y": 34,
+      "item": "coal",
+      "n": 1
+     },
+     {
+      "a": "walk",
+      "x": -40.5,
+      "y": 48.5
+     },
+     {
+      "a": "mine",
+      "x": -40.5,
+      "y": 48.5,
+      "n": 6
+     }
+    ],
+    "predict": {
+     "inventory": {
+      "coal": 7,
+      "iron-plate": 8,
+      "wood": 1
+     },
+     "buildings": 2
+    },
+    "note": "Бур теперь копает железо и кладёт перед печью. Топливо в обе машины. Следующие раунды: собирать железо-плиты, начинать электроэнергию. Проверить: попадает ли руда в печь, или нужен вставитель."
+   }
+  }
+ }
+}

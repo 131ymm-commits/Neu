@@ -782,9 +782,21 @@ remote.add_interface("neu_play", {
   hash = function() return state_hash() end,
   -- снимок для сверки баланса: Δмир = Δпроизведено − Δпотреблено + Δручной крафт, по каждому предмету, допуск 0
   snapshot = function()
+    track_crafting()   -- крафт, завершённый в обновлении этого тика, учесть сейчас, а не в следующем on_tick
     local st = stat_counts()
+    -- допуск сверки: бур может держать один цикл добычи в момент снимка (выгрузка и запись статистики — в разные моменты
+    -- цикла; трасса пилота, раунд 3): по продукту добычи |расхождение| ≤ числу буров, добывающих его
+    local tol = {}
+    for _, e in ipairs(S().find_entities_filtered { type = "mining-drill", force = "player" }) do
+      local t = e.mining_target
+      if t and t.valid then
+        for _, pr in ipairs(t.prototype.mineable_properties.products or {}) do
+          if pr.type == "item" then tol[pr.name] = (tol[pr.name] or 0) + (pr.amount or pr.amount_max or 1) end
+        end
+      end
+    end
     return json { tick = game.tick, world = world_items(true), item_in = st.item_in, item_out = st.item_out, hand = storage.hand,
-                  fluid_in = st.fluid_in, fluid_out = st.fluid_out, violations = #storage.violations }
+                  fluid_in = st.fluid_in, fluid_out = st.fluid_out, violations = #storage.violations, drill_tol = tol }
   end,
   -- прогнать n тиков с ускорением: игра на паузе крутит ticks_to_run тиков и снова встаёт
   run = function(n)

@@ -194,20 +194,27 @@ def round_unit(save_in, sha_in, actions, ticks, save_out, work, observe_after=Tr
     finally:
         srv.stop()
     return {'tick0': tick0, 'tick1': snap1['tick'], 'submit': sub, 'observe': obs, 'state_hash': h, 'sha': sha_out,
-            'balance': balance(snap0, snap1), 'violations': snap1['violations']}
+            'balance': balance(snap0, snap1), 'residuals': residuals(snap0, snap1), 'violations': snap1['violations']}
 
 def _d(a, b):
     return {k: b.get(k, 0) - a.get(k, 0) for k in set(a) | set(b) if b.get(k, 0) != a.get(k, 0)}
 
-def balance(s0, s1):
-    """Сверка с нулевым допуском: по каждому предмету Δмир = Δпроизведено − Δпотреблено + Δручной крафт.
-    Возвращает словарь расхождений (пустой — сверка прошла)."""
+def residuals(s0, s1):
+    """Δмир − (Δпроизведено − Δпотреблено + Δручной крафт) по каждому предмету (без допуска)."""
     dw, di, do, dh = _d(s0['world'], s1['world']), _d(s0['item_in'], s1['item_in']), _d(s0['item_out'], s1['item_out']), _d(s0['hand'], s1['hand'])
     out = {}
     for k in set(dw) | set(di) | set(do) | set(dh):
         r = dw.get(k, 0) - (di.get(k, 0) - do.get(k, 0) + dh.get(k, 0))
         if r != 0: out[k] = r
     return out
+
+def balance(s0, s1):
+    """Сверка: допуск 0 для всех предметов, кроме продуктов добычи буров: там |r| ≤ число буров, добывающих продукт,
+    в начальном снимке плюс в конечном (каждый бур может держать один цикл в момент снимка). Пустой словарь — прошла."""
+    tol = {}
+    for s in (s0, s1):
+        for k, v in (s.get('drill_tol') or {}).items(): tol[k] = tol.get(k, 0) + v
+    return {k: r for k, r in residuals(s0, s1).items() if abs(r) > tol.get(k, 0)}
 
 def s_auto(s0, s1, prices):
     """S_auto в Python (первичный счёт): Σ цена·(Δпроизведено − Δпотреблено) по предметам и жидкостям за окно."""
