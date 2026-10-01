@@ -1,0 +1,19 @@
+{
+ "date": "2026-10-01",
+ "note": "заморожено до первого пилота (решение совета 24): шаблоны промптов, схема, предел действий 40, заметка до 600 знаков; значения R, длины раунда и W подставляются",
+ "prompt_hashes": {
+  "common_template": "80887db47281adf2",
+  "solo": "41a6ed92ff42e2fc",
+  "b_steps": "f783e41f519ebd86",
+  "roles": "ff656f6fb06b0ea6",
+  "role_txt": "89cfecb1daa83ba4",
+  "callosum": "99a2b3db40553f54",
+  "schema": "bb51afcc02915b6f",
+  "max_actions": "d59eced1ded07f84",
+  "note_max": "284b7e6d788f363f",
+  "memory": "c2d6ee6e7c97502a",
+  "all": "c8c31a9ceedccf01"
+ },
+ "kb_json": "85bcccf4e9a9f600",
+ "mod_control_lua_at_freeze": "ef18c63384507538"
+}

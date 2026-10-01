@@ -180,7 +180,23 @@ function I.place(a)
   local dir = DIRS[a.dir or "north"]
   if not dir then return false, "направление: north/east/south/west" end
   if not S().can_place_entity { name = ent.name, position = pos, direction = dir, force = "player", build_check_type = defines.build_check_type.manual } then
-    return false, "место занято или непригодно"
+    -- причина отказа (для всех участников одинаково): что мешает в прямоугольнике постройки
+    local w, h = ent.tile_width, ent.tile_height
+    if dir == defines.direction.east or dir == defines.direction.west then w, h = h, w end
+    local box = { { pos.x - w / 2 + 0.05, pos.y - h / 2 + 0.05 }, { pos.x + w / 2 - 0.05, pos.y + h / 2 - 0.05 } }
+    local why = {}
+    for _, o in ipairs(S().find_entities_filtered { area = box }) do
+      if o.valid and o.type ~= "resource" and o ~= C() then why[#why + 1] = string.format("%s в (%.1f, %.1f)", o.name, o.position.x, o.position.y) end
+      if #why >= 3 then break end
+    end
+    if C().valid then
+      local cp = C().position
+      if cp.x > box[1][1] - 0.2 and cp.x < box[2][1] + 0.2 and cp.y > box[1][2] - 0.2 and cp.y < box[2][2] + 0.2 then why[#why + 1] = "персонаж стоит на месте постройки" end
+    end
+    if S().count_tiles_filtered { area = box, collision_mask = "water_tile" } > 0 then why[#why + 1] = "вода" end
+    if ent.type == "mining-drill" and S().count_entities_filtered { area = box, type = "resource" } == 0 then why[#why + 1] = "под буром нет руды" end
+    if ent.type == "offshore-pump" then why[#why + 1] = "насос ставится на край воды, dir — сторона воды" end
+    return false, "нельзя поставить: " .. (#why > 0 and table.concat(why, "; ") or "место непригодно")
   end
   local e = S().create_entity { name = ent.name, position = pos, direction = dir, force = "player", raise_built = true }
   if not e then return false, "не удалось поставить" end
@@ -592,6 +608,16 @@ local function world_items(include_character)
         end
       end
       if e.type == "inserter" and e.held_stack and e.held_stack.valid_for_read then add(e.held_stack.name, e.held_stack.count) end
+      -- бур, которому некуда выложить добытое (статус «ждёт места»), держит один цикл добычи во внутреннем буфере:
+      -- статистика его уже засчитала, инвентаря у буфера нет (дымовой прогон 01.10.2026: расхождение −1 руды)
+      if e.type == "mining-drill" and e.status == defines.entity_status.waiting_for_space_in_destination then
+        local t = e.mining_target
+        if t and t.valid and t.prototype.mineable_properties.products then
+          for _, pr in ipairs(t.prototype.mineable_properties.products) do
+            if pr.type == "item" then add(pr.name, pr.amount or pr.amount_min or 1) end
+          end
+        end
+      end
     end
   end
   for _, ie in ipairs(S().find_entities_filtered { type = "item-entity" }) do
