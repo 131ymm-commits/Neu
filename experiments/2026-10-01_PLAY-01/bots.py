@@ -44,8 +44,9 @@ def quad(X, Y):
     return [(X - 0.5, Y - 0.5), (X + 0.5, Y - 0.5), (X - 0.5, Y + 0.5), (X + 0.5, Y + 0.5)]
 
 
-def drill_spots(tiles, occ, near, k):
-    """До k мест (X, Y): под буром 4 клетки руды, место печи (X, Y − 2) свободно; ближе к near; без пересечений между собой."""
+def drill_spots(tiles, occ, near, k, need=3):
+    """До k мест (X, Y): под буром не меньше need из 4 клеток руды, место печи (X, Y − 2) и место стоянки (X, Y + 2,6)
+    свободны; ближе к near; без пересечений между собой."""
     cand = set()
     for (x, y) in tiles:
         for X in (x - 0.5, x + 0.5):
@@ -54,7 +55,8 @@ def drill_spots(tiles, occ, near, k):
     out, used = [], set(occ)
     for X, Y in sorted(cand, key=lambda p: (math.hypot(p[0] - near[0], p[1] - near[1]), p)):
         q, f = quad(X, Y), quad(X, Y - 2)
-        if all(t in tiles for t in q) and not any(t in used for t in q + f):
+        stand = [(X - 0.5, Y + 2.5), (X + 0.5, Y + 2.5)]
+        if sum(t in tiles for t in q) >= need and not any(t in used for t in q + f + stand):
             out.append((X, Y)); used.update(q + f)
             if len(out) >= k: break
     return out
@@ -116,26 +118,26 @@ def bot(obs, mem, rnd, R, ticks):
         if last: n = min(n, max(0, (ticks - 1500) // ORE_TICKS))      # в последнем раунде оставить время на заправку
         cx, cy = coal['nearest']['x'], coal['nearest']['y']
         if n > 0 and p.walk(cx, cy) and p.mine(cx, cy, n): inv['coal'] = inv.get('coal', 0) + n
-    # 2) к железу: новые пары
+    # 2) к железу: новые пары — к каждому месту подходить с юга (X, Y + 2,6), не вставая на место постройки
     if iron:
         ix, iy = iron['nearest']['x'], iron['nearest']['y']
         mem.setdefault('base', (ix, iy + 3))
         bx, by = mem['base']
-        p.walk(bx, by)
         npairs = min(inv.get('burner-mining-drill', 0), inv.get('stone-furnace', 0))
         if npairs and 'patch_near' in iron:
-            spots = drill_spots(ore_tiles(iron), occupied(obs), (bx, by), npairs)
-            for X, Y in spots:
-                if math.hypot(X - bx, Y - by) > 9 or math.hypot(X - bx, Y - 2 - by) > 9:
-                    continue
+            for X, Y in drill_spots(ore_tiles(iron), occupied(obs), (bx, by), npairs):
+                if not p.walk(X, Y + 2.6): break
                 p.add({'a': 'place', 'item': 'burner-mining-drill', 'x': X, 'y': Y, 'dir': 'north'})
                 p.add({'a': 'place', 'item': 'stone-furnace', 'x': X, 'y': Y - 2})
                 for (ex, ey) in ((X, Y), (X, Y - 2)):
                     burners.append({'name': '?', 'x': ex, 'y': ey, 'fuel': None})
-        # 3) обход пар: пластины и топливо
+                mem['base'] = (X, Y + 2.6)
+        # 3) обход пар: пластины и топливо (подходить к каждой паре, если дальше 8 клеток)
         per = 12 if last else 5
         for e in sorted(burners, key=lambda e: (e['x'], e['y'])):
-            if math.hypot(e['x'] - bx, e['y'] - by) > 9: continue
+            if math.hypot(e['x'] - p.pos[0], e['y'] - p.pos[1]) > 8:
+                ty = e['y'] + 2.6 if e.get('name') != 'stone-furnace' else e['y'] + 4.6
+                if not p.walk(e['x'], ty): break
             if e.get('name') == 'stone-furnace' and (e.get('output') or {}).get('iron-plate'):
                 p.add({'a': 'take', 'item': 'iron-plate', 'x': e['x'], 'y': e['y']})
                 inv['iron-plate'] = inv.get('iron-plate', 0) + e['output']['iron-plate']

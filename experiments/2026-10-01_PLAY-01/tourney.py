@@ -58,7 +58,7 @@ def init(stage, seeds, parts, R, rmin, wmin):
     for seed, sv, h, obs, sh in res:
         for p in parts:
             chains[key(p, seed)] = dict(part=p, seed=seed, round=0, save=sv, sha=h, init_save=sv, init_sha=h, state_hash=[sh],
-                                        obs=obs, mem=None, botmem={}, hist=[])
+                                        obs=obs, obs0=obs, mem=None, botmem={}, hist=[])
     save(stage, dict(cfg=cfg, chains=chains, decisions={}))
     print(f'{stage}: {len(seeds)} зёрен × {len(parts)} участников, R={R}, раунд {rmin} мин, W {wmin} мин')
 
@@ -184,10 +184,20 @@ def decide_bots(st, ck, c, k):
     raise KeyError(c['part'])
 
 
-def play(stage):
+def reset_parts(stage, parts):
+    """Цепочки участников-ботов — с нуля (исходный сейв): после исправления бота; головы не трогаются."""
+    st = load(stage)
+    for ck, c in st['chains'].items():
+        if c['part'] in parts and c['part'] not in HEADS:
+            c.update(round=0, save=c['init_save'], sha=c['init_sha'], state_hash=c['state_hash'][:1], obs=c.get('obs0', c['obs']), botmem={}, hist=[])
+    save(stage, st)
+
+
+def play(stage, only=None):
     st = load(stage); cfg = st['cfg']
     jobs, meta = [], {}
     for ck, c in st['chains'].items():
+        if only and c['part'] not in only: continue
         k = c['round'] + 1
         if k > cfg['R']: continue
         if c['part'] in HEADS:
@@ -320,7 +330,8 @@ if __name__ == '__main__':
     if a.cmd == 'init': init(a.stage, [int(x) for x in a.seeds.split(',')], a.parts.split(','), a.R, a.round, a.W)
     elif a.cmd == 'heads': heads(a.stage)
     elif a.cmd == 'ingest': ingest(a.stage, a.files)
-    elif a.cmd == 'play': play(a.stage)
+    elif a.cmd == 'play': play(a.stage, a.parts.split(',') if a.parts else None)
+    elif a.cmd == 'reset': reset_parts(a.stage, a.parts.split(','))
     elif a.cmd == 'score': score(a.stage)
     elif a.cmd == 'replay': replay(a.stage)
     elif a.cmd == 'status': status(a.stage)
