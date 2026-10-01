@@ -1,0 +1,9 @@
+{
+  "name": "neu-play",
+  "version": "1.0.0",
+  "title": "Neu PLAY-01 harness",
+  "author": "Claude (Neu)",
+  "factorio_version": "2.0",
+  "dependencies": ["base >= 2.0.0"],
+  "description": "Обвязка опыта PLAY-01: язык действий с проверкой законности, наблюдение, заморозка, счёт по ценам производства. Не для игры."
+}
