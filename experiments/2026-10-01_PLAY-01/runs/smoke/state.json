@@ -1,0 +1,1297 @@
+{
+ "cfg": {
+  "stage": "smoke",
+  "seeds": [
+   9201
+  ],
+  "parts": [
+   "A",
+   "B",
+   "C",
+   "H",
+   "D",
+   "bot"
+  ],
+  "R": 8,
+  "round_ticks": 10800,
+  "W_ticks": 18000,
+  "rmin": 3.0,
+  "wmin": 5.0,
+  "prompt_hashes": {
+   "common_template": "80887db47281adf2",
+   "solo": "41a6ed92ff42e2fc",
+   "b_steps": "f783e41f519ebd86",
+   "roles": "ff656f6fb06b0ea6",
+   "role_txt": "89cfecb1daa83ba4",
+   "callosum": "99a2b3db40553f54",
+   "schema": "bb51afcc02915b6f",
+   "max_actions": "d59eced1ded07f84",
+   "note_max": "284b7e6d788f363f",
+   "memory": "c2d6ee6e7c97502a",
+   "all": "c8c31a9ceedccf01"
+  }
+ },
+ "chains": {
+  "A_s9201": {
+   "part": "A",
+   "seed": 9201,
+   "round": 0,
+   "save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "init_save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "init_sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "state_hash": [
+    "2c4a73a8"
+   ],
+   "obs": {
+    "tick": 4,
+    "minutes": 0,
+    "character": {
+     "x": 0,
+     "y": 0,
+     "build_distance": 10,
+     "reach_distance": 10,
+     "resource_reach_distance": 2.7
+    },
+    "inventory": {
+     "burner-mining-drill": 1,
+     "stone-furnace": 1,
+     "wood": 1,
+     "iron-plate": 8
+    },
+    "crafting_queue": [],
+    "research": {
+     "researched": [],
+     "available": [
+      {
+       "name": "electronics",
+       "trigger": "craft-item copper-plate x10"
+      },
+      {
+       "name": "steam-power",
+       "trigger": "craft-item iron-plate x50"
+      }
+     ]
+    },
+    "entities": [],
+    "entities_total": 0,
+    "resources_within_48": [
+     {
+      "name": "coal",
+      "nearest": {
+       "x": -0.5,
+       "y": -25.5
+      },
+      "distance": 25.5,
+      "tiles": 294,
+      "amount": 291320,
+      "patch_near": [
+       [
+        -35.5,
+        -0.5,
+        -0.5
+       ],
+       [
+        -34.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -33.5,
+        -6.5,
+        5.5
+       ],
+       [
+        -32.5,
+        -7.5,
+        6.5
+       ],
+       [
+        -31.5,
+        -8.5,
+        7.5
+       ],
+       [
+        -30.5,
+        -8.5,
+        6.5
+       ],
+       [
+        -29.5,
+        -8.5,
+        5.5
+       ],
+       [
+        -28.5,
+        -7.5,
+        5.5
+       ],
+       [
+        -27.5,
+        -6.5,
+        4.5
+       ],
+       [
+        -26.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -25.5,
+        -2.5,
+        2.5
+       ]
+      ]
+     },
+     {
+      "name": "iron-ore",
+      "nearest": {
+       "x": 11.5,
+       "y": -16.5
+      },
+      "distance": 20.1,
+      "tiles": 577,
+      "amount": 414371,
+      "patch_near": [
+       [
+        -26.5,
+        11.5,
+        11.5
+       ],
+       [
+        -25.5,
+        7.5,
+        15.5
+       ],
+       [
+        -24.5,
+        5.5,
+        17.5
+       ],
+       [
+        -23.5,
+        4.5,
+        18.5
+       ],
+       [
+        -22.5,
+        3.5,
+        19.5
+       ],
+       [
+        -21.5,
+        4.5,
+        19.5
+       ],
+       [
+        -20.5,
+        6.5,
+        20.5
+       ],
+       [
+        -19.5,
+        10.5,
+        20.5
+       ],
+       [
+        -18.5,
+        11.5,
+        20.5
+       ],
+       [
+        -17.5,
+        11.5,
+        18.5
+       ],
+       [
+        -16.5,
+        11.5,
+        14.5
+       ]
+      ]
+     }
+    ],
+    "resources_far": [
+     {
+      "name": "copper-ore",
+      "nearest": {
+       "x": 18.5,
+       "y": -58.5
+      },
+      "distance": 61
+     },
+     {
+      "name": "stone",
+      "nearest": {
+       "x": -41.5,
+       "y": -96.5
+      },
+      "distance": 105
+     }
+    ],
+    "obstacles_near": [],
+    "obstacles_within_12": 0,
+    "water_nearest": {
+     "x": -11.5,
+     "y": 42.5,
+     "distance": 44
+    },
+    "last_actions": []
+   },
+   "mem": null,
+   "botmem": {},
+   "hist": []
+  },
+  "B_s9201": {
+   "part": "B",
+   "seed": 9201,
+   "round": 0,
+   "save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "init_save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "init_sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "state_hash": [
+    "2c4a73a8"
+   ],
+   "obs": {
+    "tick": 4,
+    "minutes": 0,
+    "character": {
+     "x": 0,
+     "y": 0,
+     "build_distance": 10,
+     "reach_distance": 10,
+     "resource_reach_distance": 2.7
+    },
+    "inventory": {
+     "burner-mining-drill": 1,
+     "stone-furnace": 1,
+     "wood": 1,
+     "iron-plate": 8
+    },
+    "crafting_queue": [],
+    "research": {
+     "researched": [],
+     "available": [
+      {
+       "name": "electronics",
+       "trigger": "craft-item copper-plate x10"
+      },
+      {
+       "name": "steam-power",
+       "trigger": "craft-item iron-plate x50"
+      }
+     ]
+    },
+    "entities": [],
+    "entities_total": 0,
+    "resources_within_48": [
+     {
+      "name": "coal",
+      "nearest": {
+       "x": -0.5,
+       "y": -25.5
+      },
+      "distance": 25.5,
+      "tiles": 294,
+      "amount": 291320,
+      "patch_near": [
+       [
+        -35.5,
+        -0.5,
+        -0.5
+       ],
+       [
+        -34.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -33.5,
+        -6.5,
+        5.5
+       ],
+       [
+        -32.5,
+        -7.5,
+        6.5
+       ],
+       [
+        -31.5,
+        -8.5,
+        7.5
+       ],
+       [
+        -30.5,
+        -8.5,
+        6.5
+       ],
+       [
+        -29.5,
+        -8.5,
+        5.5
+       ],
+       [
+        -28.5,
+        -7.5,
+        5.5
+       ],
+       [
+        -27.5,
+        -6.5,
+        4.5
+       ],
+       [
+        -26.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -25.5,
+        -2.5,
+        2.5
+       ]
+      ]
+     },
+     {
+      "name": "iron-ore",
+      "nearest": {
+       "x": 11.5,
+       "y": -16.5
+      },
+      "distance": 20.1,
+      "tiles": 577,
+      "amount": 414371,
+      "patch_near": [
+       [
+        -26.5,
+        11.5,
+        11.5
+       ],
+       [
+        -25.5,
+        7.5,
+        15.5
+       ],
+       [
+        -24.5,
+        5.5,
+        17.5
+       ],
+       [
+        -23.5,
+        4.5,
+        18.5
+       ],
+       [
+        -22.5,
+        3.5,
+        19.5
+       ],
+       [
+        -21.5,
+        4.5,
+        19.5
+       ],
+       [
+        -20.5,
+        6.5,
+        20.5
+       ],
+       [
+        -19.5,
+        10.5,
+        20.5
+       ],
+       [
+        -18.5,
+        11.5,
+        20.5
+       ],
+       [
+        -17.5,
+        11.5,
+        18.5
+       ],
+       [
+        -16.5,
+        11.5,
+        14.5
+       ]
+      ]
+     }
+    ],
+    "resources_far": [
+     {
+      "name": "copper-ore",
+      "nearest": {
+       "x": 18.5,
+       "y": -58.5
+      },
+      "distance": 61
+     },
+     {
+      "name": "stone",
+      "nearest": {
+       "x": -41.5,
+       "y": -96.5
+      },
+      "distance": 105
+     }
+    ],
+    "obstacles_near": [],
+    "obstacles_within_12": 0,
+    "water_nearest": {
+     "x": -11.5,
+     "y": 42.5,
+     "distance": 44
+    },
+    "last_actions": []
+   },
+   "mem": null,
+   "botmem": {},
+   "hist": []
+  },
+  "C_s9201": {
+   "part": "C",
+   "seed": 9201,
+   "round": 0,
+   "save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "init_save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "init_sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "state_hash": [
+    "2c4a73a8"
+   ],
+   "obs": {
+    "tick": 4,
+    "minutes": 0,
+    "character": {
+     "x": 0,
+     "y": 0,
+     "build_distance": 10,
+     "reach_distance": 10,
+     "resource_reach_distance": 2.7
+    },
+    "inventory": {
+     "burner-mining-drill": 1,
+     "stone-furnace": 1,
+     "wood": 1,
+     "iron-plate": 8
+    },
+    "crafting_queue": [],
+    "research": {
+     "researched": [],
+     "available": [
+      {
+       "name": "electronics",
+       "trigger": "craft-item copper-plate x10"
+      },
+      {
+       "name": "steam-power",
+       "trigger": "craft-item iron-plate x50"
+      }
+     ]
+    },
+    "entities": [],
+    "entities_total": 0,
+    "resources_within_48": [
+     {
+      "name": "coal",
+      "nearest": {
+       "x": -0.5,
+       "y": -25.5
+      },
+      "distance": 25.5,
+      "tiles": 294,
+      "amount": 291320,
+      "patch_near": [
+       [
+        -35.5,
+        -0.5,
+        -0.5
+       ],
+       [
+        -34.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -33.5,
+        -6.5,
+        5.5
+       ],
+       [
+        -32.5,
+        -7.5,
+        6.5
+       ],
+       [
+        -31.5,
+        -8.5,
+        7.5
+       ],
+       [
+        -30.5,
+        -8.5,
+        6.5
+       ],
+       [
+        -29.5,
+        -8.5,
+        5.5
+       ],
+       [
+        -28.5,
+        -7.5,
+        5.5
+       ],
+       [
+        -27.5,
+        -6.5,
+        4.5
+       ],
+       [
+        -26.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -25.5,
+        -2.5,
+        2.5
+       ]
+      ]
+     },
+     {
+      "name": "iron-ore",
+      "nearest": {
+       "x": 11.5,
+       "y": -16.5
+      },
+      "distance": 20.1,
+      "tiles": 577,
+      "amount": 414371,
+      "patch_near": [
+       [
+        -26.5,
+        11.5,
+        11.5
+       ],
+       [
+        -25.5,
+        7.5,
+        15.5
+       ],
+       [
+        -24.5,
+        5.5,
+        17.5
+       ],
+       [
+        -23.5,
+        4.5,
+        18.5
+       ],
+       [
+        -22.5,
+        3.5,
+        19.5
+       ],
+       [
+        -21.5,
+        4.5,
+        19.5
+       ],
+       [
+        -20.5,
+        6.5,
+        20.5
+       ],
+       [
+        -19.5,
+        10.5,
+        20.5
+       ],
+       [
+        -18.5,
+        11.5,
+        20.5
+       ],
+       [
+        -17.5,
+        11.5,
+        18.5
+       ],
+       [
+        -16.5,
+        11.5,
+        14.5
+       ]
+      ]
+     }
+    ],
+    "resources_far": [
+     {
+      "name": "copper-ore",
+      "nearest": {
+       "x": 18.5,
+       "y": -58.5
+      },
+      "distance": 61
+     },
+     {
+      "name": "stone",
+      "nearest": {
+       "x": -41.5,
+       "y": -96.5
+      },
+      "distance": 105
+     }
+    ],
+    "obstacles_near": [],
+    "obstacles_within_12": 0,
+    "water_nearest": {
+     "x": -11.5,
+     "y": 42.5,
+     "distance": 44
+    },
+    "last_actions": []
+   },
+   "mem": null,
+   "botmem": {},
+   "hist": []
+  },
+  "H_s9201": {
+   "part": "H",
+   "seed": 9201,
+   "round": 0,
+   "save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "init_save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "init_sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "state_hash": [
+    "2c4a73a8"
+   ],
+   "obs": {
+    "tick": 4,
+    "minutes": 0,
+    "character": {
+     "x": 0,
+     "y": 0,
+     "build_distance": 10,
+     "reach_distance": 10,
+     "resource_reach_distance": 2.7
+    },
+    "inventory": {
+     "burner-mining-drill": 1,
+     "stone-furnace": 1,
+     "wood": 1,
+     "iron-plate": 8
+    },
+    "crafting_queue": [],
+    "research": {
+     "researched": [],
+     "available": [
+      {
+       "name": "electronics",
+       "trigger": "craft-item copper-plate x10"
+      },
+      {
+       "name": "steam-power",
+       "trigger": "craft-item iron-plate x50"
+      }
+     ]
+    },
+    "entities": [],
+    "entities_total": 0,
+    "resources_within_48": [
+     {
+      "name": "coal",
+      "nearest": {
+       "x": -0.5,
+       "y": -25.5
+      },
+      "distance": 25.5,
+      "tiles": 294,
+      "amount": 291320,
+      "patch_near": [
+       [
+        -35.5,
+        -0.5,
+        -0.5
+       ],
+       [
+        -34.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -33.5,
+        -6.5,
+        5.5
+       ],
+       [
+        -32.5,
+        -7.5,
+        6.5
+       ],
+       [
+        -31.5,
+        -8.5,
+        7.5
+       ],
+       [
+        -30.5,
+        -8.5,
+        6.5
+       ],
+       [
+        -29.5,
+        -8.5,
+        5.5
+       ],
+       [
+        -28.5,
+        -7.5,
+        5.5
+       ],
+       [
+        -27.5,
+        -6.5,
+        4.5
+       ],
+       [
+        -26.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -25.5,
+        -2.5,
+        2.5
+       ]
+      ]
+     },
+     {
+      "name": "iron-ore",
+      "nearest": {
+       "x": 11.5,
+       "y": -16.5
+      },
+      "distance": 20.1,
+      "tiles": 577,
+      "amount": 414371,
+      "patch_near": [
+       [
+        -26.5,
+        11.5,
+        11.5
+       ],
+       [
+        -25.5,
+        7.5,
+        15.5
+       ],
+       [
+        -24.5,
+        5.5,
+        17.5
+       ],
+       [
+        -23.5,
+        4.5,
+        18.5
+       ],
+       [
+        -22.5,
+        3.5,
+        19.5
+       ],
+       [
+        -21.5,
+        4.5,
+        19.5
+       ],
+       [
+        -20.5,
+        6.5,
+        20.5
+       ],
+       [
+        -19.5,
+        10.5,
+        20.5
+       ],
+       [
+        -18.5,
+        11.5,
+        20.5
+       ],
+       [
+        -17.5,
+        11.5,
+        18.5
+       ],
+       [
+        -16.5,
+        11.5,
+        14.5
+       ]
+      ]
+     }
+    ],
+    "resources_far": [
+     {
+      "name": "copper-ore",
+      "nearest": {
+       "x": 18.5,
+       "y": -58.5
+      },
+      "distance": 61
+     },
+     {
+      "name": "stone",
+      "nearest": {
+       "x": -41.5,
+       "y": -96.5
+      },
+      "distance": 105
+     }
+    ],
+    "obstacles_near": [],
+    "obstacles_within_12": 0,
+    "water_nearest": {
+     "x": -11.5,
+     "y": 42.5,
+     "distance": 44
+    },
+    "last_actions": []
+   },
+   "mem": null,
+   "botmem": {},
+   "hist": []
+  },
+  "D_s9201": {
+   "part": "D",
+   "seed": 9201,
+   "round": 0,
+   "save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "init_save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "init_sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "state_hash": [
+    "2c4a73a8"
+   ],
+   "obs": {
+    "tick": 4,
+    "minutes": 0,
+    "character": {
+     "x": 0,
+     "y": 0,
+     "build_distance": 10,
+     "reach_distance": 10,
+     "resource_reach_distance": 2.7
+    },
+    "inventory": {
+     "burner-mining-drill": 1,
+     "stone-furnace": 1,
+     "wood": 1,
+     "iron-plate": 8
+    },
+    "crafting_queue": [],
+    "research": {
+     "researched": [],
+     "available": [
+      {
+       "name": "electronics",
+       "trigger": "craft-item copper-plate x10"
+      },
+      {
+       "name": "steam-power",
+       "trigger": "craft-item iron-plate x50"
+      }
+     ]
+    },
+    "entities": [],
+    "entities_total": 0,
+    "resources_within_48": [
+     {
+      "name": "coal",
+      "nearest": {
+       "x": -0.5,
+       "y": -25.5
+      },
+      "distance": 25.5,
+      "tiles": 294,
+      "amount": 291320,
+      "patch_near": [
+       [
+        -35.5,
+        -0.5,
+        -0.5
+       ],
+       [
+        -34.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -33.5,
+        -6.5,
+        5.5
+       ],
+       [
+        -32.5,
+        -7.5,
+        6.5
+       ],
+       [
+        -31.5,
+        -8.5,
+        7.5
+       ],
+       [
+        -30.5,
+        -8.5,
+        6.5
+       ],
+       [
+        -29.5,
+        -8.5,
+        5.5
+       ],
+       [
+        -28.5,
+        -7.5,
+        5.5
+       ],
+       [
+        -27.5,
+        -6.5,
+        4.5
+       ],
+       [
+        -26.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -25.5,
+        -2.5,
+        2.5
+       ]
+      ]
+     },
+     {
+      "name": "iron-ore",
+      "nearest": {
+       "x": 11.5,
+       "y": -16.5
+      },
+      "distance": 20.1,
+      "tiles": 577,
+      "amount": 414371,
+      "patch_near": [
+       [
+        -26.5,
+        11.5,
+        11.5
+       ],
+       [
+        -25.5,
+        7.5,
+        15.5
+       ],
+       [
+        -24.5,
+        5.5,
+        17.5
+       ],
+       [
+        -23.5,
+        4.5,
+        18.5
+       ],
+       [
+        -22.5,
+        3.5,
+        19.5
+       ],
+       [
+        -21.5,
+        4.5,
+        19.5
+       ],
+       [
+        -20.5,
+        6.5,
+        20.5
+       ],
+       [
+        -19.5,
+        10.5,
+        20.5
+       ],
+       [
+        -18.5,
+        11.5,
+        20.5
+       ],
+       [
+        -17.5,
+        11.5,
+        18.5
+       ],
+       [
+        -16.5,
+        11.5,
+        14.5
+       ]
+      ]
+     }
+    ],
+    "resources_far": [
+     {
+      "name": "copper-ore",
+      "nearest": {
+       "x": 18.5,
+       "y": -58.5
+      },
+      "distance": 61
+     },
+     {
+      "name": "stone",
+      "nearest": {
+       "x": -41.5,
+       "y": -96.5
+      },
+      "distance": 105
+     }
+    ],
+    "obstacles_near": [],
+    "obstacles_within_12": 0,
+    "water_nearest": {
+     "x": -11.5,
+     "y": 42.5,
+     "distance": 44
+    },
+    "last_actions": []
+   },
+   "mem": null,
+   "botmem": {},
+   "hist": []
+  },
+  "bot_s9201": {
+   "part": "bot",
+   "seed": 9201,
+   "round": 0,
+   "save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "init_save": "/home/user/Neu/experiments/2026-10-01_PLAY-01/runs/smoke/saves/init_s9201.zip",
+   "init_sha": "3f12f7fff8195c537454880cce5e9a40c94c2c79632f33b4c1e79ad7f7989fa6",
+   "state_hash": [
+    "2c4a73a8"
+   ],
+   "obs": {
+    "tick": 4,
+    "minutes": 0,
+    "character": {
+     "x": 0,
+     "y": 0,
+     "build_distance": 10,
+     "reach_distance": 10,
+     "resource_reach_distance": 2.7
+    },
+    "inventory": {
+     "burner-mining-drill": 1,
+     "stone-furnace": 1,
+     "wood": 1,
+     "iron-plate": 8
+    },
+    "crafting_queue": [],
+    "research": {
+     "researched": [],
+     "available": [
+      {
+       "name": "electronics",
+       "trigger": "craft-item copper-plate x10"
+      },
+      {
+       "name": "steam-power",
+       "trigger": "craft-item iron-plate x50"
+      }
+     ]
+    },
+    "entities": [],
+    "entities_total": 0,
+    "resources_within_48": [
+     {
+      "name": "coal",
+      "nearest": {
+       "x": -0.5,
+       "y": -25.5
+      },
+      "distance": 25.5,
+      "tiles": 294,
+      "amount": 291320,
+      "patch_near": [
+       [
+        -35.5,
+        -0.5,
+        -0.5
+       ],
+       [
+        -34.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -33.5,
+        -6.5,
+        5.5
+       ],
+       [
+        -32.5,
+        -7.5,
+        6.5
+       ],
+       [
+        -31.5,
+        -8.5,
+        7.5
+       ],
+       [
+        -30.5,
+        -8.5,
+        6.5
+       ],
+       [
+        -29.5,
+        -8.5,
+        5.5
+       ],
+       [
+        -28.5,
+        -7.5,
+        5.5
+       ],
+       [
+        -27.5,
+        -6.5,
+        4.5
+       ],
+       [
+        -26.5,
+        -4.5,
+        3.5
+       ],
+       [
+        -25.5,
+        -2.5,
+        2.5
+       ]
+      ]
+     },
+     {
+      "name": "iron-ore",
+      "nearest": {
+       "x": 11.5,
+       "y": -16.5
+      },
+      "distance": 20.1,
+      "tiles": 577,
+      "amount": 414371,
+      "patch_near": [
+       [
+        -26.5,
+        11.5,
+        11.5
+       ],
+       [
+        -25.5,
+        7.5,
+        15.5
+       ],
+       [
+        -24.5,
+        5.5,
+        17.5
+       ],
+       [
+        -23.5,
+        4.5,
+        18.5
+       ],
+       [
+        -22.5,
+        3.5,
+        19.5
+       ],
+       [
+        -21.5,
+        4.5,
+        19.5
+       ],
+       [
+        -20.5,
+        6.5,
+        20.5
+       ],
+       [
+        -19.5,
+        10.5,
+        20.5
+       ],
+       [
+        -18.5,
+        11.5,
+        20.5
+       ],
+       [
+        -17.5,
+        11.5,
+        18.5
+       ],
+       [
+        -16.5,
+        11.5,
+        14.5
+       ]
+      ]
+     }
+    ],
+    "resources_far": [
+     {
+      "name": "copper-ore",
+      "nearest": {
+       "x": 18.5,
+       "y": -58.5
+      },
+      "distance": 61
+     },
+     {
+      "name": "stone",
+      "nearest": {
+       "x": -41.5,
+       "y": -96.5
+      },
+      "distance": 105
+     }
+    ],
+    "obstacles_near": [],
+    "obstacles_within_12": 0,
+    "water_nearest": {
+     "x": -11.5,
+     "y": 42.5,
+     "distance": 44
+    },
+    "last_actions": []
+   },
+   "mem": null,
+   "botmem": {},
+   "hist": []
+  }
+ },
+ "decisions": {}
+}

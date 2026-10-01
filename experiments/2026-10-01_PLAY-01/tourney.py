@@ -11,9 +11,10 @@ import argparse, json, multiprocessing as mp, os, random, shutil, sys, time
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import game, bots, prompts as P
 
-HEADS = ('A', 'B', 'C', 'H', 'D')
+HEADS = ('A', 'A2', 'B', 'C', 'H', 'D')     # A2 — повтор A (пилот: разброс двух повторов одной конфигурации)
 D_MODELS = ('sonnet', 'opus', 'haiku')       # роли D: логистика, добыча и энергия, исследования; тело — opus
 WORKERS = 4
+GROUPS = (('B', 'A', 'A2'), ('C', 'H'), ('D',))   # головы зерна делятся на workflow: пул агентов — 2 на workflow (4 ядра)
 
 
 def rd(stage, *a):
@@ -73,14 +74,15 @@ def heads(stage):
     common = P.common(cfg['R'], P._num(cfg['rmin']), P._num(cfg['wmin']))
     paths = []
     for seed in cfg['seeds']:
+      for gi, grp in enumerate(GROUPS):
         jobs = {}
         for p in cfg['parts']:
-            if p not in HEADS: continue
+            if p not in HEADS or p not in grp: continue
             c = st['chains'][key(p, seed)]
             if c['round'] != k - 1: continue
             jobs[p] = '\n\n'.join([P.memory_block(c['mem']), P.obs_block(c['obs'], k, cfg['R'])])
         if not jobs: continue
-        js = f"""export const meta = {{ name: 'play01-{stage}-r{k}-s{seed}', description: 'PLAY-01 {stage}: раунд {k}, зерно {seed} — решения голов', phases: [{{ title: 'Головы' }}] }}
+        js = f"""export const meta = {{ name: 'play01-{stage}-r{k}-s{seed}-g{gi}', description: 'PLAY-01 {stage}: раунд {k}, зерно {seed}, головы {"+".join(jobs)}', phases: [{{ title: 'Головы' }}] }}
 const COMMON = {_js_str(common)}
 const CTX = {_js_str(jobs)}
 const SOLO = {_js_str(P.SOLO)}
@@ -104,6 +106,7 @@ async function call(p, label, model) {{
 }}
 const RUN = {{
   A: async () => ({{final: await call(mk(SOLO, CTX.A), 'A')}}),
+  A2: async () => ({{final: await call(mk(SOLO, CTX.A2), 'A2')}}),
   H: async () => ({{final: await call(mk(SOLO, CTX.H), 'H', 'haiku')}}),
   B: async () => {{
     const s1 = await call(mk(B_STEPS[0], CTX.B), 'B1')
@@ -126,9 +129,9 @@ const parts = Object.keys(CTX)
 const res = await parallel(parts.map(p => () => RUN[p]()))
 const out = {{}}
 parts.forEach((p, i) => {{ out[p] = res[i] }})
-return {{stage: {_js_str(stage)}, round: {k}, seed: {seed}, retries, out}}
+return {{stage: {_js_str(stage)}, round: {k}, seed: {seed}, group: {gi}, retries, out}}
 """
-        path = os.path.join(rd(stage, f'r{k}'), f'seed{seed}.js')
+        path = os.path.join(rd(stage, f'r{k}'), f'seed{seed}_g{gi}.js')
         open(path, 'w').write(js)
         paths.append(path)
     print('\n'.join(paths))
@@ -146,7 +149,7 @@ def ingest(stage, files):
         for p, v in r['out'].items():
             dec[key(p, seed)] = dict(v or {}, retries=r.get('retries', 0))
             n += 1
-        W(os.path.join(rd(stage, f'r{k}'), f'out_seed{seed}.json'), r)
+        W(os.path.join(rd(stage, f'r{k}'), f'out_seed{seed}_g{r.get("group", 0)}.json'), r)
     save(stage, st)
     print(f'принято решений: {n}')
 
