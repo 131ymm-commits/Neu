@@ -22,6 +22,7 @@ import argparse
 import concurrent.futures as cf
 import datetime
 import json
+import math
 import os
 import re
 import shutil
@@ -49,21 +50,38 @@ WARN_RE = re.compile(r'\bWarning\b')
 
 
 # ------------------------------------------------------------------------------------------------ результаты
+# Вид записи (как kind в lib.lua стенда):
+#   mod     — проверка мода; входит в счёт «прошло / не прошло»;
+#   harness — самопроверка стенда или разбора (парсер, сканер, наличие выгрузок, прогоны); в счёт проверок мода не
+#             входит, но провал валит прогон так же;
+#   info    — справочная запись без проверки; в счёт не входит, перечисляется отдельно.
+KINDS = ('mod', 'harness', 'info')
+
+
 class Results:
     def __init__(self):
         self.records = []
 
-    def add(self, cfg, test, name, ok, got=None, exp=None, note=None, source='python'):
-        self.records.append(dict(config=cfg, test=test, name=name, pass_=bool(ok), got=_short(got), expected=_short(exp),
-                                 note=note, source=source))
+    def add(self, cfg, test, name, ok, got=None, exp=None, note=None, source='python', kind='mod'):
+        assert kind in KINDS, kind
+        self.records.append(dict(config=cfg, test=test, name=name, pass_=bool(ok) or kind == 'info', got=_short(got),
+                                 expected=_short(exp), note=note, source=source, kind=kind))
         return ok
 
-    def eq(self, cfg, test, name, got, exp, tol=None, note=None):
+    def eq(self, cfg, test, name, got, exp, tol=None, note=None, kind='mod'):
         if tol is not None and isinstance(got, (int, float)) and isinstance(exp, (int, float)) and not isinstance(got, bool):
             ok = abs(got - exp) <= tol
         else:
             ok = got == exp
-        return self.add(cfg, test, name, ok, got, exp, note)
+        return self.add(cfg, test, name, ok, got, exp, note, kind=kind)
+
+    def info(self, cfg, test, name, got=None, note=None, source='python'):
+        return self.add(cfg, test, name, True, got, None, note, source, kind='info')
+
+
+def failed(r):
+    """Запись валит прогон: провал проверки мода или самопроверки стенда (справочные не валят)."""
+    return not r['pass_'] and r.get('kind', 'mod') != 'info'
 
 
 def _short(v, limit=4000):
@@ -205,25 +223,50 @@ def job_cells(base_work, cfg, max_ticks, modules, wall=3600, sub='cells', bump=F
 
 # ------------------------------------------------------------------------------------------------ модули ячеек
 def cell_modules(extra=('static',)):
+    """Модули ячеек из cells/_all.lua (+ extra) и все cells/mend_*.lua, даже если их забыли вписать в _all.lua:
+    модули ремонтной катушки идут отдельным прогоном (см. ISOLATED в main), и пропасть молча они не должны."""
     txt = open(os.path.join(run.TESTS_SRC, 'cells', '_all.lua'), encoding='utf-8').read()
     txt = re.sub(r'--[^\n]*', '', txt)
     mods = re.findall(r'"([^"]+)"', txt)
-    for x in extra:
+    for x in list(extra) + mend_modules_on_disk():
         if x not in mods:
             mods.append(x)
     return mods
 
 
+def mend_modules_on_disk():
+    d = os.path.join(run.TESTS_SRC, 'cells')
+    return sorted(f[:-4] for f in os.listdir(d) if re.fullmatch(r'mend_\w+\.lua', f))
+
+
+def is_mend_module(m):
+    return m == 'mend' or m.startswith('mend_')
+
+
 def test_id(rec):
     """Номер теста для записи ячейки: группа, если это номер (S4, G3, T-W, PILOT-…); иначе номер в начале имени
-    (R11 …, PILOT-24 …, G3:setup); иначе группа (имя модуля)."""
+    (R11 …, PILOT-24 …, G3:setup, T-W …); иначе группа (имя модуля). «E6Q …» (легендарная часть E6, ячейка quality,
+    §11.1: идёт в BQ и SA) относится к E6."""
     g, n = str(rec.get('group') or ''), str(rec.get('name') or '')
     if re.fullmatch(r'[A-Z]{1,2}\d+[a-z]?|[A-Z]-[A-Z]|PILOT-[\w-]+', g):
         return g
-    m = re.match(r'(PILOT-\d+|[A-Z]{1,2}\d+[a-z]?)(?=[\s:]|$)', n)
+    if re.match(r'E6Q(?=[\s:]|$)', n):
+        return 'E6'
+    m = re.match(r'(PILOT-\d+|T-W|[A-Z]{1,2}\d+[a-z]?)(?=[\s:]|$)', n)
     if m:
         return m.group(1)
     return g or '?'
+
+
+def cell_kind(rec):
+    """Вид записи ячейки (поле kind из lib.lua L.check). Записи группы "harness" (smoke.lua, H0 — калибровка стенда на
+    ванильной машине) пишутся через L.eq без kind, поэтому они тоже самопроверка стенда."""
+    k = rec.get('kind') or 'mod'
+    if k not in KINDS:
+        k = 'mod'
+    if k == 'mod' and rec.get('group') == 'harness':
+        k = 'harness'
+    return k
 
 
 # ------------------------------------------------------------------------------------------------ FINAL_SPEC.md
@@ -567,7 +610,7 @@ def t_s2(R, cfg, W, WO, api):
     for k, v in EXPECTED_COUNTS.items():
         R.eq(cfg, 'S2', f'count {k}', counts.get(k, 0), v)
     R.add(cfg, 'S2', 'no prototype of an unexpected type', not other, other, [])
-    R.add(cfg, 'S2', 'recycling recipes count (информация; набор проверяет S9)', True, counts.get('recipe(recycling)', 0), None)
+    R.info(cfg, 'S2', 'recycling recipes count (информация; набор проверяет S9)', counts.get('recipe(recycling)', 0))
 
 
 # ------------------------------------------------------------------------------------------------ S3
@@ -658,15 +701,22 @@ SKIP_KEYS = ('circuit_connector', 'circuit_connector_flipped', 'water_reflection
              'connector_frame_sprites', 'icons', 'icon')
 
 
+def skip_key(k):
+    """§15.4: кроме ключей §4.1 шаг 7 пропускается любой ключ, в имени которого есть «frozen» (иней Space Age:
+    frozen_patch, frozen_patch_in/out у подземки) — окрашенный лист под таким ключом — провал S12."""
+    return k in SKIP_KEYS or (isinstance(k, str) and 'frozen' in k)
+
+
 def walk_ctx(v, path=(), skipped=None):
-    """(путь, словарь, причина пропуска или None): причина — ближайший предок из SKIP_KEYS или с apply_recipe_tint/apply_tint."""
+    """(путь, словарь, причина пропуска или None): причина — ближайший предок из SKIP_KEYS (или с «frozen» в имени,
+    §15.4) или с apply_recipe_tint/apply_tint."""
     if isinstance(v, dict):
         why = skipped
         if why is None and (v.get('apply_recipe_tint') or v.get('apply_tint')):
             why = 'apply_recipe_tint/apply_tint'
         yield path, v, why
         for k, x in v.items():
-            yield from walk_ctx(x, path + (k,), why or (k if k in SKIP_KEYS else None))
+            yield from walk_ctx(x, path + (k,), why or (k if skip_key(k) else None))
     elif isinstance(v, list):
         for i, x in enumerate(v):
             yield from walk_ctx(x, path + (i,), skipped)
@@ -748,7 +798,7 @@ def expected_size(rel):
 def t_s13(R, cfg, W):
     refs = sorted({s for t, lst in W.items() if isinstance(lst, dict) for p in lst.values() for s in strings(p)
                    if s.startswith('__magnetics__/')})
-    R.add(cfg, 'S13', 'referenced __magnetics__ paths (информация)', True, len(refs), None)
+    R.info(cfg, 'S13', 'referenced __magnetics__ paths (информация)', len(refs))
     missing, bad = [], []
     for s in refs:
         rel = s[len('__magnetics__/'):]
@@ -784,6 +834,11 @@ def dig(d, *path):
     return d
 
 
+# §15.4: конденсатор 1×1 получает ванильные остатки 1×1 (`small-remnants`) вместо остатков аккумулятора 2×2;
+# остальные постройки держат остатки основы (§4.1 шаг 8)
+CORPSE_OVERRIDE = {'magnetics-coil-capacitor': 'small-remnants'}
+
+
 def t_s4_dump(R, cfg, W, WO, doc, spec_json):
     """Поля, которых нет в API времени игры: ожидания набраны из FINAL_SPEC §2–§4 (номер раздела в имени)."""
     E = lambda t, n: (W.get(t) or {}).get(n) or {}  # noqa: E731
@@ -814,7 +869,8 @@ def t_s4_dump(R, cfg, W, WO, doc, spec_json):
         p = E('projectile', n)
         chk(f'§4.7 {n} piercing_damage', p.get('piercing_damage'), pierce)
         chk(f'§4.7 {n} direction_only', p.get('direction_only'), True)
-        chk(f'§4.7 {n} force_condition', p.get('force_condition'), 'not-same')
+        # §15.4: «not-same» → «enemy» (нейтральные деревья и камни перехватывали болванки; K14)
+        chk(f'§4.7 {n} force_condition (§15.4)', p.get('force_condition'), 'enemy')
         chk(f'§4.7 {n} final_action nil', p.get('final_action'), None)
         te = dig(p, 'action', 'action_delivery', 'target_effects') or []
         dm = [x.get('damage') for x in te if isinstance(x, dict) and x.get('type') == 'damage']
@@ -855,7 +911,10 @@ def t_s4_dump(R, cfg, W, WO, doc, spec_json):
         chk(f'§4.1 {name} minable.result', dig(p, 'minable', 'result'), name)
         chk(f'§4.1 {name} not hidden', bool(p.get('hidden')), False)
         chk(f'§4.1 {name} factoriopedia_simulation nil', p.get('factoriopedia_simulation'), None)
-        chk(f'§4.1 {name} corpse = base', p.get('corpse'), base.get('corpse'))
+        if name in CORPSE_OVERRIDE:
+            chk(f'§4.1 {name} corpse = {CORPSE_OVERRIDE[name]} (§15.4, not the base)', p.get('corpse'), CORPSE_OVERRIDE[name])
+        else:
+            chk(f'§4.1 {name} corpse = base', p.get('corpse'), base.get('corpse'))
         chk(f'§4.1 {name} dying_explosion = base', p.get('dying_explosion'), base.get('dying_explosion'))
     # §2.1 предметы с auto_recycle = false
     for n in ('magnetics-superconducting-cable', 'magnetics-flux-crystal-uncharged', 'magnetics-flux-crystal'):
@@ -931,7 +990,7 @@ def t_s4_doc(R, cfg, export, W, WO, doc, api):
     fluids = set((W.get('fluid') or {}).keys())
     want = doc.recipes(vanilla, fluids, sa)
     got = export.get('recipes', {})
-    R.eq(cfg, 'S4', 'doc §3: 40 recipes in tables', len(want), 40)
+    R.eq(cfg, 'S4', 'doc §3: 40 recipes in tables', len(want), 40, kind='harness')     # самопроверка разбора §3
     for n, d in sorted(want.items()):
         g = got.get(n)
         if g is None:
@@ -945,7 +1004,7 @@ def t_s4_doc(R, cfg, export, W, WO, doc, api):
         R.eq(cfg, 'S4', f'doc §3 recipe {n} allow_quality', g['quality'], d['allow_quality'])
         R.eq(cfg, 'S4', f'doc §3 recipe {n} enabled at start', g['enabled'], False)
     gt = export.get('techs', {})
-    R.eq(cfg, 'S4', 'doc §5.1: 14 technologies in table', len(doc.techs), 14)
+    R.eq(cfg, 'S4', 'doc §5.1: 14 technologies in table', len(doc.techs), 14, kind='harness')   # самопроверка разбора §5.1
     for n, d in sorted(doc.techs.items()):
         g = gt.get(n)
         if g is None:
@@ -983,7 +1042,8 @@ def parse_cfg(path):
 def t_s11(R, doc, W, locale_dumps):
     cfg = 'files'
     exp = doc.locale
-    R.eq(cfg, 'S11', '§9 rows parsed (13 + 26 + 8 + 14 names)', len([k for k in exp if k[0].endswith('-name')]), 61)
+    R.eq(cfg, 'S11', '§9 rows parsed (13 + 26 + 8 + 14 names)', len([k for k in exp if k[0].endswith('-name')]), 61,
+         kind='harness')    # самопроверка разбора §9
     kinds = {'item': ('item', 'ammo'), 'fluid': ('fluid',), 'entity': None, 'recipe': ('recipe',), 'technology': ('technology',),
              'ammo-category': ('ammo-category',), 'fuel-category': ('fuel-category',)}
     entity_names = {n for t, lst in W.items() if isinstance(lst, dict) for n in lst if n in lst and t in ENTITY_TYPES}
@@ -1083,48 +1143,182 @@ def lua_tokens(src):
             i += 1
 
 
+# Трёхзначная логика Клини: True / False / None (неизвестно)
+def k_not(a):
+    return None if a is None else not a
+
+
+def k_and(a, b):
+    if a is False or b is False:
+        return False
+    if a is True and b is True:
+        return True
+    return None
+
+
+def k_or(a, b):
+    if a is True or b is True:
+        return True
+    if a is False and b is False:
+        return False
+    return None
+
+
+def cond_without_sa(ctoks):
+    """Значение условия Lua (токены между if/elseif и then) в мире без Space Age: True, False или None (зависит от
+    другого). Атом, где есть имя SA (SA, U.SA) или строка "space-age" (mods["space-age"], script.active_mods[…]),
+    без SA ложен; `not`, `== nil`, `== false`, `~= true` — отрицание (анти-охрана), `~= nil`, `~= false`, `== true` —
+    утверждение; and / or / скобки — по логике Клини; прочие атомы и сравнения — неизвестны."""
+    toks = [(t, v) for t, v, _ in ctoks]
+    pos = [0]
+
+    def peek(k=0):
+        i = pos[0] + k
+        return toks[i] if i < len(toks) else (None, None)
+
+    def take():
+        pos[0] += 1
+        return toks[pos[0] - 1]
+
+    def p_or():
+        v = p_and()
+        while peek() == ('name', 'or'):
+            take()
+            v = k_or(v, p_and())
+        return v
+
+    def p_and():
+        v = p_not()
+        while peek() == ('name', 'and'):
+            take()
+            v = k_and(v, p_not())
+        return v
+
+    def p_not():
+        if peek() == ('name', 'not'):
+            take()
+            return k_not(p_not())
+        return p_cmp()
+
+    def p_cmp():
+        a, lit_a = p_primary()
+        t0, t1 = peek(), peek(1)
+        if t0 in (('op', '='), ('op', '~')) and t1 == ('op', '='):
+            take()
+            take()
+            op = '==' if t0[1] == '=' else '~='
+            b, lit_b = p_primary()
+            val, lit = (a, lit_b) if lit_a is None else (b, lit_a)
+            if lit is None or (lit_a is not None and lit_b is not None):
+                return None
+            # X == nil / false, X ~= true — отрицание X; X ~= nil / false, X == true — само X
+            neg = (op == '==') == (lit in ('nil', 'false'))
+            return k_not(val) if neg else val
+        if t0 in (('op', '<'), ('op', '>')):
+            take()
+            if peek() == ('op', '='):
+                take()
+            p_primary()
+            return None
+        return a
+
+    def p_primary():
+        if peek() == ('op', '('):
+            take()
+            v = p_or()
+            if peek() == ('op', ')'):
+                take()
+            return v, None
+        atom, depth = [], 0
+        while pos[0] < len(toks):
+            t, v = peek()
+            if depth == 0 and ((t == 'name' and v in ('and', 'or')) or (t == 'op' and v in ('=', '~', '<', '>', ')'))):
+                break
+            if t == 'op' and v in '([{':
+                depth += 1
+            elif t == 'op' and v in ')]}':
+                depth -= 1
+            atom.append(take())
+        if len(atom) == 1 and atom[0][0] == 'name' and atom[0][1] in ('nil', 'false', 'true'):
+            return atom[0][1] == 'true', atom[0][1]
+        if any((t == 'name' and v == 'SA') or (t == 'str' and v == 'space-age') for t, v in atom):
+            return False, None
+        return None, None
+
+    return p_or()
+
+
 def sa_guard_scan(src):
-    """SA-имена вне охраны: охрана — блок `if <условие с SA или "space-age"> then ... [else/elseif — уже без охраны] end`
-    или поле-таблица `sa = {...}` (данные spec_data.lua, читаемые только под U.SA)."""
+    """SA-имена вне охраны. Охраняемая ветка `if / elseif / else` — та, что без Space Age исполниться не может:
+    `if SA`, `if U.SA and x`, `if mods["space-age"] ~= nil` охраняют свою ветку; `if not SA`, `== nil`, `== false`
+    (анти-охрана) — свою ветку else; `if x or SA` не охраняет ничего (§15.4, ревью c25). Ещё охраняет поле-таблица
+    `sa = {...}` (данные spec_data.lua, читаемые только под U.SA). Условия считаются по логике Клини (cond_without_sa)."""
     toks = list(lua_tokens(src))
-    stack, hits = [], []           # стек блоков: [вид, охраняет?]
+    # стек блоков: [вид, ветка охраняется?, «все прежние условия ложны» без SA (для if)]
+    stack, hits = [], []
     i = 0
     while i < len(toks):
         t, v, ln = toks[i]
-        if t == 'name' and v == 'if':
-            j, guarded = i + 1, False
+        if t == 'name' and v in ('if', 'elseif'):
+            j = i + 1
             while j < len(toks) and not (toks[j][0] == 'name' and toks[j][1] == 'then'):
-                if (toks[j][0] == 'name' and toks[j][1] == 'SA') or (toks[j][0] == 'str' and toks[j][1] == 'space-age'):
-                    guarded = True
                 j += 1
-            stack.append(['if', guarded])
+            cv = cond_without_sa(toks[i + 1:j])
+            if v == 'if':
+                stack.append(['if', cv is False, k_not(cv)])
+            elif stack and stack[-1][0] == 'if':
+                prev = stack[-1][2]
+                stack[-1][1] = k_and(prev, cv) is False
+                stack[-1][2] = k_and(prev, k_not(cv))
             i = j + 1
             continue
-        if t == 'name' and v in ('else', 'elseif') and stack and stack[-1][0] == 'if':
-            stack[-1][1] = False
+        if t == 'name' and v == 'else' and stack and stack[-1][0] == 'if':
+            stack[-1][1] = stack[-1][2] is False
         elif t == 'name' and v in ('function', 'do', 'repeat'):
-            stack.append([v, False])
+            stack.append([v, False, None])
         elif t == 'name' and v in ('for', 'while'):
             j = i + 1
             while j < len(toks) and not (toks[j][0] == 'name' and toks[j][1] == 'do'):
                 j += 1
-            stack.append([v, False])
+            stack.append([v, False, None])
             i = j + 1
             continue
         elif t == 'name' and v in ('end', 'until'):
             if stack:
                 stack.pop()
         elif t == 'op' and v == '{':
-            g = i >= 2 and toks[i - 1] == ('op', '=', toks[i - 1][2]) and toks[i - 2][0] == 'name' and toks[i - 2][1] == 'sa'
-            stack.append(['{', g])
+            g = i >= 2 and toks[i - 1][:2] == ('op', '=') and toks[i - 2][:2] == ('name', 'sa')
+            stack.append(['{', g, None])
         elif t == 'op' and v == '}':
             if stack and stack[-1][0] == '{':
                 stack.pop()
         elif t == 'str' and SA_ONLY.match(v):
-            if not any(g for _, g in stack):
+            if not any(e[1] for e in stack):
                 hits.append((ln, v))
         i += 1
     return hits
+
+
+# Самопроверка сканера: (строка, имя) попаданий. Охрана, ветка else анти-охраны, or-дыра, elseif, вложенность.
+S8_PROBE = '\n'.join([
+    'local a = "foundry"',                                                                        # 1 ловится
+    'if SA then local b = "foundry" else local c = "turbo-splitter" end',                         # 2 else ловится
+    'local t = { sa = { "space-science-pack" } }',                                                # 3 охрана sa = {}
+    'if not SA then local d = "cryogenic-plant" else local e = "foundry" end',                    # 4 then ловится
+    'if not mods["space-age"] then local f = "electromagnetic-plant" end',                        # 5 ловится
+    'if mods["space-age"] == nil then local g = "foundry" else local h = "turbo-splitter" end',   # 6 then ловится
+    'if U.SA == false then local k = "metallurgic-science-pack" end',                             # 7 ловится
+    'if x or SA then local l = "foundry" end',                                                    # 8 or: ловится
+    'if U.SA and d.sa then local m = "foundry" end',                                              # 9 охрана
+    'if mods["space-age"] ~= nil then local n = "foundry" end',                                   # 10 охрана
+    'if x then local o = "foundry" elseif SA then local q = "foundry" else local r = "turbo-splitter" end',  # 11
+    'if not (SA or x) then local s = "foundry" else local u = "turbo-splitter" end',              # 12 обе ловятся
+    'if SA == nil then else local w = "foundry" end',                                             # 13 else охраняется
+    'if SA then if not SA then local y = "foundry" end end',                                      # 14 внешняя охрана
+])
+S8_PROBE_HITS = [(1, 'foundry'), (2, 'turbo-splitter'), (4, 'cryogenic-plant'), (5, 'electromagnetic-plant'), (6, 'foundry'),
+                 (7, 'metallurgic-science-pack'), (8, 'foundry'), (11, 'foundry'), (11, 'turbo-splitter'), (12, 'foundry'),
+                 (12, 'turbo-splitter')]
 
 
 def t_s8_grep(R):
@@ -1137,24 +1331,340 @@ def t_s8_grep(R):
                 for ln, v in sa_guard_scan(open(p, encoding='utf-8').read()):
                     hits.append(f'{os.path.relpath(p, run.MOD_SRC)}:{ln}: "{v}"')
     R.add(cfg, 'S8', 'no SA-only name in mod Lua outside mods["space-age"] guards', not hits, hits, [])
-    # отрицательный контроль сканера: имя вне охраны ловится, внутри — нет
-    probe = 'local a = "foundry"\nif SA then local b = "foundry" else local c = "turbo-splitter" end\nlocal t = { sa = { "space-science-pack" } }'
-    R.eq(cfg, 'S8', 'scanner self-check (catches unguarded, skips guarded)', [v for _, v in sa_guard_scan(probe)], ['foundry', 'turbo-splitter'])
+    # самопроверка сканера: имя вне охраны ловится, внутри — нет; отрицание (not, == nil, == false) — анти-охрана,
+    # её ветка else охраняется; `x or SA` не охраняет (§15.4, ревью c25)
+    R.eq(cfg, 'S8', 'scanner self-check (guards, anti-guards not/== nil/== false, or-hole, elseif, nesting)',
+         [list(x) for x in sa_guard_scan(S8_PROBE)], [list(x) for x in S8_PROBE_HITS], kind='harness')
+
+
+# ------------------------------------------------------------------------------------------------ N1–N8 (§11.11)
+def si(v):
+    """'1.8MW' -> 1.8e6, '4MJ' -> 4e6, '300kW' -> 3e5; число — как есть."""
+    if isinstance(v, (int, float)):
+        return float(v)
+    m = re.fullmatch(r'\s*([\d.]+)\s*([kMGT]?)[WJ]\s*', str(v))
+    if not m:
+        raise ValueError(f'не разобрана величина {v!r}')
+    return float(m.group(1)) * {'': 1, 'k': 1e3, 'M': 1e6, 'G': 1e9, 'T': 1e12}[m.group(2)]
+
+
+def footprint(proto):
+    """Клеток под постройкой: стороны collision_box, округлённые вверх (2.7 -> 3, 0.8 -> 1)."""
+    cb = proto['collision_box']
+    if isinstance(cb, dict):
+        lt, rb = cb.get('left_top') or cb.get('1'), cb.get('right_bottom') or cb.get('2')
+    else:
+        lt, rb = cb
+    pt = lambda q: (q['x'], q['y']) if isinstance(q, dict) else (q[0], q[1])  # noqa: E731
+    (x1, y1), (x2, y2) = pt(lt), pt(rb)
+    return math.ceil(x2 - x1 - 1e-6) * math.ceil(y2 - y1 - 1e-6)
+
+
+def damage_amounts(v):
+    """Все damage.amount в дереве действия (target_effects с type = "damage")."""
+    return [d['damage']['amount'] for _, d in walk(v) if d.get('type') == 'damage' and isinstance(d.get('damage'), dict)]
+
+
+def in_band(x, lo, hi, rel=1e-6):
+    """lo <= x <= hi с допуском на ошибку float (здоровье в движке — float32: 14.400001525878906 вместо 14.4)."""
+    return lo * (1 - rel) <= x <= hi * (1 + rel)
+
+
+NICHE_CFGS = ('base', 'sa')        # функциональные тесты, из которых считается отчёт ниши (§11.1)
+
+
+def t_niche(R, cfg, W):
+    """§11.11: N1–N8 из записей этого прогона (M1, P7, E1, E4, E6, E7, K1, K2, K8, K11) и ванильных чисел из выгрузки
+    data.raw той же конфигурации. Каждый N — проверка вида mod с полосой §11.11; «blocker» — в имени."""
+    recs = [r for r in R.records if r['config'] == cfg and r.get('kind', 'mod') == 'mod']
+
+    def got(test, prefix):
+        for r in recs:
+            if r['test'] == test and str(r['name']).startswith(prefix):
+                if not isinstance(r.get('got'), (int, float)) or isinstance(r.get('got'), bool):
+                    raise KeyError(f'{test} «{prefix}…»: got = {r.get("got")!r} (не число)')
+                return float(r['got'])
+        raise KeyError(f'нет записи {test} «{prefix}…»')
+
+    def E(t, n):
+        x = ((W or {}).get(t) or {}).get(n)
+        if x is None:
+            raise KeyError(f'нет {t}/{n} в выгрузке data.raw')
+        return x
+
+    def item(nid, name, f):
+        try:
+            f(name)
+        except Exception as e:  # noqa: BLE001
+            R.add(cfg, nid, name, False, f'не посчитано: {e}', None, note=traceback.format_exc(limit=2))
+
+    def n1(name):
+        drill = got('M1', 'M1 magnetic drill iron ore in 60 s') / 60
+        fp = footprint(E('mining-drill', 'magnetics-magnetic-drill'))
+        big = ((W or {}).get('mining-drill') or {}).get('big-mining-drill')
+        if big:
+            ref, src = big['mining_speed'] / footprint(big), f'big-mining-drill из data.raw: {big["mining_speed"]:g} / {footprint(big)} клеток'
+        else:
+            ref, src = 2.5 / 25, 'большой бур 2.5 / 25 клеток [M §1] (в этой конфигурации его нет)'
+        R.add(cfg, 'N1', name, drill / fp < ref, round(drill / fp, 6), f'< {ref:g}',
+              note=f'M1: {drill:g} руды/с на {fp} клеток; эталон: {src}')
+
+    def n2(name):
+        sep = got('P7', 'P7 separator iron ore in 600 s') / 600
+        emd = got('M1', 'M1 control: electric mining drill iron ore in 60 s') / 60
+        R.add(cfg, 'N2', name, sep < emd, round(sep, 6), f'< {emd:g}',
+              note='P7: железная руда сепаратора / 600 с (из 2 камня/с = 4 электробура) против контроля M1: один электробур на железе / 60 с')
+
+    def n3(name):
+        pol = got('E4', 'E4 MHD pollution statistics per minute')
+        out = got('E4', 'E4 MHD (coal) output, test-load energy')
+        eff = E('burner-generator', 'magnetics-mhd-generator')['burner']['effectivity']
+        coal = got('E4', 'E4 MHD coal burnt in 60 s')
+        fuel_mw = out / eff / 1e6
+        b = E('boiler', 'boiler')
+        b_pol, b_mw = b['energy_source']['emissions_per_minute']['pollution'], si(b['energy_consumption']) / 1e6
+        ratio = (pol / fuel_mw) / (b_pol / b_mw)
+        R.add(cfg, 'N3', name, abs(ratio - 1) <= 0.02, round(ratio, 6), '1 ± 0.02',
+              note=f'МГД: {pol:.4g}/мин при топливе {fuel_mw:.4g} МВт (выход E4 {out / 1e6:.4g} МВт / КПД {eff:g}; угля {coal:g} шт × 4 МДж / 60 с '
+                   f'= {coal * 4 / 60:.4g} МВт) = {pol / fuel_mw:.4g} на МВт; котёл (data.raw): {b_pol:g}/мин / {b_mw:g} МВт = {b_pol / b_mw:.4g}')
+
+    def n4(_):
+        cap_e = got('E1', 'E1 coil capacitor energy when full')
+        cap_p = got('E1', 'E1 coil capacitor discharge power')
+        fc = footprint(E('accumulator', 'magnetics-coil-capacitor'))
+        acc = E('accumulator', 'accumulator')
+        fa = footprint(acc)
+        acc_e, acc_p = si(acc['energy_source']['buffer_capacity']) / fa, si(acc['energy_source']['output_flow_limit']) / fa
+        note = f'конденсатор (E1): {cap_e:.6g} Дж и {cap_p:.6g} Вт на {fc} клетку; аккумулятор (data.raw): {acc_e:.6g} Дж и {acc_p:.6g} Вт на клетку ({fa} клетки)'
+        R.add(cfg, 'N4', 'N4 coil capacitor capacity per tile < accumulator', cap_e / fc < acc_e, cap_e / fc, f'< {acc_e:g}', note=note)
+        # «≫» в §11.11 без числа; порог 10× задан здесь (§11.11: 1 МВт против 75 кВт = 13,3×)
+        R.add(cfg, 'N4', 'N4 coil capacitor flow per tile >> accumulator (>= 10x; порог 10x задан в tests.py)',
+              cap_p / fc >= 10 * acc_p, round(cap_p / fc / acc_p, 4), '>= 10', note=note)
+
+    def n5(_):
+        n = 0
+        for r in recs:
+            if r['test'] == 'E6' and (str(r['name']).startswith('E6 flux round trip (dynamo') or str(r['name']) == 'E6Q legendary round trip'):
+                v = float(r['got'])
+                R.add(cfg, 'N5', f'N5 flux loop energy-negative: {r["name"]} < 0.8 + 2 % (blocker at >= 1.0)', v < 0.8 * 1.02, v, '< 0.816',
+                      note='E6: энергия динамо на кристалл / энергия резонатора на кристалл')
+                n += 1
+        if not n:
+            raise KeyError('нет записи E6 «E6 flux round trip (dynamo…»')
+
+    def n6(_):
+        hit = got('K1', 'K1 coilgun magnetics-ferrite-slug damage per hit (min)')
+        rate = got('K1', 'K1 coilgun magnetics-ferrite-slug shots/s')
+        k11 = got('K11', 'K11 stage 0 per-hit ratio coilgun-ferrite / gun-turret-firearm')
+        gun = E('ammo-turret', 'gun-turret')
+        gun_rate = 60 / gun['attack_parameters']['cooldown']
+        gun_hit = hit / k11                                   # огнестрельная обойма из пулемётной турели (K11, тот же прогон)
+        raw = hit * rate / (gun_hit * gun_rate)
+        R.add(cfg, 'N6', 'N6 coilgun + ferrite raw DPS / gun turret + firearm raw DPS in 1.0–1.3', in_band(raw, 1.0, 1.3), round(raw, 6),
+              '[1.0, 1.3]', note=f'катушечник {hit:g} × {rate:g}/с = {hit * rate:g}; пулемёт: {gun_hit:g} за выстрел (K11: катушечник / пулемёт = {k11:g}) '
+                                  f'× {gun_rate:g}/с (cooldown {gun["attack_parameters"]["cooldown"]} тиков, data.raw) = {gun_hit * gun_rate:g}')
+        med = got('K2', 'K2 coilgun magnetics-ferrite-slug vs medium biter per hit (min)')
+        pierce = damage_amounts(E('ammo', 'piercing-rounds-magazine')['ammo_type'])
+        res = {x['type']: x for x in E('unit', 'medium-biter').get('resistances', [])}.get('physical', {})
+        dec, pct = res.get('decrease', 0), res.get('percent', 0)
+        p_hit = max(pierce[0] - dec, 0) * (1 - pct / 100)   # H_res (PILOT-3); в игре пулемёт по среднему не мерился
+        vs = med * rate / (p_hit * gun_rate)
+        R.add(cfg, 'N6', 'N6 coilgun + ferrite vs medium biter DPS / gun turret + piercing vs medium in 1.0–1.3', in_band(vs, 1.0, 1.3), round(vs, 6),
+              '[1.0, 1.3]', note=f'катушечник по среднему (K2) {med:.6g} × {rate:g}/с = {med * rate:.6g}; бронебойные: ({pierce[0]:g} − {dec:g}) × '
+                                  f'(1 − {pct:g} %) = {p_hit:g} (H_res, data.raw) × {gun_rate:g}/с = {p_hit * gun_rate:g}')
+
+    def n7(name):
+        r = got('K8', 'K8 arc DPS / laser DPS')
+        R.add(cfg, 'N7', name, in_band(r, 0.5, 1.0), r, '[0.5, 1.0]', note='K8: разрядник по одной цели / лазерная турель (§15.1: перезарядка 120)')
+
+    def n8(name):
+        p = max(got('E7', 'E7 geomagnetic coil at magnetic-field 90, noon'), got('E7', 'E7 geomagnetic coil at magnetic-field 90, midnight'))
+        fp = footprint(E('solar-panel', 'magnetics-geomagnetic-coil'))
+        # ≤ 20 кВт с допуском на ошибку float (замер 20000.00000000003 Вт); полоса E7 ± 1 % пропустила бы 20,2 кВт
+        R.add(cfg, 'N8', name, p <= 20000 * (1 + 1e-9), p, '<= 20000 (+1e-9 rel)',
+              note=f'E7 при поле 90 (Наувис; максимум полдня и полночи); {fp} клеток: {p / fp:.6g} Вт на клетку (20 кВт / 9 = 2222.2)')
+
+    item('N1', 'N1 magnetic drill ore/s per footprint tile < big mining drill (blocker)', n1)
+    item('N2', 'N2 separator iron ore/s < one electric drill on iron', n2)
+    item('N3', 'N3 MHD pollution per MW of fuel = boiler (± 2 %)', n3)
+    item('N4', 'N4 coil capacitor vs accumulator per tile', n4)
+    item('N5', 'N5 flux loop energy-negative', n5)
+    item('N6', 'N6 ferrite slug ≈ firearm raw, ≈ piercing vs medium', n6)
+    item('N7', 'N7 arc single-target DPS / laser DPS in 0.5–1.0', n7)
+    item('N8', 'N8 geomagnetic coil on Nauvis (field 90) <= 20 kW per 3x3 (blocker)', n8)
+
+
+# ------------------------------------------------------------------------------------------------ G1, G2 (§11.10)
+SHOWCASE_PNG = os.path.join(ROOT, 'showcase.png')
+CARDS_PNG = os.path.join(ROOT, 'cards.png')
+TILE_FILL = (42, 44, 54)           # фон плитки и карточки в paint.py showcase() / cards()
+
+
+def count_tiles(path, xs, min_run):
+    """Плитки на листе: вертикальные серии цвета TILE_FILL длиной >= min_run на линиях x (у левого края колонок,
+    между рамкой плитки и картинкой/текстом). Счёт по пикселям файла, а не по таблицам paint.py."""
+    import numpy as np
+    from PIL import Image
+    with Image.open(path) as im:
+        a = np.asarray(im.convert('RGB'))
+    n = 0
+    for x in xs:
+        col = np.all(a[:, x, :] == TILE_FILL, axis=1).astype(np.int8)
+        edges = np.diff(np.concatenate(([0], col, [0])))
+        starts, ends = np.where(edges == 1)[0], np.where(edges == -1)[0]
+        n += int(np.sum((ends - starts) >= min_run))
+    return n
+
+
+def t_graphics(R):
+    cfg = 'files'
+    # G1: 26 построек + 11 предметов + 2 жидкости + 3 рецепта + 1 рецепт LN2 + 3 категории боеприпасов + 14 технологий = 60
+    want = {'items': 11, 'fluids': 2, 'recipes with own icon': 4, 'ammo categories': 3, 'entities': 26, 'techs': 14}
+    try:
+        import paint
+        have = {'items': len(paint.ITEMS), 'fluids': len(paint.FLUIDS), 'recipes with own icon': len(paint.RECIPES),
+                'ammo categories': len(paint.AMMO_CATEGORIES), 'entities': len(paint.ENTITIES), 'techs': len(paint.TECHS)}
+        R.eq(cfg, 'G1', 'G1 paint.py showcase sections = §11.10 counts (11 + 2 + 3 + 1 + 3 + 26 + 14 = 60)', have, want)
+        # самопроверка paint.py над файлами мода (иконки §10 есть, размеры и RGBA как S13, цвета §10.2 = оттенок × 255)
+        paint.MOD = run.MOD_SRC
+        paint.ICONS = os.path.join(run.MOD_SRC, 'graphics', 'icons')
+        paint.TECH = os.path.join(run.MOD_SRC, 'graphics', 'technology')
+        paint.ENTITY = os.path.join(run.MOD_SRC, 'graphics', 'entity')
+        n_files, problems = paint.selftest()
+        R.add(cfg, 'G1', f'G1 paint.py selftest on the mod graphics ({n_files} files): every icon exists, sizes, §10.2 colours',
+              not problems, problems[:30], [])
+        R.eq(cfg, 'G2', 'G2 paint.py cards: one per spec entity (26)', sorted(e[0] for e in paint.ENTITIES),
+             sorted(json.load(open(os.path.join(HERE, 'spec.json'), encoding='utf-8'))['entities']))
+    except Exception:  # noqa: BLE001
+        R.add(cfg, 'G1', 'G1 paint.py tables and selftest', False, traceback.format_exc(limit=3), None)
+    # счёт плиток по пикселям готовых листов (геометрия paint.py: showcase 10 колонок по 198, высота 250; cards 4 по 470, 178)
+    for tid, path, xs, run_len, n_want in (('G1', SHOWCASE_PNG, [10 + c * 198 + 7 for c in range(10)], 200, 60),
+                                           ('G2', CARDS_PNG, [10 + c * 470 + 8 for c in range(4)], 120, 26)):
+        name = f'{tid} {os.path.basename(path)}: tiles counted in the image = {n_want}'
+        if not os.path.exists(path):
+            R.add(cfg, tid, name, False, 'нет файла', n_want)
+            continue
+        try:
+            R.eq(cfg, tid, name, count_tiles(path, xs, run_len), n_want)
+        except Exception:  # noqa: BLE001
+            R.add(cfg, tid, name, False, traceback.format_exc(limit=3), n_want)
+
+
+# ------------------------------------------------------------------------------------------------ U1, U2 (§11.9, ups.py)
+UPS_JSON = os.path.join(HERE, 'ups_results.json')
+
+
+def file_sha256(path):
+    import hashlib
+    return hashlib.sha256(open(path, 'rb').read()).hexdigest()
+
+
+def t_ups(R):
+    """U1/U2 из tools/ups_results.json (отдельный замер tools/ups.py: только base). Замер должен быть сделан на текущем
+    control.lua мода (sha256): цену катушки определяет скрипт; иначе — провал стенда «перезапустите ups.py»."""
+    cfg = 'base'
+    if not os.path.exists(UPS_JSON):
+        R.add(cfg, 'RUN', 'tools/ups_results.json present (python3 tools/ups.py)', False, None, UPS_JSON, kind='harness')
+        return
+    U = json.load(open(UPS_JSON, encoding='utf-8'))
+    ctl = os.path.join(run.MOD_SRC, 'control.lua')
+    h = file_sha256(ctl) if os.path.exists(ctl) else None
+    R.add(cfg, 'RUN', 'ups_results.json measured on the current mod control.lua (sha256)', U.get('mod_control_sha256') == h,
+          U.get('mod_control_sha256'), h, kind='harness', note=f'замер {U.get("started", "?")}; при несовпадении перезапустите tools/ups.py')
+    for uid in ('U1', 'U2'):
+        v = U.get(uid)
+        if not isinstance(v, dict) or 'ok' not in v:
+            R.add(cfg, uid, f'{uid} verdict in ups_results.json', False, v, 'dict with ok', kind='harness')
+            continue
+        R.add(cfg, uid, f'{uid} median Δ ms/tick <= limit (PILOT-20 rule)', bool(v['ok']), v.get('delta'), f'<= {v.get("effective_limit")}',
+              note=f'порог спецификации {v.get("limit")}; шум {v.get("noise")} (A/A контролей: {", ".join(U.get("noise_from", []))}); '
+                   f'порог различим: {v.get("resolvable")}; прогонов {U.get("runs")} по {U.get("ticks")} тиков')
+
+
+# ------------------------------------------------------------------------------------------------ манифест
+# Обязательные номера тестов по конфигурациям: FINAL_SPEC §11 с поправками §15. Для каждого (номер, конфигурация)
+# должна быть хотя бы одна запись вида mod, иначе — провал (тест мог пропасть молча: упавший прогон, фильтр configs,
+# переименованная ячейка). По определению плана: S9, Q1–Q6 и легендарная часть E6 — BQ и SA; P8, P10, E8, E9 — только SA;
+# функциональные (P, M, L, E, W, K, T-W, R, N) — B и SA (§11.1); S11, G1, G2 и S8-grep — файлы ('files').
+ALL4, BSA, QC = ('base', 'bq', 'be', 'sa'), ('base', 'sa'), ('bq', 'sa')
+
+
+def _ids(prefix, a, b):
+    return [f'{prefix}{i}' for i in range(a, b + 1)]
+
+
+MANIFEST = {t: ALL4 for t in _ids('S', 1, 16)}
+MANIFEST.update({t: BSA for t in _ids('P', 1, 10) + _ids('M', 1, 4) + _ids('L', 1, 4) + _ids('E', 1, 9) + _ids('W', 1, 4) +
+                 _ids('K', 1, 15) + ['T-W'] + _ids('R', 1, 11) + _ids('N', 1, 8)})
+MANIFEST.update({t: QC for t in _ids('Q', 1, 6)})
+MANIFEST.update(S8=ALL4 + ('files',), S9=QC, S11=('files',), P8=('sa',), P10=('sa',), E8=('sa',), E9=('sa',), E6=('base', 'bq', 'sa'),
+                R9=('base',), R10=('base',), G1=('files',), G2=('files',), G3=ALL4, U1=('base',), U2=('base',))
+# Сужения против §11.1 (функциональные — в B и SA), записанные явно: (номер, конфигурация) -> почему не требуется
+MANIFEST_EXCEPTIONS = {
+    ('R9', 'sa'): 'половина R9 со сменой версии тестового мода идёт только в base (прогон mend_bump); в sa есть только контроль',
+    ('R10', 'sa'): 'повтор прогона катушки (mend_repeat, сравнение sha256) идёт только в base',
+    ('U1', 'sa'): 'tools/ups.py ставит только базовую игру',
+    ('U2', 'sa'): 'tools/ups.py ставит только базовую игру',
+}
+
+
+def check_manifest(R, cfgs, full, why_partial):
+    for c in list(cfgs) + ['files']:
+        if not full:
+            R.info(c, 'MANIFEST', 'manifest not checked: partial run', why_partial)
+            continue
+        have = {r['test'] for r in R.records if r['config'] == c and r.get('kind', 'mod') == 'mod'}
+        need = sorted((t for t, cs in MANIFEST.items() if c in cs), key=test_sort_key)
+        miss = [t for t in need if t not in have]
+        for t in miss:
+            R.add(c, 'MANIFEST', f'{t}: no "mod" records in {c}', False, 0, '>= 1', kind='harness',
+                  note='обязательный номер (FINAL_SPEC §11 с поправками §15) без единой проверки мода')
+        if not miss:
+            R.add(c, 'MANIFEST', f'all {len(need)} required test ids have "mod" records', True, len(need), len(need), kind='harness',
+                  note=', '.join(need))
+
+
+def test_sort_key(t):
+    m = re.search(r'\d+', t)
+    return (re.sub(r'\d+', '', t), int(m.group(0)) if m else 0, t)
 
 
 # ------------------------------------------------------------------------------------------------ отчёт
+def is_exp_consistency(r):
+    """Проверка S4 ячейки static.lua против expected.lua — того же файла, что spec.py пишет в spec_data.lua мода: она
+    ловит расхождение мода с его же данными, но не ошибку в spec.py. Независимые S4 — «doc …» (числа FINAL_SPEC,
+    набранные вручную), «cal …» (калибровка на ванили), «data …» (ожидания static.lua), а также «dump …» и «doc §…» Python."""
+    return (r['test'] == 'S4' and r.get('source') == 'cell:S4' and r.get('kind', 'mod') == 'mod'
+            and not str(r['name']).startswith(('doc ', 'cal ', 'data ')))
+
+
 def summarize(R):
+    """{config: {test: {mod_pass, mod_fail, harness_pass, harness_fail, info}}}"""
     summ = {}
     for r in R.records:
-        s = summ.setdefault(r['config'], {}).setdefault(r['test'], [0, 0])
-        s[0 if r['pass_'] else 1] += 1
+        s = summ.setdefault(r['config'], {}).setdefault(r['test'], dict(mod_pass=0, mod_fail=0, harness_pass=0, harness_fail=0, info=0))
+        k = r.get('kind', 'mod')
+        if k == 'info':
+            s['info'] += 1
+        else:
+            s[f'{k}_{"pass" if r["pass_"] else "fail"}'] += 1
     return summ
+
+
+def totals(R, summ):
+    out = {}
+    for c, d in summ.items():
+        t = {k: sum(v[k] for v in d.values()) for k in ('mod_pass', 'mod_fail', 'harness_pass', 'harness_fail', 'info')}
+        t['mod_consistency_expected_lua'] = sum(1 for r in R.records if r['config'] == c and is_exp_consistency(r))
+        t['mod_independent'] = t['mod_pass'] + t['mod_fail'] - t['mod_consistency_expected_lua']
+        out[c] = t
+    return out
 
 
 def write_reports(R, meta, out_json, out_md):
     recs = []
     for r in R.records:          # компактно: пустые поля опущены; у прошедших expected опущено, если равно got
-        o = {'config': r['config'], 'test': r['test'], 'name': r['name'], 'pass': r['pass_']}
+        o = {'config': r['config'], 'test': r['test'], 'name': r['name'], 'pass': r['pass_'], 'kind': r.get('kind', 'mod')}
         if r.get('got') is not None:
             o['got'] = r['got']
         if r.get('expected') is not None and not (r['pass_'] and r.get('expected') == r.get('got')):
@@ -1165,55 +1675,121 @@ def write_reports(R, meta, out_json, out_md):
             o['source'] = r['source']
         recs.append(o)
     summ = summarize(R)
-    with open(out_json, 'w', encoding='utf-8') as f:
-        f.write('{"meta": ' + json.dumps(meta, ensure_ascii=False) + ',\n "summary": ' +
-                json.dumps({c: {t: {'pass': v[0], 'fail': v[1]} for t, v in d.items()} for c, d in summ.items()}, ensure_ascii=False) +
-                ',\n "failures": ' + json.dumps([x for x in recs if not x['pass']], ensure_ascii=False) +
-                ',\n "records": [\n' + ',\n'.join(json.dumps(x, ensure_ascii=False) for x in recs) + '\n]}\n')
+    tot = totals(R, summ)
     cols = [c for c in list(meta['configs']) + ['files'] if c in summ]
-    tests = sorted({t for d in summ.values() for t in d}, key=lambda t: (re.sub(r'\d+', '', t), int(re.search(r'\d+', t).group(0)) if re.search(r'\d+', t) else 0, t))
+    with open(out_json, 'w', encoding='utf-8') as f:
+        f.write('{"meta": ' + json.dumps(meta, ensure_ascii=False) +
+                ',\n "kinds": ' + json.dumps({'mod': 'проверка мода (в счёте)', 'harness': 'самопроверка стенда (провал валит прогон, в счёт мода не входит)',
+                                              'info': 'справочная запись без проверки (не в счёте)'}, ensure_ascii=False) +
+                ',\n "totals": ' + json.dumps(tot, ensure_ascii=False) +
+                ',\n "summary": ' + json.dumps({c: {t: {'pass': v['mod_pass'], 'fail': v['mod_fail'], 'harness_pass': v['harness_pass'],
+                                                         'harness_fail': v['harness_fail'], 'info': v['info']} for t, v in d.items()}
+                                                for c, d in summ.items()}, ensure_ascii=False) +
+                ',\n "failures": ' + json.dumps([x for x in recs if not x['pass'] and x['kind'] != 'info'], ensure_ascii=False) +
+                ',\n "info": ' + json.dumps([x for x in recs if x['kind'] == 'info'], ensure_ascii=False) +
+                ',\n "records": [\n' + ',\n'.join(json.dumps(x, ensure_ascii=False) for x in recs) + '\n]}\n')
+    tests = sorted({t for d in summ.values() for t in d}, key=test_sort_key)
     L = ['# Magnetics: результаты автотестов', '',
-         f'Запуск {meta["started"]}, {meta["seconds"]} с; Factorio {meta.get("factorio_version", "?")}; коммит `{meta.get("commit", "?")}`; '
-         f'модули ячеек: {", ".join(meta.get("modules", []))}; бенчмарк до записи результатов: {meta.get("cells_done") or "—"}.', '',
-         'Клетка: прошло/не прошло (число проверок). `files` — проверки файлов, не зависящие от конфигурации.', '',
+         f'Запуск {meta["started"]}, {meta["seconds"]} с; Factorio {meta.get("factorio_version", "?")}; коммит `{meta.get("commit", "?")}`'
+         f'{" (с незакоммиченными правками)" if meta.get("dirty") else ""}; модули ячеек: {", ".join(meta.get("modules", []))}; '
+         f'отдельный прогон катушки: {", ".join(meta.get("isolated_modules", [])) or "—"}; бенчмарк до записи результатов: {meta.get("cells_done") or "—"}.', '',
+         'Виды записей: **mod** — проверка мода (только они в счёте «прошло / не прошло»); **harness** — самопроверка стенда '
+         '(разбор спецификации, сканер, наличие прогонов и выгрузок, манифест; провал тоже валит прогон); **info** — справочная запись '
+         'без проверки (перечислены отдельно в конце).', '',
+         '## Итог по конфигурациям', '',
+         '| | ' + ' | '.join(cols) + ' |', '|---|' + '---|' * len(cols),
+         '| проверки мода: прошло / не прошло | ' + ' | '.join(f'{tot[c]["mod_pass"]} / {tot[c]["mod_fail"]}' for c in cols) + ' |',
+         '| из них независимых (ожидание из FINAL_SPEC вручную, из ванили или замер в игре) | ' + ' | '.join(str(tot[c]['mod_independent']) for c in cols) + ' |',
+         '| из них согласованность S4 с expected.lua (тот же файл spec.py, что данные мода) | ' + ' | '.join(str(tot[c]['mod_consistency_expected_lua']) for c in cols) + ' |',
+         '| самопроверки стенда: прошло / не прошло | ' + ' | '.join(f'{tot[c]["harness_pass"]} / {tot[c]["harness_fail"]}' for c in cols) + ' |',
+         '| справочные записи | ' + ' | '.join(str(tot[c]['info']) for c in cols) + ' |', '',
+         'Согласованность с expected.lua ловит расхождение мода с его же сгенерированными данными, но не ошибку в spec.py; '
+         'те же поля S4 проверяются ещё и независимо (записи «doc …» ячейки и «dump …» / «doc §…» Python), поэтому одно поле '
+         'может входить в счёт до четырёх раз.', '',
+         '## По тестам', '',
+         'Клетка: проверки мода прошло/не прошло; «ст.» — самопроверки стенда, «спр.» — справочные. '
+         '`files` — проверки файлов, не зависящие от конфигурации.', '',
          '| тест | ' + ' | '.join(cols) + ' |', '|---|' + '---|' * len(cols)]
     for t in tests:
         row = []
         for c in cols:
             v = summ.get(c, {}).get(t)
-            row.append('—' if not v else (f'{v[0]}/0' if v[1] == 0 else f'**{v[0]}/{v[1]}**'))
+            if not v:
+                row.append('—')
+                continue
+            parts = []
+            if v['mod_pass'] or v['mod_fail']:
+                parts.append(f'{v["mod_pass"]}/{v["mod_fail"]}' if not v['mod_fail'] else f'**{v["mod_pass"]}/{v["mod_fail"]}**')
+            if v['harness_pass'] or v['harness_fail']:
+                parts.append(f'ст. {v["harness_pass"]}/{v["harness_fail"]}' if not v['harness_fail'] else f'**ст. {v["harness_pass"]}/{v["harness_fail"]}**')
+            if v['info']:
+                parts.append(f'спр. {v["info"]}')
+            row.append(' · '.join(parts))
         L.append(f'| {t} | ' + ' | '.join(row) + ' |')
-    tot = {c: [sum(v[0] for v in summ[c].values()), sum(v[1] for v in summ[c].values())] for c in cols}
-    L.append('| **всего** | ' + ' | '.join(f'{tot[c][0]}/{tot[c][1]}' for c in cols) + ' |')
+    L.append('| **всего (мод)** | ' + ' | '.join(f'{tot[c]["mod_pass"]}/{tot[c]["mod_fail"]}' for c in cols) + ' |')
     L.append('')
     for c in cols:
-        fails = [r for r in R.records if r['config'] == c and not r['pass_']]
+        fails = [r for r in R.records if r['config'] == c and failed(r)]
         L.append(f'## {c}: провалы ({len(fails)})')
         L.append('')
         if not fails:
             L.append('нет')
         for r in fails[:400]:
             note = f' — {r["note"]}' if r.get('note') else ''
-            L.append(f'- **{r["test"]}** {r["name"]}: got `{_short(r["got"], 400)}`, expected `{_short(r["expected"], 400)}`{note}')
+            kind = ' (стенд)' if r.get('kind') == 'harness' else ''
+            L.append(f'- **{r["test"]}**{kind} {r["name"]}: got `{_short(r["got"], 400)}`, expected `{_short(r["expected"], 400)}`{note}')
         if len(fails) > 400:
             L.append(f'- … ещё {len(fails) - 400}')
         L.append('')
+    L.append('## Манифест обязательных номеров (§11 с поправками §15)')
+    L.append('')
+    for c in cols:
+        need = sorted((t for t, cs in MANIFEST.items() if c in cs), key=test_sort_key)
+        L.append(f'- {c}: {len(need)} номеров — {", ".join(need) or "—"}')
+    L.append('- Сужения против §11.1 (функциональные тесты — в B и SA): ' +
+             '; '.join(f'{t} в {c}: {why}' for (t, c), why in sorted(MANIFEST_EXCEPTIONS.items())) + '.')
+    L.append('')
+    infos = [r for r in R.records if r.get('kind') == 'info']
+    L.append(f'## Справочные записи (info, без проверки; {len(infos)})')
+    L.append('')
+    if not infos:
+        L.append('нет')
+    for r in infos:
+        note = f' — {_short(r["note"], 300)}' if r.get('note') else ''
+        L.append(f'- {r["config"]} **{r["test"]}** {r["name"]}: `{_short(r["got"], 300)}`{note}')
+    L.append('')
     if meta.get('run_errors'):
         L.append('## Ошибки прогона')
         L.append('')
         for e in meta['run_errors']:
             L.append(f'- {e}')
     open(out_md, 'w', encoding='utf-8').write('\n'.join(L) + '\n')
+    return summ, tot
 
 
 # ------------------------------------------------------------------------------------------------ main
+ISOLATED_TAG = {'mend': '', 'mend_bump': ' [прогон со сменой версии тестового мода]', 'mend_repeat': ' [повтор]'}
+
+
+def cell_records(R, cfg, rj, tag=''):
+    for rec in rj.get('results', []):
+        R.records.append(dict(config=cfg, test=test_id(rec), name=str(rec.get('name')) + tag, pass_=bool(rec.get('pass')) or cell_kind(rec) == 'info',
+                              got=_short(rec.get('got')), expected=_short(rec.get('expected')), note=rec.get('note'),
+                              source='cell:' + str(rec.get('group')), kind=cell_kind(rec)))
+
+
+def results_json(r):
+    x = (r or {}).get('output', {}).get('magnetics-results.json')
+    return x if isinstance(x, dict) else None
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--configs', default=','.join(CONFIGS))
     ap.add_argument('--jobs', type=int, default=max(1, os.cpu_count() or 1))
     ap.add_argument('--ticks', type=int, default=1000000,
                     help='потолок тиков бенчмарка; прогон останавливается сам, когда стенд записал результаты')
-    ap.add_argument('--cells', default=None, help='модули ячеек через запятую (по умолчанию cells/_all.lua + static)')
+    ap.add_argument('--cells', default=None, help='модули ячеек через запятую (по умолчанию cells/_all.lua + static + cells/mend_*.lua)')
     ap.add_argument('--skip-cells', action='store_true')
     ap.add_argument('--skip-dumps', action='store_true')
     ap.add_argument('--work', default=None)
@@ -1225,12 +1801,15 @@ def main():
         run.MOD_SRC = os.path.abspath(a.mod)
     cfgs = [c for c in a.configs.split(',') if c]
     modules = a.cells.split(',') if a.cells else cell_modules()
+    # полный прогон: только для него проверяются манифест и отчёт ниши (частичный прогон их заведомо не содержит)
+    full = a.cells is None and not a.skip_cells and not a.skip_dumps
+    why_partial = ', '.join(x for x, on in (('--cells', a.cells is not None), ('--skip-cells', a.skip_cells), ('--skip-dumps', a.skip_dumps)) if on)
     ticks = a.ticks
     work = a.work or tempfile.mkdtemp(prefix='mgn_tests_')
     os.makedirs(work, exist_ok=True)
     t0 = time.time()
     meta = dict(started=datetime.datetime.now().isoformat(timespec='seconds'), configs=cfgs, modules=modules, ticks=ticks,
-                work=work, mod=run.MOD_SRC, run_errors=[])
+                work=work, mod=run.MOD_SRC, run_errors=[], full_run=full)
     try:
         meta['commit'] = subprocess.run(['git', '-C', ROOT, 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
         meta['dirty'] = bool(subprocess.run(['git', '-C', ROOT, 'status', '--porcelain', '--', '.'], capture_output=True, text=True).stdout.strip())
@@ -1243,9 +1822,10 @@ def main():
     global ENTITY_TYPES
     ENTITY_TYPES = {t for t in api.typename if api.is_kind(t, 'EntityPrototype')}
 
-    # ремонтная катушка ловит урон всех стен мира, поэтому её ячейки идут отдельным прогоном (в общем прогоне
-    # стены ячеек боя попадают в её очередь); в base — ещё повтор (R10, побайтно тот же результат) и смена версии (R9)
-    ISOLATED = [m for m in ('mend',) if m in modules]
+    # ремонтная катушка ловит урон всех стен мира, поэтому её модули (mend и все cells/mend_*.lua) идут одним отдельным
+    # прогоном (в общем прогоне стены ячеек боя попадают в её очередь); в base — ещё повтор (R10, побайтно тот же
+    # результат) и смена версии тестового мода (R9)
+    ISOLATED = [m for m in modules if is_mend_module(m)]
     main_modules = [m for m in modules if m not in ISOLATED]
     meta['modules'] = main_modules
     meta['isolated_modules'] = ISOLATED
@@ -1253,12 +1833,13 @@ def main():
     with cf.ThreadPoolExecutor(max_workers=a.jobs) as ex:
         for c in cfgs:
             if not a.skip_cells:
-                jobs[ex.submit(job_cells, work, c, ticks, main_modules)] = ('cells', c)
-                for m in ISOLATED:
-                    jobs[ex.submit(job_cells, work, c, ticks, [m], 3600, m)] = (m, c)
+                if main_modules:
+                    jobs[ex.submit(job_cells, work, c, ticks, main_modules)] = ('cells', c)
+                if ISOLATED:
+                    jobs[ex.submit(job_cells, work, c, ticks, ISOLATED, 3600, 'mend')] = ('mend', c)
                     if c == 'base':
-                        jobs[ex.submit(job_cells, work, c, ticks, [m], 3600, m + '_repeat')] = (m + '_repeat', c)
-                        jobs[ex.submit(job_cells, work, c, ticks, [m], 3600, m + '_bump', True)] = (m + '_bump', c)
+                        jobs[ex.submit(job_cells, work, c, ticks, ISOLATED, 3600, 'mend_repeat')] = ('mend_repeat', c)
+                        jobs[ex.submit(job_cells, work, c, ticks, ISOLATED, 3600, 'mend_bump', True)] = ('mend_bump', c)
             if not a.skip_dumps:
                 jobs[ex.submit(job_dump, work, c, True)] = ('dump_with', c)
                 jobs[ex.submit(job_dump, work, c, False)] = ('dump_without', c)
@@ -1266,6 +1847,7 @@ def main():
         if not a.skip_dumps:
             for lang in LOCALES:
                 jobs[ex.submit(job_locale, work, lang)] = ('locale', lang)
+        submitted = set(jobs.values())
         res = {}
         for f in cf.as_completed(jobs):
             k = jobs[f]
@@ -1283,7 +1865,15 @@ def main():
         try:
             f(*args)
         except Exception:  # noqa: BLE001
-            R.add(cfg, test, 'ошибка Python в проверке', False, traceback.format_exc(limit=4), None)
+            R.add(cfg, test, 'ошибка Python в проверке', False, traceback.format_exc(limit=4), None, kind='harness')
+
+    def job_failed(cfg, key, r):
+        """Прогон, который поставили, но который не дал magnetics-results.json (упал, завис, сервер не дописал):
+        провал стенда — номера его тестов иначе пропали бы из отчёта молча (ревью c21)."""
+        R.add(cfg, 'RUN', f'{key} run produced magnetics-results.json', False,
+              dict(job_crashed=r is None, create_ok=(r or {}).get('create_ok'), finished=(r or {}).get('finished'),
+                   timeout=(r or {}).get('timeout'), errors=(r or {}).get('errors', [])[:10]),
+              'results', kind='harness', note='сбой стенда, исключение Python или потолок тиков; рабочая папка: ' + str((r or {}).get('work')))
 
     first_W = None
     for c in cfgs:
@@ -1291,13 +1881,13 @@ def main():
         if cr:
             guard(c, 'S1', t_s1, R, c, cr)
         else:
-            R.add(c, 'S1', 'create ran', False, None, True)
+            R.add(c, 'S1', 'create ran', False, None, True, kind='harness')
         W = WO = None
         if not a.skip_dumps:
             dw, dwo = res.get(('dump_with', c)), res.get(('dump_without', c))
             ok_w, ok_wo = bool(dw and dw.get('dump')), bool(dwo and dwo.get('dump'))
             R.add(c, 'S2', 'data.raw dumps written (with / without magnetics)', ok_w and ok_wo, [ok_w, ok_wo], [True, True],
-                  note=None if ok_w and ok_wo else f'with rc={dw and dw.get("rc")}, without rc={dwo and dwo.get("rc")}')
+                  note=None if ok_w and ok_wo else f'with rc={dw and dw.get("rc")}, without rc={dwo and dwo.get("rc")}', kind='harness')
             if ok_w and ok_wo:
                 W = json.load(open(dw['dump'], encoding='utf-8'))
                 WO = json.load(open(dwo['dump'], encoding='utf-8'))
@@ -1311,50 +1901,52 @@ def main():
         if not a.skip_cells:
             cr = res.get(('cells', c))
             out = (cr or {}).get('output', {})
-            rj = out.get('magnetics-results.json')
-            if not isinstance(rj, dict):
-                R.add(c, 'RUN', 'cells produced magnetics-results.json', False,
-                      dict(create_ok=(cr or {}).get('create_ok'), finished=(cr or {}).get('finished'), timeout=(cr or {}).get('timeout'),
-                           errors=(cr or {}).get('errors', [])[:10]),
-                      'results', note='сбой стенда или потолок тиков; рабочая папка: ' + str((cr or {}).get('work')))
-            else:
-                for rec in rj.get('results', []):
-                    R.records.append(dict(config=c, test=test_id(rec), name=rec.get('name'), pass_=bool(rec.get('pass')),
-                                          got=_short(rec.get('got')), expected=_short(rec.get('expected')), note=rec.get('note'),
-                                          source='cell:' + str(rec.get('group'))))
-                errs = (cr or {}).get('errors', [])
-                R.add(c, 'RUN', 'cells run: 0 Error lines in log', not errs, errs[:20], [])
-                meta.setdefault('cells_done', {})[c] = (cr or {}).get('done')
-            for m in ISOLATED:
-                for key, tag in ((m, ''), (m + '_bump', ' [прогон со сменой версии тестового мода]')):
-                    ir = res.get((key, c))
-                    if ir is None:
-                        continue
-                    irj = (ir or {}).get('output', {}).get('magnetics-results.json')
-                    if not isinstance(irj, dict):
-                        R.add(c, 'RUN', f'isolated run {key} produced results', False, dict(errors=(ir or {}).get('errors', [])[:10]), 'results')
-                        continue
-                    for rec in irj.get('results', []):
-                        R.records.append(dict(config=c, test=test_id(rec), name=str(rec.get('name')) + tag, pass_=bool(rec.get('pass')),
-                                              got=_short(rec.get('got')), expected=_short(rec.get('expected')), note=rec.get('note'),
-                                              source='cell:' + str(rec.get('group'))))
-                    R.add(c, 'RUN', f'isolated run {key}: 0 Error lines in log', not (ir or {}).get('errors'), (ir or {}).get('errors', [])[:20], [])
-                r1_, r2_ = res.get((m, c)), res.get((m + '_repeat', c))
-                if r1_ is not None and r2_ is not None:
-                    import hashlib
-                    def h(rr):
-                        x = (rr or {}).get('output', {}).get('magnetics-results.json')
-                        return hashlib.sha256(json.dumps(x, sort_keys=True).encode()).hexdigest()[:16] if x is not None else None
-                    h1, h2 = h(r1_), h(r2_)
-                    R.add(c, 'R10', 'mend: two fresh runs give byte-identical results (sha256)', h1 is not None and h1 == h2, h2, h1)
+            if ('cells', c) in submitted:
+                rj = results_json(cr)
+                if rj is None:
+                    job_failed(c, 'cells', cr)
+                else:
+                    cell_records(R, c, rj)
+                    errs = (cr or {}).get('errors', [])
+                    R.add(c, 'RUN', 'cells run: 0 Error lines in log', not errs, errs[:20], [], kind='harness')
+                    meta.setdefault('cells_done', {})[c] = (cr or {}).get('done')
+            for key in ('mend', 'mend_bump'):
+                if (key, c) not in submitted:
+                    continue
+                ir = res.get((key, c))
+                irj = results_json(ir)
+                if irj is None:
+                    job_failed(c, key, ir)
+                    continue
+                cell_records(R, c, irj, ISOLATED_TAG[key])
+                R.add(c, 'RUN', f'isolated run {key}: 0 Error lines in log', not (ir or {}).get('errors'), (ir or {}).get('errors', [])[:20], [],
+                      kind='harness')
+            if ('mend_repeat', c) in submitted:
+                import hashlib
+
+                def h(rr):
+                    x = results_json(rr)
+                    return hashlib.sha256(json.dumps(x, sort_keys=True).encode()).hexdigest()[:16] if x is not None else None
+                r2_ = res.get(('mend_repeat', c))
+                if h(r2_) is None:
+                    job_failed(c, 'mend_repeat', r2_)
+                h1, h2 = h(res.get(('mend', c))), h(r2_)
+                # без любого из двух прогонов R10 не доказан — провал, а не пропуск
+                R.add(c, 'R10', 'mend: two fresh runs give byte-identical results (sha256)', h1 is not None and h1 == h2, h2, h1,
+                      note=None if h1 and h2 else 'нет результатов одного из прогонов (mend / mend_repeat)')
             tw = out.get('magnetics-combat-tw.json')
             if isinstance(tw, dict):
                 json.dump(tw, open(os.path.join(a.out, f'tw_results_{c}.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
             exp = out.get('magnetics-static-export.json')
             if isinstance(exp, dict) and W is not None:
                 guard(c, 'S4', t_s4_doc, R, c, exp, W, WO, doc, api)
-            elif 'static' in modules:
-                R.add(c, 'S4', 'static export present (doc cross-check)', False, None, 'magnetics-static-export.json')
+            elif 'static' in main_modules:
+                R.add(c, 'S4', 'static export present (doc cross-check)', False, None, 'magnetics-static-export.json', kind='harness')
+            if c in NICHE_CFGS:
+                if full:
+                    guard(c, 'N1', t_niche, R, c, W)
+                else:
+                    R.info(c, 'N1', 'N1–N8 not computed: partial run', why_partial)
         if W is not None and first_W is None and c == 'base':
             first_W = W
         del W, WO
@@ -1375,23 +1967,29 @@ def main():
         if first_W is not None:
             guard('files', 'S11', t_s11, R, doc, first_W, dumps)
     guard('files', 'S8', t_s8_grep, R)
+    guard('files', 'G1', t_graphics, R)
+    if 'base' in cfgs:
+        guard('base', 'U1', t_ups, R)
+    check_manifest(R, cfgs, full, why_partial)
 
     meta['seconds'] = round(time.time() - t0, 1)
     out_json = os.path.join(a.out, 'test_results.json')
     out_md = os.path.join(a.out, 'test_results.md')
-    write_reports(R, meta, out_json, out_md)
-    summ = summarize(R)
+    summ, tot = write_reports(R, meta, out_json, out_md)
     for c in [x for x in cfgs + ['files'] if x in summ]:
-        p = sum(v[0] for v in summ[c].values())
-        f = sum(v[1] for v in summ[c].values())
-        bad = sorted(t for t, v in summ[c].items() if v[1])
-        print(f'{c}: прошло {p}, не прошло {f}' + (f' (тесты с провалами: {", ".join(bad)})' if bad else ''))
+        t = tot[c]
+        bad = sorted((x for x, v in summ[c].items() if v['mod_fail'] or v['harness_fail']), key=test_sort_key)
+        print(f'{c}: проверки мода прошло {t["mod_pass"]}, не прошло {t["mod_fail"]} (независимых {t["mod_independent"]}, '
+              f'согласованность с expected.lua {t["mod_consistency_expected_lua"]}); стенд {t["harness_pass"]}/{t["harness_fail"]}; '
+              f'справочных {t["info"]}' + (f' (тесты с провалами: {", ".join(bad)})' if bad else ''))
+    if meta['run_errors']:
+        print(f'ошибки прогона: {len(meta["run_errors"])} (см. отчёт)')
     print('отчёт:', out_md)
     if not a.keep and not a.work:
         shutil.rmtree(work, ignore_errors=True)
     else:
         print('рабочая папка:', work)
-    return 0 if not any(not r['pass_'] for r in R.records) else 1
+    return 1 if meta['run_errors'] or any(failed(r) for r in R.records) else 0
 
 
 if __name__ == '__main__':

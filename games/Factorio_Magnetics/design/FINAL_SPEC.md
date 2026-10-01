@@ -226,9 +226,9 @@ Every recipe has `enabled = false` and is unlocked by exactly one technology (te
 
 | recipe | ingredients | result | energy (s) | AR |
 |---|---|---|---|---|
-| `magnetics-ferrite-slug` | ferrite 6, copper-plate 2 | ferrite-slug 1 (10 shots) | 3 | true |
+| `magnetics-ferrite-slug` | ferrite 10, copper-plate 3 (§15) | ferrite-slug 1 (10 shots) | 3 | true |
 | `magnetics-magnet-slug` | ferrite-slug 1, magnet-alloy 1 | magnet-slug 1 | 5 | true |
-| `magnetics-gauss-slug` | magnet-alloy 2, steel-plate 1 | gauss-slug 1 (4 shots) | 6 | true |
+| `magnetics-gauss-slug` | magnet-alloy 3, steel-plate 2 (§15) | gauss-slug 1 (4 shots) | 6 | true |
 | `magnetics-rail-slug` | superconducting-cable 1, magnet-alloy 2, steel-plate 2 | rail-slug 1 | 10 | true |
 | `magnetics-flux-rail-slug` | rail-slug 1, flux-crystal 1 | flux-rail-slug 1 (3 shots) | 15 | **false** (a recycling recipe would return charged crystals with quality) |
 
@@ -298,7 +298,7 @@ Graphics keys walked per type:
 | assembling-machine, furnace | `graphics_set` (+ `fluid_boxes[i].pipe_picture`) |
 | mining-drill | `graphics_set`, `wet_mining_graphics_set` |
 | transport-belt / underground-belt / splitter | one shared deepcopy of express `belt_animation_set` with only `animation_set` tinted; then `structure` (UG) or `structure` + `structure_patch` (splitter) [L §12.4] |
-| accumulator | `chargable_graphics.picture` (charge/discharge animations are light overlays, untouched) |
+| accumulator | whole `chargable_graphics`: picture and the body layers of the charge/discharge animations; their glow and shadow layers untouched (§15) |
 | electric-pole | `pictures` |
 | burner-generator | `animation` (4 directions), `idle_animation` |
 | solar-panel | `picture` (the `overlay` is a shadow overlay and stays untouched) |
@@ -339,7 +339,7 @@ Upgrade chain (data-updates.lua): base `express-*.next_upgrade = magnetics-magle
 
 | entity | type ← base | size | stats | HP | FRG / upgrades | tint |
 |---|---|---|---|---|---|---|
-| `magnetics-coil-capacitor` | accumulator ← accumulator; `chargable_graphics` rebuilt from base globals `accumulator_picture(tint)`, `accumulator_charge()`, `accumulator_discharge()` [P §4] with every leaf `scale` × 0.5 and `shift` × 0.5; `circuit_connector = nil`; boxes `{{-0.4,-0.4},{0.4,0.4}}` / `{{-0.5,-0.5},{0.5,0.5}}` **[PILOT-21 look]** | 1×1 | buffer **1 MJ**; input and output **1 MW**; `tertiary` | 100 | `magnetics-coil-capacitor` | 1.00, 0.75, 0.55 |
+| `magnetics-coil-capacitor` | accumulator ← accumulator; `chargable_graphics` rebuilt from base globals `accumulator_picture(tint)`, `accumulator_charge()`, `accumulator_discharge()` [P §4] with every leaf `scale` × 0.5 and `shift` × 0.5, all body leaves tinted; `circuit_connector = nil`, `circuit_wire_max_distance = 0`; `corpse = "small-remnants"` (1×1); `drawing_box_vertical_extension = 0.25` (§15); boxes `{{-0.4,-0.4},{0.4,0.4}}` / `{{-0.5,-0.5},{0.5,0.5}}` **[PILOT-21 look]** | 1×1 | buffer **1 MJ**; input and output **1 MW**; `tertiary` | 100 | `magnetics-coil-capacitor` | 1.00, 0.75, 0.55 |
 | `magnetics-superconducting-accumulator` | accumulator ← accumulator | 2×2 | buffer **20 MJ**; in/out **1.2 MW** (vanilla 5 MJ / 300 kW [P §1]: same 16.7 s full-discharge time); `tertiary` | 250 | `accumulator`; **`accumulator.next_upgrade = ours`** | 0.65, 0.95, 1.00 |
 | `magnetics-superconducting-pylon` | electric-pole ← big-electric-pole (`collision_mask` with `elevated_rail = true` kept [P §1]) | 2×2 | `maximum_wire_distance = 48`, `supply_area_distance = 2` | 250 | `big-electric-pole`; **`big-electric-pole.next_upgrade = ours`** | 0.65, 0.95, 1.00 |
 | `magnetics-mhd-generator` | burner-generator ← base hidden `burner-generator` (steam-engine art, 3×5 [P §7.2]) | 3×5 | `max_power_output = "5.4MW"`; `burner = {type = "burner", fuel_categories = {"chemical"}, effectivity = 0.9, fuel_inventory_size = 2, emissions_per_minute = {pollution = 100}}`; output `secondary-output` | 400 | `magnetics-mhd-generator` | 1.00, 0.60, 0.45 |
@@ -385,9 +385,9 @@ All four turrets use their own name as FRG (the ammo differs from any vanilla tu
 | entity | type ← base | size | stats | HP | tint |
 |---|---|---|---|---|---|
 | `magnetics-coilgun-turret` | ammo-turret ← gun-turret | 2×2 | `attack_parameters`: type projectile (kept), `ammo_category = "magnetics-slug"`, `cooldown = 24` (2.5 shots/s), `range = 20` (gun 18 [W §5]); `energy_source = {type = "electric", usage_priority = "primary-input", buffer_capacity = "200kJ", input_flow_limit = "250kW"}`, `energy_per_shot = "40kJ"`; `inventory_size = 1`, `automated_ammo_count = 10`; `rotation_speed = 0.015` (gun [W §5.1]) | 500 | 1.00, 0.70, 0.50 |
-| `magnetics-gauss-turret` | ammo-turret ← gun-turret | 2×2 | `ammo_category = "magnetics-gauss"`, `cooldown = 60` (1 shot/s), **`range = 30`** (= medium worm; below big worm 38 [D:enemy-constants.lua:134-137]); `energy_per_shot = "250kJ"`, buffer 1 MJ, input 1 MW; `automated_ammo_count = 8`; `rotation_speed = 0.008` | 800 | 0.55, 0.65, 1.00 |
+| `magnetics-gauss-turret` | ammo-turret ← gun-turret | 2×2 | `ammo_category = "magnetics-gauss"`, `cooldown = 60` (1 shot/s), **`range = 30`** (= medium worm; below big worm 38 [D:enemy-constants.lua:134-137]); `energy_per_shot = "250kJ"`, buffer 1 MJ, input 1 MW; `automated_ammo_count = 8`; `rotation_speed = 0.008`; tank-cannon shot sound, no shell casings (§15) | 800 | 0.55, 0.65, 1.00 |
 | `magnetics-arc-emitter` | electric-turret ← laser-turret | 2×2 | `energy_source = {type = "electric", usage_priority = "primary-input", buffer_capacity = "2MJ", input_flow_limit = "3MW", drain = "24kW"}` (laser drain 24 kW [W §5.2]); `attack_parameters = {type = "beam", cooldown = 60, range = 20, range_mode = "center-to-bounding-box", source_direction_count = 64, source_offset = <laser's>, ammo_category = "laser", ammo_type = {energy_consumption = "1MJ", action = <below>}}` | 1000 | 0.60, 0.95, 1.00 |
-| `magnetics-rail-cannon` | ammo-turret ← gun-turret | 2×2 | `ammo_category = "magnetics-rail"`, `cooldown = 150` (0.4 shots/s), `range = 36`, `min_range = 4`, `health_penalty = -1` (prefers big targets, as the railgun [W §5.4]), `rotation_speed = 0.005`; `energy_per_shot = "4MJ"`, buffer 8 MJ, input 2 MW; `automated_ammo_count = 5` | 2000 | 0.78, 0.55, 1.00 |
+| `magnetics-rail-cannon` | ammo-turret ← gun-turret | 2×2 | `ammo_category = "magnetics-rail"`, `cooldown = 150` (0.4 shots/s), `range = 36`, `min_range = 4`, `health_penalty = -1` (prefers big targets, as the railgun [W §5.4]), `rotation_speed = 0.005`; `energy_per_shot = "4MJ"`, buffer 8 MJ, input 4 MW (§15); tank-cannon shot sound, no shell casings (§15); `automated_ammo_count = 5` | 2000 | 0.78, 0.55, 1.00 |
 
 The arc emitter uses ammo category `laser`, so the vanilla laser damage and shooting-speed research applies in both configurations with no appended effects [W §14.2–14.3].
 
@@ -578,6 +578,7 @@ No locomotive, character, AM2/AM3 or lab edit. No vanilla recipe, cost or prereq
 | + `magnetics-sintering-kiln` | `{property = "pressure", min = 10}` (as stone furnace [C §3]) |
 | + `magnetics-mhd-generator` | `{property = "pressure", min = 10}` (as boiler [P §11.5]) |
 | recipe `magnetics-stone-separation` | `{property = "magnetic-field", min = 50}` (Nauvis 90, Fulgora 99; not Vulcanus/Gleba 25, Aquilo 10 [P §11.6]); stops a stone→iron bypass of Gleba's biological iron |
+| recipe `magnetics-liquid-nitrogen` (§15) | `{property = "pressure", min = 10}`: air liquefaction needs air; every planet allowed (Aquilo 300 … Vulcanus 4000), space platforms (0) not |
 
 ### 7.4 `heating_energy` (SA only; copied from each vanilla analogue [C §3], [L §10], [P §11.5], [M §1], [W §0.6], [RS])
 
@@ -734,8 +735,8 @@ Placeable items take their name from the entity (`[entity-name]`), and non-place
 | item magnetics-flux-crystal | Flux crystal | Кристалл потока | Flusskristall | A charged crystal holding 100 MJ. Fuel for the flux dynamo and the core of flux rail slugs. | Заряженный кристалл на 100 МДж. Топливо динамо-машины потока и сердечник рельсовой болванки потока. |
 | item magnetics-flux-crystal-uncharged | Uncharged flux crystal | Незаряженный кристалл потока | Ungeladener Flusskristall | Charge it in a flux resonator. The flux dynamo returns it after use. | Заряжается в резонаторе потока. Динамо-машина потока возвращает его после разрядки. |
 | item magnetics-ferrite-slug | Ferrite slugs | Ферритовые болванки | Ferritbolzen | Coilgun ammo. A slug pierces small enemies standing in a line. | Боеприпас катушечника. Болванка пробивает мелких врагов, стоящих на одной линии. |
-| item magnetics-magnet-slug | Magnet slugs | Магнитные болванки | Magnetbolzen | Heavy coilgun ammo that keeps its punch against armour. | Тяжёлый боеприпас катушечника, не теряющий силы против брони. |
-| item magnetics-gauss-slug | Gauss slugs | Болванки Гаусса | Gauß-Bolzen | Gauss turret ammo: one heavy hit that ignores most armour. | Боеприпас пушки Гаусса: один тяжёлый удар, почти не замечающий брони. |
+| item magnetics-magnet-slug | Magnet slugs | Магнитные болванки | Magnetbolzen | Heavy coilgun ammo that keeps its punch against armor. | Тяжёлый боеприпас катушечника, не теряющий силы против брони. | (§15) |
+| item magnetics-gauss-slug | Gauss slugs | Болванки Гаусса | Gauß-Bolzen | Gauss turret ammo: one heavy hit that ignores most armor. | Боеприпас пушки Гаусса: один тяжёлый удар, почти не замечающий брони. | (§15) |
 | item magnetics-rail-slug | Rail slug | Рельсовая болванка | Schienenbolzen | Rail cannon ammo. Hits every enemy on a 36-tile line. | Боеприпас рельсовой пушки. Поражает всех врагов на линии длиной 36 клеток. |
 | item magnetics-flux-rail-slug | Flux rail slug | Рельсовая болванка потока | Fluss-Schienenbolzen | A rail slug around a charged flux crystal: three shots with physical and electric damage. | Рельсовая болванка вокруг заряженного кристалла: три выстрела с физическим и электрическим уроном. |
 | fluid magnetics-ferrofluid | Ferrofluid | Феррожидкость | Ferrofluid | Ferrite suspended in light oil. The lubricant of maglev belts and the bath of the magnetic separator. | Феррит во взвеси лёгкой нефти. Смазка маглев-конвейеров и ванна магнитного сепаратора. |
@@ -751,26 +752,26 @@ Placeable items take their name from the entity (`[entity-name]`), and non-place
 | magnetics-cryo-chamber | Cryo chamber | Криокамера | Kryokammer | Liquefies nitrogen from air, makes superconducting cable and grows flux crystals. | Сжижает азот из воздуха, делает сверхпроводящий кабель и выращивает кристаллы потока. |
 | magnetics-flux-resonator | Flux resonator | Резонатор потока | Flussresonator | Charges flux crystals from the grid. A fifth of the energy is lost; modules, beacons and quality do not help. | Заряжает кристаллы потока от сети. Пятая часть энергии теряется; модули, маяки и качество не помогают. |
 | magnetics-magnetic-separator | Magnetic separator | Магнитный сепаратор | Magnetabscheider | Separates iron and copper ore from stone in a ferrofluid bath. | Отделяет железную и медную руду от камня в ванне с феррожидкостью. |
-| magnetics-magnetic-drill | Magnetic mining drill | Магнитный бур | Magnetbohrer | Upgrade of the electric mining drill: 50% faster on the same 5×5 area. | Улучшение электробура: на 50% быстрее на той же площади 5×5. |
-| magnetics-maglev-transport-belt | Maglev belt | Маглев-конвейер | Magnetschwebeband | The fastest belt: 75 items per second. | Самый быстрый конвейер: 75 предметов в секунду. |
-| magnetics-maglev-underground-belt | Maglev underground belt | Подземный маглев-конвейер | Unterirdisches Magnetschwebeband | 75 items per second, maximum distance 13. | 75 предметов в секунду, наибольшая длина 13. |
-| magnetics-maglev-splitter | Maglev splitter | Маглев-разделитель | Magnetschwebe-Splitter | Splits and merges maglev lanes at 75 items per second. | Делит и сливает потоки маглев-конвейеров, 75 предметов в секунду. |
+| magnetics-magnetic-drill | Magnetic mining drill | Магнитный бур | Magnetischer Erzförderer | Upgrade of the electric mining drill: 50% faster on the same 5×5 area. | Улучшение электробура: на 50% быстрее на той же площади 5×5. | (§15) |
+| magnetics-maglev-transport-belt | Maglev belt | Маглев-конвейер | Magnetschwebe-Fließband | The fastest belt: 75 items per second. | Самый быстрый конвейер: 75 предметов в секунду. | (§15) |
+| magnetics-maglev-underground-belt | Maglev underground belt | Подземный маглев-конвейер | Unterirdisches Magnetschwebe-Fließband | 75 items per second, maximum distance 13. | 75 предметов в секунду, наибольшая длина 13. | (§15) |
+| magnetics-maglev-splitter | Maglev splitter | Маглев-разделитель | Magnetschwebe-Teilerfließband | Splits and merges maglev lanes at 75 items per second. | Делит и сливает потоки маглев-конвейеров, 75 предметов в секунду. | (§15) |
 | magnetics-coil-capacitor | Coil capacitor | Катушечный конденсатор | Spulenkondensator | 1×1 storage: only 1 MJ, but moves 1 MW. For burst loads such as turrets. | Накопитель 1×1: всего 1 МДж, зато отдаёт 1 МВт. Для пиковых нагрузок, например турелей. |
 | magnetics-superconducting-accumulator | Superconducting accumulator | Сверхпроводящий аккумулятор | Supraleitender Akkumulator | Four times the capacity and power of an accumulator on the same 2×2. | Вчетверо больше ёмкости и мощности, чем у аккумулятора, на тех же 2×2. |
-| magnetics-superconducting-pylon | Superconducting pylon | Сверхпроводящая опора | Supraleitender Mast | Wire reach 48: a third fewer poles on long lines. | Дальность провода 48: на треть меньше опор на длинных линиях. |
+| magnetics-superconducting-pylon | Superconducting pylon | Сверхпроводящая опора | Supraleitender Strommast | Wire reach 48: a third fewer poles on long lines. | Дальность провода 48: на треть меньше опор на длинных линиях. | (§15) |
 | magnetics-mhd-generator | MHD generator | МГД-генератор | MHD-Generator | Turns chemical fuel into 5.4 MW without water. Loses a tenth of the fuel energy. | Превращает химическое топливо в 5,4 МВт без воды. Теряет десятую часть энергии топлива. |
 | magnetics-flux-dynamo | Flux dynamo | Динамо-машина потока | Flussdynamo | Discharges flux crystals: 10 MW with no pollution and no water. | Разряжает кристаллы потока: 10 МВт без загрязнения и без воды. |
 | magnetics-geomagnetic-coil | Geomagnetic coil | Геомагнитная катушка | Geomagnetische Spule | Draws power from the planet's magnetic field: a small, constant output by day and night. | Берёт энергию из магнитного поля планеты: небольшая постоянная мощность днём и ночью. |
-| magnetics-ferrite-wall | Ferrite wall | Ферритовая стена | Ferritwand | A cheap early upgrade of the stone wall. | Дешёвое раннее улучшение каменной стены. |
-| magnetics-magnet-wall | Magnet wall | Магнитная стена | Magnetwand | Its field shocks the biters that bite it. | Её поле бьёт током кусающих её жуков. |
-| magnetics-superconducting-wall | Superconducting wall | Сверхпроводящая стена | Supraleitende Wand | Absorbs lasers and lightning and shocks attackers. | Поглощает лазеры и молнии и бьёт током нападающих. |
+| magnetics-ferrite-wall | Ferrite wall | Ферритовая стена | Ferritmauer | A cheap early upgrade of the stone wall. | Дешёвое раннее улучшение каменной стены. | (§15) |
+| magnetics-magnet-wall | Magnet wall | Магнитная стена | Magnetmauer | Its field shocks the biters that bite it. | Её поле бьёт током кусающих её жуков. | (§15) |
+| magnetics-superconducting-wall | Superconducting wall | Сверхпроводящая стена | Supraleitende Mauer | Immune to laser and electric damage; its field shocks the biters that bite it. | Неуязвима для лазерного и электрического урона; её поле бьёт током кусающих её жуков. | (§15) |
 | magnetics-magnet-gate | Magnet gate | Магнитные ворота | Magnettor | A gate as strong as a magnet wall. | Ворота, прочные, как магнитная стена. |
 | magnetics-superconducting-gate | Superconducting gate | Сверхпроводящие ворота | Supraleitendes Tor | A gate as strong as a superconducting wall. | Ворота, прочные, как сверхпроводящая стена. |
-| magnetics-mend-coil | Mend coil | Ремонтная катушка | Reparaturspule | Repairs walls and turrets within 10 tiles from the power grid, 5 kJ per point of health. | Чинит стены и турели в радиусе 10 клеток за счёт электросети, 5 кДж на единицу прочности. |
+| magnetics-mend-coil | Mend coil | Ремонтная катушка | Reparaturspule | Uses grid power to repair walls, gates, turrets and radars within 10 tiles of the coil: 5 kJ per point of health. | Чинит стены, ворота, турели и радары в радиусе 10 клеток от катушки за счёт электросети, 5 кДж на единицу прочности. | (§15) |
 | magnetics-coilgun-turret | Coilgun | Катушечник | Spulenkanone | An electric turret firing ferrite slugs that pierce small enemies. | Электрическая турель: ферритовые болванки пробивают мелких врагов. |
-| magnetics-gauss-turret | Gauss turret | Пушка Гаусса | Gauß-Geschütz | A long-range turret whose heavy slugs break armour. | Дальнобойная турель, тяжёлые болванки которой пробивают броню. |
-| magnetics-arc-emitter | Arc emitter | Разрядник | Bogenstrahler | Chain lightning that jumps through a swarm and slows it. | Цепная молния перескакивает по стае и замедляет её. |
-| magnetics-rail-cannon | Rail cannon | Рельсовая пушка | Schienenkanone | Fires a slug through every enemy on a line. | Прошивает болванкой всех врагов на линии. |
+| magnetics-gauss-turret | Gauss turret | Пушка Гаусса | Gauß-Geschützturm | A long-range turret whose heavy slugs break armor. | Дальнобойная турель, тяжёлые болванки которой пробивают броню. | (§15) |
+| magnetics-arc-emitter | Arc emitter | Разрядник | Lichtbogenstrahler | Chain lightning that jumps through a swarm and slows it. | Цепная молния перескакивает по стае и замедляет её. | (§15) |
+| magnetics-rail-cannon | Rail cannon | Рельсовая пушка | Schienengeschütz | Fires a slug through every enemy on a line. | Прошивает болванкой всех врагов на линии. | (§15) |
 
 ### 9.3 Recipes with their own names, categories
 
@@ -797,7 +798,7 @@ Placeable items take their name from the entity (`[entity-name]`), and non-place
 | magnetics-magnetic-power | Magnetic power | Магнитная энергетика | Magnetische Energie | MHD generator, coil capacitor and geomagnetic coil. | МГД-генератор, катушечный конденсатор и геомагнитная катушка. |
 | magnetics-magnetic-separation | Magnetic separation | Магнитная сепарация | Magnetische Trennung | Ferrofluid, and ore recovered from stone. | Феррожидкость и руда, извлечённая из камня. |
 | magnetics-magnetic-fortifications | Magnetic fortifications | Магнитные укрепления | Magnetische Befestigungen | Magnet walls and gates, magnet slugs, the gauss turret and the mend coil. | Магнитные стены и ворота, магнитные болванки, пушка Гаусса и ремонтная катушка. |
-| magnetics-arc-emitter | Arc emitter | Разрядник | Bogenstrahler | A chain-lightning turret against swarms. | Турель с цепной молнией против стай. |
+| magnetics-arc-emitter | Arc emitter | Разрядник | Lichtbogenstrahler | A chain-lightning turret against swarms. | Турель с цепной молнией против стай. | (§15) |
 | magnetics-superconductivity | Superconductivity | Сверхпроводимость | Supraleitung | Liquid nitrogen from air and superconducting cable. | Жидкий азот из воздуха и сверхпроводящий кабель. |
 | magnetics-superconducting-power | Superconducting grid | Сверхпроводящие сети | Supraleitendes Stromnetz | Superconducting accumulators and pylons. | Сверхпроводящие аккумуляторы и опоры. |
 | magnetics-flux-energy | Flux energy | Энергия потока | Flussenergie | Grow and charge flux crystals; carry power where poles cannot reach. | Выращивание и зарядка кристаллов потока; энергия туда, куда не дотянуть провода. |
@@ -940,6 +941,7 @@ Expected = speed × t / energy crafts; power = `energy_usage` + drain [C §1].
 | P7 | magnetic separator × stone separation | 600 s | 120 crafts → iron ore **240 ± 2**; copper ore Binomial(120, 0.5): mean 60, σ = 5.48 → **[44, 76]**; ferrofluid used **600 ± 5** | 258.3 kW ± 2 % |
 | P8 | SA only: EM plant × coil; foundry × ferrite; foundry × alloy; cryogenic plant × SC cable | 60 s each | 2 × 60 / 1.6 = 75 crafts × 1.5 = **111–114 coils**; 4 × 60 / 3.2 = 75 × 1.5 = **111–114 ferrite**; 4 × 60 / 6.4 = 37.5 × 1.5 = **55–57 alloy**; 2 × 60 / 10 = 12 crafts → **23–25 cable** | — |
 | P9 | category isolation | — | `set_recipe("magnetics-coil")` on AM2 and AM3 fails in B and SA; the character cannot hand-craft ferrite, coil, alloy or cable |
+| P10 (§15) | SA only: SA cryogenic plant and cryo chamber created with air liquefaction on surfaces with pressure 0 and 1000 | 300 ticks | pressure 0: recipe not assigned, 0 crafts; pressure 1000: assigned, ≥ 1 craft | — |
 
 ### 11.4 Mining and logistics
 
@@ -976,21 +978,24 @@ The arc emitter and gauss per-hit numbers use H_res `applied = (D − decrease) 
 |---|---|---|
 | W1 | `LuaEntity.damage(100, "enemy", type)` [H §10.3] on each wall/gate + stone-wall control, 8 damage types | **stone:** phys 77.6, impact 22, explosion 63, fire 0, acid 20, laser 30, electric 100, poison 100. **ferrite:** 72.75, 22, 63, 0, 20, 30, 70, 100. **magnet (and magnet gate):** 66.5, 17.5, 55.25, 0, 15, 25, 50, 100. **SC (and SC gate):** 59.8, 12, 48, 0, 10, **0, 0**, 100. ± 0.01 |
 | W2 | max health | 500 / 800 / 1500 / 800 / 1500 (ferrite, magnet, SC walls; magnet, SC gates) |
-| W3 | thorns: 1 medium biter commanded to `attack` each wall for 20 s (stone control) | per bite (wall damage event with `cause` = biter) the biter receives exactly one damage event with `cause` = wall: **5 electric** (magnet wall/gate), **10** (SC), **0** events (stone). Count(thorn events) = count(bites) ± 1 **[PILOT-11]** |
+| W3 | thorns: 1 medium biter commanded to `attack` each wall for 20 s (stone control) | per bite (wall damage event with `cause` = biter) the biter receives exactly one damage event with `cause` = wall: **5 electric** (magnet wall/gate), **10** (SC), **0** events (stone). Count(thorn events) = count(bites) ± 1 **[PILOT-11]**. (§15) Wall damage per bite = H_res: stone 9.6 / 21.6 / 69.6 (medium / big / behemoth), magnet 7.0 / 17.5, SC 4.55 / 14.3 / 53.3 |
 | W4 | small biters vs a magnet wall | a small biter dies on its 4th bite (H: 15 HP, 0.35 heal per 35-tick bite interval [W §12]); on an SC wall on the 2nd |
 | K1 | coilgun on `magnetics-test-target`, 60 s, ferrite then magnet slugs | per hit **20 / 32**; **2.50 ± 0.05 shots/s** (magazine consumption: 10 shots per item) |
 | K2 | coilgun vs 1 pinned medium biter | per hit (`final_damage_amount` [W §13.4]) **14.4** (ferrite) / **25.2** (magnet) (H_res) |
 | K3 | pierce: 5 pinned small biters in a line 1 tile apart, 8 tiles out, one ferrite shot; 5 medium biters, one magnet shot | distinct biters damaged by the first slug: **3** (30 → 15 → 0 → < 0) and **3** (150 → 75 → 0 → < 0). Band [2, 3] until PILOT-7 pins the accounting |
-| K4 | friendly fire: coilgun and gauss behind 3 own stone walls firing at biters beyond, 30 s | wall health unchanged (`force_condition = "not-same"`) |
+| K4 | friendly fire: coilgun and gauss behind 3 own stone walls firing at biters beyond, 30 s | wall health unchanged (`force_condition = "enemy"`, §15) |
 | K5 | gauss on test target; on 1 big biter; range | per hit **90**; vs big **73.8** (H_res); **1.00 ± 0.02 shots/s**; a target at 29.5 tiles is engaged within 5 s, one at 30.5 never **[PILOT-17 pins the range metric]** |
 | K6 | energy per shot (buffer delta / shots; EEI-fed) | coilgun **40 kJ**, gauss **250 kJ**, rail cannon **4 MJ**, arc emitter **1 MJ** (± 2 %). Pole removed: 0 shots, status `no_power` |
 | K7 | arc emitter: 5 pinned medium biters 4 tiles apart in a chain; one shot | primary **45**, 4 bounces of **30** → total **165** (medium biters have no electric resistance [W §12]); exactly **5** distinct entities damaged; each gets the `electric-mini-stun` sticker. A stone wall 2 tiles from the cluster keeps full health **[PILOT-9]** |
 | K8 | arc vs laser control (same run) on test targets, 60 s | laser DPS measured (L). Arc single-target DPS = 45 × 1.00 shots/s. **Ratio ∈ [0.5, 1.0]** (J1). If PILOT-15 finds L outside [45, 90], the arc primary damage is retuned before registration |
-| K9 | rail cannon: 5 pinned behemoths on one line at 10–34 tiles, 1 behemoth 3 tiles off the line, 1 behemoth on the line at 37.5, 2 own stone walls on the line | each in-line behemoth takes **1069.2** per shot (H_res); off-line 0; the one at 37.5 takes 0 (line range 36); own walls 0 (`force = "enemy"`) **[PILOT-8]** |
+| K9 | rail cannon: 5 pinned behemoths on one line at 10–34 tiles, 1 behemoth 3 tiles off the line, 1 behemoth on the line at 38.6 (§15), 2 own stone walls on the line | each in-line behemoth takes **1069.2** per shot (H_res); off-line 0; the one at 38.6 takes 0 (line range 36 from the muzzle, ends ≈ 37.4 from the centre; §15); own walls 0 (`force = "enemy"`) **[PILOT-8]** |
 | K10 | flux rail slug on test target | per shot **1800 physical + 600 electric**; 3 shots per item |
 | K11 | bonus mirroring at runtime: research PPD-1..3 and WSS-1..3 (SA also 4..6) | force modifiers equal: `get_ammo_damage_modifier` of the 3 Magnetics categories = `bullet` (0.4 after PPD-3); `get_gun_speed_modifier` likewise; `get_turret_attack_modifier` of the 3 Magnetics ammo turrets = `gun-turret`. **Per-hit ratio coilgun-ferrite / gun-turret-firearm on test targets = 4.00 ± 1 % before and after research** (formula-independent; fixes balance K10) |
 | K12 | range caps (runtime) | `prototypes.entity[t].turret_range` = 20 / 30 / 20 / 36 |
-| T-W | wave scenario: 20 medium + 10 big biters with `attack_area` on a 3×3 turret block behind a 2-deep wall line; evolution and seed fixed. Variants: gun turrets + piercing; coilguns + magnet slugs; gauss; lasers; arc emitters; each with stone walls vs SC walls | reported per variant: time to clear, wall HP lost, turret losses, energy. **Pass:** all attackers dead within 120 s in every Magnetics variant; SC-wall variants lose ≤ ½ of the stone-wall variants' wall HP. The vanilla-vs-Magnetics comparison is post-hoc for the council and does not change pass/fail |
+| K13 (§15) | arc emitter, one shot at 5 pinned small biters 4 tiles apart (every hit kills) | 5 dead; beams drawn: **1** `magnetics-arc-beam`, **4** `magnetics-arc-bounce-beam` |
+| K14 (§15) | coilgun (ferrite) and gauss, each with a clear lane and a lane with neutral `tree-01` and `huge-rock` on the line of fire, 1200 ticks | tree and rock untouched; target damage behind them = clear lane ± 1 hit |
+| K15 (§15) | shots per minute, own force without research and with WSS-1..6 (+150 %), EEI-fed | coilgun 150 → **375**, gauss 60 → **150**, rail cannon 24 → **60** (± 2 %) |
+| T-W | wave scenario: 20 medium + 10 big biters with `attack_area` on a 3×3 turret block behind a 2-deep wall line; evolution and seed fixed. Variants: gun turrets + piercing; coilguns + magnet slugs; gauss; lasers; arc emitters; each with stone walls vs SC walls | reported per variant: time to clear, wall HP lost, turret losses, energy. **Pass:** all attackers dead within 120 s in every Magnetics variant; SC-wall variants lose ≤ ½ of the stone-wall variants' wall HP (§15: reported only; the resistance claim is tested per bite in W3). The vanilla-vs-Magnetics comparison is post-hoc for the council and does not change pass/fail |
 
 ### 11.7 Mend coil (script)
 
@@ -1019,6 +1024,7 @@ Walls are damaged with `damage(X, "enemy", "poison")`. Walls have no poison resi
 | Q3 | resonator `get_crafting_speed(q)` = 1.0 for all qualities; a legendary resonator's energy per crystal is as E6 |
 | Q4 | no quality crystal exists: growth and charging `allow_quality = false`; S9's recycling rule holds |
 | Q5 | legendary coil winder speed / normal = legendary AM2 speed / normal (a ratio; no quality number invented) |
+| Q6 (§15) | legendary rail cannon (range 54) vs a pinned behemoth on its axis at 53.8 and 54.2: every shot hits for **1069.2** (no slug wasted) |
 
 ### 11.9 UPS (`--benchmark`, 5 runs each, median of mean ms/tick; noise measured in PILOT-20)
 
@@ -1138,7 +1144,7 @@ Each pilot runs on a separate save or seed that never enters the registered test
 ### 15.1 Изменения мода (числа — в `tools/spec.py`, код — в `magnetics/`)
 | что | было | стало | почему (замер) |
 |---|---|---|---|
-| длина линии рельсовой болванки и болванки потока | `range = 36` | `range = 34.60625` | PILOT-8: линия начинается у дула, в 1.39375 от центра турели; гигант на 37,5 получал 1069,2. Теперь линия кончается ровно в 36 от центра (K9: 0 на 37,5) |
+| длина линии рельсовой болванки и болванки потока | `range = 36` | `range = 34.60625` | PILOT-8: линия начинается у дула, в 1.39375 от центра турели; гигант на 37,5 получал 1069,2. Теперь линия кончается ровно в 36 от центра (K9: 0 на 37,5). **Отменено в §15.4** |
 | перезарядка разрядника | `cooldown = 60` | `cooldown = 120` | PILOT-15: лазерная турель без исследований даёт 30 урона/с (20 за выстрел, 1,5 выстрела/с), а не 45–90. При 60 разрядник был 1,5× лазера; при 120 — 22,5/с = 0,75× (полоса §8.4 [0,5; 1,0]) |
 | дальность шипов стен (`attack_reaction.range`) | 2 | 3 | пилот боя: большие и гигантские жуки кусают с 2,07–2,16 клетки, шипы их не доставали. Новый тест W3: один удар шипами (5/10 электричеством) на каждый укус большого и гигантского жука |
 | фильтр урона ремонтной катушки | «типы через or, затем final-health с and» (§6.1) | условие final-health в паре с каждым типом | PILOT-24: and связывает сильнее or; запись §6.1 относила условие только к радару |
@@ -1150,7 +1156,7 @@ Each pilot runs on a separate save or seed that never enters the registered test
 |---|---|---|---|
 | K3, магнитная болванка | 3 средних жука | 1 | PILOT-7: снаряд проходит только сквозь цель, которую его попадание убивает, и останавливается в первой выжившей (вопреки тексту API). Ферритовая болванка по мелким жукам — 3, как было |
 | K6, статус после снятия опоры | `no_power` | `no_power` или `low_power` | остаток буфера меньше одного выстрела даёт `low_power`; выстрелы при этом прекращаются (проверяется отдельно) |
-| T-W, «SC-стены теряют ≤ ½ стен из камня» | абсолютные очки прочности | доля потерянной прочности (потеряно / суммарная прочность) | абсолютные потери зависят от числа укусов, а не от стойкости; при прочности в 4,3 раза больше сравнивать нужно долю. Сид карты зафиксирован (`--map-gen-seed 20260930`) |
+| T-W, «SC-стены теряют ≤ ½ стен из камня» | абсолютные очки прочности | доля потерянной прочности (потеряно / суммарная прочность) | абсолютные потери зависят от числа укусов, а не от стойкости; при прочности в 4,3 раза больше сравнивать нужно долю. Сид карты зафиксирован (`--map-gen-seed 20260930`). **Пересмотрено в §15.4** |
 | E7, геомагнитная катушка | H1 (v/100) или H2 (v/90) | H2: 20 кВт на Наувисе, 22 кВт на Фулгоре | PILOT-12: 0 / 2222 / 5556 / 20000 / 22000 Вт при поле 0 / 10 / 25 / 90 / 99, одинаково днём и ночью |
 | W3, подсчёт шипов | опрос здоровья жука | события урона с причиной (стена ↔ жук) | опрос путал чужой урон соседних ячеек и лечение больших жуков с шипами |
 | U2 | вариант без катушек без электросети, урон прекращался на просевших стенах | одна и та же сеть и одинаковая нагрузка уроном в обоих вариантах | иначе разность мерила подстанции и разную частоту событий, а не катушки |
@@ -1164,3 +1170,49 @@ Each pilot runs on a separate save or seed that never enters the registered test
 - §6.3/G3, PILOT-16: машины с `fixed_recipe` работают до исследования рецепта; обхода нет — машину и её рецепт открывает одна технология.
 - PILOT-25: планировщик улучшений ставит отметку и там, где связи `next_upgrade` нет; проверку связи делает только статическая часть L4/S6.
 - E9: при магнитном поле 25 сепаратор не получает рецепт при создании (статус `no_recipe`), а скриптовый `set_recipe` условия поверхности не проверяет; тест создаёт машину сразу с рецептом.
+
+### 15.4 Изменения после ревью (01.10.2026)
+
+Независимое ревью (находки с двумя голосами скептиков). Здесь — часть стадии данных: числа в `tools/spec.py`, код в `magnetics/prototypes/`, проверки в `tools/magnetics-tests/` (cells и `data.lua`). Строки таблиц §3.2, §4.1, §4.4, §4.6, §7.3, §9, §11 обновлены и помечены «(§15)»; проза §0–§14 не переписывалась.
+
+| что | было | стало | почему (замер или источник) |
+|---|---|---|---|
+| порядок действий выстрела разрядника | цепь, урон, стикер, луч | цепь, **луч**, урон, стикер; в цепи — доставка луча раньше мгновенного урона | эффекты после смертельного урона к убитой цели не применяются: по мелким жукам (убиты каждым ударом) не рисовался ни один луч, а с лучом пропадал и звук выстрела (`working_sound` луча). Тест K13: 1 главный луч и 4 отскока на убивающем выстреле (до правки 0 и 0) |
+| окраска сверхпроводящего аккумулятора и конденсатора | только `chargable_graphics.picture` («анимации — световые накладки») | вся `chargable_graphics` | слой 1 `accumulator_charge()`/`accumulator_discharge()` — полное тело аккумулятора (base entities.lua), а не накладка: при зарядке и разрядке был виден ванильный цвет. Тест S12 (data facts): 3 окрашенных листа тела на постройку, тени и свечение не окрашены |
+| окраска инея Space Age | пропускался только ключ `frozen_patch` | пропускается любой ключ, в имени которого есть `frozen` | у подземки SA кладёт `structure.frozen_patch_in/out` — их иней на Аквило был сиреневым. Тест S12: листья инея = ванильный образец по тому же пути (SA: 3 листа у подземки). Правка для `tools/tests.py` (S12, не мой файл) — в отчёте ревью |
+| конденсатор 1×1: провода, остатки, рамка превью | `circuit_wire_max_distance` 9 (провода цеплялись без разъёма), остатки `accumulator-remnants` 2×2, `drawing_box_vertical_extension` 0 | 0 (без проводов, как задумано в design_balance: «no circuit connector»); ванильные `small-remnants` 1×1; **0.25** (= 0.5 у аккумулятора × масштаб графики 0.5) | ревью: пробник соединял два конденсатора проводом и читал сигнал A; остатки 2,7 × 2,3 клетки на месте постройки 1×1. Тест S4 (doc): corpses, `get_max_circuit_wire_distance()`, `drawing_box_vertical_extension`. Проверка tests.py «§4.1 corpse = base» для конденсатора теперь неверна — правка в отчёте |
+| гильзы и звук выстрела турелей на болванках | от пулемёта: гильзы `shell-particle` и звук `gun-turret-gunshot` | без гильз у всех трёх; у пушки Гаусса и рельсовой пушки — звук пушки танка (`data.raw.gun["tank-cannon"]`, поле `attack.sound_from` в spec.py); катушечник оставляет пулемётный звук | косметика копии gun-turret. Тест S4 (data facts) |
+| дым динамо-машины потока | дым `burner-generator` | без дыма (генератор без загрязнения) | описание «без загрязнения»; МГД (100/мин) дымит, контроль в тесте |
+| `color_hint` предметов построек | ванильная метка («3» у маглев-лент, «2» у намоточного станка) | нет | метка уровня ванильной копии к моду не относится (скрытая настройка игры) |
+| вход рельсовой пушки | 2 МВт | **4 МВт** = 0,4 выстр./с × 2,5 (WSS-1..6, +150 %) × 4 МДж; буфер 8 МДж = 2 выстрела | при 2 МВт исследования скорострельности поднимали её только до 0,5 выстр./с, хотя бонус копируется полностью (§5.3). Тест K15: в минуту 24 → 60 (катушечник 150 → 375, Гаусс 60 → 150); до правки 30 |
+| снаряды болванок | `force_condition = "not-same"` | `"enemy"` | нейтральные деревья и камни перехватывали болванки (огромный камень — 0 урона по цели за 20 с). Тест K14: дерево и камень на линии огня целы, урон = чистая дорожка; K4 (свои стены целы) проходит. Ожидание tests.py `§4.7 force_condition = not-same` теперь неверно — правка в отчёте |
+| длина линии рельсовой болванки и болванки потока | 34.60625 (§15.1) | **36** (как §4.7) | смещение дула (1.39375) качество не умножает, а дальность турели и линии умножает: при 34.60625 легендарная пушка (дальность 54) не доставала линией до 53,3–54,4 и тратила болванки впустую. Условие 1.39375 + L·m ≥ 36·m верно при L = 36 для любого m ≥ 1; лишние ≈ 1,4 клетки за дальностью при обычном качестве безвредны (турель туда не целится; у рельсотрона SA линия 50 при дальности 40). Тест Q6 (bq, sa): легендарная пушка, гигант на 53,8 и 54,2 — каждый выстрел 1069,2 (до правки 0 из 3). K9: дальний гигант перенесён с 37,5 на 38,6 (ожидание 0; на 37,5 линия 36 уже попадает, PILOT-8) |
+| рецепт «Сжижение воздуха» под SA | без условий | `{property = "pressure", min = 10}` | криогенный завод SA ставится и на платформу: жидкий азот делался из вакуума (пробник ревью: 6 крафтов). Азот не возится в бочках, поэтому вслед закрыты кабель и рост кристаллов в космосе. Тест P10 (sa): при давлении 0 рецепт не назначается (0 крафтов), при 1000 — назначается; S8 |
+| рецепты болванок | ферритовая: 6 феррита + 2 меди (14 руды); Гаусса: 2 сплава + 1 сталь (25) | ферритовая: **10 феррита + 3 меди (23)**; Гаусса: **3 сплава + 2 стали (40)**; урон не менялся | экономия против брони, см. ниже. Магнитная болванка дорожает вслед (её рецепт берёт ферритовую): 24 → 33 |
+| имена de | Ferritwand, Magnetwand, Supraleitende Wand, Magnetbohrer, Magnetschwebeband, Unterirdisches Magnetschwebeband, Magnetschwebe-Splitter, Supraleitender Mast, Gauß-Geschütz, Bogenstrahler (постройка и технология), Schienenkanone | Ferritmauer, Magnetmauer, Supraleitende Mauer, Magnetischer Erzförderer, Magnetschwebe-Fließband, Unterirdisches Magnetschwebe-Fließband, Magnetschwebe-Teilerfließband, Supraleitender Strommast, Gauß-Geschützturm, Lichtbogenstrahler, **Schienengeschütz** | термины ванильной немецкой локали (Mauer, Erzförderer, Fließband, Teilerfließband, Geschützturm, Strommast, Lichtbogen); «Schienenkanone» совпадало с ручным рельсотроном SA (`[item-name] railgun`). «Flusskristall laden» оставлено: ванильные рецепты тоже в инфинитиве («Eisen gießen»). `spec.py` теперь отказывается генерировать, если любое имя мода в en/ru/de совпадает с `[*-name]` ванильных локалей (core, base, quality, elevated-rails, space-age); проверка ловит старое «Schienenkanone» |
+| описание сверхпроводящей стены | «Absorbs lasers and lightning and shocks attackers» | «Immune to laser and electric damage; its field shocks the biters that bite it» (ru так же) | молнии Фулгоры не бьют ни одну стену (исключение по типу `wall`, planet.lua), а шипы отвечают только на укус вплотную (`attack_reaction` physical, range 3) |
+| описание ремонтной катушки | «within 10 tiles from the power grid» | «Uses grid power to repair walls, gates, turrets and radars within 10 tiles of the coil» (ru: ворота и радары) | радиус считается от катушки (control.lua RADIUS); чинит и ворота, и радары (HEAL_TYPES) |
+| en | armour | armor | ванильная en-локаль американская (armor 77 раз, armour 0) |
+| `info.json`, changelog | «ferrite/magnet/superconducting walls and gates»; «from red to yellow science» | «…walls, magnet and superconducting gates»; «(with Space Age, maglev logistics also needs space, metallurgic and electromagnetic science)» | ферритовых ворот нет; под SA T13 требует пакетов SA |
+
+**Экономия боеприпасов против брони** (дополняет §8.4, который считал сырой урон). Урон после стойкости на единицу сырья (руда, камень, плита = 1; сталь = 5; феррит = 2; магнитный сплав = 10; U-238 = 10 / 0,993 руды; рецепты base: обойма 4 железа, бронебойные 2 обоймы + 1 сталь + 2 меди → 2, урановые 1 бронебойная + 1 U-238), формула PILOT-3 с правилом минимума `1/(2 + decrease − D) × (1 − percent)` при D − decrease < 1. Жуки: мелкий без стойкости, средний 4/10 %, большой 8/10 % (physical). Одна цель, без исследований:
+
+| боеприпас (сырьё на обойму) | урон × выстрелов | мелкий | средний | большой |
+|---|---|---|---|---|
+| обычная обойма (4) | 5 × 10 | 12.50 | 2.25 | 0.45 |
+| бронебойная (7.5) | 8 × 10 | 10.67 | 4.80 | 0.60 |
+| урановая (17.57) | 24 × 10 | 13.66 | 10.24 | 8.20 |
+| ферритовая болванка, было (14) | 20 × 10 | 14.29 | 10.29 | 7.71 |
+| **ферритовая болванка, стало (23)** | 20 × 10 | 8.70 | 6.26 | 4.70 |
+| магнитная болванка, было (24) | 32 × 10 | 13.33 | 10.50 | 9.00 |
+| **магнитная болванка, стало (33)** | 32 × 10 | 9.70 | 7.64 | 6.55 |
+| болванка Гаусса, было (25) | 90 × 4 | 14.40 | 12.38 | 11.81 |
+| **болванка Гаусса, стало (40)** | 90 × 4 | 9.00 | 7.74 | 7.38 |
+
+Ферритовая болванка против бронебойных патронов того же уровня (A+L): было 1,34 / 2,14 / 12,9 раза (мелкий / средний / большой), стало 0,82 / 1,30 / 7,8. По сырому урону (метрика §8.4) она теперь 0,70× обычной обоймы и 0,82× бронебойной: дешевле ванили она только против брони, а против мелких жуков её выручает пробой до трёх целей. Одним рецептом нельзя уложить и мелких, и средних в полосу 1,0–1,35× (мелким нужно ≤ 18,75 сырья, средним ≥ 22,2), поэтому якорь — средний жук, главная бронированная угроза зелёного уровня. Против больших жуков все болванки остаются ответом на броню, которого у ванили до урана нет (это замысел §8.4: «armour answer before uranium»). Урон за выстрел, dps и тесты K1–K3, K11, T-W не меняются (ячейки кладут болванки напрямую). Объяснение «баланс стал лучше» в игре не проверялось — это расчёт по формуле; оценку отдаём совету.
+
+**Проверки, переделанные по ревью** (стенд; Python-часть `tools/tests.py` — не моя):
+- T-W «доля потерь SC ≤ ½ доли камня» — справочная запись (`kind = "info"`): при прочности 1500 против 350 условие выполнялось и у SC-стены без стойкости. Зависимость от стойкости теперь проверяет W3: урон каждого укуса по стене = H_res для среднего, большого и гигантского жука (камень 9,6 / 21,6 / 69,6; магнитная 7,0 / 17,5; SC 4,55 / 14,3 / 53,3; добавлена строка «камень против гиганта» с восстановлением прочности каждый тик). Мутация «SC без стойкости» даёт 15 / 30 / 90 и валит W3.
+- `allowed_effects` четырёх машин сверяются с набранным вручную столбцом §4.2 («5 effects»), а не только с `expected.lua`, который порождает тот же spec.py (мутация «печь без productivity» в spec.py теперь падает в S4 doc).
+- Записи, которые не могут упасть: «statuses (справочно)» — `info`; «entity count (expected.lua) = 26», «E8 entity list has 26 names», «data facts: mod-data present», счётчики непустоты — `harness`; тавтология «chain end X listed» удалена (концы цепочек проверяет цикл `next_upgrade = nil`).
+- Новые: K13, K14, K15 (combat), P10 (production, sa), Q6 (quality, bq/sa), «data facts» (static: гильзы, звук, дым, `color_hint`, окраска тела накопителей, иней, порядок доставок цепи — наблюдения из `data.raw` пишет тестовый `data.lua` в `mod-data` `magnetics-test-data-facts`, ожидания набраны вручную в `static.lua`).

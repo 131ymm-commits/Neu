@@ -19,12 +19,16 @@ function U.merge(dst, src)
   return dst
 end
 
--- Ключи, в которые окраска не заходит: тени, подсветка, разъёмы, отражения, иконки.
+-- Ключи, в которые окраска не заходит: тени, подсветка, разъёмы, отражения, иконки. Кроме того — любой ключ, в имени
+-- которого есть «frozen» (иней Space Age: frozen_patch, frozen_patch_in/out у подземки и будущие *_frozen*; §15.4).
 local SKIP = {
   circuit_connector = true, circuit_connector_flipped = true, water_reflection = true, frozen_patch = true,
   belt_reader = true, connector_frame_sprites = true, icon = true, icons = true, shadow = true,
   integration_patch = false,
 }
+local function skip_key(k)
+  return SKIP[k] or (type(k) == "string" and k:find("frozen", 1, true) ~= nil)
+end
 -- Окрасить листья спрайтов (таблицы с filename/filenames/stripes), кроме теней, свечения, света и масок цвета силы.
 function U.tint(node, tint)
   if type(node) ~= "table" then return end
@@ -35,7 +39,7 @@ function U.tint(node, tint)
     return
   end
   for k, v in pairs(node) do
-    if type(v) == "table" and not SKIP[k] then U.tint(v, tint) end
+    if type(v) == "table" and not skip_key(k) then U.tint(v, tint) end
   end
 end
 
@@ -110,6 +114,7 @@ function U.building_item(name, spec)
   it.weight = nil
   it.default_import_location = nil
   it.spoil_ticks = nil
+  it.color_hint = nil      -- §15.4: ванильная метка уровня («3» у экспресс-лент, «2» у AM2) к копии не относится
   return it
 end
 

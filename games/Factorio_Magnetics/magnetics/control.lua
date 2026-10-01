@@ -9,17 +9,30 @@
 --   storage.coils.index   unit_number -> номер записи в list;
 --   storage.grid          [surface_index]["cx,cy"] -> массив unit_number катушек в клетке CELL×CELL (порядок вставки);
 --   storage.force_coils   [force_index] -> число катушек силы;
---   storage.queue         массив {entity, unit, cycle} повреждённых целей (cycle — тик последней обработки);
+--   storage.queue         массив записей повреждённых целей {entity, unit, x, y, surface, force, max_health, cov, cov_v,
+--                         cycle} (cycle — тик последней обработки);
 --   storage.queued        unit -> true для целей в очереди;
 --   storage.cursor        с какой записи очереди начнётся следующий цикл (обход по кругу);
 --   storage.seq           счётчик порядка вставки катушек ("первая по порядку вставки" = наименьший seq);
---   storage.coils_version растёт при каждом добавлении/удалении катушки и слиянии сил: записи очереди хранят список
---                         покрывающих катушек (cov, по возрастанию seq) с версией cov_v и пересчитывают его при смене версии.
--- Скорость (замер UPS 01.10.2026, tools/ups.py): прежний цикл заново обходил все катушки соседних клеток сетки и читал
--- у цели неизменные поля через API на каждой записи — 100 катушек при 50 уронах/с стоили ~0,16 мс/тик. Теперь
--- неизменные поля цели (позиция, поверхность, сила, макс. здоровье) читаются один раз при постановке в очередь.
+--   storage.coils_version растёт при каждом добавлении/удалении катушки и смене её силы: записи очереди хранят список
+--                         покрывающих катушек (cov, по возрастанию seq) с версией cov_v и пересчитывают его при смене версии;
+--   storage.force_cursor  с какой записи list продолжится обход сил катушек (check_forces).
+-- Скорость (замер UPS 01.10.2026, tools/ups.py): прежний цикл заново обходил все катушки соседних клеток сетки на каждой
+-- записи — 100 катушек при 50 уронах/с стоили ~0,16 мс/тик. Теперь список покрывающих катушек цели хранится в записи
+-- и пересчитывается только при смене набора катушек, их сил или позиции и силы цели.
+-- Сила и позиция цели читаются через API на каждой обработке записи (ревью 01.10.2026, находка 10: скрипт может сменить
+-- силу цели без события или телепортировать её); поверхность и макс. здоровье цели постоянны (телепорт стен и турелей
+-- на другую поверхность движок не делает, LuaControl.teleport), их запись читает один раз.
+-- Сила катушки: присваивание entity.force события не вызывает. Катушку со сменённой силой не берёт find_coil (сила
+-- выбранной катушки сверяется перед лечением), а учёт (force_coils, rec.force, цели новой силы в радиусе) поправляет
+-- check_forces: FORCE_CHECKS записей list за цикл по кругу (ревью, находка 11).
 -- Обработчик on_entity_damaged зарегистрирован только пока есть хоть одна катушка; on_load повторяет это решение
 -- по storage (регистрация — чистая функция storage, как требует детерминизм мультиплеера).
+-- События постройки слушают и катушку, и цели (HEAL_TYPES): цель, построенная уже повреждённой (из предмета со
+-- здоровьем < 1, клоном), рядом с катушкой своей силы встаёт в очередь (ревью, находка 12). Обработчик на одно событие
+-- у мода один (LuaBootstrap.on_event: повторная регистрация заменяет прежнюю), поэтому фильтр общий.
+-- Настройки EEI из чертежа и клона (power_production, power_usage, buffer_size) при каждой постройке сбрасываются
+-- к прототипу (ревью, находка 6: отредактированный чертёж давал катушке энергию из ничего).
 --
 -- Фильтр урона (PILOT-24): в фильтрах событий "and" связывает сильнее "or" (runtime-api.json,
 -- LuaEntityDamagedEventFilter.mode), поэтому условие final-health > 0 стоит в паре с КАЖДЫМ типом:
@@ -30,6 +43,8 @@
 -- PILOT-10: катушка (EEI secondary-input, energy_usage = 0) заряжается от сети ровно на 200 кВт
 -- (3333.33 Дж/тик, полный буфер 1 МДж через 300 тиков), запасной путь не нужен.
 -- Здоровье хранится с округлением float32 (запись 505 читается как 505.0000305), поэтому "полное" сравнивается >=.
+-- Сохранения сборки fc2e2d8 (та же версия 1.0.0, до ускорения цикла): в storage нет coils_version и force_cursor,
+-- записи очереди — только {entity, unit}; covering() и heal_one() дописывают недостающее (ревью, находка 9).
 
 local COIL = "magnetics-mend-coil"
 local RADIUS = 10                -- клеток, евклидово расстояние от позиции катушки до позиции цели
@@ -41,6 +56,7 @@ local J_PER_HP = 5000            -- Дж на 1 HP (100 кВт при полно
 local QUEUE_CAP = 100            -- записей очереди за цикл
 local CELL = 32                  -- клетка пространственной сетки (>= 2 * RADIUS)
 local LINES_PER_CYCLE = 10       -- линий-лучей за цикл, не больше
+local FORCE_CHECKS = 10          -- катушек за цикл, у которых сверяется сила (check_forces)
 local LINE_COLOR = {0.4, 1, 0.6, 0.8}
 local LINE_WIDTH = 2
 local LINE_TTL = 20
@@ -55,7 +71,17 @@ for i = 1, #HEAL_TYPES do
   DAMAGE_FILTER[#DAMAGE_FILTER + 1] = {filter = "final-health", comparison = ">", value = 0, mode = "and"}
 end
 
+-- Фильтр событий постройки: катушка или цель (режим "or").
+local BUILD_FILTER = {{filter = "name", name = COIL}}
+for i = 1, #HEAL_TYPES do BUILD_FILTER[#BUILD_FILTER + 1] = {filter = "type", type = HEAL_TYPES[i]} end
+
 local COIL_FILTER = {{filter = "name", name = COIL}}
+
+local BUILD_EVENT_NAMES = {"on_built_entity", "on_robot_built_entity", "script_raised_built", "script_raised_revive",
+                           "on_entity_cloned"}
+if defines.events.on_space_platform_built_entity ~= nil then
+  BUILD_EVENT_NAMES[#BUILD_EVENT_NAMES + 1] = "on_space_platform_built_entity"
+end
 
 ---------------------------------------------------------------------------------------------------------------------
 -- Состояние
@@ -68,17 +94,18 @@ local function fresh_state()
   storage.queued = {}
   storage.cursor = 1
   storage.seq = 0
+  storage.force_cursor = 1
   storage.coils_version = (storage.coils_version or 0) + 1
 end
 
 local function cell_key(x, y)
-  return (floor(x / CELL) + 0) .. "," .. (floor(y / CELL) + 0)   -- "+ 0" превращает -0 в 0, как (cx + dx) в find_coil
+  return (floor(x / CELL) + 0) .. "," .. (floor(y / CELL) + 0)   -- "+ 0" превращает -0 в 0, как (cx + dx) в covering
 end
 
 ---------------------------------------------------------------------------------------------------------------------
 -- Очередь повреждённых целей
 
--- Запись очереди: цель и её неизменные поля (стены, ворота, турели и радары не двигаются).
+-- Запись очереди: цель и её поля на момент постановки (сила и позиция сверяются в heal_one при каждой обработке).
 local function new_item(entity, unit, force_index)
   local position = entity.position
   return {entity = entity, unit = unit, x = position.x, y = position.y, surface = entity.surface_index,
@@ -99,7 +126,7 @@ local function on_damaged(event)
   queue[#queue + 1] = new_item(entity, unit, force_index)
 end
 
--- Поставить в очередь найденную поиском цель, если она повреждена.
+-- Поставить в очередь найденную поиском или только что построенную цель, если она повреждена.
 local function enqueue_if_damaged(entity)
   local unit = entity.unit_number
   if not unit or storage.queued[unit] then return end
@@ -108,6 +135,13 @@ local function enqueue_if_damaged(entity)
   storage.queued[unit] = true
   local queue = storage.queue
   queue[#queue + 1] = new_item(entity, unit, entity.force_index)
+end
+
+-- Разовый поиск повреждённых целей силы катушки в её радиусе (постройка катушки, смена её силы).
+local function scan(coil)
+  local found = coil.surface.find_entities_filtered{position = coil.position, radius = RADIUS, force = coil.force,
+                                                    type = HEAL_TYPES}
+  for i = 1, #found do enqueue_if_damaged(found[i]) end
 end
 
 ---------------------------------------------------------------------------------------------------------------------
@@ -131,6 +165,13 @@ end
 
 local function add_coil(entity)
   if not (entity and entity.valid and entity.name == COIL) then return end
+  -- Чертёж и клон переносят настройки EEI: сбросить к прототипу при каждой постройке, оживлении, клоне, телепорте
+  -- и перестройке (энергия больше буфера прототипа срезается: клон копирует и её).
+  entity.power_production = 0
+  entity.power_usage = 0
+  local cap = entity.prototype.electric_energy_source_prototype.buffer_capacity
+  if entity.electric_buffer_size ~= cap then entity.electric_buffer_size = cap end
+  if entity.energy > cap then entity.energy = cap end
   local unit = entity.unit_number
   if not unit then return end
   local coils = storage.coils
@@ -159,9 +200,7 @@ local function add_coil(entity)
   script.register_on_object_destroyed(entity)
   update_registration()
 
-  -- Разовый поиск: цели, повреждённые до появления катушки.
-  local found = entity.surface.find_entities_filtered{position = position, radius = RADIUS, force = entity.force, type = HEAL_TYPES}
-  for i = 1, #found do enqueue_if_damaged(found[i]) end
+  scan(entity)                                          -- цели, повреждённые до появления катушки
 end
 
 local function remove_coil(unit)
@@ -215,6 +254,7 @@ local function rebuild()
 end
 
 -- После слияния сил индексы сил в записях устарели: обновить их и пересчитать force_coils (обход массива).
+-- Силы целей в очереди перечитывает heal_one при каждой обработке.
 local function refresh_forces()
   local counts = {}
   local list = storage.coils.list
@@ -225,33 +265,51 @@ local function refresh_forces()
   end
   storage.force_coils = counts
   storage.coils_version = (storage.coils_version or 0) + 1
-  -- силы целей в очереди тоже могли смениться: перечитать
-  local queue = storage.queue
-  for i = 1, #queue do
-    local item = queue[i]
-    if item.entity.valid then item.force = item.entity.force_index end
+end
+
+-- Катушка сменила силу (скрипт, без события): перенести её в счёт новой силы, сохранив порядок вставки (seq),
+-- и поставить в очередь повреждённые цели новой силы в радиусе (их урон до этого отсекал on_damaged).
+local function retarget(rec, force_index)
+  local fc = storage.force_coils
+  local count = (fc[rec.force] or 1) - 1
+  fc[rec.force] = count > 0 and count or nil
+  fc[force_index] = (fc[force_index] or 0) + 1
+  rec.force = force_index
+  storage.coils_version = (storage.coils_version or 0) + 1
+  scan(rec.entity)
+end
+
+-- Сверка сил: FORCE_CHECKS записей list за цикл по кругу. Идёт до обхода очереди (scan дописывает в очередь)
+-- и при пустой очереди (урон целей новой силы отсекается, пока её счёт не поправлен).
+local function check_forces()
+  local list = storage.coils.list
+  local n = #list
+  if n == 0 then return end
+  local k = storage.force_cursor or 1
+  for _ = 1, (n < FORCE_CHECKS and n or FORCE_CHECKS) do
+    if k > n then k = 1 end
+    local rec = list[k]
+    local coil = rec.entity
+    if coil.valid then
+      local force_index = coil.force_index
+      if force_index ~= rec.force then retarget(rec, force_index) end
+    end
+    k = k + 1
   end
+  storage.force_cursor = k
 end
 
 ---------------------------------------------------------------------------------------------------------------------
 -- Цикл лечения
 
--- Первая по порядку вставки подходящая катушка для цели; признак "цель вообще покрыта" (катушка своей силы,
--- на той же поверхности, в радиусе, существует — независимо от бюджета и энергии); признак "покрывающая катушка
--- уже истратила бюджет этого цикла" (значит, энергия у неё была — цель ждёт очереди, а не энергии).
 local function by_seq(a, b) return a.seq < b.seq end
 
 -- Список покрывающих катушек цели (своя сила, та же поверхность, в радиусе) по возрастанию seq; пересчёт по сетке
--- только при смене storage.coils_version.
+-- при смене storage.coils_version или (heal_one сбрасывает cov_v) силы и позиции цели.
 local function covering(item)
   local version = storage.coils_version
-  if item.cov_v == version then return item.cov end
-  if item.x == nil then                                  -- запись из старой версии мода: дочитать поля
-    local target = item.entity
-    local position = target.position
-    item.x, item.y, item.surface, item.force, item.max_health =
-      position.x, position.y, target.surface_index, target.force_index, target.max_health
-  end
+  if not version then version = 1; storage.coils_version = 1 end   -- сохранение сборки fc2e2d8: поля ещё нет
+  if item.cov and item.cov_v == version then return item.cov end
   local recs = {}
   local grid = storage.grid[item.surface]
   if grid then
@@ -281,10 +339,11 @@ local function covering(item)
   return cov
 end
 
--- Первая по порядку вставки подходящая катушка для цели (бюджет цикла не исчерпан, энергии хватает на 1 HP);
--- признак "цель вообще покрыта" (существующая катушка своей силы на той же поверхности в радиусе — независимо от
--- бюджета и энергии); признак "покрывающая катушка уже истратила бюджет этого цикла" (энергия у неё была — цель ждёт
--- очереди, а не энергии). Тот же выбор, что и прежний полный обход клеток: первая по seq подходящая.
+-- Первая по порядку вставки подходящая катушка для цели (бюджет цикла не исчерпан, энергии хватает на 1 HP, сила
+-- катушки не сменена скриптом); признак "цель вообще покрыта" (существующая катушка своей силы по учёту на той же
+-- поверхности в радиусе — независимо от бюджета и энергии); признак "покрывающая катушка уже истратила бюджет этого
+-- цикла" (энергия у неё была — цель ждёт очереди, а не энергии). Тот же выбор, что и прежний полный обход клеток
+-- (первая по seq подходящая), при текущих силе и позиции цели.
 local function find_coil(item, tick)
   local cov = covering(item)
   local list, index = storage.coils.list, storage.coils.index
@@ -301,8 +360,8 @@ local function find_coil(item, tick)
         if rec.budget <= 0 then
           spent = true
         elseif coil.energy >= J_PER_HP then
-          best = rec
-          break
+          if coil.force_index == rec.force then best = rec; break end
+          -- сила катушки сменена скриптом: ею не лечить; учёт (rec.force, force_coils) поправит check_forces
         end
       else
         dead = dead or {}
@@ -323,8 +382,17 @@ local function heal_one(item, tick, may_draw)
   local target = item.entity
   if not target.valid then return true, false, false end
   local health = target.health
-  local max_health = item.max_health or target.max_health
+  local max_health = item.max_health
+  if not max_health then                               -- запись сохранения сборки fc2e2d8: только {entity, unit}
+    max_health = target.max_health
+    item.max_health, item.surface = max_health, target.surface_index
+  end
   if not health or health >= max_health then return true, false, false end
+  -- §6.1 шаг 2: катушка своей силы в радиусе от цели — по текущим силе и позиции (скрипт меняет их без события)
+  local force_index, position = target.force_index, target.position
+  if force_index ~= item.force or position.x ~= item.x or position.y ~= item.y then
+    item.force, item.x, item.y, item.cov_v = force_index, position.x, position.y, false
+  end
   local rec, covered, spent = find_coil(item, tick)
   if not rec then
     return not covered, false, spent                   -- не покрыта никем: убрать; покрыта: ждать энергии или бюджета
@@ -355,6 +423,7 @@ end
 local function on_cycle(event)
   local queue = storage.queue
   if not queue then return end
+  check_forces()                                       -- до обхода: retarget дописывает в очередь
   local n0 = #queue
   if n0 == 0 then return end
   local tick = event.tick
@@ -405,8 +474,17 @@ end
 ---------------------------------------------------------------------------------------------------------------------
 -- События
 
+-- Постройка катушки — учесть её; постройка цели (тип из HEAL_TYPES) — поставить в очередь, если она построена уже
+-- повреждённой и у её силы есть катушки (O(1); цель вне радиусов уйдёт из очереди на первом цикле).
 local function on_built(event)
-  add_coil(event.entity or event.destination)
+  local entity = event.entity or event.destination
+  if not (entity and entity.valid) then return end
+  if entity.name == COIL then
+    add_coil(entity)
+    return
+  end
+  local force_coils = storage.force_coils
+  if force_coils and force_coils[entity.force_index] then enqueue_if_damaged(entity) end
 end
 
 local function on_object_destroyed(event)
@@ -426,18 +504,8 @@ local function on_teleported(event)
   add_coil(entity)
 end
 
-local build_events = {
-  defines.events.on_built_entity,
-  defines.events.on_robot_built_entity,
-  defines.events.script_raised_built,
-  defines.events.script_raised_revive,
-  defines.events.on_entity_cloned,
-}
-if defines.events.on_space_platform_built_entity ~= nil then
-  build_events[#build_events + 1] = defines.events.on_space_platform_built_entity
-end
-for i = 1, #build_events do
-  script.on_event(build_events[i], on_built, COIL_FILTER)
+for i = 1, #BUILD_EVENT_NAMES do
+  script.on_event(defines.events[BUILD_EVENT_NAMES[i]], on_built, BUILD_FILTER)
 end
 script.on_event(defines.events.script_raised_teleported, on_teleported, COIL_FILTER)
 script.on_event(defines.events.on_object_destroyed, on_object_destroyed)
@@ -472,6 +540,7 @@ remote.add_interface("magnetics", {
     return {
       RADIUS = RADIUS, PERIOD = PERIOD, TARGET_CAP = TARGET_CAP, COIL_BUDGET = COIL_BUDGET, J_PER_HP = J_PER_HP,
       QUEUE_CAP = QUEUE_CAP, CELL = CELL, HEAL_TYPES = types, LINES_PER_CYCLE = LINES_PER_CYCLE,
+      FORCE_CHECKS = FORCE_CHECKS,
     }
   end,
   state = function()
@@ -479,6 +548,20 @@ remote.add_interface("magnetics", {
       coils = storage.coils and #storage.coils.list or 0,
       queue = storage.queue and #storage.queue or 0,
       handler_registered = script.get_event_handler(defines.events.on_entity_damaged) ~= nil,
+    }
+  end,
+  -- Фактические регистрации мода (то, что применяет движок), для тестов: фильтр урона и события постройки.
+  registrations = function()
+    local build = {}
+    for i = 1, #BUILD_EVENT_NAMES do
+      local id = defines.events[BUILD_EVENT_NAMES[i]]
+      build[i] = {event = BUILD_EVENT_NAMES[i], handler = script.get_event_handler(id) ~= nil,
+                  filter = script.get_event_filter(id)}
+    end
+    local damaged = defines.events.on_entity_damaged
+    return {
+      damage = {handler = script.get_event_handler(damaged) ~= nil, filter = script.get_event_filter(damaged)},
+      build = build,
     }
   end,
 })

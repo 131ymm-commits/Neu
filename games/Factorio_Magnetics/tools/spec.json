@@ -75,7 +75,7 @@
    "stack": 20,
    "order": "m[magnetics]-d[rail-slug]",
    "line": {
-    "range": 34.60625,
+    "range": 36,
     "width": 1.5,
     "damage": [
      [
@@ -91,7 +91,7 @@
    "stack": 10,
    "order": "m[magnetics]-e[flux-rail-slug]",
    "line": {
-    "range": 34.60625,
+    "range": 36,
     "width": 2,
     "damage": [
      [
@@ -302,6 +302,7 @@
    "own_icon": true,
    "subgroup": "fluid-recipes",
    "order": "z[magnetics-liquid-nitrogen]",
+   "sa_pressure_min": 10,
    "tint": {
     "primary": [
      0.75,
@@ -469,12 +470,12 @@
     {
      "type": "item",
      "name": "magnetics-ferrite",
-     "amount": 6
+     "amount": 10
     },
     {
      "type": "item",
      "name": "copper-plate",
-     "amount": 2
+     "amount": 3
     }
    ],
    "res": [
@@ -519,12 +520,12 @@
     {
      "type": "item",
      "name": "magnetics-magnet-alloy",
-     "amount": 2
+     "amount": 3
     },
     {
      "type": "item",
      "name": "steel-plate",
-     "amount": 1
+     "amount": 2
     }
    ],
    "res": [
@@ -2405,7 +2406,8 @@
    "attack": {
     "ammo_category": "magnetics-gauss",
     "cooldown": 60,
-    "range": 30
+    "range": 30,
+    "sound_from": "tank-cannon"
    },
    "set": {
     "automated_ammo_count": 8,
@@ -2479,7 +2481,8 @@
     "cooldown": 150,
     "range": 36,
     "min_range": 4,
-    "health_penalty": -1
+    "health_penalty": -1,
+    "sound_from": "tank-cannon"
    },
    "set": {
     "automated_ammo_count": 5,
@@ -2489,7 +2492,7 @@
      "type": "electric",
      "usage_priority": "primary-input",
      "buffer_capacity": "8MJ",
-     "input_flow_limit": "2MW"
+     "input_flow_limit": "4MW"
     }
    },
    "item": {

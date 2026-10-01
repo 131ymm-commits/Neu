@@ -30,13 +30,14 @@ for name, d in pairs(S.items) do
   out[#out + 1] = it
 end
 
--- снаряды болванок: копия пушечного снаряда с ограниченным пробитием, не задевают свою силу
+-- снаряды болванок: копия пушечного снаряда с ограниченным пробитием; бьют только врагов (§15.4: при "not-same"
+-- нейтральные деревья и камни на линии огня перехватывали болванки — огромный камень закрывал катушечник на 20 с)
 local function slug_projectile(name, d)
   local p = table.deepcopy(data.raw.projectile["cannon-projectile"])
   p.name = d.projectile
   p.piercing_damage = d.piercing
   p.direction_only = true
-  p.force_condition = "not-same"
+  p.force_condition = "enemy"
   p.action = { type = "direct", action_delivery = { type = "instant", target_effects = {
     { type = "damage", damage = { amount = d.damage, type = "physical" } },
     { type = "create-entity", entity_name = "explosion-hit", offsets = { { 0, 1 } }, offset_deviation = { { -0.5, -0.5 }, { 0.5, 0.5 } } },

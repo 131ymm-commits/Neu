@@ -1,5 +1,7 @@
 -- Обёртка модуля mend_tests.lua (ремонтная катушка, §11.7, R1–R11 и пилоты 10/19/24) под интерфейс ячеек стенда.
--- Модулю нужен свой квадрат 512×512 и запуск из on_init, поэтому участок — отдельный, вдали от сетки ячеек.
+-- Модулю нужен свой квадрат 512×512 и запуск из on_init, поэтому участок — отдельный, вдали от сетки ячеек
+-- (ячейки ревью 01.10.2026 — на своей поверхности "mend-review", её создаёт сам модуль).
+-- kind записи (lib.lua L.check): "mod" по умолчанию, "harness" — самопроверка стенда и пилоты движка.
 local M = require("mend_tests")
 local ORIGIN = { x = 1024, y = 1024 }
 
@@ -8,15 +10,16 @@ local function mctx(ctx)
   return {
     surface = ctx.S, origin = ORIGIN, data = storage.mend.data, source = "magnetics-test-source",
     config_changed = storage.config_changed == true,
-    check = function(group, name, ok, got, expected, note)
+    check = function(group, name, ok, got, expected, note, kind)
       local r = storage.mend.results
-      r[#r + 1] = { group = group, name = name, ok = ok and true or false, got = got, expected = expected, note = note }
+      r[#r + 1] = { group = group, name = name, ok = ok and true or false, got = got, expected = expected, note = note,
+                    kind = kind }
     end,
   }
 end
 
 local function flush(ctx)
-  for _, r in ipairs(storage.mend.results) do ctx.L.check(r.group, r.name, r.ok, r.got, r.expected, r.note) end
+  for _, r in ipairs(storage.mend.results) do ctx.L.check(r.group, r.name, r.ok, r.got, r.expected, r.note, r.kind) end
   storage.mend.results = {}
 end
 

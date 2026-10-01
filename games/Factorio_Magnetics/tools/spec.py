@@ -50,20 +50,24 @@ AMMO = {
   M('magnet-slug'): dict(category=M('slug'), magazine=10, stack=100, order='m[magnetics]-b[magnet-slug]',
       projectile=M('magnet-slug-projectile'), damage=32, piercing=150, tint='6D86C9', speed=1, max_range=24,
       en='Magnet slugs', ru='Магнитные болванки', de='Magnetbolzen',
-      den='Heavy coilgun ammo that keeps its punch against armour.',
+      den='Heavy coilgun ammo that keeps its punch against armor.',
       dru='Тяжёлый боеприпас катушечника, не теряющий силы против брони.'),
   M('gauss-slug'): dict(category=M('gauss'), magazine=4, stack=50, order='m[magnetics]-c[gauss-slug]',
       projectile=M('gauss-slug-projectile'), damage=90, piercing=400, tint='9FB4FF', speed=1.5, max_range=34,
       en='Gauss slugs', ru='Болванки Гаусса', de='Gauß-Bolzen',
-      den='Gauss turret ammo: one heavy hit that ignores most armour.',
+      den='Gauss turret ammo: one heavy hit that ignores most armor.',
       dru='Боеприпас пушки Гаусса: один тяжёлый удар, почти не замечающий брони.'),
   M('rail-slug'): dict(category=M('rail'), magazine=1, stack=20, order='m[magnetics]-d[rail-slug]',
-      line=dict(range=34.60625, width=1.5, damage=[(1200, 'physical')]),  # 36 от центра турели: линия начинается у дула (1.39375), PILOT-8
+      # §15.4: 36 (PILOT-8 давал 34.60625). Линия начинается у дула (1.39375 от центра), и это смещение качество не умножает,
+      # а дальность линии и турели — умножает (range_multiplier). Условие «линия покрывает дальность турели при любом
+      # качестве»: 1.39375 + L·m ≥ 36·m, т. е. L ≥ 36 − 1.39375/m; L = 36 подходит при любом m ≥ 1. Лишние 1,4 клетки
+      # за дальностью турели безвредны: турель туда не целится (у ванильного рельсотрона линия 50 при дальности 40).
+      line=dict(range=36, width=1.5, damage=[(1200, 'physical')]),
       en='Rail slug', ru='Рельсовая болванка', de='Schienenbolzen',
       den='Rail cannon ammo. Hits every enemy on a 36-tile line.',
       dru='Боеприпас рельсовой пушки. Поражает всех врагов на линии длиной 36 клеток.'),
   M('flux-rail-slug'): dict(category=M('rail'), magazine=3, stack=10, order='m[magnetics]-e[flux-rail-slug]',
-      line=dict(range=34.60625, width=2, damage=[(1800, 'physical'), (600, 'electric')]),
+      line=dict(range=36, width=2, damage=[(1800, 'physical'), (600, 'electric')]),
       en='Flux rail slug', ru='Рельсовая болванка потока', de='Fluss-Schienenbolzen',
       den='A rail slug around a charged flux crystal: three shots with physical and electric damage.',
       dru='Рельсовая болванка вокруг заряженного кристалла: три выстрела с физическим и электрическим уроном.'),
@@ -98,7 +102,7 @@ RECIPES = {
   M('ferrofluid'): dict(category='chemistry', ing=[I(M('ferrite'), 1), F('light-oil', 10)], res=[F(M('ferrofluid'), 10)], energy=1, prod=True, ar=False,
       tint=dict(primary=[0.07, 0.06, 0.09], secondary=[0.48, 0.36, 0.72], tertiary=[0.30, 0.25, 0.40], quaternary=[0.15, 0.10, 0.20])),
   M('liquid-nitrogen'): dict(category=M('cryogenics'), ing=[], res=[F(M('liquid-nitrogen'), 50)], energy=2, prod=False, ar=False, own_icon=True,
-      subgroup='fluid-recipes', order='z[magnetics-liquid-nitrogen]',
+      subgroup='fluid-recipes', order='z[magnetics-liquid-nitrogen]', sa_pressure_min=10,  # §15.4: «из воздуха» — не в вакууме платформы
       tint=dict(primary=[0.75, 0.90, 1.00], secondary=[0.94, 0.98, 1.00], tertiary=[0.60, 0.80, 0.95], quaternary=[0.85, 0.95, 1.00]),
       en='Air liquefaction', ru='Сжижение воздуха', de='Luftverflüssigung'),
   M('superconducting-cable'): dict(category=M('cryogenics'), ing=[I(M('magnet-alloy'), 1), I('copper-cable', 6), I('plastic-bar', 1), F(M('liquid-nitrogen'), 20)],
@@ -113,9 +117,9 @@ RECIPES = {
       subgroup=M('intermediate'), order='z-c', sa_magnetic_field_min=50,
       en='Magnetic stone separation', ru='Магнитная сепарация камня', de='Magnetische Gesteinstrennung'),
   # 3.2 боеприпасы
-  M('ferrite-slug'): dict(category='crafting', ing=[I(M('ferrite'), 6), I('copper-plate', 2)], res=[I(M('ferrite-slug'), 1)], energy=3, prod=False, ar=True),
+  M('ferrite-slug'): dict(category='crafting', ing=[I(M('ferrite'), 10), I('copper-plate', 3)], res=[I(M('ferrite-slug'), 1)], energy=3, prod=False, ar=True),
   M('magnet-slug'): dict(category='crafting', ing=[I(M('ferrite-slug'), 1), I(M('magnet-alloy'), 1)], res=[I(M('magnet-slug'), 1)], energy=5, prod=False, ar=True),
-  M('gauss-slug'): dict(category='crafting', ing=[I(M('magnet-alloy'), 2), I('steel-plate', 1)], res=[I(M('gauss-slug'), 1)], energy=6, prod=False, ar=True),
+  M('gauss-slug'): dict(category='crafting', ing=[I(M('magnet-alloy'), 3), I('steel-plate', 2)], res=[I(M('gauss-slug'), 1)], energy=6, prod=False, ar=True),
   M('rail-slug'): dict(category='crafting', ing=[I(M('superconducting-cable'), 1), I(M('magnet-alloy'), 2), I('steel-plate', 2)], res=[I(M('rail-slug'), 1)], energy=10, prod=False, ar=True),
   M('flux-rail-slug'): dict(category='crafting', ing=[I(M('rail-slug'), 1), I(M('flux-crystal'), 1)], res=[I(M('flux-rail-slug'), 1)], energy=15, prod=False, ar=False),
 }
@@ -217,23 +221,23 @@ ENTITIES = {
       set=dict(mining_speed=0.75, energy_usage='150kW', resource_searching_radius=2.49, resource_categories=['basic-solid'], module_slots=3,
                energy_source=es_el('150kW', pollution=15)),
       item=dict(stack=50, subgroup='extraction-machine', order='a[items]-b[electric-mining-drill]-m[magnetics]'), heat='100kW', upgrade_from=['electric-mining-drill'],
-      en='Magnetic mining drill', ru='Магнитный бур', de='Magnetbohrer',
+      en='Magnetic mining drill', ru='Магнитный бур', de='Magnetischer Erzförderer',
       den='Upgrade of the electric mining drill: 50% faster on the same 5×5 area.', dru='Улучшение электробура: на 50% быстрее на той же площади 5×5.'),
   # 4.3 логистика
   M('maglev-transport-belt'): dict(kind='belt', type='transport-belt', base='express-transport-belt', tint=[0.90, 0.62, 1.00], frg='transport-belt', hp=180,
       set=dict(speed=0.15625), item=dict(stack=100, subgroup='belt', order='a[transport-belt]-e[magnetics-maglev]'), heat='10kW',
       upgrade_from=['TOP-transport-belt'],
-      en='Maglev belt', ru='Маглев-конвейер', de='Magnetschwebeband',
+      en='Maglev belt', ru='Маглев-конвейер', de='Magnetschwebe-Fließband',
       den='The fastest belt: 75 items per second.', dru='Самый быстрый конвейер: 75 предметов в секунду.'),
   M('maglev-underground-belt'): dict(kind='belt', type='underground-belt', base='express-underground-belt', tint=[0.90, 0.62, 1.00], frg='transport-belt', hp=180,
       set=dict(speed=0.15625, max_distance=13), item=dict(stack=50, subgroup='belt', order='b[underground-belt]-e[magnetics-maglev]'), heat='250kW',
       upgrade_from=['TOP-underground-belt'],
-      en='Maglev underground belt', ru='Подземный маглев-конвейер', de='Unterirdisches Magnetschwebeband',
+      en='Maglev underground belt', ru='Подземный маглев-конвейер', de='Unterirdisches Magnetschwebe-Fließband',
       den='75 items per second, maximum distance 13.', dru='75 предметов в секунду, наибольшая длина 13.'),
   M('maglev-splitter'): dict(kind='belt', type='splitter', base='express-splitter', tint=[0.90, 0.62, 1.00], frg='transport-belt', hp=200,
       set=dict(speed=0.15625), item=dict(stack=50, subgroup='belt', order='c[splitter]-e[magnetics-maglev]'), heat='40kW',
       upgrade_from=['TOP-splitter'],
-      en='Maglev splitter', ru='Маглев-разделитель', de='Magnetschwebe-Splitter',
+      en='Maglev splitter', ru='Маглев-разделитель', de='Magnetschwebe-Teilerfließband',
       den='Splits and merges maglev lanes at 75 items per second.', dru='Делит и сливает потоки маглев-конвейеров, 75 предметов в секунду.'),
   # 4.4 энергия
   M('coil-capacitor'): dict(kind='capacitor', type='accumulator', base='accumulator', tint=[1.00, 0.75, 0.55], frg=M('coil-capacitor'), hp=100,
@@ -251,7 +255,7 @@ ENTITIES = {
   M('superconducting-pylon'): dict(kind='pole', type='electric-pole', base='big-electric-pole', tint=[0.65, 0.95, 1.00], frg='big-electric-pole', hp=250,
       set=dict(maximum_wire_distance=48, supply_area_distance=2),
       item=dict(stack=50, subgroup='energy-pipe-distribution', order='a[energy]-c[big-electric-pole]-m[magnetics]'), heat=None, upgrade_from=['big-electric-pole'],
-      en='Superconducting pylon', ru='Сверхпроводящая опора', de='Supraleitender Mast',
+      en='Superconducting pylon', ru='Сверхпроводящая опора', de='Supraleitender Strommast',
       den='Wire reach 48: a third fewer poles on long lines.', dru='Дальность провода 48: на треть меньше опор на длинных линиях.'),
   M('mhd-generator'): dict(kind='generator', type='burner-generator', base='burner-generator', tint=[1.00, 0.60, 0.45], frg=M('mhd-generator'), hp=400,
       set=dict(max_power_output='5.4MW', burner={'type': 'burner', 'fuel_categories': ['chemical'], 'effectivity': 0.9, 'fuel_inventory_size': 2, 'emissions_per_minute': {'pollution': 100}},
@@ -276,18 +280,19 @@ ENTITIES = {
   M('ferrite-wall'): dict(kind='wall', type='wall', base='stone-wall', tint=[0.62, 0.55, 0.60], frg='wall', hp=500,
       set=dict(resistances=RES((3, 25), (45, 60), (10, 30), (0, 100), (0, 80), (0, 70), (0, 30))),
       item=dict(stack=100, subgroup='defensive-structure', order='a[stone-wall]-b[magnetics-ferrite-wall]'), heat=None, upgrade_from=['stone-wall'],
-      en='Ferrite wall', ru='Ферритовая стена', de='Ferritwand',
+      en='Ferrite wall', ru='Ферритовая стена', de='Ferritmauer',
       den='A cheap early upgrade of the stone wall.', dru='Дешёвое раннее улучшение каменной стены.'),
   M('magnet-wall'): dict(kind='wall', type='wall', base='stone-wall', tint=[0.60, 0.70, 1.00], frg='wall', hp=800, thorns=5,
       set=dict(resistances=RES((5, 30), (50, 65), (15, 35), (0, 100), (0, 85), (0, 75), (0, 50))),
       item=dict(stack=100, subgroup='defensive-structure', order='a[stone-wall]-c[magnetics-magnet-wall]'), heat=None, upgrade_from=[M('ferrite-wall')],
-      en='Magnet wall', ru='Магнитная стена', de='Magnetwand',
+      en='Magnet wall', ru='Магнитная стена', de='Magnetmauer',
       den='Its field shocks the biters that bite it.', dru='Её поле бьёт током кусающих её жуков.'),
   M('superconducting-wall'): dict(kind='wall', type='wall', base='stone-wall', tint=[0.70, 0.95, 1.00], frg='wall', hp=1500, thorns=10,
       set=dict(resistances=RES((8, 35), (60, 70), (20, 40), (0, 100), (0, 90), (0, 100), (0, 100))),
       item=dict(stack=100, subgroup='defensive-structure', order='a[stone-wall]-d[magnetics-superconducting-wall]'), heat=None, upgrade_from=[M('magnet-wall')],
-      en='Superconducting wall', ru='Сверхпроводящая стена', de='Supraleitende Wand',
-      den='Absorbs lasers and lightning and shocks attackers.', dru='Поглощает лазеры и молнии и бьёт током нападающих.'),
+      en='Superconducting wall', ru='Сверхпроводящая стена', de='Supraleitende Mauer',
+      den='Immune to laser and electric damage; its field shocks the biters that bite it.',
+      dru='Неуязвима для лазерного и электрического урона; её поле бьёт током кусающих её жуков.'),
   M('magnet-gate'): dict(kind='gate', type='gate', base='gate', tint=[0.60, 0.70, 1.00], frg='wall', hp=800, thorns=5,
       set=dict(resistances=RES((5, 30), (50, 65), (15, 35), (0, 100), (0, 85), (0, 75), (0, 50))),
       item=dict(stack=50, subgroup='defensive-structure', order='a[wall]-c[magnetics-magnet-gate]'), heat=None, upgrade_from=['gate'],
@@ -303,8 +308,8 @@ ENTITIES = {
                energy_source={'type': 'electric', 'usage_priority': 'secondary-input', 'buffer_capacity': '1MJ', 'input_flow_limit': '200kW', 'output_flow_limit': '0W'}),
       item=dict(stack=20, subgroup='defensive-structure', order='e[magnetics-mend-coil]'), heat=None,
       en='Mend coil', ru='Ремонтная катушка', de='Reparaturspule',
-      den='Repairs walls and turrets within 10 tiles from the power grid, 5 kJ per point of health.',
-      dru='Чинит стены и турели в радиусе 10 клеток за счёт электросети, 5 кДж на единицу прочности.'),
+      den='Uses grid power to repair walls, gates, turrets and radars within 10 tiles of the coil: 5 kJ per point of health.',
+      dru='Чинит стены, ворота, турели и радары в радиусе 10 клеток от катушки за счёт электросети, 5 кДж на единицу прочности.'),
   # 4.6 турели
   M('coilgun-turret'): dict(kind='ammo-turret', type='ammo-turret', base='gun-turret', tint=[1.00, 0.70, 0.50], frg=M('coilgun-turret'), hp=500,
       attack=dict(ammo_category=M('slug'), cooldown=24, range=20),
@@ -314,25 +319,26 @@ ENTITIES = {
       en='Coilgun', ru='Катушечник', de='Spulenkanone',
       den='An electric turret firing ferrite slugs that pierce small enemies.', dru='Электрическая турель: ферритовые болванки пробивают мелких врагов.'),
   M('gauss-turret'): dict(kind='ammo-turret', type='ammo-turret', base='gun-turret', tint=[0.55, 0.65, 1.00], frg=M('gauss-turret'), hp=800,
-      attack=dict(ammo_category=M('gauss'), cooldown=60, range=30),
+      attack=dict(ammo_category=M('gauss'), cooldown=60, range=30, sound_from='tank-cannon'),  # звук: §15.4
       set=dict(automated_ammo_count=8, rotation_speed=0.008, energy_per_shot='250kJ',
                energy_source={'type': 'electric', 'usage_priority': 'primary-input', 'buffer_capacity': '1MJ', 'input_flow_limit': '1MW'}),
       item=dict(stack=50, subgroup='turret', order='b[turret]-m[magnetics]-b[gauss]'), heat='50kW',
-      en='Gauss turret', ru='Пушка Гаусса', de='Gauß-Geschütz',
-      den='A long-range turret whose heavy slugs break armour.', dru='Дальнобойная турель, тяжёлые болванки которой пробивают броню.'),
+      en='Gauss turret', ru='Пушка Гаусса', de='Gauß-Geschützturm',
+      den='A long-range turret whose heavy slugs break armor.', dru='Дальнобойная турель, тяжёлые болванки которой пробивают броню.'),
   M('arc-emitter'): dict(kind='arc', type='electric-turret', base='laser-turret', tint=[0.60, 0.95, 1.00], frg=M('arc-emitter'), hp=1000,
       attack=dict(ammo_category='laser', cooldown=120, range=20, energy='1MJ',  # 120: лазер даёт 30 урона/с (PILOT-15), разрядник 22,5 = 0,75 лазера
                    damage=45, chain_jumps=4, chain_range=6, chain_damage=30, beam_length=22),
       set=dict(energy_source={'type': 'electric', 'usage_priority': 'primary-input', 'buffer_capacity': '2MJ', 'input_flow_limit': '3MW', 'drain': '24kW'}),
       item=dict(stack=50, subgroup='turret', order='b[turret]-m[magnetics]-c[arc-emitter]'), heat='50kW',
-      en='Arc emitter', ru='Разрядник', de='Bogenstrahler',
+      en='Arc emitter', ru='Разрядник', de='Lichtbogenstrahler',
       den='Chain lightning that jumps through a swarm and slows it.', dru='Цепная молния перескакивает по стае и замедляет её.'),
   M('rail-cannon'): dict(kind='ammo-turret', type='ammo-turret', base='gun-turret', tint=[0.78, 0.55, 1.00], frg=M('rail-cannon'), hp=2000,
-      attack=dict(ammo_category=M('rail'), cooldown=150, range=36, min_range=4, health_penalty=-1),
+      attack=dict(ammo_category=M('rail'), cooldown=150, range=36, min_range=4, health_penalty=-1, sound_from='tank-cannon'),
+      # §15.4: вход 4 МВт = 0,4 выстр./с × 2,5 (WSS-1..6, +150 %) × 4 МДж; буфер 8 МДж = 2 выстрела
       set=dict(automated_ammo_count=5, rotation_speed=0.005, energy_per_shot='4MJ',
-               energy_source={'type': 'electric', 'usage_priority': 'primary-input', 'buffer_capacity': '8MJ', 'input_flow_limit': '2MW'}),
+               energy_source={'type': 'electric', 'usage_priority': 'primary-input', 'buffer_capacity': '8MJ', 'input_flow_limit': '4MW'}),
       item=dict(stack=10, subgroup='turret', order='b[turret]-m[magnetics]-d[rail-cannon]'), heat='50kW',
-      en='Rail cannon', ru='Рельсовая пушка', de='Schienenkanone',
+      en='Rail cannon', ru='Рельсовая пушка', de='Schienengeschütz',
       den='Fires a slug through every enemy on a line.', dru='Прошивает болванкой всех врагов на линии.'),
 }
 # каждая постройка Magnetics под Space Age требует магнитного поля ≥ 10 (не ставится на космические платформы)
@@ -362,7 +368,7 @@ TECHS = {
       'Magnetic fortifications', 'Магнитные укрепления', 'Magnetische Befestigungen',
       'Magnet walls and gates, magnet slugs, the gauss turret and the mend coil.', 'Магнитные стены и ворота, магнитные болванки, пушка Гаусса и ремонтная катушка.'),
   M('arc-emitter'): T([M('induction-smelting'), 'laser-turret'], 200, 30, [A, L, C, Mil], ['arc-emitter'],
-      'Arc emitter', 'Разрядник', 'Bogenstrahler', 'A chain-lightning turret against swarms.', 'Турель с цепной молнией против стай.'),
+      'Arc emitter', 'Разрядник', 'Lichtbogenstrahler', 'A chain-lightning turret against swarms.', 'Турель с цепной молнией против стай.'),
   M('superconductivity'): T([M('induction-smelting'), 'production-science-pack'], 300, 30, [A, L, C, Pr], ['cryo-chamber', 'liquid-nitrogen', 'superconducting-cable'],
       'Superconductivity', 'Сверхпроводимость', 'Supraleitung', 'Liquid nitrogen from air and superconducting cable.', 'Жидкий азот из воздуха и сверхпроводящий кабель.'),
   M('superconducting-power'): T([M('superconductivity'), 'electric-energy-distribution-2', 'electric-energy-accumulators'], 300, 30, [A, L, C, Pr],
@@ -408,7 +414,53 @@ def self_check():
     assert len(ITEMS) + len(AMMO) == 11
     assert len(RECIPES) == 40, len(RECIPES)
     assert len(TECHS) == 14
+    clashes = vanilla_name_clashes()
+    if clashes is None:
+        print('ПРЕДУПРЕЖДЕНИЕ: нет локалей игры в', FACTORIO_DATA, '— проверка совпадения имён с ванилью пропущена')
+    for c in clashes or []:
+        errs.append('имя совпадает с ванильным: ' + c)
     return errs
+
+# ---------------------------------------------------------------- имена против ванили (§15.4, ревью 01.10.2026)
+# Ни одно имя мода ([*-name] в en/ru/de) не должно совпадать (без учёта регистра) ни с одним [*-name] ванильных локалей
+# того же языка (core, base, quality, elevated-rails, space-age): иначе в одном меню два разных предмета под одним
+# именем (так было: de «Schienenkanone» = ручной рельсотрон Space Age).
+FACTORIO_DATA = os.path.join(os.environ.get('FACTORIO', '/opt/factorio'), 'data')
+VANILLA_MODS = ('core', 'base', 'quality', 'elevated-rails', 'space-age')
+
+def cfg_names(text):
+    """{(секция, ключ): значение} для секций [*-name], кроме [mod-name]."""
+    out, sec = {}, None
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line[0] in '#;':
+            continue
+        if line.startswith('[') and line.endswith(']'):
+            sec = line[1:-1]
+            continue
+        if sec and sec.endswith('-name') and sec != 'mod-name' and '=' in line:
+            k, v = line.split('=', 1)
+            out[(sec, k.strip())] = v.strip()
+    return out
+
+def vanilla_name_clashes():
+    if not os.path.isdir(FACTORIO_DATA):
+        return None
+    out = []
+    for lang in ('en', 'ru', 'de'):
+        van = {}
+        for m in VANILLA_MODS:
+            d = os.path.join(FACTORIO_DATA, m, 'locale', lang)
+            if not os.path.isdir(d):
+                continue
+            for f in sorted(os.listdir(d)):
+                if f.endswith('.cfg'):
+                    for (sec, k), v in cfg_names(open(os.path.join(d, f), encoding='utf-8').read()).items():
+                        van.setdefault(v.casefold(), []).append(f'{m} [{sec}] {k}')
+        for (sec, k), v in sorted(cfg_names(locale(lang)).items()):
+            if v.casefold() in van:
+                out.append(f'{lang} [{sec}] {k}={v} <-> ' + '; '.join(van[v.casefold()][:3]))
+    return out
 
 # ---------------------------------------------------------------- генерация
 def lua(v, ind=0):
@@ -470,7 +522,7 @@ def locale(lang):
     L.append('[mod-description]')
     L.append({'en': 'magnetics=A magnetic technology branch: ferrite, coils, magnet alloy, superconducting cable and flux crystals; 26 buildings from a sintering kiln to maglev belts and a rail cannon.',
               'ru': 'magnetics=Магнитная ветка технологий: феррит, катушки, магнитный сплав, сверхпроводящий кабель и кристаллы потока; 26 построек — от спекательной печи до маглев-конвейеров и рельсовой пушки.',
-              'de': 'magnetics=Ein magnetischer Technologiezweig: Ferrit, Spulen, Magnetlegierung, supraleitendes Kabel und Flusskristalle; 26 Gebäude vom Sinterofen bis zu Magnetschwebebändern und der Schienenkanone.'}[lang])
+              'de': 'magnetics=Ein magnetischer Technologiezweig: Ferrit, Spulen, Magnetlegierung, supraleitendes Kabel und Flusskristalle; 26 Gebäude vom Sinterofen bis zum Magnetschwebe-Fließband und zum Schienengeschütz.'}[lang])
     L.append('')
     items = {**ITEMS, **AMMO}
     sec('item-name', [(k, nm(v)) for k, v in items.items()])

@@ -283,4 +283,57 @@ return {
       eq("E6Q legendary round trip", ratio, 0.798, 0, 0.016)
       L.check(G, "E6Q legendary round trip < 1.0 (release blocker)", ratio > 0 and ratio < 1.0, ratio, "< 1.0")
     end },
+
+  -- Q6 (§15.4, регресс правки PILOT-8): легендарная рельсовая пушка достаёт линией до края своей дальности.
+  -- Дальность турели и линии качество умножает (×1,5 на легендарном), смещение дула 1.39375 — нет; при линии 34.60625
+  -- она кончалась в 1.39375 + 34.60625 × 1,5 ≈ 53,3 от центра при дальности турели 54: гигант на 53,8 и 54,2 получал
+  -- 0 урона, а пушка тратила болванки (замер ревью). Линия 36: 1.39375 + 54 ≈ 55,4. Своя поверхность (дальность 54
+  -- накрыла бы чужие ячейки); две дорожки в 120 клетках; закреплённый отключённый гигант на оси (physical 12/10 %:
+  -- (1200 − 12) × 0,9 = 1069,2 за выстрел, H_res, PILOT-3).
+  { id = "Q6", configs = { "bq" }, slots = 0, check_at = 900,
+    setup = function(ctx)
+      local s = ctx.state
+      local name = "magnetics-quality-Q6"
+      local S = game.surfaces[name] or game.create_surface(name, { width = 256, height = 256 })
+      S.generate_with_lab_tiles = true
+      S.request_to_generate_chunks({ 0, 0 }, 4)
+      S.force_generate_chunk_requests()
+      s.p = {}
+      for i, d in ipairs({ 53.8, 54.2 }) do
+        local x, y = -60, -60 + 120 * (i - 1)
+        pole(S, x - 3, y + 3)
+        meter(S, x - 7, y + 3)
+        local tu = S.create_entity { name = "magnetics-rail-cannon", position = { x, y }, force = "player", quality = "legendary" }
+        tu.destructible = false
+        tu.insert { name = "magnetics-rail-slug", count = 3 }
+        local b = S.create_entity { name = "behemoth-biter", position = { x + d, y }, force = "enemy" }
+        b.commandable.set_command { type = defines.command.stop, distraction = defines.distraction.none }
+        b.ai_settings.allow_destroy_when_commands_fail = false
+        b.ai_settings.allow_try_return_to_spawner = false
+        b.disabled_by_script = true
+        s.p[i] = { d = d, tu = tu, b = b, h = b.health, hits = {}, dist = b.position.x - tu.position.x }
+      end
+    end,
+    tick = function(ctx, t)
+      for _, p in ipairs(ctx.state.p) do
+        if p.b.valid then
+          local h = p.b.health
+          if p.h - h > 1e-3 then p.hits[#p.hits + 1] = p.h - h end
+          p.b.health = p.b.max_health; p.h = p.b.max_health
+        end
+      end
+    end,
+    check = function(ctx)
+      L = ctx.L
+      for _, p in ipairs(ctx.state.p) do
+        local rounds = p.tu.get_item_count("magnetics-rail-slug")
+        local note = string.format("legendary rail cannon, turret range %.2f; pinned+disabled behemoth at centre distance %.3f; hits %d (%s); slugs left %d of 3",
+          prototypes.entity["magnetics-rail-cannon"].turret_range * prototypes.quality["legendary"].range_multiplier, p.dist, #p.hits,
+          table.concat(p.hits, ", "), rounds)
+        is("Q6 legendary rail cannon quality", p.tu.quality.name, "legendary")
+        L.check(G, "Q6 legendary rail cannon hits a behemoth at " .. p.d .. " (line covers the turret range)", #p.hits >= 1, #p.hits, ">= 1", note)
+        eq("Q6 legendary rail cannon damage per shot at " .. p.d, p.hits[1] or 0, 1069.2, 0, 0.01, note)
+        is("Q6 legendary rail cannon: every shot at " .. p.d .. " hits (no wasted slugs)", #p.hits, 3 - rounds, note)
+      end
+    end },
 }

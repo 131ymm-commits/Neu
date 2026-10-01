@@ -293,4 +293,51 @@ return {
       end
       L2.check(G, "P9 character crafting categories contain no magnetics-*", #s.char_cats == 0, s.char_cats, {})
     end },
+
+  -- P10 (SA, §15.4): «Сжижение воздуха» требует воздуха — условие рецепта pressure ≥ 10. Две свои поверхности:
+  -- давление 0 (как у космической платформы) и 1000 (Наувис), магнитное поле 90 на обеих (меняется только давление).
+  -- На каждой — ванильный криогенный завод Space Age (без условий постройки: ставится и на платформу) и криокамера,
+  -- созданные сразу с рецептом magnetics-liquid-nitrogen (движок проверяет условия рецепта при выборе рецепта;
+  -- скриптовый set_recipe их не проверяет — §15.3/E9), по 300 тиков работы с питанием.
+  -- Ожидание: при давлении 0 рецепт не назначен и крафтов 0; при 1000 — рецепт назначен и крафтов ≥ 1 (контроль).
+  -- До правки криогенный завод на платформе делал жидкий азот из вакуума (пробник ревью: 6 крафтов, 300 LN2).
+  { id = "P10", configs = { "sa" }, slots = 0, check_at = 300,
+    setup = function(ctx)
+      local s = ctx.state
+      research { "magnetics-ferrite-sintering", "magnetics-electromagnetic-coils", "magnetics-induction-smelting", "magnetics-superconductivity" }
+      s.m = {}
+      for _, p in ipairs({ 0, 1000 }) do
+        local name = "magnetics-production-P10-p" .. p
+        local S = game.surfaces[name] or game.create_surface(name, { width = 128, height = 128 })
+        S.generate_with_lab_tiles = true
+        S.request_to_generate_chunks({ 0, 0 }, 2)
+        S.force_generate_chunk_requests()
+        S.set_property("magnetic-field", 90)
+        S.set_property("pressure", p)
+        meter(S, -2, 6)   -- EEI в (-2, 6), подстанция в (0, 6): её зона (±9) накрывает обе машины
+        for i, mn in ipairs({ "cryogenic-plant", "magnetics-cryo-chamber" }) do
+          local e = S.create_entity { name = mn, position = { i == 1 and -4.5 or 3.5, 0.5 }, force = "player", recipe = "magnetics-liquid-nitrogen" }
+          local r = e and e.get_recipe()
+          s.m[#s.m + 1] = { p = p, n = mn, e = e, r0 = r and r.name or "nil", pf0 = e and e.products_finished or 0 }
+        end
+      end
+    end,
+    check = function(ctx)
+      local s, L2 = ctx.state, ctx.L
+      local cond = prototypes.recipe["magnetics-liquid-nitrogen"].surface_conditions or {}
+      local cs = {}
+      for _, c in ipairs(cond) do cs[#cs + 1] = c.property .. ">=" .. tostring(c.min) end
+      for _, m in ipairs(s.m) do
+        local crafts = m.e and m.e.valid and (m.e.products_finished - m.pf0) or -1
+        local note = string.format("pressure %d, magnetic-field 90; recipe at creation %s; status %s; recipe conditions %s",
+          m.p, m.r0, status(m.e), table.concat(cs, ","))
+        if m.p == 0 then
+          L2.check(G, "P10 " .. m.n .. " at pressure 0: air liquefaction not assigned", m.r0 == "nil", m.r0, "nil", note)
+          L2.check(G, "P10 " .. m.n .. " at pressure 0: crafts in 300 ticks", crafts == 0, crafts, 0, note)
+        else
+          L2.check(G, "P10 control: " .. m.n .. " at pressure 1000 takes air liquefaction", m.r0 == "magnetics-liquid-nitrogen", m.r0, "magnetics-liquid-nitrogen", note)
+          L2.check(G, "P10 control: " .. m.n .. " at pressure 1000 crafts", crafts >= 1, crafts, ">= 1", note)
+        end
+      end
+    end },
 }

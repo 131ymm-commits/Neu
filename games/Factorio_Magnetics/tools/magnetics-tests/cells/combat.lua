@@ -147,12 +147,19 @@ cells[#cells + 1] = { id = "W2", configs = { "base", "sa" }, slots = 0, check_at
 -- One medium biter commanded to attack each wall for 20 s. Bites = ticks where the wall's health drops (walls do not
 -- heal). Thorns = ticks where the biter's health drops by > 0.5 (it heals 0.01/tick), plus its death on a bite tick.
 -- Thorn amount = drop + one tick of healing (PILOT-11 events: one electric event per bite, same tick, cause = wall).
+-- 4-е поле — урон одного укуса по стене после стойкости (§15.4, вместо T-W «доли»): H_res (PILOT-3)
+-- (D − decrease) × (1 − percent); укус: средний 15, большой 30, гигантский 90 physical [W §12]; стойкость physical:
+-- камень 3/20 %, магнитная 5/30 %, сверхпроводящая 8/35 % (§4.5). Числа набраны вручную:
+--   камень 9.6 / 21.6 / 69.6;  магнитная 7.0 / 17.5;  сверхпроводящая 4.55 / 14.3 / 53.3.
 local W3 = {
-  { "magnetics-magnet-wall", 5 }, { "magnetics-superconducting-wall", 10 }, { "magnetics-magnet-gate", 5 },
-  { "magnetics-superconducting-gate", 10 }, { "stone-wall", 0 },
+  { "magnetics-magnet-wall", 5, nil, 7.0 }, { "magnetics-superconducting-wall", 10, nil, 4.55 }, { "magnetics-magnet-gate", 5, nil, 7.0 },
+  { "magnetics-superconducting-gate", 10, nil, 4.55 }, { "stone-wall", 0, nil, 9.6 },
   -- большие и гигантские жуки кусают с 2,07–2,16 клетки: шипам нужен range 3 (§15)
-  { "magnetics-magnet-wall", 5, "big-biter" }, { "magnetics-superconducting-wall", 10, "big-biter" },
-  { "magnetics-superconducting-wall", 10, "behemoth-biter" }, { "stone-wall", 0, "big-biter" },
+  { "magnetics-magnet-wall", 5, "big-biter", 17.5 }, { "magnetics-superconducting-wall", 10, "big-biter", 14.3 },
+  { "magnetics-superconducting-wall", 10, "behemoth-biter", 53.3 }, { "stone-wall", 0, "big-biter", 21.6 },
+  -- контроль гиганта на камне (§15.4): прочность стены восстанавливается каждый тик (запись здоровья событий не даёт),
+  -- иначе стена гибнет на 6-м укусе и гигант уходит к соседним ячейкам
+  { "stone-wall", 0, "behemoth-biter", 69.6, reset = true },
 }
 local function attacker(S, name, wall, pos)
   local b = new(S, name, pos, "enemy")
@@ -211,9 +218,15 @@ cells[#cells + 1] = { id = "W3", configs = { "base", "sa" }, check_at = 1200,
       local x = o.x + 20.5 + 60 * math.floor((i - 1) / 5)
       local wall = new(S, w[1], { x, y + 0.5 })
       local b = attacker(S, w[3] or "medium-biter", wall, { x + 3, y + 0.5 })
-      s.p[i] = { name = w[1] .. (w[3] and (" vs " .. w[3]) or ""), thorn = w[2], w = { e = wall }, b = { e = b }, bites = {}, thorns = {} }
+      s.p[i] = { name = w[1] .. (w[3] and (" vs " .. w[3]) or ""), thorn = w[2], bite = w[4], reset = w.reset,
+                 w = { e = wall }, b = { e = b }, bites = {}, thorns = {} }
       s.map[wall.unit_number] = { i = i, role = "wall" }
       s.map[b.unit_number] = { i = i, role = "biter" }
+    end
+  end,
+  tick = function(ctx, t)
+    for _, p in ipairs(ctx.state.p) do
+      if p.reset and p.w.e.valid then p.w.e.health = p.w.e.max_health end
     end
   end,
   check = function(ctx)
@@ -231,6 +244,11 @@ cells[#cells + 1] = { id = "W3", configs = { "base", "sa" }, check_at = 1200,
       local note = string.format("bites %d, thorn events %d (on bite ticks %d); last thorn t%s, last bite t%s, biter %s",
         nb, nt, same_tick, tostring(lt), tostring(lb), p.b.e.valid and "alive" or "dead")
       range("W3 " .. p.name .. " bites in 20 s (set-up sanity)", nb, 5, 1e9, note)
+      -- §15.4: урон укуса по стене зависит от её стойкости (у стены без стойкости был бы 15 / 30 / 90)
+      local blo, bhi
+      for _, bt in ipairs(p.bites) do blo = math.min(blo or bt[2], bt[2]); bhi = math.max(bhi or bt[2], bt[2]) end
+      eq("W3 " .. p.name .. " wall damage per bite (min, H_res)", blo, p.bite, 0, 0.01, note)
+      eq("W3 " .. p.name .. " wall damage per bite (max, H_res)", bhi, p.bite, 0, 0.01, note)
       if p.thorn > 0 then
         eq("W3 " .. p.name .. " thorn damage per bite (electric)", p.thorns[1] and p.thorns[1][2] or 0, p.thorn, 0, 1e-3, note)
         is("W3 " .. p.name .. " thorn events off the expected amount/type", off, 0, note)
@@ -600,7 +618,7 @@ cells[#cells + 1] = { id = "K9", configs = { "base", "sa" }, check_at = 450,
     s.inl = {}
     for _, d in ipairs { 10, 16, 22, 28, 34 } do s.inl[#s.inl + 1] = { d, rec(unit(S, "behemoth-biter", { x + d, y }, "disabled")) } end
     s.off = rec(unit(S, "behemoth-biter", { x + 20, y + 3 }, "disabled"))
-    s.far = rec(unit(S, "behemoth-biter", { x + 37.5, y }, "disabled"))
+    s.far = rec(unit(S, "behemoth-biter", { x + 38.6, y }, "disabled"))   -- §15.4: линия 36 от дула кончается около 37,4
     s.walls = { new(S, "stone-wall", { x + 13.5, y + 0.5 }), new(S, "stone-wall", { x + 25.5, y + 0.5 }) }
   end,
   tick = function(ctx, t)
@@ -619,8 +637,8 @@ cells[#cells + 1] = { id = "K9", configs = { "base", "sa" }, check_at = 450,
     local _, so = hits_in(s.off, 0, 1e9)
     eq("K9 behemoth 3 tiles off the line damage", so, 0, 0, 0, note)
     local _, sf = hits_in(s.far, 0, 1e9)
-    eq("K9 behemoth on the line at 37.5 damage (line range 36)", sf, 0, 0, 0,
-       "PILOT-8: the line starts at the muzzle (projectile_creation_distance 1.39375 of gun-turret) and reaches ~37.4 from the turret centre")
+    eq("K9 behemoth on the line at 38.6 damage (line range 36 from the muzzle)", sf, 0, 0, 0,
+       "PILOT-8: the line starts at the muzzle (projectile_creation_distance 1.39375 of gun-turret) and reaches ~37.4 from the turret centre; §15.4: 38.6 measured 0")
     for i, w in ipairs(s.walls) do eq("K9 own stone wall " .. i .. " on the line health", w.valid and w.health or 0, 350, 0, 0, "force = enemy on the line") end
   end }
 
@@ -740,6 +758,162 @@ cells[#cells + 1] = { id = "K12", configs = { "base", "sa" }, slots = 0, check_a
     end
   end }
 
+-------------------------------------------------------------------------------------------------- own lab surfaces
+-- отдельная поверхность-лаборатория: дальнобойные опыты (рельсовая пушка 36, Гаусс 30) не видят чужих ячеек
+local function own_surface(name, radius_chunks)
+  local S = game.surfaces[name] or game.create_surface(name, { width = 64 * radius_chunks, height = 64 * radius_chunks })
+  S.generate_with_lab_tiles = true
+  S.always_day = true
+  S.request_to_generate_chunks({ 0, 0 }, radius_chunks)
+  S.force_generate_chunk_requests()
+  return S
+end
+
+-------------------------------------------------------------------------------------------------- K13 arc beams on kills
+-- §15.4: косметический луч создаётся раньше урона (и в выстреле, и в цепи). Один выстрел (буфер на один выстрел,
+-- без сети, как K7) по 5 закреплённым мелким жукам (15 HP — каждый удар убивает) в 4 клетках друг от друга.
+-- Каждый тик считаются лучи на участке ячейки по имени; длительность луча 20 тиков, отскоки через 3 тика, поэтому
+-- одновременно видны все пять. Ожидание: 1 главный луч и 4 луча отскока; контроль — все 5 жуков погибли.
+-- До правки (луч после урона) на убийствах лучей не было вовсе: 0 и 0 (пробник ревью).
+cells[#cells + 1] = { id = "K13", configs = { "base", "sa" }, check_at = 120,
+  setup = function(ctx)
+    local S, o, s = ctx.S, ctx.origin, ctx.state
+    local x, y = o.x + 20, o.y + 64
+    local tu = turret(S, "magnetics-arc-emitter", { x, y })
+    tu.energy = 1.2e6 -- один выстрел: без сети, буфер на один выстрел 1 МДж (PILOT-9)
+    s.bs = {}
+    for k = 0, 4 do s.bs[k + 1] = unit(S, "small-biter", { x + 10 + 4 * k, y }, "disabled") end
+    s.area = { { o.x, o.y }, { o.x + 128, o.y + 128 } }
+    s.max, s.first = {}, {}
+  end,
+  tick = function(ctx, t)
+    local s = ctx.state
+    local cnt = {}
+    for _, b in ipairs(ctx.S.find_entities_filtered { type = "beam", area = s.area }) do cnt[b.name] = (cnt[b.name] or 0) + 1 end
+    for n, c in pairs(cnt) do
+      s.max[n] = math.max(s.max[n] or 0, c)
+      s.first[n] = s.first[n] or t
+    end
+  end,
+  check = function(ctx)
+    L = ctx.L
+    local s = ctx.state
+    local dead = 0
+    for _, b in ipairs(s.bs) do if not b.valid then dead = dead + 1 end end
+    local note = string.format("5 pinned+disabled small biters (15 HP) 4 tiles apart, one shot; dead %d; first tick main %s, bounce %s",
+      dead, tostring(s.first["magnetics-arc-beam"]), tostring(s.first["magnetics-arc-bounce-beam"]))
+    is("K13 small biters killed by one arc shot (set-up: every hit kills)", dead, 5, note)
+    is("K13 main beams drawn on a killing shot (§15.4)", s.max["magnetics-arc-beam"] or 0, 1, note)
+    is("K13 bounce beams drawn on killing bounces (§15.4)", s.max["magnetics-arc-bounce-beam"] or 0, 4, note)
+  end }
+
+-------------------------------------------------------------------------------------------------- K14 slugs ignore scenery
+-- §15.4: болванки бьют только врагов (force_condition = "enemy"). Своя поверхность, четыре дорожки в 100 клетках
+-- друг от друга: катушечник с ферритовыми болванками (мишень в 15 клетках) и пушка Гаусса (мишень в 25), у каждой —
+-- чистая дорожка и дорожка с нейтральными деревом tree-01 и огромным камнем huge-rock на линии огня. 1200 тиков.
+-- Ожидание: дерево и камень целы; урон по мишени на дорожке с препятствиями = урон на чистой ± 1 попадание.
+-- До правки ("not-same") огромный камень останавливал все болванки: 0 урона за 20 с (замер ревью).
+local K14 = {
+  { key = "coilgun", n = "magnetics-coilgun-turret", ammo = "magnetics-ferrite-slug", d = 15, hit = 20, tree = 5, rock = 10 },
+  { key = "gauss", n = "magnetics-gauss-turret", ammo = "magnetics-gauss-slug", d = 25, hit = 90, tree = 8, rock = 16 },
+}
+local K14_T = 1200
+cells[#cells + 1] = { id = "K14", configs = { "base", "sa" }, slots = 0, check_at = K14_T,
+  setup = function(ctx)
+    local s = ctx.state
+    local S = own_surface("magnetics-combat-K14", 4)
+    s.lanes = {}
+    for i, d in ipairs(K14) do
+      for j, obst in ipairs { false, true } do
+        local x, y = -100 + 100 * (i - 1), -50 + 100 * (j - 1)
+        island(S, x - 3, y + 3)
+        local tu = turret(S, d.n, { x, y })
+        tu.insert { name = d.ammo, count = 20 }
+        local ln = { key = d.key, hit = d.hit, obst = obst, tu = tu, r = rec(new(S, "magnetics-test-target", { x + d.d, y }, "enemy")) }
+        if obst then
+          ln.tree = S.create_entity { name = "tree-01", position = { x + d.tree, y } }
+          ln.rock = S.create_entity { name = "huge-rock", position = { x + d.rock, y } }
+          ln.tree_hp, ln.rock_hp = ln.tree and ln.tree.health, ln.rock and ln.rock.health
+        end
+        s.lanes[#s.lanes + 1] = ln
+      end
+    end
+  end,
+  tick = function(ctx, t)
+    for _, ln in ipairs(ctx.state.lanes) do
+      poll(ln.r, t, true)
+      if t % 60 == 0 and ln.tu.valid and ln.tu.get_item_count() < 10 then ln.tu.insert { name = K14[ln.key == "coilgun" and 1 or 2].ammo, count = 10 } end
+    end
+  end,
+  check = function(ctx)
+    L = ctx.L
+    local by = {}
+    for _, ln in ipairs(ctx.state.lanes) do by[ln.key .. (ln.obst and "+obst" or "")] = ln end
+    for _, d in ipairs(K14) do
+      local c, o = by[d.key], by[d.key .. "+obst"]
+      local nc, sc = hits_in(c.r, 0, K14_T)
+      local no, so = hits_in(o.r, 0, K14_T)
+      local note = string.format("clear lane %d hits / %.1f damage; lane with tree-01 at %d and huge-rock at %d: %d hits / %.1f damage",
+        nc, sc, d.tree, d.rock, no, so)
+      range("K14 " .. d.key .. " clear lane hits (set-up sanity)", nc, 10, 1e9, note)
+      eq("K14 " .. d.key .. " damage behind a tree and a rock = clear lane (± 1 hit)", so, sc, 0, d.hit + 0.01, note)
+      is("K14 " .. d.key .. " tree-01 untouched", o.tree and o.tree.valid and o.tree.health == o.tree_hp or false, true, note)
+      is("K14 " .. d.key .. " huge-rock untouched", o.rock and o.rock.valid and o.rock.health == o.rock_hp or false, true, note)
+    end
+  end }
+
+-------------------------------------------------------------------------------------------------- K15 shooting speed research
+-- §15.4: скорострельность после WSS-1..6 (+150 % к bullet, зеркально к трём категориям Magnetics, §5.3). Своя
+-- поверхность; сила magnetics-k15-0 без исследований и magnetics-k15-6 с WSS-1..6; каждая турель на своём островке
+-- с EEI-счётчиком, мишень magnetics-test-target в 12 клетках, патроны пополняются; дорожки в 100 клетках друг от друга.
+-- Окно 600..4200 тиков (60 с, после разгона на буфере). Ожидание, выстрелов в минуту (набрано вручную из §4.6 и §5.3):
+-- катушечник 60 / 24 × 60 = 150 → × 2,5 = 375; Гаусс 60 → 150; рельсовая пушка 24 → 60 (± 2 %, не меньше ± 1).
+-- При входе 2 МВт рельсовая пушка упиралась в 2 МВт / 4 МДж = 30 в минуту (замер ревью: 0,5 выстр./с при +80 и +150 %).
+local K15 = {
+  { n = "magnetics-coilgun-turret", ammo = "magnetics-ferrite-slug", cat = "magnetics-slug", base = 150 },
+  { n = "magnetics-gauss-turret", ammo = "magnetics-gauss-slug", cat = "magnetics-gauss", base = 60 },
+  { n = "magnetics-rail-cannon", ammo = "magnetics-rail-slug", cat = "magnetics-rail", base = 24 },
+}
+local K15_T0, K15_T1 = 600, 4200
+cells[#cells + 1] = { id = "K15", configs = { "base", "sa" }, slots = 0, check_at = K15_T1,
+  setup = function(ctx)
+    local s = ctx.state
+    local S = own_surface("magnetics-combat-K15", 4)
+    local f0 = game.forces["magnetics-k15-0"] or game.create_force("magnetics-k15-0")
+    local f6 = game.forces["magnetics-k15-6"] or game.create_force("magnetics-k15-6")
+    f0.set_cease_fire(f6, true); f6.set_cease_fire(f0, true)
+    for lvl = 1, 6 do f6.technologies["weapon-shooting-speed-" .. lvl].researched = true end
+    s.lanes = {}
+    for i, d in ipairs(K15) do
+      for j, f in ipairs { f0, f6 } do
+        local x, y = -100 + 100 * (i - 1), -50 + 100 * (j - 1)
+        island(S, x - 3, y + 3, f)
+        local tu = turret(S, d.n, { x, y }, f)
+        tu.insert { name = d.ammo, count = 10 }
+        s.lanes[#s.lanes + 1] = { i = i, f = f.name, res = j == 2, tu = tu, r = rec(new(S, "magnetics-test-target", { x + 12, y }, "enemy")),
+                                  gs = f.get_gun_speed_modifier(d.cat) }
+      end
+    end
+  end,
+  tick = function(ctx, t)
+    for _, ln in ipairs(ctx.state.lanes) do
+      poll(ln.r, t, true)
+      if t % 30 == 0 and ln.tu.valid and ln.tu.get_item_count() < 5 then ln.tu.insert { name = K15[ln.i].ammo, count = 5 } end
+    end
+  end,
+  check = function(ctx)
+    L = ctx.L
+    for _, ln in ipairs(ctx.state.lanes) do
+      local d = K15[ln.i]
+      local n = hits_in(ln.r, K15_T0, K15_T1)
+      local want = d.base * (ln.res and 2.5 or 1)
+      local note = string.format("force %s, gun speed modifier %s = %.3f; hits in 60 s %d; turret buffer %.0f J",
+        ln.f, d.cat, ln.gs, n, ln.tu.energy)
+      if ln.res then L.check(G, "K15 " .. d.n .. " gun speed modifier after WSS-1..6 = 1.5", math.abs(ln.gs - 1.5) < 1e-9, ln.gs, 1.5, note, "harness") end
+      eq("K15 " .. d.n .. " shots per minute " .. (ln.res and "after WSS-1..6 (§15.4)" or "without research"), n, want, 0.02, 1, note)
+    end
+  end }
+
 -------------------------------------------------------------------------------------------------- T-W wave scenario
 -- 20 medium + 10 big biters spawned 45 tiles north of a 3×3 turret block, `attack_area` on the block (radius 16).
 -- The block sits inside a closed 2-deep wall ring (inner half-size 9, 160 walls) so the attack must go through walls.
@@ -832,10 +1006,14 @@ for ti, T in ipairs(TW_TURRETS) do
           local sr = st and st.res
           -- §15: доля потерянной прочности стен (потеряно / суммарная прочность), а не абсолютные очки:
           -- у SC-стены прочность в 4,3 раза больше, и абсолютные потери зависят от числа укусов, а не от стойкости
+          -- §15.4: справочно (kind "info"). При прочности 1500 против 350 условие «доля ≤ ½ доли камня» равносильно
+          -- «SC теряет ≤ 2,14 × очков камня» и выполнялось даже у SC-стены без стойкости (мутация ревью). Зависимость
+          -- от стойкости проверяет W3: урон каждого укуса по стене = H_res для среднего, большого и гигантского жука.
           local lim = sr and (sr.wall_hp_lost / sr.wall_hp_total) / 2
           local frac = r.wall_hp_lost / r.wall_hp_total
-          L.check(G, "T-W " .. T.key .. " SC-wall share of wall HP lost <= 1/2 of stone-wall share", sr ~= nil and frac <= lim + 1e-9,
-            frac, lim, note .. "; stone variant lost " .. tostring(sr and sr.wall_hp_lost) .. " of " .. tostring(sr and sr.wall_hp_total))
+          L.check(G, "T-W " .. T.key .. " SC-wall share of wall HP lost vs 1/2 of stone-wall share (справочно)", true,
+            frac, lim, note .. "; stone variant lost " .. tostring(sr and sr.wall_hp_lost) .. " of " .. tostring(sr and sr.wall_hp_total) ..
+            "; absolute ratio SC/stone " .. tostring(sr and sr.wall_hp_lost > 0 and r.wall_hp_lost / sr.wall_hp_lost or nil), "info")
         end
         if ti == #TW_TURRETS and wi == #TW_WALLS then
           local all = {}

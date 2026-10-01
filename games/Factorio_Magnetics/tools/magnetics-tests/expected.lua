@@ -58,14 +58,14 @@ return {
       magazine = 1,
       stack = 20,
       order = "m[magnetics]-d[rail-slug]",
-      line = {range = 34.60625, width = 1.5, damage = {{1200, "physical"}}}
+      line = {range = 36, width = 1.5, damage = {{1200, "physical"}}}
     },
     ["magnetics-flux-rail-slug"] = {
       category = "magnetics-rail",
       magazine = 3,
       stack = 10,
       order = "m[magnetics]-e[flux-rail-slug]",
-      line = {range = 34.60625, width = 2, damage = {{1800, "physical"}, {600, "electric"}}}
+      line = {range = 36, width = 2, damage = {{1800, "physical"}, {600, "electric"}}}
     }
   },
   ammo_categories = {
@@ -155,6 +155,7 @@ return {
       own_icon = true,
       subgroup = "fluid-recipes",
       order = "z[magnetics-liquid-nitrogen]",
+      sa_pressure_min = 10,
       tint = {
         primary = {0.75, 0.9, 1.0},
         secondary = {0.94, 0.98, 1.0},
@@ -226,8 +227,8 @@ return {
     ["magnetics-ferrite-slug"] = {
       category = "crafting",
       ing = {
-        {type = "item", name = "magnetics-ferrite", amount = 6},
-        {type = "item", name = "copper-plate", amount = 2}
+        {type = "item", name = "magnetics-ferrite", amount = 10},
+        {type = "item", name = "copper-plate", amount = 3}
       },
       res = {{type = "item", name = "magnetics-ferrite-slug", amount = 1}},
       energy = 3,
@@ -248,8 +249,8 @@ return {
     ["magnetics-gauss-slug"] = {
       category = "crafting",
       ing = {
-        {type = "item", name = "magnetics-magnet-alloy", amount = 2},
-        {type = "item", name = "steel-plate", amount = 1}
+        {type = "item", name = "magnetics-magnet-alloy", amount = 3},
+        {type = "item", name = "steel-plate", amount = 2}
       },
       res = {{type = "item", name = "magnetics-gauss-slug", amount = 1}},
       energy = 6,
@@ -1103,7 +1104,7 @@ return {
       tint = {0.55, 0.65, 1.0},
       frg = "magnetics-gauss-turret",
       hp = 800,
-      attack = {ammo_category = "magnetics-gauss", cooldown = 60, range = 30},
+      attack = {ammo_category = "magnetics-gauss", cooldown = 60, range = 30, sound_from = "tank-cannon"},
       set = {
         automated_ammo_count = 8,
         rotation_speed = 0.008,
@@ -1155,7 +1156,14 @@ return {
       tint = {0.78, 0.55, 1.0},
       frg = "magnetics-rail-cannon",
       hp = 2000,
-      attack = {ammo_category = "magnetics-rail", cooldown = 150, range = 36, min_range = 4, health_penalty = -1},
+      attack = {
+        ammo_category = "magnetics-rail",
+        cooldown = 150,
+        range = 36,
+        min_range = 4,
+        health_penalty = -1,
+        sound_from = "tank-cannon"
+      },
       set = {
         automated_ammo_count = 5,
         rotation_speed = 0.005,
@@ -1164,7 +1172,7 @@ return {
           type = "electric",
           usage_priority = "primary-input",
           buffer_capacity = "8MJ",
-          input_flow_limit = "2MW"
+          input_flow_limit = "4MW"
         }
       },
       item = {stack = 10, subgroup = "turret", order = "b[turret]-m[magnetics]-d[rail-cannon]"},

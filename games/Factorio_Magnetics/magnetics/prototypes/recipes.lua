@@ -21,9 +21,12 @@ for name, d in pairs(S.recipes) do
   if d.order then r.order = d.order end
   if #d.res > 1 or d.own_icon then r.main_product = "" end
   if d.tint then r.crafting_machine_tint = d.tint end
-  if U.SA and d.sa_magnetic_field_min then
-    r.surface_conditions = { { property = "magnetic-field", min = d.sa_magnetic_field_min } }
-  end
+  -- условия поверхности рецепта (только Space Age): магнитное поле (сепарация камня) и давление — «нужен воздух»
+  -- (сжижение воздуха, §15.4: иначе криогенный завод Space Age делал жидкий азот из вакуума платформы)
+  local sc = {}
+  if d.sa_magnetic_field_min then sc[#sc + 1] = { property = "magnetic-field", min = d.sa_magnetic_field_min } end
+  if d.sa_pressure_min then sc[#sc + 1] = { property = "pressure", min = d.sa_pressure_min } end
+  if U.SA and #sc > 0 then r.surface_conditions = sc end
   out[#out + 1] = r
 end
 data:extend(out)

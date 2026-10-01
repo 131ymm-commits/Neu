@@ -334,7 +334,7 @@ return {
         "magnetics-ferrite-wall", "magnetics-magnet-wall", "magnetics-superconducting-wall", "magnetics-magnet-gate",
         "magnetics-superconducting-gate", "magnetics-mend-coil",
         "magnetics-coilgun-turret", "magnetics-gauss-turret", "magnetics-arc-emitter", "magnetics-rail-cannon" }
-      is("E8 entity list has 26 names", #names, 26)
+      L.check(G, "E8 entity list has 26 names", #names == 26, #names, 26, nil, "harness")   -- самопроверка списка стенда (§15.4)
       -- build_check_type: "manual" (a player building). PILOT: "script"/"script_ghost" ignore surface conditions.
       local function can(n)
         if not prototypes.entity[n] then return "missing prototype" end

@@ -44,7 +44,8 @@ local function plain(v, depth)               -- копия без LuaObject (д�
   return v
 end
 
-local function chk(id, name, pass, got, exp, note) L.check(id, name, pass, plain(got), plain(exp), note) end
+-- kind: "mod" (по умолчанию), "harness" (самопроверка стенда), "info" (справочно, без проверки) — см. lib.lua
+local function chk(id, name, pass, got, exp, note, kind) L.check(id, name, pass, plain(got), plain(exp), note, kind) end
 local function eq(id, name, got, exp, rel, note)
   if type(exp) == "number" then
     L.eq(id, name, got, exp, rel or 1e-6, 1e-9, note)
@@ -110,22 +111,24 @@ local function pollution_per_min(epj, joules_per_tick) return (epj and epj.pollu
 -- DOC: числа, набранные вручную из FINAL_SPEC (§2.1, §2.3, §4.2–§4.7, §11.2 S4, §5.3). Не из spec.py.
 
 local DOC = {}
+-- §4.2, столбец «modules / effects»: «5 effects» = все пять эффектов модулей (набрано вручную, не FIVE из spec.py)
+local AE5 = { "consumption", "speed", "productivity", "pollution", "quality" }
 -- постройки: тип, основа, клетки, HP, группа быстрой замены, ключевые числа
 DOC.entities = {
   ["magnetics-sintering-kiln"] = { type = "assembling-machine", w = 2, h = 2, hp = 200, frg = "magnetics-sintering-kiln",
     speed = 1, kw = 90, burner = { "chemical", 1, 1, 0 }, pollution = 2, fixed = "magnetics-ferrite", cats = { "magnetics-sintering" }, modules = 0,
     er = { false, false, true } },
   ["magnetics-induction-furnace"] = { type = "assembling-machine", w = 3, h = 3, hp = 350, frg = "magnetics-induction-furnace",
-    speed = 2, kw = 240, drain_kw = 8, pollution = 1, cats = { "magnetics-sintering", "magnetics-induction" }, modules = 2 },
+    speed = 2, kw = 240, drain_kw = 8, pollution = 1, cats = { "magnetics-sintering", "magnetics-induction" }, modules = 2, ae = AE5 },
   ["magnetics-coil-winder"] = { type = "assembling-machine", w = 3, h = 3, hp = 350, frg = "magnetics-coil-winder",
-    speed = 1, kw = 150, drain_kw = 5, pollution = 3, cats = { "magnetics-winding" }, modules = 2 },
+    speed = 1, kw = 150, drain_kw = 5, pollution = 3, cats = { "magnetics-winding" }, modules = 2, ae = AE5 },
   ["magnetics-cryo-chamber"] = { type = "assembling-machine", w = 3, h = 3, hp = 350, frg = "magnetics-cryo-chamber",
-    speed = 1, kw = 300, drain_kw = 10, pollution = 3, cats = { "magnetics-cryogenics" }, modules = 3 },
+    speed = 1, kw = 300, drain_kw = 10, pollution = 3, cats = { "magnetics-cryogenics" }, modules = 3, ae = AE5 },
   ["magnetics-flux-resonator"] = { type = "assembling-machine", w = 3, h = 3, hp = 350, frg = "magnetics-flux-resonator",
     speed = 1, kw = 5000, drain_kw = 10, pollution = 0, cats = { "magnetics-resonance" }, modules = 0,
     fixed = "magnetics-flux-crystal-charging", er = { false, false, false } },
   ["magnetics-magnetic-separator"] = { type = "assembling-machine", w = 3, h = 3, hp = 400, frg = "magnetics-magnetic-separator",
-    speed = 1, kw = 250, drain_kw = 8.33, pollution = 4, cats = { "magnetics-separation" }, modules = 2 },
+    speed = 1, kw = 250, drain_kw = 8.33, pollution = 4, cats = { "magnetics-separation" }, modules = 2, ae = AE5 },
   ["magnetics-magnetic-drill"] = { type = "mining-drill", w = 3, h = 3, hp = 400, frg = "mining-drill",
     mining_speed = 0.75, kw = 150, pollution = 15, radius = 2.49, res_cats = { "basic-solid" }, modules = 3 },
   ["magnetics-maglev-transport-belt"] = { type = "transport-belt", w = 1, h = 1, hp = 180, frg = "transport-belt", belt_speed = 0.15625 },
@@ -133,7 +136,9 @@ DOC.entities = {
     belt_speed = 0.15625, ug = 13 },
   ["magnetics-maglev-splitter"] = { type = "splitter", w = 2, h = 1, hp = 200, belt_speed = 0.15625 },
   ["magnetics-coil-capacitor"] = { type = "accumulator", w = 1, h = 1, hp = 100, frg = "magnetics-coil-capacitor",
-    buffer_mj = 1, flow_mw = 1, priority = "tertiary", cbox = { -0.4, -0.4, 0.4, 0.4 }, sbox = { -0.5, -0.5, 0.5, 0.5 } },
+    buffer_mj = 1, flow_mw = 1, priority = "tertiary", cbox = { -0.4, -0.4, 0.4, 0.4 }, sbox = { -0.5, -0.5, 0.5, 0.5 },
+    -- §15.4: остатки 1×1 (ванильные small-remnants), без проводов, рамка превью 0.5 × 0.5
+    corpse = "small-remnants", circuit_wire = 0, dbve = 0.25 },
   ["magnetics-superconducting-accumulator"] = { type = "accumulator", w = 2, h = 2, hp = 250, frg = "accumulator",
     buffer_mj = 20, flow_mw = 1.2, priority = "tertiary" },
   ["magnetics-superconducting-pylon"] = { type = "electric-pole", w = 2, h = 2, hp = 250, frg = "big-electric-pole", wire = 48, supply = 2 },
@@ -159,7 +164,8 @@ DOC.entities = {
     buffer_kj = 2000, in_kw = 3000, drain_kw = 24, priority = "primary-input",
     shot_mj = 1, damage = 45 },
   ["magnetics-rail-cannon"] = { type = "ammo-turret", w = 2, h = 2, hp = 2000, frg = "magnetics-rail-cannon",
-    ammo = "magnetics-rail", cooldown = 150, range = 36, min_range = 4, health_penalty = -1, buffer_kj = 8000, in_kw = 2000,
+    ammo = "magnetics-rail", cooldown = 150, range = 36, min_range = 4, health_penalty = -1, buffer_kj = 8000,
+    in_kw = 4000,   -- §15.4: 2 → 4 МВт (0,4 выстр./с × 2,5 после WSS-1..6 × 4 МДж)
     priority = "primary-input", aac = 5 },
 }
 -- сопротивления §4.5: {decrease, percent}
@@ -187,9 +193,9 @@ DOC.ammo = {
   ["magnetics-ferrite-slug"] = { cat = "magnetics-slug", mag = 10, speed = 1, max_range = 24 },
   ["magnetics-magnet-slug"] = { cat = "magnetics-slug", mag = 10, speed = 1, max_range = 24 },
   ["magnetics-gauss-slug"] = { cat = "magnetics-gauss", mag = 4, speed = 1.5, max_range = 34 },
-  ["magnetics-rail-slug"] = { cat = "magnetics-rail", mag = 1, line = { range = 34.60625,  -- §15: 36 от центра (PILOT-8)
-    width = 1.5, dmg = { { 1200, "physical" } } } },
-  ["magnetics-flux-rail-slug"] = { cat = "magnetics-rail", mag = 3, line = { range = 34.60625, width = 2, dmg = { { 1800, "physical" }, { 600, "electric" } } } },
+  -- §15.4: длина линии снова 36 (§4.7): смещение дула качество не умножает, 36 покрывает дальность турели на любом качестве
+  ["magnetics-rail-slug"] = { cat = "magnetics-rail", mag = 1, line = { range = 36, width = 1.5, dmg = { { 1200, "physical" } } } },
+  ["magnetics-flux-rail-slug"] = { cat = "magnetics-rail", mag = 3, line = { range = 36, width = 2, dmg = { { 1800, "physical" }, { 600, "electric" } } } },
 }
 DOC.chain = { max_jumps = 4, max_range_per_jump = 6, jump_delay_ticks = 3, fork_chance = 0, max_forks = 2 }
 -- §7.4 подогрев (кВт; нет в списке — 0)
@@ -202,6 +208,11 @@ DOC.heat = {
 }
 -- §7.3: к magnetic-field ≥ 10 у всех 26 — ещё pressure ≥ 10 у печи и МГД
 DOC.pressure = { ["magnetics-sintering-kiln"] = true, ["magnetics-mhd-generator"] = true }
+-- §3.1 и §15.4: условия поверхности рецептов под SA (остальные рецепты — без условий)
+DOC.recipe_conditions = {
+  ["magnetics-stone-separation"] = { { property = "magnetic-field", min = 50 } },
+  ["magnetics-liquid-nitrogen"] = { { property = "pressure", min = 10 } },   -- §15.4: «нужен воздух»
+}
 -- §5.1: технологии (предпосылки, число × время, пакеты, открываемые рецепты) — для S5 и S8
 local A, Lg, C, Mi, P, U = "automation-science-pack", "logistic-science-pack", "chemical-science-pack", "military-science-pack",
   "production-science-pack", "utility-science-pack"
@@ -250,14 +261,23 @@ local function vanilla_links()
     { top .. "-splitter", "magnetics-maglev-splitter" },
   }
 end
-DOC.chain_ends = { "magnetics-superconducting-wall", "magnetics-superconducting-gate", "magnetics-magnetic-drill",
-  "magnetics-superconducting-accumulator", "magnetics-superconducting-pylon", "magnetics-maglev-transport-belt",
-  "magnetics-maglev-underground-belt", "magnetics-maglev-splitter" }
 -- §7.5 / S9: рецепты с auto_recycle = false и предметы с auto_recycle = false
 DOC.no_recycle_recipes = { m "ferrite", m "magnet-alloy", m "ferrofluid", m "liquid-nitrogen", m "superconducting-cable",
   m "stone-separation", m "flux-crystal-growth", m "flux-crystal-charging", m "flux-rail-slug" }
 DOC.no_recycle_items = { m "superconducting-cable", m "flux-crystal-uncharged", m "flux-crystal" }
-
+-- §15.4: ожидания к фактам стадии данных (test-mod data.lua → mod-data magnetics-test-data-facts)
+DOC.data_facts = {
+  gun_sound = { "__base__/sound/fight/gun-turret-gunshot-1.ogg", "__base__/sound/fight/gun-turret-gunshot-2.ogg",
+                "__base__/sound/fight/gun-turret-gunshot-3.ogg", "__base__/sound/fight/gun-turret-gunshot-4.ogg" },
+  tank_sound = { "__base__/sound/fight/tank-cannon-1.ogg", "__base__/sound/fight/tank-cannon-2.ogg", "__base__/sound/fight/tank-cannon-3.ogg",
+                 "__base__/sound/fight/tank-cannon-4.ogg", "__base__/sound/fight/tank-cannon-5.ogg" },
+  -- звук выстрела: катушечник оставляет пулемётный, Гаусс и рельсовая пушка — пушка танка (§15.4); гильз нет ни у одной
+  turret_sound = { ["magnetics-coilgun-turret"] = "gun", ["magnetics-gauss-turret"] = "tank", ["magnetics-rail-cannon"] = "tank" },
+  -- окраска §4.4 (набрана вручную): тело во всех трёх местах (picture, charge_animation, discharge_animation)
+  chargable_tint = { ["magnetics-superconducting-accumulator"] = { 0.65, 0.95, 1.00 }, ["magnetics-coil-capacitor"] = { 1.00, 0.75, 0.55 } },
+  chargable_body_leaves = 3,
+  arc_chain_deliveries = { "beam", "instant" },
+}
 ---------------------------------------------------------------------------------------------------------------------
 -- Выгрузка прочитанного (для tools/tests.py: сверка с таблицами FINAL_SPEC.md)
 
@@ -449,6 +469,14 @@ local function s4_doc_entity(name, d)
   if d.fixed then eq(id, n .. " fixed_recipe", p.fixed_recipe, d.fixed) end
   if d.cats then seteq(id, n .. " crafting categories", keys(p.crafting_categories, { parameters = true }), d.cats) end
   if d.modules then eq(id, n .. " module slots", p.module_inventory_size or 0, d.modules) end
+  if d.ae then
+    local on = {}
+    for k, v in pairs(p.allowed_effects or {}) do if v then on[#on + 1] = k end end
+    seteq(id, n .. " allowed_effects (§4.2 «5 effects»)", on, d.ae)
+  end
+  if d.corpse then seteq(id, n .. " corpses (§15.4)", keys(p.corpses), { d.corpse }) end
+  if d.circuit_wire then eq(id, n .. " max circuit wire distance (§15.4)", p.get_max_circuit_wire_distance(), d.circuit_wire) end
+  if d.dbve then eq(id, n .. " drawing_box_vertical_extension (§15.4)", p.drawing_box_vertical_extension, d.dbve) end
   if d.er then
     local er = p.effect_receiver or {}
     eq(id, n .. " effect_receiver modules/beacons/surface", join({ tostring(er.uses_module_effects), tostring(er.uses_beacon_effects), tostring(er.uses_surface_effects) }),
@@ -510,17 +538,20 @@ local function s4_doc_entity(name, d)
     local act = a.ammo_type and a.ammo_type.action and a.ammo_type.action[1]
     local te = act and act.action_delivery and act.action_delivery[1] and act.action_delivery[1].target_effects or {}
     local kinds, dmg, dtype, sticker, chain, beam_len = {}, nil, nil, nil, nil, nil
+    local at_beam, at_damage
     for i, e in ipairs(te) do
       kinds[i] = e.type or (e.action and "nested-result") or "?"   -- у nested-result в API нет поля type (пилот)
-      if e.type == "damage" then dmg = e.damage and e.damage.amount; dtype = e.damage and e.damage.type end
+      if e.type == "damage" then dmg = e.damage and e.damage.amount; dtype = e.damage and e.damage.type; at_damage = i end
       if e.type == "create-sticker" then sticker = e.sticker end
       if kinds[i] == "nested-result" and e.action and e.action[1] and e.action[1].action_delivery then
         local dl = e.action[1].action_delivery[1] or {}
-        if dl.type == "chain" then chain = dl.chain end
-        if dl.type == "beam" then beam_len = dl.max_length end
+        if dl.type == "chain" then chain = dl.chain; kinds[i] = "chain" end
+        if dl.type == "beam" then beam_len = dl.max_length; kinds[i] = "beam"; at_beam = i end
       end
     end
-    listeq(id, n .. " arc action order", kinds, { "nested-result", "damage", "create-sticker", "nested-result" })
+    -- §15.4: цепь, луч, урон, стикер — луч раньше урона, иначе на убийствах его нет
+    listeq(id, n .. " arc action order", kinds, { "chain", "beam", "damage", "create-sticker" })
+    chk(id, n .. " arc cosmetic beam before damage (§15.4)", at_beam ~= nil and at_damage ~= nil and at_beam < at_damage, { at_beam, at_damage }, "beam < damage")
     eq(id, n .. " arc damage", dmg, d.damage)
     eq(id, n .. " arc damage type", dtype, "electric")
     eq(id, n .. " arc sticker", sticker, "electric-mini-stun")
@@ -928,7 +959,6 @@ local function s6()
       eq(id, name .. " next_upgrade = nil", p.next_upgrade and p.next_upgrade.name, nil)
     end
   end
-  for _, name in ipairs(DOC.chain_ends) do chk(id, "chain end " .. name .. " listed", DOC.entities[name] ~= nil, true, true) end
   -- ровно эти ванильные связи ведут в Magnetics
   local allowed = {}
   for _, l in ipairs(want) do allowed[l[1] .. ">" .. l[2]] = true end
@@ -976,7 +1006,7 @@ local function s8()
     end
     for _, rn in ipairs(magnetics_recipes()) do
       local r = prototypes.recipe[rn]
-      local want = rn == "magnetics-stone-separation" and { { property = "magnetic-field", min = 50 } } or {}
+      local want = DOC.recipe_conditions[rn] or {}
       eq(id, "recipe " .. rn .. " surface_conditions", cond_str(r.surface_conditions), cond_str(want))
     end
     local ins = { ["electromagnetic-plant"] = { "magnetics-winding" }, ["cryogenic-plant"] = { "magnetics-cryogenics" },
@@ -1216,6 +1246,76 @@ local function s16()
 end
 
 ---------------------------------------------------------------------------------------------------------------------
+-- Факты стадии данных (§15.4): то, чего нет в API времени игры. Наблюдения пишет test-mod data.lua в mod-data
+-- magnetics-test-data-facts; ожидания — DOC.data_facts (набраны вручную).
+
+local function tint_eq(a, b)
+  if not a or not b then return false end
+  for i = 1, 3 do if math.abs(a[i] - b[i]) > 1e-6 then return false end end
+  return true
+end
+
+local function data_facts()
+  local md = prototypes.mod_data["magnetics-test-data-facts"]
+  chk("S4", "data facts: mod-data present (test-mod data.lua)", md ~= nil, md ~= nil, true, nil, "harness")
+  if not md then return end
+  local F, D = md.data, DOC.data_facts
+  -- турели: без гильз; звук по §15.4 (контроль: у ванильного пулемёта гильзы и его звук)
+  for n, kind in pairs(D.turret_sound) do
+    local t = F.turrets[n] or {}
+    eq("S4", "data " .. n .. " shell_particle (none, §15.4)", t.shell_particle, false)
+    listeq("S4", "data " .. n .. " attack sound files (" .. kind .. ", §15.4)", t.sound or {}, kind == "tank" and D.tank_sound or D.gun_sound)
+  end
+  eq("S4", "data control: gun-turret shell_particle", F.turrets["gun-turret"].shell_particle, "shell-particle")
+  listeq("S4", "data control: tank-cannon sound files", F.tank_cannon_sound, D.tank_sound)
+  -- генераторы: без загрязнения — без дыма; МГД дымит (контроль)
+  eq("S4", "data magnetics-flux-dynamo burner smoke count (0 pollution → no smoke, §15.4)", F.generators["magnetics-flux-dynamo"].smoke, 0)
+  chk("S4", "data control: magnetics-mhd-generator keeps burner smoke", F.generators["magnetics-mhd-generator"].smoke >= 1,
+      F.generators["magnetics-mhd-generator"].smoke, ">= 1")
+  -- предметы построек: без ванильной метки уровня
+  local hint, nitems = {}, 0
+  for n, h in pairs(F.color_hint) do nitems = nitems + 1; if h then hint[#hint + 1] = n .. "=" .. tostring(h) end end
+  chk("S4", "data building items without color_hint (§15.4)", #hint == 0, hint, {})
+  chk("S4", "data building items seen = 26 (the check above is not empty)", nitems == 26, nitems, 26, nil, "harness")
+  -- S12: окраска всего тела накопителей, тени и свечение не окрашены
+  for n, want in pairs(D.chargable_tint) do
+    local body, bad, special = 0, {}, {}
+    for _, lf in ipairs(F.chargable[n] or {}) do
+      if lf.shadow or lf.glow then
+        if lf.tint and not tint_eq(lf.tint, { 1, 1, 1 }) then special[#special + 1] = lf.path end
+      else
+        body = body + 1
+        if not tint_eq(lf.tint, want) then bad[#bad + 1] = lf.path .. "=" .. (lf.tint and table.concat(lf.tint, ",") or "none") end
+      end
+    end
+    eq("S12", n .. ": chargable_graphics body leaves (picture, charge, discharge)", body, D.chargable_body_leaves)
+    chk("S12", n .. ": every body leaf of chargable_graphics has its tint (§15.4)", #bad == 0, bad, {})
+    chk("S12", n .. ": shadow/glow leaves of chargable_graphics untinted", #special == 0, special, {})
+  end
+  -- S12: иней Space Age не окрашен (тот же tint, что у ванильного образца по тому же пути)
+  local nfrozen, badf = 0, {}
+  for n, list in pairs(F.frozen) do
+    for _, lf in ipairs(list) do
+      nfrozen = nfrozen + 1
+      local same = (lf.tint == false and lf.vanilla_tint == false) or tint_eq(lf.tint, lf.vanilla_tint)
+      if not (lf.vanilla_found and same) then
+        badf[#badf + 1] = n .. lf.path .. " tint " .. (lf.tint and table.concat(lf.tint, ",") or "none") ..
+          " vs vanilla " .. (lf.vanilla_tint and table.concat(lf.vanilla_tint, ",") or (lf.vanilla_found and "none" or "missing"))
+      end
+    end
+  end
+  chk("S12", "maglev frozen (*frozen*) leaves = vanilla tint (§15.4)", #badf == 0, badf, {})
+  if SA then
+    local ug = #(F.frozen["magnetics-maglev-underground-belt"] or {})
+    chk("S12", "SA: maglev underground belt has frozen leaves (frozen_patch_in/out; the check above is not empty)", ug >= 2, ug, ">= 2", nil, "harness")
+  else
+    eq("S12", "no SA: no frozen leaves", nfrozen, 0)
+  end
+  -- §4.7 / §15.4: в цепи разрядника луч отскока раньше мгновенного урона
+  listeq("S4", "data magnetics-arc-chain delivery order (beam before damage, §15.4)", F.arc_chain_deliveries, D.arc_chain_deliveries)
+end
+
+---------------------------------------------------------------------------------------------------------------------
 -- Ячейки
 
 local function begin(ctx)
@@ -1232,7 +1332,7 @@ return {
       section("S4", "calibration", s4_calibration)
       for name, d in pairs(EXP.entities) do section("S4", name, s4_entity, name, d) end
       for name, d in pairs(DOC.entities) do section("S4", "doc " .. name, s4_doc_entity, name, d) end
-      chk("S4", "entity count (expected.lua) = 26", #keys(EXP.entities) == 26, #keys(EXP.entities), 26)
+      chk("S4", "entity count (expected.lua) = 26", #keys(EXP.entities) == 26, #keys(EXP.entities), 26, nil, "harness")
       section("S4", "items", s4_items)
       section("S4", "recipes", s4_recipes)
       section("S4", "techs", s4_techs)
@@ -1301,6 +1401,7 @@ return {
   { id = "S14", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S14", "S14", s14) end },
   { id = "S15", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S15", "S15", s15) end },
   { id = "S16", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S16", "S16", s16) end },
+  { id = "DF", slots = 0, check_at = 1, check = function(ctx) begin(ctx); section("S4", "data facts", data_facts) end },
   { id = "G3", slots = 0, check_at = 600,
     setup = function(ctx)
       begin(ctx)
@@ -1337,7 +1438,7 @@ return {
       for _, x in ipairs(s.entities) do
         if x.e and x.e.valid then st[#st + 1] = x.name .. "=" .. tostring(x.e.status and names_of[x.e.status] or "-") end
       end
-      L.check("G3", "statuses (справочно)", true, nil, nil, table.concat(st, "; "))
+      L.check("G3", "statuses (справочно)", true, nil, nil, table.concat(st, "; "), "info")
       -- PILOT-2 (часть «один крафт»): печь и индукционная печь — сборочные машины на графике печей — крафтят
       -- (витрина: печь на угле, ferrite; индукционная печь на magnet-alloy; 600 тиков = 10 с; крафт 3.2 с каждый)
       for _, x in ipairs(s.entities) do
