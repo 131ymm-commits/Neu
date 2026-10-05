@@ -1,5 +1,6 @@
 {
  "t": 0,
+ "root": 20261005,
  "pop": [
   {
    "id": "g0_0",
@@ -11,7 +12,9 @@
    "born": 0,
    "parents": [
     "self1_1"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   },
   {
    "id": "g0_1",
@@ -23,7 +26,9 @@
    "born": 0,
    "parents": [
     "ex1b_1"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   },
   {
    "id": "g0_2",
@@ -35,6 +40,10 @@
    "born": 0,
    "parents": [
     "tx0a_1"
+   ],
+   "hard": [],
+   "soft": [
+    "os.environ"
    ]
   },
   {
@@ -47,7 +56,9 @@
    "born": 0,
    "parents": [
     "tx1b_1"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   },
   {
    "id": "g0_4",
@@ -59,6 +70,10 @@
    "born": 0,
    "parents": [
     "iso0_3"
+   ],
+   "hard": [],
+   "soft": [
+    "os.environ"
    ]
   },
   {
@@ -71,7 +86,9 @@
    "born": 0,
    "parents": [
     "iso1_1"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   },
   {
    "id": "g0_6",
@@ -83,7 +100,9 @@
    "born": 0,
    "parents": [
     "iso1_2"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   },
   {
    "id": "g0_7",
@@ -95,7 +114,9 @@
    "born": 0,
    "parents": [
     "ex1a_1"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   },
   {
    "id": "g0_8",
@@ -107,7 +128,9 @@
    "born": 0,
    "parents": [
     "ex0b_1"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   },
   {
    "id": "g0_9",
@@ -119,7 +142,9 @@
    "born": 0,
    "parents": [
     "tx1a_1"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   },
   {
    "id": "g0_10",
@@ -131,6 +156,10 @@
    "born": 0,
    "parents": [
     "iso0_0"
+   ],
+   "hard": [],
+   "soft": [
+    "os.environ"
    ]
   },
   {
@@ -143,7 +172,9 @@
    "born": 0,
    "parents": [
     "iso0_1"
-   ]
+   ],
+   "hard": [],
+   "soft": []
   }
  ],
  "dead": [],
@@ -239,5 +270,11 @@
    "median": -1000000000.0,
    "hash": "44c804acef9f7917"
   }
- ]
+ ],
+ "hashes0": {
+  "eco3.py": "ddccf42a80b05f63",
+  "eco_sets.py": "a0af50becdd1b430",
+  "core.py": "918a599f87d21802",
+  "eco.py": "f559c7d98f9d4bd2"
+ }
 }

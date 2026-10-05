@@ -2,41 +2,41 @@
  {
   "seed": 800000,
   "klass": 0,
-  "greedy": 48178
+  "greedy": 197824
  },
  {
   "seed": 800001,
   "klass": 0,
-  "greedy": 52279
+  "greedy": 213607
  },
  {
   "seed": 800010,
   "klass": 1,
-  "greedy": 47164
+  "greedy": 313680
  },
  {
   "seed": 800011,
   "klass": 1,
-  "greedy": 46028
+  "greedy": 300385
  },
  {
   "seed": 800020,
   "klass": 2,
-  "greedy": 83782
+  "greedy": 564832
  },
  {
   "seed": 800021,
   "klass": 2,
-  "greedy": 81896
+  "greedy": 572291
  },
  {
   "seed": 800030,
   "klass": 3,
-  "greedy": 89457
+  "greedy": 587062
  },
  {
   "seed": 800031,
   "klass": 3,
-  "greedy": 81215
+  "greedy": 589060
  }
 ]

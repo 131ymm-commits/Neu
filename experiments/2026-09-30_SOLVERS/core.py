@@ -141,3 +141,31 @@ def greedy(inst, cpu_s=10, seed=0): return run_solver(GREEDY_SRC, inst, cpu_s, a
 def gap(ref, x, gr):
     """g = (ref − x)/(ref − greedy): 0 — как эталон, 1 — как жадный, > 1 — хуже жадного, < 0 — лучше эталона"""
     return (ref - x) / (ref - gr) if ref != gr else None
+
+def run_solver_sb(src, inst, cpu_s=10, mem_mb=1024, args=(), core=None):
+    """Песочница редакции 3 (совет 24): одноразовый процесс без сети (unshare -n), корень ФС только для чтения (unshare -m, remount ro),
+    права nobody (setpriv), rlimit CPU/AS/NOFILE/NPROC, пустое окружение; stdin/stdout — открытые родителем файлы; CPU по rusage."""
+    def lim():
+        resource.setrlimit(resource.RLIMIT_CPU, (cpu_s + 1, cpu_s + 2)); resource.setrlimit(resource.RLIMIT_AS, (mem_mb << 20, mem_mb << 20))
+        resource.setrlimit(resource.RLIMIT_NOFILE, (64, 64)); resource.setrlimit(resource.RLIMIT_NPROC, (64, 64)); os.setsid()
+    with tempfile.TemporaryDirectory() as d:
+        os.chmod(d, 0o755); f = os.path.join(d, 'solver.py'); open(f, 'w').write(src); os.chmod(f, 0o644)
+        py = ([ 'taskset', '-c', str(core)] if core is not None else []) + [sys.executable, f, *map(str, args)]
+        inner = 'mount -o remount,bind,ro / && exec setpriv --reuid=65534 --regid=65534 --clear-groups ' + ' '.join(map(lambda a: "'" + a.replace("'", "") + "'", py))
+        cmd = ['unshare', '-n', '-m', 'sh', '-c', inner]
+        env = {'PATH': '/usr/bin:/bin', 'HOME': d, 'PYTHONHASHSEED': '0', 'OMP_NUM_THREADS': '1', 'OPENBLAS_NUM_THREADS': '1', 'MKL_NUM_THREADS': '1'}
+        t0 = time.time(); inp = os.path.join(d, 'in.json'); open(inp, 'w').write(json.dumps(inst))
+        outp = os.path.join(d, 'out.txt'); errp = os.path.join(d, 'err.txt')
+        with open(inp) as fi, open(outp, 'w') as fo, open(errp, 'w') as fe:
+            p = subprocess.Popen(cmd, stdin=fi, stdout=fo, stderr=fe, cwd=d, env=env, preexec_fn=lim)
+            deadline = t0 + cpu_s * 3 + 10; st = None
+            while st is None:
+                pid, status, ru = os.wait4(p.pid, os.WNOHANG)
+                if pid: st = status; break
+                if time.time() > deadline: os.killpg(p.pid, 9); pid, status, ru = os.wait4(p.pid, 0); st = status; break
+                time.sleep(0.05)
+        cpu = ru.ru_utime + ru.ru_stime; wall = time.time() - t0
+        try: sol = json.loads(open(outp).read().strip().splitlines()[-1])
+        except Exception: return dict(ok=False, value=None, err=(open(errp).read() or 'нет вывода')[-300:], wall=wall, cpu=cpu)
+        ok, val = score(inst, sol)
+        return dict(ok=ok, value=val if ok else None, err=None if ok else 'недопустимое решение', wall=wall, cpu=cpu)
