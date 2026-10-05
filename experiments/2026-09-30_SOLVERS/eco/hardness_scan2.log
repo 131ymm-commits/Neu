@@ -1,0 +1,16 @@
+{'cpu': 1, 'conf': (2000, 20, 0.5, 'strong'), 'greedy': 546821, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 109.4, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 1, 'conf': (2000, 20, 0.5, 'strong'), 'greedy': 603839, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 120.8, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 1, 'conf': (5000, 50, 0.5, 'strong'), 'greedy': 1472334, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 294.5, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 1, 'conf': (5000, 50, 0.5, 'strong'), 'greedy': 1455444, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 291.1, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 1, 'conf': (3000, 30, 0.3, 'weak'), 'greedy': 580693, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 116.1, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 1, 'conf': (3000, 30, 0.3, 'weak'), 'greedy': 573669, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 114.7, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 1, 'conf': (10000, 20, 0.5, 'weak'), 'greedy': 3123386, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 624.7, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 1, 'conf': (10000, 20, 0.5, 'weak'), 'greedy': 2991948, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 598.4, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 3, 'conf': (2000, 20, 0.5, 'strong'), 'greedy': 546976, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 109.4, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 3, 'conf': (2000, 20, 0.5, 'strong'), 'greedy': 603969, 'fails': 11, 'distinct': 1, 'spread': 0, 'gap_med': 0, 'delta_floor': 120.8, 'best_minus_greedy': 862, 'admit': False}
+{'cpu': 3, 'conf': (5000, 50, 0.5, 'strong'), 'greedy': 1473410, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 294.7, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 3, 'conf': (5000, 50, 0.5, 'strong'), 'greedy': 1456374, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 291.3, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 3, 'conf': (3000, 30, 0.3, 'weak'), 'greedy': 580693, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 116.1, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 3, 'conf': (3000, 30, 0.3, 'weak'), 'greedy': 573669, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 114.7, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 3, 'conf': (10000, 20, 0.5, 'weak'), 'greedy': 3123386, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 624.7, 'best_minus_greedy': 0, 'admit': False}
+{'cpu': 3, 'conf': (10000, 20, 0.5, 'weak'), 'greedy': 2991948, 'fails': 12, 'distinct': 0, 'spread': 0, 'gap_med': 0, 'delta_floor': 598.4, 'best_minus_greedy': 0, 'admit': False}
