@@ -1,0 +1,20 @@
+{
+ "partiy": 1200,
+ "nichyi": 0,
+ "sredniy_hod": 23.8,
+ "dolya_pobed_pervogo": 0.513,
+ "dolya_pobed_doktriny": {
+  "A": 0.504,
+  "B": 0.53,
+  "C": 0.466
+ },
+ "pary_dolya_pobed_levoy": {
+  "A-B": 0.67,
+  "A-C": 0.355,
+  "B-A": 0.345,
+  "B-C": 0.725,
+  "C-A": 0.665,
+  "C-B": 0.28
+ },
+ "sekund": 13.1
+}

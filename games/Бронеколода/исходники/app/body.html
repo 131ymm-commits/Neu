@@ -1,0 +1,91 @@
+<div id="app" class="app">
+  <header class="bar">
+    <div class="brand"><span class="brand-mark">БК</span><span class="brand-name">Бронеколода</span></div>
+    <div class="bar-mid" id="barInfo"></div>
+    <div class="bar-btns">
+      <button id="btnLog" class="btn-ghost" type="button">Журнал</button>
+      <button id="btnSound" class="btn-ghost" type="button" aria-pressed="true">Звук</button>
+      <button id="btnMenu" class="btn-ghost" type="button">Меню</button>
+    </div>
+  </header>
+
+  <main class="table" id="table">
+    <section class="side side-op" aria-label="Противник">
+      <div class="hand-op" id="handOp"></div>
+      <div class="hq-row" id="hqOp"></div>
+    </section>
+    <section class="field" id="field" aria-label="Поле боя">
+      <canvas class="map" id="map" aria-hidden="true"></canvas>
+      <div class="lane lane-op" id="laneOp"></div>
+      <div class="front">
+        <div class="front-line"></div>
+        <div class="front-info" id="frontInfo" role="status" aria-live="polite"></div>
+        <button id="btnEnd" class="btn-end" type="button">Конец хода</button>
+      </div>
+      <div class="lane lane-me" id="laneMe"></div>
+    </section>
+    <section class="side side-me" aria-label="Ваш штаб">
+      <div class="hq-row" id="hqMe"></div>
+      <div class="hand-me" id="handMe"></div>
+    </section>
+  </main>
+
+  <svg class="arrow" id="arrow" hidden aria-hidden="true"><path id="arrowPath" d=""/><circle id="arrowEnd" r="13" cx="0" cy="0"/></svg>
+  <div class="fx" id="fx" aria-hidden="true"></div>
+  <div class="preview" id="preview" hidden></div>
+  <div class="reveal" id="reveal" hidden></div>
+  <div class="banner" id="banner" hidden></div>
+
+  <aside class="logpanel" id="logPanel" hidden aria-label="Журнал боевых действий">
+    <header><span>Журнал боевых действий</span><button class="btn-ghost" id="btnLogClose" type="button">Закрыть</button></header>
+    <div class="log" id="log"></div>
+  </aside>
+
+  <div class="overlay" id="ovStart">
+    <div class="panel">
+      <div class="eyebrow">Карточный бой бронетехники</div>
+      <h1 class="title">Броне<span>колода</span></h1>
+      <p class="subtitle">Сведите танки, орудия и пехоту в колоду из 30 карт и уничтожьте штаб противника. Каждый ход даёт на одну канистру топлива больше: топливо тратится на карты и приказ командира.</p>
+      <div class="docs" id="docs"></div>
+      <div class="row">
+        <button class="btn-main" id="btnStart" type="button">В бой</button>
+      </div>
+      <div class="record" id="record"></div>
+      <details class="rules">
+        <summary>Как играть</summary>
+        <ul id="rulesList"></ul>
+      </details>
+    </div>
+  </div>
+
+  <div class="overlay" id="ovMull" hidden>
+    <div class="panel">
+      <div class="eyebrow" id="mullWho"></div>
+      <h2 class="title" style="font-size:clamp(28px,6vw,52px)">Замена карт</h2>
+      <p class="subtitle">Нажмите на карты, которые хотите вернуть в колоду. Взамен придут новые.</p>
+      <div class="mull-cards" id="mullCards"></div>
+      <button class="btn-main" id="btnMull" type="button">Оставить все</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="ovEnd" hidden>
+    <div class="panel">
+      <div class="eyebrow" id="endEyebrow"></div>
+      <h2 class="end-title" id="endTitle"></h2>
+      <div class="stats" id="endStats"></div>
+      <div class="row">
+        <button class="btn-main" id="btnAgain" type="button">Ещё бой</button>
+        <button class="btn-sub" id="btnToMenu" type="button">Сменить доктрину</button>
+      </div>
+      <div class="record" id="record2"></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="ovMenu" hidden>
+    <div class="menu-panel">
+      <h2>Бой идёт</h2>
+      <button class="btn-main" id="btnResume" type="button">Продолжить</button>
+      <button class="btn-sub" id="btnSurrender" type="button">Сдаться и выйти в штаб</button>
+    </div>
+  </div>
+</div>
