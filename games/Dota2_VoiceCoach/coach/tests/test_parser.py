@@ -193,3 +193,14 @@ class LexiconData(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class RegressionParse01(unittest.TestCase):
+    """Бывший отложенный набор PARSE-01. После правок по его ошибкам (06.10.2026) он уже не мера
+    точности, а регрессия: следит, чтобы выученное не сломалось. Честная мера — новые наборы."""
+
+    def test_parse01_still_learned(self):
+        from pathlib import Path
+        from tests.eval_heldout import evaluate
+        summary, _ = evaluate(Path(__file__).resolve().parent / "heldout_phrases.jsonl", "parse01")
+        self.assertGreaterEqual(summary["phrase_ok_share"], 0.95, summary)

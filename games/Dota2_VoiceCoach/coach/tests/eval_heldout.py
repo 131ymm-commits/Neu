@@ -39,6 +39,25 @@ def heldout_ctx():
     )
 
 
+def parse02_ctx():
+    """Состав для набора PARSE-02 (задан до получения набора): сторона Dire, обычные имена."""
+    return MatchContext(
+        team="dire",
+        agents=[
+            Agent(1, "Петя", ("петя",), "npc_dota_hero_juggernaut"),
+            Agent(2, "Серёга", ("серега",), "npc_dota_hero_storm_spirit"),
+            Agent(3, "Лёха", ("леха",), "npc_dota_hero_axe"),
+            Agent(4, "Дима", ("дима",), "npc_dota_hero_rubick"),
+            Agent(5, "Вова", ("вова",), "npc_dota_hero_witch_doctor"),
+        ],
+        enemy_heroes=["npc_dota_hero_antimage", "npc_dota_hero_invoker", "npc_dota_hero_mars",
+                      "npc_dota_hero_earthshaker", "npc_dota_hero_crystal_maiden"],
+    )
+
+
+CONTEXTS = {"parse01": heldout_ctx, "parse02": parse02_ctx}
+
+
 def cmd_match(got: dict, exp: dict) -> bool:
     if got["action"] != exp["action"]:
         return False
@@ -58,12 +77,13 @@ def wilson(k: int, n: int, z: float = 1.96):
     return (round(c - h, 3), round(c + h, 3))
 
 
-def evaluate(path: Path):
+def evaluate(path: Path, ctx_name: str = "parse01"):
+    make_ctx = CONTEXTS[ctx_name]
     rows = [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
     results = []
     n_exp = n_got = n_hit = 0
     for r in rows:
-        res = parse(r["text"], heldout_ctx())
+        res = parse(r["text"], make_ctx())
         got = [{"action": c.action, "agents": c.agents, "params": c.params, "clarify": c.clarify}
                for c in res.commands]
         exp = r.get("expected") or []
@@ -112,9 +132,10 @@ def evaluate(path: Path):
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--data", default=str(HERE / "heldout_phrases.jsonl"))
+    ap.add_argument("--ctx", default="parse01", choices=sorted(CONTEXTS))
     ap.add_argument("--out")
     a = ap.parse_args(argv)
-    summary, results = evaluate(Path(a.data))
+    summary, results = evaluate(Path(a.data), a.ctx)
     print(json.dumps(summary, ensure_ascii=False, indent=1))
     for r in results:
         if not r["ok"]:

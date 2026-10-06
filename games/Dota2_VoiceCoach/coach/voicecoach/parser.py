@@ -1,13 +1,22 @@
 """Разбор фразы тренера (текст после распознавания речи) в команды протокола.
 
-Быстрый путь без ИИ: словарь + правила порядка слов. Что не разобрано
-уверенно — помечается (confidence, clarify, unknown), и тогда фразу можно
-отдать запасному разборщику на языковой модели (llm_fallback.py, позже).
+Быстрый путь без ИИ: словарь + правила порядка слов и падежей. Что не разобрано уверенно —
+помечается (confidence, clarify, unknown), и тогда фразу можно отдать запасному разборщику на
+языковой модели (позже).
 
 Пример:
     ctx = MatchContext(team="radiant", agents=[Agent(1, "Miracle", ("миракл",)), ...])
     parse("Миракл, фарми лес, остальные на Рошана", ctx).commands
     → [farm(agents=[1], area=jungle_own), roshan(agents=[2,3,4,5])]
+
+Правила (проверены тестами tests/test_parser.py; часть добавлена по ошибкам замера PARSE-01):
+- обращение — в именительном падеже («Миракл, …»); в дательном при действии — тоже адресат
+  («Васе стакать древних»); после «к/за» и при «помоги/спаси» — союзник;
+- «X с Y» при глаголе во мн. числе или без глагола — оба адресаты; «иди с Y» — союзник;
+- «Миракл фарми бот, Топсон мид» — пропущенный глагол переносится из прошлой части;
+- «вард у Рошана», «тп на Рошана» — Рошан здесь место, а не приказ;
+- «не» относится к следующему действию; «ой, нет, бот» заменяет названное раньше место;
+- «па пошла на мид» — сведения, а не приказ: переспрос.
 """
 from __future__ import annotations
 
@@ -56,13 +65,11 @@ class ParseResult:
 def normalize(text: str) -> list[str]:
     t = text.lower().replace("ё", "е")
     t = re.sub(r"\b[тt]\s*-?\s*([1-4])\b", r"т\1", t)          # «Т-2», «t 2» → т2
-    t = re.sub(r"[,.;!?:…]+", " | ", t)
+    t = re.sub(r"[,.;!?:…—–]+", " | ", t)
     t = re.sub(r"[«»\"()\[\]{}]", " ", t)
     t = re.sub(r"(?<=\w)-(?=\w)", " ", t)                      # «рыцарь-дракон» → два слова
-    toks = [w for w in t.split() if w]
-    # склеить подряд идущие разделители
     out = []
-    for w in toks:
+    for w in t.split():
         if w == "|" and (not out or out[-1] == "|"):
             continue
         out.append(w)
@@ -73,7 +80,9 @@ def normalize(text: str) -> list[str]:
 
 def _verb_number(word: str) -> str:
     """Грубо: множественное («фармите», «пушим») или единственное («фарми»)."""
-    if word.endswith(("те", "тесь", "емся", "имся", "ем", "им", "ем", "аем", "уем", "ем")):
+    if not word:
+        return ""
+    if word.endswith(("те", "тесь", "емся", "имся", "ем", "им", "аем", "уем")):
         return "plural"
     if word.endswith(("и", "й", "ь", "ись", "йся", "ься")):
         return "single"
@@ -100,6 +109,11 @@ class _Index:
         for w in L.ENEMY_MARK: add(w, ("enemy_mark", None))
         for w in L.OWN_MARK: add(w, ("own_mark", None))
         for w in L.PRONOUNS: add(w, ("pronoun", None))
+        for w in L.OBJ_PRONOUNS: add(w, ("obj_pronoun", None))
+        for w in L.ANAPHORA: add(w, ("anaphora", None))
+        for w in L.CORRECTION_WORDS: add(w, ("correction", None))
+        for w in L.INFO_WORDS: add(w, ("info", None))
+        for w in L.EXCEPT_WORDS: add(w, ("except", None))
         for w in L.ADDRESS_ALL: add(w, ("addr_all", None))
         for w in L.ADDRESS_REST: add(w, ("addr_rest", None))
         for w, pos in L.ADDRESS_ROLE.items(): add(w, ("addr", list(pos)))
@@ -113,7 +127,7 @@ class _Index:
         for w, item in L.ITEM_PHRASES.items(): add(w, ("item", item))
 
         # имена агентов и герои — с падежами
-        self.name_forms: list[tuple[str, str, tuple]] = []   # (стем/слово, полное, interp)
+        self.name_forms: list[tuple[str, str, tuple]] = []
         own_heroes = {a.hero: a.pos for a in ctx.agents if a.hero}
         enemy = set(ctx.enemy_heroes)
         for a in ctx.agents:
@@ -147,26 +161,22 @@ class _Index:
         hits = []
         for _, full, interp in self.name_forms:
             parts = full.split()
-            if len(parts) != n:
-                continue
-            # падеж меняет только первое слово («короля обезьян»)
-            if words[1:] != parts[1:]:
+            if len(parts) != n or words[1:] != parts[1:]:
                 continue
             w, base = words[0], parts[0]
             stem = base[:-1] if base[-1] in "аяоеиыуьй" else base
             if len(stem) < 3:
                 continue
             if w.startswith(stem) and w[len(stem):] in L.CASE_ENDINGS and w != base:
-                hits.append(interp)
+                if interp not in hits:
+                    hits.append(interp)
         return hits
 
     def fuzzy(self, word: str):
         if len(word) < 5:
             return None
         m = difflib.get_close_matches(word, self.fuzzy_keys, n=1, cutoff=0.82)
-        if m:
-            return self.fuzzy_map[m[0]]
-        return None
+        return self.fuzzy_map[m[0]] if m else None
 
 
 @dataclass
@@ -174,7 +184,7 @@ class _Span:
     words: list
     interps: list
     fuzzy: bool = False
-    oblique: bool = False     # имя в косвенном падеже: не обращение, а дополнение
+    oblique: bool = False     # имя в косвенном падеже
 
 
 def _tokenize(words: list[str], idx: _Index) -> list[_Span]:
@@ -209,18 +219,14 @@ def _tokenize(words: list[str], idx: _Index) -> list[_Span]:
                 found = _Span([w], interps)
             else:
                 fz = idx.fuzzy(w)
-                if fz:
-                    found = _Span([w], [fz], fuzzy=True)
-                else:
-                    found = _Span([w], [("unknown", w)])
-        else:
-            # точная фраза могла быть и действием по основе: «смоки», «варды», «тп»
-            if len(found.words) == 1 and not any(k == "action" for k, _ in found.interps):
-                w = found.words[0]
-                for stem, action in L.ACTION_STEMS:
-                    if w.startswith(stem):
-                        found.interps.append(("action", action))
-                        break
+                found = _Span([w], [fz], fuzzy=True) if fz else _Span([w], [("unknown", w)])
+        elif len(found.words) == 1 and not any(k == "action" for k, _ in found.interps):
+            # точное слово могло быть и действием по основе: «смоки», «варды»
+            w = found.words[0]
+            for stem, action in L.ACTION_STEMS:
+                if w.startswith(stem):
+                    found.interps.append(("action", action))
+                    break
         spans.append(found)
         i += len(found.words)
     return spans
@@ -230,14 +236,26 @@ def _tokenize(words: list[str], idx: _Index) -> list[_Span]:
 
 WEAK_ACTIONS = {"move", "report", "press", "save_ult_hint", "buy_or_group"}
 GROUPABLE = {"push", "roshan", "defend", "smoke", "tormentor", "retreat", "engage", "focus", "gank"}
-ALLY_PREPS = {"с", "со", "к", "ко", "за"}
+ALLY_PREPS = {"к", "ко", "за"}            # «иди к Мираклу», «за ней»
+WITH_PREPS = {"с", "со"}                  # «Мира с Васей ставьте» / «иди с Топсоном»
+PLACE_ACTIONS = {"ward", "tp", "move", "stack", "group", "follow"}   # Рошан при них — место
+PLACE_PREPS = {"у", "возле", "около", "под"}
+# «иди» после законченного приказа — новый приказ («купи тп и иди на бот»), а после
+# пуша, фарма и т.п. — просто часть того же приказа («пушим, идём на топ»)
+MOVE_ABSORBERS = {"push", "defend", "gank", "group", "roshan", "tormentor", "smoke", "retreat",
+                  "focus", "engage", "farm", "split", "follow", "move", "press", "save_ult_hint"}
 
 
 class _Clause:
     def __init__(self):
         self.agents: list[int] = []
+        self.dative: list[int] = []          # имя в косвенном падеже без предлога
+        self.with_agents: list[int] = []     # «с Васей»
         self.rest = False
         self.pronoun = False
+        self.ambiguous_addr = False
+        self.excluded: list[int] = []        # «все кроме Миракла»
+        self.except_next = False
         self.action: str | None = None
         self.verb = ""
         self.hints: set = set()
@@ -253,11 +271,14 @@ class _Clause:
         self.tower = False
         self.lane_or_role: list[int] = []
         self.negated = False
+        self.neg_pending = False
+        self.correction = False
+        self.info = False
         self.urgent = False
         self.after_prev = False
         self.enemy_next = False
-        self.own_next = False
         self.last_prep = ""
+        self.last_kind = ""
         self.pending_number: int | None = None
         self.pending_posword = False
         self.words: list[str] = []
@@ -268,10 +289,101 @@ class _Clause:
     def has_action(self):
         return self.action is not None
 
+    def has_object(self):
+        return bool(self.lanes or self.rel_lanes or self.areas or self.places or self.enemies
+                    or self.enemy_pos or self.items or self.tower)
+
+    def addressed(self):
+        return bool(self.agents or self.dative or self.rest)
+
     def empty(self):
-        return not (self.action or self.agents or self.rest or self.lanes or self.rel_lanes
-                    or self.areas or self.places or self.enemies or self.enemy_pos or self.items
-                    or self.allies or self.tower or self.lane_or_role or self.negated or self.hints)
+        return not (self.action or self.addressed() or self.has_object() or self.allies
+                    or self.lane_or_role or self.negated or self.hints or self.info or self.with_agents)
+
+
+def _add_agents(lst, positions):
+    for p in positions:
+        if p not in lst:
+            lst.append(p)
+
+
+def _add_place(cl: _Clause, place, utter):
+    kind, v = place
+    if cl.correction:
+        # «пушь топ, ой, нет, бот»: новое место заменяет прежнее
+        for lst in (cl.lanes, cl.rel_lanes, cl.areas, cl.places):
+            if lst:
+                lst.pop()
+                break
+        cl.correction = False
+    if kind == "lane":
+        cl.lanes.append(v)
+        cl.last_kind = "lane"
+    elif kind == "rel_lane":
+        cl.rel_lanes.append(v)
+        cl.last_kind = "lane"
+    elif kind == "area":
+        if v == "jungle":
+            v = "jungle_enemy" if cl.enemy_next else "jungle_own"
+            cl.last_kind = "area_jungle"
+        else:
+            cl.last_kind = "area"
+        cl.areas.append(v)
+    elif kind == "place":
+        cl.places.append(v)
+        cl.last_kind = "place"
+    cl.enemy_next = False
+    utter["last_place"] = (kind, v) if kind != "area" else ("area", "jungle" if v.startswith("jungle") else v)
+
+
+def _set_action(cl: _Clause, action: str, verb_word: str) -> bool:
+    """Записать действие в предложение. False — несовместимо с уже названным: нужен новый приказ."""
+    if cl.action is None:
+        cl.action = action
+        cl.verb = verb_word
+        return True
+    if action == cl.action:
+        return True
+    a, b = cl.action, action
+    if {a, b} == {"smoke", "gank"}:
+        cl.action = "smoke"
+        cl.hints.add("then_gank")
+        return True
+    if a in ("press", "save_ult_hint") and b == "use_ult":
+        cl.action = "save_ult" if a == "save_ult_hint" else "use_ult"
+        return True                                   # число глагола — у «дай/держи»
+    if b in ("press", "save_ult_hint"):
+        return True
+    if a == "defend" and b == "give_up":              # «держим мид, не отдаём вышку»
+        return True
+    if b == "move":
+        return a in MOVE_ABSORBERS
+    if a in WEAK_ACTIONS and a != "buy_or_group":
+        cl.action, cl.verb = b, verb_word
+        return True
+    if a == "group" and b in GROUPABLE:
+        cl.action, cl.verb = b, verb_word
+        cl.hints.add("group")
+        return True
+    if b == "group" and a in GROUPABLE:
+        cl.hints.add("group")
+        return True
+    if a in ("focus", "buy", "buy_or_group") and b in ("roshan", "tormentor"):
+        cl.action, cl.verb = b, verb_word
+        return True
+    return False
+
+
+def _next_content(spans, i):
+    """Есть ли после i в этом предложении что-то кроме незнакомых и служебных слов."""
+    for sp in spans[i + 1:]:
+        kinds = [k for k, _ in sp.interps]
+        if "sep" in kinds or "seq" in kinds:
+            return False
+        if all(k in ("filler", "unknown") for k in kinds):
+            continue
+        return True
+    return False
 
 
 def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
@@ -283,15 +395,19 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
     clauses: list[_Clause] = []
     cur = _Clause()
     unknown: list[str] = []
+    utter = {"last_place": None}
+    last_agents_in_utter: list[int] = []
 
     def close(new_after_prev=False):
-        nonlocal cur
+        nonlocal cur, last_agents_in_utter
         if not cur.empty():
             clauses.append(cur)
+            if cur.agents or cur.dative:
+                last_agents_in_utter = list(cur.agents or cur.dative)
         cur = _Clause()
         cur.after_prev = new_after_prev
 
-    for sp in spans:
+    for i, sp in enumerate(spans):
         kinds = [k for k, _ in sp.interps]
         val = dict(sp.interps)
         word = " ".join(sp.words)
@@ -319,19 +435,39 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
             cur.fuzzy += 1
 
         if "neg" in kinds:
-            cur.negated = True
+            cur.neg_pending = True
             continue
         if "urgent" in kinds:
             cur.urgent = True
+            continue
+        if "correction" in kinds:
+            cur.correction = True
+            continue
+        if "info" in kinds:
+            cur.info = True
+            continue
+        if "except" in kinds:
+            cur.except_next = True
             continue
         if "prep" in kinds:
             cur.last_prep = val["prep"]
             continue
         if "enemy_mark" in kinds:
-            cur.enemy_next = True
+            if cur.last_kind == "area_jungle" and cur.areas and cur.areas[-1] == "jungle_own":
+                cur.areas[-1] = "jungle_enemy"           # «лес врага»
+            else:
+                cur.enemy_next = True
             continue
         if "own_mark" in kinds:
-            cur.own_next = True
+            continue
+        if "anaphora" in kinds:
+            if utter["last_place"]:
+                _add_place(cur, utter["last_place"], utter)
+            continue
+        if "obj_pronoun" in kinds:
+            if cur.last_prep in ALLY_PREPS | WITH_PREPS and last_agents_in_utter:
+                _add_agents(cur.allies, last_agents_in_utter)
+                cur.last_prep = ""
             continue
         if "pronoun" in kinds:
             if cur.has_action():
@@ -340,7 +476,7 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
             continue
         if "posword" in kinds:
             if cur.pending_number:
-                _add_agents(cur, [cur.pending_number])
+                _add_agents(cur.agents, [cur.pending_number])
                 cur.pending_number = None
             else:
                 cur.pending_posword = True
@@ -349,7 +485,7 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
             n = val["number"]
             if cur.pending_posword:
                 cur.pending_posword = False
-                _add_agents(cur, [n])
+                _add_agents(cur.agents, [n])
             else:
                 cur.pending_number = n       # «вторую башню», «вторая позиция»
             continue
@@ -364,7 +500,7 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
                 cur.pending_number = None
             continue
 
-        # адресат или союзник-цель
+        # адресат, союзник или цель
         is_agent_like = any(k in ("addr_all", "addr_rest", "addr", "agent") for k in kinds)
         if is_agent_like:
             positions = []
@@ -378,47 +514,67 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
                 cur.enemy_pos += positions          # «их керри»
                 cur.enemy_next = False
                 continue
-            # обращение — в именительном падеже («Миракл, …»); «Мираклу», «с Мираклом» — союзник
-            as_ally = (cur.last_prep in ALLY_PREPS or cur.action in ("follow", "save")
-                       or (sp.oblique and "agent" in kinds))
-            if as_ally and positions and "addr_all" not in kinds:
-                cur.allies += positions
-                cur.last_prep = ""
+            if cur.except_next and positions:
+                _add_agents(cur.excluded, positions)   # «все кроме Миракла»
+                cur.except_next = False
                 continue
-            if cur.has_action():
+            if positions and "addr_all" not in kinds:
+                if cur.last_prep in ALLY_PREPS or cur.action in ("follow", "save"):
+                    _add_agents(cur.allies, positions)
+                    cur.last_prep = ""
+                    continue
+                if cur.last_prep in WITH_PREPS:
+                    _add_agents(cur.with_agents, positions)
+                    cur.last_prep = ""
+                    continue
+            # обращение в конце фразы: «заходи первым, Коллапс»
+            if (cur.has_action() and not cur.addressed() and not _next_content(spans, i)
+                    and "addr_rest" not in kinds):
+                _add_agents(cur.dative if sp.oblique else cur.agents, positions)
+                continue
+            if cur.has_action() or (cur.addressed() and cur.has_object()):
                 close()
             if "addr_rest" in kinds:
                 cur.rest = True
+            elif sp.oblique and "agent" in kinds:
+                _add_agents(cur.dative, positions)
             else:
-                _add_agents(cur, positions)
+                _add_agents(cur.agents, positions)
+                if word in L.AMBIGUOUS_ROLE:
+                    cur.ambiguous_addr = True
             continue
 
         if "lane_or_role" in kinds:
             pos = val["lane_or_role"]
             lane_val = val.get("place")
             if cur.action in ("follow", "save") or cur.last_prep in ALLY_PREPS:
-                cur.allies.append(pos)
+                _add_agents(cur.allies, [pos])
                 continue
-            if cur.has_action() or cur.agents or cur.rest:
+            if cur.has_action() or cur.addressed():
                 if lane_val is None:
                     lane_val = ("lane", "mid") if pos == 2 else ("rel_lane", "off")
-                _add_place(cur, lane_val)
+                _add_place(cur, lane_val, utter)
             else:
                 cur.lane_or_role.append(pos)
             continue
 
         if "hero" in kinds:
-            hero = val["hero"]
-            cur.enemies.append(hero)
+            cur.enemies.append(val["hero"])
             cur.enemy_next = False
             continue
 
-        # предметы и действия: одно слово может быть и тем и другим («смоки», «тп»)
         has_item = "item" in kinds
         has_action = "action" in kinds
+        # Рошан при «вард», «тп», «иди»… или после «у» — место, а не приказ
+        if has_action and val["action"] == "roshan" and (cur.action in PLACE_ACTIONS
+                                                          or cur.last_prep in PLACE_PREPS):
+            _add_place(cur, ("place", "roshan"), utter)
+            continue
         if has_item and cur.action == "press":
-            cur.action = "use_item"
-            cur.items.append(val["item"])
+            item = val["item"]
+            # «дай вард на Рошана» — поставить вард; «прожми бкб», «кидай еул» — применить
+            cur.action = "ward" if item in ("item_ward_observer", "item_ward_sentry") else "use_item"
+            cur.items.append(item)
             continue
         if has_item and (cur.action in ("buy", "buy_or_group") or (cur.action and not has_action)):
             cur.items.append(val["item"])
@@ -428,111 +584,84 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
             continue
 
         if "place" in kinds:
-            _add_place(cur, val["place"])
+            _add_place(cur, val["place"], utter)
             continue
 
         if has_action:
-            if not _set_action(cur, val["action"], sp.words[-1]):
-                # новый приказ тем же адресатам: «Миракл, фарми и пушь»
-                agents, rest, pronoun = list(cur.agents), cur.rest, cur.pronoun
+            negated_now = cur.neg_pending
+            cur.neg_pending = False
+            action = val["action"]
+            if action == "buyback_or_hero":
+                action = "buyback"
+            if cur.action is None:
+                cur.negated = cur.negated or negated_now
+            elif negated_now and not (cur.action == "defend" and action == "give_up"):
+                # «не» относится к новому действию: отдельный приказ тем же адресатам
+                agents, dative, rest = list(cur.agents), list(cur.dative), cur.rest
                 close()
-                cur.agents, cur.rest, cur.pronoun = agents, rest, pronoun
-                _set_action(cur, val["action"], sp.words[-1])
+                cur.agents, cur.dative, cur.rest = agents, dative, rest
+                cur.negated = True
+            if not _set_action(cur, action, sp.words[-1]):
+                # новый приказ тем же адресатам: «Миракл, фарми и пушь»
+                agents, dative, rest, pronoun = list(cur.agents), list(cur.dative), cur.rest, cur.pronoun
+                close()
+                cur.agents, cur.dative, cur.rest, cur.pronoun = agents, dative, rest, pronoun
+                _set_action(cur, action, sp.words[-1])
             continue
 
     close()
 
     # --- превращение предложений в команды ---
     commands: list[Command] = []
+    implicit: list[bool] = []
     used_agents: list[int] = []
     prev_agents: list[int] = []
+    prev_action: str | None = None
     for cl in clauses:
-        cmd = _finalize(cl, ctx, prev_agents, used_agents)
-        if cmd is None:
+        res = _finalize(cl, ctx, prev_agents, used_agents, prev_action)
+        if res is None:
             continue
+        cmd, was_implicit = res
         if commands and _same(commands[-1], cmd):
             continue
         commands.append(cmd)
+        implicit.append(was_implicit)
         if cmd.agents:
             prev_agents = list(cmd.agents)
             used_agents += [a for a in cmd.agents if a not in used_agents]
+        if not cmd.clarify:
+            prev_action = cmd.action
 
-    content = sum(c.content for c in clauses) + 0
+    # «пушим топ, а Миракл сплитит бот»: кто получил личный приказ — не в «всех» этой фразы
+    for i, cmd in enumerate(commands):
+        if not implicit[i] or len(cmd.agents) < 2:
+            continue
+        # не исключаем, если личный приказ помогает общему: «дефаем мид, Миракл, тпшнись туда же»
+        named = {a for j, other in enumerate(commands) if j != i and not implicit[j]
+                 and not _supports(other, cmd) for a in other.agents}
+        rest = [a for a in cmd.agents if a not in named]
+        if rest and len(rest) < len(cmd.agents):
+            cmd.agents = rest
+            if cmd.action == "push":
+                cmd.params["group"] = len(rest) >= 2
+
+    content = sum(c.content for c in clauses)
     known = sum(c.known for c in clauses)
     fuzz = sum(c.fuzzy for c in clauses)
-    if content == 0:
-        conf = 0.0
-    else:
-        conf = max(0.0, min(1.0, known / max(content, 1) - 0.15 * fuzz))
+    conf = 0.0 if content == 0 else max(0.0, min(1.0, known / content - 0.15 * fuzz))
     for c in commands:
         c.confidence = round(min(c.confidence, conf), 3)
     return ParseResult(text=text, commands=commands, unknown=unknown, confidence=round(conf, 3))
 
 
-def _add_agents(cl: _Clause, positions):
-    for p in positions:
-        if p not in cl.agents:
-            cl.agents.append(p)
-
-
-def _add_place(cl: _Clause, place):
-    kind, v = place
-    if kind == "lane":
-        cl.lanes.append(v)
-    elif kind == "rel_lane":
-        cl.rel_lanes.append(v)
-    elif kind == "area":
-        if v == "jungle":
-            if cl.enemy_next:
-                v = "jungle_enemy"
-            else:
-                v = "jungle_own"
-        cl.areas.append(v)
-    elif kind == "place":
-        cl.places.append(v)
-    cl.enemy_next = False
-    cl.own_next = False
-
-
-def _set_action(cl: _Clause, action: str, verb_word: str) -> bool:
-    """Записать действие в предложение. False — действие несовместимо с уже
-    названным, и вызывающий должен начать новое предложение."""
-    if cl.action is None:
-        cl.action = action
-        cl.verb = verb_word
-        return True
-    if action == cl.action:
-        return True
-    a, b = cl.action, action
-    # сочетания внутри одного приказа
-    if {a, b} == {"smoke", "gank"}:
-        cl.action = "smoke"
-        cl.hints.add("then_gank")
-        return True
-    if a in ("press", "save_ult_hint") and b == "use_ult":
-        cl.action = "save_ult" if a == "save_ult_hint" else "use_ult"
-        cl.verb = verb_word
-        return True
-    if b in ("press", "save_ult_hint"):
-        return True
-    if a in WEAK_ACTIONS and a != "buy_or_group":
-        cl.action, cl.verb = b, verb_word
-        return True
-    if b == "move":
-        return True
-    if a == "group" and b in GROUPABLE:
-        cl.action, cl.verb = b, verb_word
-        cl.hints.add("group")
-        return True
-    if b == "group" and a in GROUPABLE:
-        cl.hints.add("group")
-        return True
-    if a in ("focus", "buy", "buy_or_group", "engage") and b in ("roshan", "tormentor"):
-        cl.action, cl.verb = b, verb_word
-        return True
-    if {a, b} == {"engage", "focus"}:
-        cl.action = "engage"
-        return True
+def _supports(personal: Command, team_cmd: Command) -> bool:
+    """Личный приказ ведёт туда же, куда общий (тп/идти на ту же линию или место)."""
+    if personal.action not in ("tp", "move", "follow"):
+        return False
+    for k in ("lane", "place"):
+        v = personal.params.get(k)
+        if v is not None and v == team_cmd.params.get(k):
+            return True
     return False
 
 
@@ -546,28 +675,40 @@ def _same(a: Command, b: Command) -> bool:
     return a.action == b.action and a.agents == b.agents and a.params == b.params
 
 
-def _finalize(cl: _Clause, ctx: MatchContext, prev_agents, used_agents) -> Command | None:
+def _finalize(cl: _Clause, ctx: MatchContext, prev_agents, used_agents, prev_action):
+    """Предложение → (команда, адресаты_по_умолчанию) или None."""
     lanes = cl.lanes + [_rel_to_abs(r, ctx.team) for r in cl.rel_lanes]
     action = cl.action
 
     # роль-или-линия («мид»): адресат при глаголе в ед. числе, иначе линия
     if cl.lane_or_role:
-        number = _verb_number(cl.verb) if cl.verb else ""
+        number = _verb_number(cl.verb)
         other_place = bool(lanes or cl.areas or cl.places)
         if (number == "single" or other_place) and not cl.agents:
-            for p in cl.lane_or_role:
-                if p not in cl.agents:
-                    cl.agents.append(p)
+            _add_agents(cl.agents, cl.lane_or_role)
         else:
             for p in cl.lane_or_role:
                 lanes.append("mid" if p == 2 else _rel_to_abs("off", ctx.team))
 
+    # сведения о враге без приказа: «па пошла на мид»
+    if cl.info and action is None:
+        return Command(action="report", agents=[], text=" ".join(cl.words), confidence=0.3,
+                       clarify="это сведения или приказ?"), False
+
     if action == "buy_or_group":
         action = "buy" if cl.items else "group"
     if action == "press":
-        action = None
+        action = "use_item" if cl.items else None
     if action == "save_ult_hint":
         action = "hold"
+    if action == "give_up":
+        action = "defend" if cl.negated else "retreat"
+        cl.negated = False
+
+    # пропущенный глагол: «Миракл фарми бот, Топсон мид»
+    if (action is None and prev_action and (cl.agents or cl.dative)
+            and (lanes or cl.areas or cl.places)):
+        action = prev_action
 
     # действие не названо — выводим из того, что сказано
     if action is None:
@@ -583,23 +724,22 @@ def _finalize(cl: _Clause, ctx: MatchContext, prev_agents, used_agents) -> Comma
             action = "follow"
         elif cl.enemies or cl.enemy_pos:
             action = "focus"
-        elif cl.tower:
-            action = "push"
-        elif lanes:
+        elif cl.tower or lanes:
             action = "push"
         elif cl.places:
             action = "move"
-        elif cl.negated:
+        elif cl.negated or cl.neg_pending:
             action = "hold"
+        elif cl.addressed():
+            return Command(action="report", agents=_agents_or_all(cl, prev_agents, used_agents),
+                           text=" ".join(cl.words), confidence=0.3, clarify="что им делать?"), False
         else:
-            if cl.agents or cl.rest:
-                return Command(action="report", agents=_agents_or_all(cl, prev_agents, used_agents),
-                               text=" ".join(cl.words), confidence=0.3,
-                               clarify="что им делать?")
             return None
 
     if action == "buy" and not cl.items and (cl.places or lanes or cl.areas):
         action = "move"
+    if action == "buy" and not cl.items and cl.tower:
+        action = "push"
     if action == "move":
         if "roshan" in cl.places:
             action = "roshan"
@@ -607,29 +747,39 @@ def _finalize(cl: _Clause, ctx: MatchContext, prev_agents, used_agents) -> Comma
             action = "retreat"
         elif cl.areas:
             action = "farm"
-    if action == "buy" and not cl.items and cl.tower:
-        action = "push"
 
     params: dict = {}
     negated_what = None
     if cl.negated:
         if action == "use_ult":
             action = "save_ult"
-        elif action in ("hold", "cancel", "save_ult", "free"):
-            pass
-        else:
+        elif action not in ("hold", "cancel", "save_ult", "free"):
             negated_what = action
             action = "hold"
 
     # адресаты
-    single = _verb_number(cl.verb) == "single" if cl.verb else False
-    plural = _verb_number(cl.verb) == "plural" if cl.verb else False
+    number = _verb_number(cl.verb)
+    single, plural = number == "single", number == "plural"
     clarify = ""
-    if cl.agents:
-        agents = list(cl.agents)
+    agents = list(cl.agents)
+    if cl.dative:
+        if action in ("follow", "save"):
+            _add_agents(cl.allies, cl.dative)      # «помоги Мираклу», «Мираклу помоги»
+        else:
+            _add_agents(agents, cl.dative)         # «Васе стакать древних»: адресат
+    if cl.with_agents:
+        if action in ("follow", "move", "save"):
+            _add_agents(cl.allies, cl.with_agents)
+            if action == "move":
+                action = "follow"
+        elif not single and agents:
+            _add_agents(agents, cl.with_agents)    # «Мира с Васей ставьте»
+    was_implicit = False
+    if agents:
+        pass
     elif cl.rest:
         agents = [p for p in ALL if p not in used_agents] or list(ALL)
-    elif cl.pronoun and ctx.last_agents:
+    elif cl.pronoun and (prev_agents or ctx.last_agents):
         agents = list(prev_agents or ctx.last_agents)
     elif prev_agents:
         agents = list(prev_agents)
@@ -637,17 +787,19 @@ def _finalize(cl: _Clause, ctx: MatchContext, prev_agents, used_agents) -> Comma
         spec = ACTIONS[action]
         if plural or spec.scope == "team":
             agents = list(ALL)
+            was_implicit = True
         elif ctx.last_agents:
             agents = list(ctx.last_agents)
-        elif single:
+        else:
             agents = []
             clarify = "кому?"
-        else:
-            agents = list(ALL)
+    if cl.excluded:
+        agents = [a for a in agents if a not in cl.excluded] or agents
+    if cl.ambiguous_addr and single:
+        agents, clarify = [], "какой саппорт: четвёрка или пятёрка?"
     if cl.allies:
         agents = [a for a in agents if a not in cl.allies] or agents
 
-    # параметры по действию
     enemy = cl.enemies[0] if cl.enemies else None
     if action == "farm":
         if cl.areas:
@@ -715,6 +867,8 @@ def _finalize(cl: _Clause, ctx: MatchContext, prev_agents, used_agents) -> Comma
             params["place"] = "ancients"
     elif action == "use_item":
         params["item"] = cl.items[0]
+        if enemy:
+            params["enemy"] = enemy
     elif action == "buy":
         if cl.items:
             params["item"] = cl.items[0]
@@ -742,13 +896,14 @@ def _finalize(cl: _Clause, ctx: MatchContext, prev_agents, used_agents) -> Comma
         else:
             clarify = clarify or "куда?"
 
-    return Command(action=action, agents=sorted(agents), params=params, urgent=cl.urgent,
-                   after_prev=cl.after_prev, text=" ".join(cl.words), clarify=clarify)
+    cmd = Command(action=action, agents=sorted(agents), params=params, urgent=cl.urgent,
+                  after_prev=cl.after_prev, text=" ".join(cl.words), clarify=clarify)
+    return cmd, was_implicit
 
 
 def _agents_or_all(cl, prev_agents, used_agents):
-    if cl.agents:
-        return list(cl.agents)
+    if cl.agents or cl.dative:
+        return list(cl.agents or cl.dative)
     if cl.rest:
         return [p for p in ALL if p not in used_agents] or list(ALL)
     return list(prev_agents or ALL)
