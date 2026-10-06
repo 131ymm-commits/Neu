@@ -27,21 +27,26 @@ script.on_nth_tick(1, function(e)
   local rx, ry = p.x - s.cx, p.y - s.cy; local d = math.sqrt(rx * rx + ry * ry) + 1e-6; rx, ry = rx / d, ry / d
   if hp < s.retreat then s.retreating = true end
   local mx, my
-  if s.hx and (s.retreating or (s.mode == "kite" and tgt)) then
+  if s.hx and (s.retreating or s.mode == "kite") then
     -- к своим турелям: вектор на точку home плюс боковая составляющая от ближайшего врага
     local hx, hy = s.hx - p.x, s.hy - p.y; local dh = math.sqrt(hx * hx + hy * hy) + 1e-6
     if s.retreating and dh < 3 then return stop(s.no_ammo and "кончились патроны, отошёл к своим" or "отошёл к своим по здоровью") end
     mx, my = hx / dh, hy / dh
+    s.homing = dh < 6
     if not s.retreating then
-      -- выманивание: пока кусак рядом нет — идти к цели; как только кусака ближе 20 — бежать к турелям; у турелей ждать
-      local chaser = c.surface.find_entities_filtered{position = p, radius = 20, force = "enemy", type = "unit", limit = 1}[1]
-      if not chaser and dh < 4 and not s.lured then mx, my = -rx, -ry
-      elseif not chaser and not s.lured then mx, my = -rx, -ry
-      elseif chaser then s.lured = true
+      -- выманивание: идти к цели, пока кусака не окажется в радиусе стрельбы (выстрел её злит); потом к турелям;
+      -- у турелей стоять, пока рядом есть кусаки; стало тихо (нет кусак в 30 клетках) — снова идти выманивать
+      local near = c.surface.find_entities_filtered{position = p, radius = 17, force = "enemy", type = "unit", limit = 1}[1]
+      local any30 = c.surface.find_entities_filtered{position = p, radius = 30, force = "enemy", type = "unit", limit = 1}[1]
+      if near then s.lured = true end
+      if s.lured then
+        if dh < 2.5 then mx, my = 0, 0; if not any30 then s.lured = false end end
+      else
+        mx, my = -rx, -ry
       end
-      if s.lured and dh < 4 then mx, my = 0, 0; if not chaser then s.lured = false end end
     end
   elseif s.retreating then
+    s.homing = false
     mx, my = rx, ry
     if d > s.r + 25 then return stop(s.no_ammo and "кончились патроны, отошёл" or "отошёл по здоровью") end
   elseif s.mode == "kite" and tgt then
@@ -74,10 +79,10 @@ script.on_nth_tick(1, function(e)
   end
   -- застревание (деревья, скалы, постройки): за 10 тиков сдвинулся меньше 0,3 — сменить сторону обхода и на 30 тиков отвернуть на 90°
   if game.tick % 10 == 0 then
-    if s.lx and not s.idle and (p.x - s.lx) ^ 2 + (p.y - s.ly) ^ 2 < 0.09 then s.side = -s.side; s.turn_until = game.tick + 30; s.stuck = (s.stuck or 0) + 1 end
+    if s.lx and not s.idle and not s.homing and (p.x - s.lx) ^ 2 + (p.y - s.ly) ^ 2 < 0.09 then s.side = -s.side; s.turn_until = game.tick + 30; s.stuck = (s.stuck or 0) + 1 end
     s.lx, s.ly = p.x, p.y
   end
-  if s.turn_until and game.tick < s.turn_until then mx, my = -my * s.side, mx * s.side end
+  if s.turn_until and game.tick < s.turn_until and not s.homing then mx, my = -my * s.side, mx * s.side end
   s.idle = (mx == 0 and my == 0)
   if s.idle then c.walking_state = {walking = false} else c.walking_state = {walking = true, direction = d8(mx, my)} end
   if game.tick % 30 == 0 then
