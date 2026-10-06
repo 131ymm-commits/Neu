@@ -1,0 +1,74 @@
+{
+ "cleared_items": 22,
+ "chest_cleared_during": 0,
+ "horizon": 2700,
+ "w1": {
+  "raw": 0,
+  "dtick": 3856,
+  "norm": 0.0,
+  "balance": {
+   "coal": {
+    "mined": 0,
+    "used": 0
+   },
+   "iron-ore": {
+    "mined": 0,
+    "used": 0
+   },
+   "copper-ore": {
+    "mined": 0,
+    "used": 0
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "w2": {
+  "raw": 0,
+  "dtick": 3606,
+  "norm": 0.0,
+  "balance": {
+   "coal": {
+    "mined": 0,
+    "used": 0
+   },
+   "iron-ore": {
+    "mined": 0,
+    "used": 0
+   },
+   "copper-ore": {
+    "mined": 0,
+    "used": 0
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "measure": 0.0,
+ "balance_ok": true,
+ "success": false,
+ "quota": 16,
+ "target": "automation-science-pack"
+}

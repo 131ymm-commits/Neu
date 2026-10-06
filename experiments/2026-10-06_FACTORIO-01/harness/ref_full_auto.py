@@ -1,0 +1,33 @@
+# Эталон полностью автоматического завода железных пластин (этап 0): пар (насос → котёл → паровая машина), котёл кормится лентой от электрического бура на угле,
+# 2 линии «электрический бур → электрическая печь → манипулятор → сундук». Стартовый уголь в котёл — только для пуска.
+water = nearest(Resource.Water); move_to(water)
+pump = place_entity(Prototype.OffshorePump, position=water)
+c = nearest_buildable(Prototype.Boiler, BuildingBox(width=Prototype.Boiler.WIDTH + 4, height=Prototype.Boiler.HEIGHT + 4), pump.position); move_to(c.center)
+boiler = place_entity(Prototype.Boiler, position=c.center, direction=Direction.LEFT); boiler = insert_item(Prototype.Coal, boiler, 50)
+c2 = nearest_buildable(Prototype.SteamEngine, BuildingBox(width=Prototype.SteamEngine.WIDTH + 4, height=Prototype.SteamEngine.HEIGHT + 4), boiler.position); move_to(c2.center)
+eng = place_entity(Prototype.SteamEngine, position=c2.center, direction=Direction.LEFT)
+connect_entities(pump, boiler, Prototype.Pipe); connect_entities(boiler, eng, Prototype.Pipe)
+coal = nearest(Resource.Coal)
+c3 = nearest_buildable(Prototype.ElectricMiningDrill, BuildingBox(width=3, height=5), coal); move_to(c3.center)
+cd = place_entity(Prototype.ElectricMiningDrill, position=c3.center, direction=Direction.LEFT)
+bx, by = boiler.position.x, boiler.position.y
+move_to(Position(x=bx + 2.5, y=by + 1))
+ins = place_entity(Prototype.BurnerInserter, position=Position(x=bx + 1.5, y=by - 1), direction=Direction.LEFT)
+print('boiler ins', ins.pickup_position, ins.drop_position)
+connect_entities(cd.drop_position, ins.pickup_position, Prototype.TransportBelt)
+connect_entities(eng, cd, Prototype.MediumElectricPole)
+iron = nearest(Resource.IronOre); lines = []
+for i in range(2):
+    c4 = nearest_buildable(Prototype.ElectricMiningDrill, BuildingBox(width=3, height=9), Position(x=iron.x + 7 * i, y=iron.y)); move_to(c4.center)
+    d = place_entity(Prototype.ElectricMiningDrill, position=c4.center, direction=Direction.DOWN)
+    f = place_entity_next_to(Prototype.ElectricFurnace, d.position, direction=Direction.DOWN, spacing=0)
+    s = place_entity_next_to(Prototype.Inserter, f.position, direction=Direction.DOWN, spacing=0)
+    ch = place_entity(Prototype.WoodenChest, position=s.drop_position)
+    place_entity(Prototype.MediumElectricPole, position=Position(x=d.position.x + 2, y=d.position.y + 2))
+    place_entity(Prototype.MediumElectricPole, position=Position(x=s.position.x + 1, y=s.position.y))
+    lines.append(d)
+connect_entities(cd, lines[0], Prototype.MediumElectricPole)
+connect_entities(lines[0], lines[1], Prototype.MediumElectricPole)
+sleep(120)
+print('котёл', get_entity(Prototype.Boiler, boiler.position).fuel)
+print([e.status for e in get_entities({Prototype.ElectricMiningDrill, Prototype.ElectricFurnace, Prototype.Inserter, Prototype.BurnerInserter})])

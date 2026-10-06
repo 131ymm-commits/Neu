@@ -1,0 +1,74 @@
+{
+ "cleared_items": 354,
+ "chest_cleared_during": 2292,
+ "horizon": 2700,
+ "w1": {
+  "raw": 53,
+  "dtick": 3840,
+  "norm": 49.6875,
+  "balance": {
+   "coal": {
+    "mined": 20,
+    "used": 20
+   },
+   "iron-ore": {
+    "mined": 55,
+    "used": 55
+   },
+   "copper-ore": {
+    "mined": 83,
+    "used": 80
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "w2": {
+  "raw": 52,
+  "dtick": 3691,
+  "norm": 50.71796261175833,
+  "balance": {
+   "coal": {
+    "mined": 18,
+    "used": 18
+   },
+   "iron-ore": {
+    "mined": 51,
+    "used": 50
+   },
+   "copper-ore": {
+    "mined": 79,
+    "used": 76
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "measure": 49.6875,
+ "balance_ok": true,
+ "success": true,
+ "quota": 16,
+ "target": "electronic-circuit"
+}

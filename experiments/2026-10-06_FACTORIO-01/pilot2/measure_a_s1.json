@@ -1,0 +1,74 @@
+{
+ "cleared_items": 164,
+ "chest_cleared_during": 1740,
+ "horizon": 2700,
+ "w1": {
+  "raw": 39,
+  "dtick": 3730,
+  "norm": 37.64075067024129,
+  "balance": {
+   "coal": {
+    "mined": 12,
+    "used": 10
+   },
+   "iron-ore": {
+    "mined": 82,
+    "used": 78
+   },
+   "copper-ore": {
+    "mined": 0,
+    "used": 0
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "w2": {
+  "raw": 39,
+  "dtick": 3763,
+  "norm": 37.310656391177254,
+  "balance": {
+   "coal": {
+    "mined": 10,
+    "used": 10
+   },
+   "iron-ore": {
+    "mined": 82,
+    "used": 78
+   },
+   "copper-ore": {
+    "mined": 0,
+    "used": 0
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "measure": 37.310656391177254,
+ "balance_ok": true,
+ "success": true,
+ "quota": 16,
+ "target": "iron-gear-wheel"
+}

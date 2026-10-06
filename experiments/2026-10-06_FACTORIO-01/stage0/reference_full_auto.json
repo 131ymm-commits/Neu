@@ -1,0 +1,74 @@
+{
+ "cleared_items": 430,
+ "chest_cleared_during": 3466,
+ "horizon": 2700,
+ "w1": {
+  "raw": 76,
+  "dtick": 3705,
+  "norm": 73.84615384615384,
+  "balance": {
+   "coal": {
+    "mined": 8,
+    "used": 9
+   },
+   "iron-ore": {
+    "mined": 80,
+    "used": 76
+   },
+   "copper-ore": {
+    "mined": 0,
+    "used": 0
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "w2": {
+  "raw": 78,
+  "dtick": 3756,
+  "norm": 74.76038338658147,
+  "balance": {
+   "coal": {
+    "mined": 10,
+    "used": 9
+   },
+   "iron-ore": {
+    "mined": 82,
+    "used": 78
+   },
+   "copper-ore": {
+    "mined": 0,
+    "used": 0
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "measure": 73.84615384615384,
+ "balance_ok": true,
+ "success": true,
+ "quota": 16,
+ "target": "iron-plate"
+}

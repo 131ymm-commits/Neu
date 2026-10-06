@@ -1,0 +1,74 @@
+{
+ "cleared_items": 299,
+ "chest_cleared_during": 1288,
+ "horizon": 2700,
+ "w1": {
+  "raw": 29,
+  "dtick": 3634,
+  "norm": 28.728673637864613,
+  "balance": {
+   "coal": {
+    "mined": 23,
+    "used": 23
+   },
+   "iron-ore": {
+    "mined": 117,
+    "used": 114
+   },
+   "copper-ore": {
+    "mined": 47,
+    "used": 46
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "w2": {
+  "raw": 29,
+  "dtick": 3859,
+  "norm": 27.05364083959575,
+  "balance": {
+   "coal": {
+    "mined": 23,
+    "used": 23
+   },
+   "iron-ore": {
+    "mined": 125,
+    "used": 120
+   },
+   "copper-ore": {
+    "mined": 45,
+    "used": 44
+   },
+   "stone": {
+    "mined": 0,
+    "used": 0
+   },
+   "wood": {
+    "mined": 0,
+    "used": 0
+   },
+   "uranium-ore": {
+    "mined": 0,
+    "used": 0
+   }
+  },
+  "balance_ok": true
+ },
+ "measure": 27.05364083959575,
+ "balance_ok": true,
+ "success": true,
+ "quota": 16,
+ "target": "inserter"
+}
