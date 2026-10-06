@@ -1,6 +1,6 @@
 # Замороженные своды правил (sha256, первые 16 знаков)
 
-- rules/S1_final.md — 0cddac046df6a673, слов (wc -w): 249
-- rules/S2_final.md — bb209514a6f8dd2f, слов (wc -w): 253
+- rules/S1_final.md — 0cddac046df6a673, слов (str.split): 649
+- rules/S2_final.md — bb209514a6f8dd2f, слов (str.split): 644
 
 Сводам меняться нельзя: сравнение на Q идёт с этими файлами.
