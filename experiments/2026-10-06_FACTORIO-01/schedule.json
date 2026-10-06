@@ -1,0 +1,758 @@
+{
+ "seed": 20261006,
+ "arms": {
+  "A0": "-",
+  "S1": "../rules/S1_final.md",
+  "S2": "../rules/S2_final.md",
+  "S3": "../rules/S3_final.md",
+  "Z": "../rules/Z.md",
+  "U": "../rules/U.md",
+  "ZU": "../rules/Z_U.md"
+ },
+ "tasks": [
+  "plastic_bar_throughput",
+  "sulfur_throughput",
+  "battery_throughput",
+  "steel_plate_throughput",
+  "engine_unit_throughput",
+  "military_science_pack_throughput"
+ ],
+ "n": 126,
+ "rounds": [
+  {
+   "name": "C01",
+   "episodes": [
+    {
+     "arm": "S1",
+     "task": "battery_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "A0",
+     "task": "battery_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "steel_plate_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "ZU",
+     "task": "sulfur_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "ZU",
+     "task": "steel_plate_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "A0",
+     "task": "sulfur_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C02",
+   "episodes": [
+    {
+     "arm": "U",
+     "task": "military_science_pack_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S2",
+     "task": "military_science_pack_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S2",
+     "task": "steel_plate_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S2",
+     "task": "sulfur_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S3",
+     "task": "plastic_bar_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "Z",
+     "task": "battery_throughput",
+     "rep": 2
+    }
+   ]
+  },
+  {
+   "name": "C03",
+   "episodes": [
+    {
+     "arm": "S2",
+     "task": "engine_unit_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S3",
+     "task": "steel_plate_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S2",
+     "task": "sulfur_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S3",
+     "task": "sulfur_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S1",
+     "task": "steel_plate_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "U",
+     "task": "engine_unit_throughput",
+     "rep": 2
+    }
+   ]
+  },
+  {
+   "name": "C04",
+   "episodes": [
+    {
+     "arm": "S2",
+     "task": "sulfur_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "Z",
+     "task": "sulfur_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "battery_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "ZU",
+     "task": "sulfur_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S3",
+     "task": "military_science_pack_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S1",
+     "task": "military_science_pack_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C05",
+   "episodes": [
+    {
+     "arm": "S2",
+     "task": "military_science_pack_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "ZU",
+     "task": "engine_unit_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "U",
+     "task": "battery_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S3",
+     "task": "engine_unit_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "Z",
+     "task": "steel_plate_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "Z",
+     "task": "military_science_pack_throughput",
+     "rep": 2
+    }
+   ]
+  },
+  {
+   "name": "C06",
+   "episodes": [
+    {
+     "arm": "U",
+     "task": "military_science_pack_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "ZU",
+     "task": "battery_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "ZU",
+     "task": "plastic_bar_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "ZU",
+     "task": "sulfur_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S2",
+     "task": "battery_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "A0",
+     "task": "steel_plate_throughput",
+     "rep": 1
+    }
+   ]
+  },
+  {
+   "name": "C07",
+   "episodes": [
+    {
+     "arm": "Z",
+     "task": "engine_unit_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "ZU",
+     "task": "engine_unit_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "A0",
+     "task": "steel_plate_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "U",
+     "task": "engine_unit_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S1",
+     "task": "plastic_bar_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S1",
+     "task": "plastic_bar_throughput",
+     "rep": 2
+    }
+   ]
+  },
+  {
+   "name": "C08",
+   "episodes": [
+    {
+     "arm": "ZU",
+     "task": "plastic_bar_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S2",
+     "task": "plastic_bar_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "Z",
+     "task": "military_science_pack_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S2",
+     "task": "battery_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S1",
+     "task": "military_science_pack_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "engine_unit_throughput",
+     "rep": 1
+    }
+   ]
+  },
+  {
+   "name": "C09",
+   "episodes": [
+    {
+     "arm": "S2",
+     "task": "battery_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S1",
+     "task": "sulfur_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S2",
+     "task": "plastic_bar_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S2",
+     "task": "engine_unit_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "Z",
+     "task": "plastic_bar_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "military_science_pack_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C10",
+   "episodes": [
+    {
+     "arm": "S3",
+     "task": "battery_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "U",
+     "task": "sulfur_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "sulfur_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S2",
+     "task": "military_science_pack_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S3",
+     "task": "engine_unit_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "ZU",
+     "task": "plastic_bar_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C11",
+   "episodes": [
+    {
+     "arm": "S3",
+     "task": "battery_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "A0",
+     "task": "plastic_bar_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "U",
+     "task": "steel_plate_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "sulfur_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "ZU",
+     "task": "military_science_pack_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S1",
+     "task": "battery_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C12",
+   "episodes": [
+    {
+     "arm": "S1",
+     "task": "engine_unit_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "U",
+     "task": "steel_plate_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "U",
+     "task": "plastic_bar_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "ZU",
+     "task": "steel_plate_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "U",
+     "task": "military_science_pack_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "Z",
+     "task": "plastic_bar_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C13",
+   "episodes": [
+    {
+     "arm": "S2",
+     "task": "steel_plate_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "U",
+     "task": "plastic_bar_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "ZU",
+     "task": "battery_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S3",
+     "task": "battery_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S2",
+     "task": "engine_unit_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "A0",
+     "task": "military_science_pack_throughput",
+     "rep": 1
+    }
+   ]
+  },
+  {
+   "name": "C14",
+   "episodes": [
+    {
+     "arm": "S1",
+     "task": "military_science_pack_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S1",
+     "task": "sulfur_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "A0",
+     "task": "battery_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S3",
+     "task": "plastic_bar_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "A0",
+     "task": "engine_unit_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "A0",
+     "task": "sulfur_throughput",
+     "rep": 1
+    }
+   ]
+  },
+  {
+   "name": "C15",
+   "episodes": [
+    {
+     "arm": "A0",
+     "task": "battery_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S3",
+     "task": "sulfur_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "Z",
+     "task": "steel_plate_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S1",
+     "task": "sulfur_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "A0",
+     "task": "military_science_pack_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "U",
+     "task": "sulfur_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C16",
+   "episodes": [
+    {
+     "arm": "A0",
+     "task": "military_science_pack_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "ZU",
+     "task": "military_science_pack_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S1",
+     "task": "plastic_bar_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "U",
+     "task": "engine_unit_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "A0",
+     "task": "plastic_bar_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S1",
+     "task": "steel_plate_throughput",
+     "rep": 1
+    }
+   ]
+  },
+  {
+   "name": "C17",
+   "episodes": [
+    {
+     "arm": "S2",
+     "task": "steel_plate_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S3",
+     "task": "plastic_bar_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "plastic_bar_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S3",
+     "task": "sulfur_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S1",
+     "task": "engine_unit_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "U",
+     "task": "sulfur_throughput",
+     "rep": 2
+    }
+   ]
+  },
+  {
+   "name": "C18",
+   "episodes": [
+    {
+     "arm": "ZU",
+     "task": "military_science_pack_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "A0",
+     "task": "engine_unit_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S1",
+     "task": "engine_unit_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "A0",
+     "task": "plastic_bar_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "A0",
+     "task": "engine_unit_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "A0",
+     "task": "sulfur_throughput",
+     "rep": 2
+    }
+   ]
+  },
+  {
+   "name": "C19",
+   "episodes": [
+    {
+     "arm": "U",
+     "task": "battery_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "U",
+     "task": "battery_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S3",
+     "task": "military_science_pack_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "U",
+     "task": "plastic_bar_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "ZU",
+     "task": "battery_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "battery_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C20",
+   "episodes": [
+    {
+     "arm": "S3",
+     "task": "engine_unit_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S1",
+     "task": "steel_plate_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "S3",
+     "task": "military_science_pack_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "U",
+     "task": "steel_plate_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S1",
+     "task": "battery_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S3",
+     "task": "steel_plate_throughput",
+     "rep": 3
+    }
+   ]
+  },
+  {
+   "name": "C21",
+   "episodes": [
+    {
+     "arm": "ZU",
+     "task": "engine_unit_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "ZU",
+     "task": "steel_plate_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "S2",
+     "task": "plastic_bar_throughput",
+     "rep": 1
+    },
+    {
+     "arm": "Z",
+     "task": "engine_unit_throughput",
+     "rep": 3
+    },
+    {
+     "arm": "A0",
+     "task": "steel_plate_throughput",
+     "rep": 2
+    },
+    {
+     "arm": "S3",
+     "task": "steel_plate_throughput",
+     "rep": 1
+    }
+   ]
+  }
+ ]
+}

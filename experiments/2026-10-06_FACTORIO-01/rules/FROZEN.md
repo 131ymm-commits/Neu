@@ -2,5 +2,6 @@
 
 - rules/S1_final.md — 0cddac046df6a673, слов (str.split): 649
 - rules/S2_final.md — bb209514a6f8dd2f, слов (str.split): 644
+- rules/S3_final.md — bf7361fb7b39cda4, слов (str.split): 619
 
 Сводам меняться нельзя: сравнение на Q идёт с этими файлами.
