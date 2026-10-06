@@ -5,7 +5,7 @@
 # при здоровье ниже retreat — отход от цели. Никакой телепортации, урона, бессмертия или выдачи предметов.
 import json, time
 
-INSTALL = r'''/sc
+INSTALL = r'''/sc local _ = 0
 local function d8(dx, dy) local a = math.atan2(dx, -dy); return (math.floor(a / (2 * math.pi) * 8 + 0.5) % 8) * 2 end
 local function ammo_count(c) local n = 0; local inv = c.get_inventory(defines.inventory.character_ammo); for i = 1, #inv do if inv[i].valid_for_read then n = n + inv[i].count end end; return n end
 script.on_nth_tick(1, function(e)
