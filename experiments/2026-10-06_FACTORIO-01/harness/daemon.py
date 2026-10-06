@@ -3,6 +3,7 @@
 import json, os, re, socket, sys, time, traceback
 from fle.env.instance import FactorioInstance
 from fle.eval.tasks.task_factory import TaskFactory
+from measure import final_measure
 slot, ep, task_key, max_steps, logdir = int(sys.argv[1]), sys.argv[2], sys.argv[3], int(sys.argv[4]), sys.argv[5]
 SOCK = f'/tmp/claude-0/fact/slot{slot}.sock'
 BANNED = re.compile(r'(\bimport\b|__|\brcon|\binstance\b|\bexec\b|\beval\b|\bopen\s*\(|\bglobals\b|\blocals\b|\bgetattr\b|\bsetattr\b|\bvars\b|\bcompile\b|lua|/sc|/c\b)', re.I)
@@ -26,7 +27,7 @@ while True:
         data += part
     req = json.loads(data[:-2].decode()); cmd = req.get('cmd')
     if cmd == 'final':
-        tp, ok = throughput(); best = max(best, tp); out = dict(final_throughput=tp, best_throughput=best, success=best >= task.quota, steps=steps)
+        fm = final_measure(inst, task); out = dict(final=fm, measure=fm['measure'], success=fm['success'], best_during=best, steps=steps)
         log(event='final', **out); c.sendall(json.dumps(out).encode()); c.close(); break
     if cmd == 'info':
         c.sendall(json.dumps(dict(task=task_key, goal=task.goal_description, steps_used=steps, max_steps=max_steps, quota=task.quota)).encode()); c.close(); continue

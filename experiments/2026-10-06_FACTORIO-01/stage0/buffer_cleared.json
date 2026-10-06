@@ -1,0 +1,16 @@
+{
+ "cleared_items": 352,
+ "warmup": 180,
+ "w1": {
+  "raw": 0,
+  "dtick": 3564,
+  "norm": 0.0
+ },
+ "w2": {
+  "raw": 0,
+  "dtick": 3543,
+  "norm": 0.0
+ },
+ "measure": 0.0,
+ "success": false
+}

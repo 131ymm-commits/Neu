@@ -1,0 +1,134 @@
+{
+ "graph": {
+  "iron-plate": [
+   "iron-plate",
+   "iron-ore"
+  ],
+  "iron-gear-wheel": [
+   "iron-gear-wheel",
+   "iron-plate",
+   "iron-ore"
+  ],
+  "electronic-circuit": [
+   "electronic-circuit",
+   "iron-plate",
+   "iron-ore",
+   "copper-cable",
+   "copper-plate",
+   "copper-ore"
+  ],
+  "inserter": [
+   "inserter",
+   "iron-plate",
+   "iron-ore",
+   "iron-gear-wheel",
+   "electronic-circuit",
+   "copper-cable",
+   "copper-plate",
+   "copper-ore"
+  ],
+  "automation-science-pack": [
+   "automation-science-pack",
+   "copper-plate",
+   "copper-ore",
+   "iron-gear-wheel",
+   "iron-plate",
+   "iron-ore"
+  ],
+  "logistic-science-pack": [
+   "logistic-science-pack",
+   "transport-belt",
+   "iron-plate",
+   "iron-ore",
+   "iron-gear-wheel",
+   "inserter",
+   "electronic-circuit",
+   "copper-cable",
+   "copper-plate",
+   "copper-ore"
+  ],
+  "plastic-bar": [
+   "plastic-bar",
+   "coal",
+   "petroleum-gas"
+  ],
+  "sulfur": [
+   "sulfur",
+   "water",
+   "petroleum-gas"
+  ],
+  "battery": [
+   "battery",
+   "iron-plate",
+   "iron-ore",
+   "copper-plate",
+   "copper-ore",
+   "sulfuric-acid",
+   "sulfur",
+   "water",
+   "petroleum-gas"
+  ],
+  "steel-plate": [
+   "steel-plate",
+   "iron-plate",
+   "iron-ore"
+  ],
+  "engine-unit": [
+   "engine-unit",
+   "steel-plate",
+   "iron-plate",
+   "iron-ore",
+   "iron-gear-wheel",
+   "pipe"
+  ],
+  "military-science-pack": [
+   "military-science-pack",
+   "piercing-rounds-magazine",
+   "copper-plate",
+   "copper-ore",
+   "steel-plate",
+   "iron-plate",
+   "iron-ore",
+   "firearm-magazine",
+   "grenade",
+   "coal",
+   "stone-wall",
+   "stone-brick",
+   "stone"
+  ]
+ },
+ "P": [
+  "iron-plate",
+  "iron-gear-wheel",
+  "electronic-circuit",
+  "inserter",
+  "automation-science-pack",
+  "logistic-science-pack"
+ ],
+ "Q": [
+  "plastic-bar",
+  "sulfur",
+  "battery",
+  "steel-plate",
+  "engine-unit",
+  "military-science-pack"
+ ],
+ "shared_with_P": {
+  "plastic-bar": [],
+  "sulfur": [],
+  "battery": [],
+  "steel-plate": [],
+  "engine-unit": [
+   "iron-gear-wheel"
+  ],
+  "military-science-pack": []
+ },
+ "label": {
+  "plastic-bar": "дальняя",
+  "sulfur": "дальняя",
+  "battery": "дальняя",
+  "steel-plate": "дальняя",
+  "engine-unit": "ближняя",
+  "military-science-pack": "дальняя"
+ }
+}

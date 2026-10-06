@@ -1,0 +1,27 @@
+{
+ "code_wall": 40.9,
+ "code_ticks": 24169,
+ "output": "6: ('добыто', 400, Inventory(wooden-chest=10, storage-tank=10, transport-belt=500, underground-belt=100, burner-inserter=50, inserter=50, medium-electric-pole=500, pipe=500, pipe-to-ground=100, boiler=2, steam-engine=2, burner-mining-drill=50, electric-mining-drill=50, offshore-pump=2, pumpjack=10, stone-furnace=10, electric-furnace=10, assembling-machine-2=10, oil-refinery=5, chemical-plant=5, coal=500, iron-ore=400))\n16: (8, 'печей набито')",
+ "windows": [
+  {
+   "window": 1,
+   "tp": 144,
+   "dtick": 7041
+  },
+  {
+   "window": 2,
+   "tp": 72,
+   "dtick": 7100
+  },
+  {
+   "window": 3,
+   "tp": 0,
+   "dtick": 3537
+  },
+  {
+   "window": "+10мин",
+   "tp": 0,
+   "dtick": 3544
+  }
+ ]
+}
