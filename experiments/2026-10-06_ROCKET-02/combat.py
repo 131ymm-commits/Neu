@@ -27,7 +27,13 @@ script.on_nth_tick(1, function(e)
   local rx, ry = p.x - s.cx, p.y - s.cy; local d = math.sqrt(rx * rx + ry * ry) + 1e-6; rx, ry = rx / d, ry / d
   if hp < s.retreat then s.retreating = true end
   local mx, my
-  if s.retreating then
+  if s.hx and (s.retreating or (s.mode == "kite" and tgt)) then
+    -- к своим турелям: вектор на точку home плюс боковая составляющая от ближайшего врага
+    local hx, hy = s.hx - p.x, s.hy - p.y; local dh = math.sqrt(hx * hx + hy * hy) + 1e-6
+    if s.retreating and dh < 3 then return stop(s.no_ammo and "кончились патроны, отошёл к своим" or "отошёл к своим по здоровью") end
+    mx, my = hx / dh, hy / dh
+    if not s.retreating and dh < 4 then mx, my = 0, 0 end
+  elseif s.retreating then
     mx, my = rx, ry
     if d > s.r + 25 then return stop(s.no_ammo and "кончились патроны, отошёл" or "отошёл по здоровью") end
   elseif s.mode == "kite" and tgt then
@@ -38,9 +44,36 @@ script.on_nth_tick(1, function(e)
     local k = (s.r - d) / s.r * 2
     mx, my = -ry * s.side + rx * k, rx * s.side + ry * k
   end
-  c.walking_state = {walking = true, direction = d8(mx, my)}
+  -- рыба: при здоровье ниже fish_hp съесть сырую рыбу (лечит 80, у рыбы своя перезарядка)
+  if hp < s.fish_hp and game.tick >= (s.fish_next or 0) then
+    local m = c.get_main_inventory()
+    if m.get_item_count("raw-fish") > 0 and c.cursor_stack and not c.cursor_stack.valid_for_read then
+      local ok = pcall(function() c.cursor_stack.set_stack{name = "raw-fish", count = 1}; m.remove{name = "raw-fish", count = 1}; c.use_from_cursor(c.position) end)
+      if c.cursor_stack.valid_for_read then m.insert(c.cursor_stack); c.cursor_stack.clear() else s.fish = (s.fish or 0) + 1 end
+      s.fish_next = game.tick + 30
+    end
+  end
+  -- рывки у червей и плевак (worm wiggle): внутри 27 клеток от червя или рядом с плевакой — wig_on тиков идти, wig_off стоять/менять сторону
+  if s.wiggle > 0 then
+    local danger = c.surface.count_entities_filtered{position = p, radius = 27, force = "enemy", type = "turret"} > 0
+      or c.surface.count_entities_filtered{position = p, radius = 16, force = "enemy", name = {"small-spitter", "medium-spitter", "big-spitter", "behemoth-spitter"}} > 0
+    if danger then
+      local ph = game.tick % s.wiggle
+      if ph >= s.wiggle - s.wig_off then
+        if (math.floor(game.tick / s.wiggle) % 2) == 0 then mx, my = 0, 0 else mx, my = -my, mx end
+      end
+    end
+  end
+  -- застревание (деревья, скалы, постройки): за 10 тиков сдвинулся меньше 0,3 — сменить сторону обхода и на 30 тиков отвернуть на 90°
+  if game.tick % 10 == 0 then
+    if s.lx and (p.x - s.lx) ^ 2 + (p.y - s.ly) ^ 2 < 0.09 then s.side = -s.side; s.turn_until = game.tick + 30; s.stuck = (s.stuck or 0) + 1 end
+    s.lx, s.ly = p.x, p.y
+  end
+  if s.turn_until and game.tick < s.turn_until then mx, my = -my * s.side, mx * s.side end
+  if mx == 0 and my == 0 then c.walking_state = {walking = false} else c.walking_state = {walking = true, direction = d8(mx, my)} end
   if game.tick % 30 == 0 then
     local left = c.surface.count_entities_filtered{position = {s.cx, s.cy}, radius = s.clear_radius, force = "enemy"}
+      + c.surface.count_entities_filtered{position = p, radius = 25, force = "enemy"}
     if left == 0 then return stop("зачищено") end
   end
 end)
@@ -66,19 +99,21 @@ def scan(rcon, x=None, y=None, radius=60):
 rcon.print(helpers.table_to_json({{me = c.position, health = c.health, enemies = o}}))'''
     return json.loads(rcon.send_command(q).strip())
 
-def fight(rcon, cx, cy, r=20, mode='strafe', seconds=30, retreat=0.4, side=1, clear_radius=None, shoot_range=None, priority=None):
+def fight(rcon, cx, cy, r=20, mode='strafe', seconds=30, retreat=0.4, side=1, clear_radius=None, shoot_range=None, priority=None, home=None, wiggle=24, fish_hp=0.5):
     """Бой: персонаж ходит (strafe — по кругу вокруг (cx,cy) радиусом r; kite — держит дистанцию r от ближайшего врага) и стреляет.
     seconds — игровых секунд; retreat — доля здоровья для отхода; side — 1 по часовой, -1 против;
+    home — {x, y} своих турелей: kite и отход ведут туда; wiggle — период рывков у червей в тиках (0 — без рывков); fish_hp — доля здоровья, ниже которой есть рыбу;
     priority — порядок целей по типам, по умолчанию ["unit", "turret", "unit-spawner"] (кусаки, черви, гнёзда)."""
     prio = [t for t in (priority or ['unit', 'turret', 'unit-spawner']) if t in ('unit', 'turret', 'unit-spawner')] or ['unit', 'turret', 'unit-spawner']
     r = max(4.0, min(float(r), 40.0)); seconds = max(1.0, min(float(seconds), 180.0)); retreat = max(0.05, min(float(retreat), 0.95))
     clear_radius = float(clear_radius or r + 10); shoot_range = float(shoot_range or 30)
+    homelua = f'hx = {float(home["x"])}, hy = {float(home["y"])},' if home else ''
     rcon.send_command(INSTALL)
     pre = scan(rcon, cx, cy, clear_radius)
     q = '/sc ' + AC + lua_char() + f''' local g = c.get_inventory(defines.inventory.character_guns); local has = false; for i = 1, #g do if g[i].valid_for_read then has = true end end
 if not has then rcon.print("нет оружия в слотах — вызови arm") return end
 storage.cb = {{active = true, char = c, cx = {cx}, cy = {cy}, r = {r}, mode = "{'kite' if mode == 'kite' else 'strafe'}", side = {1 if side >= 0 else -1}, retreat = {retreat},
-  clear_radius = {clear_radius}, shoot_range = {shoot_range}, prio = {{{', '.join(repr(t).replace(chr(39), chr(34)) for t in prio)}}}, until_tick = game.tick + {int(seconds * 60)}, min_hp = 1, ammo0 = ac(c), hp0 = c.health}}
+  clear_radius = {clear_radius}, shoot_range = {shoot_range}, wiggle = {int(max(0, min(int(wiggle), 120)))}, wig_off = {max(1, int(wiggle) // 3)}, fish_hp = {max(0.0, min(float(fish_hp), 0.95))}, {homelua} prio = {{{', '.join(repr(t).replace(chr(39), chr(34)) for t in prio)}}}, until_tick = game.tick + {int(seconds * 60)}, min_hp = 1, ammo0 = ac(c), hp0 = c.health}}
 rcon.print("start")'''
     st = rcon.send_command(q).strip()
     if st != 'start': return dict(error=st)
@@ -90,7 +125,7 @@ rcon.print("start")'''
     else:
         rcon.send_command('/sc storage.cb.active = false')
     res = rcon.send_command('/sc ' + AC + 'local s = storage.cb; local c = s.char; local alive = c and c.valid; rcon.print(helpers.table_to_json({result = s.result or "прервано по времени", min_health_frac = s.min_hp, '
-                            'health = alive and c.health or 0, ammo_used = alive and (s.ammo0 - ac(c)) or s.ammo0, ammo_left = alive and ac(c) or 0}))').strip()
+                            'stuck_events = s.stuck or 0, fish_eaten = s.fish or 0, health = alive and c.health or 0, ammo_used = alive and (s.ammo0 - ac(c)) or s.ammo0, ammo_left = alive and ac(c) or 0}))').strip()
     out = json.loads(res)
     post = scan(rcon, cx, cy, clear_radius) if 'погиб' not in out['result'] else dict(enemies=[])
     kinds = lambda L: {n: sum(1 for e in L if e['name'] == n) for n in sorted({e['name'] for e in L})}
