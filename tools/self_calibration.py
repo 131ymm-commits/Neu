@@ -49,6 +49,9 @@ ROWS = [
     ('OBSERVER', 'solo обходит «Ганса»', 'PREREG-OBSERVER', 'вероятность', 0.6, 0, '0,893 против 0,969, p 0,54 — не значимо'),
     ('OBSERVER-STREAM', 'A: REJECT подтверждён за 300 точек (e ≥ 20 против трёх баз)', 'PREREG-OBSERVER-STREAM', 'вероятность', 0.3, None, 'ждёт'),
     ('OBSERVER-STREAM', 'B: OTHER против ACCEPT подтверждён', 'PREREG-OBSERVER-STREAM', 'вероятность', 0.25, None, 'ждёт'),
+    ('FACTORIO-01', 'H1: свод из практики S лучше свода без практики Z на Q', 'PREREG-FACTORIO-01', 'вероятность', 0.35, None, 'ждёт'),
+    ('FACTORIO-01', 'H2: S лучше руки без правил на Q', 'PREREG-FACTORIO-01', 'вероятность', 0.5, None, 'ждёт'),
+    ('FACTORIO-01', 'головы завышают производительность в ≥ 2/3 эпизодов', 'PREREG-FACTORIO-01', 'вероятность', 0.7, None, 'ждёт'),
 ]
 
 
