@@ -1,52 +1,42 @@
-# Рецепты и машины из игры (Factorio 2.0.77, моды: base=2.0.77), формат: имя [категория, время с]: ингредиенты => продукты
+# Рецепты из игры (Factorio 2.0.77, сервер ROCKET-02), формат: имя [категория, время с]: ингредиенты => продукты
 
 iron-plate [smelting, 3.2 с]: 1 iron-ore, => 1 iron-plate, 
 copper-plate [smelting, 3.2 с]: 1 copper-ore, => 1 copper-plate, 
 steel-plate [smelting, 16 с]: 5 iron-plate, => 1 steel-plate, 
 stone-brick [smelting, 3.2 с]: 2 stone, => 1 stone-brick, 
 iron-gear-wheel [crafting, 0.5 с]: 2 iron-plate, => 1 iron-gear-wheel, 
-copper-cable [crafting, 0.5 с]: 1 copper-plate, => 2 copper-cable, 
-electronic-circuit [crafting, 0.5 с]: 1 iron-plate, 3 copper-cable, => 1 electronic-circuit, 
-advanced-circuit [crafting, 6 с]: 2 plastic-bar, 4 copper-cable, 2 electronic-circuit, => 1 advanced-circuit, 
-processing-unit [crafting-with-fluid, 10 с]: 20 electronic-circuit, 2 advanced-circuit, 5 sulfuric-acid, => 1 processing-unit, 
+copper-cable [electronics, 0.5 с]: 1 copper-plate, => 2 copper-cable, 
+electronic-circuit [electronics, 0.5 с]: 1 iron-plate, 3 copper-cable, => 1 electronic-circuit, 
+advanced-circuit [electronics, 6 с]: 2 plastic-bar, 4 copper-cable, 2 electronic-circuit, => 1 advanced-circuit, 
+processing-unit [electronics-with-fluid, 10 с]: 20 electronic-circuit, 2 advanced-circuit, 5 sulfuric-acid, => 1 processing-unit, 
 pipe [crafting, 0.5 с]: 1 iron-plate, => 1 pipe, 
-iron-stick [crafting, 0.5 с]: 1 iron-plate, => 2 iron-stick, 
 engine-unit [advanced-crafting, 10 с]: 1 steel-plate, 1 iron-gear-wheel, 2 pipe, => 1 engine-unit, 
 electric-engine-unit [crafting-with-fluid, 10 с]: 2 electronic-circuit, 1 engine-unit, 15 lubricant, => 1 electric-engine-unit, 
-plastic-bar [chemistry, 1 с]: 1 coal, 20 petroleum-gas, => 2 plastic-bar, 
-sulfur [chemistry, 1 с]: 30 water, 30 petroleum-gas, => 2 sulfur, 
-sulfuric-acid [chemistry, 1 с]: 1 iron-plate, 5 sulfur, 100 water, => 50 sulfuric-acid, 
+plastic-bar [chemistry-or-cryogenics, 1 с]: 1 coal, 20 petroleum-gas, => 2 plastic-bar, 
+sulfur [chemistry-or-cryogenics, 1 с]: 30 water, 30 petroleum-gas, => 2 sulfur, 
+sulfuric-acid [chemistry-or-cryogenics, 1 с]: 1 iron-plate, 5 sulfur, 100 water, => 50 sulfuric-acid, 
 lubricant [chemistry, 1 с]: 10 heavy-oil, => 10 lubricant, 
-rocket-fuel [crafting-with-fluid, 15 с]: 10 solid-fuel, 10 light-oil, => 1 rocket-fuel, 
+rocket-fuel [organic-or-assembling, 15 с]: 10 solid-fuel, 10 light-oil, => 1 rocket-fuel, 
 low-density-structure [crafting, 15 с]: 20 copper-plate, 2 steel-plate, 5 plastic-bar, => 1 low-density-structure, 
 concrete [crafting-with-fluid, 10 с]: 1 iron-ore, 5 stone-brick, 100 water, => 10 concrete, 
-battery [chemistry, 4 с]: 1 iron-plate, 1 copper-plate, 20 sulfuric-acid, => 1 battery, 
+battery [chemistry-or-cryogenics, 4 с]: 1 iron-plate, 1 copper-plate, 20 sulfuric-acid, => 1 battery, 
 flying-robot-frame [crafting, 20 с]: 1 steel-plate, 2 battery, 3 electronic-circuit, 1 electric-engine-unit, => 1 flying-robot-frame, 
-rail [crafting, 0.5 с]: 1 stone, 1 steel-plate, 1 iron-stick, => 2 rail, 
-productivity-module [crafting, 15 с]: 5 electronic-circuit, 5 advanced-circuit, => 1 productivity-module, 
-speed-module [crafting, 15 с]: 5 electronic-circuit, 5 advanced-circuit, => 1 speed-module, 
 automation-science-pack [crafting, 5 с]: 1 copper-plate, 1 iron-gear-wheel, => 1 automation-science-pack, 
 logistic-science-pack [crafting, 6 с]: 1 transport-belt, 1 inserter, => 1 logistic-science-pack, 
 chemical-science-pack [crafting, 24 с]: 1 sulfur, 3 advanced-circuit, 2 engine-unit, => 2 chemical-science-pack, 
 military-science-pack [crafting, 10 с]: 1 piercing-rounds-magazine, 1 grenade, 2 stone-wall, => 2 military-science-pack, 
-production-science-pack [crafting, 21 с]: 30 rail, 1 electric-furnace, 1 productivity-module, => 3 production-science-pack, 
-utility-science-pack [crafting, 21 с]: 2 processing-unit, 1 flying-robot-frame, 3 low-density-structure, => 3 utility-science-pack, 
 firearm-magazine [crafting, 1 с]: 4 iron-plate, => 1 firearm-magazine, 
 piercing-rounds-magazine [crafting, 6 с]: 2 copper-plate, 1 steel-plate, 2 firearm-magazine, => 2 piercing-rounds-magazine, 
-submachine-gun [crafting, 10 с]: 10 iron-plate, 5 copper-plate, 10 iron-gear-wheel, => 1 submachine-gun, 
-grenade [crafting, 8 с]: 10 coal, 5 iron-plate, => 1 grenade, 
 gun-turret [crafting, 8 с]: 20 iron-plate, 10 copper-plate, 10 iron-gear-wheel, => 1 gun-turret, 
 stone-wall [crafting, 0.5 с]: 5 stone-brick, => 1 stone-wall, 
-repair-pack [crafting, 0.5 с]: 2 iron-gear-wheel, 2 electronic-circuit, => 1 repair-pack, 
 lab [crafting, 2 с]: 10 iron-gear-wheel, 10 electronic-circuit, 4 transport-belt, => 1 lab, 
-transport-belt [crafting, 0.5 с]: 1 iron-plate, 1 iron-gear-wheel, => 2 transport-belt, 
+transport-belt [pressing, 0.5 с]: 1 iron-plate, 1 iron-gear-wheel, => 2 transport-belt, 
 inserter [crafting, 0.5 с]: 1 iron-plate, 1 iron-gear-wheel, 1 electronic-circuit, => 1 inserter, 
 burner-inserter [crafting, 0.5 с]: 1 iron-plate, 1 iron-gear-wheel, => 1 burner-inserter, 
 fast-inserter [crafting, 0.5 с]: 2 iron-plate, 2 electronic-circuit, 1 inserter, => 1 fast-inserter, 
 long-handed-inserter [crafting, 0.5 с]: 1 iron-plate, 1 iron-gear-wheel, 1 inserter, => 1 long-handed-inserter, 
 assembling-machine-1 [crafting, 0.5 с]: 9 iron-plate, 5 iron-gear-wheel, 3 electronic-circuit, => 1 assembling-machine-1, 
 assembling-machine-2 [crafting, 0.5 с]: 2 steel-plate, 5 iron-gear-wheel, 3 electronic-circuit, 1 assembling-machine-1, => 1 assembling-machine-2, 
-assembling-machine-3 [crafting, 0.5 с]: 2 assembling-machine-2, 4 speed-module, => 1 assembling-machine-3, 
 electric-mining-drill [crafting, 2 с]: 10 iron-plate, 5 iron-gear-wheel, 3 electronic-circuit, => 1 electric-mining-drill, 
 burner-mining-drill [crafting, 2 с]: 3 iron-plate, 3 iron-gear-wheel, 1 stone-furnace, => 1 burner-mining-drill, 
 stone-furnace [crafting, 0.5 с]: 5 stone, => 1 stone-furnace, 
@@ -55,11 +45,10 @@ electric-furnace [crafting, 5 с]: 10 steel-plate, 5 advanced-circuit, 10 stone-
 boiler [crafting, 0.5 с]: 4 pipe, 1 stone-furnace, => 1 boiler, 
 steam-engine [crafting, 0.5 с]: 10 iron-plate, 8 iron-gear-wheel, 5 pipe, => 1 steam-engine, 
 offshore-pump [crafting, 0.5 с]: 2 iron-gear-wheel, 3 pipe, => 1 offshore-pump, 
-small-electric-pole [crafting, 0.5 с]: 1 wood, 2 copper-cable, => 2 small-electric-pole, 
-medium-electric-pole [crafting, 0.5 с]: 2 steel-plate, 4 iron-stick, 2 copper-cable, => 1 medium-electric-pole, 
-big-electric-pole [crafting, 0.5 с]: 5 steel-plate, 8 iron-stick, 4 copper-cable, => 1 big-electric-pole, 
-underground-belt [crafting, 1 с]: 10 iron-plate, 5 transport-belt, => 2 underground-belt, 
-splitter [crafting, 1 с]: 5 iron-plate, 5 electronic-circuit, 4 transport-belt, => 1 splitter, 
+small-electric-pole [electronics, 0.5 с]: 1 wood, 2 copper-cable, => 2 small-electric-pole, 
+medium-electric-pole [electronics, 0.5 с]: 2 steel-plate, 4 iron-stick, 2 copper-cable, => 1 medium-electric-pole, 
+underground-belt [pressing, 1 с]: 10 iron-plate, 5 transport-belt, => 2 underground-belt, 
+splitter [pressing, 1 с]: 5 iron-plate, 5 electronic-circuit, 4 transport-belt, => 1 splitter, 
 pumpjack [crafting, 5 с]: 5 steel-plate, 10 iron-gear-wheel, 5 electronic-circuit, 10 pipe, => 1 pumpjack, 
 oil-refinery [crafting, 8 с]: 15 steel-plate, 10 iron-gear-wheel, 10 electronic-circuit, 10 pipe, 10 stone-brick, => 1 oil-refinery, 
 chemical-plant [crafting, 5 с]: 5 steel-plate, 5 iron-gear-wheel, 5 electronic-circuit, 5 pipe, => 1 chemical-plant, 
@@ -67,31 +56,31 @@ storage-tank [crafting, 3 с]: 20 iron-plate, 5 steel-plate, => 1 storage-tank,
 pipe-to-ground [crafting, 0.5 с]: 5 iron-plate, 10 pipe, => 2 pipe-to-ground, 
 pump [crafting, 2 с]: 1 steel-plate, 1 engine-unit, 1 pipe, => 1 pump, 
 rocket-silo [crafting, 30 с]: 1000 steel-plate, 200 processing-unit, 200 electric-engine-unit, 100 pipe, 1000 concrete, => 1 rocket-silo, 
-rocket-part [rocket-building, 3 с]: 10 processing-unit, 10 low-density-structure, 10 rocket-fuel, => 1 rocket-part, 
+rocket-part [rocket-building, 3 с]: 1 processing-unit, 1 low-density-structure, 1 rocket-fuel, => 1 rocket-part, 
 basic-oil-processing [oil-processing, 5 с]: 100 crude-oil, => 45 petroleum-gas, 
 advanced-oil-processing [oil-processing, 5 с]: 50 water, 100 crude-oil, => 25 heavy-oil, 45 light-oil, 55 petroleum-gas, 
-heavy-oil-cracking [chemistry, 2 с]: 30 water, 40 heavy-oil, => 30 light-oil, 
-light-oil-cracking [chemistry, 2 с]: 30 water, 30 light-oil, => 20 petroleum-gas, 
+heavy-oil-cracking [organic-or-chemistry, 2 с]: 30 water, 40 heavy-oil, => 30 light-oil, 
+light-oil-cracking [organic-or-chemistry, 2 с]: 30 water, 30 light-oil, => 20 petroleum-gas, 
 solid-fuel-from-light-oil [chemistry, 1 с]: 10 light-oil, => 1 solid-fuel, 
 solid-fuel-from-petroleum-gas [chemistry, 1 с]: 20 petroleum-gas, => 1 solid-fuel, 
 solid-fuel-from-heavy-oil [chemistry, 1 с]: 20 heavy-oil, => 1 solid-fuel, 
 radar [crafting, 0.5 с]: 10 iron-plate, 5 iron-gear-wheel, 5 electronic-circuit, => 1 radar, 
-solar-panel [crafting, 10 с]: 5 copper-plate, 5 steel-plate, 15 electronic-circuit, => 1 solar-panel, 
-accumulator [crafting, 10 с]: 2 iron-plate, 5 battery, => 1 accumulator, 
+solar-panel [electronics, 10 с]: 5 copper-plate, 5 steel-plate, 15 electronic-circuit, => 1 solar-panel, 
+accumulator [electronics, 10 с]: 2 iron-plate, 5 battery, => 1 accumulator, 
 iron-chest [crafting, 0.5 с]: 8 iron-plate, => 1 iron-chest, 
 wooden-chest [crafting, 0.5 с]: 2 wood, => 1 wooden-chest,
 
-# Характеристики машин
+# Характеристики машин из игры
+
+# Характеристики машин из игры
 
 assembling-machine-1: скорость крафта 0.5
 assembling-machine-2: скорость крафта 0.75
-assembling-machine-3: скорость крафта 1.25
 stone-furnace: скорость крафта 1
 steel-furnace: скорость крафта 2
 electric-furnace: скорость крафта 2
 chemical-plant: скорость крафта 1
 oil-refinery: скорость крафта 1
-rocket-silo: скорость крафта 1
 burner-mining-drill: скорость добычи 0.25
 electric-mining-drill: скорость добычи 0.5
 pumpjack: скорость добычи 1
@@ -110,7 +99,4 @@ medium-electric-pole: провод 9, зона питания ±3.5
 big-electric-pole: провод 32, зона питания ±2
 substation: провод 18, зона питания ±9
 gun-turret: дальность 18
-rocket-silo: частей на ракету 100
-
-инвентарь персонажа на старте: burner-mining-drill=1 stone-furnace=1 wood=1 iron-plate=8 pistol=1 firearm-magazine=10 
-вражеских сущностей: 132
+lab: скорость исследований 1

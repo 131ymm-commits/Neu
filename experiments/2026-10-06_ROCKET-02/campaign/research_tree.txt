@@ -1,36 +1,48 @@
-steam-power | - | x1 |  | 0s
-electronics | - | x1 |  | 0s
-automation-science-pack | R | x1 |  | 0s
-steel-processing | - | x50 | automation, | 5s
-logistic-science-pack | - | x75 | automation, | 5s
-advanced-material-processing | - | x75 | automation,logistic, | 30s
-automation | - | x10 | automation, | 10s
-automation-2 | - | x40 | automation,logistic, | 15s
-concrete | - | x250 | automation,logistic, | 30s
-engine | - | x100 | automation,logistic, | 15s
-fluid-handling | - | x50 | automation,logistic, | 15s
-oil-gathering | - | x100 | automation,logistic, | 30s
-oil-processing | - | x1 |  | 0s
-flammables | - | x50 | automation,logistic, | 30s
-plastics | - | x200 | automation,logistic, | 30s
-advanced-circuit | - | x200 | automation,logistic, | 15s
-sulfur-processing | - | x150 | automation,logistic, | 30s
-chemical-science-pack | - | x75 | automation,logistic, | 10s
-advanced-oil-processing | - | x75 | automation,logistic,chemical, | 30s
-rocket-fuel | - | x300 | automation,logistic,chemical, | 45s
-processing-unit | - | x300 | automation,logistic,chemical, | 30s
-lubricant | - | x50 | automation,logistic,chemical, | 30s
-electric-engine | - | x50 | automation,logistic,chemical, | 30s
-battery | - | x150 | automation,logistic, | 30s
-robotics | - | x75 | automation,logistic,chemical, | 30s
-logistic-robotics | - | x250 | automation,logistic,chemical, | 30s
-low-density-structure | - | x300 | automation,logistic,chemical, | 45s
-advanced-material-processing-2 | - | x250 | automation,logistic,chemical, | 30s
-rocket-silo | - | x1000 | automation,logistic,chemical, | 60s
-ВСЕГО колб: automation-science-pack=4225 logistic-science-pack=4090 chemical-science-pack=2650 
-технологий в цепочке: 29
-инвентарь: 
-врагов: 26
+# Дерево исследований до rocket-silo из игры. Моды: base=2.0.77
 
-триггеры: steam-power=craft-item:iron-plate:50; electronics=craft-item:copper-plate:10; automation-science-pack=craft-item:lab:1; oil-processing=mine-entity:crude-oil:; 
-инвентарь персонажа: burner-mining-drill=1 stone-furnace=1 wood=1 iron-plate=8 pistol=1 firearm-magazine=10
+steam-power | - | x1 | ТРИГГЕР craft-item:iron-plate:50 | 0 с/ед
+electronics | - | x1 | ТРИГГЕР craft-item:copper-plate:10 | 0 с/ед
+automation-science-pack | исслед. | x1 | ТРИГГЕР craft-item:lab:1 | 0 с/ед
+steel-processing | - | x50 | automation, | 5 с/ед
+logistic-science-pack | - | x75 | automation, | 5 с/ед
+advanced-material-processing | - | x75 | automation,logistic, | 30 с/ед
+automation | - | x10 | automation, | 10 с/ед
+automation-2 | - | x40 | automation,logistic, | 15 с/ед
+concrete | - | x250 | automation,logistic, | 30 с/ед
+engine | - | x100 | automation,logistic, | 15 с/ед
+fluid-handling | - | x50 | automation,logistic, | 15 с/ед
+oil-gathering | - | x100 | automation,logistic, | 30 с/ед
+oil-processing | - | x1 | ТРИГГЕР mine-entity:crude-oil: | 0 с/ед
+flammables | - | x50 | automation,logistic, | 30 с/ед
+plastics | - | x200 | automation,logistic, | 30 с/ед
+advanced-circuit | - | x200 | automation,logistic, | 15 с/ед
+sulfur-processing | - | x150 | automation,logistic, | 30 с/ед
+chemical-science-pack | - | x75 | automation,logistic, | 10 с/ед
+advanced-oil-processing | - | x75 | automation,logistic,chemical, | 30 с/ед
+rocket-fuel | - | x300 | automation,logistic,chemical, | 45 с/ед
+electric-energy-distribution-1 | - | x120 | automation,logistic, | 30 с/ед
+battery | - | x150 | automation,logistic, | 30 с/ед
+electric-energy-accumulators | - | x150 | automation,logistic, | 30 с/ед
+solar-energy | - | x250 | automation,logistic, | 30 с/ед
+lubricant | - | x50 | automation,logistic,chemical, | 30 с/ед
+electric-engine | - | x50 | automation,logistic,chemical, | 30 с/ед
+robotics | - | x75 | automation,logistic,chemical, | 30 с/ед
+processing-unit | - | x300 | automation,logistic,chemical, | 30 с/ед
+low-density-structure | - | x300 | automation,logistic,chemical, | 45 с/ед
+utility-science-pack | - | x100 | automation,logistic,chemical, | 30 с/ед
+modules | - | x100 | automation,logistic, | 30 с/ед
+speed-module | - | x50 | automation,logistic, | 30 с/ед
+speed-module-2 | - | x75 | automation,logistic,chemical, | 30 с/ед
+productivity-module | - | x50 | automation,logistic, | 30 с/ед
+advanced-material-processing-2 | - | x250 | automation,logistic,chemical, | 30 с/ед
+logistics | - | x20 | automation, | 15 с/ед
+logistics-2 | - | x200 | automation,logistic, | 30 с/ед
+railway | - | x75 | automation,logistic, | 30 с/ед
+production-science-pack | - | x100 | automation,logistic,chemical, | 30 с/ед
+speed-module-3 | - | x300 | automation,logistic,chemical,production, | 60 с/ед
+productivity-module-2 | - | x75 | automation,logistic,chemical, | 30 с/ед
+productivity-module-3 | - | x300 | automation,logistic,chemical,production, | 60 с/ед
+radar | - | x20 | automation, | 10 с/ед
+rocket-silo | - | x1000 | automation,logistic,chemical,production,utility, | 60 с/ед
+ВСЕГО колб: automation-science-pack=5960 logistic-science-pack=5785 chemical-science-pack=3350 production-science-pack=1600 utility-science-pack=1000 
+технологий в цепочке: 44
