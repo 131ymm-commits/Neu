@@ -1,7 +1,9 @@
 # ROCKET-02 (ваниль: исследования с нуля, стартовый набор обычной игры): демон кампании. Один постоянный мир на весь путь до запуска ракеты; эпизоды голов подключаются по очереди.
 # Мир не сбрасывается между эпизодами (FLE сбрасывает карту только при создании подключения — оно одно на всю кампанию).
 #   python campaign_daemon.py <slot> <logdir>
-import json, os, re, socket, sys, time, traceback
+import json, os, re, resource, socket, sys, time, traceback
+# предел памяти процесса 3 ГБ: огромный ответ FLE (get_entities по большой области) раньше раздувал демон до 10,8 ГБ, и система убивала его и соседние серверы (ERRORS № 66)
+resource.setrlimit(resource.RLIMIT_AS, (3 * 1024 ** 3, 3 * 1024 ** 3))
 from fle.env.instance import FactorioInstance
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import combat
 slot, logdir = int(sys.argv[1]), sys.argv[2]; os.makedirs(logdir, exist_ok=True)
@@ -64,6 +66,7 @@ while True:
         else:
             steps += 1
             try: r = inst.eval(code, agent_idx=0, timeout=300); res = r[2] if isinstance(r, tuple) and len(r) > 2 else str(r)
+            except MemoryError: res = 'ошибка: шаг потребовал больше 3 ГБ памяти (слишком большой запрос: сузь радиус и типы в get_entities)'
             except Exception as e: res = 'ошибка: ' + ''.join(traceback.format_exception_only(type(e), e))[-1500:]
             m = milestones(); out = dict(step=steps, steps_left=max_steps - steps, output=str(res)[-6000:], milestones=m)
             log(event='step', ep=ep, step=steps, code=code, output=str(res)[-6000:], milestones=m)
