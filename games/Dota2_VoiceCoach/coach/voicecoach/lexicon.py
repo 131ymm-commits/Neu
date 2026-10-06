@@ -1,0 +1,217 @@
+"""Русский словарь команд тренера.
+
+Источник слов: игровой сленг русскоязычной Доты по памяти Claude (не сверен
+с корпусом речи), имена героев — data/heroes.json (официальные русские имена
+из Open Hyper AI + сленг). Словарь правится человеком: добавить слово —
+дописать его в нужную таблицу и пример во tests/test_parser.py.
+
+Все слова записаны в нормальной форме: строчные, «ё» → «е».
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+DATA = Path(__file__).resolve().parent.parent / "data"
+
+# --- служебные слова ---------------------------------------------------------
+SEQ_WORDS = {"потом", "затем", "после", "далее", "дальше"}
+NEG_WORDS = {"не", "нельзя", "никто", "никуда"}
+URGENT_WORDS = {"срочно", "быстро", "быстрее", "бегом", "живо", "сейчас", "щас", "немедленно"}
+FILLERS = {
+    "давай", "давайте", "ну", "так", "это", "пожалуйста", "плиз", "блин", "короче",
+    "значит", "вот", "уже", "тоже", "еще", "там", "тут", "вообще", "и", "а", "но",
+    "мы", "нам", "вы", "вам", "все-таки", "просто", "надо", "нужно", "можно", "го",
+    "ок", "окей", "ладно", "внимание", "слушай", "слушайте", "эй",
+}
+# предлоги: сами по себе ничего не значат, но подсказывают роль следующего слова
+PREPS = {"на", "в", "во", "к", "ко", "с", "со", "за", "по", "у", "до", "из", "от", "через", "под"}
+ENEMY_MARK = {"их", "ихний", "вражеский", "вражеского", "вражескую", "вражеском",
+              "вражеской", "врага", "врагов", "чужой", "чужом", "чужого", "противника"}
+OWN_MARK = {"наш", "наша", "нашу", "нашем", "нашей", "наши", "свой", "своем", "своей", "свою", "свои"}
+PRONOUNS = {"ты", "тебе", "тебя", "он", "ему", "его", "она", "ей", "сам", "сама"}
+
+# --- кому: всем и по ролям ---------------------------------------------------
+ADDRESS_ALL = {"все", "всем", "команда", "ребята", "ребят", "пацаны", "парни", "народ",
+               "тима", "тиммейты", "всё"}
+ADDRESS_REST = {"остальные", "остальным", "другие", "другим"}
+# роль → позиции; ключ — фраза (может быть из нескольких слов)
+ADDRESS_ROLE = {
+    "керри": [1], "кэрри": [1], "единичка": [1], "единица": [1], "первая позиция": [1],
+    "мидер": [2], "мидлейнер": [2], "мидлер": [2], "двойка": [2], "вторая позиция": [2],
+    "оффлейнер": [3], "офлейнер": [3], "хардлейнер": [3], "тройка": [3], "третья позиция": [3],
+    "четверка": [4], "роумер": [4], "софт саппорт": [4], "четвертая позиция": [4],
+    "пятерка": [5], "фулл саппорт": [5], "хард саппорт": [5], "пятая позиция": [5],
+    "саппорты": [4, 5], "саппы": [4, 5], "сапорты": [4, 5], "сапы": [4, 5],
+    "саппорт": [4, 5], "сапорт": [4, 5],
+    "коры": [1, 2, 3], "коров": [1, 2, 3],
+}
+# слова, которые в начале фразы — адресат-роль, а после действия — место
+LANE_OR_ROLE = {"мид": 2, "миду": 2, "оффлейн": 3, "офлейн": 3, "оффлейну": 3}
+
+# «позиция 2», «поз 2», «пос 2», «второй» (только с числом)
+POSITION_WORDS = {"позиция", "позиции", "поз", "пос", "позиция номер"}
+NUMBER_WORDS = {
+    "1": 1, "один": 1, "одна": 1, "первый": 1, "первая": 1, "первую": 1, "первой": 1,
+    "2": 2, "два": 2, "две": 2, "второй": 2, "вторая": 2, "вторую": 2,
+    "3": 3, "три": 3, "третий": 3, "третья": 3, "третью": 3, "третьей": 3,
+    "4": 4, "четыре": 4, "четвертый": 4, "четвертая": 4, "четвертую": 4,
+    "5": 5, "пять": 5, "пятый": 5, "пятая": 5, "пятую": 5,
+}
+
+# --- что делать: основы глаголов и существительных ---------------------------
+# (основа, действие). Совпадение: слово начинается с основы. Длинные основы
+# проверяются первыми. Точные слова — в ACTION_WORDS.
+ACTION_STEMS = [
+    ("пофарм", "farm"), ("нафарм", "farm"), ("фарм", "farm"),
+    ("запуш", "push"), ("пуш", "push"), ("снос", "push"), ("снес", "push"),
+    ("ломай", "push"), ("ломаем", "push"), ("давим", "push"), ("давите", "push"),
+    ("задеф", "defend"), ("отдеф", "defend"), ("деф", "defend"), ("защищ", "defend"), ("защит", "defend"),
+    ("заганг", "gank"), ("заганк", "gank"), ("ганг", "gank"), ("ганк", "gank"),
+    ("собира", "group"), ("собер", "group"), ("групп", "group"),
+    ("рошан", "roshan"), ("рошик", "roshan"), ("рош", "roshan"),
+    ("торментор", "tormentor"), ("тормент", "tormentor"),
+    ("смока", "smoke"), ("смок", "smoke"), ("смоук", "smoke"),
+    ("отступ", "retreat"), ("отход", "retreat"), ("отбега", "retreat"), ("сваливай", "retreat"),
+    ("сваливаем", "retreat"), ("ретрит", "retreat"), ("уходи", "retreat"), ("уходим", "retreat"),
+    ("фокус", "focus"), ("убива", "focus"), ("убей", "focus"), ("убейте", "focus"), ("кильт", "focus"),
+    ("киля", "focus"), ("дамаж", "focus"),
+    ("инициир", "engage"), ("инициац", "engage"), ("врыва", "engage"), ("прыга", "engage"),
+    ("заходи", "engage"), ("заходим", "engage"), ("файт", "engage"), ("деремся", "engage"),
+    ("сплит", "split"),
+    ("варди", "ward"), ("вардь", "ward"), ("вард", "ward"),
+    ("стакн", "stack"), ("стака", "stack"), ("стак", "stack"),
+    ("покупа", "buy"), ("купи", "buy"), ("купит", "buy"), ("закупи", "buy"),
+    ("байбек", "buyback"), ("байбэк", "buyback"), ("выкуп", "buyback"),
+    ("ультан", "use_ult"), ("ультуй", "use_ult"), ("ульт", "use_ult"),
+    ("сейв", "save"), ("спаса", "save"), ("спаси", "save"),
+    ("следуй", "follow"), ("помоги", "follow"), ("помогите", "follow"), ("помога", "follow"),
+    ("телепорт", "tp"), ("тпш", "tp"), ("тпн", "tp"), ("тпа", "tp"), ("тепн", "tp"),
+    ("отмен", "cancel"), ("отставить", "cancel"), ("забуд", "cancel"),
+    ("доклад", "report"), ("доложи", "report"), ("отчет", "report"), ("статус", "report"),
+]
+ACTION_WORDS = {
+    "тп": "tp", "бей": "focus", "бейте": "focus", "бьем": "focus", "килл": "focus",
+    "начинай": "engage", "начинаем": "engage", "начинайте": "engage", "драка": "engage",
+    "драку": "engage", "дратся": "engage", "драться": "engage", "фаит": "engage",
+    "назад": "retreat", "валим": "retreat", "вали": "retreat", "беги": "retreat",
+    "бегите": "retreat", "домой": "retreat",
+    "ждите": "hold", "ждем": "hold", "жди": "hold", "ждать": "hold", "стоять": "hold",
+    "стойте": "hold", "стой": "hold", "держитесь": "hold", "лезь": "hold", "лезьте": "hold",
+    "бери": "buy", "берите": "buy", "возьми": "buy", "возьмите": "buy",
+    "собирай": "buy_or_group", "собери": "buy_or_group",
+    "бб": "buyback",
+    "поставь": "ward", "поставьте": "ward", "ставь": "ward", "ставьте": "ward", "закинь": "ward",
+    "иди": "move", "идите": "move", "идем": "move", "пошли": "move", "двигай": "move",
+    "двигайте": "move", "двигаемся": "move", "топай": "move", "беги в": "move",
+    "стоп": "cancel", "отбой": "cancel",
+    "свобода": "free", "свободно": "free", "фриплей": "free", "сами": "free",
+    "держи": "save_ult_hint", "держите": "save_ult_hint", "береги": "save_ult_hint",
+    "жми": "press", "прожми": "press", "прожимай": "press",
+    "сколько": "report", "кд": "report", "кулдаун": "report",
+}
+
+# --- где: места на карте -----------------------------------------------------
+# фраза → (вид, значение); вид: lane, rel_lane, place, area
+PLACE_PHRASES = {
+    "топ": ("lane", "top"), "топе": ("lane", "top"), "верх": ("lane", "top"),
+    "верхнюю": ("lane", "top"), "верхняя": ("lane", "top"), "верхней": ("lane", "top"),
+    "мид": ("lane", "mid"), "миде": ("lane", "mid"), "мида": ("lane", "mid"),
+    "центр": ("lane", "mid"), "центре": ("lane", "mid"), "середину": ("lane", "mid"),
+    "бот": ("lane", "bot"), "боте": ("lane", "bot"), "низ": ("lane", "bot"),
+    "нижнюю": ("lane", "bot"), "нижняя": ("lane", "bot"), "нижней": ("lane", "bot"),
+    "лайт": ("rel_lane", "safe"), "легкая": ("rel_lane", "safe"), "легкую": ("rel_lane", "safe"),
+    "легкой": ("rel_lane", "safe"), "сейф": ("rel_lane", "safe"), "сейфлейн": ("rel_lane", "safe"),
+    "изи лайн": ("rel_lane", "safe"),
+    "хард": ("rel_lane", "off"), "хардлейн": ("rel_lane", "off"), "сложная": ("rel_lane", "off"),
+    "сложную": ("rel_lane", "off"), "сложной": ("rel_lane", "off"),
+    "оффлейн": ("rel_lane", "off"), "офлейн": ("rel_lane", "off"),
+    "лес": ("area", "jungle"), "лесу": ("area", "jungle"), "леса": ("area", "jungle"),
+    "джунгли": ("area", "jungle"), "джунглях": ("area", "jungle"), "джангл": ("area", "jungle"),
+    "древние": ("area", "ancients"), "древних": ("area", "ancients"), "эншенты": ("area", "ancients"),
+    "эншентов": ("area", "ancients"),
+    "база": ("place", "base"), "базу": ("place", "base"), "базе": ("place", "base"),
+    "базы": ("place", "base"), "фонтан": ("place", "base"), "фонт": ("place", "base"),
+    "яма": ("place", "roshan"), "яму": ("place", "roshan"), "логово": ("place", "roshan"),
+    "руна": ("place", "rune"), "руну": ("place", "rune"), "руны": ("place", "rune"),
+    "аутпост": ("place", "outpost"), "аутпосты": ("place", "outpost"),
+    "лотос": ("place", "lotus"), "лотосы": ("place", "lotus"),
+}
+TOWER_WORDS = {"башня", "башню", "башни", "вышка", "вышку", "вышки", "тавер", "тавера", "товер"}
+TIER_TOKENS = {"т1": 1, "т2": 2, "т3": 3, "т4": 4, "t1": 1, "t2": 2, "t3": 3, "t4": 4}
+
+# --- что купить --------------------------------------------------------------
+ITEM_PHRASES = {
+    "бкб": "item_black_king_bar", "бкбшку": "item_black_king_bar", "бкбху": "item_black_king_bar",
+    "блэк кинг бар": "item_black_king_bar",
+    "блинк": "item_blink", "даггер": "item_blink", "дагер": "item_blink", "блинк даггер": "item_blink",
+    "гем": "item_gem", "гему": "item_gem", "гема": "item_gem",
+    "даст": "item_dust", "дасты": "item_dust", "пыль": "item_dust",
+    "смок": "item_smoke_of_deceit", "смоки": "item_smoke_of_deceit", "смоков": "item_smoke_of_deceit",
+    "обс": "item_ward_observer", "обсы": "item_ward_observer", "обсов": "item_ward_observer",
+    "вард": "item_ward_observer", "варды": "item_ward_observer", "вардов": "item_ward_observer",
+    "сентри": "item_ward_sentry", "сенты": "item_ward_sentry", "сентрики": "item_ward_sentry",
+    "тп": "item_tpscroll", "свиток": "item_tpscroll", "тпшку": "item_tpscroll",
+    "бутылку": "item_bottle", "бутылка": "item_bottle", "ботл": "item_bottle",
+    "форс": "item_force_staff", "форсстафф": "item_force_staff", "форс стафф": "item_force_staff",
+    "глиммер": "item_glimmer_cape", "глимер": "item_glimmer_cape",
+    "линку": "item_sphere", "линка": "item_sphere", "линкенс": "item_sphere", "сферу": "item_sphere",
+    "аганим": "item_ultimate_scepter", "аги": "item_ultimate_scepter", "агс": "item_ultimate_scepter",
+    "аганимс": "item_ultimate_scepter",
+    "шард": "item_aghanims_shard", "аганим шард": "item_aghanims_shard",
+    "манту": "item_manta", "манта": "item_manta",
+    "сатаник": "item_satanic", "бабочку": "item_butterfly", "баттерфляй": "item_butterfly",
+    "дезоль": "item_desolator", "дезолятор": "item_desolator",
+    "радик": "item_radiance", "радианс": "item_radiance",
+    "мкб": "item_monkey_king_bar", "мкбшку": "item_monkey_king_bar",
+    "еул": "item_cyclone", "еулс": "item_cyclone", "циклон": "item_cyclone",
+    "хекс": "item_sheepstick", "гекс": "item_sheepstick", "овцу": "item_sheepstick",
+    "орчид": "item_orchid", "блудторн": "item_bloodthorn",
+    "бф": "item_bfury", "батлфьюри": "item_bfury",
+    "мидас": "item_hand_of_midas",
+    "фазы": "item_phase_boots", "фейзы": "item_phase_boots",
+    "треды": "item_power_treads", "тряпки": "item_power_treads",
+    "травы": "item_travel_boots", "тревела": "item_travel_boots", "тревелы": "item_travel_boots",
+    "пайп": "item_pipe", "гривсы": "item_guardian_greaves", "гривс": "item_guardian_greaves",
+    "меку": "item_mekansm", "меха": "item_mekansm", "мекансм": "item_mekansm",
+    "пайк": "item_hurricane_pike", "хурикейн": "item_hurricane_pike",
+    "арканы": "item_arcane_boots", "солар": "item_solar_crest",
+    "палку": "item_magic_wand", "ванд": "item_magic_wand", "вэнд": "item_magic_wand",
+    "рефрешер": "item_refresher", "скади": "item_skadi",
+    "инвиз": "item_invis_sword", "шадоу блейд": "item_invis_sword",
+    "сильвер": "item_silver_edge", "сильвер эдж": "item_silver_edge",
+    "абисал": "item_abyssal_blade", "абиссал": "item_abyssal_blade",
+    "дедал": "item_greater_crit", "даедалус": "item_greater_crit", "крит": "item_greater_crit",
+    "хартку": "item_heart", "харт": "item_heart", "сердце": "item_heart",
+    "ассолт": "item_assault", "кирасу": "item_assault",
+    "шиву": "item_shivas_guard", "шива": "item_shivas_guard",
+    "бладстон": "item_bloodstone", "октарин": "item_octarine_core",
+    "нуллик": "item_nullifier", "нуллифаер": "item_nullifier",
+    "дисперсер": "item_disperser", "харпун": "item_harpoon", "гарпун": "item_harpoon",
+    "вессел": "item_spirit_vessel", "урну": "item_urn_of_shadows", "урна": "item_urn_of_shadows",
+    "лотус": "item_lotus_orb", "лотус орб": "item_lotus_orb",
+    "владимир": "item_vladmir", "вовку": "item_vladmir",
+    "эфирку": "item_ethereal_blade", "диффуз": "item_diffusal_blade", "диффузал": "item_diffusal_blade",
+    "мьельнир": "item_mjollnir", "мжольнир": "item_mjollnir", "маэлстрем": "item_maelstrom",
+    "дагон": "item_dagon", "саньи": "item_sange_and_yasha", "санью": "item_sange_and_yasha",
+    "кайю": "item_kaya", "ауру": "item_vladmir",
+}
+
+# падежные окончания, которые можно отрезать от имени игрока/героя
+CASE_ENDINGS = ("", "а", "я", "у", "ю", "ом", "ем", "ой", "ей", "е", "и", "ы", "ам", "ям", "ах", "ях",
+                "ов", "ев", "ами", "ями", "ою", "ею", "у")
+
+
+def load_heroes() -> dict:
+    with open(DATA / "heroes.json", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def load_item_ids() -> set[str]:
+    ids = set()
+    with open(DATA / "items_internal.txt", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                ids.add(line)
+    return ids

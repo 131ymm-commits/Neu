@@ -1,0 +1,1278 @@
+{
+ "npc_dota_hero_abaddon": {
+  "en": "Abaddon",
+  "ru": "Абаддон",
+  "aliases": [
+   "абаддон",
+   "abaddon",
+   "аба",
+   "абадон"
+  ]
+ },
+ "npc_dota_hero_abyssal_underlord": {
+  "en": "Underlord",
+  "ru": "Абисал",
+  "aliases": [
+   "абисал",
+   "underlord",
+   "андерлорд",
+   "питлорд",
+   "лорд"
+  ]
+ },
+ "npc_dota_hero_alchemist": {
+  "en": "Alchemist",
+  "ru": "Алхимик",
+  "aliases": [
+   "алхимик",
+   "alchemist",
+   "алх",
+   "алхим"
+  ]
+ },
+ "npc_dota_hero_ancient_apparition": {
+  "en": "Ancient Apparition",
+  "ru": "Древний Призрак",
+  "aliases": [
+   "древний призрак",
+   "ancient apparition",
+   "аа",
+   "апарат",
+   "эншент апарейшн"
+  ]
+ },
+ "npc_dota_hero_antimage": {
+  "en": "Antimage",
+  "ru": "Антимаг",
+  "aliases": [
+   "антимаг",
+   "antimage",
+   "ам",
+   "антимага"
+  ]
+ },
+ "npc_dota_hero_arc_warden": {
+  "en": "Arc Warden",
+  "ru": "Хранитель Арки",
+  "aliases": [
+   "хранитель арки",
+   "arc warden",
+   "арк",
+   "арк варден",
+   "варден"
+  ]
+ },
+ "npc_dota_hero_axe": {
+  "en": "Axe",
+  "ru": "Акс",
+  "aliases": [
+   "акс",
+   "axe",
+   "акса"
+  ]
+ },
+ "npc_dota_hero_bane": {
+  "en": "Bane",
+  "ru": "Бэйн",
+  "aliases": [
+   "бэйн",
+   "bane",
+   "бейн"
+  ]
+ },
+ "npc_dota_hero_batrider": {
+  "en": "Batrider",
+  "ru": "Летучий Всадник",
+  "aliases": [
+   "летучий всадник",
+   "batrider",
+   "бэт",
+   "бет",
+   "батрайдер",
+   "бетрайдер"
+  ]
+ },
+ "npc_dota_hero_beastmaster": {
+  "en": "Beastmaster",
+  "ru": "Повелитель Зверей",
+  "aliases": [
+   "повелитель зверей",
+   "beastmaster",
+   "бист",
+   "бм",
+   "бистмастер"
+  ]
+ },
+ "npc_dota_hero_bloodseeker": {
+  "en": "Bloodseeker",
+  "ru": "Бладсикер",
+  "aliases": [
+   "бладсикер",
+   "bloodseeker",
+   "блад",
+   "бс"
+  ]
+ },
+ "npc_dota_hero_bounty_hunter": {
+  "en": "Bounty Hunter",
+  "ru": "Охотник за головами",
+  "aliases": [
+   "охотник за головами",
+   "bounty hunter",
+   "баунти",
+   "бх",
+   "баунтик"
+  ]
+ },
+ "npc_dota_hero_brewmaster": {
+  "en": "Brewmaster",
+  "ru": "Брюмастер",
+  "aliases": [
+   "брюмастер",
+   "brewmaster",
+   "брю",
+   "панда"
+  ]
+ },
+ "npc_dota_hero_bristleback": {
+  "en": "Bristleback",
+  "ru": "Ежевик",
+  "aliases": [
+   "ежевик",
+   "bristleback",
+   "бристл",
+   "бристлбек",
+   "ежик"
+  ]
+ },
+ "npc_dota_hero_broodmother": {
+  "en": "Broodmother",
+  "ru": "Брудмастер",
+  "aliases": [
+   "брудмастер",
+   "broodmother",
+   "бруда",
+   "бруд",
+   "брудмазер",
+   "паучиха"
+  ]
+ },
+ "npc_dota_hero_centaur": {
+  "en": "Centaur Warrunner",
+  "ru": "Центавр",
+  "aliases": [
+   "центавр",
+   "centaur warrunner",
+   "кентавр",
+   "цента",
+   "кент"
+  ]
+ },
+ "npc_dota_hero_chaos_knight": {
+  "en": "Chaos Knight",
+  "ru": "Рыцарь Хаоса",
+  "aliases": [
+   "рыцарь хаоса",
+   "chaos knight",
+   "цк",
+   "хаос",
+   "кхаос",
+   "хаос найт"
+  ]
+ },
+ "npc_dota_hero_chen": {
+  "en": "Chen",
+  "ru": "Чен",
+  "aliases": [
+   "чен",
+   "chen"
+  ]
+ },
+ "npc_dota_hero_clinkz": {
+  "en": "Clinkz",
+  "ru": "Клинкз",
+  "aliases": [
+   "клинкз",
+   "clinkz",
+   "клинк",
+   "клинкс"
+  ]
+ },
+ "npc_dota_hero_crystal_maiden": {
+  "en": "Crystal Maiden",
+  "ru": "Кристальная Дева",
+  "aliases": [
+   "кристальная дева",
+   "crystal maiden",
+   "цмка",
+   "цм",
+   "кристалка"
+  ]
+ },
+ "npc_dota_hero_dark_seer": {
+  "en": "Dark Seer",
+  "ru": "Темный Провидец",
+  "aliases": [
+   "темный провидец",
+   "dark seer",
+   "дс",
+   "дарк сир",
+   "дарксир"
+  ]
+ },
+ "npc_dota_hero_dark_willow": {
+  "en": "Dark Willow",
+  "ru": "Темная Ива",
+  "aliases": [
+   "темная ива",
+   "dark willow",
+   "ива",
+   "виллоу",
+   "дарк виллоу"
+  ]
+ },
+ "npc_dota_hero_dawnbreaker": {
+  "en": "Dawnbreaker",
+  "ru": "Рассветная Звезда",
+  "aliases": [
+   "рассветная звезда",
+   "dawnbreaker",
+   "даунбрейкер",
+   "даун",
+   "рассветка"
+  ]
+ },
+ "npc_dota_hero_dazzle": {
+  "en": "Dazzle",
+  "ru": "Даззл",
+  "aliases": [
+   "даззл",
+   "dazzle",
+   "дазл"
+  ]
+ },
+ "npc_dota_hero_death_prophet": {
+  "en": "Death Prophet",
+  "ru": "Прорицатель Смерти",
+  "aliases": [
+   "прорицатель смерти",
+   "death prophet",
+   "дп",
+   "дез профет",
+   "профетка"
+  ]
+ },
+ "npc_dota_hero_disruptor": {
+  "en": "Disruptor",
+  "ru": "Дизраптор",
+  "aliases": [
+   "дизраптор",
+   "disruptor",
+   "дизрупт",
+   "дизр"
+  ]
+ },
+ "npc_dota_hero_doom_bringer": {
+  "en": "Doom",
+  "ru": "Дум",
+  "aliases": [
+   "дум",
+   "doom"
+  ]
+ },
+ "npc_dota_hero_dragon_knight": {
+  "en": "Dragon Knight",
+  "ru": "Рыцарь-Дракон",
+  "aliases": [
+   "рыцарь дракон",
+   "dragon knight",
+   "дк",
+   "драгон",
+   "драгон найт"
+  ]
+ },
+ "npc_dota_hero_drow_ranger": {
+  "en": "Drow Ranger",
+  "ru": "Дроу-рейнджер",
+  "aliases": [
+   "дроу рейнджер",
+   "drow ranger",
+   "дроу",
+   "дровка",
+   "дров"
+  ]
+ },
+ "npc_dota_hero_earth_spirit": {
+  "en": "Earth Spirit",
+  "ru": "Дух Земли",
+  "aliases": [
+   "дух земли",
+   "earth spirit",
+   "ерс спирит",
+   "земеля",
+   "земелька",
+   "эрс"
+  ]
+ },
+ "npc_dota_hero_earthshaker": {
+  "en": "Earthshaker",
+  "ru": "Землетряс",
+  "aliases": [
+   "землетряс",
+   "earthshaker",
+   "шейкер",
+   "шейк",
+   "ес",
+   "эс"
+  ]
+ },
+ "npc_dota_hero_elder_titan": {
+  "en": "Elder Titan",
+  "ru": "Старший Титан",
+  "aliases": [
+   "старший титан",
+   "elder titan",
+   "титан",
+   "ет",
+   "элдер"
+  ]
+ },
+ "npc_dota_hero_ember_spirit": {
+  "en": "Ember Spirit",
+  "ru": "Дух Пламени",
+  "aliases": [
+   "дух пламени",
+   "ember spirit",
+   "эмбер",
+   "эмбер спирит"
+  ]
+ },
+ "npc_dota_hero_enchantress": {
+  "en": "Enchantress",
+  "ru": "Зачаровательница",
+  "aliases": [
+   "зачаровательница",
+   "enchantress",
+   "энча",
+   "энчантресс",
+   "энчантра"
+  ]
+ },
+ "npc_dota_hero_enigma": {
+  "en": "Enigma",
+  "ru": "Энигма",
+  "aliases": [
+   "энигма",
+   "enigma",
+   "энига"
+  ]
+ },
+ "npc_dota_hero_faceless_void": {
+  "en": "Faceless Void",
+  "ru": "Лик Без Лика",
+  "aliases": [
+   "лик без лика",
+   "faceless void",
+   "войд",
+   "фв",
+   "фейслес"
+  ]
+ },
+ "npc_dota_hero_furion": {
+  "en": "Nature's Prophet",
+  "ru": "Пророк",
+  "aliases": [
+   "пророк",
+   "nature's prophet",
+   "фурион",
+   "профет",
+   "фура"
+  ]
+ },
+ "npc_dota_hero_grimstroke": {
+  "en": "Grimstroke",
+  "ru": "Гримстроук",
+  "aliases": [
+   "гримстроук",
+   "grimstroke",
+   "грим"
+  ]
+ },
+ "npc_dota_hero_gyrocopter": {
+  "en": "Gyrocopter",
+  "ru": "Гирокоптер",
+  "aliases": [
+   "гирокоптер",
+   "gyrocopter",
+   "гиро",
+   "вертолет"
+  ]
+ },
+ "npc_dota_hero_hoodwink": {
+  "en": "Hoodwink",
+  "ru": "Худвинк",
+  "aliases": [
+   "худвинк",
+   "hoodwink",
+   "белка"
+  ]
+ },
+ "npc_dota_hero_huskar": {
+  "en": "Huskar",
+  "ru": "Хускар",
+  "aliases": [
+   "хускар",
+   "huskar",
+   "хуск"
+  ]
+ },
+ "npc_dota_hero_invoker": {
+  "en": "Invoker",
+  "ru": "Инвокер",
+  "aliases": [
+   "инвокер",
+   "invoker",
+   "инвок",
+   "карл"
+  ]
+ },
+ "npc_dota_hero_jakiro": {
+  "en": "Jakiro",
+  "ru": "Джакиро",
+  "aliases": [
+   "джакиро",
+   "jakiro",
+   "жакиро",
+   "джак"
+  ]
+ },
+ "npc_dota_hero_juggernaut": {
+  "en": "Juggernaut",
+  "ru": "Джаггернаут",
+  "aliases": [
+   "джаггернаут",
+   "juggernaut",
+   "джагг",
+   "джаг",
+   "джагернаут"
+  ]
+ },
+ "npc_dota_hero_keeper_of_the_light": {
+  "en": "Keeper of the Light",
+  "ru": "Хранитель Света",
+  "aliases": [
+   "хранитель света",
+   "keeper of the light",
+   "котл",
+   "котел",
+   "кипер"
+  ]
+ },
+ "npc_dota_hero_kez": {
+  "en": "Kez",
+  "ru": "Кез",
+  "aliases": [
+   "кез",
+   "kez"
+  ]
+ },
+ "npc_dota_hero_kunkka": {
+  "en": "Kunkka",
+  "ru": "Кунка",
+  "aliases": [
+   "кунка",
+   "kunkka",
+   "кунк",
+   "адмирал"
+  ]
+ },
+ "npc_dota_hero_largo": {
+  "en": "Largo",
+  "ru": "Ларго",
+  "aliases": [
+   "ларго",
+   "largo"
+  ]
+ },
+ "npc_dota_hero_legion_commander": {
+  "en": "Legion Commander",
+  "ru": "Легион Коммандер",
+  "aliases": [
+   "легион коммандер",
+   "legion commander",
+   "легионка",
+   "лс",
+   "легион",
+   "лк"
+  ]
+ },
+ "npc_dota_hero_leshrac": {
+  "en": "Leshrac",
+  "ru": "Лешрак",
+  "aliases": [
+   "лешрак",
+   "leshrac",
+   "леш"
+  ]
+ },
+ "npc_dota_hero_lich": {
+  "en": "Lich",
+  "ru": "Лич",
+  "aliases": [
+   "лич",
+   "lich"
+  ]
+ },
+ "npc_dota_hero_life_stealer": {
+  "en": "Lifestealer",
+  "ru": "Лайфстилер",
+  "aliases": [
+   "лайфстилер",
+   "lifestealer",
+   "гуля",
+   "найкс",
+   "наикс",
+   "гуль"
+  ]
+ },
+ "npc_dota_hero_lina": {
+  "en": "Lina",
+  "ru": "Лина",
+  "aliases": [
+   "лина",
+   "lina"
+  ]
+ },
+ "npc_dota_hero_lion": {
+  "en": "Lion",
+  "ru": "Лион",
+  "aliases": [
+   "лион",
+   "lion",
+   "лайон"
+  ]
+ },
+ "npc_dota_hero_lone_druid": {
+  "en": "Lone Druid",
+  "ru": "Одинокий Друид",
+  "aliases": [
+   "одинокий друид",
+   "lone druid",
+   "друид",
+   "лд",
+   "лон друид"
+  ]
+ },
+ "npc_dota_hero_luna": {
+  "en": "Luna",
+  "ru": "Луна",
+  "aliases": [
+   "луна",
+   "luna"
+  ]
+ },
+ "npc_dota_hero_lycan": {
+  "en": "Lycan",
+  "ru": "Ликан",
+  "aliases": [
+   "ликан",
+   "lycan"
+  ]
+ },
+ "npc_dota_hero_magnataur": {
+  "en": "Magnus",
+  "ru": "Магнус",
+  "aliases": [
+   "магнус",
+   "magnus"
+  ]
+ },
+ "npc_dota_hero_marci": {
+  "en": "Marci",
+  "ru": "Марси",
+  "aliases": [
+   "марси",
+   "marci"
+  ]
+ },
+ "npc_dota_hero_mars": {
+  "en": "Mars",
+  "ru": "Марс",
+  "aliases": [
+   "марс",
+   "mars"
+  ]
+ },
+ "npc_dota_hero_medusa": {
+  "en": "Medusa",
+  "ru": "Медуза",
+  "aliases": [
+   "медуза",
+   "medusa",
+   "дуза",
+   "дуся"
+  ]
+ },
+ "npc_dota_hero_meepo": {
+  "en": "Meepo",
+  "ru": "Мипо",
+  "aliases": [
+   "мипо",
+   "meepo"
+  ]
+ },
+ "npc_dota_hero_mirana": {
+  "en": "Mirana",
+  "ru": "Мирана",
+  "aliases": [
+   "мирана",
+   "mirana",
+   "мира",
+   "потм"
+  ]
+ },
+ "npc_dota_hero_monkey_king": {
+  "en": "Monkey King",
+  "ru": "Король Обезьян",
+  "aliases": [
+   "король обезьян",
+   "monkey king",
+   "мк",
+   "манки",
+   "манки кинг",
+   "обезьяна"
+  ]
+ },
+ "npc_dota_hero_morphling": {
+  "en": "Morphling",
+  "ru": "Морфлинг",
+  "aliases": [
+   "морфлинг",
+   "morphling",
+   "морф"
+  ]
+ },
+ "npc_dota_hero_muerta": {
+  "en": "Muerta",
+  "ru": "Мэрта",
+  "aliases": [
+   "мэрта",
+   "muerta",
+   "муэрта",
+   "мерта"
+  ]
+ },
+ "npc_dota_hero_naga_siren": {
+  "en": "Naga Siren",
+  "ru": "Нага Сирена",
+  "aliases": [
+   "нага сирена",
+   "naga siren",
+   "нага"
+  ]
+ },
+ "npc_dota_hero_necrolyte": {
+  "en": "Necrophos",
+  "ru": "Некрофос",
+  "aliases": [
+   "некрофос",
+   "necrophos",
+   "некр",
+   "некрос"
+  ]
+ },
+ "npc_dota_hero_nevermore": {
+  "en": "Shadow Fiend",
+  "ru": "Тень",
+  "aliases": [
+   "shadow fiend",
+   "сф",
+   "невермор",
+   "шадоу финд"
+  ]
+ },
+ "npc_dota_hero_night_stalker": {
+  "en": "Night Stalker",
+  "ru": "Ночной Охотник",
+  "aliases": [
+   "ночной охотник",
+   "night stalker",
+   "нс",
+   "найт сталкер"
+  ]
+ },
+ "npc_dota_hero_nyx_assassin": {
+  "en": "Nyx Assassin",
+  "ru": "Никс Ассассин",
+  "aliases": [
+   "никс ассассин",
+   "nyx assassin",
+   "никс",
+   "никса"
+  ]
+ },
+ "npc_dota_hero_obsidian_destroyer": {
+  "en": "Outworld Devourer",
+  "ru": "Разрушитель",
+  "aliases": [
+   "разрушитель",
+   "outworld devourer",
+   "од",
+   "обсидиан",
+   "харбингер"
+  ]
+ },
+ "npc_dota_hero_ogre_magi": {
+  "en": "Ogre Magi",
+  "ru": "Огр-Маг",
+  "aliases": [
+   "огр маг",
+   "ogre magi",
+   "огр",
+   "огрмаг"
+  ]
+ },
+ "npc_dota_hero_omniknight": {
+  "en": "Omniknight",
+  "ru": "Омникнайт",
+  "aliases": [
+   "омникнайт",
+   "omniknight",
+   "омник",
+   "омни"
+  ]
+ },
+ "npc_dota_hero_oracle": {
+  "en": "Oracle",
+  "ru": "Оракул",
+  "aliases": [
+   "оракул",
+   "oracle",
+   "оракл"
+  ]
+ },
+ "npc_dota_hero_pangolier": {
+  "en": "Pangolier",
+  "ru": "Пангольер",
+  "aliases": [
+   "пангольер",
+   "pangolier",
+   "панго",
+   "панголиер"
+  ]
+ },
+ "npc_dota_hero_phantom_assassin": {
+  "en": "Phantom Assassin",
+  "ru": "Фантомный Ассасин",
+  "aliases": [
+   "фантомный ассасин",
+   "phantom assassin",
+   "па",
+   "фантомка",
+   "мортред"
+  ]
+ },
+ "npc_dota_hero_phantom_lancer": {
+  "en": "Phantom Lancer",
+  "ru": "Фантомный Лансер",
+  "aliases": [
+   "фантомный лансер",
+   "phantom lancer",
+   "пл",
+   "фантом лансер",
+   "лансер"
+  ]
+ },
+ "npc_dota_hero_phoenix": {
+  "en": "Phoenix",
+  "ru": "Феникс",
+  "aliases": [
+   "феникс",
+   "phoenix"
+  ]
+ },
+ "npc_dota_hero_primal_beast": {
+  "en": "Primal Beast",
+  "ru": "Первобытный Зверь",
+  "aliases": [
+   "первобытный зверь",
+   "primal beast",
+   "праймал",
+   "праймал бист",
+   "примал"
+  ]
+ },
+ "npc_dota_hero_puck": {
+  "en": "Puck",
+  "ru": "Пак",
+  "aliases": [
+   "пак",
+   "puck",
+   "пук"
+  ]
+ },
+ "npc_dota_hero_pudge": {
+  "en": "Pudge",
+  "ru": "Пудж",
+  "aliases": [
+   "пудж",
+   "pudge",
+   "пуджик",
+   "мясник"
+  ]
+ },
+ "npc_dota_hero_pugna": {
+  "en": "Pugna",
+  "ru": "Пугна",
+  "aliases": [
+   "пугна",
+   "pugna"
+  ]
+ },
+ "npc_dota_hero_queenofpain": {
+  "en": "Queen of Pain",
+  "ru": "Королева Боли",
+  "aliases": [
+   "королева боли",
+   "queen of pain",
+   "квопа",
+   "квоп",
+   "акаша",
+   "куопа"
+  ]
+ },
+ "npc_dota_hero_rattletrap": {
+  "en": "Clockwerk",
+  "ru": "Часовой",
+  "aliases": [
+   "часовой",
+   "clockwerk",
+   "клок",
+   "клокверк",
+   "часовщик"
+  ]
+ },
+ "npc_dota_hero_razor": {
+  "en": "Razor",
+  "ru": "Рейзор",
+  "aliases": [
+   "рейзор",
+   "razor",
+   "разор"
+  ]
+ },
+ "npc_dota_hero_riki": {
+  "en": "Riki",
+  "ru": "Рики",
+  "aliases": [
+   "рики",
+   "riki"
+  ]
+ },
+ "npc_dota_hero_ringmaster": {
+  "en": "RingMaster",
+  "ru": "Кольцмейстер",
+  "aliases": [
+   "кольцмейстер",
+   "ringmaster",
+   "рингмастер",
+   "ринг"
+  ]
+ },
+ "npc_dota_hero_rubick": {
+  "en": "Rubick",
+  "ru": "Рубик",
+  "aliases": [
+   "рубик",
+   "rubick"
+  ]
+ },
+ "npc_dota_hero_sand_king": {
+  "en": "Sand King",
+  "ru": "Король Песков",
+  "aliases": [
+   "король песков",
+   "sand king",
+   "ск",
+   "санд кинг",
+   "сенд кинг",
+   "скорпион"
+  ]
+ },
+ "npc_dota_hero_shadow_demon": {
+  "en": "Shadow Demon",
+  "ru": "Теневой Демон",
+  "aliases": [
+   "теневой демон",
+   "shadow demon",
+   "шд",
+   "шадоу демон"
+  ]
+ },
+ "npc_dota_hero_shadow_shaman": {
+  "en": "Shadow Shaman",
+  "ru": "Теневой Шаман",
+  "aliases": [
+   "теневой шаман",
+   "shadow shaman",
+   "шаман",
+   "раста",
+   "шш"
+  ]
+ },
+ "npc_dota_hero_shredder": {
+  "en": "Timbersaw",
+  "ru": "Тимберсо",
+  "aliases": [
+   "тимберсо",
+   "timbersaw",
+   "тимбер",
+   "пила"
+  ]
+ },
+ "npc_dota_hero_silencer": {
+  "en": "Silencer",
+  "ru": "Сайленсер",
+  "aliases": [
+   "сайленсер",
+   "silencer",
+   "сало",
+   "сайлик"
+  ]
+ },
+ "npc_dota_hero_skeleton_king": {
+  "en": "Wraith King",
+  "ru": "Царь Скелетов",
+  "aliases": [
+   "царь скелетов",
+   "wraith king",
+   "вк",
+   "скелет",
+   "рейс кинг",
+   "врайт кинг"
+  ]
+ },
+ "npc_dota_hero_skywrath_mage": {
+  "en": "Skywrath Mage",
+  "ru": "Маг-Небесник",
+  "aliases": [
+   "маг небесник",
+   "skywrath mage",
+   "скай",
+   "скайрат",
+   "скайврат"
+  ]
+ },
+ "npc_dota_hero_slardar": {
+  "en": "Slardar",
+  "ru": "Слардар",
+  "aliases": [
+   "слардар",
+   "slardar",
+   "слард"
+  ]
+ },
+ "npc_dota_hero_slark": {
+  "en": "Slark",
+  "ru": "Сларк",
+  "aliases": [
+   "сларк",
+   "slark"
+  ]
+ },
+ "npc_dota_hero_snapfire": {
+  "en": "Snapfire",
+  "ru": "Снэпфаер",
+  "aliases": [
+   "снэпфаер",
+   "snapfire",
+   "снэп",
+   "снеп",
+   "бабка"
+  ]
+ },
+ "npc_dota_hero_sniper": {
+  "en": "Sniper",
+  "ru": "Снайпер",
+  "aliases": [
+   "снайпер",
+   "sniper",
+   "снайп",
+   "снапер"
+  ]
+ },
+ "npc_dota_hero_spectre": {
+  "en": "Spectre",
+  "ru": "Спектра",
+  "aliases": [
+   "спектра",
+   "spectre",
+   "спек",
+   "спектр"
+  ]
+ },
+ "npc_dota_hero_spirit_breaker": {
+  "en": "Spirit Breaker",
+  "ru": "Дух-разрушитель",
+  "aliases": [
+   "дух разрушитель",
+   "spirit breaker",
+   "бара",
+   "спирит брейкер",
+   "бык"
+  ]
+ },
+ "npc_dota_hero_storm_spirit": {
+  "en": "Storm Spirt",
+  "ru": "Штормовой Дух",
+  "aliases": [
+   "штормовой дух",
+   "storm spirt",
+   "шторм",
+   "штормспирит",
+   "сторм"
+  ]
+ },
+ "npc_dota_hero_sven": {
+  "en": "Sven",
+  "ru": "Свен",
+  "aliases": [
+   "свен",
+   "sven"
+  ]
+ },
+ "npc_dota_hero_techies": {
+  "en": "Techies",
+  "ru": "Техники",
+  "aliases": [
+   "техники",
+   "techies",
+   "течис",
+   "минер",
+   "техис",
+   "течиз"
+  ]
+ },
+ "npc_dota_hero_templar_assassin": {
+  "en": "Templar Assassin",
+  "ru": "Темплар Ассассин",
+  "aliases": [
+   "темплар ассассин",
+   "templar assassin",
+   "та",
+   "темпларка",
+   "темплар",
+   "ланая"
+  ]
+ },
+ "npc_dota_hero_terrorblade": {
+  "en": "Terrorblade",
+  "ru": "Террорблейд",
+  "aliases": [
+   "террорблейд",
+   "terrorblade",
+   "тб",
+   "терорблейд",
+   "терроблейд"
+  ]
+ },
+ "npc_dota_hero_tidehunter": {
+  "en": "Tidehunter",
+  "ru": "Тайдхантер",
+  "aliases": [
+   "тайдхантер",
+   "tidehunter",
+   "тайд",
+   "тайдик"
+  ]
+ },
+ "npc_dota_hero_tinker": {
+  "en": "Tinker",
+  "ru": "Тинкер",
+  "aliases": [
+   "тинкер",
+   "tinker",
+   "тинк"
+  ]
+ },
+ "npc_dota_hero_tiny": {
+  "en": "Tiny",
+  "ru": "Тайни",
+  "aliases": [
+   "тайни",
+   "tiny",
+   "тини"
+  ]
+ },
+ "npc_dota_hero_treant": {
+  "en": "Treant Protector",
+  "ru": "Древний Протектор",
+  "aliases": [
+   "древний протектор",
+   "treant protector",
+   "трент",
+   "треант"
+  ]
+ },
+ "npc_dota_hero_troll_warlord": {
+  "en": "Troll Warlord",
+  "ru": "Тролль-Вождь",
+  "aliases": [
+   "тролль вождь",
+   "troll warlord",
+   "тролль",
+   "трол",
+   "троль"
+  ]
+ },
+ "npc_dota_hero_tusk": {
+  "en": "Tusk",
+  "ru": "Туск",
+  "aliases": [
+   "туск",
+   "tusk",
+   "таск"
+  ]
+ },
+ "npc_dota_hero_undying": {
+  "en": "Undying",
+  "ru": "Нежить",
+  "aliases": [
+   "нежить",
+   "undying",
+   "андаинг",
+   "андайинг",
+   "ундя",
+   "зомби"
+  ]
+ },
+ "npc_dota_hero_ursa": {
+  "en": "Ursa",
+  "ru": "Урса",
+  "aliases": [
+   "урса",
+   "ursa",
+   "медведь"
+  ]
+ },
+ "npc_dota_hero_vengefulspirit": {
+  "en": "Vengeful Spirit",
+  "ru": "Мстительный Дух",
+  "aliases": [
+   "мстительный дух",
+   "vengeful spirit",
+   "венга",
+   "вэнга",
+   "вендж"
+  ]
+ },
+ "npc_dota_hero_venomancer": {
+  "en": "Venomancer",
+  "ru": "Веномансер",
+  "aliases": [
+   "веномансер",
+   "venomancer",
+   "веном",
+   "веник"
+  ]
+ },
+ "npc_dota_hero_viper": {
+  "en": "Viper",
+  "ru": "Вайпер",
+  "aliases": [
+   "вайпер",
+   "viper",
+   "випер"
+  ]
+ },
+ "npc_dota_hero_visage": {
+  "en": "Visage",
+  "ru": "Визаж",
+  "aliases": [
+   "визаж",
+   "visage"
+  ]
+ },
+ "npc_dota_hero_void_spirit": {
+  "en": "Void Spirit",
+  "ru": "Дух Пустоты",
+  "aliases": [
+   "дух пустоты",
+   "void spirit",
+   "войд спирит",
+   "вс",
+   "воид спирит"
+  ]
+ },
+ "npc_dota_hero_warlock": {
+  "en": "Warlock",
+  "ru": "Варлок",
+  "aliases": [
+   "варлок",
+   "warlock",
+   "варик"
+  ]
+ },
+ "npc_dota_hero_weaver": {
+  "en": "Weaver",
+  "ru": "Ткач",
+  "aliases": [
+   "ткач",
+   "weaver",
+   "вивер"
+  ]
+ },
+ "npc_dota_hero_windrunner": {
+  "en": "Windranger",
+  "ru": "Ветробег",
+  "aliases": [
+   "ветробег",
+   "windranger",
+   "вр",
+   "виндраннер",
+   "ветрогонка",
+   "виндра"
+  ]
+ },
+ "npc_dota_hero_winter_wyvern": {
+  "en": "Winter Wyvern",
+  "ru": "Зимняя Виверна",
+  "aliases": [
+   "зимняя виверна",
+   "winter wyvern",
+   "виверна",
+   "вв",
+   "винтер"
+  ]
+ },
+ "npc_dota_hero_wisp": {
+  "en": "Io",
+  "ru": "Ио",
+  "aliases": [
+   "ио",
+   "io",
+   "виспа",
+   "висп"
+  ]
+ },
+ "npc_dota_hero_witch_doctor": {
+  "en": "Witch Doctor",
+  "ru": "Ведьмак",
+  "aliases": [
+   "ведьмак",
+   "witch doctor",
+   "вд",
+   "вичдоктор",
+   "доктор"
+  ]
+ },
+ "npc_dota_hero_zuus": {
+  "en": "Zeus",
+  "ru": "Зевс",
+  "aliases": [
+   "зевс",
+   "zeus",
+   "зеус"
+  ]
+ }
+}

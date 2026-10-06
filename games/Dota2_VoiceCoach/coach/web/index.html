@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Голосовой тренер</title>
+<style>
+  :root { --bg:#14161a; --fg:#e8e6e3; --muted:#9aa0a6; --acc:#d9534f; --ok:#5cb85c; --card:#1e2127; }
+  body { margin:0; font:16px/1.4 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width:760px; margin:0 auto; padding:16px; }
+  h1 { font-size:20px; margin:0 0 12px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+  select, input, button { font:inherit; padding:8px 10px; border-radius:8px; border:1px solid #3a3f47; background:var(--card); color:var(--fg); }
+  input[type=text] { flex:1; min-width:200px; }
+  #ptt { width:100%; padding:28px; font-size:22px; background:#2a2f37; user-select:none; touch-action:none; }
+  #ptt.on { background:var(--acc); }
+  .log { background:var(--card); border-radius:8px; padding:8px 12px; max-height:50vh; overflow:auto; }
+  .entry { border-bottom:1px solid #2c3038; padding:6px 0; }
+  .muted { color:var(--muted); font-size:14px; }
+  .cmd { display:inline-block; margin:2px 6px 2px 0; padding:2px 8px; border-radius:6px; background:#263a2a; }
+  .clar { background:#4a2b2b; }
+  .ev { color:#9fd3ff; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Голосовой тренер Dota 2</h1>
+  <div class="row">
+    <label>Комната <input id="room" value="local" size="8"></label>
+    <label>Команда <select id="team"><option value="radiant">Свет (Radiant)</option><option value="dire">Тьма (Dire)</option></select></label>
+    <label><input type="checkbox" id="tts" checked> озвучивать ответы</label>
+  </div>
+  <button id="ptt">Держите кнопку (или пробел) и говорите</button>
+  <p class="muted" id="hint">Распознавание речи — встроенное в Chrome (Web Speech API, русский). Если его нет — пишите текстом.</p>
+  <div class="row">
+    <input type="text" id="text" placeholder="например: Миракл, фарми лес, остальные на Рошана">
+    <button id="send">Отправить</button>
+  </div>
+  <div class="log" id="log"></div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const api = (p) => `/api/${encodeURIComponent($('room').value)}/${p}`;
+let lastEvent = 0;
+
+function addEntry(html) {
+  const d = document.createElement('div'); d.className = 'entry'; d.innerHTML = html;
+  $('log').prepend(d);
+}
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function say(text, source) {
+  if (!text.trim()) return;
+  const r = await fetch(api('say'), { method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ team:$('team').value, text, source }) });
+  const res = await r.json();
+  if (!r.ok) { addEntry(`<b>Ошибка:</b> ${esc(res.error)}`); return; }
+  const cmds = (res.commands || []).map(c => {
+    const p = Object.entries(c.params).map(([k,v]) => `${k}=${v}`).join(' ');
+    return `<span class="cmd ${c.clarify ? 'clar' : ''}">${esc(c.action)} → [${c.agents.join(',')}] ${esc(p)} ${c.clarify ? '— ' + esc(c.clarify) : ''}</span>`;
+  }).join('');
+  addEntry(`«${esc(text)}» <span class="muted">уверенность ${res.confidence}${res.unknown.length ? ', не понял: ' + esc(res.unknown.join(', ')) : ''}</span><br>${cmds || '<span class="muted">команд нет</span>'}`);
+}
+
+$('send').onclick = () => { say($('text').value, 'text'); $('text').value = ''; };
+$('text').addEventListener('keydown', e => { if (e.key === 'Enter') $('send').onclick(); });
+
+// --- речь: Web Speech API, нажми-и-говори ---
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let rec = null, listening = false, finalText = '';
+if (SR) {
+  rec = new SR(); rec.lang = 'ru-RU'; rec.interimResults = true; rec.continuous = true; rec.maxAlternatives = 3;
+  rec.onresult = (e) => {
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalText += t + ' '; else interim += t;
+    }
+    $('ptt').textContent = (finalText + interim).trim() || 'Слушаю…';
+  };
+  rec.onend = () => { if (finalText.trim()) say(finalText, 'voice'); finalText = ''; $('ptt').textContent = 'Держите кнопку (или пробел) и говорите'; };
+  rec.onerror = (e) => addEntry(`<span class="muted">распознавание: ${esc(e.error)}</span>`);
+} else {
+  $('hint').textContent = 'В этом браузере нет распознавания речи (нужен Chrome или Edge). Работает ввод текстом.';
+}
+function start() { if (!rec || listening) return; listening = true; finalText = ''; $('ptt').classList.add('on'); try { rec.start(); } catch (e) {} }
+function stop() { if (!rec || !listening) return; listening = false; $('ptt').classList.remove('on'); rec.stop(); }
+$('ptt').addEventListener('pointerdown', start);
+$('ptt').addEventListener('pointerup', stop);
+$('ptt').addEventListener('pointerleave', stop);
+document.addEventListener('keydown', e => { if (e.code === 'Space' && document.activeElement !== $('text')) { e.preventDefault(); start(); } });
+document.addEventListener('keyup', e => { if (e.code === 'Space') stop(); });
+
+// --- ответы агентов: long-poll + озвучка ---
+async function pollEvents() {
+  while (true) {
+    try {
+      const r = await fetch(api(`events?team=${$('team').value}&after=${lastEvent}&wait=20`));
+      const res = await r.json();
+      for (const ev of res.events || []) {
+        lastEvent = Math.max(lastEvent, ev.seq);
+        addEntry(`<span class="ev">${ev.pos ? 'Агент ' + ev.pos : 'Тренеру'}: ${esc(ev.text)}</span>`);
+        if ($('tts').checked && window.speechSynthesis && ev.text) {
+          const u = new SpeechSynthesisUtterance(ev.text); u.lang = 'ru-RU'; speechSynthesis.speak(u);
+        }
+      }
+    } catch (e) { await new Promise(r => setTimeout(r, 2000)); }
+  }
+}
+pollEvents();
+</script>
+</body>
+</html>
