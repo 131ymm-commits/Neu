@@ -1,0 +1,208 @@
+<title>Комната Neu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Раскладка: лента обсуждения слева, окно кода справа (на телефоне — друг под другом). Тон — лабораторный журнал: графит, бумага, медный акцент. */
+:root{
+  --bg:#f3f2ee; --panel:#ffffff; --ink:#1f2328; --muted:#646b73; --line:#d9d6cf;
+  --accent:#b8612a; --accent-ink:#ffffff; --code-bg:#1e2227; --code-ink:#e6e1d6; --ok:#2f7d4f; --err:#b3362f; --claude:#2e5d86;
+  --f-body:"Golos Text", "Segoe UI", Roboto, Arial, sans-serif; --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#16191d; --panel:#1e2227; --ink:#e8e4da; --muted:#9aa1a9; --line:#2f353c;
+  --accent:#e08a4f; --accent-ink:#16191d; --code-bg:#0f1114; --code-ink:#e6e1d6; --ok:#5cbf83; --err:#ef7a70; --claude:#7fb2e0; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#16191d; --panel:#1e2227; --ink:#e8e4da; --muted:#9aa1a9; --line:#2f353c;
+  --accent:#e08a4f; --accent-ink:#16191d; --code-bg:#0f1114; --code-ink:#e6e1d6; --ok:#5cbf83; --err:#ef7a70; --claude:#7fb2e0; color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5}
+.wrap{padding-inline:16px; padding-block:16px; max-width:1280px; margin:0 auto; display:grid; gap:16px; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); align-items:start}
+@media (max-width:860px){.wrap{grid-template-columns:minmax(0,1fr)}}
+header.top{grid-column:1/-1; display:flex; flex-wrap:wrap; gap:8px 16px; align-items:baseline; justify-content:space-between; border-bottom:1px solid var(--line); padding-bottom:10px}
+h1{font-size:22px; margin:0; letter-spacing:.01em; text-wrap:balance}
+h1 small{font-weight:400; color:var(--muted); font-size:14px; margin-left:8px}
+.status{font-size:13px; color:var(--muted); display:flex; gap:12px; flex-wrap:wrap}
+.dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--muted); margin-right:6px; vertical-align:middle}
+.dot.on{background:var(--ok)}
+section.pane{background:var(--panel); border:1px solid var(--line); border-radius:6px; display:flex; flex-direction:column; min-width:0}
+.pane h2{font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0; padding:10px 14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:8px; align-items:center}
+#feed{padding:12px 14px; display:flex; flex-direction:column; gap:14px; max-height:62vh; overflow-y:auto; min-height:240px}
+.msg{display:grid; gap:4px; min-width:0}
+.msg .who{font-size:12px; color:var(--muted); display:flex; gap:8px; align-items:baseline}
+.msg .who b{color:var(--ink); font-weight:600}
+.msg.claude .who b{color:var(--claude)}
+.msg .text{white-space:pre-wrap; overflow-wrap:anywhere}
+.msg pre, .out{margin:0; background:var(--code-bg); color:var(--code-ink); font-family:var(--f-mono); font-size:13px; padding:10px 12px; border-radius:4px; overflow-x:auto; white-space:pre}
+.out{border-left:3px solid var(--ok); background:transparent; color:var(--ink); border-radius:0; padding:6px 10px}
+.out.err{border-left-color:var(--err); color:var(--err)}
+.tag{font-family:var(--f-mono); font-size:11px; padding:1px 6px; border:1px solid var(--line); border-radius:3px; color:var(--muted)}
+.tag.wait{border-color:var(--accent); color:var(--accent)}
+.msg .acts{display:flex; gap:10px; flex-wrap:wrap}
+.linkbtn{background:none; border:0; padding:0; color:var(--accent); font:inherit; font-size:12px; cursor:pointer; text-decoration:underline; text-underline-offset:2px}
+.empty{color:var(--muted); font-size:14px}
+form.say{display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--line); flex-wrap:wrap}
+form.say textarea{flex:1 1 220px; min-width:0; resize:vertical; min-height:42px; font:inherit; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:4px; padding:8px 10px}
+button.main{background:var(--accent); color:var(--accent-ink); border:0; border-radius:4px; padding:8px 14px; font:inherit; font-weight:600; cursor:pointer}
+button.ghost{background:transparent; color:var(--ink); border:1px solid var(--line); border-radius:4px; padding:7px 12px; font:inherit; cursor:pointer}
+button:focus-visible, textarea:focus-visible, select:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+button:disabled{opacity:.5; cursor:default}
+.editor{display:grid; grid-template-columns:auto minmax(0,1fr); background:var(--code-bg); min-height:300px}
+.gutter{font-family:var(--f-mono); font-size:13px; line-height:20px; color:#6b737c; text-align:right; padding:10px 8px 10px 12px; user-select:none; white-space:pre}
+#code{font-family:var(--f-mono); font-size:13px; line-height:20px; color:var(--code-ink); background:transparent; border:0; outline:none; resize:vertical; padding:10px 12px; min-height:300px; tab-size:4; white-space:pre; overflow:auto}
+.bar{display:flex; gap:8px; padding:10px 14px; border-top:1px solid var(--line); flex-wrap:wrap; align-items:center}
+.bar select{font:inherit; color:var(--ink); background:var(--bg); border:1px solid var(--line); border-radius:4px; padding:7px 8px}
+.bar .hint{font-size:12px; color:var(--muted); flex:1 1 200px}
+#result{padding:10px 14px; border-top:1px solid var(--line); display:grid; gap:6px}
+#result .out{max-height:220px; overflow:auto}
+.note{grid-column:1/-1; font-size:13px; color:var(--muted); max-width:75ch}
+.note b{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Комната Neu <small>обсуждение и код вместе с Claude</small></h1>
+    <div class="status"><span id="st-db"><span class="dot"></span>лента: подключение…</span><span id="st-me"></span></div>
+  </header>
+
+  <section class="pane" aria-labelledby="h-feed">
+    <h2 id="h-feed">Обсуждение <button class="linkbtn" id="ping" type="button" hidden>Позвать Claude</button></h2>
+    <div id="feed" aria-live="polite"><p class="empty">Здесь появится обсуждение. Напишите первое сообщение внизу или отправьте код из окна справа.</p></div>
+    <form class="say" id="say">
+      <label for="msg" class="visually-hidden" hidden>Сообщение</label>
+      <textarea id="msg" placeholder="Сообщение… (Ctrl+Enter — отправить)"></textarea>
+      <button class="main" id="send" type="submit">Отправить</button>
+    </form>
+  </section>
+
+  <section class="pane" aria-labelledby="h-code">
+    <h2 id="h-code">Код <span class="tag" id="runner-tag">JavaScript запускается здесь</span></h2>
+    <div class="editor"><div class="gutter" id="gutter">1</div><textarea id="code" spellcheck="false" aria-label="Код"></textarea></div>
+    <div class="bar">
+      <select id="lang" aria-label="Язык"><option value="js">JavaScript</option><option value="py">Python</option></select>
+      <button class="main" id="run" type="button">Запустить</button>
+      <button class="ghost" id="share" type="button">В обсуждение</button>
+      <span class="hint" id="hint">JavaScript выполняется в вашем браузере, отдельно от страницы, до 5 секунд.</span>
+    </div>
+    <div id="result" hidden></div>
+  </section>
+
+  <p class="note"><b>Как это работает.</b> Лента общая: её видят все, кто открыл комнату, и Claude читает её при каждом пробуждении. JavaScript запускается прямо здесь. Python выполняет Claude у себя (настоящий Python 3 с библиотеками): отправьте код с языком Python в обсуждение — результат придёт ответом. Чтобы Claude откликнулся сразу, нажмите «Позвать Claude» и оставьте короткий комментарий: комментарии будят его сессию.</p>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const feed = $('#feed'), code = $('#code'), gutter = $('#gutter'), lang = $('#lang');
+let db = null, me = null, userApi = null, comments = null, msgs = [];
+
+const SAMPLE = {
+  js: `// Пример: сколько машин нужно на красные колбы (Factorio)
+const packPerSec = 1;            // хотим 1 колбу в секунду
+const recipeTime = 5;            // красная колба — 5 с
+const speed = 0.75;              // сборщик 2
+const machines = packPerSec * recipeTime / speed;
+console.log('сборщиков:', Math.ceil(machines), '(точно', machines.toFixed(2) + ')');`,
+  py: `# Python выполняет Claude у себя: отправьте этот код в обсуждение
+import math
+pack_per_sec, recipe_time, speed = 1, 5, 0.75
+machines = pack_per_sec * recipe_time / speed
+print("сборщиков:", math.ceil(machines), f"(точно {machines:.2f})")`
+};
+function draft(k, v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k, v) }catch(e){ return null } }
+code.value = draft('neu-room-code') || SAMPLE.js;
+lang.value = draft('neu-room-lang') || 'js';
+function lines(){ const n = code.value.split('\n').length; gutter.textContent = Array.from({length:n}, (_, i) => i + 1).join('\n') }
+lines();
+code.addEventListener('input', () => { lines(); draft('neu-room-code', code.value) });
+code.addEventListener('scroll', () => { gutter.scrollTop = code.scrollTop });
+code.addEventListener('keydown', e => {
+  if(e.key === 'Tab'){ e.preventDefault(); const s = code.selectionStart, t = code.selectionEnd; code.setRangeText('    ', s, t, 'end'); lines() }
+  if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); $('#run').click() }
+});
+lang.addEventListener('change', () => {
+  draft('neu-room-lang', lang.value);
+  const isDefault = Object.values(SAMPLE).includes(code.value.trim()) || !code.value.trim();
+  if(isDefault){ code.value = SAMPLE[lang.value]; lines() }
+  $('#run').textContent = lang.value === 'js' ? 'Запустить' : 'Попросить Claude запустить';
+  $('#runner-tag').textContent = lang.value === 'js' ? 'JavaScript запускается здесь' : 'Python запускает Claude';
+  $('#hint').textContent = lang.value === 'js' ? 'JavaScript выполняется в вашем браузере, отдельно от страницы, до 5 секунд.' : 'Код уйдёт в обсуждение с пометкой «запустить»; Claude выполнит его и ответит результатом.';
+});
+lang.dispatchEvent(new Event('change'));
+
+// JavaScript — в отдельном Worker из blob: (не трогает страницу), console.log перехватывается, предел 5 с
+function runJS(src){
+  return new Promise(resolve => {
+    const pre = `const __o=[];const __f=(...a)=>a.map(x=>{try{return typeof x==='string'?x:JSON.stringify(x)}catch(e){return String(x)}}).join(' ');
+      console.log=(...a)=>__o.push(__f(...a));console.error=(...a)=>__o.push('ошибка: '+__f(...a));console.warn=console.log;
+      self.onmessage=async()=>{try{const r=await (async()=>{\n`;
+    const post = `\n})();if(r!==undefined)__o.push('→ '+__f(r));postMessage({ok:true,out:__o.join('\\n')})}catch(e){postMessage({ok:false,out:__o.concat(String(e&&e.stack||e)).join('\\n')})}}`;
+    let w;
+    try{ w = new Worker(URL.createObjectURL(new Blob([pre + src + post], {type:'text/javascript'}))) }
+    catch(e){ resolve({ok:false, out:'Не удалось запустить: ' + e.message}); return }
+    const timer = setTimeout(() => { w.terminate(); resolve({ok:false, out:'Остановлено: дольше 5 секунд.'}) }, 5000);
+    w.onmessage = ev => { clearTimeout(timer); w.terminate(); resolve(ev.data) };
+    w.onerror = ev => { clearTimeout(timer); w.terminate(); resolve({ok:false, out:'Ошибка в коде: ' + (ev.message || 'не удалось разобрать')}) };
+    w.postMessage(0);
+  });
+}
+function showResult(r){
+  const box = $('#result'); box.hidden = false; box.replaceChildren();
+  const o = document.createElement('pre'); o.className = 'out' + (r.ok ? '' : ' err'); o.textContent = r.out || '(нет вывода)'; box.append(o);
+}
+$('#run').addEventListener('click', async () => {
+  if(lang.value === 'py'){ await post({kind:'code', lang:'py', code:code.value, run_request:true}); return }
+  $('#run').disabled = true; const r = await runJS(code.value); $('#run').disabled = false; showResult(r); lastRun = {code:code.value, r};
+});
+let lastRun = null;
+$('#share').addEventListener('click', () => {
+  const out = lastRun && lastRun.code === code.value ? lastRun.r : null;
+  post({kind:'code', lang:lang.value, code:code.value, output: out ? out.out : '', output_ok: out ? out.ok : null, run_request: lang.value === 'py'});
+});
+$('#say').addEventListener('submit', e => { e.preventDefault(); const t = $('#msg').value.trim(); if(!t) return; post({kind:'text', text:t}).then(ok => { if(ok) $('#msg').value = '' }) });
+$('#msg').addEventListener('keydown', e => { if(e.key === 'Enter' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); $('#say').requestSubmit() } });
+
+async function post(m){
+  if(!db){ setStatus(false, 'лента недоступна — войдите в claude.ai, чтобы писать'); return false }
+  try{ await db.collection('messages').add({...m, author: me || 'гость', who: 'human', ts: Date.now()}); return true }
+  catch(e){ setStatus(true, e && e.code === 'not_granted' ? 'у вас доступ только на чтение' : 'не отправлено: ' + (e && e.message || e)); return false }
+}
+function setStatus(on, text){ $('#st-db').innerHTML = ''; const d = document.createElement('span'); d.className = 'dot' + (on ? ' on' : ''); $('#st-db').append(d, document.createTextNode(text)) }
+
+async function render(){
+  if(!msgs.length){ feed.innerHTML = '<p class="empty">Здесь появится обсуждение. Напишите первое сообщение внизу или отправьте код из окна справа.</p>'; return }
+  const ids = [...new Set(msgs.filter(m => m.who !== 'claude' && m.author).map(m => m.author))];
+  let names = {}; if(userApi && ids.length){ try{ names = await userApi.profiles(ids) }catch(e){} }
+  const atBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight < 40;
+  feed.replaceChildren(...msgs.map(m => {
+    const el = document.createElement('article'); el.className = 'msg' + (m.who === 'claude' ? ' claude' : '');
+    const who = document.createElement('div'); who.className = 'who';
+    const b = document.createElement('b'); b.textContent = m.who === 'claude' ? 'Claude' : ((names[m.author] && names[m.author].name) || (m.author === me ? 'Вы' : 'Участник'));
+    const t = document.createElement('span'); t.textContent = new Date(m.ts || 0).toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+    who.append(b, t);
+    if(m.kind === 'code'){ const g = document.createElement('span'); g.className = 'tag'; g.textContent = m.lang === 'py' ? 'Python' : 'JavaScript'; who.append(g) }
+    if(m.run_request && !m.output){ const g = document.createElement('span'); g.className = 'tag wait'; g.textContent = 'ждёт запуска у Claude'; who.append(g) }
+    el.append(who);
+    if(m.text){ const p = document.createElement('div'); p.className = 'text'; p.textContent = m.text; el.append(p) }
+    if(m.code){ const pre = document.createElement('pre'); pre.textContent = m.code; el.append(pre);
+      const acts = document.createElement('div'); acts.className = 'acts';
+      const open = document.createElement('button'); open.type = 'button'; open.className = 'linkbtn'; open.textContent = 'Открыть в окне кода';
+      open.addEventListener('click', () => { code.value = m.code; lang.value = m.lang === 'py' ? 'py' : 'js'; lang.dispatchEvent(new Event('change')); lines(); draft('neu-room-code', code.value); code.focus() });
+      acts.append(open); el.append(acts) }
+    if(m.output){ const o = document.createElement('pre'); o.className = 'out' + (m.output_ok === false ? ' err' : ''); o.textContent = m.output; el.append(o) }
+    return el;
+  }));
+  if(atBottom) feed.scrollTop = feed.scrollHeight;
+}
+
+(async () => {
+  if(!window.claude || !window.claude.use){ setStatus(false, 'лента работает только на claude.ai'); return }
+  const [d, u, c] = await Promise.all([claude.use('db'), claude.use('user'), claude.use('comments')]);
+  userApi = u; comments = c;
+  if(u){ try{ me = await u.id() }catch(e){} }
+  if(c){ const pb = $('#ping'); pb.hidden = false; pb.addEventListener('click', () => { c.openComposer({element: feed}).catch(() => {}) }) }
+  if(!d){ setStatus(false, 'лента недоступна — войдите в claude.ai'); return }
+  db = d; setStatus(true, 'лента подключена');
+  db.collection('messages').orderBy('ts').limit(300).onSnapshot(snap => { msgs = snap.docs.map(x => ({id:x.id, ...x.data()})); render() },
+    e => setStatus(false, 'лента отключилась: ' + (e && e.code || 'ошибка') + ' — обновите страницу'));
+})();
+</script>
