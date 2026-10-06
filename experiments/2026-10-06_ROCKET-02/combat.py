@@ -32,7 +32,15 @@ script.on_nth_tick(1, function(e)
     local hx, hy = s.hx - p.x, s.hy - p.y; local dh = math.sqrt(hx * hx + hy * hy) + 1e-6
     if s.retreating and dh < 3 then return stop(s.no_ammo and "кончились патроны, отошёл к своим" or "отошёл к своим по здоровью") end
     mx, my = hx / dh, hy / dh
-    if not s.retreating and dh < 4 then mx, my = 0, 0 end
+    if not s.retreating then
+      -- выманивание: пока кусак рядом нет — идти к цели; как только кусака ближе 20 — бежать к турелям; у турелей ждать
+      local chaser = c.surface.find_entities_filtered{position = p, radius = 20, force = "enemy", type = "unit", limit = 1}[1]
+      if not chaser and dh < 4 and not s.lured then mx, my = -rx, -ry
+      elseif not chaser and not s.lured then mx, my = -rx, -ry
+      elseif chaser then s.lured = true
+      end
+      if s.lured and dh < 4 then mx, my = 0, 0; if not chaser then s.lured = false end end
+    end
   elseif s.retreating then
     mx, my = rx, ry
     if d > s.r + 25 then return stop(s.no_ammo and "кончились патроны, отошёл" or "отошёл по здоровью") end
@@ -66,14 +74,15 @@ script.on_nth_tick(1, function(e)
   end
   -- застревание (деревья, скалы, постройки): за 10 тиков сдвинулся меньше 0,3 — сменить сторону обхода и на 30 тиков отвернуть на 90°
   if game.tick % 10 == 0 then
-    if s.lx and (p.x - s.lx) ^ 2 + (p.y - s.ly) ^ 2 < 0.09 then s.side = -s.side; s.turn_until = game.tick + 30; s.stuck = (s.stuck or 0) + 1 end
+    if s.lx and not s.idle and (p.x - s.lx) ^ 2 + (p.y - s.ly) ^ 2 < 0.09 then s.side = -s.side; s.turn_until = game.tick + 30; s.stuck = (s.stuck or 0) + 1 end
     s.lx, s.ly = p.x, p.y
   end
   if s.turn_until and game.tick < s.turn_until then mx, my = -my * s.side, mx * s.side end
-  if mx == 0 and my == 0 then c.walking_state = {walking = false} else c.walking_state = {walking = true, direction = d8(mx, my)} end
+  s.idle = (mx == 0 and my == 0)
+  if s.idle then c.walking_state = {walking = false} else c.walking_state = {walking = true, direction = d8(mx, my)} end
   if game.tick % 30 == 0 then
-    local left = c.surface.count_entities_filtered{position = {s.cx, s.cy}, radius = s.clear_radius, force = "enemy"}
-      + c.surface.count_entities_filtered{position = p, radius = 25, force = "enemy"}
+    local left = c.surface.count_entities_filtered{position = {s.cx, s.cy}, radius = s.clear_radius, force = "enemy", type = {"unit", "turret", "unit-spawner"}}
+      + c.surface.count_entities_filtered{position = p, radius = 25, force = "enemy", type = {"unit", "turret", "unit-spawner"}}
     if left == 0 then return stop("зачищено") end
   end
 end)
@@ -95,7 +104,9 @@ local s = "" for i = 1, #g do if g[i].valid_for_read then s = s .. g[i].name .. 
 def scan(rcon, x=None, y=None, radius=60):
     """Враги в радиусе: гнёзда, черви, кусаки — с координатами (как на карте игрока)."""
     pos = f'{{{x}, {y}}}' if x is not None else 'c.position'
-    q = '/sc ' + lua_char() + f''' local o = {{}} for _, e in pairs(c.surface.find_entities_filtered{{position = {pos}, radius = {radius}, force = "enemy"}}) do o[#o + 1] = {{name = e.name, x = math.floor(e.position.x * 10) / 10, y = math.floor(e.position.y * 10) / 10, hp = math.floor(e.health)}} end
+    if rcon.send_command('/sc ' + lua_char() + ' rcon.print((c and c.valid) and "1" or "0")').strip() != '1':
+        return dict(me=None, health=0, enemies=[], error='персонаж мёртв')
+    q = '/sc ' + lua_char() + f''' local o = {{}} for _, e in pairs(c.surface.find_entities_filtered{{position = {pos}, radius = {radius}, force = "enemy", type = {{"unit", "turret", "unit-spawner"}}}}) do o[#o + 1] = {{name = e.name, x = math.floor(e.position.x * 10) / 10, y = math.floor(e.position.y * 10) / 10, hp = math.floor(e.health)}} end
 rcon.print(helpers.table_to_json({{me = c.position, health = c.health, enemies = o}}))'''
     return json.loads(rcon.send_command(q).strip())
 
