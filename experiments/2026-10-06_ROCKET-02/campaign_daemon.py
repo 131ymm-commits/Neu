@@ -8,8 +8,21 @@ slot, logdir = int(sys.argv[1]), sys.argv[2]; os.makedirs(logdir, exist_ok=True)
 SOCK = f'/tmp/claude-0/fact/slot{slot}.sock'; NOTES = os.path.join(logdir, 'NOTES.md')
 BANNED = re.compile(r'(\bimport\b|__|\brcon|\binstance\b|\bexec\b|\beval\b|\bopen\s*\(|\bglobals\b|\blocals\b|\bgetattr\b|\bsetattr\b|\bvars\b|\bcompile\b|lua|/sc|/c\b)', re.I)
 START_INV = {"iron-plate": 8, "wood": 1, "pistol": 1, "firearm-magazine": 10, "burner-mining-drill": 1, "stone-furnace": 1}  # стартовый набор freeplay Factorio 2.0
-inst = FactorioInstance(address='localhost', tcp_port=27100 + slot, fast=True, all_technologies_researched=False)
-inst.initial_inventory = START_INV; inst.reset(all_technologies_researched=False)
+ATTACH = os.environ.get('NEU_ATTACH') == '1'   # переподключиться к живому миру БЕЗ сброса (после падения демона)
+class AttachInstance(FactorioInstance):
+    # initialise FLE без _reset: _reset вызывает reset_game_state, force.reset() (стирает исследования), регенерацию руды и очистку построек
+    def initialise(self, fast=True, all_technologies_researched=True, clear_entities=True):
+        self.rcon_client.send_command(f"/sc storage.fast = {str(fast).lower()}")
+        self.first_namespace._create_agent_characters(self.num_agents)
+        for script_name in ["lualib_util", "utils", "alerts", "connection_points", "recipe_fluid_connection_mappings", "serialize", "serialize_direction_fix"]:
+            self.lua_script_manager.load_init_into_game(script_name)
+        self._generate_chunks(center_x=0, center_y=0, chunk_radius=25)
+        self.first_namespace._clear_collision_boxes()
+if ATTACH:
+    inst = AttachInstance(address='localhost', tcp_port=27100 + slot, fast=True, all_technologies_researched=False)
+else:
+    inst = FactorioInstance(address='localhost', tcp_port=27100 + slot, fast=True, all_technologies_researched=False)
+    inst.initial_inventory = START_INV; inst.reset(all_technologies_researched=False)
 LOG = open(os.path.join(logdir, 'campaign.jsonl'), 'a')
 def log(**k): LOG.write(json.dumps(dict(t=time.time(), **k), ensure_ascii=False) + '\n'); LOG.flush()
 MILE = ['iron-plate', 'copper-plate', 'steel-plate', 'stone-brick', 'plastic-bar', 'sulfur', 'electronic-circuit', 'advanced-circuit', 'processing-unit', 'engine-unit',
@@ -73,4 +86,5 @@ while True:
                 out.update(step=steps, steps_left=max_steps - steps)
             log(event=cmd, ep=ep, params=prm, out=out)
     else: out = dict(error='неизвестная команда')
-    c.sendall(json.dumps(out, ensure_ascii=False).encode()); c.close()
+    try: c.sendall(json.dumps(out, ensure_ascii=False).encode()); c.close()
+    except OSError as e: log(event='client_gone', error=str(e))   # клиент оборвался (тайм-аут) — демон живёт дальше
