@@ -15,7 +15,13 @@ script.on_nth_tick(1, function(e)
   local function stop(why) s.active = false; s.result = why; c.walking_state = {walking = false}; c.shooting_state = {state = defines.shooting.not_shooting} end
   if game.tick >= s.until_tick then return stop("время вышло") end
   local p = c.position; local hp = c.health / c.max_health; s.min_hp = math.min(s.min_hp, hp)
-  local tgt = c.surface.find_nearest_enemy{position = p, max_distance = s.shoot_range, force = c.force}
+  local tgt = nil
+  for _, ty in ipairs(s.prio) do
+    local best, bd = nil, 1e9
+    for _, e in pairs(c.surface.find_entities_filtered{position = p, radius = s.shoot_range, force = "enemy", type = ty}) do
+      local dd = (e.position.x - p.x) ^ 2 + (e.position.y - p.y) ^ 2; if dd < bd then best, bd = e, dd end end
+    if best then tgt = best; break end
+  end
   if tgt then c.shooting_state = {state = defines.shooting.shooting_enemies, position = tgt.position} else c.shooting_state = {state = defines.shooting.not_shooting} end
   if ammo_count(c) == 0 and not s.no_ammo then s.no_ammo = true; s.retreating = true end
   local rx, ry = p.x - s.cx, p.y - s.cy; local d = math.sqrt(rx * rx + ry * ry) + 1e-6; rx, ry = rx / d, ry / d
@@ -60,9 +66,11 @@ def scan(rcon, x=None, y=None, radius=60):
 rcon.print(helpers.table_to_json({{me = c.position, health = c.health, enemies = o}}))'''
     return json.loads(rcon.send_command(q).strip())
 
-def fight(rcon, cx, cy, r=20, mode='strafe', seconds=30, retreat=0.4, side=1, clear_radius=None, shoot_range=None):
+def fight(rcon, cx, cy, r=20, mode='strafe', seconds=30, retreat=0.4, side=1, clear_radius=None, shoot_range=None, priority=None):
     """Бой: персонаж ходит (strafe — по кругу вокруг (cx,cy) радиусом r; kite — держит дистанцию r от ближайшего врага) и стреляет.
-    seconds — игровых секунд; retreat — доля здоровья для отхода; side — 1 по часовой, -1 против."""
+    seconds — игровых секунд; retreat — доля здоровья для отхода; side — 1 по часовой, -1 против;
+    priority — порядок целей по типам, по умолчанию ["unit", "turret", "unit-spawner"] (кусаки, черви, гнёзда)."""
+    prio = [t for t in (priority or ['unit', 'turret', 'unit-spawner']) if t in ('unit', 'turret', 'unit-spawner')] or ['unit', 'turret', 'unit-spawner']
     r = max(4.0, min(float(r), 40.0)); seconds = max(1.0, min(float(seconds), 180.0)); retreat = max(0.05, min(float(retreat), 0.95))
     clear_radius = float(clear_radius or r + 10); shoot_range = float(shoot_range or 30)
     rcon.send_command(INSTALL)
@@ -70,7 +78,7 @@ def fight(rcon, cx, cy, r=20, mode='strafe', seconds=30, retreat=0.4, side=1, cl
     q = '/sc ' + AC + lua_char() + f''' local g = c.get_inventory(defines.inventory.character_guns); local has = false; for i = 1, #g do if g[i].valid_for_read then has = true end end
 if not has then rcon.print("нет оружия в слотах — вызови arm") return end
 storage.cb = {{active = true, char = c, cx = {cx}, cy = {cy}, r = {r}, mode = "{'kite' if mode == 'kite' else 'strafe'}", side = {1 if side >= 0 else -1}, retreat = {retreat},
-  clear_radius = {clear_radius}, shoot_range = {shoot_range}, until_tick = game.tick + {int(seconds * 60)}, min_hp = 1, ammo0 = ac(c), hp0 = c.health}}
+  clear_radius = {clear_radius}, shoot_range = {shoot_range}, prio = {{{', '.join(repr(t).replace(chr(39), chr(34)) for t in prio)}}}, until_tick = game.tick + {int(seconds * 60)}, min_hp = 1, ammo0 = ac(c), hp0 = c.health}}
 rcon.print("start")'''
     st = rcon.send_command(q).strip()
     if st != 'start': return dict(error=st)

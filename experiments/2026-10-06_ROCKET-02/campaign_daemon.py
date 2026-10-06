@@ -67,7 +67,7 @@ while True:
             elif steps >= max_steps: out = dict(error=f'лимит шагов эпизода {max_steps} исчерпан')
             else:
                 steps += 1
-                keys = ('cx', 'cy', 'r', 'mode', 'seconds', 'retreat', 'side', 'clear_radius', 'shoot_range')
+                keys = ('cx', 'cy', 'r', 'mode', 'seconds', 'retreat', 'side', 'clear_radius', 'shoot_range', 'priority')
                 try: out = combat.fight(inst.rcon_client, **{k: prm[k] for k in keys if k in prm})
                 except Exception as e: out = dict(error=str(e)[-500:])
                 out.update(step=steps, steps_left=max_steps - steps)
