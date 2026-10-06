@@ -99,3 +99,48 @@ class ServerFlow(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ServerGetWrites(unittest.TestCase):
+    """Запись через GET и выдача в <title>: так пишут боты OHA и читает веб-панель кастомки."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.srv = serve("127.0.0.1", 0)
+        cls.base = f"http://127.0.0.1:{cls.srv.server_address[1]}"
+        threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.shutdown()
+
+    def get(self, path):
+        with urllib.request.urlopen(self.base + path, timeout=5) as r:
+            return r.read().decode("utf-8")
+
+    def test_state_merge_and_events_via_get(self):
+        from urllib.parse import quote
+        room = "/api/g1"
+        # сначала имена (как из файла состава), потом герои от игры — имена не теряются
+        call(self.base, "POST", room + "/state", {"team": "radiant", "agents": [
+            {"pos": 1, "name": "Вася", "aliases": ["вася"]}]})
+        d = quote(json.dumps({"agents": [{"pos": 1, "hero": "npc_dota_hero_pudge"}]}))
+        json.loads(self.get(f"{room}/w/state?team=radiant&d={d}"))
+        res = json.loads(self.get(f"{room}/log?team=radiant"))
+        code, said = call(self.base, "POST", room + "/say", {"team": "radiant", "text": "вася фарми лес"})
+        self.assertEqual(said["commands"][0]["agents"], [1])
+        code, said = call(self.base, "POST", room + "/say", {"team": "radiant", "text": "пудж фарми лес"})
+        self.assertEqual(said["commands"][0]["agents"], [1])     # герой тоже узнаётся
+        d = quote(json.dumps({"events": [{"pos": 1, "kind": "ack", "text": "Фармлю"}]}, ensure_ascii=False))
+        self.get(f"{room}/w/events?team=radiant&d={d}")
+        evs = json.loads(self.get(f"{room}/events?team=radiant&after=0"))["events"]
+        self.assertEqual(evs[-1]["text"], "Фармлю")
+
+    def test_commands_in_title(self):
+        import html as htmllib
+        room = "/api/g2"
+        call(self.base, "POST", room + "/say", {"team": "dire", "text": "все на роша"})
+        page = self.get(f"{room}/commands?team=dire&after=0&fmt=title")
+        title = page.split("<title>", 1)[1].split("</title>", 1)[0]
+        data = json.loads(htmllib.unescape(title))
+        self.assertEqual(data["commands"][0]["action"], "roshan")

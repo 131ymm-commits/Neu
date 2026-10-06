@@ -35,7 +35,7 @@ local LANES = { top = true, mid = true, bot = true }
 -- К какому классу относится режим (для добавок характера).
 local MODE_CLASS = {
   attack = "fight", roam = "fight", team_roam = "teamfight_join", defend_ally = "teamfight_join",
-  farm = "farm", laning = "farm", ward = "ward",
+  farm = "farm", laning = "farm", ward = "ward", retreat = "retreat",
 }
 
 local function clamp(x, lo, hi)

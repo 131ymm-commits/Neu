@@ -1,3 +1,7 @@
 __pycache__/
 experiments/2026-09-27_EVO-06/runs_nohup*.log
 games/*.zip
+games/Dota2_VoiceCoach/game/prototype_oha/roster.json
+games/Dota2_VoiceCoach/game/prototype_oha/lineup.json
+games/Dota2_VoiceCoach/digitizer/profiles/
+games/Dota2_VoiceCoach/digitizer/agents/

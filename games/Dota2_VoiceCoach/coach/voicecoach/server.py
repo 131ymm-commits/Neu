@@ -10,17 +10,25 @@
   POST /api/{room}/state    {"team","agents":[...],"enemy_heroes":[...]}  ← состав матча от игры
   POST /api/{room}/events   {"team","events":[{"pos","kind","text"}]}       ← ответы агентов
   GET  /api/{room}/events?team=radiant&after=N&wait=20       → клиенты ждут ответы (long-poll)
+  GET  /api/{room}/w/{state|events}?team=..&d=<JSON в url-кодировке>  ← запись через GET
+       (у ботов и у скрытой веб-панели кастомки нет удобного POST)
+  GET  /api/{room}/commands?...&fmt=title                    → тот же JSON внутри <title> страницы
+       (так ответ читает DOTAHTMLPanel в аркаде — research/00_SUMMARY.md)
   GET  /api/health
+
+Состав (имена и как их зовут голосом) можно задать заранее: --roster roster.json
+  {"radiant": [{"pos": 1, "name": "Miracle-", "aliases": ["миракл"]}, ...], "dire": [...]}
 """
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, unquote, urlparse
 
 from .parser import Agent, MatchContext, parse
 
@@ -70,15 +78,18 @@ class Room:
             return [c for c in self.commands[team] if c["seq"] > after]
 
     def set_state(self, team: str, state: dict) -> None:
+        """Состав матча. Сливается с уже известным по позиции: игра сообщает героев,
+        файл состава — имена и прозвища; пустое поле не затирает известное."""
         with self.lock:
-            agents = []
+            known = {a.pos: a for a in self.ctx[team].agents}
             for a in state.get("agents", []):
-                aliases = tuple(x.lower() for x in a.get("aliases", []) if x)
-                agents.append(Agent(pos=int(a["pos"]), name=a.get("name", ""), aliases=aliases,
-                                    hero=a.get("hero")))
-            if agents:
-                self.ctx[team].agents = agents
-            if "enemy_heroes" in state:
+                pos = int(a["pos"])
+                old = known.get(pos, Agent(pos=pos))
+                aliases = tuple(x.lower().replace("ё", "е") for x in a.get("aliases", []) if x)
+                known[pos] = Agent(pos=pos, name=a.get("name") or old.name,
+                                   aliases=aliases or old.aliases, hero=a.get("hero") or old.hero)
+            self.ctx[team].agents = [known[p] for p in sorted(known)]
+            if state.get("enemy_heroes"):
                 self.ctx[team].enemy_heroes = list(state["enemy_heroes"])
 
     def _event(self, team: str, ev: dict) -> None:
@@ -169,12 +180,27 @@ def make_handler(hub: Hub):
                     team = self._team(q)
                     after = int(q.get("after", 0))
                     if parts[2] == "commands":
-                        return self._send(200, {"commands": room.commands_after(team, after), "seq": room.seq})
+                        data = {"commands": room.commands_after(team, after), "seq": room.seq}
+                        if q.get("fmt") == "title":
+                            body = json.dumps(data, ensure_ascii=False)
+                            page = f"<!doctype html><html><head><title>{html.escape(body)}</title></head><body></body></html>"
+                            return self._send(200, raw=page.encode("utf-8"), ctype="text/html; charset=utf-8")
+                        return self._send(200, data)
                     if parts[2] == "events":
                         wait = min(float(q.get("wait", 0)), 30.0)
                         return self._send(200, {"events": room.events_after(team, after, wait)})
                     if parts[2] == "log":
                         return self._send(200, {"log": room.log[-100:]})
+                if len(parts) == 4 and parts[0] == "api" and parts[2] == "w":
+                    room = hub.room(parts[1])
+                    team = self._team(q)
+                    body = json.loads(unquote(q.get("d", "{}"))) if "d" in q else {}
+                    if parts[3] == "state":
+                        room.set_state(team, body)
+                        return self._send(200, {"ok": True})
+                    if parts[3] == "events":
+                        room.add_events(team, body.get("events", []))
+                        return self._send(200, {"ok": True})
                 return self._send(404, {"error": "нет такого пути"})
             except ValueError as e:
                 return self._send(400, {"error": str(e)})
@@ -204,6 +230,15 @@ def make_handler(hub: Hub):
     return Handler
 
 
+def load_roster(hub: "Hub", path: str, room: str = "local") -> None:
+    with open(path, encoding="utf-8") as f:
+        roster = json.load(f)
+    r = hub.room(room)
+    for team in TEAMS:
+        if roster.get(team):
+            r.set_state(team, {"agents": roster[team]})
+
+
 def serve(host="127.0.0.1", port=8787) -> ThreadingHTTPServer:
     hub = Hub()
     srv = ThreadingHTTPServer((host, port), make_handler(hub))
@@ -216,8 +251,13 @@ def main(argv=None):
     ap.add_argument("--host", default="127.0.0.1",
                     help="0.0.0.0 — чтобы подключался второй компьютер или телефон в той же сети")
     ap.add_argument("--port", type=int, default=8787)
+    ap.add_argument("--roster", help="JSON с именами агентов по командам (см. начало файла)")
+    ap.add_argument("--room", default="local")
     a = ap.parse_args(argv)
     srv = serve(a.host, a.port)
+    if a.roster:
+        load_roster(srv.hub, a.roster, a.room)
+        print(f"Состав загружен из {a.roster}")
     print(f"Тренер слушает http://{a.host}:{a.port}/  (Ctrl+C — выход)")
     try:
         srv.serve_forever()

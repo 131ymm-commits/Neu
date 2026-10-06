@@ -86,6 +86,8 @@ def agent_params(profile: dict, hero: str | None = None, obedience: float = 0.85
                 "teamfight_join": round((teamfight - 0.5) * 0.4, 3),
                 "ward": round((vision - 0.5) * 0.4, 3),
                 "stack": round((support - 0.5) * 0.4, 3),
+                # осторожные (малый риск) раньше хотят отступить, рисковые — позже
+                "retreat": round((0.5 - risk) * 0.4, 3),
             },
             "join_fight_radius": round(1200 + 1800 * teamfight),
             # механика: задержка реакции и точность добивания — грубая оценка по APM и линии
