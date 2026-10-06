@@ -1,0 +1,57 @@
+# ROCKET-02 (ваниль: исследования с нуля, стартовый набор обычной игры): демон кампании. Один постоянный мир на весь путь до запуска ракеты; эпизоды голов подключаются по очереди.
+# Мир не сбрасывается между эпизодами (FLE сбрасывает карту только при создании подключения — оно одно на всю кампанию).
+#   python campaign_daemon.py <slot> <logdir>
+import json, os, re, socket, sys, time, traceback
+from fle.env.instance import FactorioInstance
+slot, logdir = int(sys.argv[1]), sys.argv[2]; os.makedirs(logdir, exist_ok=True)
+SOCK = f'/tmp/claude-0/fact/slot{slot}.sock'; NOTES = os.path.join(logdir, 'NOTES.md')
+BANNED = re.compile(r'(\bimport\b|__|\brcon|\binstance\b|\bexec\b|\beval\b|\bopen\s*\(|\bglobals\b|\blocals\b|\bgetattr\b|\bsetattr\b|\bvars\b|\bcompile\b|lua|/sc|/c\b)', re.I)
+START_INV = {"iron-plate": 8, "wood": 1, "pistol": 1, "firearm-magazine": 10, "burner-mining-drill": 1, "stone-furnace": 1}  # стартовый набор freeplay Factorio 2.0
+inst = FactorioInstance(address='localhost', tcp_port=27100 + slot, fast=True, all_technologies_researched=False)
+inst.initial_inventory = START_INV; inst.reset(all_technologies_researched=False)
+LOG = open(os.path.join(logdir, 'campaign.jsonl'), 'a')
+def log(**k): LOG.write(json.dumps(dict(t=time.time(), **k), ensure_ascii=False) + '\n'); LOG.flush()
+MILE = ['iron-plate', 'copper-plate', 'steel-plate', 'stone-brick', 'plastic-bar', 'sulfur', 'electronic-circuit', 'advanced-circuit', 'processing-unit', 'engine-unit',
+        'electric-engine-unit', 'low-density-structure', 'solid-fuel', 'rocket-fuel', 'concrete', 'rocket-silo', 'rocket-part',
+        'lab', 'automation-science-pack', 'logistic-science-pack', 'military-science-pack', 'chemical-science-pack', 'production-science-pack', 'utility-science-pack']
+def milestones():
+    q = '/sc local st = game.forces.player.get_item_production_statistics(game.surfaces[1]); local o = {tick = game.tick, rockets = game.forces.player.rockets_launched, silos = #game.surfaces[1].find_entities_filtered{name="rocket-silo"}}\nlocal f = game.forces.player; local n = 0; for _, t in pairs(f.technologies) do if t.researched then n = n + 1 end end; o.techs_researched = n; o.research = f.current_research and f.current_research.name or ""; o.silo_tech = f.technologies["rocket-silo"].researched\n' + \
+        ''.join(f'o["{k}"] = st.get_input_count("{k}")\n' for k in MILE) + 'rcon.print(helpers.table_to_json(o))'
+    return json.loads(inst.rcon_client.send_command(q).strip())
+inst.rcon_client.send_command('/sc rcon.print(1)')
+ep = None; steps = 0; max_steps = 0
+log(event='campaign_start', milestones=milestones())
+if os.path.exists(SOCK): os.remove(SOCK)
+srv = socket.socket(socket.AF_UNIX); srv.bind(SOCK); srv.listen(1); print('READY', flush=True)
+while True:
+    c, _ = srv.accept(); data = b''
+    while not data.endswith(b'\n\x00'):
+        part = c.recv(65536)
+        if not part: break
+        data += part
+    req = json.loads(data[:-2].decode()); cmd = req.get('cmd')
+    if cmd == 'begin':      # начало эпизода (только оркестратор)
+        ep, steps, max_steps = req['ep'], 0, int(req['max_steps']); out = dict(ok=True); log(event='begin', ep=ep, max_steps=max_steps, milestones=milestones())
+    elif cmd == 'end':
+        out = dict(ep=ep, steps=steps, milestones=milestones()); log(event='end', **out); ep = None
+    elif cmd == 'status':
+        out = dict(ep=ep, steps_used=steps, max_steps=max_steps, milestones=milestones())
+    elif cmd == 'notes':
+        out = dict(notes=open(NOTES).read()[-20000:] if os.path.exists(NOTES) else '(пусто)')
+    elif cmd == 'note':
+        txt = req.get('code', '').strip()[:4000]
+        with open(NOTES, 'a') as f: f.write(f"\n\n## [{ep}] {time.strftime('%H:%M')}\n{txt}\n")
+        out = dict(ok=True); log(event='note', ep=ep, text=txt)
+    elif cmd == 'step':
+        code = req.get('code', '')
+        if ep is None: out = dict(error='эпизод не начат')
+        elif steps >= max_steps: out = dict(error=f'лимит шагов эпизода {max_steps} исчерпан')
+        elif BANNED.search(code): out = dict(error='запрещённая конструкция: ' + BANNED.search(code).group(0)); log(event='banned', ep=ep, code=code)
+        else:
+            steps += 1
+            try: r = inst.eval(code, agent_idx=0, timeout=300); res = r[2] if isinstance(r, tuple) and len(r) > 2 else str(r)
+            except Exception as e: res = 'ошибка: ' + ''.join(traceback.format_exception_only(type(e), e))[-1500:]
+            m = milestones(); out = dict(step=steps, steps_left=max_steps - steps, output=str(res)[-6000:], milestones=m)
+            log(event='step', ep=ep, step=steps, code=code, output=str(res)[-6000:], milestones=m)
+    else: out = dict(error='неизвестная команда')
+    c.sendall(json.dumps(out, ensure_ascii=False).encode()); c.close()
