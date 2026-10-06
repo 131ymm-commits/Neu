@@ -3,6 +3,7 @@
 #   python campaign_daemon.py <slot> <logdir>
 import json, os, re, socket, sys, time, traceback
 from fle.env.instance import FactorioInstance
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); import combat
 slot, logdir = int(sys.argv[1]), sys.argv[2]; os.makedirs(logdir, exist_ok=True)
 SOCK = f'/tmp/claude-0/fact/slot{slot}.sock'; NOTES = os.path.join(logdir, 'NOTES.md')
 BANNED = re.compile(r'(\bimport\b|__|\brcon|\binstance\b|\bexec\b|\beval\b|\bopen\s*\(|\bglobals\b|\blocals\b|\bgetattr\b|\bsetattr\b|\bvars\b|\bcompile\b|lua|/sc|/c\b)', re.I)
@@ -53,5 +54,23 @@ while True:
             except Exception as e: res = 'ошибка: ' + ''.join(traceback.format_exception_only(type(e), e))[-1500:]
             m = milestones(); out = dict(step=steps, steps_left=max_steps - steps, output=str(res)[-6000:], milestones=m)
             log(event='step', ep=ep, step=steps, code=code, output=str(res)[-6000:], milestones=m)
+    elif cmd in ('fight', 'scan', 'arm'):   # бой персонажа (combat.py): fight — шаг эпизода; scan и arm — без шага
+        try: prm = json.loads(req.get('code') or '{}')
+        except Exception as e: prm = None; out = dict(error=f'параметры — JSON: {e}')
+        if prm is not None:
+            if ep is None: out = dict(error='эпизод не начат')
+            elif cmd == 'scan':
+                try: out = combat.scan(inst.rcon_client, prm.get('x'), prm.get('y'), min(float(prm.get('radius', 60)), 200))
+                except Exception as e: out = dict(error=str(e)[-500:])
+            elif cmd == 'arm':
+                out = dict(guns_ammo=combat.arm(inst.rcon_client))
+            elif steps >= max_steps: out = dict(error=f'лимит шагов эпизода {max_steps} исчерпан')
+            else:
+                steps += 1
+                keys = ('cx', 'cy', 'r', 'mode', 'seconds', 'retreat', 'side', 'clear_radius', 'shoot_range')
+                try: out = combat.fight(inst.rcon_client, **{k: prm[k] for k in keys if k in prm})
+                except Exception as e: out = dict(error=str(e)[-500:])
+                out.update(step=steps, steps_left=max_steps - steps)
+            log(event=cmd, ep=ep, params=prm, out=out)
     else: out = dict(error='неизвестная команда')
     c.sendall(json.dumps(out, ensure_ascii=False).encode()); c.close()
