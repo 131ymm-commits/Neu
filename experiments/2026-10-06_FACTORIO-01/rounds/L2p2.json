@@ -1,0 +1,572 @@
+{
+ "name": "L2p2",
+ "run_id": "wf_1b5e9d4a-fe3",
+ "episodes": [
+  {
+   "id": "L2p2|L2p2|iron_plate_throughput",
+   "slot": 0,
+   "label": "L2p2",
+   "task": "iron_plate_throughput",
+   "success": true,
+   "measure": 73.46938775510205,
+   "best_during": 72,
+   "steps": 12,
+   "balance_ok": true,
+   "summary": "Built a fully electric iron-plate factory with no manual inputs, in 12 steps. Power: an offshore pump at (-9.5,4.5) sends water by pipe to a boiler at (14.5,5), which sits on the edge of the coal patch. An electric mining drill at (17.5,4.5), facing LEFT, drops coal straight into the boiler. Two steam engines stand north of the boiler, joined to it by pipes. The boiler stayed full at 50 coal; the coal drill showed WAITING_FOR_SPACE, which means it keeps up. Medium electric poles (laid with connect_entities, plus 4 extra poles placed by hand) carry power about 75 tiles to the iron patch. Production: two columns at x=18.5 and x=26.5. Each column has an electric furnace at y=77.5 with two electric drills, one north facing DOWN and one south facing UP, both dropping ore straight into it. Each furnace has two inserters, one east and one west, feeding wooden chests. The measured steady-state output was 72 plates per 60 s (chest count before and after sleep(60)), against a quota of 16. Every entity showed WORKING or WAITING status, none NO_POWER.",
+   "lessons": "1) A boiler can sit on the coal patch edge with an electric drill dropping into it: place the drill first, then the boiler centred at drill.drop_position minus 1 tile, with water piped in from the pump 25 tiles away. connect_entities(pump, boiler, Pipe) worked first try. 2) In an electric drill, furnace, drill sandwich (drills 3 tiles either side facing the furnace), drop_position lands exactly in the furnace. One such column gives about 36 plates/min. 3) connect_entities with MediumElectricPole over 75 tiles built the line, but it left one column and an inserter without power. Check NO_POWER after a sleep and add poles by hand next to the buildings. 4) place_entity has a range of about 10 tiles, so call move_to near the target before each group of placements. 5) get_entities() also returns PipeGroup and ElectricityGroup objects, which have no .warnings attribute; filter them out by name. 6) Measure output as the change in chest contents over sleep(60), and check that boiler fuel holds steady, rather than trusting the first status reading.",
+   "claimed": 72
+  },
+  {
+   "id": "L2p2|L2p2|iron_gear_wheel_throughput",
+   "slot": 1,
+   "label": "L2p2",
+   "task": "iron_gear_wheel_throughput",
+   "success": true,
+   "measure": 56.18945102260495,
+   "best_during": 86,
+   "steps": 9,
+   "balance_ok": true,
+   "summary": "Построил полностью электрический автоматический завод шестерёнок за 9 шагов. Энергия: насос на воде у (-9.5,3.5), трубы ведут к котлу (14.5,9) у края угольного поля. Электробур (17.5,8.5) смотрит LEFT и сбрасывает уголь прямо в котёл, котёл стабильно держит 50 угля. Над котлом стоят два паровых двигателя в линию (центры y=5.5 и 0.5, direction UP), между ними нет труб. Столбы до железного поля (~75 клеток) проложены через connect_entities(MediumElectricPole). Производство: AM2 с рецептом шестерёнок в (27.5,80.5). С запада, севера и востока стоят цепочки «электробур → электропечь в точке drop_position → inserter в AM2». На выходе два inserter'а и два деревянных сундука. Первый замер показал 85/мин, он завышен запасом пластин. В установившемся режиме три минуты подряд было 54, 54 и 52 шестерёнки/мин при квоте 16, проверено по разнице содержимого сундуков. Все сущности в статусе WORKING. Топливо котла не падает. Уголь и руду добывают только собственные буры.",
+   "lessons": "1) Схема «электробур → электропечь в drop_position → inserter → AM2» работает сразу. Три такие цепочки с трёх сторон AM2 дают около 53 шестерёнок/мин. Печь ставить на drop_position + 1 клетку по направлению бура. 2) Котёл ставить прямо на точку сброса угольного бура: 3 клетки от центра бура, котёл direction UP. Бур закрывает одну водяную точку подключения, вода идёт через вторую, и котёл сам заполняется до 50 угля. 3) Двигатели direction UP можно ставить вплотную над steam_output_point котла и друг над другом (шаг 5 клеток): пар доходит без труб. 4) connect_entities(pos, pos, MediumElectricPole) на 75 клеток сработал. Сущности на краю зоны (выходные манипуляторы) остались без питания, их нашёл по NO_POWER и поставил ещё один столб. 5) place_entity ограничен дистанцией 10 от игрока: перед каждой группой построек делать move_to. 6) В get_entities() попадает PipeGroup без поля warnings. Фильтровать через 'Group' in str(type(e)) нужно до обращения к атрибутам, иначе цикл падает. 7) Первый замер после запуска завышен (85 против 53) из-за запаса пластин. Мерить несколько минут подряд.",
+   "claimed": 86
+  },
+  {
+   "id": "L2p2|L2p2|electronic_circuit_throughput",
+   "slot": 2,
+   "label": "L2p2",
+   "task": "electronic_circuit_throughput",
+   "success": true,
+   "measure": 24.691358024691358,
+   "best_during": 23,
+   "steps": 14,
+   "balance_ok": true,
+   "summary": "I built a fully electric electronic-circuit factory, and the last measurement showed 23 circuits per minute against a quota of 16. I measured this myself in steady state: the output chest went from 83 to 106 over 60 seconds. The harness readings were 23 and 22.\n\nPower: an offshore pump at (-9.5,1.5) feeds a boiler at (14.5,5) through a pipe about 25 tiles long. Two steam engines sit right next to the boiler on its steam output, with no pipe between them. An electric mining drill on coal drops coal straight into the boiler, which kept 50 coal the whole time.\n\nIron: one electric drill at (18.5,78.5) drops ore into an electric furnace at (15.5,78.5). An inserter puts plates on a 32-tile belt running to the assembly area.\n\nCopper: two drills feed one electric furnace at (-49.5,78.5) from two sides. An inserter puts plates on a 43-tile belt.\n\nAssembly sits at y=66.5, north of a lake that had blocked the first spot. A cable assembler (AM2) at (-13.5,66.5) passes cable to the circuit assembler at (-9.5,66.5) through three inserters. Iron comes in from the east, and an output inserter fills a chest at (-9.5,63.5).\n\nMedium poles were laid with connect_entities, and I added three by hand where buildings had no power. All raw materials are mined by the factory's own drills, so nothing depends on items I put in by hand. The bottleneck is copper smelting, about 37 plates per minute, which caps output at about 25 circuits per minute. I used 14 of the 20 steps.",
+   "lessons": "1) An electric furnace is 3x3, not 2x2. Place it 3 tiles out from the drill centre: the drill at x=18.5 facing west drops at 16.5, and the furnace centre goes at 15.5. Placing it exactly on drop_position collides with the drill.\n2) Ore patches can have lakes in between. Run get_resource_patch(Water) on the assembly area before building, and put the assembly row next to the lake rather than routing belts around it.\n3) Put the boiler right on a coal patch, fed by a drill whose drop point is inside the boiler. Bring water with connect_entities(pump, boiler, Pipe); 25 tiles works. A steam engine placed with direction UP directly on the boiler's steam_output_point connects with no pipes at all.\n4) One cable AM2 and one circuit AM2 easily cover about 25 circuits per minute. Cable moves between the assemblers at 1.25 per second, so use three inserters on the shared edge, because one basic inserter manages about 0.83 items per second. Smelting is the real limit: one electric furnace gives about 37 plates per minute, even with two drills feeding it.\n5) In placement loops, call move_to before each section, because the character can only reach 10 tiles. A shared counter across loops caused a \"too far\" error.\n6) connect_entities with MediumElectricPole lays long, winding lines and leaves end buildings unpowered (here the output inserter and the copper drills). Check for NO_POWER and add poles by hand.\n7) Do not use getattr, even inside a condition: the whole step is rejected. get_entities returns PipeGroup and BeltGroup objects with no .warnings, so filter by e.name first.",
+   "claimed": 23
+  },
+  {
+   "id": "L2p2|L2p2|inserter_throughput",
+   "slot": 3,
+   "label": "L2p2",
+   "task": "inserter_throughput",
+   "success": true,
+   "measure": 24.644030668127055,
+   "best_during": 22,
+   "steps": 12,
+   "balance_ok": true,
+   "summary": "I built a fully electric inserter factory. Measured steady output is 23 inserters/min against a quota of 16. Power comes from an offshore pump at water (-9.5,0.5) and about 25 tiles of pipe to a boiler placed next to the coal patch. An electric drill on coal drops straight into the boiler, which stays topped up at 50 coal, so fuel is fully automatic. The boiler drives 2 steam engines (1.8 MW), and a line of medium poles runs about 70 tiles south to the ore patches. Iron: 3 drills facing UP drop into 3 electric furnaces, and a 4th drill feeds one furnace from the side. Inserters move the plates onto a belt to the factory. Copper: 2 drills feed 1 electric furnace, and a 56-tile belt goes around a lake to the factory. The factory has 4 AM2 machines in a row: cable, circuit, inserter and gear. Intermediates pass from machine to machine by inserters (2 inserters for cable), and the output goes into 2 wooden chests through 2 inserters. Everything runs on electricity, and all raw materials come from my own drills. The bottleneck is copper (37.5 plates/min, enough for about 25 inserters/min). Iron is in surplus. Engine power is enough: no machine showed LOW_POWER once both engines were connected. Best throughput reported by the harness was 22, and the steady chest-delta measurement gave 23 per 60 s. I used 12 of 20 steps.",
+   "lessons": "1) Water bodies can sit directly in the path between patches: get_resource_patch(Water, ..., radius=20) on the route before laying belts or poles; I hit a lake at x -22..-9.5, y 69..92 and lost a step. 2) Instead of a coal belt, pipe water from the pump to a boiler at the coal patch edge: place the electric drill first (direction=LEFT), then place_entity_next_to(Boiler, drill.position, LEFT) — the drop lands in the boiler and it holds 50 coal on its own. 3) place_entity really does return a neighbouring entity of the same type in printouts, but the entity itself gets placed correctly — check with get_entities, not the return value. 4) place_entity has a range limit of 10 tiles: call move_to right next to the target before every placement in loops. 5) The second steam engine is often left without a pole (NOT_PLUGGED_IN): add a pole by hand next to it, otherwise everything sits at LOW_POWER. 6) can_place_entity far from the player returns False everywhere, so it is useless as a water map. 7) A chain of 4 AM2 machines with direct inserter handoff (2 inserters for cable) plus 1 copper furnace fed by 2 drills gives about 23 inserters/min; the bottleneck is copper. 8) Wooden-chest delta over sleep(60) matched the harness figure (23 vs 22).",
+   "claimed": 22
+  },
+  {
+   "id": "L2p2|L2p2|automation_science_pack_throughput",
+   "slot": 4,
+   "label": "L2p2",
+   "task": "automation_science_pack_throughput",
+   "success": true,
+   "measure": 26.644736842105264,
+   "best_during": 24,
+   "steps": 18,
+   "balance_ok": true,
+   "summary": "Built a fully electric automation-science-pack factory. Power: an offshore pump at (-9.5,1.5) pipes water to a boiler at (22.5,4) on the coal patch. Two electric drills drop coal straight into the boiler (from the south and the east). Two steam engines are connected directly to the boiler, giving 1.8 MW. Iron (y≈69.5): 2 electric drills drop ore into 2 electric furnaces. Each furnace feeds an AM2 making gears through an inserter. The gear inserter puts gears on the north lane of a belt running east along y=66.5. Copper (x≈-49.5): a drill feeds an electric furnace. An inserter puts the plates on a belt that goes north and turns east, so copper rides the south lane of the same belt for about 82 tiles. 3 AM2s on automation-science-pack sit north of the belt. Each has an input inserter from the belt and an output inserter into a wooden chest. The grid is a line of medium poles. Bugs I fixed along the way: a coal drill dropping its coal one tile short of the boiler, the copper end of the pole line left without power, and assemblers one tile too far from their input inserters. Steady-state measurement (chest contents before and after sleep(60)): 24 packs/min against a quota of 16. The response showed 23–24. All raw materials (coal, iron, copper) are mined by the factory's own drills, and the boiler held 50 coal fed automatically. 18 of 20 steps used.",
+   "lessons": "1) Check the gap between an assembler or furnace and its inserter: a 3x3 at y=62.5 covers 61..64, so an inserter at 65.5 drops at 64.5, onto the ground. Center the building so drop_position falls inside it (furnace/AM at y=Ybelt-3 when the inserter is at Ybelt-1). 2) An electric drill drops coal into a boiler only if drop_position is inside the boiler's tiles: the boiler at y=4 spans 3..5, so the drill goes at y=6.5, not 7.5. Two coal drills from different sides keep the boiler at 50 coal. 3) Lane trick: copper is inserted from the west onto a north-going belt, so after the right turn east it sits on the south lane; gears inserted from the south of the eastbound belt go on the north lane. Mixing on one belt causes no deadlock. 4) connect_entities with MediumElectricPole over ~70 tiles left the far end unpowered. A manual chain of poles every 7 tiles fixed it at once. get_entities returns ElectricityGroup/BeltGroup/PipeGroup objects, which have no warnings, voltage or position fields, so filter by type before reading attributes. 5) Any exception aborts the rest of the step, so wrap risky placements in try/except. Keep within 10 tiles: call move_to before each placement, including at the start of a loop. 6) Three AM2s on automation-science-pack (27/min theoretical) with 2 iron and 1 copper drill+furnace pairs gave a steady 24/min on one boiler and 2 engines without blackouts.",
+   "claimed": 24
+  },
+  {
+   "id": "L2p2|L2p2|logistics_science_pack_throughput",
+   "slot": 5,
+   "label": "L2p2",
+   "task": "logistics_science_pack_throughput",
+   "success": true,
+   "measure": 24.82758620689655,
+   "best_during": 23,
+   "steps": 20,
+   "balance_ok": true,
+   "summary": "I built a fully electric logistic science pack factory. In the last steps it made 21–24 packs/min against a quota of 16. That is a lower bound from the 60-second checks: the 45-minute run with emptied buffers was not tested directly.\n\nPower: 2 boilers and 4 steam engines (3.6 MW), with 2 offshore pumps. Each boiler gets coal from an electric drill that drops straight into it. Boiler 1 also has a backup drill feeding it through a chest and an inserter. The last two steam engines were hand-crafted from 60 iron ore I mined by hand and smelted in temporary furnaces, which I then removed.\n\nRaw materials: 4 iron units, each an electric furnace fed by 2 drills, at roughly 30–37 plates/min per unit. One copper unit with 2 drills. Plates reach the assembly area on belts: iron about 50 tiles, copper about 70. The belts go around a body of water I missed at first.\n\nAssembly uses 6 AM2 machines in a row: copper cable, circuit, inserter, two gear machines and transport belt. They pass items to each other with inserters. Inserters (the items) go on belt P1 and transport belts on belt P2. Four science AM2s take from P1 on one side and P2 on the other, and output into chests.\n\nProblems along the way: water at the first site, P2 input inserters one tile too far from the machines, a boiler-to-engine pipe that tied into the water line, and power shortage (LOW_POWER). Before the extra engines, output held at 15–18/min. In the final check no building was short of power or unpowered.",
+   "lessons": "1. Count the starting inventory first. With only 1 boiler and 2 engines (1.8 MW), a 10-AM2 factory with 9 drills and 5 furnaces is short of power and holds at about 16/min. You can hand-craft extra steam engines with craft_item: mine about 60 iron ore by hand, smelt it in temporary electric furnaces, then extract the plates.\n2. A water bounding box from get_resource_patch can sit right between two ore patches. Check for water with get_resource_patch(Water, centre, radius) and nearest(Water) after move_to, before laying a long belt. can_place_entity with an item not in the inventory returns False everywhere and wastes a step.\n3. An inserter feeding a 3x3 machine must stand on the tile next to its edge. For a machine centred at y, that is y+2 picking from y+3, not y+3 picking from y+4. Check that drop_position is inside the machine's footprint.\n4. Keep two products on separate belts (P1 for inserters, P2 for transport belts) with the science row between them. This avoids a mixed-lane deadlock without lane tricks.\n5. connect_entities(boiler, engine, Pipe) can attach to the boiler's spare water inlet and join the engine to the water line. A pipe next to another pipe always merges with it. Lay steam pipes by hand from steam_output_point, at least one tile away from water pipes. A pipe that held water must be picked up and placed again.\n6. A boiler showing 'chest is full' with 50 coal means it is fully fuelled. The drill or inserter warning 'output blocked by item on the ground' that appears with it is misleading.\n7. A drill that drops directly into a furnace or boiler works with no belts. Two drills per electric furnace saturate it at about 37 plates/min. Plan iron for about 5.5 plates per logistic pack.",
+   "claimed": 23
+  }
+ ],
+ "finals": [
+  {
+   "final": {
+    "cleared_items": 6828,
+    "chest_cleared_during": 3478,
+    "horizon": 2700,
+    "w1": {
+     "raw": 78,
+     "dtick": 3732,
+     "norm": 75.2411575562701,
+     "balance": {
+      "coal": {
+       "mined": 9,
+       "used": 9
+      },
+      "iron-ore": {
+       "mined": 80,
+       "used": 78
+      },
+      "copper-ore": {
+       "mined": 0,
+       "used": 0
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "w2": {
+     "raw": 76,
+     "dtick": 3724,
+     "norm": 73.46938775510205,
+     "balance": {
+      "coal": {
+       "mined": 8,
+       "used": 9
+      },
+      "iron-ore": {
+       "mined": 76,
+       "used": 76
+      },
+      "copper-ore": {
+       "mined": 0,
+       "used": 0
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "measure": 73.46938775510205,
+    "balance_ok": true,
+    "success": true,
+    "quota": 16,
+    "target": "iron-plate"
+   },
+   "measure": 73.46938775510205,
+   "success": true,
+   "best_during": 72,
+   "steps": 12
+  },
+  {
+   "final": {
+    "cleared_items": 3846,
+    "chest_cleared_during": 2608,
+    "horizon": 2700,
+    "w1": {
+     "raw": 58,
+     "dtick": 3716,
+     "norm": 56.18945102260495,
+     "balance": {
+      "coal": {
+       "mined": 15,
+       "used": 15
+      },
+      "iron-ore": {
+       "mined": 117,
+       "used": 114
+      },
+      "copper-ore": {
+       "mined": 0,
+       "used": 0
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "w2": {
+     "raw": 59,
+     "dtick": 3756,
+     "norm": 56.54952076677316,
+     "balance": {
+      "coal": {
+       "mined": 16,
+       "used": 16
+      },
+      "iron-ore": {
+       "mined": 123,
+       "used": 117
+      },
+      "copper-ore": {
+       "mined": 0,
+       "used": 0
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "measure": 56.18945102260495,
+    "balance_ok": true,
+    "success": true,
+    "quota": 16,
+    "target": "iron-gear-wheel"
+   },
+   "measure": 56.18945102260495,
+   "success": true,
+   "best_during": 86,
+   "steps": 9
+  },
+  {
+   "final": {
+    "cleared_items": 3938,
+    "chest_cleared_during": 1145,
+    "horizon": 2700,
+    "w1": {
+     "raw": 25,
+     "dtick": 3645,
+     "norm": 24.691358024691358,
+     "balance": {
+      "coal": {
+       "mined": 9,
+       "used": 9
+      },
+      "iron-ore": {
+       "mined": 24,
+       "used": 25
+      },
+      "copper-ore": {
+       "mined": 37,
+       "used": 37
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "w2": {
+     "raw": 27,
+     "dtick": 3838,
+     "norm": 25.32569046378322,
+     "balance": {
+      "coal": {
+       "mined": 10,
+       "used": 10
+      },
+      "iron-ore": {
+       "mined": 28,
+       "used": 27
+      },
+      "copper-ore": {
+       "mined": 40,
+       "used": 40
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "measure": 24.691358024691358,
+    "balance_ok": true,
+    "success": true,
+    "quota": 16,
+    "target": "electronic-circuit"
+   },
+   "measure": 24.691358024691358,
+   "success": true,
+   "best_during": 23,
+   "steps": 14
+  },
+  {
+   "final": {
+    "cleared_items": 2805,
+    "chest_cleared_during": 1144,
+    "horizon": 2700,
+    "w1": {
+     "raw": 26,
+     "dtick": 3738,
+     "norm": 25.040128410914928,
+     "balance": {
+      "coal": {
+       "mined": 21,
+       "used": 20
+      },
+      "iron-ore": {
+       "mined": 105,
+       "used": 102
+      },
+      "copper-ore": {
+       "mined": 38,
+       "used": 39
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "w2": {
+     "raw": 25,
+     "dtick": 3652,
+     "norm": 24.644030668127055,
+     "balance": {
+      "coal": {
+       "mined": 19,
+       "used": 20
+      },
+      "iron-ore": {
+       "mined": 101,
+       "used": 101
+      },
+      "copper-ore": {
+       "mined": 38,
+       "used": 38
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "measure": 24.644030668127055,
+    "balance_ok": true,
+    "success": true,
+    "quota": 16,
+    "target": "inserter"
+   },
+   "measure": 24.644030668127055,
+   "success": true,
+   "best_during": 22,
+   "steps": 12
+  },
+  {
+   "final": {
+    "cleared_items": 3821,
+    "chest_cleared_during": 1235,
+    "horizon": 2700,
+    "w1": {
+     "raw": 29,
+     "dtick": 3755,
+     "norm": 27.802929427430094,
+     "balance": {
+      "coal": {
+       "mined": 18,
+       "used": 19
+      },
+      "iron-ore": {
+       "mined": 60,
+       "used": 58
+      },
+      "copper-ore": {
+       "mined": 30,
+       "used": 29
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "w2": {
+     "raw": 27,
+     "dtick": 3648,
+     "norm": 26.644736842105264,
+     "balance": {
+      "coal": {
+       "mined": 18,
+       "used": 17
+      },
+      "iron-ore": {
+       "mined": 56,
+       "used": 52
+      },
+      "copper-ore": {
+       "mined": 24,
+       "used": 26
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "measure": 26.644736842105264,
+    "balance_ok": true,
+    "success": true,
+    "quota": 16,
+    "target": "automation-science-pack"
+   },
+   "measure": 26.644736842105264,
+   "success": true,
+   "best_during": 24,
+   "steps": 18
+  },
+  {
+   "final": {
+    "cleared_items": 3512,
+    "chest_cleared_during": 2933,
+    "horizon": 2700,
+    "w1": {
+     "raw": 26,
+     "dtick": 3761,
+     "norm": 24.886998138792872,
+     "balance": {
+      "coal": {
+       "mined": 74,
+       "used": 36
+      },
+      "iron-ore": {
+       "mined": 142,
+       "used": 141
+      },
+      "copper-ore": {
+       "mined": 39,
+       "used": 40
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "w2": {
+     "raw": 26,
+     "dtick": 3770,
+     "norm": 24.82758620689655,
+     "balance": {
+      "coal": {
+       "mined": 78,
+       "used": 36
+      },
+      "iron-ore": {
+       "mined": 146,
+       "used": 148
+      },
+      "copper-ore": {
+       "mined": 39,
+       "used": 39
+      },
+      "stone": {
+       "mined": 0,
+       "used": 0
+      },
+      "wood": {
+       "mined": 0,
+       "used": 0
+      },
+      "uranium-ore": {
+       "mined": 0,
+       "used": 0
+      }
+     },
+     "balance_ok": true
+    },
+    "measure": 24.82758620689655,
+    "balance_ok": true,
+    "success": true,
+    "quota": 16,
+    "target": "logistic-science-pack"
+   },
+   "measure": 24.82758620689655,
+   "success": true,
+   "best_during": 23,
+   "steps": 20
+  }
+ ]
+}
