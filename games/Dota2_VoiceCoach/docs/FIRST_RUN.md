@@ -101,6 +101,8 @@ python install.py --oha C:\oha\dota2bot-OpenHyperAI-main --lineup lineup.json
 (сначала без Claude — проверить связь и руки), потом `--agents api --model <имя модели>` с ключом API
 (`docs/CLAUDE_AGENTS.md` — цена и задержка), и в консоли Tools `dota_launch_custom_game voicecoach dota`.
 
+Голосовой чат агентов — `http://localhost:8787/voice.html`, кнопка «Включить звук».
+
 **Пришлите:** строки `[ТРЕНЕР]` из `console.log`, журнал `coach\logs\agents_*.jsonl` и сводку сервера после
 Ctrl+C, снимок экрана и что неудобно.
 

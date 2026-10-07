@@ -97,6 +97,17 @@ class ParseDecision(unittest.TestCase):
         self.assertEqual(s["properties"]["plan"]["enum"], list(A.PLANS))
 
 
+class VoiceChatParse(unittest.TestCase):
+    def test_to_field(self):
+        d, notes = A.parse_decision({"plan": "hold", "say": "Вайпер, ко мне", "to": [2, 1, 2, 9, "x"]}, obs(pos=1))
+        self.assertEqual(d["to"], [2])                          # себя, повтор и чужие номера — прочь
+        self.assertEqual(len(notes), 1)                          # «x» — не номер
+        d, _ = A.parse_decision({"plan": "hold", "say": "", "to": [2]}, obs())
+        self.assertEqual(d["to"], [])                            # без реплики адресат не нужен
+        self.assertIn("to", A.DECISION_SCHEMA["required"])
+        self.assertEqual(A.DECISION_SCHEMA["properties"]["to"], {"type": "array", "items": {"type": "integer"}})
+
+
 class Prompts(unittest.TestCase):
     def test_system_prompt(self):
         p = A.system_prompt("dire", 2, "npc_dota_hero_lina", {"name": "Тест", "style": {"aggression": 0.8}})
@@ -110,6 +121,15 @@ class Prompts(unittest.TestCase):
         d, notes = A.parse_decision(example, None)
         self.assertEqual((d["plan"], d["where"]), ("farm", "mid"))
         self.assertEqual(notes, [])
+
+    def test_system_prompt_voice_chat_and_names(self):
+        p = A.system_prompt("radiant", 1, "sniper", None, 0.85,
+                            {"allies": [(2, "viper"), (3, "axe")], "enemies": ["luna", "lina"]})
+        self.assertIn("ГОЛОСОВОЙ ЧАТ КОМАНДЫ", p)
+        self.assertIn("2 — viper (Вайпер)", p)
+        self.assertIn("luna (Луна)", p)
+        self.assertIn('"to":[]', p)
+        self.assertEqual(A.hero_ru("npc_dota_hero_crystal_maiden"), "Кристальная Дева")   # coach/data/heroes.json
 
     def test_user_prompt(self):
         o = obs(clock=754, coach=[{"seq": 3, "ago": 1, "text": "1 пуш бот т2", "urgent": True}])
@@ -216,6 +236,66 @@ class Hub(unittest.TestCase):
             self.assertEqual(len(slow.calls), 1)
         finally:
             h.close()
+
+
+class SayingBackend(FakeBackend):
+    """Агент, который говорит заданное (и только раз)."""
+
+    def __init__(self, lines):
+        super().__init__()
+        self.lines = list(lines)
+
+    def decide(self, system, user, obs, extra=None):
+        self.calls.append({"system": system, "user": user, "obs": obs, "extra": extra})
+        say, to = self.lines.pop(0) if self.lines else ("", [])
+        return {"data": {"plan": "farm", "where": "bot", "target": "", "ally": 0, "cast": [], "buy": [], "level": [],
+                         "retreat_hp": 30, "buyback": False, "say": say, "to": to}, "usage": {}}
+
+
+class VoiceChatHub(unittest.TestCase):
+    def test_conversation(self):
+        talk = SayingBackend([("Вайпер, иди ко мне на бот", [2])])
+        h = A.AgentHub({"radiant": talk, "dire": A.RulesBackend()}, sync=True)
+        heard = []
+        h.on_say = lambda team, e: heard.append((team, e))
+        p1, p2 = obs(clock=0, pos=1), obs(clock=0, pos=2)
+        p2["hero"] = "viper"
+        enemy = obs(clock=0, pos=1, team="dire")
+        enemy["hero"] = "luna"
+        h.tick({"heroes": [p1, p2, enemy]})                        # первые решения всех; первый агент зовёт второго
+        self.assertEqual(heard[0][0], "radiant")
+        self.assertEqual((heard[0][1]["from"], heard[0][1]["to"], heard[0][1]["reply"]), (1, [2], False))
+        n = len(talk.calls)
+        p1, p2 = obs(clock=1.5, pos=1), obs(clock=1.5, pos=2)
+        p2["hero"] = "viper"
+        h.tick({"heroes": [p1, p2]})
+        last = talk.calls[-1]
+        self.assertEqual(len(talk.calls), n + 1)                   # проснулся только второй
+        self.assertEqual(last["obs"]["pos"], 2)
+        self.assertEqual(last["extra"]["trigger"], A.ASKED)
+        self.assertIn("НОВОЕ", last["user"])
+        self.assertIn("→ тебе: «Вайпер, иди ко мне на бот»", last["user"])
+        self.assertEqual(last["extra"]["chat_to_me"][0]["from"], 1)
+        enemy_prompt = A.user_prompt(enemy, [], [], "x", h._chat_for(h.agents[("dire", 1)], 1.5), 1)
+        self.assertNotIn("Вайпер, иди", enemy_prompt)              # чужая команда чат не слышит
+
+    def test_reply_does_not_ping_pong(self):
+        talk = SayingBackend([("Вайпер, иди ко мне", [2]), ("", []), ("Иду", [1])])
+        h = A.AgentHub({"radiant": talk, "dire": talk}, sync=True)
+        p = lambda c, pos: dict(obs(clock=c, pos=pos), hero="viper" if pos == 2 else "sniper")
+        h.tick({"heroes": [p(0, 1), p(0, 2)]})
+        h.tick({"heroes": [p(1.5, 1), p(1.5, 2)]})                 # второй отвечает первому
+        chat = list(h.chat["radiant"])
+        self.assertEqual([(e["from"], e["to"], e["reply"]) for e in chat], [(1, [2], False), (2, [1], True)])
+        n = len(talk.calls)
+        h.tick({"heroes": [p(3.0, 1), p(3.0, 2)]})                 # ответ первого не будит
+        self.assertEqual(len(talk.calls), n)
+
+    def test_rules_answer_and_callout(self):
+        d = A.rules_decision(obs(), None, {"chat_to_me": [{"from": 3, "hero": "axe", "text": "помоги"}]})
+        self.assertEqual((d["say"], d["to"], d["plan"], d["ally"]), ("Акс, понял, иду", [3], "save", 3))
+        d = A.rules_decision(obs(enemies=[{"hero": "luna", "d": 900}]), None, {"trigger": "враг рядом"})
+        self.assertEqual(d["say"], "Вижу Луна")
 
 
 class Rules(unittest.TestCase):
@@ -380,6 +460,23 @@ class Route(unittest.TestCase):
             st = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{port}/api/local/agents", timeout=5).read())
             self.assertEqual([a["pos"] for a in st["agents"]], [3, 1])
             self.assertEqual(st["summary"]["calls"], 2)
+            # голосовой чат: реплика агента — событие kind=voice своей команде
+            order = obs(clock=-70, items=[], coach=[{"seq": 1, "ago": 0, "text": "1 пуш бот"}])
+            body = json.dumps({"heroes": [order]}).encode()
+            req = urllib.request.Request(f"http://127.0.0.1:{port}/api/local/tick", data=body, method="POST")
+            urllib.request.urlopen(req, timeout=5).read()
+            evs = json.loads(urllib.request.urlopen(
+                f"http://127.0.0.1:{port}/api/local/events?team=radiant&after=0", timeout=5).read())["events"]
+            voice = [e for e in evs if e["kind"] == "voice"]
+            self.assertEqual((voice[-1]["pos"], voice[-1]["text"], voice[-1]["hero_ru"], voice[-1]["to"]),
+                             (1, "Понял: 1 пуш бот", "Снайпер", []))
+            dire = json.loads(urllib.request.urlopen(
+                f"http://127.0.0.1:{port}/api/local/events?team=dire&after=0", timeout=5).read())["events"]
+            self.assertFalse([e for e in dire if e["kind"] == "voice"])
+            for name, ctype in (("voice.html", "text/html"), ("voices.js", "application/javascript")):
+                r = urllib.request.urlopen(f"http://127.0.0.1:{port}/{name}", timeout=5)
+                self.assertTrue(r.headers["Content-Type"].startswith(ctype))
+                self.assertIn(b"speechSynthesis" if name == "voices.js" else b"VoiceChat", r.read())
         finally:
             srv.shutdown()
             srv.server_close()

@@ -369,7 +369,11 @@ function G:OnAgents(data)
       T.dec_seq[pos] = seq
       Exec.set(T.exec[pos], d.decision, now, "agent")
       local say = d.decision.say
-      if type(say) == "string" and say ~= "" and say ~= T.said[pos] then G:Reply(T, pos, "say", say) end
+      if type(say) == "string" and say ~= "" and say ~= T.said[pos] then
+        local to = {}
+        for _, n in ipairs(type(d.decision.to) == "table" and d.decision.to or {}) do to[#to + 1] = tostring(n) end
+        G:Reply(T, pos, "say", say, table.concat(to, ","))         -- голосовой чат команды (Д12): кто → кому
+      end
     end
   end
   for _, a in ipairs(data.agents or {}) do
@@ -443,19 +447,23 @@ function G:TextCtx(team)
   return { team = team == DOTA_TEAM_GOODGUYS and "radiant" or "dire", agents = agents, enemy_heroes = enemies }
 end
 
--- ответ агента (pos) или системы (pos = 0) тренерам команды: в HUD и, для реплик агентов, в чат
-function G:Reply(T, pos, kind, text)
+-- реплика агента (pos) или системы (pos = 0) тренерам команды: в HUD и, для реплик агентов, в командный чат;
+-- to — кому из союзников («2» или «2,3»), пусто — всем
+function G:Reply(T, pos, kind, text, to)
   local hero = pos and pos > 0 and T.agents[pos] or nil
   local name = hero and World.short(hero:GetUnitName()) or ""
+  to = to or ""
   if hero and kind == "say" then T.said[pos] = text end
   for _, pid in ipairs(T.commanders) do
     local player = PlayerResource:GetPlayer(pid)
     if player then
-      CustomGameEventManager:Send_ServerToPlayer(player, "vc_reply", { pos = pos or 0, hero = name, kind = kind, text = text })
+      CustomGameEventManager:Send_ServerToPlayer(player, "vc_reply",
+        { pos = pos or 0, hero = name, kind = kind, text = text, to = to })
     end
   end
-  if G.CHAT_REPLIES and hero and (kind == "say" or kind == "report" or kind == "refuse") then Say(hero, text, true) end
-  log("%s%s: %s", pos and pos > 0 and (tostring(pos) .. " ") or "", name, text)
+  local line = (to ~= "" and ("→" .. to .. " ") or "") .. text
+  if G.CHAT_REPLIES and hero and (kind == "say" or kind == "report" or kind == "refuse") then Say(hero, line, true) end
+  log("%s%s: %s", pos and pos > 0 and (tostring(pos) .. " ") or "", name, line)
 end
 
 function G:Command(pid, text)

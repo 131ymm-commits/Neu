@@ -270,7 +270,8 @@ class PanoramaNames(unittest.TestCase):
 
     def used(self, code):
         used = set(re.findall(r"\$\.(\w+)\s*\(", code))
-        used |= set(re.findall(r"\b(?:GameEvents|GameUI|Game)\.(\w+)\s*\(", code))
+        used |= set(re.findall(r"\b(?:GameEvents|GameUI|Game|Players)\.(\w+)\s*\(", code))
+        used |= set(re.findall(r"\bDOTATeam_t\.(\w+)", code))
         used |= set(re.findall(r"\b(?:panel|label|input|log|line|box|row|mode)\.(\w+)\s*[(=]", code))
         used |= set(re.findall(r"\$\('[^']+'\)\.(\w+)\s*[(=]", code))
         used |= set(re.findall(r"CreatePanel\(\s*'(\w+)'", code))
@@ -292,6 +293,16 @@ class PanoramaNames(unittest.TestCase):
         self.assertEqual(missing, [])
         for n in ("SetCameraDistance", "SetDefaultUIEnabled", "oninputsubmit", "DOTA_DEFAULT_UI_ACTION_PANEL"):
             self.assertIn(n, used)
+
+    def test_hud_voice_address_matches_agents_server(self):
+        """Скрытая веб-панель голосового чата ходит на тот же сервер тренера, что и игра (Д12)."""
+        raw_lua = (CVS / "coach_game.lua").read_text(encoding="utf-8")
+        code = CJS.read_text(encoding="utf-8")
+        game = re.search(r'G\.AGENTS_URL = "(http://[^/"]+)/', raw_lua).group(1)
+        hud = re.search(r"var VOICE_URL = '(http://[^/']+)/voice\.html'", code).group(1)
+        self.assertEqual(game, hud)
+        for n in ("GetTeam", "GetLocalPlayer", "DOTA_TEAM_BADGUYS", "SetURL", "DOTAHTMLPanel"):
+            self.assertIn(n, self.used(self.code(CJS)))
 
     def test_hud_events_match_server(self):
         code = self.code(CJS)

@@ -21,7 +21,9 @@
        (coach/ptt_hotkey.py): событие kind=ptt уходит странице, она включает распознавание
   POST /api/{room}/tick     {"clock","heroes":[наблюдения],"coached"}   ← кастомка раз в секунду (Д11):
        наблюдения героев → агенты Claude (agents.py) → в ответе последние решения агентов
-  GET  /api/{room}/agents                                  → состояние агентов, память, задержка, токены
+  GET  /api/{room}/agents                                  → состояние агентов, память, задержка, токены, чат
+  Голосовой чат команды (Д12): реплика агента — событие kind=voice {pos, hero, hero_ru, text, to} в /events;
+  страница /voice.html озвучивает реплики своей команды разными голосами (её же открывает HUD игры).
   GET  /api/health
 
 Запасной канал к ботам (если HTTP из ботов не работает): --inbox <папка bots/coach в Доте> —
@@ -47,7 +49,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
-from .agents import AgentHub, make_backend
+from .agents import AgentHub, hero_ru, make_backend
 from .describe import describe
 from .parser import Agent, MatchContext, parse
 from .textcmd import parse_short, suggest
@@ -55,6 +57,7 @@ from .textcmd import parse_short, suggest
 TEAMS = ("radiant", "dire")
 MAX_QUEUE = 500
 STATIC = Path(__file__).resolve().parent.parent / "web"
+STATIC_FILES = {"voice.html": "text/html; charset=utf-8", "voices.js": "application/javascript; charset=utf-8"}
 
 
 def to_lua(v) -> str:
@@ -201,8 +204,11 @@ class Room:
     def add_events(self, team: str, events: list[dict]) -> None:
         with self.lock:
             for ev in events:
-                self._event(team, {"pos": ev.get("pos", 0), "kind": ev.get("kind", "say"),
-                                   "text": ev.get("text", "")})
+                item = {"pos": ev.get("pos", 0), "kind": ev.get("kind", "say"), "text": ev.get("text", "")}
+                for k in ("hero", "hero_ru", "to"):                 # реплики голосового чата: кто и кому
+                    if k in ev:
+                        item[k] = ev[k]
+                self._event(team, item)
             self.lock.notify_all()
 
     def events_after(self, team: str, after: int, wait: float) -> list[dict]:
@@ -214,6 +220,12 @@ class Room:
                 if evs or left <= 0:
                     return evs
                 self.lock.wait(timeout=left)
+
+
+def voice_event(e: dict) -> dict:
+    """Реплика агента → событие голосового чата для страниц тренера (только своей команде)."""
+    return {"pos": e["from"], "kind": "voice", "text": e["text"], "hero": e["hero"], "hero_ru": hero_ru(e["hero"]),
+            "to": list(e.get("to") or [])}
 
 
 def rules_agents(room_name: str) -> AgentHub:
@@ -237,6 +249,7 @@ class Hub:
         with self.lock:
             if room.agents is None:
                 room.agents = self.agent_factory(room.name)
+                room.agents.on_say = lambda team, e: room.add_events(team, [voice_event(e)])
             return room.agents
 
 
@@ -288,6 +301,10 @@ def make_handler(hub: Hub):
                     return self._send(404, {"error": "нет web/index.html"})
                 if parts == ["favicon.ico"]:
                     return self._send(204, raw=b"")
+                if len(parts) == 1 and parts[0] in STATIC_FILES:          # страницы и скрипты из web/
+                    f = STATIC / parts[0]
+                    if f.exists():
+                        return self._send(200, raw=f.read_bytes(), ctype=STATIC_FILES[parts[0]])
                 if parts == ["api", "health"]:
                     return self._send(200, {"ok": True, "rooms": len(hub.rooms)})
                 if len(parts) == 3 and parts[0] == "api":

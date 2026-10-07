@@ -35,7 +35,8 @@
   <div class="row">
     <label>Комната <input id="room" value="local" size="8"></label>
     <label>Команда <select id="team"><option value="radiant">Свет (Radiant)</option><option value="dire">Тьма (Dire)</option></select></label>
-    <label><input type="checkbox" id="tts" checked> озвучивать ответы</label>
+    <label><input type="checkbox" id="tts" checked> озвучивать ответы и голосовой чат агентов</label>
+    <a href="voice.html" style="color:#9fd3ff">только голосовой чат</a>
   </div>
   <p class="muted" id="roster">Состав: …</p>
   <div class="row">
@@ -73,6 +74,7 @@
     <label><input type="checkbox" id="always"> слушать постоянно</label>
   </details>
 </main>
+<script src="voices.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const api = (p) => `/api/${encodeURIComponent($('room').value)}/${p}`;
@@ -191,12 +193,13 @@ async function pollEvents() {
       for (const ev of res.events || []) {
         lastEvent = Math.max(lastEvent, ev.seq);
         if (ev.kind === 'ptt') { ev.text === 'down' ? start() : stop(); continue; }   // глобальная клавиша
-        const who = ev.pos ? (rosterNames[ev.pos] || 'Агент ' + ev.pos) : 'Тренеру';
-        addEntry(`<span class="ev">${esc(who)}: ${esc(ev.text)}</span>`);
-        if ($('tts').checked && window.speechSynthesis && ev.text) {
-          const u = new SpeechSynthesisUtterance(ev.pos ? `${who}: ${ev.text}` : ev.text);
-          u.lang = 'ru-RU'; speechSynthesis.speak(u);
-        }
+        // реплики голосового чата кастомки называем героем; ответы ботов прототипа — по составу
+        const who = ev.kind === 'voice' ? (ev.hero_ru || ev.hero || 'Агент ' + ev.pos)
+          : (ev.pos ? (rosterNames[ev.pos] || 'Агент ' + ev.pos) : 'Тренеру');
+        const to = (ev.to && ev.to.length) ? ` → ${ev.to.join(',')}` : '';
+        addEntry(`<span class="ev">${esc(who)}${esc(to)}: ${esc(ev.text)}</span>`);
+        // голосовой чат команды (Д12): у каждой позиции свой голос (voices.js)
+        if ($('tts').checked && window.VoiceChat && ev.text) VoiceChat.say(ev.pos, ev.pos ? `${who}: ${ev.text}` : ev.text);
       }
     } catch (e) { await new Promise(r => setTimeout(r, 2000)); }
   }

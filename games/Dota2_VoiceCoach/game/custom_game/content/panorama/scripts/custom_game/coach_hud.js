@@ -38,8 +38,23 @@
   }
 
   function onReply(ev) {
-    var who = ev.pos > 0 ? (ev.pos + ' ' + ev.hero + ': ') : '';
+    var to = ev.to ? (' → ' + ev.to) : '';                 // голосовой чат: кому из союзников
+    var who = ev.pos > 0 ? (ev.pos + ' ' + ev.hero + to + ': ') : '';
     addLog(who + ev.text, ev.kind);
+  }
+
+  // Голосовой чат команды вслух (Д12): скрытая веб-панель открывает страницу сервера тренера, та озвучивает
+  // реплики своей команды голосами браузера. Работает ли речь внутри веб-панели Доты — не проверено;
+  // надёжный путь — та же страница в браузере или на телефоне (game/custom_game/README.md).
+  var VOICE_URL = 'http://127.0.0.1:8787/voice.html';
+  var voiceStarted = false;
+  function startVoice() {
+    if (voiceStarted) return;
+    voiceStarted = true;
+    var team = Players.GetTeam(Players.GetLocalPlayer()) === DOTATeam_t.DOTA_TEAM_BADGUYS ? 'dire' : 'radiant';
+    var panel = $.CreatePanel('DOTAHTMLPanel', $('#CoachRoot'), 'CoachVoice');
+    panel.AddClass('CoachVoice');
+    panel.SetURL(VOICE_URL + '?team=' + team + '&embed=1');
   }
 
   function onAgents(ev) {
@@ -74,7 +89,7 @@
 
   GameEvents.Subscribe('vc_reply', onReply);
   GameEvents.Subscribe('vc_agents', onAgents);
-  GameEvents.Subscribe('vc_ack', function (ev) { acked = true; setupCamera(ev.camera); });
+  GameEvents.Subscribe('vc_ack', function (ev) { acked = true; setupCamera(ev.camera); startVoice(); });
   $('#CoachInput').SetPanelEvent('oninputsubmit', send);
   $('#CoachHelpButton').SetPanelEvent('onactivate', function () { $('#CoachSheet').ToggleClass('Hidden'); });
   Game.AddCommand('vc_coach_focus', focusInput, '', 0);

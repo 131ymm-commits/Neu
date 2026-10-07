@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Голосовой чат команды</title>
+<style>
+  :root { --bg:#14161a; --fg:#e8e6e3; --muted:#9aa0a6; --card:#1e2127; --acc:#2e7d32; }
+  body { margin:0; font:16px/1.4 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width:760px; margin:0 auto; padding:16px; }
+  h1 { font-size:20px; margin:0 0 12px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+  select, input, button { font:inherit; padding:8px 10px; border-radius:8px; border:1px solid #3a3f47; background:var(--card); color:var(--fg); }
+  #sound { background:var(--acc); border-color:var(--acc); }
+  #sound.on { background:#2a2f37; border-color:#3a3f47; }
+  .log { background:var(--card); border-radius:8px; padding:8px 12px; min-height:30vh; max-height:65vh; overflow:auto; }
+  .line { border-bottom:1px solid #2c3038; padding:5px 0; }
+  .who { font-weight:600; }
+  .to { color:#ffd27f; }
+  .muted { color:var(--muted); font-size:14px; }
+  body.embed main { display:none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Голосовой чат команды</h1>
+  <p class="muted">Агенты героев переговариваются: колы, просьбы, договорённости. Слышна только своя команда.
+    Голоса синтетические (браузера), у каждой позиции свой.</p>
+  <div class="row">
+    <label>Комната <input id="room" value="local" size="8"></label>
+    <label>Команда <select id="team"><option value="radiant">Свет (Radiant)</option><option value="dire">Тьма (Dire)</option></select></label>
+  </div>
+  <div class="row">
+    <button id="sound">Включить звук</button>
+    <label>Громкость <input id="volume" type="range" min="0" max="1" step="0.1" value="1"></label>
+    <label><input type="checkbox" id="names" checked> называть героя</label>
+  </div>
+  <p class="muted" id="status">жду реплик…</p>
+  <div class="log" id="log"></div>
+</main>
+<script src="voices.js"></script>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const q = new URLSearchParams(location.search);
+const embed = q.get('embed') === '1';             // так страницу открывает HUD игры (скрытая веб-панель)
+if (q.get('room')) $('room').value = q.get('room');
+if (q.get('team')) $('team').value = q.get('team');
+if (embed) document.body.classList.add('embed');
+let soundOn = embed, lastEvent = -1, generation = 0;
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function api(path) { return `/api/${encodeURIComponent($('room').value)}/${path}`; }
+
+function show(ev) {
+  const log = $('log');
+  const div = document.createElement('div');
+  div.className = 'line';
+  const to = (ev.to && ev.to.length) ? ` <span class="to">→ ${esc(ev.to.join(','))}</span>` : '';
+  const time = new Date().toLocaleTimeString().slice(0, 5);
+  div.innerHTML = `<span class="muted">${time}</span> <span class="who">${esc(ev.pos)} ${esc(ev.hero_ru || ev.hero || '')}</span>${to}: ${esc(ev.text)}`;
+  log.appendChild(div);
+  while (log.children.length > 60) log.removeChild(log.firstChild);
+  log.scrollTop = log.scrollHeight;
+}
+
+function speak(ev) {
+  if (!soundOn || !window.VoiceChat) return;
+  const name = $('names').checked && (ev.hero_ru || ev.hero) ? `${ev.hero_ru || ev.hero}: ` : '';
+  VoiceChat.say(ev.pos, name + ev.text);
+}
+
+async function poll(gen) {
+  while (gen === generation) {
+    try {
+      // при открытии старые реплики не зачитываем: сначала узнаём номер последнего события
+      const wait = lastEvent < 0 ? 0 : 20;
+      const r = await fetch(api(`events?team=${$('team').value}&after=${Math.max(lastEvent, 0)}&wait=${wait}`));
+      const res = await r.json();
+      const first = lastEvent < 0;
+      for (const ev of res.events || []) {
+        lastEvent = Math.max(lastEvent, ev.seq);
+        if (ev.kind !== 'voice' || first) continue;
+        show(ev);
+        speak(ev);
+      }
+      if (first) lastEvent = Math.max(lastEvent, 0);
+      $('status').textContent = `на связи с сервером тренера · голосов в системе: ${window.VoiceChat ? VoiceChat.count() : 0}`;
+    } catch (e) {
+      $('status').textContent = 'сервер тренера не отвечает — повтор через 2 с';
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
+}
+
+function restart() { generation += 1; lastEvent = -1; $('log').innerHTML = ''; poll(generation); }
+$('team').addEventListener('change', restart);
+$('room').addEventListener('change', restart);
+$('volume').addEventListener('input', () => { if (window.VoiceChat) VoiceChat.volume = Number($('volume').value); });
+$('sound').addEventListener('click', () => {
+  soundOn = !soundOn;
+  $('sound').classList.toggle('on', soundOn);
+  $('sound').textContent = soundOn ? 'Выключить звук' : 'Включить звук';
+  if (soundOn && window.VoiceChat) VoiceChat.unlock();
+});
+restart();
+</script>
+</body>
+</html>

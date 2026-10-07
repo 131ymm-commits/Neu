@@ -23,7 +23,7 @@
     horizontal-align: left;
     vertical-align: top;
     margin: 90px 0px 0px 12px;
-    width: 460px;
+    width: 560px;
     flow-children: down;
     background-color: #000000a0;
     padding: 6px 10px;
@@ -137,4 +137,13 @@
 .CoachSheetText {
     font-size: 16px;
     color: #e8e6e3;
+}
+
+/* скрытая веб-панель голосового чата: крошечная и прозрачная — скрытую совсем браузер может не запускать */
+.CoachVoice {
+    width: 4px;
+    height: 4px;
+    opacity: 0.01;
+    horizontal-align: right;
+    vertical-align: top;
 }

@@ -458,6 +458,17 @@ class WithAgents(Game):
         self.assertFalse(get[("radiant", 1)]["alive"])
         self.assertEqual(get[("radiant", 1)]["respawn"], 17)
 
+    def test_agents_talk_to_coach_page(self):
+        self.start_match()
+        self.step(2)
+        self.hud("1 пуш бот")
+        self.step(2)
+        port = self.srv.server_address[1]
+        evs = json.loads(urllib.request.urlopen(
+            f"http://127.0.0.1:{port}/api/local/events?team=radiant&after=0", timeout=5).read())["events"]
+        voice = [e for e in evs if e["kind"] == "voice"]
+        self.assertTrue(any(e["pos"] == 1 and "пуш бот" in e["text"] and e["hero_ru"] == "Снайпер" for e in voice), voice)
+
     def test_lua_observation_passes_python_checks(self):
         self.start_match()
         self.step(2)
@@ -568,6 +579,17 @@ class Executor(Game):
         notes = list(self.G["CoachGame"]["teams"][2]["exec"][1]["notes"].values())
         self.assertIn("нет способности no_such_spell", notes)
         self.assertIn("нет такого предмета: item_nonexistent", notes)
+
+    def test_voice_chat_line_in_hud_and_team_chat(self):
+        self.start_match()
+        self.decide(2, 1, {"plan": "farm", "where": "bot", "say": "Вайпер, Луна идёт к тебе", "to": [2]})
+        r = self.replies("say")[-1]
+        self.assertEqual((r["pos"], r["hero"], r["to"], r["text"]), (1, "sniper", "2", "Вайпер, Луна идёт к тебе"))
+        self.assertEqual(list(self.G["__said"].values())[-1], "→2 Вайпер, Луна идёт к тебе")
+        self.decide(2, 2, {"plan": "save", "ally": 1, "say": "Иду", "to": []})
+        r = self.replies("say")[-1]
+        self.assertEqual((r["pos"], r["to"], r["text"]), (2, "", "Иду"))
+        self.assertEqual(list(self.G["__said"].values())[-1], "Иду")
 
     def test_old_decision_ignored_and_server_restart(self):
         self.start_match()

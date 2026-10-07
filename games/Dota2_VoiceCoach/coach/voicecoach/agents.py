@@ -31,6 +31,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from .lexicon import load_heroes
 from .parser import Agent, MatchContext
 from .protocol import ACTIONS
 from .textcmd import ACTION_CANON, parse_short
@@ -57,8 +58,9 @@ DECISION_SCHEMA = {
         "retreat_hp": {"type": "integer"},
         "buyback": {"type": "boolean"},
         "say": {"type": "string"},
+        "to": {"type": "array", "items": {"type": "integer"}},
     },
-    "required": ["plan", "where", "target", "ally", "cast", "buy", "level", "retreat_hp", "buyback", "say"],
+    "required": ["plan", "where", "target", "ally", "cast", "buy", "level", "retreat_hp", "buyback", "say", "to"],
     "additionalProperties": False,
 }
 
@@ -213,10 +215,35 @@ def parse_decision(raw, obs: dict | None = None) -> tuple[dict | None, list[str]
     out["retreat_hp"] = max(0, min(90, hp))
     out["buyback"] = d.get("buyback") is True
     out["say"] = str(d.get("say") or "").strip()[:MAX_SAY]
+    me = int((obs or {}).get("pos") or 0)
+    to = []
+    for x in d.get("to") or []:
+        try:
+            n = int(x)
+        except (TypeError, ValueError):
+            notes.append(f"кому {x!r} — не номер союзника")
+            continue
+        if 1 <= n <= 5 and n != me and n not in to:
+            to.append(n)
+    out["to"] = to if out["say"] else []
     return out, notes
 
 
 # --- промпты ---
+
+_HEROES_RU: dict | None = None
+
+
+def hero_ru(name) -> str:
+    """Как называть героя в речи: «luna» → «Луна» (coach/data/heroes.json); неизвестного — как есть."""
+    global _HEROES_RU
+    if _HEROES_RU is None:
+        try:
+            _HEROES_RU = {short_hero(k): v.get("ru") or v.get("en") for k, v in load_heroes().items()}
+        except OSError:
+            _HEROES_RU = {}
+    s = short_hero(name)
+    return _HEROES_RU.get(s) or s
 
 def _glossary() -> str:
     skip = {"tormentor"}
@@ -251,13 +278,28 @@ def persona_text(persona: dict | None) -> str:
     return "\n".join(lines)
 
 
-def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, obedience: float = 0.85) -> str:
+def roster_text(roster: dict | None) -> str:
+    if not roster:
+        return ""
+    allies = ", ".join(f"{p} — {h} ({hero_ru(h)})" for p, h in roster.get("allies") or [])
+    enemies = ", ".join(f"{h} ({hero_ru(h)})" for h in roster.get("enemies") or [])
+    out = []
+    if allies:
+        out.append(f"Союзники (позиция — герой): {allies}.")
+    if enemies:
+        out.append(f"Враги: {enemies}.")
+    return "\n".join(out) + "\nВ речи называй героев по-русски (как в скобках), союзников — по герою или номеру."
+
+
+def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, obedience: float = 0.85,
+                  roster: dict | None = None) -> str:
     who = (persona or {}).get("name") or f"игрок позиции {pos}"
     team_ru = "Свет (Radiant)" if team == "radiant" else "Тьму (Dire)"
     return f"""Ты — {who}: играешь в Dota 2 героем {short_hero(hero)} за {team_ru}, роль — {ROLE_RU.get(pos, f"позиция {pos}")}.
-В команде пятеро героев, и каждого ведёт свой ИИ-игрок, как ты. Над вами тренер — человек: героем он не играет, а пишет приказы коротким текстом.
+В команде пятеро героев, и каждого ведёт свой ИИ-игрок, как ты. Над вами тренер — человек: героем он не играет, а пишет приказы коротким текстом. У команды голосовой чат: вы переговариваетесь, тренер вас слышит.
 
 {persona_text(persona)}
+{roster_text(roster)}
 
 КАК ТЫ УПРАВЛЯЕШЬ ГЕРОЕМ
 Раз в несколько секунд и сразу при событии (приказ тренера, смерть, враг рядом, резкая потеря здоровья) ты получаешь наблюдение — JSON с тем, что видит твой герой, — и отвечаешь одним решением, тоже JSON. Решение выполняют твои «руки» — исполнитель в игре. Руки сами: добивают крипов при фарме линии; бьют цель; применяют способности из cast, когда цель видна (до далёкой цели сначала подходят); отходят к фонтану, когда здоровья меньше retreat_hp процентов; покупают предметы из buy по очереди, когда герой у фонтана или мёртв и хватает золота; вкладывают очки способностей по level. До следующего решения руки продолжают выполнять это. Ты решаешь, ЧТО делать и ГДЕ; руки — КАК.
@@ -272,17 +314,21 @@ def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, o
 - level: очередь прокачки из can_level (есть, когда есть очки). Пустой — руки качают сами: ульту, потом младшую способность.
 - retreat_hp: порог отхода, проценты здоровья; обычно 25–40. 0 — не отходить вовсе: только осознанно (например, добить цель).
 - buyback: true — выкупиться сейчас (только когда мёртв). После выкупа или возрождения выбери план — куда идти.
-- say: короткая реплика тренеру по-русски (до 100 знаков): ответ на приказ, возражение, важное. Сказать нечего — "".
+- say: твоя реплика в голосовой чат команды (до 100 знаков, по-русски). Сказать нечего — "".
+- to: кому реплика — номера союзников, например [2] или [2,3]; [] — всем (и тренеру).
 
 ПРИКАЗЫ ТРЕНЕРА
 Они в поле coach: seq, ago (сколько секунд назад), text, urgent (срочно). Новый приказ отмечен в сообщении. Формат: «[кому] действие [где/цель] [!]»; кому — номера позиций («23» — второй и третий) или «все». Слова: {_glossary()}; «не X» — не делать X; «!» — срочно.
 Слушайся тренера, если приказ выполним (послушание {obedience:.2f} из 1). Если нет — ты мёртв, нет маны, ульта в откате, это верная смерть — скажи об этом в say коротко и делай лучшее, что можешь. Смок, стаки, лес и варды не у своих вышек руки пока не умеют — скажи тренеру честно, что сделаешь вместо. На новый приказ отвечай в say коротко («Иду пушить бот»).
 
+ГОЛОСОВОЙ ЧАТ КОМАНДЫ
+Твою реплику (say) слышат тренер и все четверо союзников; их реплики ты видишь в сообщении в разделе «Голосовой чат» (кто, кому, сколько секунд назад). Говори как живой игрок в голосе Доты: коротко и по делу — где враги и куда пропали, у кого из врагов нет ульты или выкупа, кому нужна помощь, договорённости (Рошан, драка, пуш, отход), ответы тренеру и союзникам. Хочешь, чтобы союзник что-то сделал, — обратись к нему (to) и скажи что. Если обратились к тебе — ответь коротко (to — тот, кто обратился) и, если согласен, сделай. Молчать — нормально: не повторяй то, что уже сказано, и не болтай без нового.
+
 ЧТО В НАБЛЮДЕНИИ
 clock — игровые часы, с; hp, mp — [сейчас, максимум]; where — где ты (линия и ближайшая вышка); attack — урон и дальность атаки; abilities — способности (use: target/point/none/passive; ready; cd — откат, с; mana; range); items — предметы (backpack — в рюкзаке); points и can_level — очки способностей и что можно качать; gold; buyback — цена и можно ли; in_shop — у фонтана; doing — что сейчас делают руки; queue — очереди рук; notes — что руки не смогли сделать; near — крипы и вражеская вышка рядом (weak_enemy_creeps — можно добить сразу); allies — союзники; enemies — видимые враги (d — расстояние до тебя); missing — невидимые враги (seen — где, ago — сколько секунд назад видели); towers — уровень внешней живой вышки на линиях (0 — вышек нет); roshan — жив ли Рошан; events — недавние события.
 
 Отвечай ТОЛЬКО JSON-объектом решения, без пояснений и без markdown.
-Пример: {{"plan":"farm","where":"{default_lane(team, pos)}","target":"","ally":0,"cast":[],"buy":["item_tango","item_branches"],"level":[],"retreat_hp":30,"buyback":false,"say":""}}"""
+Пример: {{"plan":"farm","where":"{default_lane(team, pos)}","target":"","ally":0,"cast":[],"buy":["item_tango","item_branches"],"level":[],"retreat_hp":30,"buyback":false,"say":"","to":[]}}"""
 
 
 SHOP_HINT_GOLD = 600         # с таким золотом у фонтана или мёртвым — напомнить о покупках (пилот: агент забывал)
@@ -293,11 +339,29 @@ OBS_ORDER = ("clock", "alive", "respawn", "lvl", "hp", "mp", "gold", "buyback", 
              "missing", "allies", "towers", "roshan", "coach", "events", "stats", "enemy_team")
 
 
-def user_prompt(obs: dict, memory: list[str], new_coach: list[dict], trigger: str) -> str:
+def chat_line(e: dict, me: int, clock) -> str:
+    who = "ты" if e["from"] == me else f"{hero_ru(e['hero'])} ({e['from']})"
+    if not e.get("to"):
+        whom = "всем"
+    elif me in e["to"]:
+        whom = "тебе" if len(e["to"]) == 1 else "тебе и " + ",".join(str(x) for x in e["to"] if x != me)
+    else:
+        whom = ",".join(str(x) for x in e["to"])
+    ago = max(0, int(round(float(clock or 0) - float(e.get("clock") or 0))))
+    return f"{ago} с назад {who} → {whom}: «{e['text']}»"
+
+
+def user_prompt(obs: dict, memory: list[str], new_coach: list[dict], trigger: str,
+                chat: list[dict] | None = None, me: int | None = None, seen_chat: int = 0) -> str:
     lines = [f"Часы {mmss(obs.get('clock'))}. Повод: {trigger}."]
     if new_coach:
         lines.append("НОВЫЙ ПРИКАЗ ТРЕНЕРА: " + "; ".join(
             f"«{c.get('text', '')}»" + (" (срочно)" if c.get("urgent") else "") for c in new_coach))
+    if chat:
+        me = int(me if me is not None else obs.get("pos") or 0)
+        rows = [("НОВОЕ " if e["seq"] > seen_chat and e["from"] != me else "") + chat_line(e, me, obs.get("clock"))
+                for e in chat]
+        lines.append("Голосовой чат команды (старое → новое): " + " | ".join(rows))
     if memory:
         lines.append("Твои прошлые решения: " + " | ".join(memory))
     gold = int(obs.get("gold") or 0)
@@ -323,7 +387,7 @@ def memory_line(obs: dict, d: dict, new_coach: list[dict]) -> str:
     if new_coach:
         s += " (на приказ «" + "; ".join(c.get("text", "") for c in new_coach) + "»)"
     if d.get("say"):
-        s += f"; сказал «{d['say']}»"
+        s += f"; сказал{(' ' + ','.join(map(str, d['to']))) if d.get('to') else ''} «{d['say']}»"
     return s
 
 
@@ -350,11 +414,13 @@ INTENT_PLAN = {"retreat": "retreat", "move": "move", "push": "push", "split": "p
                "hold": "hold", "follow": "follow", "save": "save", "farm": "farm"}
 
 
-def rules_decision(obs: dict, new_coach: list[dict] | None = None) -> dict:
-    """Решение без модели — простые правила (тесты, сухой прогон, бесплатный соперник). Не Claude."""
+def rules_decision(obs: dict, new_coach: list[dict] | None = None, extra: dict | None = None) -> dict:
+    """Решение без модели — простые правила (тесты, сухой прогон, бесплатный соперник). Не Claude.
+    Говорит в чат: на приказ — «Понял», на обращение союзника — «Иду», на нового врага рядом — «Вижу …»."""
+    extra = extra or {}
     team, pos = obs.get("team", "radiant"), int(obs.get("pos", 1))
     d = {"plan": "farm", "where": default_lane(team, pos), "target": "", "ally": 0, "cast": [], "buy": [],
-         "level": [], "retreat_hp": 30, "buyback": False, "say": ""}
+         "level": [], "retreat_hp": 30, "buyback": False, "say": "", "to": []}
     have = {i.get("name") for i in obs.get("items") or []}
     queued = set((obs.get("queue") or {}).get("buy") or [])
     if obs.get("clock", 0) < 60 and not have and not queued:
@@ -388,6 +454,14 @@ def rules_decision(obs: dict, new_coach: list[dict] | None = None) -> dict:
                 d["buyback"] = True
         if new_coach:
             d["say"] = "Понял: " + coach[-1].get("text", "")
+    asked = extra.get("chat_to_me") or []
+    if asked and not d["say"]:
+        e = asked[-1]
+        d["say"], d["to"] = f"{hero_ru(e['hero'])}, понял, иду", [e["from"]]
+        if obs.get("alive", True):
+            d["plan"], d["where"], d["ally"] = "save", "", e["from"]
+    elif extra.get("trigger") == "враг рядом" and not d["say"] and obs.get("enemies"):
+        d["say"] = f"Вижу {hero_ru(obs['enemies'][0]['hero'])}"
     if not obs.get("alive", True):
         return d
     hp = obs.get("hp") or [1, 1]
@@ -400,7 +474,7 @@ class RulesBackend:
     label = "правила (не Claude)"
 
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
-        return {"data": rules_decision(obs, (extra or {}).get("new_coach")), "usage": {}}
+        return {"data": rules_decision(obs, (extra or {}).get("new_coach"), extra), "usage": {}}
 
 
 class ApiBackend:
@@ -504,6 +578,7 @@ class HeroAgent:
     system: str
     memory: deque = field(default_factory=lambda: deque(maxlen=6))
     seen_coach: int = 0
+    seen_chat: int = 0                  # последняя реплика чата команды, которую агент уже слышал
     busy: bool = False
     last_clock: float = -1e9
     last_error: bool = False
@@ -513,6 +588,11 @@ class HeroAgent:
     state: str = "ждёт"
     calls: int = 0
     errors: int = 0
+
+
+ASKED = "к тебе обратился союзник"
+CHAT_WINDOW = 60          # с игры: столько агент «помнит» голосовой чат
+CHAT_KEEP = 6             # и не больше стольких реплик
 
 
 def _hp_pct(obs: dict | None) -> float:
@@ -546,6 +626,9 @@ class AgentHub:
         self.pause_until = 0.0
         self.log_path = Path(log_path) if log_path else None
         self.run = f"{time.time():.0f}-{id(self) % 10000}"   # новый запуск сервера — номера решений с 1, игра их сбрасывает
+        self.chat = {t: deque(maxlen=40) for t in backends}   # голосовой чат каждой команды (слышит только своя)
+        self.chat_seq = 0
+        self.on_say = None                                    # on_say(team, реплика) — сервер шлёт её тренеру
         self.stats = {"calls": 0, "errors": 0, "latency": [], "in": 0, "out": 0, "cache_read": 0, "cache_write": 0,
                       "cost_cli": 0.0}
 
@@ -558,11 +641,25 @@ class AgentHub:
         ag = self.agents.get(key)
         clock = float(obs.get("clock") or 0)
         if ag is None or ag.hero != hero or clock < ag.last_clock - 60:     # новый матч или другой герой
+            if ag is not None and clock < ag.last_clock - 60:
+                self.chat[team].clear()
             persona = self._persona(team, pos)
+            roster = {"allies": [(a.get("pos"), a.get("hero")) for a in obs.get("allies") or []],
+                      "enemies": list(obs.get("enemy_team") or [])}
             ag = HeroAgent(team=team, pos=pos, hero=hero,
-                           system=system_prompt(team, pos, hero, persona, self.obedience))
+                           system=system_prompt(team, pos, hero, persona, self.obedience, roster))
             self.agents[key] = ag
         return ag
+
+    def _chat_for(self, ag: HeroAgent, clock: float) -> list[dict]:
+        """Последние реплики своей команды за CHAT_WINDOW с игры — что агент «слышит»."""
+        recent = [dict(e) for e in self.chat.get(ag.team, ()) if clock - e["clock"] <= CHAT_WINDOW]
+        return recent[-CHAT_KEEP:]
+
+    def _asked(self, ag: HeroAgent) -> list[dict]:
+        """Новые обращения союзников к этому агенту (ответы на обращения не будят — нет пинг-понга)."""
+        return [e for e in self.chat.get(ag.team, ()) if e["seq"] > ag.seen_chat and e["from"] != ag.pos
+                and ag.pos in e["to"] and not e["reply"]]
 
     def _trigger(self, ag: HeroAgent, obs: dict) -> str | None:
         if ag.calls == 0:
@@ -573,6 +670,8 @@ class AgentHub:
             return None
         if any((c.get("seq") or 0) > ag.seen_coach for c in obs.get("coach") or []):
             return "приказ тренера"
+        if self._asked(ag):
+            return ASKED
         prev = ag.called_obs
         if prev is not None:
             if prev.get("alive") and not obs.get("alive"):
@@ -612,7 +711,8 @@ class AgentHub:
                 ag.busy, ag.state = True, "думает"
                 self.inflight += 1
                 self.calls_total += 1
-                jobs.append((ag, obs, trig))
+                clock = float(obs.get("clock") or 0)
+                jobs.append((ag, obs, trig, self._chat_for(ag, clock), self._asked(ag), self.chat_seq))
         for job in jobs:
             if self.sync:
                 self._run(*job)
@@ -627,14 +727,17 @@ class AgentHub:
                 "run": self.run,
             }
 
-    def _run(self, ag: HeroAgent, obs: dict, trig: str) -> None:
+    def _run(self, ag: HeroAgent, obs: dict, trig: str, chat: list | None = None, asked: list | None = None,
+             heard: int = 0) -> None:
         t0 = time.monotonic()
         new_coach = [c for c in obs.get("coach") or [] if (c.get("seq") or 0) > ag.seen_coach]
-        user = user_prompt(obs, list(ag.memory), new_coach, trig)
+        user = user_prompt(obs, list(ag.memory), new_coach, trig, chat or [], ag.pos, ag.seen_chat)
         backend = self.backends[ag.team]
         reply, decision, notes, err = {}, None, [], None
+        said = None
         try:
-            reply = backend.decide(ag.system, user, obs, {"new_coach": new_coach, "trigger": trig}) or {}
+            reply = backend.decide(ag.system, user, obs, {"new_coach": new_coach, "trigger": trig,
+                                                          "chat_to_me": asked or []}) or {}
             raw = reply.get("data") if reply.get("data") is not None else (reply.get("text") or "")
             decision, notes = parse_decision(raw, obs)
             if decision is None:
@@ -668,11 +771,23 @@ class AgentHub:
                 ag.decision = decision
                 ag.state = "решил" + (f": «{decision['say']}»" if decision.get("say") else "")
                 ag.seen_coach = max([ag.seen_coach] + [int(c.get("seq") or 0) for c in obs.get("coach") or []])
+                ag.seen_chat = max(ag.seen_chat, heard)
                 ag.memory.append(memory_line(obs, decision, new_coach))
+                if decision.get("say"):
+                    self.chat_seq += 1
+                    said = {"seq": self.chat_seq, "clock": float(obs.get("clock") or 0), "from": ag.pos,
+                            "hero": ag.hero, "text": decision["say"], "to": list(decision.get("to") or []),
+                            "reply": trig == ASKED}
+                    self.chat[ag.team].append(said)
             else:
                 ag.errors += 1
                 self.stats["errors"] += 1
                 ag.state = "ошибка: " + (err or "")[:80]
+        if said is not None and self.on_say is not None:
+            try:
+                self.on_say(ag.team, dict(said))
+            except Exception:                                      # noqa: BLE001 — тренеру не дошло, игра идёт
+                pass
         self._log({"t": round(time.time(), 3), "clock": obs.get("clock"), "team": ag.team, "pos": ag.pos,
                    "hero": ag.hero, "trigger": trig, "backend": getattr(backend, "label", ""),
                    "latency_s": round(latency, 3), "usage": usage, "cost_usd": reply.get("cost_usd"),
@@ -708,7 +823,8 @@ class AgentHub:
             agents = [{"team": a.team, "pos": a.pos, "hero": a.hero, "state": a.state, "calls": a.calls,
                        "errors": a.errors, "decision": a.decision, "memory": list(a.memory)}
                       for a in sorted(self.agents.values(), key=lambda a: (a.team, a.pos))]
-        return {"agents": agents, "summary": self.summary(),
+            chat = {t: list(c) for t, c in self.chat.items()}
+        return {"agents": agents, "summary": self.summary(), "chat": chat,
                 "backend": {t: getattr(b, "label", str(b)) for t, b in self.backends.items()}}
 
     def close(self) -> None:
