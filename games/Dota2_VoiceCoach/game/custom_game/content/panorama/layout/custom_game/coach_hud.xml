@@ -1,0 +1,22 @@
+<root>
+    <styles>
+        <include src="file://{resources}/styles/custom_game/coach_hud.css" />
+    </styles>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/coach_hud.js" />
+    </scripts>
+    <Panel id="CoachRoot" hittest="false">
+        <Panel id="CoachAgents" hittest="false" />
+        <Panel id="CoachLog" hittest="false" />
+        <Panel id="CoachBar">
+            <Label class="CoachPrompt" text="Приказ:" />
+            <TextEntry id="CoachInput" maxchars="200" placeholder="1 фарм лес. 23 ганг мид. все рош" />
+            <Button id="CoachHelpButton" class="CoachButton">
+                <Label text="?" />
+            </Button>
+        </Panel>
+        <Panel id="CoachSheet" class="Hidden">
+            <Label class="CoachSheetText" text="[кому] действие [где/что] [!] · несколько приказов — через точку или запятую&#10;Кому: 1…5, 23, все, все-1, все кроме 4,5, герой агента; без «кому» командные приказы идут всем&#10;Действия: фарм пуш деф ганг сбор рош торм смок назад фокус драка жди сплит вард стак купи юз бб ульт держи сейв за тп иди сам отмена доклад&#10;Где: топ мид бот сейф хард лес «их лес» древние база руна рош · вышка т1…т4 · цель: герой или в1…в5&#10;Примеры: 1 фарм лес · 23 ганг мид · все-1 пуш бот · 3 ульт марс ! · 45 рош · все назад · сам&#10;F2 — поле приказа (проверить)" />
+        </Panel>
+    </Panel>
+</root>

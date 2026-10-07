@@ -1,0 +1,112 @@
+#CoachRoot {
+    width: 100%;
+    height: 100%;
+}
+
+#CoachAgents {
+    horizontal-align: left;
+    vertical-align: top;
+    margin: 90px 0px 0px 12px;
+    width: 460px;
+    flow-children: down;
+    background-color: #000000a0;
+    padding: 6px 10px;
+    border-radius: 4px;
+}
+
+.CoachAgent {
+    font-size: 17px;
+    color: #e8e6e3;
+    margin: 2px 0px;
+}
+
+.CoachAgent.Dead {
+    color: #8a8f96;
+}
+
+#CoachLog {
+    horizontal-align: left;
+    vertical-align: bottom;
+    margin: 0px 0px 300px 12px;
+    width: 560px;
+    flow-children: down;
+}
+
+.CoachLine {
+    font-size: 17px;
+    color: #9fd3ff;
+    background-color: #00000090;
+    padding: 2px 8px;
+    margin: 1px 0px;
+}
+
+.CoachLine.Reply_error {
+    color: #ff9c8f;
+}
+
+.CoachLine.Reply_refuse,
+.CoachLine.Reply_delay {
+    color: #ffd27f;
+}
+
+#CoachBar {
+    horizontal-align: center;
+    vertical-align: bottom;
+    margin-bottom: 180px;
+    width: 720px;
+    height: 46px;
+    flow-children: right;
+    background-color: #101317e0;
+    border: 1px solid #3a3f47;
+    border-radius: 6px;
+    padding: 6px 8px;
+}
+
+.CoachPrompt {
+    font-size: 18px;
+    color: #ffd27f;
+    vertical-align: center;
+    margin-right: 8px;
+}
+
+#CoachInput {
+    width: fill-parent-flow(1.0);
+    height: 32px;
+    font-size: 18px;
+    color: #ffffff;
+    background-color: #1e2127;
+}
+
+.CoachButton {
+    width: 32px;
+    height: 32px;
+    margin-left: 8px;
+    background-color: #2a2f37;
+    border-radius: 4px;
+}
+
+.CoachButton Label {
+    horizontal-align: center;
+    vertical-align: center;
+    font-size: 18px;
+    color: #e8e6e3;
+}
+
+#CoachSheet {
+    horizontal-align: center;
+    vertical-align: bottom;
+    margin-bottom: 236px;
+    width: 900px;
+    background-color: #000000d0;
+    padding: 10px 14px;
+    border-radius: 6px;
+}
+
+#CoachSheet.Hidden {
+    visibility: collapse;
+}
+
+.CoachSheetText {
+    font-size: 16px;
+    color: #e8e6e3;
+}

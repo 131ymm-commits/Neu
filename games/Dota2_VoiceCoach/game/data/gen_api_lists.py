@@ -53,6 +53,8 @@ def panorama(pkg: Path) -> list[str]:
         text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
         text = re.sub(r"//[^\n]*", "", text)
         names |= set(MEMBER.findall(text)) | set(TYPE.findall(text))
+        names |= set(re.findall(r"^\s+([A-Z][A-Z0-9_]+)\s*=", text, re.M))      # члены перечислений
+        names |= set(re.findall(r"\|\s*'([a-z][A-Za-z0-9_]*)'", text))           # события панелей: 'oninputsubmit'…
     names = {n for n in names if len(n) > 1}
     head = ["# Имена API Panorama: @moddota/panorama-types 1.39.2 (npm, 2026-04-26, MIT): методы, свойства, события, типы панелей."]
     return head + sorted(names)

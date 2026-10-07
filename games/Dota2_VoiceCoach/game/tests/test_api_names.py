@@ -22,6 +22,12 @@ from gen_api_lists import strip_lua  # noqa: E402
 PROBE = GAME / "probe_addon"
 VS = PROBE / "game" / "scripts" / "vscripts"
 JS = PROBE / "content" / "panorama" / "scripts" / "custom_game" / "probe.js"
+CG = GAME / "custom_game"                                      # каркас кастомки
+CVS = CG / "game" / "scripts" / "vscripts"
+CJS = CG / "content" / "panorama" / "scripts" / "custom_game" / "coach_hud.js"
+# модули, которые установщик кладёт в vscripts под другим именем (game/custom_game/install_game.py)
+INSTALLED = {"vc_intents": "coach_intents", "vc_voice": "coach_voice", "vc_text": "coach_text",
+             "vc_text_data": "coach_text_data", "vc_json": "json"}
 
 # Имена вне списков — с источником
 ALLOW = {
@@ -38,6 +44,11 @@ VS_TYPED = {
     "probe.lua": {"gm": "CDOTABaseGameMode", "e.hero": "CDOTA_BaseNPC_Hero", "h": "CDOTA_BaseNPC_Hero",
                   "buff": "CDOTA_Buff", "req": "CScriptHTTPRequest", "player": "CDOTAPlayerController"},
     "coach_bridge.lua": {"req": "CScriptHTTPRequest"},
+    "coach_world.lua": {"tower": "CDOTA_BaseNPC", "f": "CBaseEntity", "hero": "CDOTA_BaseNPC_Hero",
+                        "ab": "CDOTABaseAbility", "unit": "CDOTA_BaseNPC", "t.unit": "CDOTA_BaseNPC"},
+    "coach_game.lua": {"hero": "CDOTA_BaseNPC_Hero", "unit": "CDOTA_BaseNPC", "gm": "CDOTABaseGameMode",
+                       "ab": "CDOTABaseAbility", "act.ability": "CDOTABaseAbility", "order.target": "CDOTA_BaseNPC",
+                       "act.target": "CDOTA_BaseNPC"},
 }
 # Переменные скриптов ботов, которые держат объекты API ботов
 BOT_OBJECTS = {"bot", "a", "unit", "npcBot", "hero", "ability", "req"}
@@ -100,8 +111,15 @@ def lua(path):
 class VscriptsNames(unittest.TestCase):
     """Сервер кастомки: пробник и мост тренера."""
 
-    FILES = [VS / "probe.lua", VS / "addon_game_mode.lua", VS / "modifiers" / "modifier_voicecoach_probe.lua",
-             GAME / "shared" / "coach_bridge.lua"]
+    # группы файлов, которые видят глобальные имена друг друга: пробник, каркас кастомки, мост
+    GROUPS = [
+        [VS / "probe.lua", VS / "addon_game_mode.lua", VS / "modifiers" / "modifier_voicecoach_probe.lua",
+         VS / "modifiers" / "modifier_voicecoach_commander.lua"],
+        [CVS / "coach_game.lua", CVS / "coach_world.lua", CVS / "coach_agents.lua", CVS / "addon_game_mode.lua",
+         CVS / "modifiers" / "modifier_voicecoach_commander.lua"],
+        [GAME / "shared" / "coach_bridge.lua"],
+    ]
+    FILES = [p for g in GROUPS for p in g]
 
     def check_file(self, path, project=frozenset()):
         code = lua(path)
@@ -147,12 +165,13 @@ class VscriptsNames(unittest.TestCase):
         return sorted(set(bad))
 
     def test_names_exist(self):
-        project = set()
-        for path in self.FILES[:3]:                # файлы аддона видят глобальные имена друг друга
-            project |= set(re.findall(r"^(\w+)\s*=", lua(path), re.M))
-        for path in self.FILES:
-            with self.subTest(file=path.name):
-                self.assertEqual(self.check_file(path, frozenset(project) if path in self.FILES[:3] else frozenset()), [])
+        for group in self.GROUPS:
+            project = set()
+            for path in group:                     # файлы одного аддона видят глобальные имена друг друга
+                project |= set(re.findall(r"^(\w+)\s*=", lua(path), re.M))
+            for path in group:
+                with self.subTest(file=f"{path.parent.name}/{path.name}"):
+                    self.assertEqual(self.check_file(path, frozenset(project)), [])
 
     def test_checker_catches_typos(self):
         # сам проверщик должен ловить опечатки — иначе пустой список ничего не значит
@@ -202,28 +221,50 @@ class BotApiNames(unittest.TestCase):
 
 
 class PanoramaNames(unittest.TestCase):
-    """Интерфейс кастомки: probe.js."""
+    """Интерфейс: probe.js (пробник) и coach_hud.js (каркас кастомки)."""
 
     NAMES = {l for l in (DATA / "panorama_api.txt").read_text(encoding="utf-8").splitlines()
              if l and not l.startswith("#")}
 
-    def code(self):
-        text = JS.read_text(encoding="utf-8")
+    def code(self, path=JS):
+        text = path.read_text(encoding="utf-8")
         text = re.sub(r"/\*.*?\*/", "", text, flags=re.S)
         return re.sub(r"//[^\n]*", "", text)
 
-    def test_names_exist(self):
-        code = self.code()
+    def used(self, code):
         used = set(re.findall(r"\$\.(\w+)\s*\(", code))
-        used |= set(re.findall(r"GameEvents\.(\w+)\s*\(", code))
-        used |= set(re.findall(r"\bpanel\.(\w+)\s*\(", code))
+        used |= set(re.findall(r"\b(?:GameEvents|GameUI|Game)\.(\w+)\s*\(", code))
+        used |= set(re.findall(r"\b(?:panel|label|input|log|line|box|row)\.(\w+)\s*[(=]", code))
+        used |= set(re.findall(r"\$\('[^']+'\)\.(\w+)\s*[(=]", code))
         used |= set(re.findall(r"CreatePanel\(\s*'(\w+)'", code))
         used |= set(re.findall(r"RegisterEventHandler\(\s*'(\w+)'", code))
-        used |= set(re.findall(r"\blabel\.(\w+)\s*=", code))
+        used |= set(re.findall(r"SetPanelEvent\(\s*'(\w+)'", code))
+        used |= set(re.findall(r"\bE\.(DOTA_DEFAULT_UI_\w+)", code))
+        return used
+
+    def test_names_exist(self):
+        used = self.used(self.code())
         missing = sorted(n for n in used if n not in self.NAMES and n not in ALLOW)
         self.assertEqual(missing, [])
         self.assertIn("SetURL", used)
         self.assertIn("DOTAHTMLPanel", used)
+
+    def test_hud_names_exist(self):
+        used = self.used(self.code(CJS))
+        missing = sorted(n for n in used if n not in self.NAMES and n not in ALLOW)
+        self.assertEqual(missing, [])
+        for n in ("SetCameraDistance", "SetDefaultUIEnabled", "oninputsubmit", "DOTA_DEFAULT_UI_ACTION_PANEL"):
+            self.assertIn(n, used)
+
+    def test_hud_events_match_server(self):
+        code = self.code(CJS)
+        raw = (CVS / "coach_game.lua").read_text(encoding="utf-8")
+        to_server = set(re.findall(r"SendCustomGameEventToServer\(\s*'(\w+)'", code))
+        self.assertEqual(to_server, {"vc_command", "vc_ready"})
+        self.assertLessEqual(to_server, set(re.findall(r'RegisterListener\("(\w+)"', raw)))
+        to_client = set(re.findall(r'Send_ServerTo(?:Player|Team)\([^,]+,\s*"(\w+)"', raw))
+        self.assertEqual(to_client, {"vc_reply", "vc_ack", "vc_agents"})
+        self.assertLessEqual(to_client, set(re.findall(r"GameEvents\.Subscribe\(\s*'(\w+)'", code)))
 
     def test_custom_events_match_server(self):
         """События клиента ↔ слушатели сервера, подтверждения сервера ↔ подписки клиента."""
@@ -266,6 +307,20 @@ class AddonLayout(unittest.TestCase):
         for path in VS.rglob("*.lua"):
             for mod in re.findall(r'require\("([\w/]+)"\)', path.read_text(encoding="utf-8")):
                 self.assertTrue((VS / f"{mod}.lua").exists(), f"{path.name}: require {mod}")
+
+    def test_custom_game_layout(self):
+        info = (CG / "game/addoninfo.txt").read_text(encoding="utf-8")
+        self.assertRegex(info, r'"maps"\s+"dota"')
+        for xml in ("custom_ui_manifest.xml", "coach_hud.xml"):
+            text = (CG / "content/panorama/layout/custom_game" / xml).read_text(encoding="utf-8")
+            for rel in re.findall(r"file://\{resources\}/([\w/.]+)", text):
+                self.assertTrue((CG / "content/panorama" / rel).exists(), rel)
+        for path in CVS.rglob("*.lua"):
+            for mod in re.findall(r'require\("([\w/]+)"\)', path.read_text(encoding="utf-8")):
+                if mod in INSTALLED:
+                    self.assertTrue((GAME / "shared" / f"{INSTALLED[mod]}.lua").exists(), mod)
+                else:
+                    self.assertTrue((CVS / f"{mod}.lua").exists(), f"{path.name}: require {mod}")
 
 
 if __name__ == "__main__":
