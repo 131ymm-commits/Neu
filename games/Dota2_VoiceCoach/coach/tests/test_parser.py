@@ -204,3 +204,30 @@ class RegressionParse01(unittest.TestCase):
         from tests.eval_heldout import evaluate
         summary, _ = evaluate(Path(__file__).resolve().parent / "heldout_phrases.jsonl", "parse01")
         self.assertGreaterEqual(summary["phrase_ok_share"], 0.95, summary)
+
+
+class ContextMemory(unittest.TestCase):
+    """Кому уходит личный приказ без адресата (проверка в браузере 07.10.2026 нашла: после
+    «все на Рошана» фраза «купи бкб» уходила всем пятерым)."""
+
+    def run_seq(self, phrases):
+        c = ctx()
+        out = []
+        for t in phrases:
+            r = parse(t, c)
+            c.remember(r)
+            out.append([(cmd.action, cmd.agents, cmd.clarify) for cmd in r.commands])
+        return out
+
+    def test_personal_follows_single_addressee(self):
+        out = self.run_seq(["Вася, фарми лес", "купи бкб", "тп на мид"])
+        self.assertEqual(out[1], [("buy", [5], "")])
+        self.assertEqual(out[2], [("tp", [5], "")])
+
+    def test_after_team_order_personal_asks(self):
+        out = self.run_seq(["Вася, фарми лес", "все на роша", "купи бкб"])
+        self.assertEqual(out[2], [("buy", [], "кому?")])
+
+    def test_after_two_named_personal_asks(self):
+        out = self.run_seq(["Миракл и Топсон, на роша", "купи бкб"])
+        self.assertEqual(out[1], [("buy", [], "кому?")])

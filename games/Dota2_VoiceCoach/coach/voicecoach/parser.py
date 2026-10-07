@@ -46,10 +46,15 @@ class MatchContext:
     last_agents: list = field(default_factory=list)   # кому был прошлый приказ
 
     def remember(self, result: "ParseResult") -> None:
-        for c in reversed(result.commands):
-            if c.agents:
-                self.last_agents = list(c.agents)
-                return
+        """Запомнить, кому был прошлый личный приказ: только если явно назван один агент.
+        После «все на Рошана» фраза «купи бкб» должна переспросить «кому?», а не уйти всем."""
+        if not result.commands:
+            return
+        if result.focus_agents:
+            self.last_agents = list(result.focus_agents) if len(result.focus_agents) == 1 else []
+        elif any(len(c.agents) >= 2 for c in result.commands):
+            self.last_agents = []          # был общий приказ — личный без адресата переспросит
+        # иначе приказ ушёл прошлому адресату («Вася, фарми лес» → «купи бкб») — помним его же
 
 
 @dataclass
@@ -58,6 +63,7 @@ class ParseResult:
     commands: list
     unknown: list
     confidence: float
+    focus_agents: list = field(default_factory=list)   # явно названные адресаты последнего приказа
 
 
 # --- нормализация ------------------------------------------------------------
@@ -617,11 +623,15 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
     used_agents: list[int] = []
     prev_agents: list[int] = []
     prev_action: str | None = None
+    focus_agents: list[int] = []
     for cl in clauses:
+        explicit = sorted(set(cl.agents) | set(cl.dative)) if (cl.agents or cl.dative) else []
         res = _finalize(cl, ctx, prev_agents, used_agents, prev_action)
         if res is None:
             continue
         cmd, was_implicit = res
+        if explicit and not cmd.clarify:
+            focus_agents = [a for a in cmd.agents if a in explicit] or explicit
         if commands and _same(commands[-1], cmd):
             continue
         commands.append(cmd)
@@ -651,7 +661,8 @@ def parse(text: str, ctx: MatchContext | None = None) -> ParseResult:
     conf = 0.0 if content == 0 else max(0.0, min(1.0, known / content - 0.15 * fuzz))
     for c in commands:
         c.confidence = round(min(c.confidence, conf), 3)
-    return ParseResult(text=text, commands=commands, unknown=unknown, confidence=round(conf, 3))
+    return ParseResult(text=text, commands=commands, unknown=unknown, confidence=round(conf, 3),
+                       focus_agents=focus_agents)
 
 
 def _supports(personal: Command, team_cmd: Command) -> bool:

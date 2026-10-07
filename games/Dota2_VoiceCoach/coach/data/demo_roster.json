@@ -1,0 +1,17 @@
+{
+ "_note": "Демо-состав для проверки голоса без Доты. Настоящий состав пишет game/prototype_oha/install.py (roster.json) и передаётся серверу через --roster.",
+ "radiant": [
+  {"pos": 1, "name": "Вася", "aliases": ["вася", "васька"]},
+  {"pos": 2, "name": "Петя", "aliases": ["петя"]},
+  {"pos": 3, "name": "Коля", "aliases": ["коля"]},
+  {"pos": 4, "name": "Дима", "aliases": ["дима"]},
+  {"pos": 5, "name": "Саша", "aliases": ["саша"]}
+ ],
+ "dire": [
+  {"pos": 1, "name": "Миша", "aliases": ["миша"]},
+  {"pos": 2, "name": "Женя", "aliases": ["женя"]},
+  {"pos": 3, "name": "Лёша", "aliases": ["леша"]},
+  {"pos": 4, "name": "Ваня", "aliases": ["ваня"]},
+  {"pos": 5, "name": "Гоша", "aliases": ["гоша"]}
+ ]
+}

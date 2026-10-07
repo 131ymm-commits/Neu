@@ -30,10 +30,11 @@
     <label>Команда <select id="team"><option value="radiant">Свет (Radiant)</option><option value="dire">Тьма (Dire)</option></select></label>
     <label><input type="checkbox" id="tts" checked> озвучивать ответы</label>
   </div>
+  <p class="muted" id="roster">Состав: …</p>
   <button id="ptt">Держите кнопку (или пробел) и говорите</button>
   <p class="muted" id="hint">Распознавание речи — встроенное в Chrome (Web Speech API, русский). Если его нет — пишите текстом.</p>
   <div class="row">
-    <input type="text" id="text" placeholder="например: Миракл, фарми лес, остальные на Рошана">
+    <input type="text" id="text" placeholder="например: Вася, фарми лес, остальные на Рошана">
     <button id="send">Отправить</button>
   </div>
   <div class="log" id="log"></div>
@@ -42,6 +43,7 @@
 const $ = (id) => document.getElementById(id);
 const api = (p) => `/api/${encodeURIComponent($('room').value)}/${p}`;
 let lastEvent = 0;
+let rosterNames = {};
 
 function addEntry(html) {
   const d = document.createElement('div'); d.className = 'entry'; d.innerHTML = html;
@@ -57,7 +59,8 @@ async function say(text, source) {
   if (!r.ok) { addEntry(`<b>Ошибка:</b> ${esc(res.error)}`); return; }
   const cmds = (res.commands || []).map(c => {
     const p = Object.entries(c.params).map(([k,v]) => `${k}=${v}`).join(' ');
-    return `<span class="cmd ${c.clarify ? 'clar' : ''}">${esc(c.action)} → [${c.agents.join(',')}] ${esc(p)} ${c.clarify ? '— ' + esc(c.clarify) : ''}</span>`;
+    const code = `${c.action} → [${c.agents.join(',')}] ${p}`;
+    return `<span class="cmd ${c.clarify ? 'clar' : ''}" title="${esc(code)}">${esc(c.human || code)}</span>`;
   }).join('');
   addEntry(`«${esc(text)}» <span class="muted">уверенность ${res.confidence}${res.unknown.length ? ', не понял: ' + esc(res.unknown.join(', ')) : ''}</span><br>${cmds || '<span class="muted">команд нет</span>'}`);
 }
@@ -91,6 +94,21 @@ $('ptt').addEventListener('pointerleave', stop);
 document.addEventListener('keydown', e => { if (e.code === 'Space' && document.activeElement !== $('text')) { e.preventDefault(); start(); } });
 document.addEventListener('keyup', e => { if (e.code === 'Space') stop(); });
 
+// --- состав команды: кого как звать ---
+async function loadRoster() {
+  try {
+    const r = await fetch(api(`state?team=${$('team').value}`));
+    const st = await r.json();
+    rosterNames = {};
+    (st.agents || []).forEach(a => { if (a.name) rosterNames[a.pos] = a.name; });
+    const names = (st.agents || []).map(a => `${a.pos} ${esc(a.name || '—')}${a.hero ? ' (' + esc(a.hero.replace('npc_dota_hero_', '')) + ')' : ''}`);
+    $('roster').innerHTML = `Состав (${esc(st.source)}): ${names.join(' · ') || 'нет'}`;
+  } catch (e) { $('roster').textContent = 'Состав: сервер не отвечает'; }
+}
+$('team').addEventListener('change', () => { lastEvent = 0; loadRoster(); });
+loadRoster();
+setInterval(loadRoster, 10000);
+
 // --- ответы агентов: long-poll + озвучка ---
 async function pollEvents() {
   while (true) {
@@ -99,9 +117,11 @@ async function pollEvents() {
       const res = await r.json();
       for (const ev of res.events || []) {
         lastEvent = Math.max(lastEvent, ev.seq);
-        addEntry(`<span class="ev">${ev.pos ? 'Агент ' + ev.pos : 'Тренеру'}: ${esc(ev.text)}</span>`);
+        const who = ev.pos ? (rosterNames[ev.pos] || 'Агент ' + ev.pos) : 'Тренеру';
+        addEntry(`<span class="ev">${esc(who)}: ${esc(ev.text)}</span>`);
         if ($('tts').checked && window.speechSynthesis && ev.text) {
-          const u = new SpeechSynthesisUtterance(ev.text); u.lang = 'ru-RU'; speechSynthesis.speak(u);
+          const u = new SpeechSynthesisUtterance(ev.pos ? `${who}: ${ev.text}` : ev.text);
+          u.lang = 'ru-RU'; speechSynthesis.speak(u);
         }
       }
     } catch (e) { await new Promise(r => setTimeout(r, 2000)); }

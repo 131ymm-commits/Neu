@@ -30,6 +30,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from .describe import describe
 from .parser import Agent, MatchContext, parse
 
 TEAMS = ("radiant", "dire")
@@ -46,6 +47,7 @@ class Room:
         self.events = {t: [] for t in TEAMS}
         self.ctx = {t: MatchContext(team=t) for t in TEAMS}
         self.log: list[dict] = []
+        self.roster_source = "нет"
 
     def _next(self) -> int:
         self.seq += 1
@@ -57,8 +59,9 @@ class Room:
             res = parse(text, ctx)
             ctx.remember(res)
             out = []
+            names = {a.pos: a.name for a in ctx.agents if a.name}
             for c in res.commands:
-                item = {"seq": self._next(), "t": time.time(), **c.to_json()}
+                item = {"seq": self._next(), "t": time.time(), **c.to_json(), "human": describe(c, names)}
                 if not c.clarify:
                     self.commands[team].append(item)
                 out.append(item)
@@ -91,6 +94,13 @@ class Room:
             self.ctx[team].agents = [known[p] for p in sorted(known)]
             if state.get("enemy_heroes"):
                 self.ctx[team].enemy_heroes = list(state["enemy_heroes"])
+
+    def state(self, team: str) -> dict:
+        with self.lock:
+            c = self.ctx[team]
+            return {"agents": [{"pos": a.pos, "name": a.name, "aliases": list(a.aliases), "hero": a.hero}
+                               for a in c.agents],
+                    "enemy_heroes": list(c.enemy_heroes), "source": self.roster_source}
 
     def _event(self, team: str, ev: dict) -> None:
         ev = {"seq": self._next(), "t": time.time(), **ev}
@@ -173,6 +183,8 @@ def make_handler(hub: Hub):
                     if page.exists():
                         return self._send(200, raw=page.read_bytes(), ctype="text/html; charset=utf-8")
                     return self._send(404, {"error": "нет web/index.html"})
+                if parts == ["favicon.ico"]:
+                    return self._send(204, raw=b"")
                 if parts == ["api", "health"]:
                     return self._send(200, {"ok": True, "rooms": len(hub.rooms)})
                 if len(parts) == 3 and parts[0] == "api":
@@ -189,6 +201,8 @@ def make_handler(hub: Hub):
                     if parts[2] == "events":
                         wait = min(float(q.get("wait", 0)), 30.0)
                         return self._send(200, {"events": room.events_after(team, after, wait)})
+                    if parts[2] == "state":
+                        return self._send(200, room.state(team))
                     if parts[2] == "log":
                         return self._send(200, {"log": room.log[-100:]})
                 if len(parts) == 4 and parts[0] == "api" and parts[2] == "w":
@@ -230,13 +244,17 @@ def make_handler(hub: Hub):
     return Handler
 
 
-def load_roster(hub: "Hub", path: str, room: str = "local") -> None:
+DEMO_ROSTER = Path(__file__).resolve().parent.parent / "data" / "demo_roster.json"
+
+
+def load_roster(hub: "Hub", path: str, room: str = "local", source: str | None = None) -> None:
     with open(path, encoding="utf-8") as f:
         roster = json.load(f)
     r = hub.room(room)
     for team in TEAMS:
         if roster.get(team):
             r.set_state(team, {"agents": roster[team]})
+    r.roster_source = source or str(path)
 
 
 def serve(host="127.0.0.1", port=8787) -> ThreadingHTTPServer:
@@ -258,6 +276,9 @@ def main(argv=None):
     if a.roster:
         load_roster(srv.hub, a.roster, a.room)
         print(f"Состав загружен из {a.roster}")
+    else:
+        load_roster(srv.hub, str(DEMO_ROSTER), a.room, source="демо")
+        print("Состав — демо (Вася, Петя, Коля, Дима, Саша); свой — через --roster")
     print(f"Тренер слушает http://{a.host}:{a.port}/  (Ctrl+C — выход)")
     try:
         srv.serve_forever()
