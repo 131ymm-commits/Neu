@@ -144,3 +144,33 @@ class ServerGetWrites(unittest.TestCase):
         title = page.split("<title>", 1)[1].split("</title>", 1)[0]
         data = json.loads(htmllib.unescape(title))
         self.assertEqual(data["commands"][0]["action"], "roshan")
+
+
+class PushToTalk(unittest.TestCase):
+    """Глобальная клавиша: смена состояния → событие ptt странице."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.srv = serve("127.0.0.1", 0)
+        cls.base = f"http://127.0.0.1:{cls.srv.server_address[1]}"
+        threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.srv.shutdown()
+
+    def test_hotkey_sends_only_transitions(self):
+        import ptt_hotkey
+        states = [False, True, True, True, False, False, True, False]
+        sent = []
+        it = iter(states)
+        ptt_hotkey.run(0x05, sent.append, lambda vk: next(it), sleep=lambda s: None, ticks=len(states))
+        self.assertEqual(sent, ["down", "up", "down", "up"])
+
+    def test_ptt_event_reaches_page(self):
+        with urllib.request.urlopen(self.base + "/api/p1/ptt?team=dire&state=down", timeout=5) as r:
+            self.assertEqual(json.loads(r.read().decode("utf-8")), {"ok": True})
+        code, res = call(self.base, "GET", "/api/p1/events?team=dire&after=0")
+        self.assertEqual([(e["kind"], e["text"]) for e in res["events"]], [("ptt", "down")])
+        code, res = call(self.base, "GET", "/api/p1/ptt?team=dire&state=sideways")
+        self.assertEqual(code, 400)

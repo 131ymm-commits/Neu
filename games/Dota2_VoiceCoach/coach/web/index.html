@@ -29,10 +29,13 @@
     <label>Комната <input id="room" value="local" size="8"></label>
     <label>Команда <select id="team"><option value="radiant">Свет (Radiant)</option><option value="dire">Тьма (Dire)</option></select></label>
     <label><input type="checkbox" id="tts" checked> озвучивать ответы</label>
+    <label><input type="checkbox" id="always"> слушать постоянно</label>
   </div>
   <p class="muted" id="roster">Состав: …</p>
   <button id="ptt">Держите кнопку (или пробел) и говорите</button>
   <p class="muted" id="hint">Распознавание речи — встроенное в Chrome (Web Speech API, русский). Если его нет — пишите текстом.</p>
+  <p class="muted">Во время матча вкладка не в фокусе: включите «слушать постоянно» или запустите
+  <code>python ptt_hotkey.py</code> — тогда говорить можно, держа боковую кнопку мыши в игре.</p>
   <div class="row">
     <input type="text" id="text" placeholder="например: Вася, фарми лес, остальные на Рошана">
     <button id="send">Отправить</button>
@@ -81,13 +84,44 @@ if (SR) {
     }
     $('ptt').textContent = (finalText + interim).trim() || 'Слушаю…';
   };
-  rec.onend = () => { if (finalText.trim()) say(finalText, 'voice'); finalText = ''; $('ptt').textContent = 'Держите кнопку (или пробел) и говорите'; };
-  rec.onerror = (e) => addEntry(`<span class="muted">распознавание: ${esc(e.error)}</span>`);
+  rec.onresult = ((orig) => (e) => {
+    orig(e);
+    // в постоянном режиме каждая законченная фраза уходит сразу
+    if (alwaysOn && finalText.trim()) { say(finalText, 'voice'); finalText = ''; }
+  })(rec.onresult);
+  rec.onend = () => {
+    if (finalText.trim()) say(finalText, 'voice');
+    finalText = '';
+    listening = false;
+    if (alwaysOn) {
+      // Chrome сам останавливает распознавание — перезапуск с паузой, без спама
+      $('ptt').textContent = 'Слушаю постоянно';
+      setTimeout(() => { if (alwaysOn) start(); }, 300);
+    } else {
+      $('ptt').classList.remove('on');
+      $('ptt').textContent = 'Держите кнопку (или пробел) и говорите';
+    }
+  };
+  rec.onerror = (e) => {
+    if (e.error === 'no-speech' || e.error === 'aborted') return;          // обычная тишина
+    if (['audio-capture', 'not-allowed', 'service-not-allowed'].includes(e.error)) {
+      alwaysOn = false; $('always').checked = false;                          // не крутиться в ошибке
+      addEntry(`<span class="muted">Микрофон недоступен (${esc(e.error)}): проверьте разрешение и устройство. Пока можно писать текстом.</span>`);
+      return;
+    }
+    addEntry(`<span class="muted">распознавание: ${esc(e.error)}</span>`);
+  };
 } else {
   $('hint').textContent = 'В этом браузере нет распознавания речи (нужен Chrome или Edge). Работает ввод текстом.';
 }
+let alwaysOn = false;
 function start() { if (!rec || listening) return; listening = true; finalText = ''; $('ptt').classList.add('on'); try { rec.start(); } catch (e) {} }
-function stop() { if (!rec || !listening) return; listening = false; $('ptt').classList.remove('on'); rec.stop(); }
+function stop() { if (!rec || !listening || alwaysOn) return; listening = false; $('ptt').classList.remove('on'); rec.stop(); }
+$('always').addEventListener('change', () => {
+  alwaysOn = $('always').checked;
+  if (alwaysOn) { start(); $('ptt').textContent = 'Слушаю постоянно'; }
+  else { listening = true; alwaysOn = false; stop(); }
+});
 $('ptt').addEventListener('pointerdown', start);
 $('ptt').addEventListener('pointerup', stop);
 $('ptt').addEventListener('pointerleave', stop);
@@ -117,6 +151,7 @@ async function pollEvents() {
       const res = await r.json();
       for (const ev of res.events || []) {
         lastEvent = Math.max(lastEvent, ev.seq);
+        if (ev.kind === 'ptt') { ev.text === 'down' ? start() : stop(); continue; }   // глобальная клавиша
         const who = ev.pos ? (rosterNames[ev.pos] || 'Агент ' + ev.pos) : 'Тренеру';
         addEntry(`<span class="ev">${esc(who)}: ${esc(ev.text)}</span>`);
         if ($('tts').checked && window.speechSynthesis && ev.text) {

@@ -14,6 +14,8 @@
        (у ботов и у скрытой веб-панели кастомки нет удобного POST)
   GET  /api/{room}/commands?...&fmt=title                    → тот же JSON внутри <title> страницы
        (так ответ читает DOTAHTMLPanel в аркаде — research/00_SUMMARY.md)
+  GET  /api/{room}/ptt?team=..&state=down|up               ← глобальная клавиша «нажми и говори»
+       (coach/ptt_hotkey.py): событие kind=ptt уходит странице, она включает распознавание
   GET  /api/health
 
 Запасной канал к ботам (если HTTP из ботов не работает): --inbox <папка bots/coach в Доте> —
@@ -244,6 +246,12 @@ def make_handler(hub: Hub):
                         return self._send(200, {"events": room.events_after(team, after, wait)})
                     if parts[2] == "state":
                         return self._send(200, room.state(team))
+                    if parts[2] == "ptt":
+                        st = q.get("state")
+                        if st not in ("down", "up"):
+                            raise ValueError("state должен быть down или up")
+                        room.add_events(team, [{"pos": 0, "kind": "ptt", "text": st}])
+                        return self._send(200, {"ok": True})
                     if parts[2] == "log":
                         return self._send(200, {"log": room.log[-100:]})
                 if len(parts) == 4 and parts[0] == "api" and parts[2] == "w":
