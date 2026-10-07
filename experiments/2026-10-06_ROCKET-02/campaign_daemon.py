@@ -72,9 +72,18 @@ while True:
         elif BANNED.search(code): out = dict(error='запрещённая конструкция: ' + BANNED.search(code).group(0)); log(event='banned', ep=ep, code=code)
         else:
             steps += 1
+            CHAR_ID = '/sc local c = storage.agent_characters and storage.agent_characters[1] rcon.print((c and c.valid) and c.unit_number or 0)'
+            try: cid0 = inst.rcon_client.send_command(CHAR_ID).strip()
+            except Exception: cid0 = '?'
             try: r = inst.eval(code, agent_idx=0, timeout=300); res = r[2] if isinstance(r, tuple) and len(r) > 2 else str(r)
             except MemoryError: res = 'ошибка: шаг потребовал больше 3 ГБ памяти (слишком большой запрос: сузь радиус и типы в get_entities)'
             except Exception as e: res = 'ошибка: ' + ''.join(traceback.format_exception_only(type(e), e))[-1500:]
+            try: cid1 = inst.rcon_client.send_command(CHAR_ID).strip()
+            except Exception: cid1 = '?'
+            if cid0 != '?' and cid1 not in ('?', '0') and cid1 != cid0:   # FLE молча создаёт нового персонажа взамен погибшего (ERRORS № 68)
+                res = ('ВНИМАНИЕ: персонаж ПОГИБ во время или до этого шага (враги рядом?) — FLE создал нового в (0,0), ВЕСЬ ИНВЕНТАРЬ ПОТЕРЯН. '
+                       'Проверь врагов (scan) и оборону.\n') + str(res)
+                log(event='character_died', ep=ep, step=steps)
             m = milestones(); out = dict(step=steps, steps_left=max_steps - steps, output=str(res)[-6000:], milestones=m)
             log(event='step', ep=ep, step=steps, code=code, output=str(res)[-6000:], milestones=m)
     elif cmd == 'checkpoint':   # только оркестратор: сохранить мир на диск (ERRORS № 64, 67); после ответа демон завершается — перезапуск с NEU_ATTACH=1
