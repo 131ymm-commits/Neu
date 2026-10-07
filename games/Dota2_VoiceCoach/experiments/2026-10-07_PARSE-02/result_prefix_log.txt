@@ -1,0 +1,116 @@
+7b9049f7f3a495dca9e50d680dd7cccba493f5c667b770a5a08fe060c27e6f22  voicecoach/__init__.py
+8489946b9502cec7135395ad6652d3acc59c7bc43e0f9128a0ab152846a2cedf  voicecoach/parser.py
+236ca4f5fca521db4284c1ed70ba2f82ed53a07209498f9468f5eec8790c72af  voicecoach/lexicon.py
+cbb934240e3ef6119f5e17e6d3f155f9036117baa248d54d3ff6b4eb62993f86  voicecoach/protocol.py
+e40ba70c3b7e2af4ce8a4095880c4c3853c9de4e277e07ae9b3a144ecf94f19b  data/heroes.json
+1ebc44b6df2b4c6a6a88df49d6d94e00e353b0b5fcdad6ed1dddf6f020769021  data/items_internal.txt
+b8cf6472e082f15a89faea3692d659a31984bf9f5f0e38fbea720f70b2b50d20  tests/eval_heldout.py
+7c99542b82e8ad37c3bc4273aa218dc255d6622bca7bd2d2f79f48fbd31e4797  heldout_phrases_02.jsonl
+{
+ "data_sha256": "7c99542b82e8ad37c3bc4273aa218dc255d6622bca7bd2d2f79f48fbd31e4797",
+ "ctx": "parse02",
+ "n_exp": 106,
+ "n_got": 109,
+ "n_hit": 66,
+ "phrase_ok_ci95": [
+  0.405,
+  0.619
+ ],
+ "by_category": {
+  "asr": {
+   "ok": 3,
+   "n": 10,
+   "share": 0.3,
+   "ci95": [
+    0.108,
+    0.603
+   ]
+  },
+  "hard": {
+   "ok": 7,
+   "n": 15,
+   "share": 0.467,
+   "ci95": [
+    0.248,
+    0.699
+   ]
+  },
+  "modal": {
+   "ok": 6,
+   "n": 15,
+   "share": 0.4,
+   "ci95": [
+    0.198,
+    0.643
+   ]
+  },
+  "multi": {
+   "ok": 10,
+   "n": 20,
+   "share": 0.5,
+   "ci95": [
+    0.299,
+    0.701
+   ]
+  },
+  "simple": {
+   "ok": 15,
+   "n": 20,
+   "share": 0.75,
+   "ci95": [
+    0.531,
+    0.888
+   ]
+  }
+ },
+ "phrases": 80,
+ "phrase_ok": 41,
+ "phrase_ok_share": 0.512,
+ "command_recall": 0.623,
+ "command_precision": 0.606,
+ "clarify_expected": 4,
+ "clarify_asked_when_expected": 3,
+ "asked_when_not_expected": 9,
+ "crashed_phrases": 0,
+ "parser_state": "75dc796",
+ "eval_sha256": "b8cf6472e082f15a89faea3692d659a31984bf9f5f0e38fbea720f70b2b50d20"
+}
+#1 [simple] неверно
+#7 [simple] неверно
+#8 [simple] неверно
+#14 [simple] неверно
+#15 [simple] неверно
+#23 [multi] неверно
+#25 [multi] неверно
+#26 [multi] неверно
+#27 [multi] неверно
+#29 [multi] неверно
+#30 [multi] неверно
+#31 [multi] неверно
+#36 [multi] неверно
+#37 [multi] неверно
+#40 [multi] неверно
+#44 [modal] неверно
+#45 [modal] неверно
+#46 [modal] неверно
+#47 [modal] неверно
+#48 [modal] неверно
+#49 [modal] неверно
+#50 [modal] неверно
+#51 [modal] неверно
+#55 [modal] неверно
+#56 [hard] неверно
+#57 [hard] неверно
+#62 [hard] неверно
+#63 [hard] неверно
+#64 [hard] неверно
+#66 [hard] неверно
+#68 [hard] неверно
+#69 [hard] неверно
+#71 [asr] неверно
+#74 [asr] неверно
+#75 [asr] неверно
+#76 [asr] неверно
+#77 [asr] неверно
+#78 [asr] неверно
+#80 [asr] неверно

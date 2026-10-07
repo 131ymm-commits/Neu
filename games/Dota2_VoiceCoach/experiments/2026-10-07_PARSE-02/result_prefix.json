@@ -1,0 +1,3748 @@
+{
+ "summary": {
+  "data_sha256": "7c99542b82e8ad37c3bc4273aa218dc255d6622bca7bd2d2f79f48fbd31e4797",
+  "ctx": "parse02",
+  "n_exp": 106,
+  "n_got": 109,
+  "n_hit": 66,
+  "phrase_ok_ci95": [
+   0.405,
+   0.619
+  ],
+  "by_category": {
+   "asr": {
+    "ok": 3,
+    "n": 10,
+    "share": 0.3,
+    "ci95": [
+     0.108,
+     0.603
+    ]
+   },
+   "hard": {
+    "ok": 7,
+    "n": 15,
+    "share": 0.467,
+    "ci95": [
+     0.248,
+     0.699
+    ]
+   },
+   "modal": {
+    "ok": 6,
+    "n": 15,
+    "share": 0.4,
+    "ci95": [
+     0.198,
+     0.643
+    ]
+   },
+   "multi": {
+    "ok": 10,
+    "n": 20,
+    "share": 0.5,
+    "ci95": [
+     0.299,
+     0.701
+    ]
+   },
+   "simple": {
+    "ok": 15,
+    "n": 20,
+    "share": 0.75,
+    "ci95": [
+     0.531,
+     0.888
+    ]
+   }
+  },
+  "phrases": 80,
+  "phrase_ok": 41,
+  "phrase_ok_share": 0.512,
+  "command_recall": 0.623,
+  "command_precision": 0.606,
+  "clarify_expected": 4,
+  "clarify_asked_when_expected": 3,
+  "asked_when_not_expected": 9,
+  "crashed_phrases": 0,
+  "parser_state": "75dc796",
+  "code_sha256": {
+   "voicecoach/__init__.py": "7b9049f7f3a495dca9e50d680dd7cccba493f5c667b770a5a08fe060c27e6f22",
+   "voicecoach/parser.py": "8489946b9502cec7135395ad6652d3acc59c7bc43e0f9128a0ab152846a2cedf",
+   "voicecoach/lexicon.py": "236ca4f5fca521db4284c1ed70ba2f82ed53a07209498f9468f5eec8790c72af",
+   "voicecoach/protocol.py": "cbb934240e3ef6119f5e17e6d3f155f9036117baa248d54d3ff6b4eb62993f86",
+   "data/heroes.json": "e40ba70c3b7e2af4ce8a4095880c4c3853c9de4e277e07ae9b3a144ecf94f19b",
+   "data/items_internal.txt": "1ebc44b6df2b4c6a6a88df49d6d94e00e353b0b5fcdad6ed1dddf6f020769021"
+  },
+  "eval_sha256": "b8cf6472e082f15a89faea3692d659a31984bf9f5f0e38fbea720f70b2b50d20"
+ },
+ "results": [
+  {
+   "id": 1,
+   "category": "simple",
+   "text": "петь иди фарми сейф",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "lane",
+      "lane": "top"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "farm",
+     "agents": [],
+     "params": {
+      "area": "lane",
+      "lane": "top"
+     },
+     "clarify": "кому?"
+    }
+   ],
+   "unknown": [
+    "петь"
+   ],
+   "confidence": 0.75,
+   "note": "Dire: сейф = top"
+  },
+  {
+   "id": 2,
+   "category": "simple",
+   "text": "серёга пушни мид",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "push",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "mid"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "push",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "mid",
+      "group": false
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": ""
+  },
+  {
+   "id": 3,
+   "category": "simple",
+   "text": "заходим в драку",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "engage",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "engage",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "адресат не назван; engage — командное действие → все"
+  },
+  {
+   "id": 4,
+   "category": "simple",
+   "text": "вова поставь вард на руну",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "ward",
+     "agents": [
+      5
+     ],
+     "params": {
+      "place": "rune"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "ward",
+     "agents": [
+      5
+     ],
+     "params": {
+      "place": "rune"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": ""
+  },
+  {
+   "id": 5,
+   "category": "simple",
+   "text": "дима стакай древних",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "stack",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "ancients"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "stack",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "ancients"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": ""
+  },
+  {
+   "id": 6,
+   "category": "simple",
+   "text": "делаем рошана",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "делаем"
+   ],
+   "confidence": 0.5,
+   "note": ""
+  },
+  {
+   "id": 7,
+   "category": "simple",
+   "text": "дефаем тройку на топе",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "top",
+      "tier": 3
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "top"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "тройку"
+   ],
+   "confidence": 0.75,
+   "note": "«тройка» здесь — вышка третьего уровня, а не позиция 3"
+  },
+  {
+   "id": 8,
+   "category": "simple",
+   "text": "лёх назад",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "retreat",
+     "agents": [
+      3
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "retreat",
+     "agents": [
+      1,
+      2,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "место отхода не названо"
+  },
+  {
+   "id": 9,
+   "category": "simple",
+   "text": "фокус их керри",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "enemy_pos": 1
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "enemy_pos": 1
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "вражеская позиция 1; героя по позиции не подставлять"
+  },
+  {
+   "id": 10,
+   "category": "simple",
+   "text": "гем купи",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": true,
+   "asked": true,
+   "expected": [
+    {
+     "action": "buy",
+     "agents": [],
+     "params": {
+      "item": "item_gem"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "buy",
+     "agents": [],
+     "params": {
+      "item": "item_gem"
+     },
+     "clarify": "кому?"
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "адресат не назван, buy не командное, глагол в ед. ч. → переспрос"
+  },
+  {
+   "id": 11,
+   "category": "simple",
+   "text": "джагг прожимай бкб",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "use_item",
+     "agents": [
+      1
+     ],
+     "params": {
+      "item": "item_black_king_bar"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "use_item",
+     "agents": [
+      1
+     ],
+     "params": {
+      "item": "item_black_king_bar"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "джагг = Петя"
+  },
+  {
+   "id": 12,
+   "category": "simple",
+   "text": "лёха выкупайся",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "buyback",
+     "agents": [
+      3
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "buyback",
+     "agents": [
+      3
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": ""
+  },
+  {
+   "id": 13,
+   "category": "simple",
+   "text": "серёга тпшься к лёхе на бот",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "tp",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "bot"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "tp",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "bot"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«к лёхе» — цель телепорта, не адресат"
+  },
+  {
+   "id": 14,
+   "category": "simple",
+   "text": "рубик придержи ульт",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "save_ult",
+     "agents": [
+      4
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "use_ult",
+     "agents": [
+      4
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "придержи"
+   ],
+   "confidence": 0.667,
+   "note": "рубик = Дима"
+  },
+  {
+   "id": 15,
+   "category": "simple",
+   "text": "вов ходи за петей",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "follow",
+     "agents": [
+      5
+     ],
+     "params": {
+      "ally": 1
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "follow",
+     "agents": [
+      2,
+      3,
+      4
+     ],
+     "params": {
+      "ally": 5
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "ходи"
+   ],
+   "confidence": 0.75,
+   "note": ""
+  },
+  {
+   "id": 16,
+   "category": "simple",
+   "text": "вова сейвь диму",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "save",
+     "agents": [
+      5
+     ],
+     "params": {
+      "ally": 4
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "save",
+     "agents": [
+      5
+     ],
+     "params": {
+      "ally": 4
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«диму» — кого спасать; исполнитель Вова"
+  },
+  {
+   "id": 17,
+   "category": "simple",
+   "text": "играйте сами",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "free",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "free",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "играйте"
+   ],
+   "confidence": 0.5,
+   "note": ""
+  },
+  {
+   "id": 18,
+   "category": "simple",
+   "text": "доложите обстановку",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "report",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "report",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "обстановку"
+   ],
+   "confidence": 0.5,
+   "note": ""
+  },
+  {
+   "id": 19,
+   "category": "simple",
+   "text": "отбой всё отменяется",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "cancel",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "cancel",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": ""
+  },
+  {
+   "id": 20,
+   "category": "simple",
+   "text": "акс сплитпушь бот",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "split",
+     "agents": [
+      3
+     ],
+     "params": {
+      "lane": "bot"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "split",
+     "agents": [
+      3
+     ],
+     "params": {
+      "lane": "bot"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "акс = Лёха"
+  },
+  {
+   "id": 21,
+   "category": "multi",
+   "text": "петя в лес фармить а серёга пушит мид",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     }
+    },
+    {
+     "action": "push",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "mid"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "push",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "mid",
+      "group": false
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«пушит» в 3-м лице — тоже приказ"
+  },
+  {
+   "id": 22,
+   "category": "multi",
+   "text": "лёха прыгай в марса остальные бьём инвока",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "engage",
+     "agents": [
+      3
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_mars"
+     }
+    },
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      4,
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_invoker"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "engage",
+     "agents": [
+      3
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_mars"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      4,
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_invoker"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«прыгай в марса» = инициация на Марса; «остальные» = 1, 2, 4, 5; «бьём» = фокус"
+  },
+  {
+   "id": 23,
+   "category": "multi",
+   "text": "петя купи бкб и иди на древних",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "buy",
+     "agents": [
+      1
+     ],
+     "params": {
+      "item": "item_black_king_bar"
+     }
+    },
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "ancients"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "buy",
+     "agents": [
+      1
+     ],
+     "params": {
+      "item": "item_black_king_bar"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "вторая часть — тот же адресат; «иди на древних» = фарм древних"
+  },
+  {
+   "id": 24,
+   "category": "multi",
+   "text": "смокаемся и на рошана",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "smoke",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    },
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "smoke",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "then у smoke бывает только gank, поэтому рошан — отдельная команда"
+  },
+  {
+   "id": 25,
+   "category": "multi",
+   "text": "дима с серёгой идите ганкать бот а петя фармит",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "gank",
+     "agents": [
+      2,
+      4
+     ],
+     "params": {
+      "lane": "bot"
+     }
+    },
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "auto"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "gank",
+     "agents": [
+      4
+     ],
+     "params": {
+      "lane": "bot"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "auto"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«с серёгой» — второй исполнитель; место фарма не названо → auto"
+  },
+  {
+   "id": 26,
+   "category": "multi",
+   "text": "серёга тп на топ дефай а лёха сплитуй бот",
+   "ok": false,
+   "exact": false,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "tp",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "top"
+     }
+    },
+    {
+     "action": "defend",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "top"
+     }
+    },
+    {
+     "action": "split",
+     "agents": [
+      3
+     ],
+     "params": {
+      "lane": "bot"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "tp",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "top"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "defend",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "auto"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "split",
+     "agents": [
+      3
+     ],
+     "params": {
+      "lane": "bot"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«дефай» без линии — та же top"
+  },
+  {
+   "id": 27,
+   "category": "multi",
+   "text": "собираемся впятером и ломаем двойку на миде",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "group",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    },
+    {
+     "action": "push",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "mid",
+      "tier": 2
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "push",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "mid",
+      "group": true
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "впятером",
+    "двойку"
+   ],
+   "confidence": 0.667,
+   "note": "«впятером» = все, а не позиция 5; место сбора не названо; «двойка» = вышка второго уровня"
+  },
+  {
+   "id": 28,
+   "category": "multi",
+   "text": "вова купи смок а дима пусть возьмёт даст",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "buy",
+     "agents": [
+      5
+     ],
+     "params": {
+      "item": "item_smoke_of_deceit"
+     }
+    },
+    {
+     "action": "buy",
+     "agents": [
+      4
+     ],
+     "params": {
+      "item": "item_dust"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "buy",
+     "agents": [
+      5
+     ],
+     "params": {
+      "item": "item_smoke_of_deceit"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "buy",
+     "agents": [
+      4
+     ],
+     "params": {
+      "item": "item_dust"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "пусть",
+    "возьмет"
+   ],
+   "confidence": 0.714,
+   "note": "«пусть возьмёт» = купит"
+  },
+  {
+   "id": 29,
+   "category": "multi",
+   "text": "вд ставь ульт на инвока а дима сейвит петю",
+   "ok": false,
+   "exact": false,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "use_ult",
+     "agents": [
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_invoker"
+     }
+    },
+    {
+     "action": "save",
+     "agents": [
+      4
+     ],
+     "params": {
+      "ally": 1
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "ward",
+     "agents": [
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "use_ult",
+     "agents": [
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_invoker"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "save",
+     "agents": [
+      4
+     ],
+     "params": {
+      "ally": 1
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "вд = Вова; «сейвит» в 3-м лице — приказ"
+  },
+  {
+   "id": 30,
+   "category": "multi",
+   "text": "петя фарми лёгкую лёха сложную а серёга мид",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "lane",
+      "lane": "top"
+     }
+    },
+    {
+     "action": "farm",
+     "agents": [
+      3
+     ],
+     "params": {
+      "area": "lane",
+      "lane": "bot"
+     }
+    },
+    {
+     "action": "farm",
+     "agents": [
+      2
+     ],
+     "params": {
+      "area": "lane",
+      "lane": "mid"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "lane",
+      "lane": "top"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "push",
+     "agents": [
+      2,
+      3
+     ],
+     "params": {
+      "lane": "mid",
+      "group": true
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "Dire: лёгкая = top, сложная = bot; «фарми» относится ко всем троим"
+  },
+  {
+   "id": 31,
+   "category": "multi",
+   "text": "дима вард во вражеский лес а вова сентрю к рошану",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "ward",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "jungle_enemy"
+     }
+    },
+    {
+     "action": "ward",
+     "agents": [
+      5
+     ],
+     "params": {
+      "place": "roshan",
+      "kind": "sentry"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "ward",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "jungle_enemy"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "roshan",
+     "agents": [
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "сентрю"
+   ],
+   "confidence": 0.889,
+   "note": ""
+  },
+  {
+   "id": 32,
+   "category": "multi",
+   "text": "шторм тпшься на мид а джагг фармит лес",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "tp",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "mid"
+     }
+    },
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "tp",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "mid"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "адресаты по героям: шторм = Серёга, джагг = Петя"
+  },
+  {
+   "id": 33,
+   "category": "multi",
+   "text": "все назад и дефаем базу",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "retreat",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    },
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "place": "base"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "retreat",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "place": "base"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "две команды; место отхода не названо"
+  },
+  {
+   "id": 34,
+   "category": "multi",
+   "text": "берём торментора и сразу рошана",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "tormentor",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    },
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "tormentor",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "берем",
+    "сразу"
+   ],
+   "confidence": 0.5,
+   "note": ""
+  },
+  {
+   "id": 35,
+   "category": "multi",
+   "text": "петя и серёга фармите остальные стакайте",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "farm",
+     "agents": [
+      1,
+      2
+     ],
+     "params": {
+      "area": "auto"
+     }
+    },
+    {
+     "action": "stack",
+     "agents": [
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "farm",
+     "agents": [
+      1,
+      2
+     ],
+     "params": {
+      "area": "auto"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "stack",
+     "agents": [
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«остальные» = 3, 4, 5; места не названы"
+  },
+  {
+   "id": 36,
+   "category": "multi",
+   "text": "вова ходи за серёгой дима стакай лагеря",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "follow",
+     "agents": [
+      5
+     ],
+     "params": {
+      "ally": 2
+     }
+    },
+    {
+     "action": "stack",
+     "agents": [
+      4
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "stack",
+     "agents": [
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "ходи",
+    "лагеря"
+   ],
+   "confidence": 0.714,
+   "note": "«лагеря» — не древние, place не указывать"
+  },
+  {
+   "id": 37,
+   "category": "multi",
+   "text": "фокусим цмку лёха ульт на неё",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_crystal_maiden"
+     }
+    },
+    {
+     "action": "use_ult",
+     "agents": [
+      3
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_crystal_maiden"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_crystal_maiden"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "use_ult",
+     "agents": [
+      3
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "нее"
+   ],
+   "confidence": 0.833,
+   "note": "«неё» = цмка"
+  },
+  {
+   "id": 38,
+   "category": "multi",
+   "text": "лёха прожимай блинк и заходи",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "use_item",
+     "agents": [
+      3
+     ],
+     "params": {
+      "item": "item_blink"
+     }
+    },
+    {
+     "action": "engage",
+     "agents": [
+      3
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "use_item",
+     "agents": [
+      3
+     ],
+     "params": {
+      "item": "item_blink"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "engage",
+     "agents": [
+      3
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": ""
+  },
+  {
+   "id": 39,
+   "category": "multi",
+   "text": "коры фармят саппорты вардят",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "farm",
+     "agents": [
+      1,
+      2,
+      3
+     ],
+     "params": {
+      "area": "auto"
+     }
+    },
+    {
+     "action": "ward",
+     "agents": [
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "farm",
+     "agents": [
+      1,
+      2,
+      3
+     ],
+     "params": {
+      "area": "auto"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "ward",
+     "agents": [
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "коры = позиции 1–3, саппорты = 4–5; места не названы"
+  },
+  {
+   "id": 40,
+   "category": "multi",
+   "text": "дима иди к руне а вова на бот",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "move",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "rune"
+     }
+    },
+    {
+     "action": "move",
+     "agents": [
+      5
+     ],
+     "params": {
+      "lane": "bot"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "move",
+     "agents": [
+      4
+     ],
+     "params": {
+      "lane": "bot"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "руне"
+   ],
+   "confidence": 0.857,
+   "note": "во второй части глагол «иди» опущен"
+  },
+  {
+   "id": 41,
+   "category": "modal",
+   "text": "не пушьте пока",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "push"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "push"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "пока"
+   ],
+   "confidence": 0.667,
+   "note": ""
+  },
+  {
+   "id": 42,
+   "category": "modal",
+   "text": "никто не байбекает",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "buyback"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "buyback"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«никто не» = запрет всем"
+  },
+  {
+   "id": 43,
+   "category": "modal",
+   "text": "рошана пока не трогаем",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "roshan"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "roshan"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "пока",
+    "трогаем"
+   ],
+   "confidence": 0.5,
+   "note": ""
+  },
+  {
+   "id": 44,
+   "category": "modal",
+   "text": "серёга не тепайся на бот рано ещё",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "hold",
+     "agents": [
+      2
+     ],
+     "params": {
+      "what": "tp"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "hold",
+     "agents": [
+      2
+     ],
+     "params": {
+      "what": "push"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "тепайся",
+    "рано"
+   ],
+   "confidence": 0.667,
+   "note": "линия запрета (бот) в hold не передаётся"
+  },
+  {
+   "id": 45,
+   "category": "modal",
+   "text": "лёха не лезь в драку",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "hold",
+     "agents": [
+      3
+     ],
+     "params": {
+      "what": "engage"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "hold",
+     "agents": [
+      3
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "engage",
+     "agents": [
+      3
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "запрет вступать в бой"
+  },
+  {
+   "id": 46,
+   "category": "modal",
+   "text": "вова не ставь варды в их лес ставь в наш",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "ward",
+     "agents": [
+      5
+     ],
+     "params": {
+      "place": "jungle_own"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "hold",
+     "agents": [
+      5
+     ],
+     "params": {
+      "what": "ward"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "отрицание касается места, а не действия: hold не нужен"
+  },
+  {
+   "id": 47,
+   "category": "modal",
+   "text": "сейчас не фармим собираемся у рошана",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "farm"
+     }
+    },
+    {
+     "action": "group",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "place": "roshan"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "farm"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "запрет фарма — отдельная команда hold"
+  },
+  {
+   "id": 48,
+   "category": "modal",
+   "text": "петя фарми лес хотя нет лучше линию",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "lane"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "хотя",
+    "нет",
+    "лучше",
+    "линию"
+   ],
+   "confidence": 0.429,
+   "note": "самоисправление: в силе последний вариант; линия не названа"
+  },
+  {
+   "id": 49,
+   "category": "modal",
+   "text": "вова вард к руне то есть к рошану",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "ward",
+     "agents": [
+      5
+     ],
+     "params": {
+      "place": "roshan"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "ward",
+     "agents": [
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "roshan",
+     "agents": [
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "руне",
+    "то",
+    "есть"
+   ],
+   "confidence": 0.625,
+   "note": "самоисправление: в силе рошан"
+  },
+  {
+   "id": 50,
+   "category": "modal",
+   "text": "серёга собирай линку ой нет аганим",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "buy",
+     "agents": [
+      2
+     ],
+     "params": {
+      "item": "item_ultimate_scepter"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "buy",
+     "agents": [
+      2
+     ],
+     "params": {
+      "item": "item_sphere"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "ой",
+    "нет"
+   ],
+   "confidence": 0.667,
+   "note": "самоисправление: линка отменена"
+  },
+  {
+   "id": 51,
+   "category": "modal",
+   "text": "дима стакни древних а потом петя их зафармит",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "stack",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "ancients"
+     }
+    },
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "ancients"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "stack",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "ancients"
+     },
+     "clarify": ""
+    },
+    {
+     "action": "report",
+     "agents": [
+      1
+     ],
+     "params": {},
+     "clarify": "что им делать?"
+    }
+   ],
+   "unknown": [
+    "зафармит"
+   ],
+   "confidence": 0.833,
+   "note": "«их» = древние; порядок: стак, потом фарм"
+  },
+  {
+   "id": 52,
+   "category": "modal",
+   "text": "сначала рошан потом пушим",
+   "ok": true,
+   "exact": true,
+   "hits": 2,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    },
+    {
+     "action": "push",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "auto"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "push",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "auto",
+      "group": true
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "сначала"
+   ],
+   "confidence": 0.667,
+   "note": "линия пуша не названа → auto"
+  },
+  {
+   "id": 53,
+   "category": "modal",
+   "text": "срочно сейвь вову",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": true,
+   "asked": true,
+   "expected": [
+    {
+     "action": "save",
+     "agents": [],
+     "params": {
+      "ally": 5
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "save",
+     "agents": [],
+     "params": {
+      "ally": 5
+     },
+     "clarify": "кому?"
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "адресат не назван, save не командное, глагол в ед. ч. → переспрос; срочность параметром не передаётся"
+  },
+  {
+   "id": 54,
+   "category": "modal",
+   "text": "срочно тпшьтесь на мид",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "tp",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "mid"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "tp",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "mid"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "адресат не назван, глагол во мн. ч. → все"
+  },
+  {
+   "id": 55,
+   "category": "modal",
+   "text": "пушим бот ой нет дефаем топ",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "top"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "push",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "bot",
+      "group": true
+     },
+     "clarify": ""
+    },
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "top"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "ой",
+    "нет"
+   ],
+   "confidence": 0.667,
+   "note": "самоисправление: пуш бота отменён в той же фразе"
+  },
+  {
+   "id": 56,
+   "category": "hard",
+   "text": "у ама нет бкб фокусим его",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_antimage"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "engage",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "ама",
+    "нет"
+   ],
+   "confidence": 0.667,
+   "note": "первая часть — сведения; «его» = антимаг"
+  },
+  {
+   "id": 57,
+   "category": "hard",
+   "text": "инвокер пропал с мида",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [],
+   "got": [
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_invoker"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "пропал"
+   ],
+   "confidence": 0.75,
+   "note": "сведения, не приказ: команд нет"
+  },
+  {
+   "id": 58,
+   "category": "hard",
+   "text": "все кроме пети на рошана",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "roshan",
+     "agents": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "roshan",
+     "agents": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "кроме"
+   ],
+   "confidence": 0.8,
+   "note": ""
+  },
+  {
+   "id": 59,
+   "category": "hard",
+   "text": "саппорты стакните древних",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "stack",
+     "agents": [
+      4,
+      5
+     ],
+     "params": {
+      "place": "ancients"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "stack",
+     "agents": [
+      4,
+      5
+     ],
+     "params": {
+      "place": "ancients"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "саппорты = позиции 4 и 5"
+  },
+  {
+   "id": 60,
+   "category": "hard",
+   "text": "шторм за доктором",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "follow",
+     "agents": [
+      2
+     ],
+     "params": {
+      "ally": 5
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "follow",
+     "agents": [
+      2
+     ],
+     "params": {
+      "ally": 5
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "без глагола: шторм (Серёга) следует за доктором (Вова)"
+  },
+  {
+   "id": 61,
+   "category": "hard",
+   "text": "смокаемся и идём на мид гангать инвока",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "smoke",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "then": "gank",
+      "lane": "mid",
+      "enemy": "npc_dota_hero_invoker"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "smoke",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "then": "gank",
+      "lane": "mid",
+      "enemy": "npc_dota_hero_invoker"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "одна команда smoke с then=gank; разбор на smoke + gank — отклонение от протокола"
+  },
+  {
+   "id": 62,
+   "category": "hard",
+   "text": "все на рошана а ты купи сентри",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": true,
+   "asked": false,
+   "expected": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    },
+    {
+     "action": "buy",
+     "agents": [],
+     "params": {
+      "item": "item_ward_sentry"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "buy",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "item": "item_ward_sentry"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«ты» не определён → переспрос по покупке; рошан всем"
+  },
+  {
+   "id": 63,
+   "category": "hard",
+   "text": "пятый покупай варды",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "buy",
+     "agents": [
+      5
+     ],
+     "params": {
+      "item": "item_ward_observer"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "buy",
+     "agents": [],
+     "params": {
+      "item": "item_ward_observer"
+     },
+     "clarify": "кому?"
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "«пятый» = своя позиция 5; «варды» без уточнения = обсерверы"
+  },
+  {
+   "id": 64,
+   "category": "hard",
+   "text": "серый ульт в шейкера",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "use_ult",
+     "agents": [
+      2
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_earthshaker"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "use_ult",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_earthshaker"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "серый"
+   ],
+   "confidence": 0.75,
+   "note": "«серый» — прозвище Серёги (Сергей)"
+  },
+  {
+   "id": 65,
+   "category": "hard",
+   "text": "кто нибудь вардани руну",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": true,
+   "asked": true,
+   "expected": [
+    {
+     "action": "ward",
+     "agents": [],
+     "params": {
+      "place": "rune"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "ward",
+     "agents": [],
+     "params": {
+      "place": "rune"
+     },
+     "clarify": "кому?"
+    }
+   ],
+   "unknown": [
+    "кто",
+    "нибудь"
+   ],
+   "confidence": 0.5,
+   "note": "«кто-нибудь» — адресат не определён, глагол в ед. ч. → переспрос"
+  },
+  {
+   "id": 66,
+   "category": "hard",
+   "text": "пете выкупаться",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "buyback",
+     "agents": [
+      1
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "buyback",
+     "agents": [],
+     "params": {},
+     "clarify": "кому?"
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "приказ в форме «дательный + инфинитив»"
+  },
+  {
+   "id": 67,
+   "category": "hard",
+   "text": "джагг иди покушай в лесу",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "покушай"
+   ],
+   "confidence": 0.8,
+   "note": "«покушай» = фарми"
+  },
+  {
+   "id": 68,
+   "category": "hard",
+   "text": "дим не стой столбом стакай",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "stack",
+     "agents": [
+      4
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "stack",
+     "agents": [
+      1,
+      2,
+      3,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "столбом"
+   ],
+   "confidence": 0.8,
+   "note": "«не стой столбом» — идиома, не запрет; hold не нужен"
+  },
+  {
+   "id": 69,
+   "category": "hard",
+   "text": "четверо на торментора петя фармит",
+   "ok": false,
+   "exact": false,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "tormentor",
+     "agents": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    },
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "auto"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "tormentor",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "auto"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "четверо"
+   ],
+   "confidence": 0.8,
+   "note": "«четверо» = все, кроме названного Пети"
+  },
+  {
+   "id": 70,
+   "category": "hard",
+   "text": "все в оффлейн дефать",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "bot"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "bot"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "Dire: оффлейн = bot"
+  },
+  {
+   "id": 71,
+   "category": "asr",
+   "text": "петя фарми влес",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "auto"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "влес"
+   ],
+   "confidence": 0.667,
+   "note": "слитый предлог «в лес»"
+  },
+  {
+   "id": 72,
+   "category": "asr",
+   "text": "серега пушни бот",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "push",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "bot"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "push",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "bot",
+      "group": false
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 1.0,
+   "note": "ё → е"
+  },
+  {
+   "id": 73,
+   "category": "asr",
+   "text": "леха э короче иди бот",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "move",
+     "agents": [
+      3
+     ],
+     "params": {
+      "lane": "bot"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "move",
+     "agents": [
+      3
+     ],
+     "params": {
+      "lane": "bot"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "э"
+   ],
+   "confidence": 0.75,
+   "note": "ё → е, слова-паразиты, пропущен предлог «на»"
+  },
+  {
+   "id": 74,
+   "category": "asr",
+   "text": "вава поставь варт на руну",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "ward",
+     "agents": [
+      5
+     ],
+     "params": {
+      "place": "rune"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "ward",
+     "agents": [],
+     "params": {
+      "place": "rune"
+     },
+     "clarify": "кому?"
+    }
+   ],
+   "unknown": [
+    "вава",
+    "варт"
+   ],
+   "confidence": 0.6,
+   "note": "«вава» = Вова, «варт» = вард"
+  },
+  {
+   "id": 75,
+   "category": "asr",
+   "text": "все идем на терминатора",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "tormentor",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {}
+    }
+   ],
+   "got": [
+    {
+     "action": "move",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "clarify": "куда?"
+    }
+   ],
+   "unknown": [
+    "терминатора"
+   ],
+   "confidence": 0.75,
+   "note": "распознаватель заменил «торментора» на «терминатора»; ё → е"
+  },
+  {
+   "id": 76,
+   "category": "asr",
+   "text": "дима ну типа это вард у рошана поставь короче",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "ward",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "roshan"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "ward",
+     "agents": [
+      4
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "roshan",
+     "agents": [
+      4
+     ],
+     "params": {},
+     "clarify": ""
+    },
+    {
+     "action": "ward",
+     "agents": [
+      4
+     ],
+     "params": {},
+     "clarify": ""
+    }
+   ],
+   "unknown": [
+    "типа"
+   ],
+   "confidence": 0.833,
+   "note": "слова-паразиты"
+  },
+  {
+   "id": 77,
+   "category": "asr",
+   "text": "джагг тэпэ набазу",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "tp",
+     "agents": [
+      1
+     ],
+     "params": {
+      "place": "base"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "report",
+     "agents": [
+      1
+     ],
+     "params": {},
+     "clarify": "что им делать?"
+    }
+   ],
+   "unknown": [
+    "тэпэ",
+    "набазу"
+   ],
+   "confidence": 0.333,
+   "note": "«тэпэ» = тп; слитый предлог «на базу»"
+  },
+  {
+   "id": 78,
+   "category": "asr",
+   "text": "лёха купи бэ ка бэ",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "buy",
+     "agents": [
+      3
+     ],
+     "params": {
+      "item": "item_black_king_bar"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "buy",
+     "agents": [
+      3
+     ],
+     "params": {},
+     "clarify": "что купить?"
+    }
+   ],
+   "unknown": [
+    "бэ",
+    "ка",
+    "бэ"
+   ],
+   "confidence": 0.4,
+   "note": "бкб по буквам"
+  },
+  {
+   "id": 79,
+   "category": "asr",
+   "text": "сирега гангни топ",
+   "ok": true,
+   "exact": true,
+   "hits": 1,
+   "clarify_expected": false,
+   "asked": false,
+   "expected": [
+    {
+     "action": "gank",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "top"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "gank",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "top"
+     },
+     "clarify": ""
+    }
+   ],
+   "unknown": [],
+   "confidence": 0.85,
+   "note": "«сирега» = Серёга"
+  },
+  {
+   "id": 80,
+   "category": "asr",
+   "text": "э дима слышь купи смог",
+   "ok": false,
+   "exact": false,
+   "hits": 0,
+   "clarify_expected": false,
+   "asked": true,
+   "expected": [
+    {
+     "action": "buy",
+     "agents": [
+      4
+     ],
+     "params": {
+      "item": "item_smoke_of_deceit"
+     }
+    }
+   ],
+   "got": [
+    {
+     "action": "buy",
+     "agents": [
+      4
+     ],
+     "params": {},
+     "clarify": "что купить?"
+    }
+   ],
+   "unknown": [
+    "э",
+    "слышь",
+    "смог"
+   ],
+   "confidence": 0.4,
+   "note": "«смог» = смок; слова-паразиты"
+  }
+ ]
+}

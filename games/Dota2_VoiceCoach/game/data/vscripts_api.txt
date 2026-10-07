@@ -1,4 +1,4 @@
-# Имена API vscripts Dota 2: @moddota/dota-data 0.47.2 (npm, 2026-04-26). Строки: Класс.метод, функция, константа,
+# Имена API vscripts Dota 2: @moddota/dota-data 0.47.2 (npm, 2026-04-26, Apache-2.0). Строки: Класс.метод, функция, константа,
 # instance:глобальная_переменная=Класс, extends:Класс=Родитель. Нужны тесту game/tests/test_api_names.py.
 ABILITY_CANNOT_BE_UPGRADED_AT_MAX
 ABILITY_CANNOT_BE_UPGRADED_NOT_UPGRADABLE

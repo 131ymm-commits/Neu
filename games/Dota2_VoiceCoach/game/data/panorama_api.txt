@@ -1,4 +1,4 @@
-# Имена API Panorama: @moddota/panorama-types 1.39.2 (npm, 2026-04-26): методы, свойства, события, типы панелей.
+# Имена API Panorama: @moddota/panorama-types 1.39.2 (npm, 2026-04-26, MIT): методы, свойства, события, типы панелей.
 ABILITY_TYPES
 AbilityBehavior
 AbilityEntityIndex

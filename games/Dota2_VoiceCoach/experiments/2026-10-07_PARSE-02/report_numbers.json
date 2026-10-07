@@ -1,0 +1,603 @@
+{
+ "result": {
+  "data_sha256": "7c99542b82e8ad37c3bc4273aa218dc255d6622bca7bd2d2f79f48fbd31e4797",
+  "ctx": "parse02",
+  "n_exp": 106,
+  "n_got": 107,
+  "n_hit": 68,
+  "phrase_ok_ci95": [
+   0.453,
+   0.666
+  ],
+  "by_category": {
+   "asr": {
+    "ok": 4,
+    "n": 10,
+    "share": 0.4,
+    "ci95": [
+     0.168,
+     0.687
+    ]
+   },
+   "hard": {
+    "ok": 8,
+    "n": 15,
+    "share": 0.533,
+    "ci95": [
+     0.301,
+     0.752
+    ]
+   },
+   "modal": {
+    "ok": 7,
+    "n": 15,
+    "share": 0.467,
+    "ci95": [
+     0.248,
+     0.699
+    ]
+   },
+   "multi": {
+    "ok": 10,
+    "n": 20,
+    "share": 0.5,
+    "ci95": [
+     0.299,
+     0.701
+    ]
+   },
+   "simple": {
+    "ok": 16,
+    "n": 20,
+    "share": 0.8,
+    "ci95": [
+     0.584,
+     0.919
+    ]
+   }
+  },
+  "phrases": 80,
+  "phrase_ok": 45,
+  "phrase_ok_share": 0.562,
+  "command_recall": 0.642,
+  "command_precision": 0.636,
+  "clarify_expected": 4,
+  "clarify_asked_when_expected": 3,
+  "asked_when_not_expected": 14,
+  "crashed_phrases": 0,
+  "parser_state": "рабочая копия (хеши ниже)",
+  "eval_sha256": "b8cf6472e082f15a89faea3692d659a31984bf9f5f0e38fbea720f70b2b50d20"
+ },
+ "result_prefix": {
+  "data_sha256": "7c99542b82e8ad37c3bc4273aa218dc255d6622bca7bd2d2f79f48fbd31e4797",
+  "ctx": "parse02",
+  "n_exp": 106,
+  "n_got": 109,
+  "n_hit": 66,
+  "phrase_ok_ci95": [
+   0.405,
+   0.619
+  ],
+  "by_category": {
+   "asr": {
+    "ok": 3,
+    "n": 10,
+    "share": 0.3,
+    "ci95": [
+     0.108,
+     0.603
+    ]
+   },
+   "hard": {
+    "ok": 7,
+    "n": 15,
+    "share": 0.467,
+    "ci95": [
+     0.248,
+     0.699
+    ]
+   },
+   "modal": {
+    "ok": 6,
+    "n": 15,
+    "share": 0.4,
+    "ci95": [
+     0.198,
+     0.643
+    ]
+   },
+   "multi": {
+    "ok": 10,
+    "n": 20,
+    "share": 0.5,
+    "ci95": [
+     0.299,
+     0.701
+    ]
+   },
+   "simple": {
+    "ok": 15,
+    "n": 20,
+    "share": 0.75,
+    "ci95": [
+     0.531,
+     0.888
+    ]
+   }
+  },
+  "phrases": 80,
+  "phrase_ok": 41,
+  "phrase_ok_share": 0.512,
+  "command_recall": 0.623,
+  "command_precision": 0.606,
+  "clarify_expected": 4,
+  "clarify_asked_when_expected": 3,
+  "asked_when_not_expected": 9,
+  "crashed_phrases": 0,
+  "parser_state": "75dc796",
+  "eval_sha256": "b8cf6472e082f15a89faea3692d659a31984bf9f5f0e38fbea720f70b2b50d20"
+ },
+ "result_B": {
+  "data_sha256": "5487538a32b16b02fd50d836d5369bffc6fdb81d99883826401e6fbfbf5f77f2",
+  "ctx": "parse02",
+  "n_exp": 106,
+  "n_got": 107,
+  "n_hit": 68,
+  "phrase_ok_ci95": [
+   0.453,
+   0.666
+  ],
+  "by_category": {
+   "asr": {
+    "ok": 4,
+    "n": 10,
+    "share": 0.4,
+    "ci95": [
+     0.168,
+     0.687
+    ]
+   },
+   "hard": {
+    "ok": 8,
+    "n": 15,
+    "share": 0.533,
+    "ci95": [
+     0.301,
+     0.752
+    ]
+   },
+   "modal": {
+    "ok": 7,
+    "n": 15,
+    "share": 0.467,
+    "ci95": [
+     0.248,
+     0.699
+    ]
+   },
+   "multi": {
+    "ok": 10,
+    "n": 20,
+    "share": 0.5,
+    "ci95": [
+     0.299,
+     0.701
+    ]
+   },
+   "simple": {
+    "ok": 16,
+    "n": 20,
+    "share": 0.8,
+    "ci95": [
+     0.584,
+     0.919
+    ]
+   }
+  },
+  "phrases": 80,
+  "phrase_ok": 45,
+  "phrase_ok_share": 0.562,
+  "command_recall": 0.642,
+  "command_precision": 0.636,
+  "clarify_expected": 4,
+  "clarify_asked_when_expected": 3,
+  "asked_when_not_expected": 14,
+  "crashed_phrases": 0,
+  "parser_state": "рабочая копия (хеши ниже)",
+  "eval_sha256": "b8cf6472e082f15a89faea3692d659a31984bf9f5f0e38fbea720f70b2b50d20"
+ },
+ "agreement": {
+  "A_sha256": "7c99542b82e8ad37c3bc4273aa218dc255d6622bca7bd2d2f79f48fbd31e4797",
+  "B_sha256": "c5ad0d3036b0482d8dc34b8634eadcb817518b54b093068b59d9d8026ac968f0",
+  "agree": 80,
+  "n": 80,
+  "share": 1.0,
+  "ci95": [
+   0.954,
+   1.0
+  ],
+  "missing_or_text_changed": 0,
+  "S1prime_without_empty_A": {
+   "agree": 79,
+   "n": 79,
+   "share": 1.0,
+   "ci95": [
+    0.954,
+    1.0
+   ]
+  },
+  "by_category": {
+   "asr": {
+    "agree": 10,
+    "n": 10
+   },
+   "hard": {
+    "agree": 15,
+    "n": 15
+   },
+   "modal": {
+    "agree": 15,
+    "n": 15
+   },
+   "multi": {
+    "agree": 20,
+    "n": 20
+   },
+   "simple": {
+    "agree": 20,
+    "n": 20
+   }
+  }
+ },
+ "secondary": {
+  "S5_strict": {
+   "ok": 45,
+   "n": 80,
+   "share": 0.562,
+   "ci95": [
+    0.453,
+    0.666
+   ],
+   "ok_only_thanks_to_clarify_main_rule": 0
+  },
+  "S2": {
+   "ok": 45,
+   "n": 80,
+   "share": 0.562,
+   "ci95": [
+    0.453,
+    0.666
+   ]
+  },
+  "S3": {
+   "ok": 45,
+   "n": 80,
+   "share": 0.562,
+   "ci95": [
+    0.453,
+    0.666
+   ],
+   "by_category": {
+    "asr": {
+     "ok": 4,
+     "n": 10,
+     "share": 0.4,
+     "ci95": [
+      0.168,
+      0.687
+     ]
+    },
+    "hard": {
+     "ok": 8,
+     "n": 15,
+     "share": 0.533,
+     "ci95": [
+      0.301,
+      0.752
+     ]
+    },
+    "modal": {
+     "ok": 7,
+     "n": 15,
+     "share": 0.467,
+     "ci95": [
+      0.248,
+      0.699
+     ]
+    },
+    "multi": {
+     "ok": 10,
+     "n": 20,
+     "share": 0.5,
+     "ci95": [
+      0.299,
+      0.701
+     ]
+    },
+    "simple": {
+     "ok": 16,
+     "n": 20,
+     "share": 0.8,
+     "ci95": [
+      0.584,
+      0.919
+     ]
+    }
+   },
+   "command_recall": 0.642,
+   "command_precision": 0.636,
+   "same_parser_output_as_result_json": true
+  },
+  "S4": {
+   "new_ok": 45,
+   "old_ok": 41,
+   "n": 80,
+   "b_new_only": 7,
+   "c_old_only": 3,
+   "mcnemar_exact_p": 0.3438,
+   "diff": 0.05,
+   "bootstrap_ci95": [
+    -0.025,
+    0.125
+   ],
+   "seed": 20261007,
+   "resamples": 10000,
+   "old_crashed": 0,
+   "old_by_category": {
+    "asr": {
+     "ok": 3,
+     "n": 10,
+     "share": 0.3,
+     "ci95": [
+      0.108,
+      0.603
+     ]
+    },
+    "hard": {
+     "ok": 7,
+     "n": 15,
+     "share": 0.467,
+     "ci95": [
+      0.248,
+      0.699
+     ]
+    },
+    "modal": {
+     "ok": 6,
+     "n": 15,
+     "share": 0.4,
+     "ci95": [
+      0.198,
+      0.643
+     ]
+    },
+    "multi": {
+     "ok": 10,
+     "n": 20,
+     "share": 0.5,
+     "ci95": [
+      0.299,
+      0.701
+     ]
+    },
+    "simple": {
+     "ok": 15,
+     "n": 20,
+     "share": 0.75,
+     "ci95": [
+      0.531,
+      0.888
+     ]
+    }
+   }
+  },
+  "vs_PARSE01": {
+   "всего": {
+    "parse02": [
+     45,
+     80
+    ],
+    "parse01": [
+     57,
+     80
+    ],
+    "diff": -0.15,
+    "ci95": [
+     -0.29,
+     -0.001
+    ]
+   },
+   "без asr": {
+    "parse02": [
+     41,
+     70
+    ],
+    "parse01": [
+     57,
+     80
+    ],
+    "diff": -0.127,
+    "ci95": [
+     -0.273,
+     0.025
+    ]
+   },
+   "simple": {
+    "parse02": [
+     16,
+     20
+    ],
+    "parse01": [
+     24,
+     27
+    ],
+    "diff": -0.089,
+    "ci95": [
+     -0.317,
+     0.118
+    ]
+   },
+   "multi": {
+    "parse02": [
+     10,
+     20
+    ],
+    "parse01": [
+     13,
+     27
+    ],
+    "diff": 0.019,
+    "ci95": [
+     -0.25,
+     0.284
+    ]
+   },
+   "modal": {
+    "parse02": [
+     7,
+     15
+    ],
+    "parse01": [
+     13,
+     13
+    ],
+    "diff": -0.533,
+    "ci95": [
+     -0.752,
+     -0.208
+    ]
+   },
+   "hard": {
+    "parse02": [
+     8,
+     15
+    ],
+    "parse01": [
+     7,
+     13
+    ],
+    "diff": -0.005,
+    "ci95": [
+     -0.332,
+     0.325
+    ]
+   }
+  }
+ },
+ "parse01_result": {
+  "data_sha256": "1dc5bcd36d170cda984c1096ed55992d0cbcba28f1162f53a60c4b0a40393951",
+  "phrase_ok_ci95": [
+   0.605,
+   0.8
+  ],
+  "by_category": {
+   "hard": {
+    "ok": 7,
+    "n": 13,
+    "share": 0.538,
+    "ci95": [
+     0.291,
+     0.768
+    ]
+   },
+   "modal": {
+    "ok": 13,
+    "n": 13,
+    "share": 1.0,
+    "ci95": [
+     0.772,
+     1.0
+    ]
+   },
+   "multi": {
+    "ok": 13,
+    "n": 27,
+    "share": 0.481,
+    "ci95": [
+     0.307,
+     0.66
+    ]
+   },
+   "simple": {
+    "ok": 24,
+    "n": 27,
+    "share": 0.889,
+    "ci95": [
+     0.719,
+     0.961
+    ]
+   }
+  },
+  "phrases": 80,
+  "phrase_ok": 57,
+  "phrase_ok_share": 0.713,
+  "command_recall": 0.743,
+  "command_precision": 0.737,
+  "clarify_expected": 6,
+  "clarify_asked_when_expected": 3,
+  "asked_when_not_expected": 5
+ },
+ "S4_ids": {
+  "new_only": [
+   8,
+   23,
+   30,
+   47,
+   49,
+   66,
+   76
+  ],
+  "old_only": [
+   32,
+   39,
+   43
+  ]
+ },
+ "failed_ids_new": [
+  1,
+  7,
+  14,
+  15,
+  25,
+  26,
+  27,
+  29,
+  31,
+  32,
+  36,
+  37,
+  39,
+  40,
+  43,
+  44,
+  45,
+  46,
+  48,
+  50,
+  51,
+  55,
+  56,
+  57,
+  62,
+  63,
+  64,
+  68,
+  69,
+  71,
+  74,
+  75,
+  77,
+  78,
+  80
+ ],
+ "prereg_probabilities": [
+  0.35,
+  0.5,
+  0.25,
+  0.45,
+  0.55,
+  0.3,
+  0.8,
+  0.5
+ ]
+}

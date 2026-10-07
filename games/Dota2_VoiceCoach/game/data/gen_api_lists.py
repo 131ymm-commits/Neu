@@ -4,7 +4,8 @@
   python3 gen_api_lists.py panorama  <папка package из @moddota/panorama-types 1.39.2> > panorama_api.txt
   python3 gen_api_lists.py botapi    <клон forest0xia/dota2bot-OpenHyperAI>            > botapi_names.txt
 
-Пакеты npm: `npm pack @moddota/dota-data@0.47.2`, `npm pack @moddota/panorama-types@1.39.2` (MIT).
+Пакеты npm: `npm pack @moddota/dota-data@0.47.2` (лицензия Apache-2.0), `npm pack @moddota/panorama-types@1.39.2`
+(MIT) — лицензии сверены по их package.json. В списки идут только имена API.
 Open Hyper AI (MIT): https://github.com/forest0xia/dota2bot-OpenHyperAI.
 """
 from __future__ import annotations
@@ -34,7 +35,7 @@ def vscripts(pkg: Path) -> list[str]:
         else:  # имя самого перечисления не пишем: в коде встречаются только его члены
             for m in e.get("members", []):
                 names.add(m["name"])
-    head = ["# Имена API vscripts Dota 2: @moddota/dota-data 0.47.2 (npm, 2026-04-26). Строки: Класс.метод, функция, константа,",
+    head = ["# Имена API vscripts Dota 2: @moddota/dota-data 0.47.2 (npm, 2026-04-26, Apache-2.0). Строки: Класс.метод, функция, константа,",
             "# instance:глобальная_переменная=Класс, extends:Класс=Родитель. Нужны тесту game/tests/test_api_names.py."]
     return head + sorted(names) + sorted(inst) + sorted(ext)
 
@@ -53,7 +54,7 @@ def panorama(pkg: Path) -> list[str]:
         text = re.sub(r"//[^\n]*", "", text)
         names |= set(MEMBER.findall(text)) | set(TYPE.findall(text))
     names = {n for n in names if len(n) > 1}
-    head = ["# Имена API Panorama: @moddota/panorama-types 1.39.2 (npm, 2026-04-26): методы, свойства, события, типы панелей."]
+    head = ["# Имена API Panorama: @moddota/panorama-types 1.39.2 (npm, 2026-04-26, MIT): методы, свойства, события, типы панелей."]
     return head + sorted(names)
 
 
