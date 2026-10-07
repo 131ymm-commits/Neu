@@ -3,6 +3,22 @@
     height: 100%;
 }
 
+#CoachMode {
+    horizontal-align: left;
+    vertical-align: top;
+    margin: 62px 0px 0px 12px;
+    width: 560px;
+    font-size: 16px;
+    color: #9fe39f;
+    background-color: #000000a0;
+    padding: 2px 10px;
+    border-radius: 4px;
+}
+
+#CoachMode.Offline {
+    color: #ffb07f;
+}
+
 #CoachAgents {
     horizontal-align: left;
     vertical-align: top;
@@ -24,6 +40,10 @@
     color: #8a8f96;
 }
 
+.CoachAgent.Fallback {
+    color: #ffb07f;
+}
+
 #CoachLog {
     horizontal-align: left;
     vertical-align: bottom;
@@ -42,6 +62,14 @@
 
 .CoachLine.Reply_error {
     color: #ff9c8f;
+}
+
+.CoachLine.Reply_say {
+    color: #ffffff;
+}
+
+.CoachLine.Reply_order {
+    color: #a8b0ba;
 }
 
 .CoachLine.Reply_refuse,

@@ -6,6 +6,7 @@
         <include src="file://{resources}/scripts/custom_game/coach_hud.js" />
     </scripts>
     <Panel id="CoachRoot" hittest="false">
+        <Label id="CoachMode" hittest="false" text="агенты: жду связи" />
         <Panel id="CoachAgents" hittest="false" />
         <Panel id="CoachLog" hittest="false" />
         <Panel id="CoachBar">

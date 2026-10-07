@@ -1,0 +1,204 @@
+{
+ "where": "bot, своя Т1, 1603",
+ "events": [],
+ "attack": {
+  "range": 550,
+  "dmg": 60
+ },
+ "slots_free": 6,
+ "stats": {
+  "d": 0,
+  "lh": 0,
+  "dn": 0,
+  "a": 0,
+  "k": 0
+ },
+ "towers": {
+  "enemy": {
+   "top": 1,
+   "mid": 1,
+   "bot": 1
+  },
+  "own": {
+   "top": 1,
+   "mid": 1,
+   "bot": 1
+  }
+ },
+ "alive": true,
+ "enemies": [],
+ "hero": "crystal_maiden",
+ "pos": 5,
+ "items": [
+  {
+   "ready": true,
+   "slot": 0,
+   "charges": 1,
+   "use": "target",
+   "name": "item_tango"
+  },
+  {
+   "ready": true,
+   "slot": 1,
+   "charges": 1,
+   "use": "target",
+   "name": "item_ward_observer"
+  },
+  {
+   "use": "target",
+   "ready": true,
+   "name": "item_boots",
+   "slot": 2
+  }
+ ],
+ "mp": [
+  300,
+  300
+ ],
+ "enemy_team": [
+  "luna",
+  "lina",
+  "bristleback",
+  "witch_doctor",
+  "jakiro"
+ ],
+ "allies": [
+  {
+   "where": "bot, своя Т1, 1825",
+   "hero": "sniper",
+   "pos": 1,
+   "hp": 71,
+   "doing": "фарм бот: иду к волне",
+   "lvl": 7,
+   "d": 283,
+   "alive": true
+  },
+  {
+   "where": "mid, своя Т1, 500",
+   "hero": "viper",
+   "pos": 2,
+   "hp": 100,
+   "doing": "фарм мид: иду к волне",
+   "lvl": 8,
+   "d": 7120,
+   "alive": true
+  },
+  {
+   "where": "top, своя Т1, 806",
+   "hero": "axe",
+   "pos": 3,
+   "hp": 100,
+   "doing": "фарм топ: иду к волне",
+   "lvl": 7,
+   "d": 12870,
+   "alive": true
+  },
+  {
+   "where": "top, своя Т1, 781",
+   "hero": "lion",
+   "pos": 4,
+   "hp": 100,
+   "doing": "фарм топ: иду к волне",
+   "lvl": 6,
+   "d": 12594,
+   "alive": true
+  }
+ ],
+ "notes": [],
+ "queue": {
+  "cast": [],
+  "buy": [],
+  "level": []
+ },
+ "near": {
+  "ally_creeps": 0,
+  "enemy_creeps": 0,
+  "weak_enemy_creeps": 0
+ },
+ "doing": "фарм бот: иду к волне",
+ "gold": 420,
+ "points": 1,
+ "lvl": 6,
+ "in_shop": false,
+ "coach": [
+  {
+   "urgent": false,
+   "seq": 4,
+   "ago": 0,
+   "text": "5 вард руна"
+  }
+ ],
+ "abilities": [
+  {
+   "ready": true,
+   "range": 700,
+   "use": "point",
+   "lvl": 2,
+   "name": "crystal_maiden_crystal_nova",
+   "mana": 50
+  },
+  {
+   "ready": true,
+   "range": 550,
+   "use": "target",
+   "lvl": 2,
+   "name": "crystal_maiden_frostbite",
+   "mana": 50
+  },
+  {
+   "use": "passive",
+   "lvl": 1,
+   "name": "crystal_maiden_brilliance_aura"
+  },
+  {
+   "use": "none",
+   "lvl": 0,
+   "name": "crystal_maiden_freezing_field",
+   "ult": true
+  }
+ ],
+ "missing": [
+  {
+   "hero": "luna",
+   "seen": "их база",
+   "ago": 567
+  },
+  {
+   "hero": "lina",
+   "seen": "их база",
+   "ago": 567
+  },
+  {
+   "hero": "bristleback",
+   "seen": "их база",
+   "ago": 567
+  },
+  {
+   "hero": "witch_doctor",
+   "seen": "их база",
+   "ago": 567
+  },
+  {
+   "hero": "jakiro",
+   "seen": "их база",
+   "ago": 567
+  }
+ ],
+ "buyback": {
+  "can": false,
+  "cost": 500
+ },
+ "can_level": [
+  "crystal_maiden_crystal_nova",
+  "crystal_maiden_frostbite",
+  "crystal_maiden_brilliance_aura",
+  "crystal_maiden_freezing_field"
+ ],
+ "hp": [
+  420,
+  640
+ ],
+ "clock": 480,
+ "team": "radiant",
+ "roshan": true
+}

@@ -19,6 +19,9 @@
        (так ответ читает DOTAHTMLPanel в аркаде — research/00_SUMMARY.md)
   GET  /api/{room}/ptt?team=..&state=down|up               ← глобальная клавиша «нажми и говори»
        (coach/ptt_hotkey.py): событие kind=ptt уходит странице, она включает распознавание
+  POST /api/{room}/tick     {"clock","heroes":[наблюдения],"coached"}   ← кастомка раз в секунду (Д11):
+       наблюдения героев → агенты Claude (agents.py) → в ответе последние решения агентов
+  GET  /api/{room}/agents                                  → состояние агентов, память, задержка, токены
   GET  /api/health
 
 Запасной канал к ботам (если HTTP из ботов не работает): --inbox <папка bots/coach в Доте> —
@@ -27,6 +30,10 @@
 
 Состав (имена и как их зовут голосом) можно задать заранее: --roster roster.json
   {"radiant": [{"pos": 1, "name": "Miracle-", "aliases": ["миракл"]}, ...], "dire": [...]}
+
+Агенты героев (кастомка, решение Д11): --agents rules|api|cli (по умолчанию rules — правила, НЕ Claude);
+--radiant / --dire — свой мотор для одной стороны (например, соперник на бесплатных правилах);
+api — ключ в ANTHROPIC_API_KEY и --model; cli — Claude Code (`claude -p`, путь — --claude).
 """
 from __future__ import annotations
 
@@ -40,6 +47,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
+from .agents import AgentHub, make_backend
 from .describe import describe
 from .parser import Agent, MatchContext, parse
 from .textcmd import parse_short, suggest
@@ -81,6 +89,7 @@ class Room:
         self.ctx = {t: MatchContext(team=t) for t in TEAMS}
         self.log: list[dict] = []
         self.roster_source = "нет"
+        self.agents: AgentHub | None = None       # агенты героев кастомки — при первом /tick
 
     def _next(self) -> int:
         self.seq += 1
@@ -207,16 +216,28 @@ class Room:
                 self.lock.wait(timeout=left)
 
 
+def rules_agents(room_name: str) -> AgentHub:
+    """Агенты по умолчанию: правила без модели с обеих сторон (не Claude)."""
+    return AgentHub({"radiant": make_backend("rules"), "dire": make_backend("rules")})
+
+
 class Hub:
-    def __init__(self):
+    def __init__(self, agent_factory=None):
         self.rooms: dict[str, Room] = {}
         self.lock = threading.Lock()
+        self.agent_factory = agent_factory or rules_agents
 
     def room(self, name: str) -> Room:
         with self.lock:
             if name not in self.rooms:
                 self.rooms[name] = Room(name)
             return self.rooms[name]
+
+    def agents(self, room: Room) -> AgentHub:
+        with self.lock:
+            if room.agents is None:
+                room.agents = self.agent_factory(room.name)
+            return room.agents
 
 
 def make_handler(hub: Hub):
@@ -297,6 +318,10 @@ def make_handler(hub: Hub):
                         return self._send(200, {"ok": True})
                     if parts[2] == "log":
                         return self._send(200, {"log": room.log[-100:]})
+                    if parts[2] == "agents":
+                        if room.agents is None:
+                            return self._send(200, {"agents": [], "summary": {}, "backend": {}})
+                        return self._send(200, room.agents.status())
                 if len(parts) == 4 and parts[0] == "api" and parts[2] == "w":
                     room = hub.room(parts[1])
                     team = self._team(q)
@@ -315,6 +340,9 @@ def make_handler(hub: Hub):
             try:
                 parts, q = self._route()
                 body = self._body()
+                if len(parts) == 3 and parts[0] == "api" and parts[2] == "tick":
+                    room = hub.room(parts[1])
+                    return self._send(200, hub.agents(room).tick(body))
                 if len(parts) == 3 and parts[0] == "api":
                     room = hub.room(parts[1])
                     team = self._team(q, body)
@@ -350,11 +378,39 @@ def load_roster(hub: "Hub", path: str, room: str = "local", source: str | None =
     r.roster_source = source or str(path)
 
 
-def serve(host="127.0.0.1", port=8787) -> ThreadingHTTPServer:
-    hub = Hub()
+def serve(host="127.0.0.1", port=8787, agent_factory=None) -> ThreadingHTTPServer:
+    hub = Hub(agent_factory)
     srv = ThreadingHTTPServer((host, port), make_handler(hub))
     srv.hub = hub
     return srv
+
+
+LOGS = Path(__file__).resolve().parent.parent / "logs"
+
+
+def agent_factory_from_args(a):
+    """Моторы сторон и журнал вызовов из аргументов командной строки."""
+    kinds = {"radiant": a.radiant or a.agents, "dire": a.dire or a.agents}
+    backends = {t: make_backend(k, a.model, a.claude) for t, k in kinds.items()}
+    personas = json.loads(Path(a.personas).read_text(encoding="utf-8")) if a.personas else {}
+    for spec in a.persona or []:                     # radiant:1=digitizer/agents/vasya.json
+        try:
+            who, path = spec.split("=", 1)
+            team, pos = who.split(":", 1)
+            int(pos)
+        except ValueError:
+            raise ValueError(f"--persona {spec!r}: нужно сторона:позиция=файл, например radiant:1=agents/vasya.json")
+        if team not in TEAMS:
+            raise ValueError(f"--persona {spec!r}: сторона radiant или dire")
+        personas.setdefault(team, {})[pos] = json.loads(Path(path).read_text(encoding="utf-8"))
+    prices = {k: v for k, v in (("in", a.price_in), ("out", a.price_out), ("cache_read", a.price_cache_read),
+                                ("cache_write", a.price_cache_write)) if v is not None}
+
+    def factory(room_name: str) -> AgentHub:
+        log = LOGS / f"agents_{room_name}_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
+        return AgentHub(backends, period=a.period, max_calls=a.max_calls, log_path=log, personas=personas or None,
+                        prices=prices or None)
+    return factory, backends
 
 
 def main(argv=None):
@@ -365,8 +421,29 @@ def main(argv=None):
     ap.add_argument("--roster", help="JSON с именами агентов по командам (см. начало файла)")
     ap.add_argument("--room", default="local")
     ap.add_argument("--inbox", help="папка bots/coach в Доте: дублировать команды в файлы для ботов")
+    ag = ap.add_argument_group("агенты героев кастомки (решение Д11)")
+    ag.add_argument("--agents", choices=("rules", "api", "cli"), default="rules",
+                    help="мотор агентов: rules — правила, не Claude; api — Claude по ключу; cli — Claude Code")
+    ag.add_argument("--radiant", choices=("rules", "api", "cli"), help="свой мотор для Света")
+    ag.add_argument("--dire", choices=("rules", "api", "cli"), help="свой мотор для Тьмы")
+    ag.add_argument("--model", help="модель Claude (имя из документации Anthropic); для api обязательна")
+    ag.add_argument("--claude", default="claude", help="путь к Claude Code для --agents cli")
+    ag.add_argument("--period", type=float, default=4.0, help="решение агента не реже раза в столько секунд игры")
+    ag.add_argument("--max-calls", type=int, help="предел вызовов модели за запуск сервера (защита кошелька)")
+    ag.add_argument("--personas", help="JSON характеров: {\"radiant\": {\"1\": {…agent_params…}}, …}")
+    ag.add_argument("--persona", action="append", metavar="СТОРОНА:ПОЗ=ФАЙЛ",
+                    help="характер одного агента из оцифровки: radiant:1=../digitizer/agents/vasya.json (можно несколько)")
+    for k in ("in", "out", "cache-read", "cache-write"):
+        ag.add_argument(f"--price-{k}", type=float, help="цена за 1 млн токенов, $ — для оценки цены в журнале")
     a = ap.parse_args(argv)
-    srv = serve(a.host, a.port)
+    try:
+        factory, backends = agent_factory_from_args(a)
+    except ValueError as e:
+        raise SystemExit(f"Агенты: {e}")
+    srv = serve(a.host, a.port, factory)
+    for t, b in backends.items():
+        print(f"Агенты {'Света' if t == 'radiant' else 'Тьмы'}: {b.label}")
+    print(f"Журнал вызовов агентов: {LOGS}")
     if a.inbox:
         srv.hub.room(a.room).inbox_dir = a.inbox
         for team in TEAMS:
@@ -383,6 +460,10 @@ def main(argv=None):
         srv.serve_forever()
     except KeyboardInterrupt:
         pass
+    for name, room in srv.hub.rooms.items():
+        if room.agents is not None:
+            print(f"Агенты комнаты {name}: {json.dumps(room.agents.summary(), ensure_ascii=False)}")
+            room.agents.close()
 
 
 if __name__ == "__main__":

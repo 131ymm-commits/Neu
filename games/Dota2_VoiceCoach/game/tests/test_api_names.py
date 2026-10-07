@@ -5,6 +5,7 @@
   vscripts_api.txt  — @moddota/dota-data 0.47.2 (сервер кастомки);
   panorama_api.txt  — @moddota/panorama-types 1.39.2 (интерфейс кастомки);
   botapi_names.txt  — API скриптов ботов по коду Open Hyper AI (работает в игре).
+  events_api.txt    — игровые события и их поля, оттуда же (files/events.json).
 Имя, которого нет в списке, допускается только из ALLOW с указанием источника.
 """
 import re
@@ -45,10 +46,14 @@ VS_TYPED = {
                   "buff": "CDOTA_Buff", "req": "CScriptHTTPRequest", "player": "CDOTAPlayerController"},
     "coach_bridge.lua": {"req": "CScriptHTTPRequest"},
     "coach_world.lua": {"tower": "CDOTA_BaseNPC", "f": "CBaseEntity", "hero": "CDOTA_BaseNPC_Hero",
-                        "ab": "CDOTABaseAbility", "unit": "CDOTA_BaseNPC", "t.unit": "CDOTA_BaseNPC"},
+                        "ab": "CDOTABaseAbility", "unit": "CDOTA_BaseNPC", "t.unit": "CDOTA_BaseNPC",
+                        "u": "CDOTA_BaseNPC", "it": "CDOTA_Item"},
     "coach_game.lua": {"hero": "CDOTA_BaseNPC_Hero", "unit": "CDOTA_BaseNPC", "gm": "CDOTABaseGameMode",
                        "ab": "CDOTABaseAbility", "act.ability": "CDOTABaseAbility", "order.target": "CDOTA_BaseNPC",
-                       "act.target": "CDOTA_BaseNPC"},
+                       "act.target": "CDOTA_BaseNPC", "a.ability": "CDOTABaseAbility", "killed": "CDOTA_BaseNPC",
+                       "killer": "CDOTA_BaseNPC", "e": "CDOTA_BaseNPC"},
+    "coach_obs.lua": {"t.unit": "CDOTA_BaseNPC"},
+    "coach_link.lua": {"req": "CScriptHTTPRequest"},
 }
 # Переменные скриптов ботов, которые держат объекты API ботов
 BOT_OBJECTS = {"bot", "a", "unit", "npcBot", "hero", "ability", "req"}
@@ -115,8 +120,8 @@ class VscriptsNames(unittest.TestCase):
     GROUPS = [
         [VS / "probe.lua", VS / "addon_game_mode.lua", VS / "modifiers" / "modifier_voicecoach_probe.lua",
          VS / "modifiers" / "modifier_voicecoach_commander.lua"],
-        [CVS / "coach_game.lua", CVS / "coach_world.lua", CVS / "coach_agents.lua", CVS / "addon_game_mode.lua",
-         CVS / "modifiers" / "modifier_voicecoach_commander.lua"],
+        [CVS / "coach_game.lua", CVS / "coach_world.lua", CVS / "coach_exec.lua", CVS / "coach_obs.lua",
+         CVS / "coach_link.lua", CVS / "addon_game_mode.lua", CVS / "modifiers" / "modifier_voicecoach_commander.lua"],
         [GAME / "shared" / "coach_bridge.lua"],
     ]
     FILES = [p for g in GROUPS for p in g]
@@ -185,6 +190,38 @@ class VscriptsNames(unittest.TestCase):
         self.assertEqual(len(bad), 5, bad)
 
 
+def load_events():
+    out = {}
+    for line in (DATA / "events_api.txt").read_text(encoding="utf-8").splitlines():
+        if line and not line.startswith("#"):
+            name, _, fields = line.partition(":")
+            out[name.strip()] = set(fields.split())
+    return out
+
+
+class GameEvents(unittest.TestCase):
+    """Игровые события кастомки: имя есть в описании Доты, обработчик читает только его поля."""
+
+    EVENTS = load_events()
+
+    def test_listened_events_and_fields(self):
+        code = (CVS / "coach_game.lua").read_text(encoding="utf-8")       # с литералами: имена событий — строки
+        pairs = re.findall(r'ListenToGameEvent\("(\w+)",\s*Dynamic_Wrap\(G,\s*"(\w+)"\)', code)
+        self.assertEqual({e for e, _ in pairs}, {"game_rules_state_change", "npc_spawned", "player_chat", "entity_killed"})
+        for event, handler in pairs:
+            with self.subTest(event=event):
+                self.assertIn(event, self.EVENTS)
+                body = re.search(r"function G:" + handler + r"\((\w*)\)(.*?)\nend\n", code, re.S)
+                self.assertIsNotNone(body, handler)
+                arg, text = body.group(1), body.group(2)
+                used = set(re.findall(r"\b" + re.escape(arg) + r"\.(\w+)", text)) if arg else set()
+                self.assertLessEqual(used, self.EVENTS[event], (event, used - self.EVENTS[event]))
+
+    def test_checker_catches_wrong_field(self):
+        self.assertNotIn("killer_index", self.EVENTS["entity_killed"])
+        self.assertIn("entindex_attacker", self.EVENTS["entity_killed"])
+
+
 class BotApiNames(unittest.TestCase):
     """Скрипты ботов: модуль тренера для OHA и бот-пробник аддона."""
 
@@ -234,7 +271,7 @@ class PanoramaNames(unittest.TestCase):
     def used(self, code):
         used = set(re.findall(r"\$\.(\w+)\s*\(", code))
         used |= set(re.findall(r"\b(?:GameEvents|GameUI|Game)\.(\w+)\s*\(", code))
-        used |= set(re.findall(r"\b(?:panel|label|input|log|line|box|row)\.(\w+)\s*[(=]", code))
+        used |= set(re.findall(r"\b(?:panel|label|input|log|line|box|row|mode)\.(\w+)\s*[(=]", code))
         used |= set(re.findall(r"\$\('[^']+'\)\.(\w+)\s*[(=]", code))
         used |= set(re.findall(r"CreatePanel\(\s*'(\w+)'", code))
         used |= set(re.findall(r"RegisterEventHandler\(\s*'(\w+)'", code))

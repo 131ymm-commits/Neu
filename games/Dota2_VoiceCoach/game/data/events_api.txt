@@ -1,0 +1,367 @@
+# Игровые события Dota 2 и их поля: @moddota/dota-data 0.47.2 (npm, 2026-04-26, Apache-2.0), files/events.json.
+# Строка: имя: поле поле … Нужны тесту game/tests/test_api_names.py.
+account_all_hero_challenge_changed: account_id
+achievement_earned: player achievement
+achievement_event: achievement_name cur_val max_val
+achievement_write_failed:
+aegis_event: player_id chat_message_type
+antiaddiction_toast: message duration
+bindpanel_close:
+bindpanel_open:
+bonus_updated: numadvanced numbronze numsilver numgold
+booster_state_updated:
+bot_takeover: userid botid p y r
+bought_back: player_id
+break_breakable: entindex userid material
+break_prop: entindex userid player_held player_thrown player_dropped
+broken_breakable: entindex userid material
+cart_updated:
+chat_members_changed: channel
+chat_new_message: channel
+client_disconnect: reason_code reason_desc
+client_reload_game_keyvalues:
+clientside_lesson_closed: lesson_name
+colorblind_mode_changed:
+community_cached_names_updated:
+custom_game_friends_played_updated: custom_game_id
+custom_game_lobby_list_updated:
+custom_game_mode_list_updated:
+custom_game_player_count_updated: custom_game_id
+custom_games_friends_play_updated:
+dashboard_caches_cleared:
+dashboard_switched_section: section
+defeated: entindex
+demo_skip: playback_tick skipto_tick user_message_list dota_hero_chase_list
+demo_start: dota_combatlog_list dota_hero_chase_list dota_pick_hero_list
+demo_stop:
+difficulty_changed: newDifficulty oldDifficulty strDifficulty
+door_close: userid checkpoint
+dota_ability_changed: entityIndex
+dota_ability_channel_finished: abilityname interrupted caster_entindex
+dota_action_item: reason itemdef message
+dota_action_success:
+dota_ad_ban: heroid
+dota_ad_ban_count: count
+dota_ad_hero_collision: heroid playerid1 playerid2
+dota_ad_nominated_ban: heroid
+dota_ad_randomed: userid item_ability_id
+dota_alchemist_granted_scepter: alchemist_userid grantee_userid
+dota_ancient_decoration_event: entindex teamnumber eventname
+dota_assist_earned: entindex_hero playerid_victim
+dota_banner_planted: teamnumber
+dota_barracks_kill: barracks_id barracks_type teamnumber killer_userid killer_team gold pos_x pos_y pos_z
+dota_blessing_chosen: blessing_receipient_id blessing
+dota_bounty: userid target bounty_event
+dota_buyback: entindex player_id
+dota_candy: userid candy_event
+dota_challenge_socache_updated:
+dota_chase_hero: target1 target2 type priority gametime highlight target1playerid target2playerid eventtype
+dota_chat_assassin_announce: assassin_id target_id message
+dota_chat_assassin_denied: assassin_id target_id message
+dota_chat_assassin_success: assassin_id target_id message
+dota_chat_ban_notification: userid
+dota_chat_event: userid gold message
+dota_chat_first_blood: gold killer_id victim_id
+dota_chat_informational: userid type
+dota_chat_kill_streak: gold killer_id killer_streak killer_multikill victim_id victim_streak
+dota_chat_timed_reward: userid itmedef message
+dota_coin_wager: userid message coins
+dota_combat_event_message: message teamnumber player_id player_id2 value value1 value2 value3 int_value int_value2 ability_name locstring_value locstring_value2 string_replace_token
+dota_combatlog: type sourcename targetname attackername inflictorname attackerillusion targetillusion value health timestamp targetsourcename timestampraw attackerhero targethero ability_toggle_on ability_toggle_off ability_level gold_reason xp_reason
+dota_courier_lost: killerid teamnumber bounty_gold
+dota_courier_respawned: teamnumber
+dota_courier_transfer_item: hero_entindex courier_entindex item_entindex
+dota_crafting_xp: userid type xp
+dota_creature_gained_level: entindex level
+dota_custom_camera_pitch_updated: pitch
+dota_custom_camera_updated: flags zoom x y extra_yaw pitch duration player_id
+dota_effigy_kill: owner_userid
+dota_enemy_money_changed:
+dota_event_game_camera_position_updated: x y duration
+dota_event_game_camera_zoom_updated: zoom duration
+dota_favorite_heroes_updated:
+dota_force_portrait_update:
+dota_game_state_change: old_state new_state
+dota_glyph_used: teamnumber
+dota_hero_ability_points_changed:
+dota_hero_entered_shop: shop_type shop_entindex hero_entindex
+dota_hero_inventory_item_change: player_id hero_entindex item_entindex item_ability_id removed dropped sold in_sellback_windown
+dota_hero_on_gain_aggro: entindex_attacker entindex_hero
+dota_hero_random: userid heroid
+dota_hero_swap: playerid1 playerid2
+dota_hero_teleport_to_unit: hero_entindex unit_entindex
+dota_hero_undoselection: playerid1
+dota_holdout_revive_complete: caster target channel_time
+dota_holdout_revive_eliminated: caster target channel_time
+dota_hud_error_message: reason message sequenceNumber
+dota_hud_skin_changed: skin style
+dota_illusions_created: original_entindex
+dota_inventory_changed:
+dota_inventory_changed_query_unit:
+dota_inventory_item_added: item_slot inventory_player_id itemname item_entindex inventory_parent_entindex is_courier
+dota_inventory_item_changed: entityIndex
+dota_inventory_player_got_item: itemname
+dota_item_auto_purchase: item_id
+dota_item_combined: PlayerID itemname itemcost
+dota_item_drag_begin:
+dota_item_drag_end:
+dota_item_gifted: userid item_ability_id sourceid
+dota_item_physical_destroyed: itemname PlayerID ItemEntityIndex HeroEntityIndex
+dota_item_picked_up: itemname PlayerID ItemEntityIndex HeroEntityIndex
+dota_item_placed_in_neutral_stash: userid item_ability_id
+dota_item_purchase: userid item_ability_id
+dota_item_purchased: PlayerID itemname itemcost
+dota_item_spawned: item_ent_index player_id
+dota_item_spotted: userid item_ability_id
+dota_item_used: PlayerID itemname
+dota_link_clicked: link nav nav_back recipe shop
+dota_local_quickbuy_changed:
+dota_match_done: winningteam
+dota_match_done_client:
+dota_match_signout:
+dota_miniboss_kill: shard_recipient_id teamnumber gold
+dota_money_changed:
+dota_neutral_creep_camp_cleared: camp_name camp_type killer_player_id
+dota_neutral_item_sent_to_stash: player_id itemname item_entindex
+dota_no_battle_points: userid reason
+dota_non_player_begin_cast: abilityname caster_entindex
+dota_non_player_used_ability: abilityname caster_entindex
+dota_npc_goal_reached: npc_entindex goal_entindex next_goal_entindex
+dota_on_hero_finish_spawn: heroindex hero
+dota_pause_event: userid value message
+dota_player_begin_cast: PlayerID abilityname caster_entindex
+dota_player_connection_state_changed:
+dota_player_deny: killer_userid victim_userid
+dota_player_details_changed:
+dota_player_gained_level: player player_id level hero_entindex PlayerID
+dota_player_hero_selection_dirty:
+dota_player_kill: victim_userid killer1_userid killer2_userid killer3_userid killer4_userid killer5_userid bounty neutral greevil
+dota_player_killed: PlayerID HeroKill TowerKill
+dota_player_learned_ability: PlayerID player abilityname
+dota_player_pick_hero: player heroindex hero
+dota_player_reconnected: player_id
+dota_player_selected_custom_team: player_id team_id success
+dota_player_shop_changed: prevshopmask shopmask
+dota_player_show_killcam: nodes player
+dota_player_show_minikillcam: nodes player
+dota_player_spawned: PlayerID
+dota_player_take_tower_damage: PlayerID damage
+dota_player_team_changed:
+dota_player_update_assigned_hero: playerid
+dota_player_update_hero_selection: tabcycle
+dota_player_update_killcam_unit:
+dota_player_update_query_unit:
+dota_player_update_selected_unit:
+dota_player_used_ability: PlayerID abilityname caster_entindex
+dota_portrait_ability_layout_changed:
+dota_portrait_unit_modifiers_changed: modifier_affects_abilities
+dota_portrait_unit_stats_changed:
+dota_protector_spawned: player_id
+dota_quest_completed: questIndex
+dota_quest_started: questIndex
+dota_quick_buy_changed: item recipe
+dota_rank_wager: userid
+dota_rd_chat_turn: userid
+dota_report_submitted: result report_flags message
+dota_reset_suggested_items:
+dota_river_painted: userid riverid
+dota_roshan_kill: teamnumber gold
+dota_roshan_roar: teamnumber
+dota_rubick_ability_steal: abilityIndex abilityLevel
+dota_rune_activated_server: PlayerID rune
+dota_rune_deny: userid rune
+dota_rune_pickup: userid type rune bounty_amount
+dota_rune_spotted: userid rune map_location rune_team
+dota_scan_found_enemy: teamnumber
+dota_scan_used: teamnumber
+dota_set_quick_buy: item recipe toggle
+dota_shop_item_drag_begin:
+dota_shop_item_drag_end:
+dota_shrine_kill: killer_userid teamnumber gold
+dota_spectate_hero: entindex
+dota_spectator_talent_changed: abilityname playerid
+dota_stone_of_recall_used: caster_userid
+dota_super_creeps: teamnumber
+dota_team_kill_credit: killer_userid victim_userid teamnumber herokills
+dota_team_neutral_stash_items_acknowledged_changed: teamnumber
+dota_team_neutral_stash_items_changed: teamnumber
+dota_team_player_list_changed:
+dota_tournament_item_event: winner_count event_type
+dota_tower_deny: killer_userid teamnumber gold tier pos_x pos_y pos_z
+dota_tower_kill: killer_userid teamnumber gold tier pos_x pos_y pos_z
+dota_tutorial_lesson_start:
+dota_tutorial_shop_toggled: shop_opened
+dota_tutorial_task_advance:
+dota_unit_aghshard_status_change: entindex has_scepter has_shard
+dota_unit_event: victim attacker basepriority priority eventtype
+dota_wager_token: userid message amount
+dota_ward_killed: userid type bounty_amount
+dota_watch_tower_captured: entindex team_number old_team_number
+dota_workshop_filecanceled:
+dota_workshop_fileselected: filename
+dota_year_beast_killed: killer_player_id message beast_id
+drop_rate_modified:
+dynamic_shadow_light_changed:
+enable_china_logomark:
+entity_hurt: entindex_killed entindex_attacker entindex_inflictor damagebits damage
+entity_killed: entindex_killed entindex_attacker entindex_inflictor damagebits
+entity_visible: userid subject classname entityname
+event_ticket_modified:
+fantasy_league_changed:
+fantasy_score_info_changed:
+fantasy_updated:
+file_downloaded: success local_filename remote_url
+finale_start: rushes
+flare_ignite_npc: entindex
+friend_lobby_list_updated:
+frosty_points_updated:
+full_ui_unlocked:
+game_end_visible:
+game_message: target text
+game_newmap: mapname transition
+game_rules_shutdown:
+game_rules_state_change:
+gameinstructor_draw:
+gameinstructor_nodraw:
+gameui_activated:
+gameui_hidden:
+gc_chat_channel_list_updated:
+gc_connected:
+gc_mismatched_version:
+gc_user_session_created:
+guild_data_updated:
+guild_open_parties_updated:
+halloween_high_score_received:
+halloween_high_score_request_failed:
+halloween_phase_end: phase team
+helicopter_grenade_punt_miss:
+hero_picker_hidden:
+hero_picker_shown:
+hero_selected: player_id team_number hero_unit
+hero_selector_preview_set: setindex
+hide_highlight_hud_element:
+highlight_hud_element: elementname duration
+hltv_cameraman: userid
+hltv_chase: target1 target2 distance theta phi inertia ineye
+hltv_chat: text steamID name
+hltv_fixed: posx posy posz theta phi offset fov target
+hltv_message: text
+hltv_rank_camera: index rank target
+hltv_rank_entity: userid rank target
+hltv_replay: delay reason
+hltv_replay_status: reason
+hltv_status: clients slots proxies master
+hltv_title: text
+hltv_versioninfo: version
+hostname_changed: hostname
+hud_flip_changed: flipped
+instructor_close_lesson: userid hint_name
+instructor_server_hint_create: userid hint_entindex hint_name hint_replace_key hint_target hint_activator_userid hint_timeout hint_icon_onscreen hint_icon_offscreen hint_caption hint_activator_caption hint_color hint_icon_offset hint_range hint_flags hint_binding hint_allow_nodraw_target hint_nooffscreen hint_forcecaption hint_local_player_only hint_start_sound hint_layoutfile hint_vr_panel_type hint_vr_height_offset hint_vr_offset_x hint_vr_offset_y hint_vr_offset_z
+instructor_server_hint_stop: hint_name hint_entindex
+instructor_start_lesson: userid hint_name hint_target vr_movement_type vr_single_controller vr_controller_type
+intro_video_finished:
+inventory_updated: itemdef itemid
+item_preview_closed:
+item_purchased: itemid
+item_schema_initialized:
+joined_chat_channel: channelName
+keybind_changed:
+last_hit: PlayerID EntKilled FirstBlood HeroKill TowerKill
+league_admin_info_updated:
+league_series_info_updated:
+left_chat_channel: channelName
+live_games_updated:
+live_leagues_updated:
+lobby_invites_updated:
+lobby_updated:
+local_player_controller_team:
+local_player_pawn_changed:
+local_player_team:
+map_shutdown:
+map_transition:
+match_details_updated: matchID
+match_history_updated: SteamID
+matchmaking_status_visibility_changed:
+microtransaction_success: txnid
+modifier_event: eventname caster ability
+news_updated:
+nommed_tree: PlayerID
+npc_replaced: old_entindex new_entindex
+npc_spawn_finished: entindex
+npc_spawned: entindex is_respawn
+particle_system_start: targetname
+particle_system_stop: targetname immediate
+party_invites_updated:
+party_updated:
+persona_updated: SteamID
+physgun_pickup: target
+player_activate: userid
+player_changename: userid oldname newname
+player_chat: teamonly userid playerid text
+player_completed_game: PlayerID Winner
+player_connect: name userid networkid xuid bot index
+player_connect_full: userid index PlayerID
+player_death: userid attacker
+player_disconnect: userid reason name networkid xuid PlayerID
+player_footstep: userid
+player_full_update: userid count
+player_fullyjoined: userid name
+player_hintmessage: hintmessage
+player_hurt: userid attacker health
+player_info: name userid steamid bot
+player_info_individual_updated: account_id
+player_info_updated:
+player_is_experienced:
+player_is_notexperienced:
+player_reconnected: PlayerID
+player_report_counts_updated: positive_remaining negative_remaining positive_total negative_total
+player_spawn: userid
+player_stats_updated: forceupload
+player_team: userid team oldteam disconnect silent name isbot
+practice_lobby_visibility_changed:
+prizepool_received: success prizepool leagueid
+profile_closed:
+profile_opened:
+ragdoll_dissolved: entindex
+recent_matches_updated: Page
+reset_defeated:
+rich_presence_updated:
+richpresence_custom_updated:
+round_end: winner reason message time
+round_freeze_end:
+round_start: timelimit fraglimit objective
+round_start_post_nav:
+round_start_pre_entity:
+scaleform_file_download_complete: success local_filename remote_url
+server_cvar: cvarname cvarvalue
+server_message: text
+server_pre_shutdown: reason
+server_shutdown: reason
+server_spawn: hostname address port game mapname addonname maxplayers os dedicated password
+set_instructor_group_enabled: group enabled
+spec_aegis_reclaim_time: reclaim_time
+spec_item_pickup: player_id item_name purchase gift gift_player_id
+spec_mode_updated: userid
+spec_target_updated: userid target
+store_pricesheet_updated:
+team_data_updated:
+team_details_updated: teamID
+team_info: teamid teamname
+team_score: teamid score
+team_showcase_ui_update: show account_id hero_entindex display_ui_on_left
+teamplay_broadcast_audio: team sound
+teamplay_round_start: full_reset
+tournament_state_updated:
+tree_cut: tree_x tree_y
+ugc_details_arrived: published_file_id
+ugc_download_requested: published_file_id
+ugc_installed: published_file_id
+ugc_subscribed: published_file_id
+ugc_unsubscribed: published_file_id
+user_data_downloaded:
+vote_cast_no: team entityid
+vote_cast_yes: team entityid
+vote_changed: yesVotes noVotes potentialVotes
+vote_failed: team reliable
+vote_passed: details param1 team reliable
+vote_started: issue param1 votedata team initiator reliable

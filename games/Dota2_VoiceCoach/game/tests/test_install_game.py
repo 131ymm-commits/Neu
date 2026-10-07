@@ -1,4 +1,4 @@
-"""Установщик каркаса кастомки: аддон и общие модули попадают в синтетическую папку Dota 2;
+"""Установщик кастомки: аддон и общие модули попадают в синтетическую папку Dota 2;
 переустановка, удаление, чужая папка не трогается."""
 import shutil
 import sys
@@ -25,8 +25,8 @@ class InstallGame(unittest.TestCase):
     def test_install_reinstall_uninstall(self):
         g, c = IG.install(self.dota, log=self.log.append)
         vs = g / "scripts" / "vscripts"
-        for rel in ("addon_game_mode.lua", "coach_game.lua", "coach_agents.lua", "coach_world.lua",
-                    "vc_intents.lua", "vc_voice.lua", "vc_text.lua", "vc_text_data.lua",
+        for rel in ("addon_game_mode.lua", "coach_game.lua", "coach_exec.lua", "coach_obs.lua", "coach_link.lua",
+                    "coach_world.lua", "vc_intents.lua", "vc_text.lua", "vc_text_data.lua", "vc_json.lua",
                     "modifiers/modifier_voicecoach_commander.lua"):
             self.assertTrue((vs / rel).exists(), rel)
         self.assertTrue((g / "addoninfo.txt").exists())

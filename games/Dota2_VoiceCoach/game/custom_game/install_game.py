@@ -1,4 +1,4 @@
-"""Установка кастомки «голосовой тренер» (каркас) в Dota 2 Workshop Tools (Windows).
+"""Установка кастомки «тренер доты» в Dota 2 Workshop Tools (Windows).
 
   python install_game.py                        # папка Dota 2 ищется сама (реестр Steam, библиотеки)
   python install_game.py --dota "D:\\SteamLibrary\\steamapps\\common\\dota 2 beta"
@@ -7,7 +7,7 @@
 Копирует:
   custom_game/game     → <dota>/game/dota_addons/voicecoach
   custom_game/content  → <dota>/content/dota_addons/voicecoach
-  общие модули game/shared → …/scripts/vscripts/vc_intents.lua, vc_voice.lua, vc_text.lua, vc_text_data.lua
+  общие модули game/shared → …/scripts/vscripts/vc_intents.lua, vc_text.lua, vc_text_data.lua, vc_json.lua
 Чужие папки с тем же именем не трогает (своя папка помечена файлом-меткой). Запуск — README.md рядом.
 """
 from __future__ import annotations
@@ -25,8 +25,8 @@ from install import find_dota  # noqa: E402
 
 ADDON = "voicecoach"
 MARKER = "voicecoach_game.marker"
-SHARED = {"coach_intents.lua": "vc_intents.lua", "coach_voice.lua": "vc_voice.lua",
-          "coach_text.lua": "vc_text.lua", "coach_text_data.lua": "vc_text_data.lua"}
+SHARED = {"coach_intents.lua": "vc_intents.lua", "coach_text.lua": "vc_text.lua",
+          "coach_text_data.lua": "vc_text_data.lua", "json.lua": "vc_json.lua"}
 
 
 def targets(dota: Path) -> tuple[Path, Path]:
@@ -65,7 +65,7 @@ def uninstall(dota: Path, log=print) -> None:
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(description="Установка кастомки голосового тренера (каркас)")
+    ap = argparse.ArgumentParser(description="Установка кастомки «тренер доты»")
     ap.add_argument("--dota", type=Path, help="папка 'dota 2 beta' (по умолчанию ищется сама)")
     ap.add_argument("--uninstall", action="store_true")
     a = ap.parse_args(argv)

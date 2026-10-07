@@ -1,0 +1,367 @@
+[
+ {
+  "model": "fast",
+  "round": 1,
+  "scenario": 4,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 0,
+  "expected": false,
+  "decision": {
+   "plan": "hold",
+   "where": "",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 0,
+   "buyback": true,
+   "say": "Выкупился"
+  }
+ },
+ {
+  "model": "fast",
+  "round": 1,
+  "scenario": 1,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 30,
+  "expected": true,
+  "decision": {
+   "plan": "farm",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 30,
+   "buyback": false,
+   "say": ""
+  }
+ },
+ {
+  "model": "fast",
+  "round": 1,
+  "scenario": 2,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 35,
+  "expected": true,
+  "decision": {
+   "plan": "push",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 35,
+   "buyback": false,
+   "say": "Пушу Т2 бот"
+  }
+ },
+ {
+  "model": "fast",
+  "round": 1,
+  "scenario": 5,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 0,
+  "expected": false,
+  "decision": {
+   "plan": "move",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [
+    {
+     "ability": "item_ward_observer",
+     "target": "bot"
+    }
+   ],
+   "buy": [],
+   "level": [
+    "crystal_maiden_freezing_field"
+   ],
+   "retreat_hp": 0,
+   "buyback": false,
+   "say": "Ставлю вард на руну"
+  }
+ },
+ {
+  "model": "fast",
+  "round": 1,
+  "scenario": 3,
+  "json_only": false,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 30,
+  "expected": true,
+  "decision": {
+   "plan": "fight",
+   "where": "",
+   "target": "luna",
+   "ally": 0,
+   "cast": [
+    {
+     "ability": "sniper_assassinate",
+     "target": "luna"
+    }
+   ],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 30,
+   "buyback": false,
+   "say": "Атакую!"
+  }
+ },
+ {
+  "model": "mid",
+  "round": 1,
+  "scenario": 2,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 45,
+  "expected": true,
+  "decision": {
+   "plan": "push",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [
+    "item_tpscroll",
+    "item_dragon_lance",
+    "item_black_king_bar"
+   ],
+   "level": [],
+   "retreat_hp": 45,
+   "buyback": false,
+   "say": "Иду пушить бот т2. Враги не видны, иду осторожно."
+  }
+ },
+ {
+  "model": "mid",
+  "round": 1,
+  "scenario": 5,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 35,
+  "expected": true,
+  "decision": {
+   "plan": "follow",
+   "where": "bot",
+   "target": "",
+   "ally": 1,
+   "cast": [],
+   "buy": [
+    "item_tpscroll",
+    "item_magic_wand"
+   ],
+   "level": [
+    "crystal_maiden_freezing_field"
+   ],
+   "retreat_hp": 35,
+   "buyback": false,
+   "say": "Вард не могу: руки варды не ставят. Остаюсь с керри на боте."
+  }
+ },
+ {
+  "model": "mid",
+  "round": 1,
+  "scenario": 3,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 25,
+  "expected": true,
+  "decision": {
+   "plan": "fight",
+   "where": "mid",
+   "target": "luna",
+   "ally": 0,
+   "cast": [
+    {
+     "ability": "sniper_shrapnel",
+     "target": "luna"
+    },
+    {
+     "ability": "sniper_assassinate",
+     "target": "luna"
+    },
+    {
+     "ability": "sniper_take_aim",
+     "target": "self"
+    }
+   ],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 25,
+   "buyback": false,
+   "say": "Драка! Бью Луну (35%): шрапнель и ульт."
+  }
+ },
+ {
+  "model": "fast",
+  "round": 2,
+  "scenario": 1,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 30,
+  "expected": true,
+  "decision": {
+   "plan": "farm",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 30,
+   "buyback": false,
+   "say": ""
+  }
+ },
+ {
+  "model": "mid",
+  "round": 1,
+  "scenario": 1,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 35,
+  "expected": true,
+  "decision": {
+   "plan": "farm",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [
+    {
+     "ability": "sniper_shrapnel",
+     "target": "creeps"
+    }
+   ],
+   "buy": [
+    "item_magic_stick",
+    "item_boots",
+    "item_power_treads",
+    "item_dragon_lance"
+   ],
+   "level": [],
+   "retreat_hp": 35,
+   "buyback": false,
+   "say": ""
+  }
+ },
+ {
+  "model": "fast",
+  "round": 2,
+  "scenario": 4,
+  "json_only": false,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 30,
+  "expected": false,
+  "decision": {
+   "plan": "group",
+   "where": "base",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 30,
+   "buyback": true,
+   "say": "Выкупаюсь"
+  }
+ },
+ {
+  "model": "fast",
+  "round": 2,
+  "scenario": 5,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 30,
+  "expected": true,
+  "decision": {
+   "plan": "follow",
+   "where": "bot",
+   "target": "",
+   "ally": 1,
+   "cast": [
+    {
+     "ability": "item_ward_observer",
+     "target": "bot"
+    }
+   ],
+   "buy": [],
+   "level": [
+    "crystal_maiden_freezing_field"
+   ],
+   "retreat_hp": 30,
+   "buyback": false,
+   "say": "Вард у башни. Охраняю снайпера."
+  }
+ },
+ {
+  "model": "fast",
+  "round": 3,
+  "scenario": 4,
+  "json_only": false,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 30,
+  "expected": true,
+  "decision": {
+   "plan": "push",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [
+    "item_black_king_bar"
+   ],
+   "level": [],
+   "retreat_hp": 30,
+   "buyback": true,
+   "say": "Выкупился, иду пушить бот"
+  }
+ },
+ {
+  "model": "mid",
+  "round": 1,
+  "scenario": 4,
+  "json_only": true,
+  "parsed": true,
+  "notes": [],
+  "retreat_hp": 35,
+  "expected": true,
+  "decision": {
+   "plan": "group",
+   "where": "mid",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [
+    "item_tpscroll",
+    "item_mjollnir",
+    "item_black_king_bar"
+   ],
+   "level": [],
+   "retreat_hp": 35,
+   "buyback": true,
+   "say": "Выкупаюсь. Куплю ТП и Мьёльнир, иду на мид."
+  }
+ }
+]

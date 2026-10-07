@@ -1,6 +1,7 @@
 """Списки имён API для game/tests/test_api_names.py — из опубликованных описаний, не по памяти.
 
   python3 gen_api_lists.py vscripts  <папка package из @moddota/dota-data 0.47.2>     > vscripts_api.txt
+  python3 gen_api_lists.py events    <папка package из @moddota/dota-data 0.47.2>     > events_api.txt
   python3 gen_api_lists.py panorama  <папка package из @moddota/panorama-types 1.39.2> > panorama_api.txt
   python3 gen_api_lists.py botapi    <клон forest0xia/dota2bot-OpenHyperAI>            > botapi_names.txt
 
@@ -38,6 +39,15 @@ def vscripts(pkg: Path) -> list[str]:
     head = ["# Имена API vscripts Dota 2: @moddota/dota-data 0.47.2 (npm, 2026-04-26, Apache-2.0). Строки: Класс.метод, функция, константа,",
             "# instance:глобальная_переменная=Класс, extends:Класс=Родитель. Нужны тесту game/tests/test_api_names.py."]
     return head + sorted(names) + sorted(inst) + sorted(ext)
+
+
+def events(pkg: Path) -> list[str]:
+    """Игровые события (ListenToGameEvent) и их поля: «имя: поле поле …»."""
+    data = json.loads((pkg / "files/events.json").read_text(encoding="utf-8"))
+    head = ["# Игровые события Dota 2 и их поля: @moddota/dota-data 0.47.2 (npm, 2026-04-26, Apache-2.0), files/events.json.",
+            "# Строка: имя: поле поле … Нужны тесту game/tests/test_api_names.py."]
+    rows = sorted(f'{e["name"]}: {" ".join(f["name"] for f in e.get("fields", []))}'.rstrip() for e in data)
+    return head + rows
 
 
 MEMBER = re.compile(r"^\s*(?:readonly\s+)?([A-Za-z_$][\w$]*)\??\s*[:(<]", re.M)
@@ -121,7 +131,7 @@ def botapi(repo: Path) -> list[str]:
 
 def main():
     kind, path = sys.argv[1], Path(sys.argv[2])
-    out = {"vscripts": vscripts, "panorama": panorama, "botapi": botapi}[kind](path)
+    out = {"vscripts": vscripts, "events": events, "panorama": panorama, "botapi": botapi}[kind](path)
     sys.stdout.write("\n".join(out) + "\n")
 
 

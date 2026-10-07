@@ -1,0 +1,716 @@
+"""Агенты Claude: каждого героя ведёт свой агент (решение автора Д11, 07.10.2026).
+
+Игра раз в секунду присылает наблюдения всех героев (POST /api/{room}/tick, game/custom_game/…/coach_link.lua).
+У каждого героя свой агент: свой системный промпт (характер, герой, позиция, команда), своя память и своя
+очередь. Агент решает раз в `period` секунд игры и сразу по событию: новый приказ тренера, смерть или
+возрождение, враг рядом, резкая потеря здоровья. Вызов модели идёт в фоне; игра забирает готовое решение
+на следующем обмене, а выполняет его исполнитель в игре (coach_exec.lua) — рефлексами, пока не придёт новое.
+
+Мотор агента (backend):
+  rules — правила без модели: тесты, сухой прогон, бесплатный соперник. Это НЕ Claude, и HUD так и пишет.
+  api   — Claude через Messages API: ключ в ANTHROPIC_API_KEY, модель — --model (имя из документации Anthropic).
+          Ответ — JSON по схеме DECISION_SCHEMA (structured outputs, параметр output_config.format),
+          системный промпт помечен для кэша.
+  cli   — Claude через Claude Code: `claude -p` со входом по подписке. Каждый вызов — новый процесс (медленнее);
+          лимиты подписки Anthropic не публикует.
+Журнал вызовов — JSONL: повод, время ответа, токены, решение, ошибки. По нему меряются задержка и цена.
+"""
+from __future__ import annotations
+
+import json
+import os
+import re
+import subprocess
+import tempfile
+import threading
+import time
+import urllib.error
+import urllib.request
+from collections import deque
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass, field
+from pathlib import Path
+
+from .parser import Agent, MatchContext
+from .protocol import ACTIONS
+from .textcmd import ACTION_CANON, parse_short
+
+PLANS = ("farm", "push", "defend", "fight", "retreat", "roshan", "move", "follow", "save", "group", "hold")
+WHERE = ("", "top", "mid", "bot", "base", "roshan")
+SPECIAL_TARGETS = {"", "self", "creeps", "base", "top", "mid", "bot", "roshan", "1", "2", "3", "4", "5"}
+MAX_CASTS, MAX_BUY, MAX_LEVEL, MAX_SAY = 4, 6, 4, 120
+ITEM_RE = re.compile(r"^item_[a-z0-9_]+$")
+
+DECISION_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "plan": {"type": "string", "enum": list(PLANS)},
+        "where": {"type": "string", "enum": list(WHERE)},
+        "target": {"type": "string"},
+        "ally": {"type": "integer"},
+        "cast": {"type": "array", "items": {
+            "type": "object",
+            "properties": {"ability": {"type": "string"}, "target": {"type": "string"}},
+            "required": ["ability", "target"], "additionalProperties": False}},
+        "buy": {"type": "array", "items": {"type": "string"}},
+        "level": {"type": "array", "items": {"type": "string"}},
+        "retreat_hp": {"type": "integer"},
+        "buyback": {"type": "boolean"},
+        "say": {"type": "string"},
+    },
+    "required": ["plan", "where", "target", "ally", "cast", "buy", "level", "retreat_hp", "buyback", "say"],
+    "additionalProperties": False,
+}
+
+ROLE_RU = {
+    1: "керри (позиция 1): лёгкая линия, фарм, сила к поздней игре",
+    2: "мидер (позиция 2): центральная линия, темп, ганги после 6 уровня",
+    3: "оффлейнер (позиция 3): сложная линия, инициация, место в драке",
+    4: "роумер-саппорт (позиция 4): помогает сложной линии, ганги, контроль",
+    5: "саппорт (позиция 5): бережёт керри на лёгкой линии, варды, сейвы",
+}
+
+
+def default_lane(team: str, pos: int) -> str:
+    """Как X.default_lane в coach_exec.lua: лёгкая у 1 и 5, мид у 2, сложная у 3 и 4."""
+    radiant = team == "radiant"
+    if pos == 2:
+        return "mid"
+    if pos in (1, 5):
+        return "bot" if radiant else "top"
+    return "top" if radiant else "bot"
+
+
+def mmss(clock) -> str:
+    c = int(round(abs(float(clock or 0))))
+    return f"{'-' if (clock or 0) < 0 else ''}{c // 60}:{c % 60:02d}"
+
+
+def short_hero(name) -> str:
+    s = str(name or "").strip().lower().replace(" ", "_")
+    return s[len("npc_dota_hero_"):] if s.startswith("npc_dota_hero_") else s
+
+
+# --- разбор ответа ---
+
+def extract_json(text: str) -> dict | None:
+    """Первый JSON-объект в тексте (модель может обернуть его в ```json … ``` или добавить слова)."""
+    start = text.find("{")
+    while start != -1:
+        depth, in_str, esc = 0, False, False
+        for i in range(start, len(text)):
+            ch = text[i]
+            if in_str:
+                if esc:
+                    esc = False
+                elif ch == "\\":
+                    esc = True
+                elif ch == '"':
+                    in_str = False
+            elif ch == '"':
+                in_str = True
+            elif ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        obj = json.loads(text[start:i + 1])
+                    except json.JSONDecodeError:
+                        break
+                    if isinstance(obj, dict):
+                        return obj
+                    break
+        start = text.find("{", start + 1)
+    return None
+
+
+def parse_decision(raw, obs: dict | None = None) -> tuple[dict | None, list[str]]:
+    """Ответ модели → решение для исполнителя и замечания. Без допустимого плана — (None, причины).
+    С наблюдением проверяются имена: цель — из вражеской пятёрки, способности — у героя."""
+    notes: list[str] = []
+    if isinstance(raw, str):
+        d = extract_json(raw)
+        if d is None:
+            return None, ["в ответе нет JSON-объекта"]
+    elif isinstance(raw, dict):
+        d = raw
+    else:
+        return None, ["ответ — не объект"]
+    plan = str(d.get("plan") or "").strip().lower()
+    if plan not in PLANS:
+        return None, [f"план {plan!r} не из списка"]
+    out = {"plan": plan}
+    where = str(d.get("where") or "").strip().lower()
+    if where not in WHERE:
+        notes.append(f"место {where!r} не из списка")
+        where = ""
+    out["where"] = where
+
+    enemies = {short_hero(h) for h in (obs or {}).get("enemy_team") or []} if obs else None
+    target = short_hero(d.get("target"))
+    if target and enemies is not None and target not in enemies:
+        notes.append(f"цели {target!r} нет во вражеской пятёрке")
+        target = ""
+    out["target"] = target
+
+    try:
+        ally = int(d.get("ally") or 0)
+    except (TypeError, ValueError):
+        ally = 0
+    out["ally"] = ally if 0 <= ally <= 5 else 0
+
+    names = None
+    if obs is not None:
+        names = {a.get("name") for a in obs.get("abilities") or []} | {i.get("name") for i in obs.get("items") or []}
+    casts = []
+    for c in d.get("cast") or []:
+        if len(casts) >= MAX_CASTS:
+            notes.append("применений больше 4 — лишние отброшены")
+            break
+        if not isinstance(c, dict):
+            continue
+        name = str(c.get("ability") or "").strip()
+        if not name:
+            continue
+        if names is not None and name not in names and name != "#ult":
+            notes.append(f"способности или предмета {name} у героя нет")
+            continue
+        t = str(c.get("target") or "").strip().lower()
+        if t not in SPECIAL_TARGETS:
+            t = short_hero(t)
+            if enemies is not None and t not in enemies:
+                notes.append(f"цели {t!r} для {name} нет во вражеской пятёрке")
+                t = ""
+        casts.append({"ability": name, "target": t})
+    out["cast"] = casts
+
+    buy = []
+    for x in d.get("buy") or []:
+        s = str(x).strip().lower()
+        if ITEM_RE.match(s):
+            buy.append(s)
+        else:
+            notes.append(f"{s!r} — не имя предмета")
+    out["buy"] = buy[:MAX_BUY]
+
+    allowed = None
+    if obs is not None:
+        allowed = set(obs.get("can_level") or []) | {a.get("name") for a in obs.get("abilities") or []}
+    level = []
+    for x in d.get("level") or []:
+        s = str(x).strip()
+        if allowed is not None and s not in allowed and not s.startswith("special_bonus"):
+            notes.append(f"качать {s} нельзя")
+            continue
+        level.append(s)
+    out["level"] = level[:MAX_LEVEL]
+
+    try:
+        hp = int(d.get("retreat_hp"))
+    except (TypeError, ValueError):
+        hp = 25
+    out["retreat_hp"] = max(0, min(90, hp))
+    out["buyback"] = d.get("buyback") is True
+    out["say"] = str(d.get("say") or "").strip()[:MAX_SAY]
+    return out, notes
+
+
+# --- промпты ---
+
+def _glossary() -> str:
+    skip = {"tormentor"}
+    return "; ".join(f"«{ACTION_CANON[a]}» — {spec.title_ru}" for a, spec in ACTIONS.items()
+                     if a in ACTION_CANON and a not in skip)
+
+
+def persona_text(persona: dict | None) -> str:
+    """Характер из оцифровки (digitizer/twin/agent_params.py) или архетип позиции."""
+    if not persona:
+        return "Характер: крепкий игрок своей позиции — без лишнего риска, но и без трусости."
+    lines = []
+    name = persona.get("name")
+    src = persona.get("source_profile") or {}
+    head = "Твой стиль снят с матчей игрока" + (f" {name}" if name else "")
+    if src.get("matches"):
+        head += f" ({src['matches']} матчей)"
+    lines.append(head + ".")
+    style = persona.get("style") or {}
+    axes = [("aggression", "агрессия"), ("farm_focus", "фарм"), ("risk", "риск"), ("teamfight", "командные драки"),
+            ("vision", "обзор"), ("support_play", "помощь своим"), ("mechanics", "механика")]
+    vals = [f"{ru} {float(style[k]):.1f}" for k, ru in axes if style.get(k) is not None]
+    if vals:
+        lines.append("Оси стиля (0 — мало, 1 — много): " + ", ".join(vals) + ".")
+    beh = persona.get("behavior") or {}
+    if beh.get("retreat_hp") is not None:
+        lines.append(f"Обычно отходишь при {int(round(float(beh['retreat_hp']) * 100))}% здоровья.")
+    if persona.get("core_build"):
+        lines.append("Любимая сборка: " + ", ".join(map(str, persona["core_build"][:8])) + ".")
+    if persona.get("phrases"):
+        lines.append("Твои фразы из чата: " + " | ".join(map(str, persona["phrases"][:5])) + ".")
+    return "\n".join(lines)
+
+
+def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, obedience: float = 0.85) -> str:
+    who = (persona or {}).get("name") or f"игрок позиции {pos}"
+    team_ru = "Свет (Radiant)" if team == "radiant" else "Тьму (Dire)"
+    return f"""Ты — {who}: играешь в Dota 2 героем {short_hero(hero)} за {team_ru}, роль — {ROLE_RU.get(pos, f"позиция {pos}")}.
+В команде пятеро героев, и каждого ведёт свой ИИ-игрок, как ты. Над вами тренер — человек: героем он не играет, а пишет приказы коротким текстом.
+
+{persona_text(persona)}
+
+КАК ТЫ УПРАВЛЯЕШЬ ГЕРОЕМ
+Раз в несколько секунд и сразу при событии (приказ тренера, смерть, враг рядом, резкая потеря здоровья) ты получаешь наблюдение — JSON с тем, что видит твой герой, — и отвечаешь одним решением, тоже JSON. Решение выполняют твои «руки» — исполнитель в игре. Руки сами: добивают крипов при фарме линии; бьют цель; применяют способности из cast, когда цель видна (до далёкой цели сначала подходят); отходят к фонтану, когда здоровья меньше retreat_hp процентов; покупают предметы из buy по очереди, когда герой у фонтана или мёртв и хватает золота; вкладывают очки способностей по level. До следующего решения руки продолжают выполнять это. Ты решаешь, ЧТО делать и ГДЕ; руки — КАК.
+
+ПОЛЯ РЕШЕНИЯ
+- plan: farm (фарм линии where с добиванием), push (давить линию where к вышкам врага), defend (защищать линию where или base), fight (бить героя target; не видно — искать, где видели, или на линии where), retreat (к своему фонтану), roshan (бить Рошана), move (идти к where), follow (идти за союзником ally), save (бежать на помощь союзнику ally), group (собраться в where или к своим), hold (стоять).
+- where: "", "top", "mid", "bot", "base", "roshan".
+- target: имя героя врага из enemy_team (например "luna") или "".
+- ally: номер союзника 1–5 или 0.
+- cast: до 4 применений {{"ability": имя из abilities или items, "target": цель}}. Цель: "" (цель плана или ближайший видимый враг), "self", "creeps" (крипы рядом — для способностей по площади), номер союзника "1"–"5", место "base"/"top"/"mid"/"bot" (своя внешняя вышка линии: для телепорта item_tpscroll и вардов), имя героя врага. Каждое применение — один раз; ждёт цели и отката до 8 с. Варды (item_ward_observer, item_ward_sentry) руки ставят только у своей внешней вышки линии; точек рун и лагерей руки не знают.
+- buy: очередь покупок — внутренние имена предметов Доты ("item_tango", "item_power_treads"). Пустой список — очередь не менять. Есть золото, а ты у фонтана или мёртв — закажи, что нужно по роли и сборке.
+- level: очередь прокачки из can_level (есть, когда есть очки). Пустой — руки качают сами: ульту, потом младшую способность.
+- retreat_hp: порог отхода, проценты здоровья; обычно 25–40. 0 — не отходить вовсе: только осознанно (например, добить цель).
+- buyback: true — выкупиться сейчас (только когда мёртв). После выкупа или возрождения выбери план — куда идти.
+- say: короткая реплика тренеру по-русски (до 100 знаков): ответ на приказ, возражение, важное. Сказать нечего — "".
+
+ПРИКАЗЫ ТРЕНЕРА
+Они в поле coach: seq, ago (сколько секунд назад), text, urgent (срочно). Новый приказ отмечен в сообщении. Формат: «[кому] действие [где/цель] [!]»; кому — номера позиций («23» — второй и третий) или «все». Слова: {_glossary()}; «не X» — не делать X; «!» — срочно.
+Слушайся тренера, если приказ выполним (послушание {obedience:.2f} из 1). Если нет — ты мёртв, нет маны, ульта в откате, это верная смерть — скажи об этом в say коротко и делай лучшее, что можешь. Смок, стаки, лес и варды не у своих вышек руки пока не умеют — скажи тренеру честно, что сделаешь вместо. На новый приказ отвечай в say коротко («Иду пушить бот»).
+
+ЧТО В НАБЛЮДЕНИИ
+clock — игровые часы, с; hp, mp — [сейчас, максимум]; where — где ты (линия и ближайшая вышка); attack — урон и дальность атаки; abilities — способности (use: target/point/none/passive; ready; cd — откат, с; mana; range); items — предметы (backpack — в рюкзаке); points и can_level — очки способностей и что можно качать; gold; buyback — цена и можно ли; in_shop — у фонтана; doing — что сейчас делают руки; queue — очереди рук; notes — что руки не смогли сделать; near — крипы и вражеская вышка рядом (weak_enemy_creeps — можно добить сразу); allies — союзники; enemies — видимые враги (d — расстояние до тебя); missing — невидимые враги (seen — где, ago — сколько секунд назад видели); towers — уровень внешней живой вышки на линиях (0 — вышек нет); roshan — жив ли Рошан; events — недавние события.
+
+Отвечай ТОЛЬКО JSON-объектом решения, без пояснений и без markdown.
+Пример: {{"plan":"farm","where":"{default_lane(team, pos)}","target":"","ally":0,"cast":[],"buy":["item_tango","item_branches"],"level":[],"retreat_hp":30,"buyback":false,"say":""}}"""
+
+
+SHOP_HINT_GOLD = 600         # с таким золотом у фонтана или мёртвым — напомнить о покупках (пилот: агент забывал)
+
+# порядок полей наблюдения в сообщении: сначала сам герой, потом окружение (JSON из Lua приходит без порядка)
+OBS_ORDER = ("clock", "alive", "respawn", "lvl", "hp", "mp", "gold", "buyback", "where", "attack", "abilities",
+             "points", "can_level", "items", "slots_free", "in_shop", "doing", "queue", "notes", "near", "enemies",
+             "missing", "allies", "towers", "roshan", "coach", "events", "stats", "enemy_team")
+
+
+def user_prompt(obs: dict, memory: list[str], new_coach: list[dict], trigger: str) -> str:
+    lines = [f"Часы {mmss(obs.get('clock'))}. Повод: {trigger}."]
+    if new_coach:
+        lines.append("НОВЫЙ ПРИКАЗ ТРЕНЕРА: " + "; ".join(
+            f"«{c.get('text', '')}»" + (" (срочно)" if c.get("urgent") else "") for c in new_coach))
+    if memory:
+        lines.append("Твои прошлые решения: " + " | ".join(memory))
+    gold = int(obs.get("gold") or 0)
+    queued = ((obs.get("queue") or {}).get("buy") or []) if isinstance(obs.get("queue"), dict) else []
+    if (not obs.get("alive", True) or obs.get("in_shop")) and gold >= SHOP_HINT_GOLD and not queued:
+        lines.append(f"Ты {'мёртв' if not obs.get('alive', True) else 'у фонтана'}, золота {gold}, "
+                     "очередь покупок пуста — самое время заказать покупки (buy).")
+    rest = [k for k in obs if k not in OBS_ORDER and k not in ("team", "pos", "hero")]
+    view = {k: obs[k] for k in (*OBS_ORDER, *rest) if k in obs}
+    lines.append("Наблюдение: " + json.dumps(view, ensure_ascii=False, separators=(",", ":")))
+    lines.append("Твоё решение (только JSON):")
+    return "\n".join(lines)
+
+
+def memory_line(obs: dict, d: dict, new_coach: list[dict]) -> str:
+    s = f"{mmss(obs.get('clock'))} {d['plan']}"
+    if d.get("where"):
+        s += f" {d['where']}"
+    if d.get("target"):
+        s += f" → {d['target']}"
+    if d.get("cast"):
+        s += " cast " + ",".join(c["ability"] for c in d["cast"])
+    if new_coach:
+        s += " (на приказ «" + "; ".join(c.get("text", "") for c in new_coach) + "»)"
+    if d.get("say"):
+        s += f"; сказал «{d['say']}»"
+    return s
+
+
+# --- моторы ---
+
+class BackendError(Exception):
+    def __init__(self, msg: str, retry_after: float | None = None):
+        super().__init__(msg)
+        self.retry_after = retry_after
+
+
+START_ITEMS = {
+    1: ["item_tango", "item_quelling_blade", "item_branches", "item_branches", "item_slippers"],
+    2: ["item_tango", "item_faerie_fire", "item_branches", "item_branches", "item_circlet"],
+    3: ["item_tango", "item_quelling_blade", "item_gauntlets", "item_branches"],
+    4: ["item_tango", "item_branches", "item_branches", "item_circlet"],
+    5: ["item_tango", "item_tango", "item_branches", "item_branches"],
+}
+LATER_ITEMS = {1: ["item_magic_stick", "item_boots"], 2: ["item_bottle", "item_boots"],
+               3: ["item_magic_stick", "item_boots"], 4: ["item_boots", "item_magic_stick"],
+               5: ["item_boots", "item_magic_stick"]}
+INTENT_PLAN = {"retreat": "retreat", "move": "move", "push": "push", "split": "push", "defend": "defend",
+               "gank": "fight", "engage": "fight", "focus": "fight", "group": "group", "roshan": "roshan",
+               "hold": "hold", "follow": "follow", "save": "save", "farm": "farm"}
+
+
+def rules_decision(obs: dict, new_coach: list[dict] | None = None) -> dict:
+    """Решение без модели — простые правила (тесты, сухой прогон, бесплатный соперник). Не Claude."""
+    team, pos = obs.get("team", "radiant"), int(obs.get("pos", 1))
+    d = {"plan": "farm", "where": default_lane(team, pos), "target": "", "ally": 0, "cast": [], "buy": [],
+         "level": [], "retreat_hp": 30, "buyback": False, "say": ""}
+    have = {i.get("name") for i in obs.get("items") or []}
+    queued = set((obs.get("queue") or {}).get("buy") or [])
+    if obs.get("clock", 0) < 60 and not have and not queued:
+        d["buy"] = list(START_ITEMS.get(pos, START_ITEMS[5]))
+    elif not queued:
+        d["buy"] = [x for x in LATER_ITEMS.get(pos, []) if x not in have][:1]
+    coach = sorted(obs.get("coach") or [], key=lambda c: c.get("seq", 0))
+    if coach and coach[-1].get("ago", 999) <= 60:
+        ctx = MatchContext(team=team, agents=[Agent(i) for i in range(1, 6)],
+                           enemy_heroes=["npc_dota_hero_" + h for h in obs.get("enemy_team") or []])
+        r = parse_short(coach[-1].get("text", ""), ctx)
+        if r.ok:
+            c = r.commands[-1]
+            p = c.params
+            plan = INTENT_PLAN.get(c.action)
+            if plan:
+                d["plan"] = plan
+                d["where"] = p.get("lane") if p.get("lane") in ("top", "mid", "bot") else (
+                    p.get("place") if p.get("place") in ("base", "roshan") else "")
+                if plan == "farm" and not d["where"]:
+                    d["where"] = default_lane(team, pos)
+                if plan in ("push", "defend") and not d["where"]:
+                    d["where"] = "mid"
+                d["target"] = short_hero(p.get("enemy") or "")
+                d["ally"] = int(p.get("ally") or 0)
+            elif c.action == "use_ult":
+                ult = next((a["name"] for a in obs.get("abilities") or [] if a.get("ult")), None)
+                if ult:
+                    d["cast"] = [{"ability": ult, "target": short_hero(p.get("enemy") or "")}]
+            elif c.action == "buyback":
+                d["buyback"] = True
+        if new_coach:
+            d["say"] = "Понял: " + coach[-1].get("text", "")
+    if not obs.get("alive", True):
+        return d
+    hp = obs.get("hp") or [1, 1]
+    if hp[1] and hp[0] / hp[1] < 0.3 and d["plan"] not in ("retreat", "fight"):
+        d["plan"], d["where"] = "retreat", "base"
+    return d
+
+
+class RulesBackend:
+    label = "правила (не Claude)"
+
+    def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
+        return {"data": rules_decision(obs, (extra or {}).get("new_coach")), "usage": {}}
+
+
+class ApiBackend:
+    """Claude через Messages API (ключ — переменная окружения ANTHROPIC_API_KEY)."""
+    URL = "https://api.anthropic.com/v1/messages"
+    VERSION = "2023-06-01"
+
+    def __init__(self, model: str, api_key: str | None = None, timeout: float = 20.0, max_tokens: int = 500,
+                 structured: bool = True, opener=None):
+        if not model:
+            raise ValueError("нужна модель (--model): имя из документации Anthropic")
+        self.model = model
+        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
+        if not self.api_key:
+            raise ValueError("нет ключа: задайте переменную окружения ANTHROPIC_API_KEY")
+        self.timeout, self.max_tokens, self.structured = timeout, max_tokens, structured
+        self.opener = opener or urllib.request.urlopen
+        self.label = f"Claude API ({model})"
+
+    def body(self, system: str, user: str) -> dict:
+        b = {"model": self.model, "max_tokens": self.max_tokens,
+             "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
+             "messages": [{"role": "user", "content": user}]}
+        if self.structured:
+            b["output_config"] = {"format": {"type": "json_schema", "schema": DECISION_SCHEMA}}
+        return b
+
+    def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
+        req = urllib.request.Request(
+            self.URL, data=json.dumps(self.body(system, user)).encode("utf-8"), method="POST",
+            headers={"x-api-key": self.api_key, "anthropic-version": self.VERSION, "content-type": "application/json"})
+        try:
+            with self.opener(req, timeout=self.timeout) as r:
+                data = json.loads(r.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            text = e.read().decode("utf-8", "replace")[:300] if hasattr(e, "read") else ""
+            retry = e.headers.get("retry-after") if getattr(e, "headers", None) else None
+            if e.code == 400 and self.structured and "output_config" in text:
+                self.structured = False                     # модель без structured outputs — дальше просим JSON словами
+                return self.decide(system, user, obs, extra)
+            raise BackendError(f"HTTP {e.code}: {text}", float(retry) if retry else None) from None
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            raise BackendError(f"нет связи с API: {e}") from None
+        text = "".join(b.get("text", "") for b in data.get("content") or [] if b.get("type") == "text")
+        return {"text": text, "usage": data.get("usage") or {}, "stop_reason": data.get("stop_reason")}
+
+
+class CliBackend:
+    """Claude через Claude Code: `claude -p` (вход по подписке или ключом — как настроен Claude Code).
+    Без --bare: режим --bare подписку не использует (документация Claude Code, «headless»)."""
+
+    def __init__(self, model: str | None = None, claude: str = "claude", timeout: float = 90.0, runner=None):
+        self.model, self.claude, self.timeout = model, claude, timeout
+        self.runner = runner or subprocess.run
+        self.cwd = tempfile.mkdtemp(prefix="vc_agent_")      # пустая папка: чужой CLAUDE.md не подмешается
+        self.label = "Claude Code" + (f" ({model})" if model else "")
+
+    def argv(self, system: str) -> list[str]:
+        a = [self.claude, "-p", "--output-format", "json", "--system-prompt", system, "--tools", "",
+             "--disallowedTools", "mcp__*", "--no-session-persistence", "--json-schema", json.dumps(DECISION_SCHEMA),
+             "Реши, что делать герою сейчас. Наблюдение и приказы — во входных данных."]
+        if self.model:
+            a[1:1] = ["--model", self.model]
+        return a
+
+    def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
+        try:
+            p = self.runner(self.argv(system), input=user, capture_output=True, text=True, encoding="utf-8",
+                            timeout=self.timeout, cwd=self.cwd)
+        except FileNotFoundError:
+            raise BackendError(f"не нашёл {self.claude}: установите Claude Code или укажите --claude") from None
+        except subprocess.TimeoutExpired:
+            raise BackendError(f"claude -p не ответил за {self.timeout:.0f} с") from None
+        try:
+            data = json.loads(p.stdout)
+        except json.JSONDecodeError:
+            raise BackendError(f"claude -p: не JSON (код {p.returncode}): {(p.stdout or p.stderr)[:200]}") from None
+        if data.get("is_error"):
+            raise BackendError(f"claude -p: {str(data.get('result'))[:200]}")
+        return {"data": data.get("structured_output"), "text": data.get("result") or "",
+                "usage": data.get("usage") or {}, "cost_usd": data.get("total_cost_usd")}
+
+
+def make_backend(kind: str, model: str | None = None, claude: str = "claude"):
+    if kind == "rules":
+        return RulesBackend()
+    if kind == "api":
+        return ApiBackend(model or "")
+    if kind == "cli":
+        return CliBackend(model, claude)
+    raise ValueError(f"неизвестный мотор агентов: {kind}")
+
+
+# --- агенты и их расписание ---
+
+@dataclass
+class HeroAgent:
+    team: str
+    pos: int
+    hero: str
+    system: str
+    memory: deque = field(default_factory=lambda: deque(maxlen=6))
+    seen_coach: int = 0
+    busy: bool = False
+    last_clock: float = -1e9
+    last_error: bool = False
+    called_obs: dict | None = None
+    decision: dict | None = None
+    seq: int = 0
+    state: str = "ждёт"
+    calls: int = 0
+    errors: int = 0
+
+
+def _hp_pct(obs: dict | None) -> float:
+    hp = (obs or {}).get("hp") or [0, 0]
+    return 100.0 * hp[0] / hp[1] if len(hp) == 2 and hp[1] else 0.0
+
+
+def _near_enemies(obs: dict | None, radius: float = 1500) -> set:
+    return {e.get("hero") for e in (obs or {}).get("enemies") or [] if (e.get("d") or 1e9) <= radius}
+
+
+class AgentHub:
+    """Агенты одной комнаты (одного матча): по агенту на героя, решения в фоне."""
+
+    def __init__(self, backends: dict, period: float = 4.0, dead_period: float = 12.0, min_gap: float = 1.0,
+                 error_gap: float = 3.0, max_inflight: int = 10, max_calls: int | None = None,
+                 log_path: str | Path | None = None, personas: dict | None = None, obedience: float = 0.85,
+                 prices: dict | None = None, sync: bool = False):
+        self.backends = backends                  # {"radiant": мотор, "dire": мотор}
+        self.period, self.dead_period, self.min_gap, self.error_gap = period, dead_period, min_gap, error_gap
+        self.max_inflight, self.max_calls = max_inflight, max_calls
+        self.personas = personas or {}
+        self.obedience = obedience
+        self.prices = prices or {}
+        self.sync = sync
+        self.pool = None if sync else ThreadPoolExecutor(max_workers=max_inflight, thread_name_prefix="agent")
+        self.lock = threading.Lock()
+        self.agents: dict[tuple, HeroAgent] = {}
+        self.inflight = 0
+        self.calls_total = 0
+        self.pause_until = 0.0
+        self.log_path = Path(log_path) if log_path else None
+        self.run = f"{time.time():.0f}-{id(self) % 10000}"   # новый запуск сервера — номера решений с 1, игра их сбрасывает
+        self.stats = {"calls": 0, "errors": 0, "latency": [], "in": 0, "out": 0, "cache_read": 0, "cache_write": 0,
+                      "cost_cli": 0.0}
+
+    def _persona(self, team: str, pos: int) -> dict | None:
+        return (self.personas.get(team) or {}).get(str(pos)) or (self.personas.get(team) or {}).get(pos)
+
+    def _agent(self, obs: dict) -> HeroAgent:
+        team, pos, hero = obs.get("team"), int(obs.get("pos")), str(obs.get("hero") or "")
+        key = (team, pos)
+        ag = self.agents.get(key)
+        clock = float(obs.get("clock") or 0)
+        if ag is None or ag.hero != hero or clock < ag.last_clock - 60:     # новый матч или другой герой
+            persona = self._persona(team, pos)
+            ag = HeroAgent(team=team, pos=pos, hero=hero,
+                           system=system_prompt(team, pos, hero, persona, self.obedience))
+            self.agents[key] = ag
+        return ag
+
+    def _trigger(self, ag: HeroAgent, obs: dict) -> str | None:
+        if ag.calls == 0:
+            return "начало игры для тебя"
+        clock = float(obs.get("clock") or 0)
+        gap = clock - ag.last_clock
+        if gap < (self.error_gap if ag.last_error else self.min_gap):
+            return None
+        if any((c.get("seq") or 0) > ag.seen_coach for c in obs.get("coach") or []):
+            return "приказ тренера"
+        prev = ag.called_obs
+        if prev is not None:
+            if prev.get("alive") and not obs.get("alive"):
+                return "ты погиб"
+            if not prev.get("alive") and obs.get("alive"):
+                return "ты возродился"
+            if obs.get("alive"):
+                if _near_enemies(obs) - _near_enemies(prev):
+                    return "враг рядом"
+                if _hp_pct(prev) - _hp_pct(obs) >= 20:
+                    return "быстро теряешь здоровье"
+        if gap >= (self.period if obs.get("alive") else self.dead_period):
+            return "очередное решение"
+        return None
+
+    def tick(self, payload: dict) -> dict:
+        jobs = []
+        now = time.monotonic()
+        with self.lock:
+            for obs in payload.get("heroes") or []:
+                if not isinstance(obs, dict) or obs.get("team") not in self.backends:
+                    continue
+                ag = self._agent(obs)
+                if ag.busy:
+                    continue
+                trig = self._trigger(ag, obs)
+                if trig is None:
+                    continue
+                if self.max_calls is not None and self.calls_total >= self.max_calls:
+                    ag.state = "лимит вызовов исчерпан"
+                    continue
+                if now < self.pause_until:
+                    ag.state = "пауза: лимит API"
+                    continue
+                if self.inflight >= self.max_inflight:
+                    continue
+                ag.busy, ag.state = True, "думает"
+                self.inflight += 1
+                self.calls_total += 1
+                jobs.append((ag, obs, trig))
+        for job in jobs:
+            if self.sync:
+                self._run(*job)
+            else:
+                self.pool.submit(self._run, *job)
+        with self.lock:
+            return {
+                "decisions": [{"team": a.team, "pos": a.pos, "seq": a.seq, "decision": a.decision}
+                              for a in self.agents.values() if a.decision is not None],
+                "agents": [{"team": a.team, "pos": a.pos, "state": a.state} for a in self.agents.values()],
+                "backend": {t: getattr(b, "label", str(b)) for t, b in self.backends.items()},
+                "run": self.run,
+            }
+
+    def _run(self, ag: HeroAgent, obs: dict, trig: str) -> None:
+        t0 = time.monotonic()
+        new_coach = [c for c in obs.get("coach") or [] if (c.get("seq") or 0) > ag.seen_coach]
+        user = user_prompt(obs, list(ag.memory), new_coach, trig)
+        backend = self.backends[ag.team]
+        reply, decision, notes, err = {}, None, [], None
+        try:
+            reply = backend.decide(ag.system, user, obs, {"new_coach": new_coach, "trigger": trig}) or {}
+            raw = reply.get("data") if reply.get("data") is not None else (reply.get("text") or "")
+            decision, notes = parse_decision(raw, obs)
+            if decision is None:
+                err = "; ".join(notes) or "пустой ответ"
+        except BackendError as e:
+            err = str(e)
+            if e.retry_after:
+                with self.lock:
+                    self.pause_until = max(self.pause_until, time.monotonic() + e.retry_after)
+        except Exception as e:                                     # noqa: BLE001 — агент не должен ронять сервер
+            err = f"{type(e).__name__}: {e}"
+        latency = time.monotonic() - t0
+        usage = reply.get("usage") or {}
+        with self.lock:
+            ag.busy = False
+            self.inflight -= 1
+            ag.calls += 1
+            ag.last_clock = float(obs.get("clock") or 0)
+            ag.called_obs = obs
+            ag.last_error = decision is None
+            self.stats["calls"] += 1
+            self.stats["latency"].append(latency)
+            self.stats["in"] += int(usage.get("input_tokens") or 0)
+            self.stats["out"] += int(usage.get("output_tokens") or 0)
+            self.stats["cache_read"] += int(usage.get("cache_read_input_tokens") or 0)
+            self.stats["cache_write"] += int(usage.get("cache_creation_input_tokens") or 0)
+            if reply.get("cost_usd"):
+                self.stats["cost_cli"] += float(reply["cost_usd"])
+            if decision is not None:
+                ag.seq += 1
+                ag.decision = decision
+                ag.state = "решил" + (f": «{decision['say']}»" if decision.get("say") else "")
+                ag.seen_coach = max([ag.seen_coach] + [int(c.get("seq") or 0) for c in obs.get("coach") or []])
+                ag.memory.append(memory_line(obs, decision, new_coach))
+            else:
+                ag.errors += 1
+                self.stats["errors"] += 1
+                ag.state = "ошибка: " + (err or "")[:80]
+        self._log({"t": round(time.time(), 3), "clock": obs.get("clock"), "team": ag.team, "pos": ag.pos,
+                   "hero": ag.hero, "trigger": trig, "backend": getattr(backend, "label", ""),
+                   "latency_s": round(latency, 3), "usage": usage, "cost_usd": reply.get("cost_usd"),
+                   "decision": decision, "notes": notes, "error": err})
+
+    def _log(self, rec: dict) -> None:
+        if not self.log_path:
+            return
+        line = json.dumps(rec, ensure_ascii=False)
+        with self.lock:
+            self.log_path.parent.mkdir(parents=True, exist_ok=True)
+            with self.log_path.open("a", encoding="utf-8") as f:
+                f.write(line + "\n")
+
+    def summary(self) -> dict:
+        with self.lock:
+            lat = sorted(self.stats["latency"])
+            s = {k: v for k, v in self.stats.items() if k != "latency"}
+
+        def q(p):
+            return round(lat[min(len(lat) - 1, int(p * len(lat)))], 2) if lat else None
+
+        s.update({"latency_p50_s": q(0.5), "latency_p95_s": q(0.95)})
+        p = self.prices
+        if p:
+            s["cost_usd_est"] = round((s["in"] * p.get("in", 0) + s["out"] * p.get("out", 0)
+                                       + s["cache_read"] * p.get("cache_read", 0)
+                                       + s["cache_write"] * p.get("cache_write", 0)) / 1e6, 4)
+        return s
+
+    def status(self) -> dict:
+        with self.lock:
+            agents = [{"team": a.team, "pos": a.pos, "hero": a.hero, "state": a.state, "calls": a.calls,
+                       "errors": a.errors, "decision": a.decision, "memory": list(a.memory)}
+                      for a in sorted(self.agents.values(), key=lambda a: (a.team, a.pos))]
+        return {"agents": agents, "summary": self.summary(),
+                "backend": {t: getattr(b, "label", str(b)) for t, b in self.backends.items()}}
+
+    def close(self) -> None:
+        if self.pool:
+            self.pool.shutdown(wait=False, cancel_futures=True)

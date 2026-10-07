@@ -1,0 +1,230 @@
+{
+ "where": "mid, их Т1, 820",
+ "attack": {
+  "range": 550,
+  "dmg": 60
+ },
+ "events": [],
+ "in_shop": false,
+ "towers": {
+  "enemy": {
+   "top": 1,
+   "mid": 1,
+   "bot": 2
+  },
+  "own": {
+   "top": 1,
+   "mid": 1,
+   "bot": 1
+  }
+ },
+ "alive": true,
+ "stats": {
+  "d": 0,
+  "lh": 0,
+  "dn": 0,
+  "a": 0,
+  "k": 0
+ },
+ "hero": "sniper",
+ "pos": 1,
+ "enemies": [
+  {
+   "where": "mid, их Т1, 658",
+   "hero": "luna",
+   "hp": [
+    700,
+    2000
+   ],
+   "lvl": 17,
+   "d": 600
+  },
+  {
+   "where": "mid, их Т1, 737",
+   "hero": "lina",
+   "hp": [
+    1300,
+    1500
+   ],
+   "lvl": 16,
+   "d": 902
+  }
+ ],
+ "mp": [
+  300,
+  300
+ ],
+ "slots_free": 4,
+ "enemy_team": [
+  "luna",
+  "lina",
+  "bristleback",
+  "witch_doctor",
+  "jakiro"
+ ],
+ "allies": [
+  {
+   "where": "mid, их Т1, 1167",
+   "hero": "viper",
+   "pos": 2,
+   "hp": 100,
+   "doing": "фарм мид: иду к волне",
+   "lvl": 19,
+   "d": 361,
+   "alive": true
+  },
+  {
+   "where": "mid, их Т1, 1059",
+   "hero": "axe",
+   "pos": 3,
+   "hp": 100,
+   "doing": "фарм топ: иду к волне",
+   "lvl": 18,
+   "d": 583,
+   "alive": true
+  },
+  {
+   "where": "mid, своя Т1, 1281",
+   "hero": "lion",
+   "pos": 4,
+   "hp": 100,
+   "doing": "фарм топ: иду к волне",
+   "lvl": 15,
+   "d": 806,
+   "alive": true
+  },
+  {
+   "where": "mid, их Т1, 1504",
+   "hero": "crystal_maiden",
+   "pos": 5,
+   "hp": 100,
+   "doing": "фарм бот: иду к волне",
+   "lvl": 14,
+   "d": 906,
+   "alive": true
+  }
+ ],
+ "notes": [],
+ "near": {
+  "ally_creeps": 0,
+  "enemy_tower": "Т1 mid, 820",
+  "enemy_creeps": 0,
+  "weak_enemy_creeps": 0
+ },
+ "queue": {
+  "cast": [],
+  "buy": [],
+  "level": []
+ },
+ "gold": 900,
+ "points": 0,
+ "lvl": 18,
+ "doing": "фарм бот: иду к волне",
+ "coach": [
+  {
+   "urgent": false,
+   "seq": 1,
+   "ago": 480,
+   "text": "1 пуш бот т2"
+  },
+  {
+   "urgent": true,
+   "seq": 2,
+   "ago": 0,
+   "text": "все драка"
+  }
+ ],
+ "abilities": [
+  {
+   "ready": true,
+   "range": 1800,
+   "use": "point",
+   "lvl": 4,
+   "name": "sniper_shrapnel",
+   "mana": 50
+  },
+  {
+   "use": "passive",
+   "lvl": 4,
+   "name": "sniper_headshot"
+  },
+  {
+   "ready": true,
+   "use": "none",
+   "lvl": 2,
+   "name": "sniper_take_aim",
+   "mana": 50
+  },
+  {
+   "ready": true,
+   "range": 3000,
+   "ult": true,
+   "use": "target",
+   "lvl": 3,
+   "name": "sniper_assassinate",
+   "mana": 50
+  }
+ ],
+ "missing": [
+  {
+   "hero": "bristleback",
+   "seen": "их база",
+   "ago": 1407
+  },
+  {
+   "hero": "witch_doctor",
+   "seen": "их база",
+   "ago": 1407
+  },
+  {
+   "hero": "jakiro",
+   "seen": "их база",
+   "ago": 1407
+  }
+ ],
+ "buyback": {
+  "can": true,
+  "cost": 500
+ },
+ "items": [
+  {
+   "ready": true,
+   "slot": 0,
+   "charges": 2,
+   "use": "target",
+   "name": "item_tango"
+  },
+  {
+   "use": "target",
+   "ready": true,
+   "name": "item_quelling_blade",
+   "slot": 1
+  },
+  {
+   "use": "target",
+   "ready": true,
+   "name": "item_power_treads",
+   "slot": 2
+  },
+  {
+   "use": "target",
+   "ready": true,
+   "name": "item_maelstrom",
+   "slot": 3
+  },
+  {
+   "ready": true,
+   "slot": 4,
+   "charges": 8,
+   "use": "target",
+   "name": "item_magic_wand"
+  }
+ ],
+ "hp": [
+  1500,
+  2100
+ ],
+ "clock": 1320,
+ "team": "radiant",
+ "roshan": true
+}

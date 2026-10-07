@@ -1,5 +1,6 @@
-// Интерфейс тренера: поле приказа (короткий формат), список агентов и что каждый делает, журнал
-// ответов, шпаргалка. Камера — сверху и дальше обычного, панели героя скрыты: у тренера героя нет (Д10).
+// Интерфейс тренера: поле приказа (короткий формат), связь с агентами Claude, список героев и что каждый
+// делает, журнал реплик агентов, шпаргалка. Камера — сверху и дальше обычного, панели героя скрыты: у тренера
+// героя нет (Д10); героев ведут агенты Claude (Д11).
 (function () {
   'use strict';
   var CAMERA_PITCH = 70;          // наклон камеры, градусы: «вид сверху» (проверить в игре)
@@ -42,15 +43,20 @@
   }
 
   function onAgents(ev) {
+    var mode = $('#CoachMode');
+    mode.text = ev.mode || '';
+    mode.SetHasClass('Offline', (ev.mode || '').indexOf('нет связи') === 0);
     var box = $('#CoachAgents');
     box.RemoveAndDeleteChildren();
     var agents = ev.agents || {};
     for (var k in agents) {                 // таблица Lua приходит объектом с ключами «1», «2», …
       var a = agents[k];
       var row = $.CreatePanel('Label', box, '');
-      row.text = a.pos + ' ' + a.hero + ' — ' + (a.alive ? (a.hp + '% · ') : 'мёртв · ') + a.status;
+      var think = a.agent === 'думает' ? ' · думает…' : '';
+      row.text = a.pos + ' ' + a.hero + ' — ' + (a.alive ? (a.hp + '% · ') : 'мёртв · ') + a.status + think;
       row.AddClass('CoachAgent');
       row.SetHasClass('Dead', !a.alive);
+      row.SetHasClass('Fallback', a.source === 'fallback');
     }
   }
 
@@ -75,6 +81,6 @@
   Game.CreateCustomKeyBind('F2', 'vc_coach_focus');
   hideHeroUi();
   setupCamera(1600);
-  addLog('Тренер: пишите приказы в поле внизу (F2 — к полю), «?» — шпаргалка', 'ack');
+  addLog('Тренер: пишите приказы в поле внизу (F2 — к полю), «?» — шпаргалка; героев ведут агенты Claude', 'ack');
   sendReady();
 })();
