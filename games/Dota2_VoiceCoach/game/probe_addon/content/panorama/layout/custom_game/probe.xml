@@ -1,0 +1,9 @@
+<root>
+    <scripts>
+        <include src="file://{resources}/scripts/custom_game/probe.js" />
+    </scripts>
+    <Panel hittest="false" style="width: 100%; height: 100%;">
+        <Label id="ProbeStatus" text="Пробник: жду сервер тренера…"
+               style="horizontal-align: left; vertical-align: top; margin: 120px 0 0 20px; font-size: 20px; color: #ffd27f; background-color: #000000aa; padding: 6px;" />
+    </Panel>
+</root>

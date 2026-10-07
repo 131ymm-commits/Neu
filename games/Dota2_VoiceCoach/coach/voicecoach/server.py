@@ -237,7 +237,11 @@ def make_handler(hub: Hub):
                     if parts[2] == "commands":
                         data = {"commands": room.commands_after(team, after), "seq": room.seq}
                         if q.get("fmt") == "title":
+                            # «номер|JSON»: клиент узнаёт свой ответ (страница может прийти из кеша)
                             body = json.dumps(data, ensure_ascii=False)
+                            rid = q.get("rid")
+                            if rid:
+                                body = f"{rid}|{body}"
                             page = f"<!doctype html><html><head><title>{html.escape(body)}</title></head><body></body></html>"
                             return self._send(200, raw=page.encode("utf-8"), ctype="text/html; charset=utf-8")
                         return self._send(200, data)

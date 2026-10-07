@@ -144,6 +144,11 @@ class ServerGetWrites(unittest.TestCase):
         title = page.split("<title>", 1)[1].split("</title>", 1)[0]
         data = json.loads(htmllib.unescape(title))
         self.assertEqual(data["commands"][0]["action"], "roshan")
+        page = self.get(f"{room}/commands?team=dire&after=0&fmt=title&rid=17")
+        title = htmllib.unescape(page.split("<title>", 1)[1].split("</title>", 1)[0])
+        rid, body = title.split("|", 1)
+        self.assertEqual(rid, "17")
+        self.assertEqual(json.loads(body)["commands"][0]["action"], "roshan")
 
 
 class PushToTalk(unittest.TestCase):
