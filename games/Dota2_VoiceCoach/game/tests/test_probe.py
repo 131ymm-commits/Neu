@@ -68,6 +68,9 @@ local function make_hero(name, team, pid)
   function h:GetUnitName() return self.name end
   function h:GetHealth() return 600 end
   function h:entindex() return self.idx end
+  function h:IsRealHero() return true end
+  function h:GetPlayerOwnerID() return pid end
+  function h:AddNoDraw() self.nodraw = true end
   function h:AddNewModifier(caster, ability, mname, data)
     local b = { stack = 0 }
     function b:SetStackCount(n) self.stack = n end
@@ -114,6 +117,11 @@ function ExecuteOrderFromTable(t)
   for _, p in pairs(__players) do if p.hero.idx == t.UnitIndex then p.hero.pos = t.Position end end
 end
 function Say(ent, msg, teamOnly) __said[#__said + 1] = msg end
+function EntIndexToHScript(idx)
+  for _, p in pairs(__players) do if p.hero.idx == idx then return p.hero end end
+  return nil
+end
+function FindClearSpaceForUnit(unit, pos, grid) unit.pos = pos end
 function CreateHTTPRequestScriptVM(method, url)
   local req = { url = url }
   function req:SetHTTPRequestAbsoluteTimeoutMS(ms) self.timeout = ms end
@@ -140,6 +148,10 @@ function __set_state(s)
   __state = s
   local e = __events["game_rules_state_change"]
   e.fn(e.ctx, {})
+end
+function __fire(name, data)
+  local e = __events[name]
+  e.fn(e.ctx, data)
 end
 """
 
@@ -169,6 +181,8 @@ class ProbeDryRun(unittest.TestCase):
         L.execute(MOCK)
         L.execute(f'package.path = "{VS.as_posix()}/?.lua;" .. package.path')
         L.execute(f'package.preload["vc_json"] = function() return dofile("{(GAME / "shared" / "json.lua").as_posix()}") end')
+        L.execute(f'package.preload["vc_text"] = function() return dofile("{(GAME / "shared" / "coach_text.lua").as_posix()}") end')
+        L.execute(f'package.preload["vc_text_data"] = function() return dofile("{(GAME / "shared" / "coach_text_data.lua").as_posix()}") end')
         L.execute(f'dofile("{(VS / "addon_game_mode.lua").as_posix()}")')
         # адрес сервера тренера — на тестовый порт
         L.execute(f'VoiceCoachProbe.SERVER = "http://127.0.0.1:{self.port}"')
@@ -205,6 +219,8 @@ class ProbeDryRun(unittest.TestCase):
         self.L.execute("__set_state(DOTA_GAMERULES_STATE_STRATEGY_TIME)")
         self.step(2)
         self.L.execute("__set_state(DOTA_GAMERULES_STATE_PRE_GAME)")
+        for pid in list(S["__players"].keys()):             # герои появляются в начале PRE_GAME
+            self.L.execute(f"__fire('npc_spawned', {{ entindex = __players[{pid}].hero.idx, is_respawn = 0 }})")
         self.step(10)
         self.L.execute("__set_state(DOTA_GAMERULES_STATE_GAME_IN_PROGRESS)")
         self.step(95)
@@ -215,9 +231,15 @@ class ProbeDryRun(unittest.TestCase):
         self.assertIn(" OK ", self.line("lua"))
         self.assertIn(" OK ", self.line("json"))
         self.assertRegex(self.line("server_http"), r" OK .*код 200")
-        self.assertRegex(self.line("bots_added"), r" OK .*добавлено 9, всего 9")
+        self.assertRegex(self.line("bots_added"), r" OK .*добавлено 10, всего 10")
         self.assertTrue(S["Tutorial"]["started"])
-        self.assertRegex(self.line("heroes"), r" OK\s+10 героев, ботов 9")
+        self.assertRegex(self.line("heroes"), r" OK\s+11 героев, ботов 10")
+        self.assertIn(" OK ", self.line("text_parser"))
+        self.assertRegex(self.line("commander_hidden"), r" OK .*игрок 0 .*pudge")
+        human = S["__players"][0]["hero"]
+        self.assertTrue(human["nodraw"])
+        self.assertIn("modifier_voicecoach_commander", list(human["mods"].keys()))
+        self.assertEqual((human["pos"]["x"], human["pos"]["y"]), (-7300, -7000))
         self.assertIn(" OK ", self.line("modifier_on_bots"))
         self.assertIn("#vc проба чата", list(S["__said"].values()))
         self.assertIn(" OK ", self.line("order_vs_native_ai"))       # имитация: приказ исполняется
@@ -244,10 +266,39 @@ class ProbeDryRun(unittest.TestCase):
         self.client_title("7_123")
         self.assertRegex(self.line("html_panel_channel"), r" OK .*140 мс")
         orders = list(self.L.globals()["__orders"].values())[n0:]
-        self.assertEqual(len(orders), 4)                   # 4 бота Света (пятый — человек)
+        self.assertEqual(len(orders), 5)                   # 5 ботов Света; человек — тренер без героя
         for o in orders:
             self.assertEqual((o["Position"]["x"], o["Position"]["y"]), (-7000, -6500))
         self.assertTrue(any("retreat → позиции 1,2,3,4,5" in l for l in self.printed()))
+
+    def chat(self, text, pid=0):
+        self.L.execute(f"__fire('player_chat', {{ playerid = {pid}, text = {json.dumps(text, ensure_ascii=False)}, teamonly = 1 }})")
+
+    def test_chat_commands_reach_bots(self):
+        """Команды короткого формата в чате: «все назад» — пятерым к фонтану, «1 иди мид» — первому в центр."""
+        self.run_match()
+        n0 = len(self.L.globals()["__orders"])
+        self.chat("все назад")
+        orders = list(self.L.globals()["__orders"].values())[n0:]
+        self.assertEqual(len(orders), 5)
+        self.assertTrue(all((o["Position"]["x"], o["Position"]["y"]) == (-7000, -6500) for o in orders))
+        self.assertRegex(self.line("chat_commands"), r" OK .*retreat → позиции 1,2,3,4,5")
+        n1 = len(self.L.globals()["__orders"])
+        self.chat("1 иди мид")
+        orders = list(self.L.globals()["__orders"].values())[n1:]
+        self.assertEqual([(o["Position"]["x"], o["Position"]["y"]) for o in orders], [(0, 0)])
+        said = list(self.L.globals()["__said"].values())
+        self.assertIn("Понял", said)
+
+    def test_chat_errors_and_plain_chat(self):
+        self.run_match()
+        n0 = len(self.L.globals()["__orders"])
+        self.chat("gg")                                    # обычный чат — молча
+        self.chat("2 летай")                               # ошибка формата — ответ одного бота
+        self.assertEqual(len(self.L.globals()["__orders"]), n0)
+        said = [t for t in self.L.globals()["__said"].values() if t.startswith("Не понял")]
+        self.assertEqual(len(said), 1)
+        self.assertIn("летай", said[0])
 
     def test_ui_loaded_ack(self):
         lst = self.L.globals()["__listeners"]

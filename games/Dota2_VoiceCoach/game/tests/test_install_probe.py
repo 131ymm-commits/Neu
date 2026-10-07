@@ -25,8 +25,9 @@ class InstallProbe(unittest.TestCase):
     def test_install_reinstall_uninstall(self):
         g, c = IP.install(self.dota, log=self.log.append)
         vs = g / "scripts" / "vscripts"
-        for rel in ("addon_game_mode.lua", "probe.lua", "vc_json.lua", "bots/mode_rune_generic.lua",
-                    "modifiers/modifier_voicecoach_probe.lua"):
+        for rel in ("addon_game_mode.lua", "probe.lua", "vc_json.lua", "vc_text.lua", "vc_text_data.lua",
+                    "bots/mode_rune_generic.lua", "modifiers/modifier_voicecoach_probe.lua",
+                    "modifiers/modifier_voicecoach_commander.lua"):
             self.assertTrue((vs / rel).exists(), rel)
         self.assertTrue((g / "addoninfo.txt").exists())
         self.assertTrue((c / "panorama" / "scripts" / "custom_game" / "probe.js").exists())

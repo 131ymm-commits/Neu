@@ -6,7 +6,11 @@
 --   2) поднимаются ли 10 ботов через Tutorial:AddBot и думают ли они (схема Windy10v10AI);
 --   3) работает ли канал «голос → веб-панель клиента → игровое событие → сервер» (как в аркаде);
 --   4) видят ли скрипты ботов то, что кладёт кастомка (модификатор, чат, общая переменная);
---   5) перебивает ли встроенный ИИ наши приказы; 6) сколько стоит «думание» по 10 героям.
+--   5) перебивает ли встроенный ИИ наши приказы; 6) сколько стоит «думание» по 10 героям;
+--   7) тренер без героя: в каждой команде 5 ботов, а герой человека спрятан у базы (неуязвим,
+--      вне игры) — решение автора 07.10.2026: «игра сразу за 5 агентов»;
+--   8) команды короткого формата в командном чате («все назад», «1 иди мид») доходят до ботов
+--      (разбор — vc_text.lua, тот же, что на странице тренера и у ботов OHA).
 -- Каждый ответ — строка «[ПРОБНИК] имя  OK/НЕТ/??  подробности»; в конце — сводка «ИТОГ».
 
 VoiceCoachProbe = VoiceCoachProbe or {}
@@ -14,13 +18,21 @@ local P = VoiceCoachProbe
 
 P.SERVER = "http://127.0.0.1:8787"
 P.ROOM = "probe"
--- герои с поддержкой встроенных ботов Valve (классический список ботов; ПРЕДПОЛОЖЕНИЕ, проверяется здесь же)
+-- герои с поддержкой встроенных ботов Valve (классический список ботов; ПРЕДПОЛОЖЕНИЕ, проверяется здесь же);
+-- по 7 на команду: если человек взял одного из них, берётся следующий
 P.BOT_HEROES = {
   [DOTA_TEAM_GOODGUYS] = { "npc_dota_hero_sniper", "npc_dota_hero_viper", "npc_dota_hero_axe",
-                           "npc_dota_hero_lion", "npc_dota_hero_crystal_maiden" },
+                           "npc_dota_hero_lion", "npc_dota_hero_crystal_maiden",
+                           "npc_dota_hero_drow_ranger", "npc_dota_hero_dragon_knight" },
   [DOTA_TEAM_BADGUYS] = { "npc_dota_hero_luna", "npc_dota_hero_lina", "npc_dota_hero_bristleback",
-                          "npc_dota_hero_witch_doctor", "npc_dota_hero_jakiro" },
+                          "npc_dota_hero_witch_doctor", "npc_dota_hero_jakiro",
+                          "npc_dota_hero_skeleton_king", "npc_dota_hero_ogre_magi" },
 }
+-- точки на стандартной карте (приблизительно, по памяти — для пробника хватает)
+P.FOUNTAIN = { [DOTA_TEAM_GOODGUYS] = Vector(-7000, -6500, 0), [DOTA_TEAM_BADGUYS] = Vector(7000, 6400, 0) }
+P.CORNER = { [DOTA_TEAM_GOODGUYS] = Vector(-7300, -7000, 0), [DOTA_TEAM_BADGUYS] = Vector(7300, 6900, 0) }
+P.LANE_POINT = { top = Vector(-6000, 6000, 0), mid = Vector(0, 0, 0), bot = Vector(6000, -6000, 0) }
+P.commanders, P.positions = {}, {}
 
 local results, order = {}, {}
 
@@ -41,6 +53,10 @@ end
 
 -- JSON: game/shared/json.lua (rxi, MIT), установщик кладёт его рядом как vc_json.lua
 local has_json, JSON = pcall(require, "vc_json")
+-- короткий формат команд: game/shared/coach_text.lua и словарь — установщик кладёт как vc_text*.lua
+local has_text, Text = pcall(require, "vc_text")
+local has_tdata, TextData = pcall(require, "vc_text_data")
+if has_text and has_tdata and type(Text) == "table" then Text.init(TextData) else has_text = false end
 
 local function json_decode(s)
   if not has_json then return nil end
@@ -56,12 +72,14 @@ function P:Init()
   say("dedicated_server", nil, tostring(IsDedicatedServer()))
   say("http_api", CreateHTTPRequestScriptVM ~= nil, "CreateHTTPRequestScriptVM")
   say("json", has_json, has_json and "vc_json загружен" or ("нет vc_json.lua: " .. tostring(JSON)))
+  say("text_parser", has_text, has_text and "vc_text загружен" or "нет vc_text.lua / vc_text_data.lua")
 
   local gm = GameRules:GetGameModeEntity()
   pcall(function() Convars:SetBool("dota_bot_mode", true) end)
   pcall(function() Convars:SetBool("dota_bot_disable", false) end)
-  GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, 5)
-  GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, 5)
+  -- 5 ботов + тренер в каждой команде (MaxPlayers в addoninfo считает только людей — как у Windy10v10AI)
+  GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_GOODGUYS, 6)
+  GameRules:SetCustomGameTeamMaxPlayers(DOTA_TEAM_BADGUYS, 6)
   GameRules:EnableCustomGameSetupAutoLaunch(true)
   GameRules:SetCustomGameSetupAutoLaunchDelay(5)
   GameRules:SetHeroSelectionTime(30)
@@ -71,9 +89,11 @@ function P:Init()
 
   ListenToGameEvent("game_rules_state_change", Dynamic_Wrap(P, "OnState"), P)
   ListenToGameEvent("player_chat", Dynamic_Wrap(P, "OnChat"), P)
+  ListenToGameEvent("npc_spawned", Dynamic_Wrap(P, "OnSpawn"), P)
   CustomGameEventManager:RegisterListener("vc_probe_title", function(_, ev) P:OnTitle(ev) end)
   CustomGameEventManager:RegisterListener("vc_probe_report", function(_, ev) P:OnClientReport(ev) end)
   LinkLuaModifier("modifier_voicecoach_probe", "modifiers/modifier_voicecoach_probe", LUA_MODIFIER_MOTION_NONE)
+  LinkLuaModifier("modifier_voicecoach_commander", "modifiers/modifier_voicecoach_commander", LUA_MODIFIER_MOTION_NONE)
   _G.VOICECOACH_PROBE = "vscripts"
   gm:SetContextThink("vc_probe_http", function() P:CheckHttp() return nil end, 1)
 end
@@ -117,24 +137,66 @@ function P:OnState()
 end
 
 -- 2) 10 ботов
+local function taken_heroes()
+  local taken = {}
+  for pid = 0, 23 do
+    if PlayerResource:IsValidPlayerID(pid) then
+      local name = PlayerResource:GetSelectedHeroName(pid)
+      if name and name ~= "" then taken[name] = true end
+    end
+  end
+  return taken
+end
+
+local function bots_on_team(team)
+  local n = 0
+  for pid = 0, 23 do
+    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) and PlayerResource:GetTeam(pid) == team then
+      n = n + 1
+    end
+  end
+  return n
+end
+
+-- 2) по 5 ботов в каждой команде, сколько бы людей ни было (люди — тренеры без героя)
 function P:AddBots(check)
   local added, failed = 0, {}
+  local taken = taken_heroes()
   for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
-    local need = 5 - PlayerResource:GetPlayerCountForTeam(team)
-    for i = 1, need do
-      local hero = P.BOT_HEROES[team][i]
-      if hero and Tutorial:AddBot(hero, "", "unfair", team == DOTA_TEAM_GOODGUYS) then
-        added = added + 1
-      else
-        failed[#failed + 1] = tostring(hero)
+    local need = 5 - bots_on_team(team)
+    for _, hero in ipairs(P.BOT_HEROES[team]) do
+      if need <= 0 then break end
+      if not taken[hero] then
+        if Tutorial:AddBot(hero, "", "unfair", team == DOTA_TEAM_GOODGUYS) then
+          added = added + 1
+          need = need - 1
+          taken[hero] = true
+        else
+          failed[#failed + 1] = hero
+        end
       end
     end
   end
   P.bots_total = (P.bots_total or 0) + added
   GameRules:GetGameModeEntity():SetBotThinkingEnabled(true)
   Tutorial:StartTutorialMode()
-  say(check, P.bots_total >= 9, "добавлено " .. added .. ", всего " .. P.bots_total ..
+  say(check, P.bots_total >= 10, "добавлено " .. added .. ", всего " .. P.bots_total ..
     (#failed > 0 and (", не вышло: " .. table.concat(failed, " ")) or ""))
+end
+
+-- 7) тренер без героя: герой человека прячется у своей базы
+function P:OnSpawn(ev)
+  local unit = EntIndexToHScript(ev.entindex)
+  if unit == nil or not unit:IsRealHero() then return end
+  local pid = unit:GetPlayerOwnerID()
+  if pid == nil or pid < 0 or PlayerResource:IsFakeClient(pid) or P.commanders[pid] then return end
+  P.commanders[pid] = unit
+  local team = PlayerResource:GetTeam(pid)
+  unit:AddNewModifier(unit, nil, "modifier_voicecoach_commander", {})
+  unit:AddNoDraw()
+  if P.CORNER[team] then FindClearSpaceForUnit(unit, P.CORNER[team], true) end
+  say("commander_hidden", true, string.format("игрок %d (команда %d): герой %s спрятан у базы, тренер командует пятью",
+    pid, team, unit:GetUnitName()))
 end
 
 function P:Heroes()
@@ -159,12 +221,17 @@ end
 
 function P:CheckHeroes()
   local list, fake, lines = P:Heroes(), 0, {}
+  P.positions = { [DOTA_TEAM_GOODGUYS] = {}, [DOTA_TEAM_BADGUYS] = {} }
   for _, e in ipairs(list) do
-    if e.fake then fake = fake + 1 end
+    if e.fake then
+      fake = fake + 1
+      local pos = P.positions[e.team]
+      if pos then pos[#pos + 1] = e.hero end          -- позиции 1–5 — порядок добавления ботов
+    end
     lines[#lines + 1] = string.format("%d:%s%s(%d)", e.pid, e.hero:GetUnitName():gsub("npc_dota_hero_", ""),
       e.fake and "*" or "", e.team)
   end
-  say("heroes", #list >= 10, #list .. " героев, ботов " .. fake .. ": " .. table.concat(lines, " "))
+  say("heroes", fake >= 10, #list .. " героев, ботов " .. fake .. ": " .. table.concat(lines, " "))
   -- тренер: кто человек и на какой он стороне
   for pid = 0, 23 do
     if PlayerResource:IsValidPlayerID(pid) and not PlayerResource:IsFakeClient(pid) then
@@ -283,8 +350,63 @@ function P:OnClientReport(ev)
   end
 end
 
+-- 8) команды короткого формата из чата: разбор тем же vc_text, простые приказы — ботам своей команды
+local function text_ctx(team)
+  local agents, enemies = {}, {}
+  for pos, hero in ipairs(P.positions[team] or {}) do
+    agents[#agents + 1] = { pos = pos, name = "", aliases = {}, hero = hero:GetUnitName() }
+  end
+  local other = team == DOTA_TEAM_GOODGUYS and DOTA_TEAM_BADGUYS or DOTA_TEAM_GOODGUYS
+  for _, hero in ipairs(P.positions[other] or {}) do enemies[#enemies + 1] = hero:GetUnitName() end
+  return { team = team == DOTA_TEAM_GOODGUYS and "radiant" or "dire", agents = agents, enemy_heroes = enemies }
+end
+
+local function give_order(hero, kind, point)
+  ExecuteOrderFromTable({ UnitIndex = hero:entindex(), OrderType = kind, Position = point, Queue = false })
+end
+
+function P:RunCommand(team, cmd)
+  local p = cmd.params or {}
+  local point, kind = nil, DOTA_UNIT_ORDER_MOVE_TO_POSITION
+  if cmd.action == "retreat" or ((cmd.action == "move" or cmd.action == "tp") and p.place == "base") then
+    point = P.FOUNTAIN[team]
+  elseif (cmd.action == "move" or cmd.action == "tp") and p.lane then
+    point = P.LANE_POINT[p.lane]
+  elseif (cmd.action == "push" or cmd.action == "defend") and p.lane and p.lane ~= "auto" then
+    point, kind = P.LANE_POINT[p.lane], DOTA_UNIT_ORDER_ATTACK_MOVE
+  end
+  local who = {}
+  for _, pos in ipairs(cmd.agents or {}) do
+    local hero = (P.positions[team] or {})[pos]
+    if hero and point then
+      give_order(hero, kind, point)
+      who[#who + 1] = tostring(pos)
+    end
+  end
+  if point then
+    say("chat_commands", #who > 0, string.format("из чата: %s → позиции %s", cmd.action, table.concat(who, ",")))
+  else
+    print("[ПРОБНИК] из чата понято: " .. cmd.action .. " (в пробнике исполняются только назад/иди/тп/пуш/деф)")
+  end
+end
+
 function P:OnChat(ev)
   print("[ПРОБНИК] чат игрока " .. tostring(ev.playerid) .. ": " .. tostring(ev.text))
+  local pid = tonumber(ev.playerid) or -1
+  if not has_text or pid < 0 or PlayerResource:IsFakeClient(pid) then return end
+  local team = PlayerResource:GetTeam(pid)
+  local ctx = text_ctx(team)
+  local text = tostring(ev.text or "")
+  if not Text.looks_like_command(text, ctx) then return end
+  local r = Text.parse(text, ctx)
+  local speaker = (P.positions[team] or {})[1]
+  if #r.errors > 0 then
+    print("[ПРОБНИК] из чата не понято: " .. r.errors[1])
+    if speaker then Say(speaker, "Не понял: " .. r.errors[1], true) end
+    return
+  end
+  for _, cmd in ipairs(r.commands) do P:RunCommand(team, cmd) end
+  if speaker then Say(speaker, "Понял", true) end
 end
 
 function P:Summary()
@@ -296,5 +418,8 @@ function P:Summary()
   end
   if not results.html_panel_channel then
     print("[ПРОБНИК] ИТОГ html_panel_channel       НЕТ ответов от веб-панели (сервер тренера запущен? комната probe?)")
+  end
+  if not results.chat_commands then
+    print("[ПРОБНИК] ИТОГ chat_commands            ?? команд из чата не было (напишите в чат команды «все назад»)")
   end
 end

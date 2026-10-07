@@ -8,6 +8,7 @@
   probe_addon/game     → <dota>/game/dota_addons/voicecoach_probe
   probe_addon/content  → <dota>/content/dota_addons/voicecoach_probe
   game/shared/json.lua → …/game/dota_addons/voicecoach_probe/scripts/vscripts/vc_json.lua
+  game/shared/coach_text.lua, coach_text_data.lua → …/scripts/vscripts/vc_text.lua, vc_text_data.lua
 Чужие папки с тем же именем не трогает (своя папка помечена файлом-меткой).
 Как запускать и что прислать — README.md рядом.
 """
@@ -49,6 +50,8 @@ def install(dota: Path, log=print) -> tuple[Path, Path]:
         (dst / MARKER).write_text("пробник голосового тренера: games/Dota2_VoiceCoach/game/probe_addon\n",
                                   encoding="utf-8")
     shutil.copy(GAME / "shared" / "json.lua", g / "scripts" / "vscripts" / "vc_json.lua")
+    shutil.copy(GAME / "shared" / "coach_text.lua", g / "scripts" / "vscripts" / "vc_text.lua")
+    shutil.copy(GAME / "shared" / "coach_text_data.lua", g / "scripts" / "vscripts" / "vc_text_data.lua")
     log(f"Пробник установлен:\n  {g}\n  {c}")
     log("Дальше — README.md пробника: сервер тренера с комнатой probe, затем Dota 2 Tools и\n"
         f"  dota_launch_custom_game {ADDON} dota")
