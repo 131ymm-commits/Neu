@@ -4,6 +4,9 @@ import json, subprocess, sys
 from orch import send
 done, summary, nxt, role = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]; ms = sys.argv[5] if len(sys.argv) > 5 else '40'
 e = send(6, dict(cmd='end', ep=done, max_steps=0))
+# сохранение мира на диск (переживёт перезапуск контейнера) и переподключение демона без сброса
+ck = send(6, dict(cmd='checkpoint', ep='rocket2_ckpt', max_steps=0)); print('сохранение:', ck.get('saved'), ck.get('size'))
+subprocess.run(['./daemon_ctl.sh', 'attach'], check=True)
 subprocess.run(f'cp campaign/NOTES.md snapshots/NOTES_after_{done}.md && cp campaign/campaign.jsonl snapshots/campaign_after_{done}.jsonl', shell=True, check=True)
 H = subprocess.run(['/tmp/claude-0/flevenv/bin/python', 'health.py'], capture_output=True, text=True).stdout.splitlines()
 d = json.loads(H[0]); itog = H[-1].replace('ИТОГ: ', '')

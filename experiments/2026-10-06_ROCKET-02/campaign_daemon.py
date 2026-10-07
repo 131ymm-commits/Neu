@@ -15,7 +15,14 @@ class AttachInstance(FactorioInstance):
     # initialise FLE без _reset: _reset вызывает reset_game_state, force.reset() (стирает исследования), регенерацию руды и очистку построек
     def initialise(self, fast=True, all_technologies_researched=True, clear_entities=True):
         self.rcon_client.send_command(f"/sc storage.fast = {str(fast).lower()}")
+        # FLE пересоздаёт персонажей (удаляет и ставит в (0,0)) — сохранить инвентари и позицию и вернуть после
+        self.rcon_client.send_command('/sc NEU_KEEP = nil local c = storage and storage.agent_characters and storage.agent_characters[1] '
+            'if c and c.valid then NEU_KEEP = {pos = c.position, inv = {}} for _, id in pairs({defines.inventory.character_main, defines.inventory.character_guns, '
+            'defines.inventory.character_ammo, defines.inventory.character_armor}) do local inv = c.get_inventory(id) if inv then NEU_KEEP.inv[id] = inv.get_contents() end end end')
         self.first_namespace._create_agent_characters(self.num_agents)
+        print('восстановление персонажа:', self.rcon_client.send_command('/sc local c = storage.agent_characters[1] if NEU_KEEP and c and c.valid then c.teleport(NEU_KEEP.pos) local n = 0 '
+            'for id, items in pairs(NEU_KEEP.inv) do local inv = c.get_inventory(id) for _, it in pairs(items) do n = n + inv.insert{name = it.name, count = it.count, quality = it.quality} end end '
+            'rcon.print("вещей возвращено: " .. n) else rcon.print("нечего возвращать") end NEU_KEEP = nil'), flush=True)
         for script_name in ["lualib_util", "utils", "alerts", "connection_points", "recipe_fluid_connection_mappings", "serialize", "serialize_direction_fix"]:
             self.lua_script_manager.load_init_into_game(script_name)
         self._generate_chunks(center_x=0, center_y=0, chunk_radius=25)
@@ -70,6 +77,25 @@ while True:
             except Exception as e: res = 'ошибка: ' + ''.join(traceback.format_exception_only(type(e), e))[-1500:]
             m = milestones(); out = dict(step=steps, steps_left=max_steps - steps, output=str(res)[-6000:], milestones=m)
             log(event='step', ep=ep, step=steps, code=code, output=str(res)[-6000:], milestones=m)
+    elif cmd == 'checkpoint':   # только оркестратор: сохранить мир на диск (ERRORS № 64, 67); после ответа демон завершается — перезапуск с NEU_ATTACH=1
+        name = req.get('ep') or 'neu_ckpt'
+        path = f'/tmp/claude-0/fact/slot{slot}/saves/{name}.zip'; m0 = os.path.getmtime(path) if os.path.exists(path) else 0
+        q = ('/sc NEU_STASH = {} local seen = {} '
+             'local function walk(t, d) if d > 6 or seen[t] then return end seen[t] = true for k, v in pairs(t) do local tv = type(v) '
+             'if tv == "function" then NEU_STASH[#NEU_STASH + 1] = {t, k, v}; t[k] = nil elseif tv == "table" and not v.object_name then walk(v, d + 1) end end end '
+             'walk(storage, 0) storage.__lua_script_checksums = {} script.on_nth_tick(nil) script.on_event(defines.events.on_tick, nil) '
+             f'game.server_save("{name}") rcon.print(#NEU_STASH)')
+        n = inst.rcon_client.send_command(q).strip()
+        for _ in range(120):
+            time.sleep(0.5)
+            if os.path.exists(path) and os.path.getmtime(path) > m0: time.sleep(1.5); break
+        inst.rcon_client.send_command('/sc for _, e in pairs(NEU_STASH or {}) do e[1][e[2]] = e[3] end NEU_STASH = nil rcon.print("ok")')
+        ok = os.path.exists(path) and os.path.getmtime(path) > m0
+        out = dict(saved=ok, path=path, functions_stashed=n, size=os.path.getsize(path) if ok else 0, note='демон завершается: перезапустить с NEU_ATTACH=1')
+        log(event='checkpoint', **out)
+        try: c.sendall(json.dumps(out, ensure_ascii=False).encode()); c.close()
+        except OSError: pass
+        os._exit(0)
     elif cmd in ('fight', 'scan', 'arm'):   # бой персонажа (combat.py): fight — шаг эпизода; scan и arm — без шага
         try: prm = json.loads(req.get('code') or '{}')
         except Exception as e: prm = None; out = dict(error=f'параметры — JSON: {e}')
