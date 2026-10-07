@@ -36,6 +36,7 @@ __players = { [TEAM_RADIANT] = {0, 1, 2, 3, 4}, [TEAM_DIRE] = {5, 6, 7, 8, 9} }
 __heroes = {}
 function GetTeamPlayers(team) return __players[team] end
 function GetSelectedHeroName(pid) return __heroes[pid] or "" end
+function GetItemCost(item) if item == "item_black_king_bar" then return 4050 end return 500 end
 __bots, __cur = {}, nil
 function GetBot() return __cur end
 function GetTeam() return __cur.team end
@@ -57,6 +58,14 @@ function make_bot(pid, team)
   function b:HasBuyback() return self.buyback end
   function b:ActionImmediate_Buyback() self.bought_back = true end
   function b:ActionImmediate_Chat(text, all) table.insert(self.chat, text) end
+  b.busy, b.ult_cd = 0.2, 0
+  function b:GetActiveModeDesire() return self.busy end
+  function b:GetAbilityInSlot(i)
+    if i ~= 5 then return { IsUltimate = function() return false end } end
+    local bot = self
+    return { IsUltimate = function() return true end,
+             GetCooldownTimeRemaining = function() return bot.ult_cd end }
+  end
   __bots[pid] = b
   return b
 end
@@ -81,12 +90,14 @@ class CoachBot(unittest.TestCase):
         coach.mkdir(parents=True)
         shutil.copy(GAME / "prototype_oha" / "coach" / "coach_bot.lua", coach)
         shutil.copy(GAME / "shared" / "coach_intents.lua", coach)
+        shutil.copy(GAME / "shared" / "coach_voice.lua", coach)
         shutil.copy(GAME / "shared" / "json.lua", coach)
         self.room = f"bot{id(self)}"
         self.base = f"http://127.0.0.1:{self.port}"
         (coach / "coach_config.lua").write_text(
             f'return {{ base_url = "{self.base}", room = "{self.room}", poll_interval = 0.5,\n'
-            '  personas = { [2] = { [1] = { obedience = 1, desire_bonus = { fight = 0.1 } } } } }\n',
+            '  personas = { [2] = { [1] = { obedience = 1, desire_bonus = { fight = 0.1 } },\n'
+            '    [2] = { obedience = 0.35, tone = "grumpy" }, [3] = { tone = "hype" } } } }\n',
             encoding="utf-8")
         self.L = lupa_rt.LuaRuntime(unpack_returned_tuples=True)
         self.L.globals().py_http = self.py_http
@@ -137,8 +148,10 @@ class CoachBot(unittest.TestCase):
         self.tick_all()                                    # опрос забирает команду
         self.at(101.1)
         d = self.tick_all("roshan", 0.1)
-        for pid in range(5):
+        for pid in (0, 2, 3, 4):
             self.assertGreaterEqual(d[pid], 0.9, pid)
+        # позиция 2 — послушание 0.35: пол желания достигается частично, 0.1 + 0.8*0.35
+        self.assertAlmostEqual(d[1], 0.38)
         for pid in range(5, 10):
             self.assertAlmostEqual(d[pid], 0.1, msg=pid)   # чужая команда не тронута
 
@@ -158,10 +171,11 @@ class CoachBot(unittest.TestCase):
         self.tick_all()
         self.at(101.2)
         self.tick_all()
+        calm = {"Иду на Рошана", "На Рошана, понял"}
         chat = list(self.bots[0].chat.values())
-        self.assertIn("Иду на Рошана", chat)
+        self.assertTrue(calm & set(chat), chat)
         texts = [e["text"] for e in self.events()]
-        self.assertIn("Иду на Рошана", texts)
+        self.assertTrue(calm & set(texts), texts)
 
     def test_buy_goes_to_oha_purchase_stack(self):
         self.at(100)
@@ -195,6 +209,42 @@ class CoachBot(unittest.TestCase):
         self.tick_all()
         texts = [e["text"] for e in self.events()]
         self.assertTrue(any("Здоровье 50%" in t for t in texts), texts)
+
+    def cycle(self, text, t0=100):
+        self.at(t0)
+        self.tick_all()
+        self.say(text)
+        self.at(t0 + 1)
+        self.tick_all()
+        self.at(t0 + 1.2)
+        self.tick_all()
+
+    def test_dead_agent_refuses(self):
+        self.bots[3].alive = False
+        self.cycle("все на роша")
+        self.assertIn("Я мёртв, приду после возрождения", list(self.bots[3].chat.values()))
+
+    def test_disobedient_busy_agent_delays(self):
+        self.bots[1].busy = 0.9                    # позиция 2: послушание 0.35, ворчун
+        self.cycle("все на роша")
+        self.assertIn("Через 20 с, дофармлю", list(self.bots[1].chat.values()))
+        self.at(105)
+        self.assertAlmostEqual(self.desire(1, "roshan", 0.1), 0.1)      # ещё фармит
+        self.at(122)
+        self.assertGreater(self.desire(1, "roshan", 0.1), 0.3)          # пошёл (послушание частичное)
+
+    def test_tone_from_persona(self):
+        self.cycle("все на роша")
+        self.assertTrue({"Рошан наш!", "Забираем Рошана"} & set(self.bots[2].chat.values()))
+
+    def test_buy_short_of_gold_note(self):
+        self.cycle("позиция 1 купи бкб")
+        self.assertIn("Куплю, не хватает 3450 золота", list(self.bots[0].chat.values()))
+
+    def test_ult_on_cooldown_refused(self):
+        self.bots[0].ult_cd = 37
+        self.cycle("позиция 1 прожми ульту")
+        self.assertIn("Ульта в откате, 37 с", list(self.bots[0].chat.values()))
 
     def test_persona_bonus_applies_without_orders(self):
         self.at(100)

@@ -13,6 +13,7 @@
 
 local DIR = GetScriptDirectory()
 local Intents = require(DIR .. "/coach/coach_intents")
+local Voice = require(DIR .. "/coach/coach_voice")
 local json = require(DIR .. "/coach/json")
 local okc, Config = pcall(require, DIR .. "/coach/coach_config")
 if not okc or type(Config) ~= "table" then Config = {} end
@@ -131,16 +132,6 @@ end
 
 -- --- ответы тренеру ---
 
-local SAY = {
-  farm = "Фармлю", push = "Иду пушить", defend = "Иду защищать", gank = "Иду на ганг",
-  group = "Иду к своим", roshan = "Иду на Рошана", tormentor = "Иду на Торментора",
-  smoke = "Смок, иду", retreat = "Отхожу", focus = "Бью цель", engage = "Захожу",
-  hold = "Жду", split = "Сплитую", ward = "Иду ставить вард", stack = "Стакну",
-  follow = "Иду с тобой", move = "Иду", save = "Иду спасать", save_ult = "Держу ульту",
-  buy = "Куплю", buyback = "Выкупаюсь", use_ult = "Ульту понял", use_item = "Понял",
-  tp = "Тпшусь", free = "Играю сам", cancel = "Отбой",
-}
-
 local function reply(bot, team, pos, kind, text)
   local b = M.bots[bot:GetPlayerID()]
   local now = clock()
@@ -157,46 +148,78 @@ local function status_text(bot)
   return string.format("Здоровье %d%%, мана %d%%, золото %d", hp, mp, bot:GetGold())
 end
 
+-- состояние бота для решения «принять / оговорить / отказать / отложить» (Intents.respond)
+local function bot_state(bot, action, params)
+  local s = { alive = bot:IsAlive(), gold = bot:GetGold() }
+  pcall(function() s.has_buyback = bot:HasBuyback() end)
+  pcall(function() s.busy = bot:GetActiveModeDesire() end)
+  if action == "buy" and params and params.item then
+    pcall(function() s.item_cost = GetItemCost(params.item) end)
+  end
+  if action == "use_ult" then
+    pcall(function()
+      s.has_ult = false
+      for i = 0, 6 do
+        local a = bot:GetAbilityInSlot(i)
+        if a and a:IsUltimate() then
+          s.has_ult = true
+          s.ult_cd = a:GetCooldownTimeRemaining()
+          break
+        end
+      end
+    end)
+  end
+  return s
+end
+
+local function say_result(bot, team, pos, persona, it, r)
+  if r.kind == "ack" then
+    reply(bot, team, pos, "ack", Voice.ack(persona, it.action, it.seq))
+  elseif r.kind == "short" then
+    reply(bot, team, pos, "ack", Voice.refuse("short_gold", r.value))
+  elseif r.kind == "delay" then
+    reply(bot, team, pos, "delay", Voice.refuse("busy", r.value))
+  else
+    reply(bot, team, pos, "refuse", Voice.refuse(r.reason, r.value))
+  end
+end
+
 -- новые намерения этого бота → ответ; мгновенные приказы → исполнение
 local function handle_new(bot, team, pos, now)
   local t = team_state(team)
   local b = M.bots[bot:GetPlayerID()]
+  local persona = t.intents.persona[pos]
   local it = Intents.current(t.intents, pos, now)
   if it and it.seq > b.seen_seq then
     b.seen_seq = it.seq
-    if not bot:IsAlive() and it.action ~= "buyback" then
-      reply(bot, team, pos, "refuse", "Я мёртв, приду после возрождения")
-    else
-      reply(bot, team, pos, "ack", SAY[it.action] or "Понял")
+    local r = Intents.respond(t.intents, pos, it, now, bot_state(bot, it.action, it.params))
+    if r.kind == "delay" then
+      Intents.delay(t.intents, pos, it.seq, r.delay, now)
     end
+    say_result(bot, team, pos, persona, it, r)
   end
   for _, ins in ipairs(Intents.pending_instant(t.intents, pos, now)) do
     if not b.done[ins.seq] then
+      local r = Intents.respond(t.intents, pos, ins, now, bot_state(bot, ins.action, ins.params))
       if ins.action == "buy" then
         local item = ins.params and ins.params.item
         if item and bot.purchaseListInReverseOrder then
           table.insert(bot.purchaseListInReverseOrder, item)   -- верх стека покупок OHA
-          reply(bot, team, pos, "ack", SAY.buy)
+          say_result(bot, team, pos, persona, ins, r)
         else
-          reply(bot, team, pos, "refuse", "Не могу купить")
+          reply(bot, team, pos, "refuse", Voice.refuse("cant"))
         end
-        b.done[ins.seq] = true
-        Intents.done_instant(t.intents, pos, ins.seq)
       elseif ins.action == "buyback" then
-        if not bot:IsAlive() and bot:HasBuyback() then
-          bot:ActionImmediate_Buyback()
-          reply(bot, team, pos, "ack", SAY.buyback)
-        else
-          reply(bot, team, pos, "refuse", bot:IsAlive() and "Я жив" or "Нет денег на байбэк")
-        end
-        b.done[ins.seq] = true
-        Intents.done_instant(t.intents, pos, ins.seq)
+        if r.kind == "ack" then bot:ActionImmediate_Buyback() end
+        say_result(bot, team, pos, persona, ins, r)
+      elseif r.kind == "refuse" then
+        say_result(bot, team, pos, persona, ins, r)          -- «ульта в откате»
       else
-        -- ульта, предмет, тп — неделя 2 (ROADMAP); пока только подтверждаем
-        reply(bot, team, pos, "ack", (SAY[ins.action] or "Понял") .. " (пока не умею)")
-        b.done[ins.seq] = true
-        Intents.done_instant(t.intents, pos, ins.seq)
+        -- ульта, предмет, тп — неделя 2 (ROADMAP): пока только подтверждаем
+        reply(bot, team, pos, "ack", Voice.ack(persona, ins.action, ins.seq) .. " (пока не умею)")
       end
+      b.done[ins.seq] = true
+      Intents.done_instant(t.intents, pos, ins.seq)
     end
   end
   -- доклад приходит как команда report: отвечаем состоянием (по seq команды)

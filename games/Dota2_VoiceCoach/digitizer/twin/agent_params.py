@@ -96,6 +96,9 @@ def agent_params(profile: dict, hero: str | None = None, obedience: float = 0.85
             # насколько агент слушается тренера (не из данных: настройка игры)
             "obedience": obedience,
         },
+        # тон ответов тренеру (game/shared/coach_voice.lua): заводной — при высокой агрессии,
+        # ворчун — при низком послушании, иначе спокойный. ПРЕДПОЛОЖЕНИЕ, правится вручную.
+        "voice": {"tone": "grumpy" if obedience < 0.6 else ("hype" if aggression > 0.65 else "calm")},
         "ward_spots": profile.get("ward_spots", [])[:10],
         "chat_samples": profile.get("chat_samples", [])[:10],
         "notes": "формулы поведения — предположение, см. twin/agent_params.py",

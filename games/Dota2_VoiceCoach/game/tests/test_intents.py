@@ -151,3 +151,92 @@ class Intents(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Respond(unittest.TestCase):
+    """Ответ агента на приказ: отказ по делу, оговорка, отсрочка у непослушного."""
+
+    def setUp(self):
+        self.L, self.M = load()
+        self.tbl = self.L.table_from
+
+    def st(self, obedience=1.0):
+        p = self.L.table()
+        p[1] = self.tbl({"obedience": obedience, "desire_bonus": self.tbl({})})
+        return self.M.new(p)
+
+    def cmd(self, action, seq=1, urgent=False, params=None):
+        return self.tbl({"action": action, "agents": self.tbl([1]), "seq": seq, "urgent": urgent,
+                         "params": self.tbl(params or {})})
+
+    def respond(self, st, action, state, **kw):
+        r = self.M.respond(st, 1, self.cmd(action, **kw), 0, self.tbl(state))
+        return dict(r.items())
+
+    def test_dead_refuses_except_buyback_and_buy(self):
+        st = self.st()
+        self.assertEqual(self.respond(st, "roshan", {"alive": False, "respawn_left": 25}),
+                         {"kind": "refuse", "reason": "dead_s", "value": 25})
+        self.assertEqual(self.respond(st, "buyback", {"alive": False, "has_buyback": True})["kind"], "ack")
+        self.assertEqual(self.respond(st, "buyback", {"alive": False, "has_buyback": False})["reason"], "no_buyback")
+        self.assertEqual(self.respond(st, "buy", {"alive": False})["kind"], "ack")
+
+    def test_alive_buyback_refused(self):
+        self.assertEqual(self.respond(self.st(), "buyback", {"alive": True})["reason"], "alive")
+
+    def test_buy_short_of_gold_is_accepted_with_note(self):
+        r = self.respond(self.st(), "buy", {"alive": True, "gold": 1200, "item_cost": 4050})
+        self.assertEqual((r["kind"], r["value"]), ("short", 2850))
+
+    def test_ult_on_cooldown(self):
+        r = self.respond(self.st(), "use_ult", {"alive": True, "has_ult": True, "ult_cd": 42})
+        self.assertEqual((r["kind"], r["reason"], r["value"]), ("refuse", "ult_cd", 42))
+
+    def test_disobedient_busy_agent_delays_but_not_urgent(self):
+        st = self.st(obedience=0.35)
+        r = self.respond(st, "roshan", {"alive": True, "busy": 0.9})
+        self.assertEqual((r["kind"], r["delay"]), ("delay", 20))     # 10 + 20*(0.7-0.35)/0.7
+        r = self.respond(st, "roshan", {"alive": True, "busy": 0.9}, urgent=True)
+        self.assertEqual(r["kind"], "ack")
+        r = self.respond(st, "retreat", {"alive": True, "busy": 0.9})
+        self.assertEqual(r["kind"], "ack")                           # отход не откладывают
+        r = self.respond(self.st(obedience=0.9), "roshan", {"alive": True, "busy": 0.9})
+        self.assertEqual(r["kind"], "ack")
+
+    def test_delay_activates_later(self):
+        st = self.st()
+        self.M.apply(st, self.cmd("roshan", seq=3), 0)
+        self.assertTrue(self.M.delay(st, 1, 3, 20, 0))
+        self.assertIsNone(self.M.current(st, 1, 10))
+        self.assertAlmostEqual(self.M.desire(st, 1, "roshan", 0.1, 10), 0.1)
+        it = self.M.current(st, 1, 20)
+        self.assertEqual(it.action, "roshan")
+        self.assertGreaterEqual(self.M.desire(st, 1, "roshan", 0.1, 21), 0.9)
+
+    def test_new_order_cancels_delay(self):
+        st = self.st()
+        self.M.apply(st, self.cmd("roshan", seq=3), 0)
+        self.M.delay(st, 1, 3, 20, 0)
+        self.M.apply(st, self.cmd("retreat", seq=4), 5)
+        self.assertEqual(self.M.current(st, 1, 25).action, "retreat")
+
+
+class Voice(unittest.TestCase):
+    def setUp(self):
+        self.L = lupa_rt.LuaRuntime(unpack_returned_tuples=True)
+        self.V = self.L.execute((GAME / "shared" / "coach_voice.lua").read_text(encoding="utf-8"))
+
+    def test_tone_and_determinism(self):
+        calm = self.L.table_from({"tone": "calm"})
+        hype = self.L.table_from({"tone": "hype"})
+        self.assertEqual(self.V.ack(calm, "roshan", 1), self.V.ack(calm, "roshan", 1))
+        self.assertIn(self.V.ack(hype, "roshan", 0), ("Рошан наш!", "Забираем Рошана"))
+        self.assertEqual(self.V.ack(None, "roshan", 0), "Иду на Рошана")
+        # нет фразы у тона — берётся спокойная, потом общая
+        self.assertEqual(self.V.ack(hype, "stack", 0), "Стакну")
+        self.assertEqual(self.V.ack(calm, "unknown_action", 0), "Понял")
+
+    def test_refuse_formats(self):
+        self.assertEqual(self.V.refuse("ult_cd", 41.6), "Ульта в откате, 42 с")
+        self.assertEqual(self.V.refuse("no_buyback", None), "Нет байбэка")
+        self.assertEqual(self.V.refuse("???", None), "Не могу")

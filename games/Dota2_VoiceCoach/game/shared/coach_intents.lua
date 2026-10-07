@@ -200,7 +200,7 @@ function M.apply(st, cmd, now)
     if a then
       got[#got + 1] = pos
       if cmd.action == "cancel" or cmd.action == "free" then
-        a.current, a.queue, a.instant, a.save_ult_until = nil, {}, {}, 0
+        a.current, a.queue, a.instant, a.save_ult_until, a.delayed = nil, {}, {}, 0, nil
       elseif cmd.action == "report" then
         -- доклад не меняет намерений
       elseif cmd.action == "save_ult" then
@@ -209,10 +209,10 @@ function M.apply(st, cmd, now)
         a.instant[#a.instant + 1] = make_intent(cmd, now)
       else
         local it = make_intent(cmd, now)
-        if cmd.after_prev and a.current then
+        if cmd.after_prev and (a.current or a.delayed) then
           a.queue[#a.queue + 1] = it
         else
-          a.current, a.queue = it, {}
+          a.current, a.queue, a.delayed = it, {}, nil
         end
       end
     end
@@ -224,11 +224,64 @@ end
 function M.current(st, pos, now)
   local a = st.agents[pos]
   if not a then return nil end
+  if a.delayed and now >= a.delayed.start then
+    a.current, a.delayed.it.t0 = a.delayed.it, now
+    a.delayed = nil
+  end
   while a.current and now - a.current.t0 > a.current.ttl do
     a.current = table.remove(a.queue, 1)
     if a.current then a.current.t0 = now end
   end
   return a.current
+end
+
+-- Отложить текущее намерение агента на seconds: пока агент занят своим («дофармлю лагерь»).
+function M.delay(st, pos, seq, seconds, now)
+  local a = st.agents[pos]
+  if not a or not a.current or a.current.seq ~= seq then return false end
+  a.delayed = { it = a.current, start = now + seconds }
+  a.current = nil
+  return true
+end
+
+-- Что агент ответит на приказ, с учётом своего состояния и характера.
+-- s — состояние бота: alive, respawn_left, gold, item_cost, has_buyback, has_ult, ult_cd,
+-- busy (желание своего текущего занятия 0..1). Возвращает {kind=ack|short|refuse|delay, reason, value, delay}.
+local DELAYABLE = { group = true, roshan = true, tormentor = true, push = true, defend = true,
+  smoke = true, gank = true, follow = true, move = true, ward = true, stack = true }
+
+function M.respond(st, pos, cmd, now, s)
+  s = s or {}
+  local act = cmd.action
+  if act == "report" or act == "cancel" or act == "free" or act == "save_ult" then
+    return { kind = "ack" }
+  end
+  if s.alive == false then
+    if act == "buyback" then
+      if s.has_buyback then return { kind = "ack" } end
+      return { kind = "refuse", reason = "no_buyback" }
+    end
+    if act == "buy" then return { kind = "ack" } end
+    if s.respawn_left and s.respawn_left > 0 then
+      return { kind = "refuse", reason = "dead_s", value = s.respawn_left }
+    end
+    return { kind = "refuse", reason = "dead" }
+  end
+  if act == "buyback" then return { kind = "refuse", reason = "alive" } end
+  if act == "buy" and s.item_cost and s.gold and s.gold < s.item_cost then
+    return { kind = "short", reason = "short_gold", value = s.item_cost - s.gold }
+  end
+  if act == "use_ult" then
+    if s.has_ult == false then return { kind = "refuse", reason = "no_ult" } end
+    if s.ult_cd and s.ult_cd > 0 then return { kind = "refuse", reason = "ult_cd", value = s.ult_cd } end
+  end
+  local p = st.persona[pos]
+  local obedience = (p and p.obedience) or 1
+  if obedience < 0.7 and DELAYABLE[act] and (s.busy or 0) > 0.7 and not cmd.urgent then
+    local d = math.floor(10 + 20 * (0.7 - obedience) / 0.7)
+    return { kind = "delay", reason = "busy", value = d, delay = d }
+  end
+  return { kind = "ack" }
 end
 
 -- Мгновенные намерения (купить, тп, ульта…), ещё не исполненные и не просроченные.
