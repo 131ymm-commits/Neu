@@ -22,6 +22,10 @@ local M = {}
 M.base_url = Config.base_url or "http://127.0.0.1:8787"
 M.room = Config.room or "local"
 M.poll_interval = Config.poll_interval or 0.5
+-- канал команд: "http" — опрос сервера; "file" — файл-ящик, который пишет сервер (--inbox);
+-- "auto" — HTTP, а после 3 неудач подряд — файл (и раз в 10 с снова пробуем HTTP)
+M.channel = Config.channel or "auto"
+M.inbox_prefix = Config.inbox_prefix or "bots/coach/inbox_"
 M.debug = Config.debug and true or false
 M.teams = M.teams or {}          -- состояние по командам (общее, если модуль общий для ботов)
 M.bots = M.bots or {}            -- состояние по ботам (ключ — PlayerID)
@@ -102,11 +106,46 @@ local function http_write(what, team, payload)
   http_get(url, function() end)
 end
 
+local function apply_data(t, data)
+  for _, cmd in ipairs(data.commands or {}) do
+    if type(cmd.seq) == "number" and cmd.seq > t.last_seq then
+      t.last_seq = cmd.seq
+      Intents.apply(t.intents, cmd, clock())
+      log("команда " .. tostring(cmd.seq) .. " " .. tostring(cmd.action))
+    end
+  end
+end
+
+-- файл-ящик (запасной канал): return { seq = N, commands = {...} }; так боты bota (2025)
+-- читают свои bots/action_<team> — loadfile без расширения, на всякий случай пробуем и с ним
+local function read_inbox(team)
+  local name = M.inbox_prefix .. team_name(team)
+  local okl, f = pcall(loadfile, name)
+  if not okl or not f then okl, f = pcall(loadfile, name .. ".lua") end
+  if not okl or not f then return nil end
+  local ok, data = pcall(f)
+  if ok and type(data) == "table" then return data end
+  return nil
+end
+
 local function poll(team, now)
   local t = team_state(team)
-  if t.in_flight or now < t.next_poll then return end
-  t.in_flight = true
+  if now < t.next_poll then return end
   t.next_poll = now + M.poll_interval
+  local use_file = M.channel == "file" or (M.channel == "auto" and t.fail >= 3)
+  if use_file then
+    local data = read_inbox(team)
+    if data then
+      if not t.file_ok then
+        print("[тренер] читаю команды из файла " .. M.inbox_prefix .. team_name(team))
+        t.file_ok = true
+      end
+      apply_data(t, data)
+    end
+    if M.channel == "file" then return end
+  end
+  if t.in_flight or now < (t.next_http or 0) then return end
+  t.in_flight = true
   local url = M.base_url .. "/api/" .. M.room .. "/commands?team=" .. team_name(team) .. "&after=" .. t.last_seq
   http_get(url, function(body)
     t.in_flight = false
@@ -114,19 +153,15 @@ local function poll(team, now)
     if body then ok, data = pcall(json.decode, body) end
     if not ok or type(data) ~= "table" then
       t.fail = t.fail + 1
-      t.next_poll = clock() + math.min(10, 0.5 * 2 ^ (t.fail - 1))
+      local wait = math.min(10, 0.5 * 2 ^ (t.fail - 1))
+      if M.channel == "auto" and t.fail >= 3 then wait = 10 end      -- файл уже работает
+      t.next_http = clock() + wait
       if t.fail == 1 then print("[тренер] нет связи с сервером тренера " .. M.base_url) end
       return
     end
     if t.fail > 0 then print("[тренер] связь с сервером тренера есть") end
     t.fail = 0
-    for _, cmd in ipairs(data.commands or {}) do
-      if type(cmd.seq) == "number" and cmd.seq > t.last_seq then
-        t.last_seq = cmd.seq
-        Intents.apply(t.intents, cmd, clock())
-        log("команда " .. tostring(cmd.seq) .. " " .. tostring(cmd.action))
-      end
-    end
+    apply_data(t, data)
   end)
 end
 

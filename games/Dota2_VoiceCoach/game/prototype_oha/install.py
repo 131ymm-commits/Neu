@@ -168,7 +168,7 @@ def lua_value(v, indent="  "):
     raise TypeError(type(v))
 
 
-def config_text(base_url: str, room: str, lineup_agents: dict) -> str:
+def config_text(base_url: str, room: str, lineup_agents: dict, channel: str = "auto") -> str:
     personas = {}
     for team, agents in lineup_agents.items():
         tid = TEAM_IDS[team]
@@ -180,7 +180,7 @@ def config_text(base_url: str, room: str, lineup_agents: dict) -> str:
                                       "desire_bonus": b.get("desire_bonus", {}),
                                       "tone": (a.get("voice") or {}).get("tone", "calm")}
     return ("-- Настройки тренера для ботов: пишет install.py, руками править можно.\n"
-            f"return {lua_value({'base_url': base_url, 'room': room, 'poll_interval': 0.5, 'debug': False, 'personas': personas})}\n")
+            f"return {lua_value({'base_url': base_url, 'room': room, 'poll_interval': 0.5, 'debug': False, 'channel': channel, 'inbox_prefix': 'bots/coach/inbox_', 'personas': personas})}\n")
 
 
 def roster_json(lineup_agents: dict) -> dict:
@@ -253,6 +253,12 @@ def install(dota: Path, oha: Path, lineup: dict, base_url: str, room: str, log=p
     roster = roster_path or (HERE / "roster.json")
     roster.write_text(json.dumps(roster_json(lineup), ensure_ascii=False, indent=1), encoding="utf-8")
     log(f"состав для сервера тренера: {roster}")
+    # готовая команда запуска сервера: состав + запасной канал через файл в папке ботов
+    coach_dir = GAME.parent / "coach"
+    cmd = (f'cd /d "{coach_dir}"\r\npython -m voicecoach.server --roster "{roster}" '
+           f'--inbox "{bots / "coach"}" --room {room}\r\npause\r\n')
+    (roster.parent / "run_server.cmd").write_text(cmd, encoding="utf-8")
+    log(f"запуск сервера тренера: {roster.parent / 'run_server.cmd'}")
     return bots
 
 

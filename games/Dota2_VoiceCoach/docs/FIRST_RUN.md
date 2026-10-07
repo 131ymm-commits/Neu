@@ -63,12 +63,10 @@ cd Neu\games\Dota2_VoiceCoach\game\prototype_oha
 python install.py --oha C:\oha\dota2bot-OpenHyperAI-main --lineup lineup.json
 ```
    Установщик сам найдёт Доту (или `--dota "D:\SteamLibrary\steamapps\common\dota 2 beta"`).
-4. Сервер тренера с именами вашего состава (в отдельном окне, не закрывать):
-```
-cd Neu\games\Dota2_VoiceCoach\coach
-python -m voicecoach.server --roster ..\game\prototype_oha\roster.json
-```
-   и страница `http://localhost:8787` в Chrome.
+4. Сервер тренера: двойной щелчок по `game\prototype_oha\run_server.cmd` (его пишет установщик:
+   там ваш состав и запасной канал `--inbox` — сервер дублирует команды в файл в папке ботов, и
+   если боты не смогут ходить по HTTP, они через 3 неудачи сами перейдут на чтение файла). Окно не
+   закрывать. Страница — `http://localhost:8787` в Chrome.
 5. В Steam: Dota 2 → Свойства → Параметры запуска: `-condebug` (консоль будет сохраняться в
    `...\dota 2 beta\game\dota\console.log`).
 6. В Доте (названия по английскому интерфейсу из инструкции авторов ботов): Play Dota → Custom
@@ -81,7 +79,8 @@ python -m voicecoach.server --roster ..\game\prototype_oha\roster.json
    Рошана»), в командном чате игры — те же ответы от ботов.
 8. Вернуть всё как было: `python install.py --uninstall`.
 
-**Пришлите:** из `console.log` строки с `[тренер]` (и ошибки Lua рядом, если есть) и что вы видели:
+**Пришлите:** из `console.log` строки с `[тренер]` (особенно «нет связи с сервером тренера» и «читаю
+команды из файла» — по ним видно, какой канал заработал; и ошибки Lua рядом, если есть) и что вы видели:
 слушаются ли агенты, через сколько секунд, что раздражало. Если ботов не видно или они не двигаются —
 лог сразу, это важнее всего.
 

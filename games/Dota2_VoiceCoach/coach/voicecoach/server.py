@@ -16,6 +16,10 @@
        (так ответ читает DOTAHTMLPanel в аркаде — research/00_SUMMARY.md)
   GET  /api/health
 
+Запасной канал к ботам (если HTTP из ботов не работает): --inbox <папка bots/coach в Доте> —
+сервер дублирует команды в файлы inbox_radiant.lua / inbox_dire.lua, боты читают их через loadfile
+(так делает проект bota, 2025).
+
 Состав (имена и как их зовут голосом) можно задать заранее: --roster roster.json
   {"radiant": [{"pos": 1, "name": "Miracle-", "aliases": ["миракл"]}, ...], "dire": [...]}
 """
@@ -24,6 +28,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -38,9 +43,31 @@ MAX_QUEUE = 500
 STATIC = Path(__file__).resolve().parent.parent / "web"
 
 
+def to_lua(v) -> str:
+    """Python → литерал Lua (для файла-ящика ботов)."""
+    if v is None:
+        return "nil"
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    if isinstance(v, (int, float)):
+        return repr(v)
+    if isinstance(v, str):
+        return '"' + v.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
+    if isinstance(v, (list, tuple)):
+        return "{" + ", ".join(to_lua(x) for x in v) + "}"
+    if isinstance(v, dict):
+        parts = []
+        for k, x in v.items():
+            key = k if isinstance(k, str) and k.isidentifier() else "[" + to_lua(k) + "]"
+            parts.append(f"{key} = {to_lua(x)}")
+        return "{" + ", ".join(parts) + "}"
+    raise TypeError(type(v))
+
+
 class Room:
     def __init__(self, name: str):
         self.name = name
+        self.inbox_dir: str | None = None
         self.lock = threading.Condition()
         self.seq = 0
         self.commands = {t: [] for t in TEAMS}
@@ -70,11 +97,25 @@ class Room:
                 if item["clarify"]:
                     self._event(team, {"pos": 0, "kind": "clarify", "text": item["clarify"]})
             del self.commands[team][:-MAX_QUEUE]
+            self._write_inbox(team)
             entry = {"t": time.time(), "team": team, "text": text, "source": source,
                      "confidence": res.confidence, "unknown": res.unknown, "commands": out}
             self.log.append(entry)
             self.lock.notify_all()
             return entry
+
+    def _write_inbox(self, team: str) -> None:
+        """Файл-ящик для ботов: последние команды команды; запись через временный файл."""
+        if not self.inbox_dir:
+            return
+        keep = [{k: c[k] for k in ("seq", "action", "agents", "params", "urgent", "after_prev")}
+                for c in self.commands[team][-30:]]
+        text = "return " + to_lua({"seq": self.seq, "commands": keep}) + "\n"
+        path = os.path.join(self.inbox_dir, f"inbox_{team}.lua")
+        tmp = path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(text)
+        os.replace(tmp, path)
 
     def commands_after(self, team: str, after: int) -> list[dict]:
         with self.lock:
@@ -271,8 +312,14 @@ def main(argv=None):
     ap.add_argument("--port", type=int, default=8787)
     ap.add_argument("--roster", help="JSON с именами агентов по командам (см. начало файла)")
     ap.add_argument("--room", default="local")
+    ap.add_argument("--inbox", help="папка bots/coach в Доте: дублировать команды в файлы для ботов")
     a = ap.parse_args(argv)
     srv = serve(a.host, a.port)
+    if a.inbox:
+        srv.hub.room(a.room).inbox_dir = a.inbox
+        for team in TEAMS:
+            srv.hub.room(a.room)._write_inbox(team)
+        print(f"Команды дублируются в файлы: {a.inbox}")
     if a.roster:
         load_roster(srv.hub, a.roster, a.room)
         print(f"Состав загружен из {a.roster}")

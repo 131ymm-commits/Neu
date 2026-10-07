@@ -263,3 +263,41 @@ class CoachBot(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CoachBotFileChannel(CoachBot):
+    """Запасной канал: сервер пишет файл-ящик (--inbox), боты читают его через loadfile."""
+
+    def make_config(self, channel, base_url):
+        coach = self.tmp / "bots" / "coach"
+        self.srv.hub.room(self.room).inbox_dir = str(coach)
+        (coach / "coach_config.lua").write_text(
+            f'return {{ base_url = "{base_url}", room = "{self.room}", poll_interval = 0.5,\n'
+            f'  channel = "{channel}", inbox_prefix = "{coach.as_posix()}/inbox_" }}\n', encoding="utf-8")
+        self.L.execute('package.loaded["bots/coach/coach_bot"] = nil; package.loaded["bots/coach/coach_config"] = nil')
+        self.M = self.L.eval('require("bots/coach/coach_bot")')
+
+    def test_file_channel_only(self):
+        self.make_config("file", "http://127.0.0.1:9")
+        self.say("все на роша")
+        self.assertTrue((self.tmp / "bots" / "coach" / "inbox_radiant.lua").exists())
+        self.at(100)
+        d = self.tick_all("roshan", 0.1)
+        self.assertGreaterEqual(d[0], 0.9)
+        self.assertAlmostEqual(d[5], 0.1)                  # у Тьмы своих команд нет
+
+    def test_auto_falls_back_to_file_after_http_fails(self):
+        self.make_config("auto", "http://127.0.0.1:9")
+        self.say("все на роша")
+        t = 100.0
+        for _ in range(8):                                 # три неудачи HTTP с паузами 0.5, 1, 2 с
+            self.at(t)
+            self.tick_all()
+            t += 2.1
+        self.at(t)
+        d = self.tick_all("roshan", 0.1)
+        self.assertGreaterEqual(d[0], 0.9)
+
+    # тесты родителя с ответами на сервер в файловом режиме не нужны
+    test_ack_in_chat_and_on_server = None
+    test_report_answers_with_status = None
