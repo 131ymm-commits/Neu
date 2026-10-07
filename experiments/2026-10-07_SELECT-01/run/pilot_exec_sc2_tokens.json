@@ -1,0 +1,98 @@
+{
+"SC_7202|exec": {
+"inp": 89516,
+"out": 5913,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7209|exec": {
+"inp": 89480,
+"out": 6063,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7204|exec": {
+"inp": 89480,
+"out": 4206,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7210|exec": {
+"inp": 89480,
+"out": 4123,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7208|exec": {
+"inp": 89480,
+"out": 4731,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7211|exec": {
+"inp": 89480,
+"out": 5934,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7206|exec": {
+"inp": 89480,
+"out": 5181,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7203|exec": {
+"inp": 89480,
+"out": 6647,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7205|exec": {
+"inp": 89480,
+"out": 7680,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7207|exec": {
+"inp": 89480,
+"out": 4965,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7212|exec": {
+"inp": 89480,
+"out": 10539,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7201|exec": {
+"inp": 89516,
+"out": 7357,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+}
+}
