@@ -52,6 +52,11 @@ if __name__ == '__main__':
             e = json.loads(line)
             if not e['task'].startswith(a.typ + '_'): continue
             votes[(e['task'], e['arm'])].append(e['choice']); toks[(e['task'], e['arm'])].update(dict(inp=e.get('inp', 0), out=e.get('out', 0), calls=1))
+    # одиночные руки = первый вызов соответствующей руки из N (тот же промпт): A = B_zayavka[0], C = C_N[0], D = D_N[0]
+    for (t, x) in list(votes):
+        for one, many in (('A', 'B_zayavka'), ('C', 'C_N'), ('D', 'D_N')):
+            if x == many and (t, one) not in votes:
+                votes[(t, one)] = votes[(t, many)][:1]; toks[(t, one)].update({kk: v / len(votes[(t, many)]) for kk, v in toks[(t, many)].items()})
     tasks = sorted({t for t, _ in votes}); arms = sorted({x for _, x in votes})
     R = collections.defaultdict(dict); excl = []; sec = dict(spearman=[], goodhart={k: [] for k in (1, 2, 4, 8)}, doubt_auroc=[], refusals=collections.Counter(), a_eq_a0=[])
     for t in tasks:

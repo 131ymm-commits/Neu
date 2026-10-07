@@ -1,0 +1,194 @@
+{
+"SC_7110|exec": {
+"inp": 89000,
+"out": 9834,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7112|exec": {
+"inp": 89000,
+"out": 14,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7103|exec": {
+"inp": 89000,
+"out": 5009,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7107|exec": {
+"inp": 89000,
+"out": 6350,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7109|exec": {
+"inp": 89000,
+"out": 12424,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7105|exec": {
+"inp": 89000,
+"out": 23213,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7008|exec": {
+"inp": 88954,
+"out": 8175,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7002|exec": {
+"inp": 88954,
+"out": 7390,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7004|exec": {
+"inp": 88954,
+"out": 5794,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7007|exec": {
+"inp": 88954,
+"out": 9271,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7005|exec": {
+"inp": 88954,
+"out": 7008,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7101|exec": {
+"inp": 89000,
+"out": 8846,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7111|exec": {
+"inp": 89000,
+"out": 6603,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7104|exec": {
+"inp": 89000,
+"out": 16147,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7009|exec": {
+"inp": 88954,
+"out": 5823,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7006|exec": {
+"inp": 88954,
+"out": 8912,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7108|exec": {
+"inp": 141973,
+"out": 1228,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7012|exec": {
+"inp": 88954,
+"out": 8372,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7106|exec": {
+"inp": 140227,
+"out": 5969,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7011|exec": {
+"inp": 88954,
+"out": 7656,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7003|exec": {
+"inp": 88954,
+"out": 8136,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"SC_7102|exec": {
+"inp": 89000,
+"out": 7897,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7010|exec": {
+"inp": 88954,
+"out": 8695,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+},
+"WH_7001|exec": {
+"inp": 88954,
+"out": 6892,
+"models": [
+"claude-opus-5-5"
+],
+"tool_calls": 0
+}
+}

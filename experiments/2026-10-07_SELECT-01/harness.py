@@ -28,7 +28,7 @@ def js(stage, jobs, schema):
     p = f'{D}/run/{stage}.js'; open(p, 'w').write(s); print(p, len(jobs), 'голов')
 
 def wf_record(wf):
-    f = glob.glob(f'{PROJ}/*/workflows/{wf}.json'); return json.load(open(f[0]))
+    f = glob.glob(f'{PROJ}/*/workflows/{wf}.json') + glob.glob(f'{PROJ}/*/*/workflows/{wf}.json'); return json.load(open(f[0]))
 
 def wf_tokens(wf):
     # токены по меткам голов из транскриптов: вход (с кэшем) и выход, по всем ходам головы
@@ -78,9 +78,25 @@ if __name__ == '__main__':
         for t in tids:
             tk = task(t); pool = json.load(open(f'{D}/pools/{t}.json')); rules = sim.RULES[tk['type']](tk)
             for a in arms:
-                for i in range(N if a in MULTI else 1):
+                for i in range(N if a in MULTI else 1):   # A, C, D отдельно не зовутся: это первый вызов B_zayavka, C_N, D_N (analyze.py)
                     jobs.append(dict(id=f'{t}|{a}|{i}', prompt=prompts.eval_prompt(a, rules, pool)))
-        js(stage, jobs, prompts.EVAL_SCHEMA)
+        # компактно: промпт собирается в JS из шаблона руки и текстов задачи (иначе скрипт > 512 КБ); сверка — harness.py check_eval
+        TD, TPL = {}, {}
+        for t in tids:
+            tk = task(t); pool = json.load(open(f'{D}/pools/{t}.json'))
+            TD[t] = dict(rules=sim.RULES[tk['type']](tk), c1=prompts.cands_text(pool, True), c0=prompts.cands_text(pool, False), k=len(pool))
+        for a in arms: TPL[a] = dict(tpl=prompts.ARMS[a]['tpl'], claim=prompts.ARMS[a]['claim'])
+        cj = [dict(id=j['id']) for j in jobs]
+        os.makedirs(f'{D}/run', exist_ok=True)
+        s = (f"export const meta = {{ name: 'select01-{stage}', description: 'SELECT-01, этап {stage}', phases: [{{ title: 'Ход' }}] }}\n"
+             f"const TD = {json.dumps(TD, ensure_ascii=False)}\nconst TPL = {json.dumps(TPL, ensure_ascii=False)}\nconst IDS = {json.dumps([j['id'] for j in jobs])}\n"
+             f"const S = {json.dumps(prompts.EVAL_SCHEMA)}\n"
+             "const build = id => { const [t, a] = id.split('|'); const d = TD[t], p = TPL[a]; return p.tpl.split('{k}').join(String(d.k)).split('{rules}').join(d.rules).split('{cands}').join(p.claim ? d.c1 : d.c0) }\n"
+             "phase('Ход')\n"
+             "const res = await parallel(IDS.map(id => () => agent(build(id), {label: id, phase: 'Ход', schema: S}).catch(e => ({error: String(e)}))))\n"
+             "const out = {}\nIDS.forEach((id, i) => { out[id] = res[i] })\nreturn {out}\n")
+        open(f'{D}/run/{stage}.js', 'w').write(s); json.dump({j['id']: hashlib.sha256(j['prompt'].encode()).hexdigest() for j in jobs}, open(f'{D}/run/{stage}_prompt_sha.json', 'w'))
+        print(f'{D}/run/{stage}.js', len(jobs), 'голов', len(s), 'байт')
     elif cmd == 'collect_eval':
         wf, stage = sys.argv[2], sys.argv[3]; res = wf_record(wf)['result']['out']; tok = wf_tokens(wf)
         os.makedirs(f'{D}/evals', exist_ok=True)

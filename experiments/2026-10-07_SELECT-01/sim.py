@@ -122,13 +122,13 @@ def rules_wh(task):
 # Недопустимый план чинится детерминированно: повторы работ выбрасываются (остаётся первое вхождение по станку 0, потом 1),
 # пропущенные работы дописываются в конец станка 0 по возрастанию номера; неизвестные элементы игнорируются.
 
-def gen_sc(seed, J=20, sigma=0.2):
+def gen_sc(seed, J=20, sigma=0.2, wear=0.08, v=1):
     r = random.Random(seed)
     jobs = []
     for j in range(J):
         d = r.randint(3, 15); rel = r.randint(0, 40)
         jobs.append(dict(f=r.randint(0, 2), d=d, rel=rel, due=rel + d + r.randint(5, 45), w=r.randint(1, 5)))
-    return dict(type='SC', seed=seed, J=J, jobs=jobs, SU=r.randint(3, 7), MT=r.randint(5, 10), wear=0.08, sigma=sigma)
+    return dict(type='SC', seed=seed, J=J, jobs=jobs, SU=r.randint(3, 7), MT=r.randint(5, 10), wear=wear, sigma=sigma, v=v)
 
 def noise_sc(task, nseed):
     r = random.Random(nseed)
@@ -176,7 +176,8 @@ def rules_sc(task):
     s.append('План — JSON {"machines": [[…станок 0…], […станок 1…]]}, например [[3, 0, "M", 7], [1, 2]].')
     return '\n'.join(s)
 
-GEN = dict(WH=gen_wh, SC=gen_sc); NOISE = dict(WH=noise_wh, SC=noise_sc); SIM = dict(WH=simulate_wh, SC=simulate_sc); RULES = dict(WH=rules_wh, SC=rules_sc)
+# SC v2 (07.10, после пилота v1: медиана регрета A0 = 0,01 < 0,2 — допуск не пройден; меняются только параметры генератора)
+GEN = dict(WH=gen_wh, SC=lambda s: gen_sc(s, J=30, sigma=0.4, wear=0.12, v=2)); NOISE = dict(WH=noise_wh, SC=noise_sc); SIM = dict(WH=simulate_wh, SC=simulate_sc); RULES = dict(WH=rules_wh, SC=rules_sc)
 
 # ---------------- эвристики (для проверки разброса, не головы) ----------------
 def heur_wh(task, kind, r):
