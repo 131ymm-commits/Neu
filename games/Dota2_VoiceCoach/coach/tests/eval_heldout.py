@@ -7,8 +7,12 @@
   python -m tests.eval_heldout [--out results.json]
 
 Совпадение команды: то же действие, тот же список позиций, и каждый ожидаемый параметр равен.
-Фраза верна, если совпали все ожидаемые команды и лишних нет. Для фраз с clarify=true
-верно и «переспросил» (есть команда с clarify), и точное совпадение с ожидаемым.
+Переспрос (команда с непустым clarify) в игру не уходит (docs/COMMANDS.md) и приказ с адресатом
+не выполняет — с такой ожидаемой командой он не совпадает (правка до прогона PARSE-02, по рецензии).
+Фраза верна, если совпали все ожидаемые команды и лишних нет. Для фраз с clarify=true верно и
+точное совпадение, и переспрос, если при этом все ожидаемые команды с адресатом найдены среди
+команд без переспроса и лишних команд без переспроса нет (правка до прогона PARSE-02, по рецензии;
+на PARSE-01 исходный счёт не меняется: 57/80).
 """
 from __future__ import annotations
 
@@ -59,6 +63,8 @@ CONTEXTS = {"parse01": heldout_ctx, "parse02": parse02_ctx}
 
 
 def cmd_match(got: dict, exp: dict) -> bool:
+    if got.get("clarify") and exp.get("agents"):
+        return False                      # переспрос не выполняет приказ с адресатом
     if got["action"] != exp["action"]:
         return False
     if sorted(got["agents"]) != sorted(exp.get("agents", [])):
@@ -77,6 +83,19 @@ def wilson(k: int, n: int, z: float = 1.96):
     return (round(c - h, 3), round(c + h, 3))
 
 
+def count_hits(exp: list, got: list) -> int:
+    """Жадное сопоставление один к одному: сколько ожидаемых команд нашлось."""
+    used = set()
+    hits = 0
+    for e in exp:
+        for i, g in enumerate(got):
+            if i not in used and cmd_match(g, e):
+                used.add(i)
+                hits += 1
+                break
+    return hits
+
+
 def evaluate(path: Path, ctx_name: str = "parse01"):
     make_ctx = CONTEXTS[ctx_name]
     rows = [json.loads(l) for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
@@ -87,22 +106,19 @@ def evaluate(path: Path, ctx_name: str = "parse01"):
         got = [{"action": c.action, "agents": c.agents, "params": c.params, "clarify": c.clarify}
                for c in res.commands]
         exp = r.get("expected") or []
-        used = set()
-        hits = 0
-        for e in exp:
-            for i, g in enumerate(got):
-                if i not in used and cmd_match(g, e):
-                    used.add(i)
-                    hits += 1
-                    break
+        hits = count_hits(exp, got)
         exact = hits == len(exp) and len(got) == len(exp)
         asked = any(g["clarify"] for g in got)
-        ok = exact or (r.get("clarify") and asked)
+        ok = exact
+        if r.get("clarify") and asked and not exact:
+            need = [e for e in exp if e.get("agents")]
+            plain = [g for g in got if not g["clarify"]]
+            ok = count_hits(need, plain) == len(need) and len(plain) == len(need)
         n_exp += len(exp)
         n_got += len(got)
         n_hit += hits
         results.append({"id": r["id"], "category": r.get("category", "?"), "text": r["text"],
-                        "ok": bool(ok), "exact": exact,
+                        "ok": bool(ok), "exact": exact, "hits": hits,
                         "clarify_expected": bool(r.get("clarify")), "asked": asked,
                         "expected": exp, "got": got, "unknown": res.unknown,
                         "confidence": res.confidence, "note": r.get("note", "")})
@@ -114,6 +130,8 @@ def evaluate(path: Path, ctx_name: str = "parse01"):
         by_cat[r["category"]][1] += 1
     summary = {
         "data_sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "ctx": ctx_name,
+        "n_exp": n_exp, "n_got": n_got, "n_hit": n_hit,
         "phrase_ok_ci95": wilson(k, n),
         "by_category": {c: {"ok": a, "n": b, "share": round(a / b, 3), "ci95": wilson(a, b)}
                         for c, (a, b) in sorted(by_cat.items())},

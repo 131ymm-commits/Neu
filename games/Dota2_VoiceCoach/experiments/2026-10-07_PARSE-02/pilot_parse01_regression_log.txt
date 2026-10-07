@@ -1,0 +1,57 @@
+{
+ "data_sha256": "1dc5bcd36d170cda984c1096ed55992d0cbcba28f1162f53a60c4b0a40393951",
+ "ctx": "parse01",
+ "n_exp": 113,
+ "n_got": 115,
+ "n_hit": 113,
+ "phrase_ok_ci95": [
+  0.954,
+  1.0
+ ],
+ "by_category": {
+  "hard": {
+   "ok": 13,
+   "n": 13,
+   "share": 1.0,
+   "ci95": [
+    0.772,
+    1.0
+   ]
+  },
+  "modal": {
+   "ok": 13,
+   "n": 13,
+   "share": 1.0,
+   "ci95": [
+    0.772,
+    1.0
+   ]
+  },
+  "multi": {
+   "ok": 27,
+   "n": 27,
+   "share": 1.0,
+   "ci95": [
+    0.875,
+    1.0
+   ]
+  },
+  "simple": {
+   "ok": 27,
+   "n": 27,
+   "share": 1.0,
+   "ci95": [
+    0.875,
+    1.0
+   ]
+  }
+ },
+ "phrases": 80,
+ "phrase_ok": 80,
+ "phrase_ok_share": 1.0,
+ "command_recall": 1.0,
+ "command_precision": 0.983,
+ "clarify_expected": 6,
+ "clarify_asked_when_expected": 6,
+ "asked_when_not_expected": 0
+}

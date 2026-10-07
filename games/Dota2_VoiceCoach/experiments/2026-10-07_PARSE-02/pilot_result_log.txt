@@ -1,0 +1,60 @@
+7b9049f7f3a495dca9e50d680dd7cccba493f5c667b770a5a08fe060c27e6f22  voicecoach/__init__.py
+3b4c68116892a7de73a7c4280beabf9e8ff4209d0449950b7df37eaa21b34ddc  voicecoach/parser.py
+f24d1b5fd3b13e4bdf444fd6e75f3f2ebbff9b3fc544064006d8c247c7b8972b  voicecoach/lexicon.py
+cbb934240e3ef6119f5e17e6d3f155f9036117baa248d54d3ff6b4eb62993f86  voicecoach/protocol.py
+e40ba70c3b7e2af4ce8a4095880c4c3853c9de4e277e07ae9b3a144ecf94f19b  data/heroes.json
+1ebc44b6df2b4c6a6a88df49d6d94e00e353b0b5fcdad6ed1dddf6f020769021  data/items_internal.txt
+b8cf6472e082f15a89faea3692d659a31984bf9f5f0e38fbea720f70b2b50d20  tests/eval_heldout.py
+0242dad9c532356b49cfc6e5296706c7bc9824eb4d468e9542a6db459046019e  stub_phrases.jsonl
+{
+ "data_sha256": "0242dad9c532356b49cfc6e5296706c7bc9824eb4d468e9542a6db459046019e",
+ "ctx": "parse02",
+ "n_exp": 4,
+ "n_got": 6,
+ "n_hit": 4,
+ "phrase_ok_ci95": [
+  0.376,
+  0.964
+ ],
+ "by_category": {
+  "hard": {
+   "ok": 1,
+   "n": 2,
+   "share": 0.5,
+   "ci95": [
+    0.095,
+    0.905
+   ]
+  },
+  "multi": {
+   "ok": 1,
+   "n": 1,
+   "share": 1.0,
+   "ci95": [
+    0.207,
+    1.0
+   ]
+  },
+  "simple": {
+   "ok": 2,
+   "n": 2,
+   "share": 1.0,
+   "ci95": [
+    0.342,
+    1.0
+   ]
+  }
+ },
+ "phrases": 5,
+ "phrase_ok": 4,
+ "phrase_ok_share": 0.8,
+ "command_recall": 1.0,
+ "command_precision": 0.667,
+ "clarify_expected": 1,
+ "clarify_asked_when_expected": 1,
+ "asked_when_not_expected": 0,
+ "crashed_phrases": 0,
+ "parser_state": "рабочая копия (хеши ниже)",
+ "eval_sha256": "b8cf6472e082f15a89faea3692d659a31984bf9f5f0e38fbea720f70b2b50d20"
+}
+#3 [hard] неверно

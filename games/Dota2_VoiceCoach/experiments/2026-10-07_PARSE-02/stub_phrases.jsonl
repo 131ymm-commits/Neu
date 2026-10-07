@@ -1,0 +1,5 @@
+{"id": 1, "category": "simple", "text": "петя фарми лес", "expected": [{"action": "farm", "agents": [1], "params": {"area": "jungle_own"}}], "clarify": false, "note": "заглушка Claude"}
+{"id": 2, "category": "multi", "text": "вова ставь вард на руну остальные на рошана", "expected": [{"action": "ward", "agents": [5], "params": {"place": "rune"}}, {"action": "roshan", "agents": [1, 2, 3, 4], "params": {}}], "clarify": false, "note": "заглушка Claude"}
+{"id": 3, "category": "hard", "text": "у них шейкер без блинка", "expected": [], "clarify": false, "note": "заглушка Claude: только сведения"}
+{"id": 4, "category": "hard", "text": "иди на мид", "expected": [], "clarify": true, "note": "заглушка Claude: адресат неясен"}
+{"id": 5, "category": "simple", "text": "пушим сейф", "expected": [{"action": "push", "agents": [1, 2, 3, 4, 5], "params": {"lane": "top"}}], "clarify": false, "note": "заглушка Claude: сейф у Dire — top"}
