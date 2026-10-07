@@ -6,7 +6,10 @@
 --   * превращает команды в намерения (coach_intents.lua) и сдвигает желания режимов ботов:
 --     в конец каждого mode_*_generic.lua установщик дописывает обёртку GetDesire → M.desire(...);
 --   * мгновенные приказы: купить (в начало очереди покупок OHA), выкупиться;
---   * отвечает тренеру: в командный чат игры и на сервер (озвучка на странице тренера).
+--   * отвечает тренеру: в командный чат игры и на сервер (озвучка на странице тренера);
+--   * понимает команды короткого формата прямо из командного чата игры («1 фарм лес. все рош»):
+--     разбор — coach_text.lua, тот же, что на странице тренера (решение автора 07.10.2026: голос
+--     отложен, команды текстом). Сервер для этого не нужен. Обычный чат не трогается.
 --
 -- Установка — game/prototype_oha/install.py; настройки — coach_config.lua (пишет установщик).
 -- Всё, что зависит от API ботов, обёрнуто в pcall: ошибка тренера не должна ломать бота.
@@ -17,6 +20,9 @@ local Voice = require(DIR .. "/coach/coach_voice")
 local json = require(DIR .. "/coach/json")
 local okc, Config = pcall(require, DIR .. "/coach/coach_config")
 if not okc or type(Config) ~= "table" then Config = {} end
+local okt, Text = pcall(require, DIR .. "/coach/coach_text")
+local okx, TextData = pcall(require, DIR .. "/coach/coach_text_data")
+if okt and okx and type(Text) == "table" and type(TextData) == "table" then Text.init(TextData) else Text = nil end
 
 local M = {}
 M.base_url = Config.base_url or "http://127.0.0.1:8787"
@@ -27,8 +33,10 @@ M.poll_interval = Config.poll_interval or 0.5
 M.channel = Config.channel or "auto"
 M.inbox_prefix = Config.inbox_prefix or "bots/coach/inbox_"
 M.debug = Config.debug and true or false
+M.chat_commands = (Config.chat_commands ~= false) and Text ~= nil   -- команды из чата игры
 M.teams = M.teams or {}          -- состояние по командам (общее, если модуль общий для ботов)
 M.bots = M.bots or {}            -- состояние по ботам (ключ — PlayerID)
+M.chat_installed = M.chat_installed or {}
 
 local function log(msg)
   if M.debug then print("[тренер] " .. tostring(msg)) end
@@ -54,7 +62,8 @@ local function team_state(team)
   if t == nil then
     local personas = (Config.personas and Config.personas[team]) or {}
     t = { intents = Intents.new(personas), last_seq = 0, next_poll = 0, in_flight = false,
-          fail = 0, poller = nil, poller_seen = -1e9, state_sent = false }
+          fail = 0, poller = nil, poller_seen = -1e9, state_sent = false,
+          chat_last = 0, chat_seen = {}, chat_error = nil }
     M.teams[team] = t
   end
   return t
@@ -277,6 +286,106 @@ local function handle_new(bot, team, pos, now)
 end
 
 -- главный вход: вызывается из обёрток режимов
+-- --- команды из чата игры (короткий формат) ---
+
+local function other_team(team)
+  if team == TEAM_RADIANT then return TEAM_DIRE end
+  return TEAM_RADIANT
+end
+
+local function hero_of(pid)
+  local okh, h = pcall(GetSelectedHeroName, pid)
+  if okh and type(h) == "string" and h ~= "" then return h end
+  return nil
+end
+
+-- состав для разбора: имена из настроек (coach_config, по позициям); герой позиции — по роли бота,
+-- если она уже известна (M.bots[pid].pos), иначе по слоту лобби
+local function text_ctx(team)
+  local personas = (Config.personas and Config.personas[team]) or {}
+  local hero_by_pos = {}
+  for slot, pid in ipairs(GetTeamPlayers(team) or {}) do
+    local pos = (M.bots[pid] and M.bots[pid].pos) or slot
+    hero_by_pos[pos] = hero_of(pid)
+  end
+  local agents = {}
+  for pos = 1, 5 do
+    local p = personas[pos] or {}
+    agents[#agents + 1] = { pos = pos, name = p.name or "", aliases = p.aliases or {}, hero = hero_by_pos[pos] }
+  end
+  local enemies = {}
+  for _, pid in ipairs(GetTeamPlayers(other_team(team)) or {}) do
+    local h = hero_of(pid)
+    if h then enemies[#enemies + 1] = h end
+  end
+  return { team = team_name(team), agents = agents, enemy_heroes = enemies }
+end
+
+local function is_bot_player(pid)
+  local okb, isbot = pcall(IsPlayerBot, pid)
+  return okb and isbot == true
+end
+
+-- отвечает на ошибки формата один бот команды: с наименьшим PlayerID среди ботов
+local function is_spokesbot(bot, team)
+  local best = nil
+  for _, pid in ipairs(GetTeamPlayers(team) or {}) do
+    if is_bot_player(pid) and (best == nil or pid < best) then best = pid end
+  end
+  return best == bot:GetPlayerID()
+end
+
+function M._on_chat(team, chat)
+  if not M.chat_commands or type(chat) ~= "table" then return end
+  local pid, text = chat.player_id, chat.string
+  if type(text) ~= "string" or text == "" then return end
+  if is_bot_player(pid) then return end                     -- боты не командуют
+  local mine = false
+  for _, p in ipairs(GetTeamPlayers(team) or {}) do
+    if p == pid then mine = true end
+  end
+  if not mine then return end                               -- только человек своей команды
+  local t = team_state(team)
+  local key = tostring(pid) .. "|" .. text .. "|" .. tostring(math.floor(clock()))
+  if t.chat_seen[key] then return end                       -- колбэк есть у каждого бота: разбор один раз
+  t.chat_seen[key] = true
+  local ctx = text_ctx(team)
+  if not Text.looks_like_command(text, ctx) then return end -- обычный чат — молча
+  local r = Text.parse(text, ctx)
+  if #r.errors > 0 then
+    t.chat_error = { text = "Не понял: " .. r.errors[1], said = false }
+    note("чат: ошибка формата: " .. r.errors[1])
+    return
+  end
+  for _, cmd in ipairs(r.commands) do
+    cmd.seq = math.max(t.last_seq, t.chat_last or 0) + 0.001   -- между номерами команд сервера
+    t.chat_last = cmd.seq
+    Intents.apply(t.intents, cmd, clock())
+    local who = {}
+    for _, p in ipairs(cmd.agents or {}) do who[#who + 1] = tostring(p) end
+    note(string.format("чат: %s → позиции %s", tostring(cmd.action), table.concat(who, ",")))
+  end
+end
+
+local function chat_setup(bot, team)
+  local id = bot:GetPlayerID()
+  if not M.chat_commands or M.chat_installed[id] then return end
+  M.chat_installed[id] = true
+  local ok = pcall(InstallChatCallback, function(chat)
+    local okc2, err = pcall(M._on_chat, team, chat)
+    if not okc2 then note("чат: ошибка разбора: " .. tostring(err)) end
+  end)
+  note("чат: команды короткого формата " .. (ok and "включены" or "недоступны (нет InstallChatCallback)"))
+end
+
+local function chat_reply_error(bot, team)
+  local t = team_state(team)
+  if t.chat_error and not t.chat_error.said and is_spokesbot(bot, team) then
+    t.chat_error.said = true
+    pcall(function() bot:ActionImmediate_Chat(t.chat_error.text, false) end)
+  end
+end
+
 function M.desire(mode, base)
   local okb, bot = pcall(GetBot)
   if not okb or bot == nil then return base end
@@ -304,6 +413,8 @@ function M.desire(mode, base)
     end
   end
 
+  pcall(chat_setup, bot, team)
+  pcall(chat_reply_error, bot, team)
   local okh, err = pcall(handle_new, bot, team, pos, now)
   if not okh then log("ошибка ответа: " .. tostring(err)) end
 

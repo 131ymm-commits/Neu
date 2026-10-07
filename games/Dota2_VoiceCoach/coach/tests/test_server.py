@@ -62,6 +62,37 @@ class ServerFlow(unittest.TestCase):
         code, res = call(self.base, "GET", room + "/commands?team=dire&after=0")
         self.assertEqual(res["commands"], [])
 
+    def test_short_format_goes_to_game(self):
+        """Текстовые команды (решение автора 07.10.2026): строгий формат уходит в игру как есть."""
+        room = "/api/ts1"
+        code, res = call(self.base, "POST", room + "/say",
+                         {"team": "radiant", "text": "1 фарм лес. 23 ганг мид", "mode": "short", "source": "text"})
+        self.assertEqual(code, 200)
+        self.assertEqual(res["errors"], [])
+        self.assertEqual([(c["action"], c["agents"]) for c in res["commands"]], [("farm", [1]), ("gank", [2, 3])])
+        self.assertTrue(all(c["human"] for c in res["commands"]))
+        code, res = call(self.base, "GET", room + "/commands?team=radiant&after=0")
+        self.assertEqual([c["action"] for c in res["commands"]], ["farm", "gank"])
+
+    def test_short_format_error_suggests_and_sends_nothing(self):
+        room = "/api/ts2"
+        call(self.base, "POST", room + "/state", {"team": "radiant", "agents": [
+            {"pos": 1, "name": "Вася", "aliases": ["вася"]}, {"pos": 2, "name": "Петя", "aliases": ["петя"]},
+            {"pos": 3}, {"pos": 4}, {"pos": 5}]})
+        # свободная фраза в строгом режиме: ничего не уходит, подсказка — в коротком формате
+        code, res = call(self.base, "POST", room + "/say",
+                         {"team": "radiant", "text": "вася фарми лес остальные на рошана", "mode": "short"})
+        self.assertEqual(code, 200)
+        self.assertEqual(res["commands"], [])
+        self.assertTrue(res["errors"])
+        self.assertEqual(res["suggestion"], "1 фарм лес. все-1 рош")
+        self.assertEqual(len(res["suggestion_human"]), 2)
+        code, got = call(self.base, "GET", room + "/commands?team=radiant&after=0")
+        self.assertEqual(got["commands"], [])
+        # подсказку можно отправить как есть
+        code, res = call(self.base, "POST", room + "/say", {"team": "radiant", "text": res["suggestion"], "mode": "short"})
+        self.assertEqual([(c["action"], c["agents"]) for c in res["commands"]], [("farm", [1]), ("roshan", [2, 3, 4, 5])])
+
     def test_clarify_goes_to_events_not_to_game(self):
         room = "/api/t2"
         code, res = call(self.base, "POST", room + "/say", {"team": "dire", "text": "купи бкб"})

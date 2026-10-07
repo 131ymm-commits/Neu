@@ -20,6 +20,13 @@
   .cmd { display:inline-block; margin:2px 6px 2px 0; padding:2px 8px; border-radius:6px; background:#263a2a; }
   .clar { background:#4a2b2b; }
   .ev { color:#9fd3ff; }
+  .err { color:#ff9c8f; }
+  .sug { display:inline-block; margin-top:4px; padding:2px 8px; border-radius:6px; background:#2b3550; cursor:pointer; }
+  details { background:var(--card); border-radius:8px; padding:8px 12px; margin:12px 0; }
+  summary { cursor:pointer; }
+  .sheet { font-size:14px; line-height:1.5; }
+  .sheet code { background:#2a2f37; padding:1px 5px; border-radius:4px; }
+  #text { font-size:18px; }
 </style>
 </head>
 <body>
@@ -29,18 +36,42 @@
     <label>Комната <input id="room" value="local" size="8"></label>
     <label>Команда <select id="team"><option value="radiant">Свет (Radiant)</option><option value="dire">Тьма (Dire)</option></select></label>
     <label><input type="checkbox" id="tts" checked> озвучивать ответы</label>
-    <label><input type="checkbox" id="always"> слушать постоянно</label>
   </div>
   <p class="muted" id="roster">Состав: …</p>
-  <button id="ptt">Держите кнопку (или пробел) и говорите</button>
-  <p class="muted" id="hint">Распознавание речи — встроенное в Chrome (Web Speech API, русский). Если его нет — пишите текстом.</p>
-  <p class="muted">Во время матча вкладка не в фокусе: включите «слушать постоянно» или запустите
-  <code>python ptt_hotkey.py</code> — тогда говорить можно, держа боковую кнопку мыши в игре.</p>
   <div class="row">
-    <input type="text" id="text" placeholder="например: Вася, фарми лес, остальные на Рошана">
+    <input type="text" id="text" autofocus autocomplete="off"
+           placeholder="1 фарм лес. 23 ганг мид. все рош">
     <button id="send">Отправить</button>
   </div>
+  <p class="muted" id="status">Enter — отправить. Если строка не по формату, ничего не уходит, а в поле
+  появится подсказка — проверьте её и нажмите Enter ещё раз.</p>
+  <details open>
+    <summary>Шпаргалка: короткий формат</summary>
+    <div class="sheet">
+      <p><b>[кому] действие [где/что] [!]</b>; несколько команд — через точку, запятую или <code>;</code>.</p>
+      <p><b>Кому:</b> <code>1</code>…<code>5</code>, несколько — <code>23</code> или <code>2,3</code>;
+        <code>все</code>, <code>все-1</code>, <code>все кроме 4,5</code>; имя из состава или свой герой;
+        <code>керри мидер хардер саппы коры</code>. Для командных действий можно не писать — тогда всем.</p>
+      <p><b>Действия:</b> <code>фарм пуш деф ганг сбор рош торм смок назад фокус драка жди сплит вард стак
+        купи юз бб ульт держи сейв за тп иди сам отмена доклад</code>; запрет — <code>не рош</code>.</p>
+      <p><b>Где:</b> <code>топ мид бот сейф хард лес «их лес» древние база руна рош торм</code>, вышка
+        <code>т1</code>…<code>т4</code>. <b>Цель:</b> герой (<code>марс</code>, <code>пудж</code>) или
+        <code>в1</code>…<code>в5</code> (позиция врага). <b>Союзник</b> для <code>сейв</code>/<code>за</code> — номер или имя.
+        <b>Предмет:</b> <code>бкб блинк гем даст вард сентри тп форс</code>…</p>
+      <p><b>Срочно</b> — <code>!</code> в конце; <b>потом</b> — <code>потом</code> в начале команды.</p>
+      <p>Примеры: <code>1 фарм лес. 23 ганг мид. 45 вард руна</code> · <code>все-1 пуш бот т2</code> ·
+        <code>3 ульт марс !</code> · <code>4 сейв 1</code> · <code>все смок ганг мид</code> · <code>все не рош</code></p>
+    </div>
+  </details>
   <div class="log" id="log"></div>
+  <details>
+    <summary>Голос (отложен по решению автора 07.10.2026)</summary>
+    <p class="muted">Распознавание речи Chrome (Web Speech API). Фразы голосом разбираются свободно, без
+    строгого формата — точность ниже (замер PARSE-02: 45 из 80).</p>
+    <button id="ptt">Держите кнопку и говорите</button>
+    <p class="muted" id="hint"></p>
+    <label><input type="checkbox" id="always"> слушать постоянно</label>
+  </details>
 </main>
 <script>
 const $ = (id) => document.getElementById(id);
@@ -56,19 +87,28 @@ function esc(s) { return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&l
 
 async function say(text, source) {
   if (!text.trim()) return;
+  const mode = source === 'text' ? 'short' : 'free';      // текст — строгий короткий формат
   const r = await fetch(api('say'), { method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ team:$('team').value, text, source }) });
+    body: JSON.stringify({ team:$('team').value, text, source, mode }) });
   const res = await r.json();
   if (!r.ok) { addEntry(`<b>Ошибка:</b> ${esc(res.error)}`); return; }
+  if (mode === 'short' && res.errors && res.errors.length) {
+    const sug = res.suggestion ? `<br>Может быть: <span class="sug" title="${esc((res.suggestion_human || []).join('; '))}">${esc(res.suggestion)}</span>
+      <span class="muted">— уже в поле ввода, Enter отправит</span>` : '';
+    addEntry(`«${esc(text)}» <span class="err">не отправлено: ${esc(res.errors.join('; '))}</span>${sug}`);
+    if (res.suggestion) { $('text').value = res.suggestion; $('text').focus(); }
+    return;
+  }
   const cmds = (res.commands || []).map(c => {
     const p = Object.entries(c.params).map(([k,v]) => `${k}=${v}`).join(' ');
     const code = `${c.action} → [${c.agents.join(',')}] ${p}`;
     return `<span class="cmd ${c.clarify ? 'clar' : ''}" title="${esc(code)}">${esc(c.human || code)}</span>`;
   }).join('');
-  addEntry(`«${esc(text)}» <span class="muted">уверенность ${res.confidence}${res.unknown.length ? ', не понял: ' + esc(res.unknown.join(', ')) : ''}</span><br>${cmds || '<span class="muted">команд нет</span>'}`);
+  const info = mode === 'short' ? '' : `<span class="muted">уверенность ${res.confidence}${res.unknown.length ? ', не понял: ' + esc(res.unknown.join(', ')) : ''}</span>`;
+  addEntry(`«${esc(text)}» ${info}<br>${cmds || '<span class="muted">команд нет</span>'}`);
 }
 
-$('send').onclick = () => { say($('text').value, 'text'); $('text').value = ''; };
+$('send').onclick = () => { const t = $('text').value; $('text').value = ''; say(t, 'text'); };
 $('text').addEventListener('keydown', e => { if (e.key === 'Enter') $('send').onclick(); });
 
 // --- речь: Web Speech API, нажми-и-говори ---
@@ -99,7 +139,7 @@ if (SR) {
       setTimeout(() => { if (alwaysOn) start(); }, 300);
     } else {
       $('ptt').classList.remove('on');
-      $('ptt').textContent = 'Держите кнопку (или пробел) и говорите';
+      $('ptt').textContent = 'Держите кнопку и говорите';
     }
   };
   rec.onerror = (e) => {
@@ -125,8 +165,7 @@ $('always').addEventListener('change', () => {
 $('ptt').addEventListener('pointerdown', start);
 $('ptt').addEventListener('pointerup', stop);
 $('ptt').addEventListener('pointerleave', stop);
-document.addEventListener('keydown', e => { if (e.code === 'Space' && document.activeElement !== $('text')) { e.preventDefault(); start(); } });
-document.addEventListener('keyup', e => { if (e.code === 'Space') stop(); });
+// пробел больше не включает микрофон: главный ввод — текст (голос отложен 07.10.2026)
 
 // --- состав команды: кого как звать ---
 async function loadRoster() {

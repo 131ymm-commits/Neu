@@ -115,7 +115,8 @@ class Install(unittest.TestCase):
                             roster_path=self.tmp / "roster.json")
         vs = bots.parent
         self.assertTrue(any(p.name.startswith("bots_backup_") for p in vs.iterdir()))
-        for f in ("coach_bot.lua", "coach_intents.lua", "json.lua", "coach_config.lua"):
+        for f in ("coach_bot.lua", "coach_intents.lua", "json.lua", "coach_config.lua", "coach_voice.lua",
+                  "coach_text.lua", "coach_text_data.lua"):
             self.assertTrue((bots / "coach" / f).exists(), f)
         farm = (bots / "mode_farm_generic.lua").read_text(encoding="utf-8")
         self.assertEqual(farm.count(inst.WRAP_BEGIN), 1)

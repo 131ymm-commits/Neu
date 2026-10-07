@@ -5,7 +5,10 @@
 Все пути — JSON. Комната (room) объединяет двух тренеров и одну игру; команда тренера
 (team) — radiant или dire. Игра опрашивает /commands; голосовые клиенты — /events.
 
-  POST /api/{room}/say      {"team","text","source"?}      → разбор + команды в очередь
+  POST /api/{room}/say      {"team","text","source"?,"mode"?} → разбор + команды в очередь
+       mode="short" — короткий формат (textcmd.py, решение автора 07.10.2026: голос отложен):
+       строгий разбор; при ошибке ничего не уходит, в ответе — ошибки и подсказка в коротком
+       формате из свободного разбора. Без mode — свободная фраза (parser.py), как раньше.
   GET  /api/{room}/commands?team=radiant&after=N             ← игра забирает команды (seq > N)
   POST /api/{room}/state    {"team","agents":[...],"enemy_heroes":[...]}  ← состав матча от игры
   POST /api/{room}/events   {"team","events":[{"pos","kind","text"}]}       ← ответы агентов
@@ -39,6 +42,7 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 from .describe import describe
 from .parser import Agent, MatchContext, parse
+from .textcmd import parse_short, suggest
 
 TEAMS = ("radiant", "dire")
 MAX_QUEUE = 500
@@ -82,7 +86,9 @@ class Room:
         self.seq += 1
         return self.seq
 
-    def say(self, team: str, text: str, source: str = "voice") -> dict:
+    def say(self, team: str, text: str, source: str = "voice", mode: str = "free") -> dict:
+        if mode == "short":
+            return self.say_short(team, text, source)
         with self.lock:
             ctx = self.ctx[team]
             res = parse(text, ctx)
@@ -102,6 +108,39 @@ class Room:
             self._write_inbox(team)
             entry = {"t": time.time(), "team": team, "text": text, "source": source,
                      "confidence": res.confidence, "unknown": res.unknown, "commands": out}
+            self.log.append(entry)
+            self.lock.notify_all()
+            return entry
+
+    def say_short(self, team: str, text: str, source: str = "text") -> dict:
+        """Короткий формат: всё или ничего. Ошибка → подсказка из свободного разбора, в очередь не идёт."""
+        with self.lock:
+            ctx = self.ctx[team]
+            names = {a.pos: a.name for a in ctx.agents if a.name}
+            res = parse_short(text, ctx)
+            out = []
+            suggestion, suggestion_human = "", []
+            if res.ok:
+                for c in res.commands:
+                    item = {"seq": self._next(), "t": time.time(), **c.to_json(), "human": describe(c, names)}
+                    self.commands[team].append(item)
+                    out.append(item)
+                del self.commands[team][:-MAX_QUEUE]
+                self._write_inbox(team)
+            else:
+                free = parse(text, MatchContext(team=ctx.team, agents=ctx.agents, enemy_heroes=ctx.enemy_heroes))
+                suggestion = suggest(free.commands, ctx)
+                if suggestion:
+                    check = parse_short(suggestion, ctx)
+                    suggestion_human = [describe(c, names) for c in check.commands] if check.ok else []
+                    if not check.ok:
+                        suggestion = ""
+            entry = {"t": time.time(), "team": team, "text": text, "source": source, "format": "short",
+                     "confidence": 1.0 if res.ok else 0.0, "unknown": [], "commands": out,
+                     "errors": res.errors or ([] if res.commands else ["пустая строка"]),
+                     "suggestion": suggestion, "suggestion_human": suggestion_human}
+            if res.ok:
+                entry["errors"] = []
             self.log.append(entry)
             self.lock.notify_all()
             return entry
@@ -283,7 +322,8 @@ def make_handler(hub: Hub):
                         text = (body.get("text") or "").strip()
                         if not text:
                             return self._send(400, {"error": "пустой text"})
-                        return self._send(200, room.say(team, text, body.get("source", "voice")))
+                        return self._send(200, room.say(team, text, body.get("source", "voice"),
+                                                        body.get("mode", "free")))
                     if parts[2] == "state":
                         room.set_state(team, body)
                         return self._send(200, {"ok": True})

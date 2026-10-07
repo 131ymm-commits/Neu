@@ -37,6 +37,12 @@ __heroes = {}
 function GetTeamPlayers(team) return __players[team] end
 function GetSelectedHeroName(pid) return __heroes[pid] or "" end
 function GetItemCost(item) if item == "item_black_king_bar" then return 4050 end return 500 end
+__chat_cbs, __humans = {}, {}
+function InstallChatCallback(cb) table.insert(__chat_cbs, cb) end
+function IsPlayerBot(pid) return not __humans[pid] end
+function chat(pid, text, team_only)
+  for _, cb in ipairs(__chat_cbs) do cb({ player_id = pid, string = text, team_only = team_only ~= false }) end
+end
 __bots, __cur = {}, nil
 function GetBot() return __cur end
 function GetTeam() return __cur.team end
@@ -92,12 +98,15 @@ class CoachBot(unittest.TestCase):
         shutil.copy(GAME / "shared" / "coach_intents.lua", coach)
         shutil.copy(GAME / "shared" / "coach_voice.lua", coach)
         shutil.copy(GAME / "shared" / "json.lua", coach)
+        shutil.copy(GAME / "shared" / "coach_text.lua", coach)
+        shutil.copy(GAME / "shared" / "coach_text_data.lua", coach)
         self.room = f"bot{id(self)}"
         self.base = f"http://127.0.0.1:{self.port}"
         (coach / "coach_config.lua").write_text(
             f'return {{ base_url = "{self.base}", room = "{self.room}", poll_interval = 0.5,\n'
             '  personas = { [2] = { [1] = { obedience = 1, desire_bonus = { fight = 0.1 } },\n'
-            '    [2] = { obedience = 0.35, tone = "grumpy" }, [3] = { tone = "hype" } } } }\n',
+            '    [2] = { obedience = 0.35, tone = "grumpy" },\n'
+            '    [3] = { tone = "hype", name = "Коля", aliases = { "коля" } } } } }\n',
             encoding="utf-8")
         self.L = lupa_rt.LuaRuntime(unpack_returned_tuples=True)
         self.L.globals().py_http = self.py_http
@@ -176,6 +185,62 @@ class CoachBot(unittest.TestCase):
         self.assertTrue(calm & set(chat), chat)
         texts = [e["text"] for e in self.events()]
         self.assertTrue(calm & set(texts), texts)
+
+    # --- команды короткого формата из чата игры (решение автора 07.10.2026) ---
+
+    def tick_bots(self, pids, mode, base):
+        return {pid: self.desire(pid, mode, base) for pid in pids}
+
+    def human_chat(self, pid, text):
+        self.L.globals()["__humans"][pid] = True
+        self.L.globals()["chat"](pid, text)
+
+    def test_chat_command_applies_without_server(self):
+        self.at(100)
+        self.tick_bots(range(1, 10), "farm", 0.1)            # боты ставят колбэк чата
+        self.human_chat(0, "3 фарм лес. все-3 рош")
+        self.at(100.2)
+        farm = self.tick_bots(range(1, 10), "farm", 0.1)
+        rosh = self.tick_bots(range(1, 10), "roshan", 0.1)
+        self.assertGreater(farm[2], 0.5)                     # pid 2 — позиция 3
+        for pid in (1, 3, 4):
+            self.assertGreater(rosh[pid], 0.3, pid)
+        self.assertLessEqual(rosh[2], 0.1 + 1e-9)
+        for pid in range(5, 10):                             # другая команда не тронута
+            self.assertAlmostEqual(rosh[pid], 0.1, msg=pid)
+
+    def test_chat_names_from_config(self):
+        self.at(100)
+        self.tick_bots(range(1, 10), "farm", 0.1)
+        self.human_chat(0, "коля, фарм лес")
+        self.at(100.2)
+        self.assertGreater(self.tick_bots([2], "farm", 0.1)[2], 0.5)
+
+    def test_chat_error_answered_once(self):
+        self.at(100)
+        self.tick_bots(range(1, 10), "farm", 0.1)
+        self.human_chat(0, "3 летай")
+        self.at(100.2)
+        self.tick_bots(range(1, 10), "farm", 0.1)
+        self.tick_bots(range(1, 10), "farm", 0.1)
+        said = {pid: [t for t in self.bots[pid].chat.values() if t.startswith("Не понял")] for pid in range(1, 10)}
+        self.assertEqual(len(said[1]), 1, said)               # спикер — бот с наименьшим PlayerID
+        self.assertTrue(all(not said[pid] for pid in range(2, 10)), said)
+        self.assertIn("летай", said[1][0])
+
+    def test_chat_ignores_plain_chat_and_enemies(self):
+        self.at(100)
+        self.tick_bots(range(1, 10), "farm", 0.1)
+        self.human_chat(0, "gg")                              # обычный чат — молча
+        self.human_chat(5, "все рош")                         # человек другой команды
+        self.at(100.2)
+        rosh = self.tick_bots(range(1, 10), "roshan", 0.1)
+        for pid in (1, 2, 3, 4):
+            self.assertAlmostEqual(rosh[pid], 0.1, msg=pid)
+        self.assertTrue(all(not [t for t in self.bots[pid].chat.values() if t.startswith("Не понял")]
+                            for pid in range(1, 10)))
+        for pid in (6, 7, 8, 9):                              # своя команда человека 5 — слушается
+            self.assertGreater(rosh[pid], 0.3, pid)
 
     def test_buy_goes_to_oha_purchase_stack(self):
         self.at(100)

@@ -176,7 +176,8 @@ def config_text(base_url: str, room: str, lineup_agents: dict, channel: str = "a
         for pos, a in enumerate(agents, start=1):
             if a:
                 b = a.get("behavior", {})
-                personas[tid][pos] = {"name": a.get("name"), "obedience": b.get("obedience", 0.85),
+                personas[tid][pos] = {"name": a.get("name"), "aliases": a.get("aliases", []),
+                                      "obedience": b.get("obedience", 0.85),
                                       "desire_bonus": b.get("desire_bonus", {}),
                                       "tone": (a.get("voice") or {}).get("tone", "calm")}
     return ("-- Настройки тренера для ботов: пишет install.py, руками править можно.\n"
@@ -232,6 +233,8 @@ def install(dota: Path, oha: Path, lineup: dict, base_url: str, room: str, log=p
     shutil.copy(GAME / "shared" / "coach_intents.lua", coach)
     shutil.copy(GAME / "shared" / "coach_voice.lua", coach)
     shutil.copy(GAME / "shared" / "json.lua", coach)
+    shutil.copy(GAME / "shared" / "coach_text.lua", coach)          # команды из чата игры
+    shutil.copy(GAME / "shared" / "coach_text_data.lua", coach)
     (coach / "coach_config.lua").write_text(config_text(base_url, room, lineup), encoding="utf-8")
     patched = []
     for f in sorted(bots.glob("mode_*_generic.lua")):

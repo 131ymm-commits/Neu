@@ -1,0 +1,959 @@
+{
+ "version": 1,
+ "contexts": {
+  "dire": {
+   "team": "dire",
+   "agents": [
+    {
+     "pos": 1,
+     "name": "Петя",
+     "aliases": [
+      "петя"
+     ],
+     "hero": "npc_dota_hero_juggernaut"
+    },
+    {
+     "pos": 2,
+     "name": "Серёга",
+     "aliases": [
+      "серега"
+     ],
+     "hero": "npc_dota_hero_storm_spirit"
+    },
+    {
+     "pos": 3,
+     "name": "Лёха",
+     "aliases": [
+      "леха"
+     ],
+     "hero": "npc_dota_hero_axe"
+    },
+    {
+     "pos": 4,
+     "name": "Дима",
+     "aliases": [
+      "дима"
+     ],
+     "hero": "npc_dota_hero_rubick"
+    },
+    {
+     "pos": 5,
+     "name": "Вова",
+     "aliases": [
+      "вова"
+     ],
+     "hero": "npc_dota_hero_witch_doctor"
+    }
+   ],
+   "enemy_heroes": [
+    "npc_dota_hero_antimage",
+    "npc_dota_hero_invoker",
+    "npc_dota_hero_mars",
+    "npc_dota_hero_earthshaker",
+    "npc_dota_hero_crystal_maiden"
+   ]
+  },
+  "radiant": {
+   "team": "radiant",
+   "agents": [
+    {
+     "pos": 1,
+     "name": "Вася",
+     "aliases": [
+      "вася"
+     ],
+     "hero": null
+    },
+    {
+     "pos": 2,
+     "name": "Петя",
+     "aliases": [
+      "петя"
+     ],
+     "hero": null
+    },
+    {
+     "pos": 3,
+     "name": "Коля",
+     "aliases": [
+      "коля"
+     ],
+     "hero": null
+    },
+    {
+     "pos": 4,
+     "name": "Дима",
+     "aliases": [
+      "дима"
+     ],
+     "hero": null
+    },
+    {
+     "pos": 5,
+     "name": "Саша",
+     "aliases": [
+      "саша"
+     ],
+     "hero": null
+    }
+   ],
+   "enemy_heroes": [
+    "npc_dota_hero_pudge",
+    "npc_dota_hero_phantom_assassin",
+    "npc_dota_hero_storm_spirit",
+    "npc_dota_hero_tidehunter",
+    "npc_dota_hero_lion"
+   ]
+  }
+ },
+ "cases": [
+  {
+   "ctx": "radiant",
+   "text": "1 фарм лес. 23 ганг мид. 45 вард руна",
+   "expect": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     },
+     "urgent": false,
+     "after_prev": false
+    },
+    {
+     "action": "gank",
+     "agents": [
+      2,
+      3
+     ],
+     "params": {
+      "lane": "mid"
+     },
+     "urgent": false,
+     "after_prev": false
+    },
+    {
+     "action": "ward",
+     "agents": [
+      4,
+      5
+     ],
+     "params": {
+      "place": "rune"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все рош",
+   "expect": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "рош",
+   "expect": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все-1 пуш бот т2",
+   "expect": [
+    {
+     "action": "push",
+     "agents": [
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "bot",
+      "tier": 2
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все-12 рош",
+   "expect": [
+    {
+     "action": "roshan",
+     "agents": [
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все кроме 4,5 пуш топ",
+   "expect": [
+    {
+     "action": "push",
+     "agents": [
+      1,
+      2,
+      3
+     ],
+     "params": {
+      "lane": "top"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "dire",
+   "text": "3 ульт марс !",
+   "expect": [
+    {
+     "action": "use_ult",
+     "agents": [
+      3
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_mars"
+     },
+     "urgent": true,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "ВСЕ РОШ!",
+   "expect": [
+    {
+     "action": "roshan",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": true,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "4 сейв 1",
+   "expect": [
+    {
+     "action": "save",
+     "agents": [
+      4
+     ],
+     "params": {
+      "ally": 1
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "5 купи сентри",
+   "expect": [
+    {
+     "action": "buy",
+     "agents": [
+      5
+     ],
+     "params": {
+      "item": "item_ward_sentry"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "5 купи вард",
+   "expect": [
+    {
+     "action": "buy",
+     "agents": [
+      5
+     ],
+     "params": {
+      "item": "item_ward_observer"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "3 юз бкб",
+   "expect": [
+    {
+     "action": "use_item",
+     "agents": [
+      3
+     ],
+     "params": {
+      "item": "item_black_king_bar"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "потом все назад",
+   "expect": [
+    {
+     "action": "retreat",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": true
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все смок ганг мид",
+   "expect": [
+    {
+     "action": "smoke",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "then": "gank",
+      "lane": "mid"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все не рош",
+   "expect": [
+    {
+     "action": "hold",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "what": "roshan"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 не фарм",
+   "expect": [
+    {
+     "action": "hold",
+     "agents": [
+      1
+     ],
+     "params": {
+      "what": "farm"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "dire",
+   "text": "дима, стак древние",
+   "expect": [
+    {
+     "action": "stack",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "ancients"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "dire",
+   "text": "петя фарм лес, серега тп мид",
+   "expect": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     },
+     "urgent": false,
+     "after_prev": false
+    },
+    {
+     "action": "tp",
+     "agents": [
+      2
+     ],
+     "params": {
+      "lane": "mid"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "dire",
+   "text": "джагг фарм сейф",
+   "expect": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "lane",
+      "lane": "top"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "dire",
+   "text": "пете фарм хард",
+   "expect": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "lane",
+      "lane": "bot"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "вася фарм хард",
+   "expect": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "lane",
+      "lane": "top"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "dire",
+   "text": "4 за серега",
+   "expect": [
+    {
+     "action": "follow",
+     "agents": [
+      4
+     ],
+     "params": {
+      "ally": 2
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "dire",
+   "text": "5 сейв джагг",
+   "expect": [
+    {
+     "action": "save",
+     "agents": [
+      5
+     ],
+     "params": {
+      "ally": 1
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "4 вард рош сентри",
+   "expect": [
+    {
+     "action": "ward",
+     "agents": [
+      4
+     ],
+     "params": {
+      "place": "roshan",
+      "kind": "sentry"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "фокус в1",
+   "expect": [
+    {
+     "action": "focus",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "enemy_pos": 1
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "12 ганг пудж",
+   "expect": [
+    {
+     "action": "gank",
+     "agents": [
+      1,
+      2
+     ],
+     "params": {
+      "enemy": "npc_dota_hero_pudge"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 держи ульт",
+   "expect": [
+    {
+     "action": "save_ult",
+     "agents": [
+      1
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все ?",
+   "expect": [
+    {
+     "action": "report",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 ф лес",
+   "expect": [
+    {
+     "action": "farm",
+     "agents": [
+      1
+     ],
+     "params": {
+      "area": "jungle_own"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 2 фарм их лес",
+   "expect": [
+    {
+     "action": "farm",
+     "agents": [
+      1,
+      2
+     ],
+     "params": {
+      "area": "jungle_enemy"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "1,2 фарм",
+   "expect": [
+    {
+     "action": "farm",
+     "agents": [
+      1,
+      2
+     ],
+     "params": {
+      "area": "auto"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все драка",
+   "expect": [
+    {
+     "action": "engage",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "3 тп база",
+   "expect": [
+    {
+     "action": "tp",
+     "agents": [
+      3
+     ],
+     "params": {
+      "place": "base"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 иди руна",
+   "expect": [
+    {
+     "action": "move",
+     "agents": [
+      1
+     ],
+     "params": {
+      "place": "rune"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 бб",
+   "expect": [
+    {
+     "action": "buyback",
+     "agents": [
+      1
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "сам",
+   "expect": [
+    {
+     "action": "free",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "отмена",
+   "expect": [
+    {
+     "action": "cancel",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все деф т3 мид",
+   "expect": [
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "lane": "mid",
+      "tier": 3
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "все деф база",
+   "expect": [
+    {
+     "action": "defend",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "place": "base"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "саппы вард",
+   "expect": [
+    {
+     "action": "ward",
+     "agents": [
+      4,
+      5
+     ],
+     "params": {},
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "коры пуш бот",
+   "expect": [
+    {
+     "action": "push",
+     "agents": [
+      1,
+      2,
+      3
+     ],
+     "params": {
+      "lane": "bot"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  },
+  {
+   "ctx": "radiant",
+   "text": "сбор рош",
+   "expect": [
+    {
+     "action": "group",
+     "agents": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "params": {
+      "place": "roshan"
+     },
+     "urgent": false,
+     "after_prev": false
+    }
+   ]
+  }
+ ],
+ "errors": [
+  {
+   "ctx": "radiant",
+   "text": "мид пуш",
+   "error_contains": "место пишется после действия"
+  },
+  {
+   "ctx": "radiant",
+   "text": "купи бкб",
+   "error_contains": "кому"
+  },
+  {
+   "ctx": "radiant",
+   "text": "фокус",
+   "error_contains": "цель"
+  },
+  {
+   "ctx": "radiant",
+   "text": "2 тп",
+   "error_contains": "куда"
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 фарм лес. 2 абракадабра",
+   "error_contains": "абракадабра"
+  },
+  {
+   "ctx": "dire",
+   "text": "все фокус джагг",
+   "error_contains": "наш герой"
+  },
+  {
+   "ctx": "radiant",
+   "text": "все",
+   "error_contains": "нет действия"
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 сейв",
+   "error_contains": "кого"
+  },
+  {
+   "ctx": "radiant",
+   "text": "1 ганг лес",
+   "error_contains": "не подходит"
+  }
+ ]
+}
