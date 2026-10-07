@@ -34,6 +34,11 @@ local function log(msg)
   if M.debug then print("[тренер] " .. tostring(msg)) end
 end
 
+-- ключевые события пишутся всегда: по ним в console.log видно, где рвётся цепочка
+local function note(msg)
+  print("[тренер] " .. tostring(msg))
+end
+
 local function clock()
   return GameTime()
 end
@@ -73,6 +78,9 @@ local function my_pos(bot)
   end
   M.bots[id] = M.bots[id] or { seen_seq = 0, next_say = 0, done = {} }
   M.bots[id].pos = pos
+  local okn, uname = pcall(function() return bot:GetUnitName() end)
+  note(string.format("бот %s: позиция %s, команда %s, канал %s", okn and uname or "?", tostring(pos),
+    tostring(team_name(GetTeam())), M.channel))
   return pos
 end
 
@@ -111,7 +119,10 @@ local function apply_data(t, data)
     if type(cmd.seq) == "number" and cmd.seq > t.last_seq then
       t.last_seq = cmd.seq
       Intents.apply(t.intents, cmd, clock())
-      log("команда " .. tostring(cmd.seq) .. " " .. tostring(cmd.action))
+      local who = {}
+      for _, p in ipairs(cmd.agents or {}) do who[#who + 1] = tostring(p) end
+      note(string.format("команда %s: %s → позиции %s", tostring(cmd.seq), tostring(cmd.action),
+        table.concat(who, ",")))
     end
   end
 end
@@ -173,6 +184,7 @@ local function reply(bot, team, pos, kind, text)
   if b and now < b.next_say and kind == "ack" then return end
   if b then b.next_say = now + 2 end
   pcall(function() bot:ActionImmediate_Chat(text, false) end)
+  note(string.format("ответ позиции %s: %s", tostring(pos), text))
   http_write("events", team, { team = team_name(team), events = { { pos = pos, kind = kind, text = text } } })
 end
 
