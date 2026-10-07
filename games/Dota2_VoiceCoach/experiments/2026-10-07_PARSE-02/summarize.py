@@ -29,6 +29,10 @@ out = {
     },
     "failed_ids_new": [r["id"] for r in load(HERE / "result.json")["results"] if not r["ok"]],
 }
+# пост-хок по оценке совета (posthoc_classes.py)
+if (HERE / "posthoc_classes.json").exists():
+    ph = load(HERE / "posthoc_classes.json")
+    out["posthoc_classes"] = {k: ph[k] for k in ("new", "old_75dc796", "old_parser_set_drop", "transitions_old_to_new")}
 # вероятности ставок из таблицы калибровки (они же в PREREG) — чтобы отчёт сверялся и по ним
 import re
 cal = (HERE.parents[3] / "tools" / "self_calibration.py").read_text(encoding="utf-8")

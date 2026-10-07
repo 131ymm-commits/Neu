@@ -590,6 +590,97 @@
   78,
   80
  ],
+ "posthoc_classes": {
+  "new": {
+   "classes": {
+    "верно": 45,
+    "переспрос": 12,
+    "неверно": 20,
+    "запрещённое": 3
+   },
+   "self_deception_silent": 23,
+   "ignorance_clarify": 12,
+   "forbidden_ids": [
+    14,
+    43,
+    45
+   ],
+   "clarify_ids": [
+    1,
+    15,
+    32,
+    51,
+    57,
+    63,
+    64,
+    74,
+    75,
+    77,
+    78,
+    80
+   ],
+   "silent_with_confidence_1": 10,
+   "auroc_conf_correct_vs_silent": 0.624,
+   "auroc_conf_correct_vs_all_errors": 0.666
+  },
+  "old_75dc796": {
+   "classes": {
+    "верно": 41,
+    "переспрос": 9,
+    "неверно": 28,
+    "запрещённое": 2
+   },
+   "self_deception_silent": 30,
+   "ignorance_clarify": 9,
+   "forbidden_ids": [
+    14,
+    45
+   ],
+   "clarify_ids": [
+    1,
+    51,
+    63,
+    66,
+    74,
+    75,
+    77,
+    78,
+    80
+   ],
+   "silent_with_confidence_1": 10,
+   "auroc_conf_correct_vs_silent": 0.639,
+   "auroc_conf_correct_vs_all_errors": 0.666
+  },
+  "old_parser_set_drop": {
+   "parse01": [
+    57,
+    80
+   ],
+   "parse02": [
+    41,
+    80
+   ],
+   "diff": -0.2,
+   "ci95_newcombe": [
+    -0.339,
+    -0.049
+   ]
+  },
+  "transitions_old_to_new": {
+   "верно→переспрос": 1,
+   "верно→неверно": 1,
+   "верно→запрещённое": 1,
+   "переспрос→верно": 1,
+   "переспрос→неверно": 0,
+   "переспрос→запрещённое": 0,
+   "неверно→верно": 6,
+   "неверно→переспрос": 3,
+   "неверно→запрещённое": 0,
+   "запрещённое→верно": 0,
+   "запрещённое→переспрос": 0,
+   "запрещённое→неверно": 0
+  }
+ },
  "prereg_probabilities": [
   0.35,
   0.5,
