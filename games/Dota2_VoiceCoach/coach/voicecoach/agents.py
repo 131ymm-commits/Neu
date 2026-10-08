@@ -682,9 +682,11 @@ class HeroAgent:
     calls: int = 0
     errors: int = 0
     decided: dict = field(default_factory=dict)   # seq → (часы наблюдения, время готовности) — для замера задержки
+    last_coach_clock: float = -1e9      # когда приказ тренера будил агента в последний раз
 
 
 ASKED = "к тебе обратился союзник"
+COACH = "приказ тренера"
 CHAT_WINDOW = 60          # с игры: столько агент «помнит» голосовой чат
 CHAT_KEEP = 6             # и не больше стольких реплик
 RAW_KEEP = 400            # столько знаков сырого ответа модели — в журнал, когда ответ не разобрался чисто
@@ -722,11 +724,11 @@ class AgentHub:
     def __init__(self, backends: dict, period: float = 4.0, dead_period: float = 12.0, min_gap: float = 1.0,
                  error_gap: float = 3.0, max_inflight: int = 10, max_calls: int | None = None,
                  log_path: str | Path | None = None, personas: dict | None = None, obedience: float = 0.85,
-                 prices: dict | None = None, sync: bool = False):
+                 prices: dict | None = None, sync: bool = False, coach_gap: float = 3.0):
         self.backends = backends                  # {"radiant": мотор, "dire": мотор}
         self.period, self.dead_period, self.min_gap, self.error_gap = period, dead_period, min_gap, error_gap
         self.max_inflight = max_inflight
-        self.max_calls = max_calls                # предел платных вызовов (правила не считаются)
+        self.max_calls = max_calls                # предел платных вызовов у каждой стороны (правила не считаются)
         self.personas = personas or {}
         self.obedience = obedience
         self.prices = prices or {}
@@ -735,7 +737,8 @@ class AgentHub:
         self.lock = threading.Lock()
         self.agents: dict[tuple, HeroAgent] = {}
         self.inflight = 0
-        self.calls_total = 0                      # платные вызовы
+        self.calls_paid = {t: 0 for t in backends}     # платные вызовы по сторонам: соперник не тратит предел хоста
+        self.coach_gap = coach_gap
         self.pause_until = {t: 0.0 for t in backends}         # пауза по retry-after — у стороны, которой ответили 429
         self.log_path = Path(log_path) if log_path else None
         self.run = f"{time.time():.0f}-{id(self) % 10000}"   # новый запуск сервера — номера решений с 1, игра их сбрасывает
@@ -785,8 +788,9 @@ class AgentHub:
         gap = clock - ag.last_clock
         if gap < (self.error_gap if ag.last_error else self.min_gap):
             return None
-        if any((c.get("seq") or 0) > ag.seen_coach for c in obs.get("coach") or []):
-            return "приказ тренера"
+        if (any((c.get("seq") or 0) > ag.seen_coach for c in obs.get("coach") or [])
+                and clock - ag.last_coach_clock >= self.coach_gap):
+            return COACH          # чаще — приказ подождёт до следующего решения: поток приказов не множит вызовы
         if self._asked(ag):
             return ASKED
         prev = ag.called_obs
@@ -816,7 +820,7 @@ class AgentHub:
         if trig is None:
             return None
         paid = self._paid(ag.team)
-        if paid and self.max_calls is not None and self.calls_total >= self.max_calls:
+        if paid and self.max_calls is not None and self.calls_paid.get(ag.team, 0) >= self.max_calls:
             ag.state = "лимит вызовов исчерпан"
             return None
         if now < self.pause_until.get(ag.team, 0.0):
@@ -827,7 +831,9 @@ class AgentHub:
         ag.busy, ag.state = True, "думает"
         self.inflight += 1
         if paid:
-            self.calls_total += 1
+            self.calls_paid[ag.team] = self.calls_paid.get(ag.team, 0) + 1
+        if trig == COACH:
+            ag.last_coach_clock = _clock(obs)
         try:
             t_obs = float(t_obs)
         except (TypeError, ValueError):
@@ -989,7 +995,7 @@ class AgentHub:
             dropped = {t: list(getattr(b, "dropped", []) or []) for t, b in self.backends.items()}
             paid = {t: self._paid(t) for t in self.backends}
             self_cost = {t: bool(getattr(b, "self_cost", False)) for t, b in self.backends.items()}
-            calls_paid = self.calls_total
+            calls_paid = sum(self.calls_paid.values())
         total = {k: 0 for k in keys}
         total["cost_cli"] = 0.0
         priced = {k: 0 for k in ("in", "out", "cache_read", "cache_write")}   # токены моторов без своей цены

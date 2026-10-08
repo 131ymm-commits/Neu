@@ -274,6 +274,30 @@ class Hub(unittest.TestCase):
         self.assertIn("пауза", h.agents[("radiant", 1)].state)
         self.assertEqual(next(d["seq"] for d in r["decisions"] if d["team"] == "dire"), 2)  # Тьма не ждёт чужой 429
 
+    def test_coach_orders_wake_at_most_every_coach_gap(self):
+        """Поток приказов не множит вызовы: приказ будит агента не чаще раза в coach_gap с (остальное — в очереди)."""
+        h = self.hub()
+        h.tick({"heroes": [obs(clock=0)]})
+        orders = []
+        for i in range(8):                                                     # приказ каждые 0.5 с игры
+            orders.append({"seq": i + 1, "ago": 0, "text": f"1 пуш бот {i}", "urgent": False})
+            h.tick({"heroes": [obs(clock=1 + i * 0.5, coach=list(orders))]})
+        triggers = [c["extra"]["trigger"] for c in self.backend.calls[1:]]
+        self.assertEqual(triggers, ["приказ тренера", "приказ тренера"])        # в 1 с и в 4 с, а не 8 раз
+        h.tick({"heroes": [obs(clock=8, coach=list(orders))]})                 # следующее решение видит все приказы
+        self.assertIn("1 пуш бот 7", self.backend.calls[-1]["user"])
+
+    def test_paid_call_limit_is_per_side(self):
+        """Предел платных вызовов — у каждой стороны свой: соперник не исчерпает предел хоста."""
+        light, dark = FakeBackend(), FakeBackend()
+        h = A.AgentHub({"radiant": light, "dire": dark}, sync=True, max_calls=2)
+        for clock in (0, 5, 10, 15):
+            h.tick({"heroes": [obs(clock=clock, team="dire", pos=p) for p in (1, 2, 3)]})
+        self.assertEqual(len(dark.calls), 2)
+        h.tick({"heroes": [obs(clock=20, pos=1), obs(clock=20, pos=2)]})
+        self.assertEqual(len(light.calls), 2)                                   # у Света свой предел
+        self.assertEqual(h.summary()["paid_calls"], 4)
+
     def test_applied_measures_decision_age(self):
         with tempfile.TemporaryDirectory() as tmp:
             log = Path(tmp) / "a.jsonl"

@@ -4,6 +4,7 @@
 Проверяется: страница по ссылке с ключом показывает свою команду, рисует карту, отдаёт приказ, который игра
 получает в ответе на /tick, зачитывает голосовой чат только своей команды; на экране телефона нет прокрутки вбок;
 политика безопасности страницы (CSP) ничего не блокирует. Нужен Playwright с Chromium; без него тест пропускается."""
+import http.server
 import json
 import os
 import tempfile
@@ -102,8 +103,13 @@ class ConsolePage(unittest.TestCase):
             page.wait_for_function("document.getElementById('answer').innerText.includes('Принято')")
             r = self.tick(payload(cmd_ack=0, cmd_run=first["run"]))
             self.assertEqual([c["text"] for c in r["commands"]], ["все фарм", "все назад"])
-            page.click("button[data-cmd='все сбор мид']")
+            page.click("button[data-cmd='все сбор мид']")                     # кнопка — заготовка, не приказ
+            self.assertEqual(page.input_value("#text"), "все сбор мид")
+            self.assertEqual(len(self.room.remote), 2)
+            page.evaluate("document.getElementById('answer').textContent = ''")
+            page.press("#text", "Enter")
             page.wait_for_function("document.getElementById('answer').innerText.includes('Принято')")
+            self.assertEqual(len(self.room.remote), 3)
             page.fill("#text", "1 летать")
             page.press("#text", "Enter")
             page.wait_for_function("document.getElementById('answer').innerText.includes('Не понял')")
@@ -113,8 +119,24 @@ class ConsolePage(unittest.TestCase):
             self.room.add_events("radiant", [voice_event({"from": 1, "hero": "sniper", "text": "секрет Света", "to": []})])
             self.room.add_events("dire", [voice_event({"from": 2, "hero": "lina", "text": "иду на мид", "to": [1]})])
             self.room.add_events("dire", [{"pos": 0, "kind": "order", "text": "→ 12345: все назад"}])
+            self.room.add_events("dire", [voice_event({"from": 3, "hero": "bristleback",
+                                                       "text": '<img src=x onerror="window.__xss=1">', "to": []})])
             page.wait_for_function("window.__spoken.some(s => s.text.includes('иду на мид'))", timeout=15000)
             page.wait_for_function("document.getElementById('feed').innerText.includes('12345')")
+            page.wait_for_function("document.getElementById('feed').innerText.includes('<img')")
+            self.assertIsNone(page.evaluate("window.__xss"))                    # разметка не исполнилась
+            # сервер перезапущен: номера событий снова с 1 — страница не молчит
+            with self.room.lock:
+                self.room.run, self.room.seq = "новый запуск", 0
+                self.room.events = {"radiant": [], "dire": []}
+            self.room.add_events("dire", [voice_event({"from": 5, "hero": "jakiro", "text": "после перезапуска",
+                                                       "to": []})])
+            page.wait_for_function("document.getElementById('feed').innerText.includes('после перезапуска')",
+                                   timeout=30000)
+            # метки врагов на карте различимы
+            labs = page.evaluate("labels(['Лион', 'Лина', 'Луна', 'Лион'])")
+            self.assertEqual(len(set(labs.values())), 3)
+            self.assertNotEqual(labs["Лион"], labs["Лина"])
             spoken = [s["text"] for s in page.evaluate("window.__spoken")]
             self.assertIn("Лина: иду на мид", spoken)
             self.assertFalse(any("секрет" in s for s in spoken))
@@ -125,11 +147,64 @@ class ConsolePage(unittest.TestCase):
             wide = page.evaluate("document.documentElement.scrollWidth - window.innerWidth")
             if SHOTS:
                 page.screenshot(path=os.path.join(SHOTS, "console_phone.png"), full_page=True)
+            order_y = page.evaluate("document.getElementById('text').getBoundingClientRect().top")
+            feed_y = page.evaluate("document.getElementById('feed').getBoundingClientRect().top")
+            map_y = page.evaluate("document.getElementById('map').getBoundingClientRect().top")
+            self.assertLess(order_y, feed_y)
+            self.assertLess(feed_y, map_y)                                     # ответы — сразу под приказом
+            self.assertEqual(page.evaluate("getComputedStyle(document.getElementById('text')).fontSize"), "16px")
+            seen_problems = list(problems)                                      # дальше 404 — нарочно
+            page.route("**/api/view", lambda route: route.fulfill(status=404, body="{}"))
+            page.wait_for_function("document.getElementById('link').innerText.includes('устарела')")
             browser.close()
         self.assertLessEqual(wide, 0)
-        self.assertEqual(problems, [])
+        self.assertEqual(seen_problems, [])
         self.assertEqual(csp, [])                                             # ни ошибок, ни отказов CSP
 
+
+    def test_foreign_site_in_host_browser(self):
+        """Страница чужого сайта (например, по ссылке соперника), открытая в браузере хоста, не читает приказы и чат
+        Света с порта игры и не отдаёт приказ — ни чтением ответа (CORS), ни «простым» POST (сервер: 403).
+        Чужой сайт здесь — http://localhost:<порт> (другой сайт для браузера, но тоже этот ПК: настоящий внешний
+        адрес Chromium сам не пускает к 127.0.0.1 без разрешения человека — запрос висит, проверить сервер нельзя)."""
+        self.room.say_short("radiant", "все назад", "page")
+        before = len(self.room.commands_after("radiant", 0))
+        target = f"http://127.0.0.1:{self.port}"
+        evil = f"""<!doctype html><script>
+          window.__result = {{}};
+          fetch('{target}/api/local/events?team=radiant&after=0')
+            .then(r => r.text()).then(t => window.__result.read = t).catch(e => window.__result.read = 'blocked');
+          fetch('{target}/api/local/say', {{method: 'POST', mode: 'no-cors', headers: {{'Content-Type': 'text/plain'}},
+                body: JSON.stringify({{team: 'radiant', text: '12345 назад', mode: 'short'}})}})
+            .then(() => window.__result.post = 'sent').catch(() => window.__result.post = 'blocked');
+        </script>""".encode("utf-8")
+
+        class Evil(http.server.BaseHTTPRequestHandler):
+            def log_message(self, *a):
+                pass
+
+            def do_GET(self):
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(evil)))
+                self.end_headers()
+                self.wfile.write(evil)
+
+        bad = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Evil)
+        threading.Thread(target=bad.serve_forever, daemon=True).start()
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(executable_path=CHROMIUM)
+                page = browser.new_page()
+                page.goto(f"http://localhost:{bad.server_address[1]}/")
+                page.wait_for_function("window.__result.read && window.__result.post", timeout=15000)
+                result = page.evaluate("window.__result")
+                browser.close()
+        finally:
+            bad.shutdown()
+            bad.server_close()
+        self.assertEqual(result["read"], "blocked")                            # ответ чужому сайту не отдан
+        self.assertEqual(len(self.room.commands_after("radiant", 0)), before)   # приказ не прошёл (403)
 
 if __name__ == "__main__":
     unittest.main()

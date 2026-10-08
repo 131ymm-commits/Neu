@@ -194,6 +194,9 @@ function G:SetupAgents()
     return { math.floor(GetWorldMinX()), math.floor(GetWorldMinY()), math.ceil(GetWorldMaxX()), math.ceil(GetWorldMaxY()) }
   end)
   G.bounds = ok and bounds or nil                  -- границы карты — для схемы на пульте тренера (Д13)
+  -- номер матча: приказ с пульта, отданный в прошлом матче, сервер в этот не отдаст
+  G.game_id = string.format("%d-%d", RandomInt(1, 999999999), math.floor(Time() * 1000))
+  G.outbox, G.outbox_sent = {}, 0
   G.ready = true
   log("карта: вышек %d, фонтаны %s; героев: Свет %d, Тьма %d", towers, tostring(fountains),
     #G.teams[DOTA_TEAM_GOODGUYS].agents, #G.teams[DOTA_TEAM_BADGUYS].agents)
@@ -369,11 +372,15 @@ function G:TickPayload(now)
   end
   local applied = G.applied or {}
   G.applied = {}
-  local replies = G.outbox or {}
-  G.outbox = {}
+  -- ответы игры для пульта уходят, пока сервер не принял обмен: убираются в OnAgents (сорвался запрос — пойдут снова)
+  local replies = {}
+  for i, r in ipairs(G.outbox or {}) do replies[i] = r end
+  G.outbox_sent = #replies
+  local okm, map = pcall(G.MapInfo, G)             -- сбой схемы карты не срывает обмен с агентами
   -- часы с точностью 0.1 с — для замера задержки решений (в наблюдениях героев — целые секунды)
   return { clock = math.floor(clock * 10 + 0.5) / 10, heroes = heroes, coached = coached, applied = applied,
-           replies = replies, map = G:MapInfo(), cmd_ack = G.remote_seq or 0, cmd_run = G.agents_run }
+           replies = replies, map = okm and map or nil, cmd_ack = G.remote_seq or 0, cmd_run = G.agents_run,
+           game_id = G.game_id }
 end
 
 -- схема карты для пульта тренера (Д13): вышки (где стоят и живы ли — это видят обе команды), фонтаны, границы, счёт
@@ -402,8 +409,13 @@ local function team_of(name)
 end
 
 -- ответ сервера: { decisions = { {team, pos, seq, decision}, … }, agents = { {team, pos, state}, … },
---                  backend = { radiant = "…", dire = "…" }, run = "номер запуска сервера" }
+--                  backend = { radiant = "…", dire = "…" }, run = "номер запуска сервера",
+--                  commands = { {seq, team, text}, … } — приказы с пульта второго тренера (Д13) }
+-- в обмене игра шлёт: clock, heroes, coached, applied, replies (ответы игры для пульта), map (схема карты),
+--                     cmd_ack и cmd_run (какой приказ с пульта применён и с какого запуска сервера), game_id
 function G:OnAgents(data)
+  for _ = 1, math.min(G.outbox_sent or 0, #(G.outbox or {})) do table.remove(G.outbox, 1) end   -- сервер их принял
+  G.outbox_sent = 0
   G.backend = type(data.backend) == "table" and data.backend or {}
   local now = GameRules:GetGameTime()
   if data.run ~= nil and data.run ~= G.agents_run then          -- сервер перезапущен: его номера решений снова с 1

@@ -24,6 +24,7 @@ import os
 import re
 import secrets
 import shutil
+import socket
 import subprocess
 import threading
 import time
@@ -37,14 +38,17 @@ TEAMS = ("radiant", "dire")
 TEAM_RU = {"radiant": "Свет", "dire": "Тьма"}
 WEB = Path(__file__).resolve().parent.parent / "web"
 KEYS_FILE = Path(__file__).resolve().parent.parent / "logs" / "console_keys.json"   # logs/ — вне git
-FILES = {"voices.js": "application/javascript; charset=utf-8"}
+FILES = {"voices.js": "application/javascript; charset=utf-8", "console.js": "application/javascript; charset=utf-8"}
 MAX_BODY = 2048           # байт в запросе приказа
 MAX_TEXT = 200            # знаков в приказе
 WAIT_MAX = 25.0           # с: long-poll событий (у туннеля Cloudflare свой предел ожидания — держимся ниже)
-RATE = (5.0, 1.0)         # приказов: запас 5, пополнение 1 в секунду
+RATE = (4.0, 0.5)         # приказов: запас 4, дальше один в 2 с — поток приказов не множит вызовы агентов
+SOCKET_TIMEOUT = 10.0     # с: недосланный запрос не держит поток вечно
+MAX_CONN = 32             # одновременных соединений с пультом (у тренера — 2–3 на вкладку)
+TUNNEL_WAIT = 40.0        # с: не дождались адреса туннеля — сказать хосту
 # адрес быстрого туннеля: несколько слов через дефис (служебный api.trycloudflare.com — не он)
 TUNNEL_RE = re.compile(r"https://[a-z0-9]+(?:-[a-z0-9]+)+\.trycloudflare\.com", re.I)
-CSP = ("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
+CSP = ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
        "connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
 
 
@@ -80,6 +84,16 @@ def load_keys(teams, path: Path = KEYS_FILE, new: bool = False) -> dict:
 
 
 TOWER_RE = re.compile(r"npc_dota_(goodguys|badguys)_tower(\d)_(top|mid|bot)")
+STAMP_RE = re.compile(r"^(-?)(\d+):(\d\d)\s")
+PERSONAL_RE = re.compile(r"\b(тебя|ты)\b")
+
+
+def _stamp(event: str) -> float:
+    m = STAMP_RE.match(event)
+    if not m:
+        return -1e9
+    t = int(m.group(2)) * 60 + int(m.group(3))
+    return -t if m.group(1) else t
 LANE_RU = {"top": "топ", "mid": "мид", "bot": "бот"}
 
 
@@ -130,8 +144,15 @@ def team_view(room, team: str) -> dict:
                 missing[m["hero"]] = {"hero": m["hero"], "hero_ru": hero_ru(m["hero"]), "seen": m.get("seen"),
                                       "ago": m.get("ago"), "dead": bool(m.get("dead"))}
         for ev in o.get("events") or []:
-            if isinstance(ev, str) and ru_names(ev, names) not in events:
-                events.append(ru_names(ev, names))
+            if not isinstance(ev, str):
+                continue
+            ev = ru_names(ev, names)
+            if PERSONAL_RE.search(ev):                   # «тебя убил …» — у каждого героя своё: подписать героем
+                m = STAMP_RE.match(ev)
+                cut = m.end() if m else 0
+                ev = f"{ev[:cut]}{row['hero_ru']}: {ev[cut:]}"
+            if ev not in events:
+                events.append(ev)
     m = payload.get("map") if isinstance(payload.get("map"), dict) else {}
     return {"team": team, "team_ru": TEAM_RU.get(team, team), "backend": backend,
             "game": {"linked": room.game_linked(), "clock": payload.get("clock"),
@@ -139,10 +160,10 @@ def team_view(room, team: str) -> dict:
             "heroes": heroes, "enemies": list(enemies.values()),
             "missing": [x for n, x in missing.items() if n not in enemies],
             "towers": m.get("towers") or [], "fountains": m.get("fountains") or {}, "bounds": m.get("bounds"),
-            "score": m.get("score"), "events": events[-8:]}
+            "score": m.get("score"), "events": sorted(events, key=_stamp)[-8:]}
 
 
-def make_console_handler(hub, room_name: str, keys: dict, rate=RATE):
+def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_timeout: float = SOCKET_TIMEOUT):
     by_key = [(k.encode("utf-8"), t) for t, k in keys.items()]
     buckets: dict[str, tuple[float, float]] = {}
     guard = threading.Lock()
@@ -167,6 +188,7 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE):
     class Handler(BaseHTTPRequestHandler):
         server_version = "VoiceCoach"
         sys_version = ""
+        timeout = socket_timeout                        # недосланный запрос не держит поток (long-poll ждёт не сокет)
 
         def log_message(self, fmt, *args):
             pass
@@ -202,8 +224,8 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE):
 
         def do_GET(self):
             team, key, rest, q, path = self._parse()
-            if path == "/robots.txt":
-                return self._send(200, raw=b"User-agent: *\nDisallow: /\n", ctype="text/plain; charset=utf-8")
+            if path == "/robots.txt":                   # страницу поисковик видит и читает «noindex»; API — нет
+                return self._send(200, raw=b"User-agent: *\nDisallow: /c/*/api/\n", ctype="text/plain; charset=utf-8")
             if path == "/favicon.ico":
                 return self._send(204, raw=b"", ctype="image/x-icon")
             if team is None:
@@ -222,7 +244,7 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE):
                     wait = min(max(float(q.get("wait", 0)), 0.0), WAIT_MAX)
                 except ValueError:
                     wait = 0.0
-                return self._send(200, {"events": room.events_after(team, _int(q.get("after")), wait)})
+                return self._send(200, {"events": room.events_after(team, _int(q.get("after")), wait), "run": room.run})
             return self._send(404, {"error": "нет такой страницы"})
 
         def do_POST(self):
@@ -246,8 +268,38 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE):
     return Handler
 
 
-def serve_console(hub, host: str = "127.0.0.1", port: int = 8788, room: str = "local", keys: dict | None = None):
-    srv = ThreadingHTTPServer((host, port), make_console_handler(hub, room, keys or {}))
+class ConsoleServer(ThreadingHTTPServer):
+    """Сервер пульта: не больше max_conn соединений сразу — лишние закрываются, не заводя поток."""
+    max_conn = MAX_CONN
+
+    def server_activate(self):
+        self.slots = threading.BoundedSemaphore(self.max_conn)
+        super().server_activate()
+
+    def process_request(self, request, client_address):
+        if not self.slots.acquire(blocking=False):
+            self.shutdown_request(request)
+            return
+        try:
+            super().process_request(request, client_address)
+        except Exception:
+            self.slots.release()
+            raise
+
+    def process_request_thread(self, request, client_address):
+        try:
+            super().process_request_thread(request, client_address)
+        finally:
+            self.slots.release()
+
+
+def serve_console(hub, host: str = "127.0.0.1", port: int = 8788, room: str = "local", keys: dict | None = None,
+                  max_conn: int = MAX_CONN, socket_timeout: float = SOCKET_TIMEOUT):
+    attrs = {"max_conn": max_conn}
+    if ":" in host:                                       # адрес IPv6
+        attrs["address_family"] = socket.AF_INET6
+    cls = type("ConsoleServerOn", (ConsoleServer,), attrs)
+    srv = cls((host, port), make_console_handler(hub, room, keys or {}, socket_timeout=socket_timeout))
     srv.keys = dict(keys or {})
     return srv
 
@@ -256,11 +308,13 @@ def console_url(base: str, key: str) -> str:
     return f"{base.rstrip('/')}/c/{key}/"
 
 
-def start_tunnel(port: int, on_url, cloudflared: str = "cloudflared", popen=subprocess.Popen, which=shutil.which):
+def start_tunnel(port: int, on_url, cloudflared: str = "cloudflared", popen=subprocess.Popen, which=shutil.which,
+                 on_error=None, wait: float = TUNNEL_WAIT):
     """Быстрый туннель Cloudflare (без учётной записи): `cloudflared tunnel --url http://127.0.0.1:<порт>`.
     Адрес https://….trycloudflare.com cloudflared пишет в журнал при запуске — on_url(адрес) зовётся один раз.
     Адрес случайный и меняется при каждом запуске; гарантий работы Cloudflare не даёт (тестовый режим).
-    Нет cloudflared — None."""
+    Ошибки cloudflared (строки ERR), его выход и «адреса нет за wait секунд» — в on_error. Нет cloudflared — None."""
+    on_error = on_error or (lambda msg: print(msg, flush=True))
     exe = which(cloudflared) or cloudflared
     try:
         proc = popen([exe, "tunnel", "--url", f"http://127.0.0.1:{port}"], stdout=subprocess.PIPE,
@@ -268,14 +322,26 @@ def start_tunnel(port: int, on_url, cloudflared: str = "cloudflared", popen=subp
                      errors="replace")
     except (FileNotFoundError, PermissionError, OSError):
         return None
+    got = threading.Event()
 
     def reader():
-        told = False
+        errors = 0
         for line in proc.stdout:                       # читаем до конца, иначе cloudflared упрётся в полную трубу
             m = TUNNEL_RE.search(line)
-            if m and not told:
-                told = True
+            if m and not got.is_set():
+                got.set()
                 on_url(m.group(0))
+            elif " ERR " in line and errors < 5:
+                errors += 1
+                on_error("cloudflared: " + line.strip()[:300])
+        code = proc.wait() if hasattr(proc, "wait") else None
+        on_error(f"Туннель закрыт: cloudflared завершился (код {code}). Ссылка через интернет больше не работает."
+                 if got.is_set() else f"Туннель не поднялся: cloudflared завершился (код {code}) — строки выше.")
+
+    def watchdog():
+        if not got.wait(wait):
+            on_error(f"Туннель: за {wait:.0f} с cloudflared не дал адреса — проверьте интернет и строки cloudflared.")
 
     threading.Thread(target=reader, daemon=True, name="tunnel").start()
+    threading.Thread(target=watchdog, daemon=True, name="tunnel-wait").start()
     return proc

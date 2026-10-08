@@ -226,6 +226,8 @@ function PlayerResource:GetGold(pid) return __players[pid].hero.gold end
 function PlayerResource:SpendGold(pid, cost, reason) __players[pid].hero.gold = __players[pid].hero.gold - cost end
 function PlayerResource:SetCustomTeamAssignment(pid, team) __assign[pid] = team; __players[pid].team = team end
 function PlayerResource:GetTeamKills(team) return team == 2 and 3 or 5 end
+function RandomInt(a, b) return math.random(a, b) end
+function Time() return __now end
 function GetWorldMinX() return -8288 end
 function GetWorldMinY() return -8288 end
 function GetWorldMaxX() return 8288 end
@@ -330,7 +332,12 @@ class Game(unittest.TestCase):
             threading.Thread(target=self.srv.serve_forever, daemon=True).start()
             port = self.srv.server_address[1]
 
+            self.http_fail = 0                                 # сколько следующих запросов «сорвать»
+
             def py_http(method, url, body):
+                if self.http_fail > 0:
+                    self.http_fail -= 1
+                    return 0, None
                 url = url.replace("http://127.0.0.1:8787", f"http://127.0.0.1:{port}")
                 req = urllib.request.Request(url, data=body.encode("utf-8") if body else None, method=method,
                                              headers={"Content-Type": "application/json"})
@@ -520,6 +527,32 @@ class WithAgents(Game):
         bad = room.remote_order("dire", "1 летать")                          # не понял — в игру не уходит
         self.assertTrue(bad["errors"])
         self.assertNotIn("queued", bad)
+
+    def test_console_link_survives_failures_and_new_match(self):
+        """Ответы игры для пульта не теряются при сорванном обмене; сбой схемы карты не срывает обмен;
+        приказ с пульта из прошлого матча в новый не уходит (номер матча game_id)."""
+        self.start_match()
+        self.step(2)
+        room = self.srv.hub.room("local")
+        game = self.payloads()[-1]["game_id"]
+        self.assertTrue(game)
+        self.L.execute('CoachGame:Reply(CoachGame.teams[DOTA_TEAM_BADGUYS], 0, "order", "проверка связи", "")')
+        self.http_fail = 1
+        self.step(1.25)
+        self.assertFalse(any(e["text"] == "проверка связи" for e in room.events_after("dire", 0, 0)))
+        self.step(12)                                                       # повтор после паузы связи
+        got = [e for e in room.events_after("dire", 0, 0) if e["text"] == "проверка связи"]
+        self.assertEqual(len(got), 1)
+        self.L.execute('CoachGame.MapInfo = function() error("сломалась схема") end')
+        n = len(self.payloads())
+        self.step(2)
+        self.assertGreater(len(self.payloads()), n)
+        self.assertNotIn("map", self.payloads()[-1])
+        res = room.remote_order("dire", "все назад")
+        self.assertEqual(res["errors"], [])
+        self.assertEqual(room.remote[-1]["game"], game)
+        fresh = dict(self.payloads()[-1], game_id="другой матч", cmd_run=None, cmd_ack=0)
+        self.assertEqual(room.remote_for_game(fresh, None), [])               # новый матч приказ не получит
 
     def test_lua_observation_passes_python_checks(self):
         self.start_match()

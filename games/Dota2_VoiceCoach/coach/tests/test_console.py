@@ -4,6 +4,9 @@
 команд. Туннель Cloudflare здесь не запускается: проверяется разбор адреса из журнала cloudflared."""
 import io
 import json
+import shutil
+import socket
+import subprocess
 import tempfile
 import threading
 import time
@@ -14,17 +17,17 @@ from pathlib import Path
 
 from voicecoach import agents as A
 from voicecoach import console as C
-from voicecoach.server import main, serve
+from voicecoach.server import DEMO_ROSTER, load_roster, main, serve
 
 
-def hero(team, pos, name, xy, enemies=(), missing=(), gold=600, alive=True, **kw):
+def hero(team, pos, name, xy, enemies=(), missing=(), gold=600, alive=True, events=("4:50 у них погиб axe",), **kw):
     o = {"team": team, "pos": pos, "hero": name, "clock": 300, "alive": alive, "lvl": 5, "gold": gold,
          "abilities": [], "items": [{"name": "item_tango", "slot": 0}, {"name": "item_ward_observer", "slot": 6,
                                                                        "backpack": True}],
          "enemy_team": ["sniper", "viper", "axe", "lion", "crystal_maiden"] if team == "dire"
          else ["luna", "lina", "bristleback", "witch_doctor", "jakiro"],
          "enemies": [dict(e) for e in enemies], "missing": [dict(m) for m in missing], "coach": [],
-         "events": ["4:50 у них погиб axe"], "stats": {"k": 1, "d": 0, "a": 2}, "doing": "фарм бот"}
+         "events": list(events), "stats": {"k": 1, "d": 0, "a": 2}, "doing": "фарм бот"}
     if alive:
         o.update({"hp": [400, 600], "mp": [200, 300], "xy": list(xy), "where": "бот"})
     else:
@@ -43,12 +46,15 @@ def payload(**kw):
     """Обмен игры: Свет видит Луну; Тьма видит Снайпера (виден) и не видит Вайпера; секрет Света — его золото."""
     p = {"clock": 300.0, "map": MAP, "heroes": [
         hero("radiant", 1, "sniper", (100, -6000), gold=7777, enemies=[{"hero": "luna", "lvl": 6, "hp": [300, 900],
-                                                                        "xy": [200, -5900], "d": 300}]),
+                                                                        "xy": [200, -5900], "d": 300}],
+             missing=[{"hero": "lina", "seen": "СЕКРЕТ-СВЕТА-ПРОПАЖА", "ago": 3}],
+             events=["4:59 СЕКРЕТ-СВЕТА-СОБЫТИЕ"]),
         hero("radiant", 2, "viper", (-300, -300), gold=8888),
         hero("dire", 1, "luna", (200, -5900), enemies=[{"hero": "sniper", "lvl": 5, "hp": [400, 600],
                                                          "xy": [100, -6000], "d": 300, "where": "бот"}],
-             missing=[{"hero": "viper", "seen": "мид", "ago": 40}, {"hero": "sniper", "seen": "бот", "ago": 1}]),
-        hero("dire", 2, "lina", (0, 0), alive=False),
+             missing=[{"hero": "viper", "seen": "мид", "ago": 40}, {"hero": "sniper", "seen": "бот", "ago": 1}],
+             events=["4:50 у них погиб axe", "9:59 тебя убил sniper"]),
+        hero("dire", 2, "lina", (0, 0), alive=False, events=["0:32 у них погиб axe", "4:50 у них погиб axe"]),
     ]}
     p.update(kw)
     return p
@@ -108,7 +114,9 @@ class Keys(unittest.TestCase):
             self.assertEqual(b["dire"], a["dire"])
             self.assertNotEqual(b["radiant"], b["dire"])
             self.assertNotEqual(C.load_keys(("dire",), path=path, new=True)["dire"], a["dire"])
-        self.assertIn("logs", str(C.KEYS_FILE))                                   # logs/ — в .gitignore
+        if shutil.which("git"):                                                    # файл ключей — вне git
+            r = subprocess.run(["git", "check-ignore", "-q", str(C.KEYS_FILE)], cwd=C.KEYS_FILE.parent.parent)
+            self.assertEqual(r.returncode, 0)
 
 
 class Names(unittest.TestCase):
@@ -128,7 +136,7 @@ class Access(Servers):
             self.assertEqual(self.status(base + path), 404, path)               # ключ Света тут не выдан
         self.assertEqual(self.status(base + "/api/local/tick", b"{}", "POST"), 404)
         r = urllib.request.urlopen(base + "/robots.txt", timeout=5)
-        self.assertIn(b"Disallow: /", r.read())
+        self.assertEqual(r.read(), b"User-agent: *\nDisallow: /c/*/api/\n")     # страницу видно — и её noindex
 
     def test_page_and_headers(self):
         r, body = self.get("")
@@ -171,9 +179,10 @@ class View(Servers):
         self.assertEqual([m["hero"] for m in v["missing"]], ["viper"])            # видимый не числится пропавшим
         self.assertEqual((v["score"], v["bounds"], len(v["towers"])), (MAP["score"], MAP["bounds"], 2))
         self.assertEqual(v["heroes"][0]["agent"][:5], "решил")                    # состояние агента героя
-        self.assertEqual(v["events"], ["4:50 у них погиб Акс"])                   # имена — по-русски
+        self.assertEqual(v["events"], ["0:32 у них погиб Акс", "4:50 у них погиб Акс",
+                                       "9:59 Луна: тебя убил Снайпер"])            # по времени, по-русски, с героем
         text = json.dumps(v, ensure_ascii=False)
-        for secret in ("7777", "8888", "-300"):                                   # золото и место героев Света
+        for secret in ("7777", "8888", "-300", "СЕКРЕТ"):                         # золото, место, события Света
             self.assertNotIn(secret, text)
 
 
@@ -212,8 +221,8 @@ class Orders(Servers):
         self.assertEqual(self.status(base, b"not json", "POST"), 400)
         self.assertEqual(self.status(base, json.dumps({"text": "  \n "}).encode(), "POST"), 400)
         codes = [self.status(base, json.dumps({"text": "все назад"}).encode(), "POST") for _ in range(8)]
-        self.assertEqual(codes[:5], [200] * 5)
-        self.assertIn(429, codes[5:])                                            # не больше приказа в секунду
+        self.assertEqual(codes[:4], [200] * 4)
+        self.assertIn(429, codes[4:])                                            # дальше — один приказ в 2 с
         res = self.room.remote_order("dire", "все назад")
         self.assertIn("queued", res)
 
@@ -236,6 +245,84 @@ class Orders(Servers):
         self.assertIn("decisions", r)
 
 
+class RosterNames(Servers):
+    def test_console_parses_like_the_game(self):
+        """Пульт разбирает приказ так же, как игра: без имён из файла состава (их игра не знает); описывает героями."""
+        load_roster(self.srv.hub, str(DEMO_ROSTER))                             # демо-имена: у Тьмы — Миша, Женя…
+        self.tick(payload())
+        res = self.say("миша назад")
+        self.assertTrue(res["errors"])                                           # в игре было бы «Не понял»
+        self.assertNotIn("queued", res)
+        res = self.say("1 фарм лес")
+        self.assertEqual(res["errors"], [])
+        self.assertTrue(res["commands"][0]["human"].startswith("Луна"), res["commands"][0]["human"])
+        self.assertIn("Миша", json.dumps(self.room.state("dire"), ensure_ascii=False))   # страница хоста — с именами
+
+
+class SlowClients(unittest.TestCase):
+    def test_timeout_and_connection_cap(self):
+        main_srv = serve("127.0.0.1", 0)
+        main_srv.server_close()                                                   # нужен только hub
+        con = C.serve_console(main_srv.hub, "127.0.0.1", 0, "local", {"dire": "k" * 22}, max_conn=3,
+                              socket_timeout=0.5)
+        threading.Thread(target=con.serve_forever, daemon=True).start()
+        port = con.server_address[1]
+        try:
+            idle = []
+            for _ in range(3):                                                    # недосланные запросы
+                c = socket.create_connection(("127.0.0.1", port))
+                c.sendall(b"GET /c/")
+                idle.append(c)
+            time.sleep(0.2)
+            extra = socket.create_connection(("127.0.0.1", port))                # четвёртое — сверх предела
+            extra.settimeout(2)
+            self.assertEqual(extra.recv(10), b"")                                 # закрыто сразу, без потока
+            extra.close()
+            idle[0].settimeout(3)
+            self.assertIn(idle[0].recv(100), (b"",))                              # через 0.5 с сервер закрыл сам
+            for c in idle:
+                c.close()
+            time.sleep(0.3)
+            r = urllib.request.urlopen(f"http://127.0.0.1:{port}/c/{'k' * 22}/api/view", timeout=5)
+            self.assertEqual(r.status, 200)                                       # места освободились
+        finally:
+            con.shutdown()
+            con.server_close()
+
+
+class GamePortGuard(Servers):
+    def test_foreign_sites_cannot_read_or_order(self):
+        """Порт игры (8787): страница чужого сайта в браузере хоста не читает приказы и чат и не отдаёт приказ."""
+        base = f"http://127.0.0.1:{self.port}"
+        foreign = {"Sec-Fetch-Site": "cross-site", "Sec-Fetch-Mode": "cors", "Origin": "https://evil.example"}
+
+        def code(path, headers=None, data=None):
+            req = urllib.request.Request(base + path, data=data, headers=headers or {},
+                                         method="POST" if data is not None else "GET")
+            try:
+                r = urllib.request.urlopen(req, timeout=5)
+                return r.status, r.headers.get("Access-Control-Allow-Origin")
+            except urllib.error.HTTPError as e:
+                return e.code, e.headers.get("Access-Control-Allow-Origin")
+
+        order = json.dumps({"team": "radiant", "text": "все назад", "mode": "short"}).encode()
+        self.assertEqual(code("/api/local/events?team=radiant", foreign), (403, None))
+        self.assertEqual(code("/api/local/say", {"Origin": "https://evil.example", "Content-Type": "text/plain"},
+                              order), (403, None))
+        self.assertEqual(code("/api/local/say", {"Origin": "null"}, order), (403, None))
+        self.assertEqual(code("/api/local/w/events?team=radiant&d=%7B%7D", foreign), (403, None))
+        self.assertEqual(self.room.commands_after("radiant", 0), [])
+        # свои страницы, игра и боты — как прежде
+        self.assertEqual(code("/api/local/events?team=radiant", {"Sec-Fetch-Site": "same-origin"}), (200, None))
+        self.assertEqual(code("/api/local/say", {"Origin": base, "Host": f"127.0.0.1:{self.port}"}, order)[0], 200)
+        self.assertEqual(code("/api/local/tick", None, json.dumps(payload()).encode())[0], 200)
+        nav = dict(foreign, **{"Sec-Fetch-Mode": "navigate"})                     # веб-панель Доты открывает адрес
+        self.assertEqual(code("/api/local/commands?team=radiant&fmt=title", nav)[0], 200)
+        self.assertEqual(code("/voice.html", foreign)[0], 200)
+        evs = json.loads(urllib.request.urlopen(base + "/api/local/events?team=dire&after=0", timeout=5).read())
+        self.assertEqual(evs["run"], self.room.run)
+
+
 class Tunnel(unittest.TestCase):
     def test_url_from_cloudflared_log(self):
         lines = ["2026-10-08T10:00:00Z INF Requesting new quick Tunnel on trycloudflare.com...\n",
@@ -253,7 +340,9 @@ class Tunnel(unittest.TestCase):
             seen["argv"] = argv
             return P()
 
-        proc = C.start_tunnel(8788, got.append, "cloudflared", popen=popen, which=lambda n: "/usr/bin/cloudflared")
+        notes = []
+        proc = C.start_tunnel(8788, got.append, "cloudflared", popen=popen, which=lambda n: "/usr/bin/cloudflared",
+                              on_error=notes.append)
         deadline = time.time() + 2
         while not got and time.time() < deadline:
             time.sleep(0.01)
@@ -267,6 +356,27 @@ class Tunnel(unittest.TestCase):
             raise FileNotFoundError
 
         self.assertIsNone(C.start_tunnel(8788, got.append, popen=missing, which=lambda n: None))
+
+    def test_tunnel_errors_reach_host(self):
+        lines = ["2026-10-08T10:00:00Z ERR Failed to create new quick Tunnel error=\"dial tcp: no route\"\n",
+                 "2026-10-08T10:00:01Z INF Exiting\n"]
+        errors, urls = [], []
+
+        class P:
+            stdout = io.StringIO("".join(lines))
+
+            def wait(self):
+                return 1
+
+        C.start_tunnel(8788, urls.append, popen=lambda argv, **kw: P(), which=lambda n: "cloudflared",
+                       on_error=errors.append, wait=0.3)
+        deadline = time.time() + 2
+        while len(errors) < 3 and time.time() < deadline:
+            time.sleep(0.02)
+        self.assertEqual(urls, [])
+        self.assertTrue(errors[0].startswith("cloudflared: ") and "no route" in errors[0])
+        self.assertTrue(any("не поднялся" in e and "код 1" in e for e in errors), errors)
+        self.assertTrue(any("не дал адреса" in e for e in errors), errors)
 
     def test_tunnel_needs_remote(self):
         with self.assertRaises(SystemExit):

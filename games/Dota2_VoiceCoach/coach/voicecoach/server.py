@@ -19,8 +19,10 @@
        (так ответ читает DOTAHTMLPanel в аркаде — research/00_SUMMARY.md)
   GET  /api/{room}/ptt?team=..&state=down|up               ← глобальная клавиша «нажми и говори»
        (coach/ptt_hotkey.py): событие kind=ptt уходит странице, она включает распознавание
-  POST /api/{room}/tick     {"clock","heroes":[наблюдения],"coached"}   ← кастомка раз в секунду (Д11):
-       наблюдения героев → агенты Claude (agents.py) → в ответе последние решения агентов
+  POST /api/{room}/tick     ← кастомка раз в секунду (Д11): {"clock", "heroes": [наблюдения], "coached",
+       "applied", "replies" (ответы игры для пульта), "map" (схема карты), "cmd_ack", "cmd_run", "game_id"}
+       → наблюдения героев → агенты Claude (agents.py); в ответе: решения агентов, их состояния, моторы, номер
+       запуска сервера (run) и "commands" — приказы с пульта второго тренера (Д13, console.py)
   GET  /api/{room}/agents                                  → состояние агентов, память, задержка, токены, чат
   Голосовой чат команды (Д12): реплика агента — событие kind=voice {pos, hero, hero_ru, text, to} в /events;
   страница /voice.html озвучивает реплики своей команды разными голосами (её же открывает HUD игры).
@@ -33,6 +35,10 @@
 Состав (имена и как их зовут голосом) можно задать заранее: --roster roster.json
   {"radiant": [{"pos": 1, "name": "Miracle-", "aliases": ["миракл"]}, ...], "dire": [...]}
 
+Пульт второго тренера через интернет (Д13): --remote dire [--tunnel] — отдельный порт 8788 под ключом команды
+(console.py). Порт игры (этот) запросов со страниц чужих сайтов не принимает: браузер хоста, открывший ссылку
+соперника, не прочтёт приказы и чат и не отдаст приказ (заголовки Sec-Fetch-Site и Origin).
+
 Агенты героев (кастомка, решение Д11): --agents rules|api|cli (по умолчанию rules — правила, НЕ Claude);
 --radiant / --dire — свой мотор для одной стороны (например, соперник на бесплатных правилах);
 api — ключ в ANTHROPIC_API_KEY и --model; cli — Claude Code (`claude -p`, путь — --claude).
@@ -42,6 +48,7 @@ from __future__ import annotations
 import argparse
 import atexit
 import html
+import secrets
 import json
 import os
 import threading
@@ -107,8 +114,10 @@ class Room:
         self.agents: AgentHub | None = None       # агенты героев кастомки — при первом /tick
         self.last_tick: dict | None = None        # последний обмен с игрой — для пульта тренера (Д13)
         self.last_tick_t = 0.0
-        self.remote: list[dict] = []              # приказы с пульта для игры: {seq, team, text, t}
+        self.remote: list[dict] = []              # приказы с пульта для игры: {seq, team, text, t, game}
         self.remote_seq = 0
+        self.game_id: str | None = None           # номер матча из обмена игры
+        self.run = secrets.token_hex(4)           # запуск сервера: страницы сбрасывают номера событий
 
     def _next(self) -> int:
         self.seq += 1
@@ -140,14 +149,35 @@ class Room:
             self.lock.notify_all()
             return entry
 
+    @staticmethod
+    def _short(text: str, ctx: MatchContext, names: dict):
+        """Разбор короткого формата: (результат, подсказка, подсказка словами). Подсказка — из свободного разбора."""
+        res = parse_short(text, ctx)
+        suggestion, suggestion_human = "", []
+        if not res.ok:
+            free = parse(text, MatchContext(team=ctx.team, agents=ctx.agents, enemy_heroes=ctx.enemy_heroes))
+            suggestion = suggest(free.commands, ctx)
+            if suggestion:
+                check = parse_short(suggestion, ctx)
+                suggestion_human = [describe(c, names) for c in check.commands] if check.ok else []
+                if not check.ok:
+                    suggestion = ""
+        return res, suggestion, suggestion_human
+
+    @staticmethod
+    def _entry(team, text, source, res, out, suggestion, suggestion_human) -> dict:
+        return {"t": time.time(), "team": team, "text": text, "source": source, "format": "short",
+                "confidence": 1.0 if res.ok else 0.0, "unknown": [], "commands": out,
+                "errors": [] if res.ok else (res.errors or ["пустая строка"]),
+                "suggestion": suggestion, "suggestion_human": suggestion_human}
+
     def say_short(self, team: str, text: str, source: str = "text") -> dict:
         """Короткий формат: всё или ничего. Ошибка → подсказка из свободного разбора, в очередь не идёт."""
         with self.lock:
             ctx = self.ctx[team]
             names = {a.pos: a.name for a in ctx.agents if a.name}
-            res = parse_short(text, ctx)
+            res, suggestion, suggestion_human = self._short(text, ctx, names)
             out = []
-            suggestion, suggestion_human = "", []
             if res.ok:
                 for c in res.commands:
                     item = {"seq": self._next(), "t": time.time(), **c.to_json(), "human": describe(c, names)}
@@ -155,20 +185,7 @@ class Room:
                     out.append(item)
                 del self.commands[team][:-MAX_QUEUE]
                 self._write_inbox(team)
-            else:
-                free = parse(text, MatchContext(team=ctx.team, agents=ctx.agents, enemy_heroes=ctx.enemy_heroes))
-                suggestion = suggest(free.commands, ctx)
-                if suggestion:
-                    check = parse_short(suggestion, ctx)
-                    suggestion_human = [describe(c, names) for c in check.commands] if check.ok else []
-                    if not check.ok:
-                        suggestion = ""
-            entry = {"t": time.time(), "team": team, "text": text, "source": source, "format": "short",
-                     "confidence": 1.0 if res.ok else 0.0, "unknown": [], "commands": out,
-                     "errors": res.errors or ([] if res.commands else ["пустая строка"]),
-                     "suggestion": suggestion, "suggestion_human": suggestion_human}
-            if res.ok:
-                entry["errors"] = []
+            entry = self._entry(team, text, source, res, out, suggestion, suggestion_human)
             self.log.append(entry)
             self.lock.notify_all()
             return entry
@@ -234,6 +251,8 @@ class Room:
         heroes = [o for o in payload.get("heroes") or [] if isinstance(o, dict)]
         with self.lock:
             self.last_tick, self.last_tick_t = payload, time.time()
+            if payload.get("game_id"):
+                self.game_id = str(payload["game_id"])
         for team in TEAMS:
             mine = [o for o in heroes if o.get("team") == team and 1 <= _int(o.get("pos")) <= 5]
             if not mine:
@@ -253,15 +272,35 @@ class Room:
         for team, items in replies.items():
             self.add_events(team, items)
 
+    def console_ctx(self, team: str):
+        """Состав для разбора приказа с пульта — тот же, что у разбора в игре (G:TextCtx): позиции и герои из
+        последнего обмена, без имён из файла состава (их игра не знает). Имена в описании — герои по-русски."""
+        with self.lock:
+            heroes = [o for o in (self.last_tick or {}).get("heroes") or []
+                      if isinstance(o, dict) and o.get("team") == team and 1 <= _int(o.get("pos")) <= 5]
+        agents = [Agent(pos=_int(o.get("pos")), hero="npc_dota_hero_" + str(o.get("hero") or "")) for o in heroes]
+        known = {a.pos for a in agents}
+        agents += [Agent(pos=p) for p in range(1, 6) if p not in known]
+        enemies = ["npc_dota_hero_" + str(h) for h in (heroes[0].get("enemy_team") if heroes else None) or []
+                   if isinstance(h, str)]
+        names = {_int(o.get("pos")): hero_ru(o.get("hero")) for o in heroes}
+        return MatchContext(team=team, agents=sorted(agents, key=lambda a: a.pos), enemy_heroes=enemies), names
+
     def remote_order(self, team: str, text: str, source: str = "console") -> dict:
-        """Приказ второго тренера с пульта: разбор коротким форматом; верный — в очередь для игры."""
-        entry = self.say_short(team, text, source)
-        if not entry.get("errors"):
-            with self.lock:
+        """Приказ второго тренера с пульта: разбор коротким форматом так же, как в игре; верный — в очередь для игры."""
+        ctx, names = self.console_ctx(team)
+        res, suggestion, suggestion_human = self._short(text, ctx, names)
+        out = [{**c.to_json(), "human": describe(c, names)} for c in res.commands] if res.ok else []
+        entry = self._entry(team, text, source, res, out, suggestion, suggestion_human)
+        with self.lock:
+            if res.ok:
                 self.remote_seq += 1
-                self.remote.append({"seq": self.remote_seq, "team": team, "text": text, "t": time.time()})
+                # game — матч, во время которого отдан приказ: в следующий матч он не уйдёт
+                self.remote.append({"seq": self.remote_seq, "team": team, "text": text, "t": time.time(),
+                                    "game": self.game_id})
                 del self.remote[:-REMOTE_KEEP]
                 entry["queued"] = self.remote_seq
+            self.log.append(entry)
         entry["game_linked"] = self.game_linked()
         return entry
 
@@ -274,10 +313,10 @@ class Room:
                 ack = int(payload.get("cmd_ack") or 0)
             except (TypeError, ValueError):
                 ack = 0
-        now = time.time()
+        now, game = time.time(), payload.get("game_id")
         with self.lock:
             return [{"seq": c["seq"], "team": c["team"], "text": c["text"]} for c in self.remote
-                    if c["seq"] > ack and now - c["t"] <= REMOTE_TTL]
+                    if c["seq"] > ack and now - c["t"] <= REMOTE_TTL and c.get("game") in (None, game)]
 
     def game_linked(self) -> bool:
         return self.last_tick is not None and time.time() - self.last_tick_t <= GAME_STALE
@@ -336,8 +375,6 @@ def make_handler(hub: Hub):
             self.send_response(code)
             self.send_header("Content-Type", ctype)
             self.send_header("Content-Length", str(len(body)))
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type")
             self.end_headers()
             try:
                 self.wfile.write(body)
@@ -345,7 +382,21 @@ def make_handler(hub: Hub):
                 pass                                    # страница ушла, не дождавшись ответа (long-poll)
 
         def do_OPTIONS(self):
-            self._send(204, raw=b"")
+            self._send(204, raw=b"")             # без разрешений CORS: чужой сайт запрос не отправит
+
+        def _cross_site(self) -> bool:
+            """Запрос со страницы чужого сайта в браузере хоста (например, по ссылке соперника)? Свои страницы
+            сервера — same-origin; игра и боты — не браузер, заголовков Sec-Fetch и Origin не шлют."""
+            if (self.headers.get("Sec-Fetch-Site") or "").lower() in ("cross-site", "same-site"):
+                return True
+            origin = self.headers.get("Origin")
+            return bool(origin) and (origin == "null" or urlparse(origin).netloc != (self.headers.get("Host") or ""))
+
+        def _foreign(self, parts) -> bool:
+            """Запись и чтение API — только своим: чужой сайт не отдаст приказ и не прочтёт приказы и чат.
+            Переход по ссылке (navigate) пропускается — так веб-панель Доты открывает страницы сервера."""
+            navigate = (self.headers.get("Sec-Fetch-Mode") or "").lower() == "navigate"
+            return bool(parts) and parts[0] == "api" and self._cross_site() and not navigate
 
         def _body(self) -> dict:
             n = int(self.headers.get("Content-Length") or 0)
@@ -368,6 +419,8 @@ def make_handler(hub: Hub):
         def do_GET(self):
             try:
                 parts, q = self._route()
+                if self._foreign(parts):
+                    return self._send(403, {"error": "запрос с чужого сайта"})
                 if not parts or parts == ["index.html"]:
                     page = STATIC / "index.html"
                     if page.exists():
@@ -398,7 +451,7 @@ def make_handler(hub: Hub):
                         return self._send(200, data)
                     if parts[2] == "events":
                         wait = min(float(q.get("wait", 0)), 30.0)
-                        return self._send(200, {"events": room.events_after(team, after, wait)})
+                        return self._send(200, {"events": room.events_after(team, after, wait), "run": room.run})
                     if parts[2] == "state":
                         return self._send(200, room.state(team))
                     if parts[2] == "ptt":
@@ -430,6 +483,8 @@ def make_handler(hub: Hub):
         def do_POST(self):
             try:
                 parts, q = self._route()
+                if self._cross_site():
+                    return self._send(403, {"error": "запрос с чужого сайта"})
                 body = self._body()
                 if len(parts) == 3 and parts[0] == "api" and parts[2] == "tick":
                     room = hub.room(parts[1])
@@ -518,7 +573,8 @@ def start_remote(a, hub: "Hub"):
     keys = load_keys(teams, new=a.new_key)
     console = serve_console(hub, a.console_host, a.console_port, a.room, keys)
     threading.Thread(target=console.serve_forever, daemon=True, name="console").start()
-    local = "127.0.0.1" if a.console_host in ("0.0.0.0", "::") else a.console_host
+    host = a.console_host
+    local = {"0.0.0.0": "127.0.0.1", "::": "[::1]"}.get(host, f"[{host}]" if ":" in host else host)
     for t in teams:
         print(f"Пульт тренера ({TEAM_RU[t]}) на этом ПК: {console_url(f'http://{local}:{a.console_port}', keys[t])}")
     if a.console_host in ("0.0.0.0", "::"):
@@ -557,7 +613,8 @@ def main(argv=None):
     ag.add_argument("--claude", default="claude", help="путь к Claude Code для --agents cli")
     ag.add_argument("--period", type=float, default=4.0, help="решение агента не реже раза в столько секунд игры")
     ag.add_argument("--max-calls", type=int,
-                    help="предел платных вызовов модели на комнату за запуск сервера (защита кошелька; правила не в счёт)")
+                    help="предел платных вызовов модели у каждой стороны за запуск сервера (защита кошелька; правила "
+                         "не в счёт). Обе стороны оплачивает тот, чей ключ у сервера, — и с пультом второго тренера")
     ag.add_argument("--effort", choices=("low", "medium", "high", "xhigh", "max", "off"), default="low",
                     help="сколько модели думать (api: output_config.effort, cli: --effort); off — не передавать. "
                          "Модель, которая effort не знает, получит запрос без него")
