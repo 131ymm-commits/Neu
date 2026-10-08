@@ -1,0 +1,324 @@
+{"id": "WH_7301|B_zayavka|4", "result": {"choice": 6}, "inp": 6767, "out": 1754, "thinking": 1043, "models": {"claude-opus-5-5": 1754}, "permission_denials": 0, "cost_usd": 0.08920800000000001}
+{"id": "WH_7301|B_zayavka|3", "result": {"choice": 6}, "inp": 6765, "out": 1798, "thinking": 1150, "models": {"claude-opus-5-5": 1798}, "permission_denials": 0, "cost_usd": 0.090072}
+{"id": "WH_7301|B_zayavka|0", "result": {"choice": 6}, "inp": 6767, "out": 1947, "thinking": 1328, "models": {"claude-opus-5-5": 1947}, "permission_denials": 0, "cost_usd": 0.09306800000000001}
+{"id": "WH_7301|B_zayavka|1", "result": {"choice": 6}, "inp": 6767, "out": 1977, "thinking": 1215, "models": {"claude-opus-5-5": 1977}, "permission_denials": 0, "cost_usd": 0.093668}
+{"id": "WH_7301|B_zayavka|2", "result": {"choice": 6}, "inp": 6765, "out": 1936, "thinking": 1263, "models": {"claude-opus-5-5": 1936}, "permission_denials": 0, "cost_usd": 0.092832}
+{"id": "WH_7301|B_blind|2", "result": {"choice": 6}, "inp": 6112, "out": 2174, "thinking": 1378, "models": {"claude-opus-5-5": 2174}, "permission_denials": 0, "cost_usd": 0.092368}
+{"id": "WH_7301|B_blind|1", "result": {"choice": 6}, "inp": 6112, "out": 2402, "thinking": 1728, "models": {"claude-opus-5-5": 2402}, "permission_denials": 0, "cost_usd": 0.096928}
+{"id": "WH_7301|B_blind|0", "result": {"choice": 7}, "inp": 6108, "out": 3292, "thinking": 2447, "models": {"claude-opus-5-5": 3292}, "permission_denials": 0, "cost_usd": 0.11469599999999999}
+{"id": "WH_7301|B_blind|5", "result": {"choice": 6}, "inp": 6106, "out": 1925, "thinking": 1302, "models": {"claude-opus-5-5": 1925}, "permission_denials": 0, "cost_usd": 0.0472558}
+{"id": "WH_7301|B_blind|3", "result": {"choice": 6}, "inp": 6110, "out": 2166, "thinking": 1384, "models": {"claude-opus-5-5": 2166}, "permission_denials": 0, "cost_usd": 0.0521078}
+{"id": "WH_7301|B_blind|6", "result": {"choice": 6}, "inp": 6112, "out": 2152, "thinking": 1548, "models": {"claude-opus-5-5": 2152}, "permission_denials": 0, "cost_usd": 0.051843799999999995}
+{"id": "WH_7301|B_blind|8", "result": {"choice": 6}, "inp": 6108, "out": 2154, "thinking": 1481, "models": {"claude-opus-5-5": 2154}, "permission_denials": 0, "cost_usd": 0.0518518}
+{"id": "WH_7301|B_blind|4", "result": {"choice": 6}, "inp": 6110, "out": 2643, "thinking": 1872, "models": {"claude-opus-5-5": 2643}, "permission_denials": 0, "cost_usd": 0.0616478}
+{"id": "WH_7301|B_blind|9", "result": {"choice": 6}, "inp": 6110, "out": 2715, "thinking": 2073, "models": {"claude-opus-5-5": 2715}, "permission_denials": 0, "cost_usd": 0.0630878}
+{"id": "WH_7301|B_blind|7", "result": {"choice": 6}, "inp": 6112, "out": 3501, "thinking": 2791, "models": {"claude-opus-5-5": 3501}, "permission_denials": 0, "cost_usd": 0.07882379999999999}
+{"id": "WH_7301|B_blind|10", "result": {"choice": 6}, "inp": 6110, "out": 2839, "thinking": 2178, "models": {"claude-opus-5-5": 2839}, "permission_denials": 0, "cost_usd": 0.0655678}
+{"id": "WH_7301|B_blind|11", "result": {"choice": 0}, "inp": 6110, "out": 2655, "thinking": 2021, "models": {"claude-opus-5-5": 2655}, "permission_denials": 0, "cost_usd": 0.0618878}
+{"id": "WH_7301|C_N|3", "result": {"choice": 6}, "inp": 6304, "out": 2668, "thinking": 1907, "models": {"claude-opus-5-5": 2668}, "permission_denials": 0, "cost_usd": 0.0622022}
+{"id": "WH_7301|C_N|1", "result": {"choice": 6}, "inp": 6304, "out": 3158, "thinking": 2330, "models": {"claude-opus-5-5": 3158}, "permission_denials": 0, "cost_usd": 0.0720022}
+{"id": "WH_7301|C_N|0", "result": {"choice": 6}, "inp": 6304, "out": 3254, "thinking": 2169, "models": {"claude-opus-5-5": 3254}, "permission_denials": 0, "cost_usd": 0.1013704}
+{"id": "WH_7301|C_N|2", "result": {"choice": 6}, "inp": 6300, "out": 3833, "thinking": 3070, "models": {"claude-opus-5-5": 3833}, "permission_denials": 0, "cost_usd": 0.0854702}
+{"id": "WH_7301|D_N|1", "result": {"choice": 6}, "inp": 6373, "out": 3024, "thinking": 2236, "models": {"claude-opus-5-5": 3024}, "permission_denials": 0, "cost_usd": 0.0693204}
+{"id": "WH_7302|B_zayavka|0", "result": {"choice": 0}, "inp": 6816, "out": 1908, "thinking": 1085, "models": {"claude-opus-5-5": 1908}, "permission_denials": 0, "cost_usd": 0.0785464}
+{"id": "WH_7301|C_N|4", "result": {"choice": 6}, "inp": 6302, "out": 4188, "thinking": 3455, "models": {"claude-opus-5-5": 4188}, "permission_denials": 0, "cost_usd": 0.0925862}
+{"id": "WH_7301|D_N|0", "result": {"choice": 6}, "inp": 6375, "out": 4471, "thinking": 3477, "models": {"claude-opus-5-5": 4471}, "permission_denials": 0, "cost_usd": 0.12627839999999999}
+{"id": "WH_7302|B_zayavka|1", "result": {"choice": 0}, "inp": 6816, "out": 1652, "thinking": 1059, "models": {"claude-opus-5-5": 1652}, "permission_denials": 0, "cost_usd": 0.0419534}
+{"id": "WH_7301|D_N|2", "result": {"choice": 7}, "inp": 6371, "out": 3946, "thinking": 3022, "models": {"claude-opus-5-5": 3946}, "permission_denials": 0, "cost_usd": 0.08774439999999997}
+{"id": "WH_7302|B_zayavka|4", "result": {"choice": 0}, "inp": 6820, "out": 1342, "thinking": 817, "models": {"claude-opus-5-5": 1342}, "permission_denials": 0, "cost_usd": 0.0357854}
+{"id": "WH_7302|B_zayavka|2", "result": {"choice": 0}, "inp": 6820, "out": 1729, "thinking": 1172, "models": {"claude-opus-5-5": 1729}, "permission_denials": 0, "cost_usd": 0.0435254}
+{"id": "WH_7302|B_zayavka|3", "result": {"choice": 0}, "inp": 6818, "out": 1869, "thinking": 1143, "models": {"claude-opus-5-5": 1869}, "permission_denials": 0, "cost_usd": 0.0463094}
+{"id": "WH_7301|D_N|3", "result": {"choice": 6}, "inp": 6373, "out": 4355, "thinking": 3476, "models": {"claude-opus-5-5": 4355}, "permission_denials": 0, "cost_usd": 0.0959404}
+{"id": "WH_7301|D_N|4", "result": {"choice": 6}, "inp": 6371, "out": 4695, "thinking": 3564, "models": {"claude-opus-5-5": 4695}, "permission_denials": 0, "cost_usd": 0.1027244}
+{"id": "WH_7302|B_blind|1", "result": {"choice": 0}, "inp": 6108, "out": 2860, "thinking": 2037, "models": {"claude-opus-5-5": 2860}, "permission_denials": 0, "cost_usd": 0.0659718}
+{"id": "WH_7302|B_blind|2", "result": {"choice": 7}, "inp": 6110, "out": 2320, "thinking": 1816, "models": {"claude-opus-5-5": 2320}, "permission_denials": 0, "cost_usd": 0.0551878}
+{"id": "WH_7302|B_blind|0", "result": {"choice": 0}, "inp": 6110, "out": 3560, "thinking": 2930, "models": {"claude-opus-5-5": 3560}, "permission_denials": 0, "cost_usd": 0.10593839999999999}
+{"id": "WH_7302|B_blind|4", "result": {"choice": 7}, "inp": 6108, "out": 2227, "thinking": 1636, "models": {"claude-opus-5-5": 2227}, "permission_denials": 0, "cost_usd": 0.0533118}
+{"id": "WH_7302|B_blind|6", "result": {"choice": 7}, "inp": 6110, "out": 2060, "thinking": 1410, "models": {"claude-opus-5-5": 2060}, "permission_denials": 0, "cost_usd": 0.049987800000000006}
+{"id": "WH_7302|B_blind|5", "result": {"choice": 0}, "inp": 6108, "out": 2728, "thinking": 2050, "models": {"claude-opus-5-5": 2728}, "permission_denials": 0, "cost_usd": 0.0633318}
+{"id": "WH_7302|B_blind|7", "result": {"choice": 0}, "inp": 6110, "out": 2824, "thinking": 2178, "models": {"claude-opus-5-5": 2824}, "permission_denials": 0, "cost_usd": 0.0652678}
+{"id": "WH_7302|B_blind|8", "result": {"choice": 0}, "inp": 6110, "out": 2192, "thinking": 1649, "models": {"claude-opus-5-5": 2192}, "permission_denials": 0, "cost_usd": 0.0526278}
+{"id": "WH_7302|B_blind|9", "result": {"choice": 0}, "inp": 6110, "out": 2595, "thinking": 1883, "models": {"claude-opus-5-5": 2595}, "permission_denials": 0, "cost_usd": 0.06068780000000001}
+{"id": "WH_7302|B_blind|11", "result": {"choice": 0}, "inp": 6108, "out": 2283, "thinking": 1717, "models": {"claude-opus-5-5": 2283}, "permission_denials": 0, "cost_usd": 0.0544318}
+{"id": "WH_7302|B_blind|3", "result": {"choice": 0}, "inp": 6112, "out": 5634, "thinking": 4879, "models": {"claude-opus-5-5": 5634}, "permission_denials": 0, "cost_usd": 0.12148379999999999}
+{"id": "WH_7302|B_blind|10", "result": {"choice": 0}, "inp": 6112, "out": 2895, "thinking": 2320, "models": {"claude-opus-5-5": 2895}, "permission_denials": 0, "cost_usd": 0.06670380000000001}
+{"id": "WH_7302|C_N|0", "result": {"choice": 7}, "inp": 6304, "out": 2988, "thinking": 2220, "models": {"claude-opus-5-5": 2988}, "permission_denials": 0, "cost_usd": 0.09605040000000001}
+{"id": "WH_7302|C_N|1", "result": {"choice": 7}, "inp": 6302, "out": 3028, "thinking": 2193, "models": {"claude-opus-5-5": 3028}, "permission_denials": 0, "cost_usd": 0.0693862}
+{"id": "WH_7302|C_N|2", "result": {"choice": 7}, "inp": 6300, "out": 2403, "thinking": 1630, "models": {"claude-opus-5-5": 2403}, "permission_denials": 0, "cost_usd": 0.05687020000000001}
+{"id": "WH_7302|D_N|0", "result": {"choice": 0}, "inp": 6371, "out": 2453, "thinking": 2400, "models": {"claude-opus-5-5": 2453}, "permission_denials": 0, "cost_usd": 0.0858864}
+{"id": "WH_7302|C_N|3", "result": {"choice": 0}, "inp": 6302, "out": 3111, "thinking": 2453, "models": {"claude-opus-5-5": 3111}, "permission_denials": 0, "cost_usd": 0.07104619999999999}
+{"id": "WH_7303|B_zayavka|0", "result": {"choice": 6}, "inp": 6789, "out": 1399, "thinking": 848, "models": {"claude-opus-5-5": 1399}, "permission_denials": 0, "cost_usd": 0.0681504}
+{"id": "WH_7302|C_N|4", "result": {"choice": 7}, "inp": 6304, "out": 2992, "thinking": 2193, "models": {"claude-opus-5-5": 2992}, "permission_denials": 0, "cost_usd": 0.0686822}
+{"id": "WH_7303|B_zayavka|1", "result": {"choice": 6}, "inp": 6789, "out": 1201, "thinking": 554, "models": {"claude-opus-5-5": 1201}, "permission_denials": 0, "cost_usd": 0.0329436}
+{"id": "WH_7302|D_N|1", "result": {"choice": 7}, "inp": 6371, "out": 3323, "thinking": 2466, "models": {"claude-opus-5-5": 3323}, "permission_denials": 0, "cost_usd": 0.0752844}
+{"id": "WH_7303|B_zayavka|4", "result": {"choice": 6}, "inp": 6789, "out": 1216, "thinking": 599, "models": {"claude-opus-5-5": 1216}, "permission_denials": 0, "cost_usd": 0.033243600000000005}
+{"id": "WH_7302|D_N|2", "result": {"choice": 0}, "inp": 6373, "out": 3955, "thinking": 3062, "models": {"claude-opus-5-5": 3955}, "permission_denials": 0, "cost_usd": 0.08794039999999999}
+{"id": "WH_7303|B_zayavka|2", "result": {"choice": 6}, "inp": 6789, "out": 1741, "thinking": 1029, "models": {"claude-opus-5-5": 1741}, "permission_denials": 0, "cost_usd": 0.0437436}
+{"id": "WH_7303|B_zayavka|3", "result": {"choice": 6}, "inp": 6789, "out": 1838, "thinking": 1176, "models": {"claude-opus-5-5": 1838}, "permission_denials": 0, "cost_usd": 0.045683600000000005}
+{"id": "WH_7302|D_N|4", "result": {"choice": 0}, "inp": 6371, "out": 4082, "thinking": 3271, "models": {"claude-opus-5-5": 4082}, "permission_denials": 0, "cost_usd": 0.09046439999999997}
+{"id": "WH_7302|D_N|3", "result": {"choice": 0}, "inp": 6369, "out": 5431, "thinking": 4480, "models": {"claude-opus-5-5": 5431}, "permission_denials": 0, "cost_usd": 0.11742839999999999}
+{"id": "WH_7303|B_blind|1", "result": {"choice": 6}, "inp": 6108, "out": 2969, "thinking": 2119, "models": {"claude-opus-5-5": 2969}, "permission_denials": 0, "cost_usd": 0.0941024}
+{"id": "WH_7303|B_blind|3", "result": {"choice": 6}, "inp": 6108, "out": 2311, "thinking": 1451, "models": {"claude-opus-5-5": 2311}, "permission_denials": 0, "cost_usd": 0.05499180000000001}
+{"id": "WH_7303|B_blind|5", "result": {"choice": 6}, "inp": 6110, "out": 2127, "thinking": 1542, "models": {"claude-opus-5-5": 2127}, "permission_denials": 0, "cost_usd": 0.05132780000000001}
+{"id": "WH_7303|B_blind|2", "result": {"choice": 6}, "inp": 6110, "out": 2883, "thinking": 1925, "models": {"claude-opus-5-5": 2883}, "permission_denials": 0, "cost_usd": 0.0664478}
+{"id": "WH_7303|B_blind|0", "result": {"choice": 6}, "inp": 6110, "out": 3807, "thinking": 2922, "models": {"claude-opus-5-5": 3807}, "permission_denials": 0, "cost_usd": 0.11087839999999999}
+{"id": "WH_7303|B_blind|6", "result": {"choice": 7}, "inp": 6112, "out": 3342, "thinking": 2558, "models": {"claude-opus-5-5": 3342}, "permission_denials": 0, "cost_usd": 0.07564379999999998}
+{"id": "WH_7303|B_blind|7", "result": {"choice": 6}, "inp": 6110, "out": 2637, "thinking": 1836, "models": {"claude-opus-5-5": 2637}, "permission_denials": 0, "cost_usd": 0.06152780000000001}
+{"id": "WH_7303|B_blind|8", "result": {"choice": 6}, "inp": 6108, "out": 2261, "thinking": 1535, "models": {"claude-opus-5-5": 2261}, "permission_denials": 0, "cost_usd": 0.0539918}
+{"id": "WH_7303|B_blind|9", "result": {"choice": 6}, "inp": 6110, "out": 2154, "thinking": 1478, "models": {"claude-opus-5-5": 2154}, "permission_denials": 0, "cost_usd": 0.051867800000000006}
+{"id": "WH_7303|B_blind|4", "result": {"choice": 3}, "inp": 6110, "out": 4811, "thinking": 4073, "models": {"claude-opus-5-5": 4811}, "permission_denials": 0, "cost_usd": 0.10500779999999998}
+{"id": "WH_7303|B_blind|11", "result": {"choice": 6}, "inp": 6112, "out": 2352, "thinking": 1599, "models": {"claude-opus-5-5": 2352}, "permission_denials": 0, "cost_usd": 0.0558438}
+{"id": "WH_7303|C_N|0", "result": {"choice": 3}, "inp": 6300, "out": 3224, "thinking": 2357, "models": {"claude-opus-5-5": 3224}, "permission_denials": 0, "cost_usd": 0.10073839999999999}
+{"id": "WH_7303|C_N|1", "result": {"choice": 6}, "inp": 6302, "out": 2831, "thinking": 2118, "models": {"claude-opus-5-5": 2831}, "permission_denials": 0, "cost_usd": 0.06544620000000001}
+{"id": "WH_7303|C_N|3", "result": {"choice": 7}, "inp": 6302, "out": 2194, "thinking": 1329, "models": {"claude-opus-5-5": 2194}, "permission_denials": 0, "cost_usd": 0.05270620000000001}
+{"id": "WH_7303|B_blind|10", "result": {"choice": 6}, "inp": 6112, "out": 4354, "thinking": 3538, "models": {"claude-opus-5-5": 4354}, "permission_denials": 0, "cost_usd": 0.09588379999999999}
+{"id": "WH_7304|B_zayavka|0", "result": {"choice": 0}, "inp": 6776, "out": 1326, "thinking": 692, "models": {"claude-opus-5-5": 1326}, "permission_denials": 0, "cost_usd": 0.0665864}
+{"id": "WH_7303|C_N|4", "result": {"choice": 7}, "inp": 6304, "out": 3799, "thinking": 2928, "models": {"claude-opus-5-5": 3799}, "permission_denials": 0, "cost_usd": 0.08482219999999999}
+{"id": "WH_7303|C_N|2", "result": {"choice": 3}, "inp": 6302, "out": 5051, "thinking": 4368, "models": {"claude-opus-5-5": 5051}, "permission_denials": 0, "cost_usd": 0.10984619999999999}
+{"id": "WH_7304|B_zayavka|2", "result": {"choice": 0}, "inp": 6776, "out": 1712, "thinking": 926, "models": {"claude-opus-5-5": 1712}, "permission_denials": 0, "cost_usd": 0.0431454}
+{"id": "WH_7304|B_zayavka|1", "result": {"choice": 2}, "inp": 6778, "out": 2165, "thinking": 1523, "models": {"claude-opus-5-5": 2165}, "permission_denials": 0, "cost_usd": 0.0522214}
+{"id": "WH_7303|D_N|1", "result": {"choice": 3}, "inp": 6373, "out": 6227, "thinking": 5012, "models": {"claude-opus-5-5": 6227}, "permission_denials": 0, "cost_usd": 0.1333804}
+{"id": "WH_7303|D_N|2", "result": {"choice": 6}, "inp": 6375, "out": 5370, "thinking": 4448, "models": {"claude-opus-5-5": 5370}, "permission_denials": 0, "cost_usd": 0.11625639999999998}
+{"id": "WH_7303|D_N|4", "result": {"choice": 3}, "inp": 6373, "out": 4451, "thinking": 3613, "models": {"claude-opus-5-5": 4451}, "permission_denials": 0, "cost_usd": 0.09786039999999999}
+{"id": "WH_7304|B_zayavka|3", "result": {"choice": 7}, "inp": 6776, "out": 2125, "thinking": 1532, "models": {"claude-opus-5-5": 2125}, "permission_denials": 0, "cost_usd": 0.051405400000000004}
+{"id": "WH_7303|D_N|3", "result": {"choice": 3}, "inp": 6375, "out": 5749, "thinking": 4537, "models": {"claude-opus-5-5": 5749}, "permission_denials": 0, "cost_usd": 0.12383639999999999}
+{"id": "WH_7304|B_blind|0", "result": {"choice": 7}, "inp": 6110, "out": 2477, "thinking": 1814, "models": {"claude-opus-5-5": 2477}, "permission_denials": 0, "cost_usd": 0.0842784}
+{"id": "WH_7304|B_blind|1", "result": {"choice": 7}, "inp": 6112, "out": 2262, "thinking": 1581, "models": {"claude-opus-5-5": 2262}, "permission_denials": 0, "cost_usd": 0.0540438}
+{"id": "WH_7304|B_blind|3", "result": {"choice": 5}, "inp": 6110, "out": 2283, "thinking": 1556, "models": {"claude-opus-5-5": 2283}, "permission_denials": 0, "cost_usd": 0.054447800000000005}
+{"id": "WH_7304|B_blind|5", "result": {"choice": 0}, "inp": 6110, "out": 1844, "thinking": 1198, "models": {"claude-opus-5-5": 1844}, "permission_denials": 0, "cost_usd": 0.0456678}
+{"id": "WH_7304|B_blind|4", "result": {"choice": 2}, "inp": 6110, "out": 2456, "thinking": 1549, "models": {"claude-opus-5-5": 2456}, "permission_denials": 0, "cost_usd": 0.0579078}
+{"id": "WH_7304|B_zayavka|4", "result": {"choice": 7}, "inp": 6780, "out": 4436, "thinking": 3605, "models": {"claude-opus-5-5": 4436}, "permission_denials": 0, "cost_usd": 0.09765739999999998}
+{"id": "WH_7304|B_blind|2", "result": {"choice": 6}, "inp": 6108, "out": 3907, "thinking": 3042, "models": {"claude-opus-5-5": 3907}, "permission_denials": 0, "cost_usd": 0.08691179999999998}
+{"id": "WH_7303|D_N|0", "result": {"choice": -1}, "inp": 6371, "out": 11247, "thinking": 10183, "models": {"claude-opus-5-5": 11247}, "permission_denials": 0, "cost_usd": 0.2617664}
+{"id": "WH_7304|B_blind|8", "result": {"choice": 7}, "inp": 6108, "out": 1896, "thinking": 1136, "models": {"claude-opus-5-5": 1896}, "permission_denials": 0, "cost_usd": 0.0466918}
+{"id": "WH_7304|B_blind|6", "result": {"choice": 5}, "inp": 6110, "out": 2833, "thinking": 2215, "models": {"claude-opus-5-5": 2833}, "permission_denials": 0, "cost_usd": 0.0654478}
+{"id": "WH_7304|B_blind|9", "result": {"choice": 0}, "inp": 6108, "out": 2236, "thinking": 1425, "models": {"claude-opus-5-5": 2236}, "permission_denials": 0, "cost_usd": 0.053491800000000006}
+{"id": "WH_7304|B_blind|7", "result": {"choice": 2}, "inp": 6110, "out": 2880, "thinking": 2099, "models": {"claude-opus-5-5": 2880}, "permission_denials": 0, "cost_usd": 0.06638780000000001}
+{"id": "WH_7304|B_blind|10", "result": {"choice": 7}, "inp": 6110, "out": 2681, "thinking": 1935, "models": {"claude-opus-5-5": 2681}, "permission_denials": 0, "cost_usd": 0.0624078}
+{"id": "WH_7304|B_blind|11", "result": {"choice": 2}, "inp": 6110, "out": 2465, "thinking": 1767, "models": {"claude-opus-5-5": 2465}, "permission_denials": 0, "cost_usd": 0.05808780000000001}
+{"id": "WH_7304|C_N|0", "result": {"choice": 0}, "inp": 6304, "out": 2723, "thinking": 1751, "models": {"claude-opus-5-5": 2723}, "permission_denials": 0, "cost_usd": 0.09075040000000001}
+{"id": "WH_7304|C_N|2", "result": {"choice": 2}, "inp": 6304, "out": 3817, "thinking": 3045, "models": {"claude-opus-5-5": 3817}, "permission_denials": 0, "cost_usd": 0.0851822}
+{"id": "WH_7304|C_N|1", "result": {"choice": 6}, "inp": 6298, "out": 5916, "thinking": 4824, "models": {"claude-opus-5-5": 5916}, "permission_denials": 0, "cost_usd": 0.1545624}
+{"id": "WH_7304|D_N|1", "result": {"choice": 5}, "inp": 6375, "out": 5228, "thinking": 4268, "models": {"claude-opus-5-5": 5228}, "permission_denials": 0, "cost_usd": 0.11341639999999999}
+{"id": "WH_7304|D_N|2", "result": {"choice": 5}, "inp": 6373, "out": 5167, "thinking": 4229, "models": {"claude-opus-5-5": 5167}, "permission_denials": 0, "cost_usd": 0.11218039999999997}
+{"id": "WH_7304|D_N|3", "result": {"choice": 2}, "inp": 6375, "out": 4306, "thinking": 3308, "models": {"claude-opus-5-5": 4306}, "permission_denials": 0, "cost_usd": 0.09497639999999999}
+{"id": "WH_7305|B_zayavka|0", "result": {"choice": 7}, "inp": 6673, "out": 1412, "thinking": 765, "models": {"claude-opus-5-5": 1412}, "permission_denials": 0, "cost_usd": 0.0674824}
+{"id": "WH_7304|C_N|4", "result": {"choice": 2}, "inp": 6298, "out": 6463, "thinking": 5506, "models": {"claude-opus-5-5": 6463}, "permission_denials": 0, "cost_usd": 0.1380542}
+{"id": "WH_7304|D_N|4", "result": {"choice": 7}, "inp": 6375, "out": 2787, "thinking": 2027, "models": {"claude-opus-5-5": 2787}, "permission_denials": 0, "cost_usd": 0.0645964}
+{"id": "WH_7305|B_zayavka|2", "result": {"choice": 7}, "inp": 6671, "out": 1273, "thinking": 651, "models": {"claude-opus-5-5": 1273}, "permission_denials": 0, "cost_usd": 0.0343288}
+{"id": "WH_7304|C_N|3", "result": {"choice": 2}, "inp": 6304, "out": 7751, "thinking": 6789, "models": {"claude-opus-5-5": 7751}, "permission_denials": 0, "cost_usd": 0.16386219999999999}
+{"id": "WH_7305|B_zayavka|3", "result": {"choice": 7}, "inp": 6675, "out": 1439, "thinking": 687, "models": {"claude-opus-5-5": 1439}, "permission_denials": 0, "cost_usd": 0.0376808}
+{"id": "WH_7305|B_zayavka|1", "result": {"choice": 7}, "inp": 6675, "out": 1570, "thinking": 908, "models": {"claude-opus-5-5": 1570}, "permission_denials": 0, "cost_usd": 0.0403008}
+{"id": "WH_7305|B_zayavka|4", "result": {"choice": 7}, "inp": 6675, "out": 1352, "thinking": 747, "models": {"claude-opus-5-5": 1352}, "permission_denials": 0, "cost_usd": 0.0359408}
+{"id": "WH_7304|D_N|0", "result": {"choice": 2}, "inp": 6373, "out": 7784, "thinking": 6772, "models": {"claude-opus-5-5": 7784}, "permission_denials": 0, "cost_usd": 0.19252240000000004}
+{"id": "WH_7305|B_blind|1", "result": {"choice": 7}, "inp": 6108, "out": 1953, "thinking": 1255, "models": {"claude-opus-5-5": 1953}, "permission_denials": 0, "cost_usd": 0.0737824}
+{"id": "WH_7305|B_blind|4", "result": {"choice": 5}, "inp": 6110, "out": 2042, "thinking": 1447, "models": {"claude-opus-5-5": 2042}, "permission_denials": 0, "cost_usd": 0.04962780000000001}
+{"id": "WH_7305|B_blind|6", "result": {"choice": 7}, "inp": 6110, "out": 1897, "thinking": 1219, "models": {"claude-opus-5-5": 1897}, "permission_denials": 0, "cost_usd": 0.04672780000000001}
+{"id": "WH_7305|B_blind|5", "result": {"choice": 7}, "inp": 6110, "out": 1992, "thinking": 1407, "models": {"claude-opus-5-5": 1992}, "permission_denials": 0, "cost_usd": 0.048627800000000006}
+{"id": "WH_7305|B_blind|7", "result": {"choice": 7}, "inp": 6106, "out": 2040, "thinking": 1358, "models": {"claude-opus-5-5": 2040}, "permission_denials": 0, "cost_usd": 0.049555800000000004}
+{"id": "WH_7305|B_blind|3", "result": {"choice": 7}, "inp": 6110, "out": 2344, "thinking": 1676, "models": {"claude-opus-5-5": 2344}, "permission_denials": 0, "cost_usd": 0.05566780000000001}
+{"id": "WH_7305|B_blind|8", "result": {"choice": 7}, "inp": 6112, "out": 1519, "thinking": 839, "models": {"claude-opus-5-5": 1519}, "permission_denials": 0, "cost_usd": 0.0391838}
+{"id": "WH_7305|B_blind|0", "result": {"choice": 7}, "inp": 6112, "out": 4503, "thinking": 3958, "models": {"claude-opus-5-5": 4503}, "permission_denials": 0, "cost_usd": 0.12481439999999999}
+{"id": "WH_7305|B_blind|9", "result": {"choice": 7}, "inp": 6108, "out": 2329, "thinking": 1643, "models": {"claude-opus-5-5": 2329}, "permission_denials": 0, "cost_usd": 0.0553518}
+{"id": "WH_7305|B_blind|2", "result": {"choice": 7}, "inp": 6112, "out": 5213, "thinking": 4395, "models": {"claude-opus-5-5": 5213}, "permission_denials": 0, "cost_usd": 0.11306379999999998}
+{"id": "WH_7305|B_blind|11", "result": {"choice": 7}, "inp": 6110, "out": 3129, "thinking": 2275, "models": {"claude-opus-5-5": 3129}, "permission_denials": 0, "cost_usd": 0.07136779999999998}
+{"id": "WH_7305|B_blind|10", "result": {"choice": 7}, "inp": 6110, "out": 4293, "thinking": 3620, "models": {"claude-opus-5-5": 4293}, "permission_denials": 0, "cost_usd": 0.09464779999999998}
+{"id": "WH_7305|C_N|3", "result": {"choice": 7}, "inp": 6302, "out": 2704, "thinking": 1987, "models": {"claude-opus-5-5": 2704}, "permission_denials": 0, "cost_usd": 0.0629062}
+{"id": "WH_7305|C_N|0", "result": {"choice": 7}, "inp": 6302, "out": 4580, "thinking": 3587, "models": {"claude-opus-5-5": 4580}, "permission_denials": 0, "cost_usd": 0.1278744}
+{"id": "WH_7305|C_N|4", "result": {"choice": 7}, "inp": 6304, "out": 2803, "thinking": 1917, "models": {"claude-opus-5-5": 2803}, "permission_denials": 0, "cost_usd": 0.06490220000000001}
+{"id": "WH_7305|C_N|2", "result": {"choice": 7}, "inp": 6302, "out": 4835, "thinking": 4021, "models": {"claude-opus-5-5": 4835}, "permission_denials": 0, "cost_usd": 0.10552619999999999}
+{"id": "WH_7305|C_N|1", "result": {"choice": 7}, "inp": 6302, "out": 5504, "thinking": 4626, "models": {"claude-opus-5-5": 5504}, "permission_denials": 0, "cost_usd": 0.1189062}
+{"id": "WH_7305|D_N|1", "result": {"choice": 7}, "inp": 6375, "out": 3717, "thinking": 3012, "models": {"claude-opus-5-5": 3717}, "permission_denials": 0, "cost_usd": 0.08319639999999998}
+{"id": "WH_7306|B_zayavka|0", "result": {"choice": 6}, "inp": 6794, "out": 1848, "thinking": 1262, "models": {"claude-opus-5-5": 1848}, "permission_denials": 0, "cost_usd": 0.0771704}
+{"id": "WH_7305|D_N|3", "result": {"choice": 7}, "inp": 6375, "out": 3528, "thinking": 2831, "models": {"claude-opus-5-5": 3528}, "permission_denials": 0, "cost_usd": 0.07941639999999998}
+{"id": "WH_7306|B_zayavka|1", "result": {"choice": 0}, "inp": 6794, "out": 2487, "thinking": 1688, "models": {"claude-opus-5-5": 2487}, "permission_denials": 0, "cost_usd": 0.058664600000000004}
+{"id": "WH_7305|D_N|2", "result": {"choice": 7}, "inp": 6371, "out": 3657, "thinking": 2611, "models": {"claude-opus-5-5": 3657}, "permission_denials": 0, "cost_usd": 0.08196439999999999}
+{"id": "WH_7305|D_N|4", "result": {"choice": 7}, "inp": 6375, "out": 3039, "thinking": 2264, "models": {"claude-opus-5-5": 3039}, "permission_denials": 0, "cost_usd": 0.0696364}
+{"id": "WH_7305|D_N|0", "result": {"choice": 7}, "inp": 6369, "out": 5531, "thinking": 4379, "models": {"claude-opus-5-5": 5531}, "permission_denials": 0, "cost_usd": 0.14743040000000002}
+{"id": "WH_7306|B_zayavka|2", "result": {"choice": 6}, "inp": 6794, "out": 2529, "thinking": 1936, "models": {"claude-opus-5-5": 2529}, "permission_denials": 0, "cost_usd": 0.059504600000000005}
+{"id": "WH_7306|B_zayavka|4", "result": {"choice": 0}, "inp": 6794, "out": 1417, "thinking": 848, "models": {"claude-opus-5-5": 1417}, "permission_denials": 0, "cost_usd": 0.0372646}
+{"id": "WH_7306|B_zayavka|3", "result": {"choice": 6}, "inp": 6796, "out": 2294, "thinking": 1645, "models": {"claude-opus-5-5": 2294}, "permission_denials": 0, "cost_usd": 0.054820600000000004}
+{"id": "WH_7306|B_blind|0", "result": {"choice": 6}, "inp": 6110, "out": 2456, "thinking": 1787, "models": {"claude-opus-5-5": 2456}, "permission_denials": 0, "cost_usd": 0.0838584}
+{"id": "WH_7306|B_blind|4", "result": {"choice": 3}, "inp": 6104, "out": 2328, "thinking": 1695, "models": {"claude-opus-5-5": 2328}, "permission_denials": 0, "cost_usd": 0.05529980000000001}
+{"id": "WH_7306|B_blind|6", "result": {"choice": 6}, "inp": 6108, "out": 1989, "thinking": 1475, "models": {"claude-opus-5-5": 1989}, "permission_denials": 0, "cost_usd": 0.0485518}
+{"id": "WH_7306|B_blind|1", "result": {"choice": 6}, "inp": 6112, "out": 3625, "thinking": 3000, "models": {"claude-opus-5-5": 3625}, "permission_denials": 0, "cost_usd": 0.0813038}
+{"id": "WH_7306|B_blind|2", "result": {"choice": 6}, "inp": 6112, "out": 3473, "thinking": 2771, "models": {"claude-opus-5-5": 3473}, "permission_denials": 0, "cost_usd": 0.07826379999999998}
+{"id": "WH_7306|B_blind|5", "result": {"choice": 3}, "inp": 6110, "out": 3109, "thinking": 2387, "models": {"claude-opus-5-5": 3109}, "permission_denials": 0, "cost_usd": 0.0709678}
+{"id": "WH_7306|B_blind|3", "result": {"choice": 0}, "inp": 6110, "out": 4315, "thinking": 3696, "models": {"claude-opus-5-5": 4315}, "permission_denials": 0, "cost_usd": 0.09508779999999999}
+{"id": "WH_7306|B_blind|10", "result": {"choice": 6}, "inp": 6112, "out": 1972, "thinking": 1360, "models": {"claude-opus-5-5": 1972}, "permission_denials": 0, "cost_usd": 0.048243799999999996}
+{"id": "WH_7306|B_blind|7", "result": {"choice": 6}, "inp": 6110, "out": 4047, "thinking": 3397, "models": {"claude-opus-5-5": 4047}, "permission_denials": 0, "cost_usd": 0.0897278}
+{"id": "WH_7306|B_blind|9", "result": {"choice": 6}, "inp": 6110, "out": 3360, "thinking": 2710, "models": {"claude-opus-5-5": 3360}, "permission_denials": 0, "cost_usd": 0.0759878}
+{"id": "WH_7306|B_blind|11", "result": {"choice": 6}, "inp": 6108, "out": 2603, "thinking": 2010, "models": {"claude-opus-5-5": 2603}, "permission_denials": 0, "cost_usd": 0.0608318}
+{"id": "WH_7306|B_blind|8", "result": {"choice": 0}, "inp": 6110, "out": 3761, "thinking": 3108, "models": {"claude-opus-5-5": 3761}, "permission_denials": 0, "cost_usd": 0.08400779999999998}
+{"id": "WH_7306|C_N|1", "result": {"choice": 6}, "inp": 6300, "out": 3400, "thinking": 2683, "models": {"claude-opus-5-5": 3400}, "permission_denials": 0, "cost_usd": 0.0768102}
+{"id": "WH_7306|C_N|2", "result": {"choice": 6}, "inp": 6300, "out": 2933, "thinking": 2308, "models": {"claude-opus-5-5": 2933}, "permission_denials": 0, "cost_usd": 0.06747020000000001}
+{"id": "WH_7306|C_N|0", "result": {"choice": 6}, "inp": 6300, "out": 4385, "thinking": 3657, "models": {"claude-opus-5-5": 4385}, "permission_denials": 0, "cost_usd": 0.1239584}
+{"id": "WH_7306|C_N|3", "result": {"choice": 6}, "inp": 6304, "out": 3732, "thinking": 2958, "models": {"claude-opus-5-5": 3732}, "permission_denials": 0, "cost_usd": 0.08348219999999999}
+{"id": "WH_7306|C_N|4", "result": {"choice": 6}, "inp": 6302, "out": 4102, "thinking": 3344, "models": {"claude-opus-5-5": 4102}, "permission_denials": 0, "cost_usd": 0.0908662}
+{"id": "WH_7306|D_N|1", "result": {"choice": 6}, "inp": 6375, "out": 3258, "thinking": 2366, "models": {"claude-opus-5-5": 3258}, "permission_denials": 0, "cost_usd": 0.07401639999999998}
+{"id": "WH_7307|B_zayavka|0", "result": {"choice": 0}, "inp": 6714, "out": 1690, "thinking": 1055, "models": {"claude-opus-5-5": 1690}, "permission_denials": 0, "cost_usd": 0.0733704}
+{"id": "WH_7306|D_N|0", "result": {"choice": 6}, "inp": 6373, "out": 4123, "thinking": 3357, "models": {"claude-opus-5-5": 4123}, "permission_denials": 0, "cost_usd": 0.1193024}
+{"id": "WH_7307|B_zayavka|3", "result": {"choice": 0}, "inp": 6712, "out": 1233, "thinking": 638, "models": {"claude-opus-5-5": 1233}, "permission_denials": 0, "cost_usd": 0.0335526}
+{"id": "WH_7307|B_zayavka|1", "result": {"choice": 0}, "inp": 6714, "out": 1751, "thinking": 1099, "models": {"claude-opus-5-5": 1751}, "permission_denials": 0, "cost_usd": 0.0439286}
+{"id": "WH_7307|B_zayavka|4", "result": {"choice": 0}, "inp": 6710, "out": 1577, "thinking": 983, "models": {"claude-opus-5-5": 1577}, "permission_denials": 0, "cost_usd": 0.0404166}
+{"id": "WH_7307|B_zayavka|2", "result": {"choice": 0}, "inp": 6716, "out": 2104, "thinking": 1564, "models": {"claude-opus-5-5": 2104}, "permission_denials": 0, "cost_usd": 0.0510046}
+{"id": "WH_7307|B_blind|0", "result": {"choice": 0}, "inp": 6108, "out": 2089, "thinking": 1407, "models": {"claude-opus-5-5": 2089}, "permission_denials": 0, "cost_usd": 0.0765024}
+{"id": "WH_7306|D_N|4", "result": {"choice": 6}, "inp": 6369, "out": 5734, "thinking": 4891, "models": {"claude-opus-5-5": 5734}, "permission_denials": 0, "cost_usd": 0.1234884}
+{"id": "WH_7307|B_blind|1", "result": {"choice": 0}, "inp": 6108, "out": 1853, "thinking": 1212, "models": {"claude-opus-5-5": 1853}, "permission_denials": 0, "cost_usd": 0.045831800000000006}
+{"id": "WH_7306|D_N|2", "result": {"choice": 6}, "inp": 6373, "out": 6343, "thinking": 5420, "models": {"claude-opus-5-5": 6343}, "permission_denials": 0, "cost_usd": 0.13570040000000003}
+{"id": "WH_7307|B_blind|2", "result": {"choice": 6}, "inp": 6110, "out": 2153, "thinking": 1606, "models": {"claude-opus-5-5": 2153}, "permission_denials": 0, "cost_usd": 0.051847800000000006}
+{"id": "WH_7307|B_blind|3", "result": {"choice": 6}, "inp": 6110, "out": 2218, "thinking": 1581, "models": {"claude-opus-5-5": 2218}, "permission_denials": 0, "cost_usd": 0.0531478}
+{"id": "WH_7307|B_blind|4", "result": {"choice": 6}, "inp": 6110, "out": 2430, "thinking": 1790, "models": {"claude-opus-5-5": 2430}, "permission_denials": 0, "cost_usd": 0.0573878}
+{"id": "WH_7307|B_blind|5", "result": {"choice": 0}, "inp": 6108, "out": 2122, "thinking": 1569, "models": {"claude-opus-5-5": 2122}, "permission_denials": 0, "cost_usd": 0.05121180000000001}
+{"id": "WH_7307|B_blind|6", "result": {"choice": 0}, "inp": 6112, "out": 1816, "thinking": 1242, "models": {"claude-opus-5-5": 1816}, "permission_denials": 0, "cost_usd": 0.0451238}
+{"id": "WH_7307|B_blind|7", "result": {"choice": 0}, "inp": 6110, "out": 2229, "thinking": 1517, "models": {"claude-opus-5-5": 2229}, "permission_denials": 0, "cost_usd": 0.05336780000000001}
+{"id": "WH_7307|B_blind|8", "result": {"choice": 0}, "inp": 6106, "out": 2458, "thinking": 1854, "models": {"claude-opus-5-5": 2458}, "permission_denials": 0, "cost_usd": 0.0579158}
+{"id": "WH_7307|B_blind|9", "result": {"choice": 0}, "inp": 6110, "out": 2455, "thinking": 1641, "models": {"claude-opus-5-5": 2455}, "permission_denials": 0, "cost_usd": 0.05788780000000001}
+{"id": "WH_7307|B_blind|10", "result": {"choice": 0}, "inp": 6112, "out": 2725, "thinking": 1963, "models": {"claude-opus-5-5": 2725}, "permission_denials": 0, "cost_usd": 0.06330380000000001}
+{"id": "WH_7306|D_N|3", "result": {"choice": -1}, "inp": 6373, "out": 10144, "thinking": 9315, "models": {"claude-opus-5-5": 10144}, "permission_denials": 0, "cost_usd": 0.21172040000000003}
+{"id": "WH_7307|B_blind|11", "result": {"choice": 0}, "inp": 6110, "out": 3142, "thinking": 2479, "models": {"claude-opus-5-5": 3142}, "permission_denials": 0, "cost_usd": 0.07162779999999998}
+{"id": "WH_7307|C_N|3", "result": {"choice": 0}, "inp": 6304, "out": 2234, "thinking": 1485, "models": {"claude-opus-5-5": 2234}, "permission_denials": 0, "cost_usd": 0.0535222}
+{"id": "WH_7307|C_N|2", "result": {"choice": 0}, "inp": 6298, "out": 2719, "thinking": 1959, "models": {"claude-opus-5-5": 2719}, "permission_denials": 0, "cost_usd": 0.0631742}
+{"id": "WH_7307|C_N|4", "result": {"choice": 0}, "inp": 6304, "out": 2929, "thinking": 2012, "models": {"claude-opus-5-5": 2929}, "permission_denials": 0, "cost_usd": 0.06742220000000002}
+{"id": "WH_7307|C_N|1", "result": {"choice": 0}, "inp": 6302, "out": 4162, "thinking": 3368, "models": {"claude-opus-5-5": 4162}, "permission_denials": 0, "cost_usd": 0.09206619999999999}
+{"id": "WH_7307|C_N|0", "result": {"choice": 0}, "inp": 6302, "out": 5231, "thinking": 4404, "models": {"claude-opus-5-5": 5231}, "permission_denials": 0, "cost_usd": 0.1408944}
+{"id": "WH_7307|D_N|1", "result": {"choice": 0}, "inp": 6371, "out": 3457, "thinking": 2527, "models": {"claude-opus-5-5": 3457}, "permission_denials": 0, "cost_usd": 0.07796439999999999}
+{"id": "WH_7307|D_N|0", "result": {"choice": 0}, "inp": 6371, "out": 4107, "thinking": 3311, "models": {"claude-opus-5-5": 4107}, "permission_denials": 0, "cost_usd": 0.1189664}
+{"id": "WH_7308|B_zayavka|2", "result": {"choice": 0}, "inp": 6756, "out": 1889, "thinking": 1377, "models": {"claude-opus-5-5": 1889}, "permission_denials": 0, "cost_usd": 0.0467126}
+{"id": "WH_7307|D_N|4", "result": {"choice": 6}, "inp": 6375, "out": 3356, "thinking": 2478, "models": {"claude-opus-5-5": 3356}, "permission_denials": 0, "cost_usd": 0.07597639999999999}
+{"id": "WH_7307|D_N|3", "result": {"choice": 0}, "inp": 6371, "out": 3593, "thinking": 2768, "models": {"claude-opus-5-5": 3593}, "permission_denials": 0, "cost_usd": 0.08068439999999999}
+{"id": "WH_7307|D_N|2", "result": {"choice": 0}, "inp": 6371, "out": 5664, "thinking": 4861, "models": {"claude-opus-5-5": 5664}, "permission_denials": 0, "cost_usd": 0.12210439999999997}
+{"id": "WH_7308|B_zayavka|1", "result": {"choice": 2}, "inp": 6756, "out": 3943, "thinking": 3267, "models": {"claude-opus-5-5": 3943}, "permission_denials": 0, "cost_usd": 0.0877926}
+{"id": "WH_7308|B_blind|0", "result": {"choice": 2}, "inp": 6108, "out": 1600, "thinking": 915, "models": {"claude-opus-5-5": 1600}, "permission_denials": 0, "cost_usd": 0.0667224}
+{"id": "WH_7308|B_blind|1", "result": {"choice": 2}, "inp": 6110, "out": 1865, "thinking": 1325, "models": {"claude-opus-5-5": 1865}, "permission_denials": 0, "cost_usd": 0.0720384}
+{"id": "WH_7308|B_zayavka|4", "result": {"choice": 2}, "inp": 6754, "out": 3078, "thinking": 2551, "models": {"claude-opus-5-5": 3078}, "permission_denials": 0, "cost_usd": 0.0704766}
+{"id": "WH_7308|B_blind|3", "result": {"choice": 2}, "inp": 6112, "out": 1982, "thinking": 1342, "models": {"claude-opus-5-5": 1982}, "permission_denials": 0, "cost_usd": 0.048443799999999995}
+{"id": "WH_7308|B_zayavka|3", "result": {"choice": 2}, "inp": 6756, "out": 4669, "thinking": 3683, "models": {"claude-opus-5-5": 4669}, "permission_denials": 0, "cost_usd": 0.10231259999999999}
+{"id": "WH_7308|B_blind|4", "result": {"choice": 4}, "inp": 6108, "out": 1942, "thinking": 1384, "models": {"claude-opus-5-5": 1942}, "permission_denials": 0, "cost_usd": 0.0476118}
+{"id": "WH_7308|B_zayavka|0", "result": {"choice": 0}, "inp": 6752, "out": 6541, "thinking": 5768, "models": {"claude-opus-5-5": 6541}, "permission_denials": 0, "cost_usd": 0.17069440000000002}
+{"id": "WH_7308|B_blind|6", "result": {"choice": 2}, "inp": 6110, "out": 1757, "thinking": 1079, "models": {"claude-opus-5-5": 1757}, "permission_denials": 0, "cost_usd": 0.04392780000000001}
+{"id": "WH_7308|B_blind|5", "result": {"choice": 2}, "inp": 6110, "out": 2791, "thinking": 2202, "models": {"claude-opus-5-5": 2791}, "permission_denials": 0, "cost_usd": 0.0646078}
+{"id": "WH_7308|B_blind|2", "result": {"choice": 2}, "inp": 6108, "out": 4423, "thinking": 3767, "models": {"claude-opus-5-5": 4423}, "permission_denials": 0, "cost_usd": 0.09723179999999998}
+{"id": "WH_7308|B_blind|8", "result": {"choice": 2}, "inp": 6108, "out": 1771, "thinking": 1216, "models": {"claude-opus-5-5": 1771}, "permission_denials": 0, "cost_usd": 0.0441918}
+{"id": "WH_7308|B_blind|7", "result": {"choice": 2}, "inp": 6108, "out": 3177, "thinking": 2389, "models": {"claude-opus-5-5": 3177}, "permission_denials": 0, "cost_usd": 0.07231179999999998}
+{"id": "WH_7308|B_blind|9", "result": {"choice": 2}, "inp": 6110, "out": 1764, "thinking": 1192, "models": {"claude-opus-5-5": 1764}, "permission_denials": 0, "cost_usd": 0.044067800000000004}
+{"id": "WH_7308|B_blind|10", "result": {"choice": 4}, "inp": 6108, "out": 3291, "thinking": 2606, "models": {"claude-opus-5-5": 3291}, "permission_denials": 0, "cost_usd": 0.07459179999999999}
+{"id": "WH_7308|B_blind|11", "result": {"choice": 1}, "inp": 6110, "out": 3490, "thinking": 2630, "models": {"claude-opus-5-5": 3490}, "permission_denials": 0, "cost_usd": 0.07858779999999999}
+{"id": "WH_7308|C_N|0", "result": {"choice": 2}, "inp": 6304, "out": 3625, "thinking": 3023, "models": {"claude-opus-5-5": 3625}, "permission_denials": 0, "cost_usd": 0.10879040000000001}
+{"id": "WH_7308|C_N|4", "result": {"choice": 1}, "inp": 6302, "out": 4759, "thinking": 3630, "models": {"claude-opus-5-5": 4759}, "permission_denials": 0, "cost_usd": 0.1040062}
+{"id": "WH_7308|D_N|3", "result": {"choice": 2}, "inp": 6371, "out": 2552, "thinking": 1807, "models": {"claude-opus-5-5": 2552}, "permission_denials": 0, "cost_usd": 0.059864400000000005}
+{"id": "WH_7308|D_N|0", "result": {"choice": 2}, "inp": 6373, "out": 5393, "thinking": 4558, "models": {"claude-opus-5-5": 5393}, "permission_denials": 0, "cost_usd": 0.1447024}
+{"id": "WH_7308|C_N|1", "result": {"choice": 2}, "inp": 6304, "out": 7767, "thinking": 6845, "models": {"claude-opus-5-5": 7767}, "permission_denials": 0, "cost_usd": 0.16418219999999997}
+{"id": "WH_7309|B_zayavka|0", "result": {"choice": 0}, "inp": 6709, "out": 1458, "thinking": 842, "models": {"claude-opus-5-5": 1458}, "permission_denials": 0, "cost_usd": 0.0686904}
+{"id": "WH_7308|D_N|1", "result": {"choice": 1}, "inp": 6373, "out": 5253, "thinking": 4288, "models": {"claude-opus-5-5": 5253}, "permission_denials": 0, "cost_usd": 0.11390039999999998}
+{"id": "WH_7308|C_N|3", "result": {"choice": 2}, "inp": 6302, "out": 7477, "thinking": 6648, "models": {"claude-opus-5-5": 7477}, "permission_denials": 0, "cost_usd": 0.1583662}
+{"id": "WH_7309|B_zayavka|1", "result": {"choice": 0}, "inp": 6707, "out": 1633, "thinking": 1051, "models": {"claude-opus-5-5": 1633}, "permission_denials": 0, "cost_usd": 0.0415672}
+{"id": "WH_7308|D_N|4", "result": {"choice": 2}, "inp": 6373, "out": 3250, "thinking": 2333, "models": {"claude-opus-5-5": 3250}, "permission_denials": 0, "cost_usd": 0.07384039999999999}
+{"id": "WH_7309|B_zayavka|2", "result": {"choice": 0}, "inp": 6705, "out": 1524, "thinking": 883, "models": {"claude-opus-5-5": 1524}, "permission_denials": 0, "cost_usd": 0.0393712}
+{"id": "WH_7309|B_zayavka|3", "result": {"choice": 0}, "inp": 6703, "out": 1467, "thinking": 969, "models": {"claude-opus-5-5": 1467}, "permission_denials": 0, "cost_usd": 0.0382152}
+{"id": "WH_7309|B_zayavka|4", "result": {"choice": 0}, "inp": 6709, "out": 1437, "thinking": 813, "models": {"claude-opus-5-5": 1437}, "permission_denials": 0, "cost_usd": 0.0376632}
+{"id": "WH_7308|C_N|2", "result": {"choice": 2}, "inp": 6298, "out": 10107, "thinking": 9232, "models": {"claude-opus-5-5": 10107}, "permission_denials": 0, "cost_usd": 0.2109342}
+{"id": "WH_7309|B_blind|1", "result": {"choice": 0}, "inp": 6108, "out": 2048, "thinking": 1369, "models": {"claude-opus-5-5": 2048}, "permission_denials": 0, "cost_usd": 0.0497318}
+{"id": "WH_7309|B_blind|0", "result": {"choice": 0}, "inp": 6108, "out": 2491, "thinking": 1884, "models": {"claude-opus-5-5": 2491}, "permission_denials": 0, "cost_usd": 0.0845424}
+{"id": "WH_7309|B_blind|4", "result": {"choice": 0}, "inp": 6112, "out": 1854, "thinking": 1270, "models": {"claude-opus-5-5": 1854}, "permission_denials": 0, "cost_usd": 0.0458838}
+{"id": "WH_7309|B_blind|5", "result": {"choice": 0}, "inp": 6110, "out": 2153, "thinking": 1441, "models": {"claude-opus-5-5": 2153}, "permission_denials": 0, "cost_usd": 0.051847800000000006}
+{"id": "WH_7309|B_blind|3", "result": {"choice": 7}, "inp": 6110, "out": 2429, "thinking": 1842, "models": {"claude-opus-5-5": 2429}, "permission_denials": 0, "cost_usd": 0.05736780000000001}
+{"id": "WH_7309|B_blind|6", "result": {"choice": 7}, "inp": 6108, "out": 2055, "thinking": 1477, "models": {"claude-opus-5-5": 2055}, "permission_denials": 0, "cost_usd": 0.0498718}
+{"id": "WH_7309|B_blind|2", "result": {"choice": 0}, "inp": 6112, "out": 3484, "thinking": 2734, "models": {"claude-opus-5-5": 3484}, "permission_denials": 0, "cost_usd": 0.07848379999999999}
+{"id": "WH_7309|B_blind|8", "result": {"choice": 0}, "inp": 6110, "out": 2235, "thinking": 1632, "models": {"claude-opus-5-5": 2235}, "permission_denials": 0, "cost_usd": 0.05348780000000001}
+{"id": "WH_7309|B_blind|9", "result": {"choice": 0}, "inp": 6110, "out": 2048, "thinking": 1404, "models": {"claude-opus-5-5": 2048}, "permission_denials": 0, "cost_usd": 0.0497478}
+{"id": "WH_7309|B_blind|10", "result": {"choice": 0}, "inp": 6110, "out": 2596, "thinking": 1875, "models": {"claude-opus-5-5": 2596}, "permission_denials": 0, "cost_usd": 0.0607078}
+{"id": "WH_7309|B_blind|7", "result": {"choice": 0}, "inp": 6108, "out": 3873, "thinking": 3286, "models": {"claude-opus-5-5": 3873}, "permission_denials": 0, "cost_usd": 0.0862318}
+{"id": "WH_7309|C_N|1", "result": {"choice": 0}, "inp": 6302, "out": 2588, "thinking": 1768, "models": {"claude-opus-5-5": 2588}, "permission_denials": 0, "cost_usd": 0.06058620000000001}
+{"id": "WH_7309|C_N|0", "result": {"choice": 0}, "inp": 6300, "out": 3588, "thinking": 2695, "models": {"claude-opus-5-5": 3588}, "permission_denials": 0, "cost_usd": 0.1080184}
+{"id": "WH_7309|C_N|3", "result": {"choice": 0}, "inp": 6300, "out": 2148, "thinking": 1399, "models": {"claude-opus-5-5": 2148}, "permission_denials": 0, "cost_usd": 0.05177020000000001}
+{"id": "WH_7309|B_blind|11", "result": {"choice": 0}, "inp": 6108, "out": 3930, "thinking": 3316, "models": {"claude-opus-5-5": 3930}, "permission_denials": 0, "cost_usd": 0.0873718}
+{"id": "WH_7308|D_N|2", "result": {"choice": 1}, "inp": 6373, "out": 15680, "thinking": 14521, "models": {"claude-opus-5-5": 15680}, "permission_denials": 0, "cost_usd": 0.32244039999999996}
+{"id": "WH_7309|C_N|4", "result": {"choice": 0}, "inp": 6304, "out": 2542, "thinking": 1759, "models": {"claude-opus-5-5": 2542}, "permission_denials": 0, "cost_usd": 0.0596822}
+{"id": "WH_7309|C_N|2", "result": {"choice": 2}, "inp": 6302, "out": 4377, "thinking": 3468, "models": {"claude-opus-5-5": 4377}, "permission_denials": 0, "cost_usd": 0.09636619999999999}
+{"id": "WH_7309|D_N|2", "result": {"choice": 0}, "inp": 6373, "out": 3264, "thinking": 2578, "models": {"claude-opus-5-5": 3264}, "permission_denials": 0, "cost_usd": 0.07412039999999999}
+{"id": "WH_7309|D_N|1", "result": {"choice": 6}, "inp": 6373, "out": 4004, "thinking": 3298, "models": {"claude-opus-5-5": 4004}, "permission_denials": 0, "cost_usd": 0.08892039999999998}
+{"id": "WH_7309|D_N|4", "result": {"choice": 0}, "inp": 6373, "out": 3750, "thinking": 2812, "models": {"claude-opus-5-5": 3750}, "permission_denials": 0, "cost_usd": 0.08384039999999998}
+{"id": "WH_7310|B_zayavka|0", "result": {"choice": 3}, "inp": 6854, "out": 3660, "thinking": 3111, "models": {"claude-opus-5-5": 3660}, "permission_denials": 0, "cost_usd": 0.1138904}
+{"id": "WH_7309|D_N|0", "result": {"choice": 2}, "inp": 6373, "out": 6359, "thinking": 5471, "models": {"claude-opus-5-5": 6359}, "permission_denials": 0, "cost_usd": 0.16402240000000004}
+{"id": "WH_7309|D_N|3", "result": {"choice": 2}, "inp": 6373, "out": 6380, "thinking": 5452, "models": {"claude-opus-5-5": 6380}, "permission_denials": 0, "cost_usd": 0.13644040000000002}
+{"id": "WH_7310|B_zayavka|2", "result": {"choice": 4}, "inp": 6858, "out": 4750, "thinking": 3932, "models": {"claude-opus-5-5": 4750}, "permission_denials": 0, "cost_usd": 0.10392180000000001}
+{"id": "WH_7310|B_zayavka|4", "result": {"choice": 4}, "inp": 6860, "out": 2697, "thinking": 1992, "models": {"claude-opus-5-5": 2697}, "permission_denials": 0, "cost_usd": 0.0628778}
+{"id": "WH_7310|B_zayavka|3", "result": {"choice": 4}, "inp": 6862, "out": 3318, "thinking": 2623, "models": {"claude-opus-5-5": 3318}, "permission_denials": 0, "cost_usd": 0.0753138}
+{"id": "WH_7310|B_blind|1", "result": {"choice": 4}, "inp": 6112, "out": 2448, "thinking": 1801, "models": {"claude-opus-5-5": 2448}, "permission_denials": 0, "cost_usd": 0.057763800000000004}
+{"id": "WH_7310|B_blind|4", "result": {"choice": 4}, "inp": 6106, "out": 1637, "thinking": 960, "models": {"claude-opus-5-5": 1637}, "permission_denials": 0, "cost_usd": 0.0414958}
+{"id": "WH_7310|B_blind|2", "result": {"choice": 4}, "inp": 6112, "out": 3205, "thinking": 2521, "models": {"claude-opus-5-5": 3205}, "permission_denials": 0, "cost_usd": 0.07290379999999999}
+{"id": "WH_7310|B_blind|0", "result": {"choice": 5}, "inp": 6108, "out": 4325, "thinking": 3563, "models": {"claude-opus-5-5": 4325}, "permission_denials": 0, "cost_usd": 0.12122239999999998}
+{"id": "WH_7310|B_blind|6", "result": {"choice": 4}, "inp": 6112, "out": 2463, "thinking": 1795, "models": {"claude-opus-5-5": 2463}, "permission_denials": 0, "cost_usd": 0.0580638}
+{"id": "WH_7310|B_blind|5", "result": {"choice": 4}, "inp": 6108, "out": 2425, "thinking": 1643, "models": {"claude-opus-5-5": 2425}, "permission_denials": 0, "cost_usd": 0.057271800000000005}
+{"id": "WH_7310|B_blind|3", "result": {"choice": 7}, "inp": 6110, "out": 3595, "thinking": 2957, "models": {"claude-opus-5-5": 3595}, "permission_denials": 0, "cost_usd": 0.08068779999999999}
+{"id": "WH_7310|B_blind|7", "result": {"choice": 4}, "inp": 6108, "out": 2861, "thinking": 2212, "models": {"claude-opus-5-5": 2861}, "permission_denials": 0, "cost_usd": 0.06599179999999999}
+{"id": "WH_7310|B_blind|8", "result": {"choice": 4}, "inp": 6108, "out": 2509, "thinking": 1723, "models": {"claude-opus-5-5": 2509}, "permission_denials": 0, "cost_usd": 0.058951800000000006}
+{"id": "WH_7310|B_blind|10", "result": {"choice": 4}, "inp": 6110, "out": 2239, "thinking": 1560, "models": {"claude-opus-5-5": 2239}, "permission_denials": 0, "cost_usd": 0.053567800000000006}
+{"id": "WH_7310|B_blind|9", "result": {"choice": 4}, "inp": 6106, "out": 2869, "thinking": 2266, "models": {"claude-opus-5-5": 2869}, "permission_denials": 0, "cost_usd": 0.06613580000000001}
+{"id": "WH_7310|B_zayavka|1", "result": {"choice": 6}, "inp": 6860, "out": 10709, "thinking": 9816, "models": {"claude-opus-5-5": 10709}, "permission_denials": 0, "cost_usd": 0.2231178}
+{"id": "WH_7310|B_blind|11", "result": {"choice": 3}, "inp": 6112, "out": 3302, "thinking": 2625, "models": {"claude-opus-5-5": 3302}, "permission_denials": 0, "cost_usd": 0.07484379999999999}
+{"id": "WH_7310|C_N|0", "result": {"choice": 5}, "inp": 6304, "out": 3635, "thinking": 2772, "models": {"claude-opus-5-5": 3635}, "permission_denials": 0, "cost_usd": 0.10899039999999999}
+{"id": "WH_7310|C_N|2", "result": {"choice": 4}, "inp": 6300, "out": 3631, "thinking": 2778, "models": {"claude-opus-5-5": 3631}, "permission_denials": 0, "cost_usd": 0.08143020000000001}
+{"id": "WH_7310|C_N|4", "result": {"choice": 4}, "inp": 6302, "out": 4781, "thinking": 3847, "models": {"claude-opus-5-5": 4781}, "permission_denials": 0, "cost_usd": 0.10444619999999999}
+{"id": "WH_7310|C_N|3", "result": {"choice": 4}, "inp": 6304, "out": 5062, "thinking": 4029, "models": {"claude-opus-5-5": 5062}, "permission_denials": 0, "cost_usd": 0.11008219999999999}
+{"id": "WH_7310|D_N|4", "result": {"choice": 4}, "inp": 6371, "out": 3008, "thinking": 1945, "models": {"claude-opus-5-5": 3008}, "permission_denials": 0, "cost_usd": 0.0689844}
+{"id": "WH_7310|D_N|0", "result": {"choice": 4}, "inp": 6371, "out": 6700, "thinking": 5785, "models": {"claude-opus-5-5": 6700}, "permission_denials": 0, "cost_usd": 0.17082640000000004}
+{"id": "WH_7310|D_N|2", "result": {"choice": 4}, "inp": 6371, "out": 5566, "thinking": 4570, "models": {"claude-opus-5-5": 5566}, "permission_denials": 0, "cost_usd": 0.12014439999999998}
+{"id": "WH_7311|B_zayavka|0", "result": {"choice": 6}, "inp": 6708, "out": 2387, "thinking": 1688, "models": {"claude-opus-5-5": 2387}, "permission_denials": 0, "cost_usd": 0.08726239999999999}
+{"id": "WH_7311|B_zayavka|1", "result": {"choice": 2}, "inp": 6712, "out": 2236, "thinking": 1593, "models": {"claude-opus-5-5": 2236}, "permission_denials": 0, "cost_usd": 0.0536438}
+{"id": "WH_7311|B_zayavka|2", "result": {"choice": 2}, "inp": 6712, "out": 1620, "thinking": 921, "models": {"claude-opus-5-5": 1620}, "permission_denials": 0, "cost_usd": 0.041323799999999994}
+{"id": "WH_7311|B_zayavka|3", "result": {"choice": 2}, "inp": 6710, "out": 1506, "thinking": 793, "models": {"claude-opus-5-5": 1506}, "permission_denials": 0, "cost_usd": 0.0390278}
+{"id": "WH_7311|B_zayavka|4", "result": {"choice": 2}, "inp": 6708, "out": 1702, "thinking": 1105, "models": {"claude-opus-5-5": 1702}, "permission_denials": 0, "cost_usd": 0.0429318}
+{"id": "WH_7310|D_N|3", "result": {"choice": 2}, "inp": 6375, "out": 7298, "thinking": 6294, "models": {"claude-opus-5-5": 7298}, "permission_denials": 0, "cost_usd": 0.15481640000000002}
+{"id": "WH_7311|B_blind|1", "result": {"choice": 6}, "inp": 6108, "out": 2712, "thinking": 2120, "models": {"claude-opus-5-5": 2712}, "permission_denials": 0, "cost_usd": 0.0889624}
+{"id": "WH_7311|B_blind|3", "result": {"choice": 7}, "inp": 6110, "out": 2015, "thinking": 1367, "models": {"claude-opus-5-5": 2015}, "permission_denials": 0, "cost_usd": 0.0490878}
+{"id": "WH_7311|B_blind|0", "result": {"choice": 4}, "inp": 6110, "out": 3847, "thinking": 3097, "models": {"claude-opus-5-5": 3847}, "permission_denials": 0, "cost_usd": 0.11167840000000001}
+{"id": "WH_7311|B_blind|2", "result": {"choice": 6}, "inp": 6108, "out": 4115, "thinking": 3435, "models": {"claude-opus-5-5": 4115}, "permission_denials": 0, "cost_usd": 0.09107179999999998}
+{"id": "WH_7311|B_blind|5", "result": {"choice": 6}, "inp": 6110, "out": 2427, "thinking": 1688, "models": {"claude-opus-5-5": 2427}, "permission_denials": 0, "cost_usd": 0.057327800000000005}
+{"id": "WH_7311|B_blind|4", "result": {"choice": 2}, "inp": 6108, "out": 3562, "thinking": 2861, "models": {"claude-opus-5-5": 3562}, "permission_denials": 0, "cost_usd": 0.0800118}
+{"id": "WH_7310|C_N|1", "result": {"choice": 2}, "inp": 6302, "out": 14265, "thinking": 13235, "models": {"claude-opus-5-5": 14265}, "permission_denials": 0, "cost_usd": 0.2941262}
+{"id": "WH_7310|D_N|1", "result": {"choice": 2}, "inp": 6375, "out": 12845, "thinking": 11658, "models": {"claude-opus-5-5": 12845}, "permission_denials": 0, "cost_usd": 0.2657564}
+{"id": "WH_7311|B_blind|11", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|C_N|0", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|C_N|1", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|B_blind|6", "result": {"choice": 7}, "inp": 6110, "out": 2678, "thinking": 2043, "models": {"claude-opus-5-5": 2678}, "permission_denials": 0, "cost_usd": 0.0623478}
+{"id": "WH_7311|C_N|2", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|C_N|4", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|C_N|3", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|D_N|0", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|D_N|1", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|D_N|2", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|D_N|3", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|B_blind|7", "result": {"choice": 6}, "inp": 6106, "out": 2961, "thinking": 2292, "models": {"claude-opus-5-5": 2961}, "permission_denials": 0, "cost_usd": 0.0679758}
+{"id": "WH_7311|D_N|4", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_zayavka|0", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_zayavka|1", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_zayavka|2", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_zayavka|3", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_zayavka|4", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|0", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|1", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|3", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|2", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|B_blind|10", "result": {"choice": 6}, "inp": 6110, "out": 2801, "thinking": 2261, "models": {"claude-opus-5-5": 2801}, "permission_denials": 0, "cost_usd": 0.0648078}
+{"id": "WH_7312|B_blind|4", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|5", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|6", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|8", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|7", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|10", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|9", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|B_blind|11", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|C_N|0", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|C_N|1", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|C_N|2", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|C_N|3", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|C_N|4", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|D_N|0", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|D_N|1", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|D_N|2", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|D_N|3", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7312|D_N|4", "result": null, "inp": 0, "out": 0, "thinking": 0, "models": {}, "permission_denials": 0, "cost_usd": 0, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "retried": true}
+{"id": "WH_7311|B_blind|8", "result": {"choice": 6}, "inp": 6110, "out": 4706, "thinking": 4045, "models": {"claude-opus-5-5": 4706}, "permission_denials": 0, "cost_usd": 0.1029078}
+{"id": "WH_7311|B_blind|9", "result": {"choice": 6}, "inp": 6108, "out": 4787, "thinking": 4019, "models": {"claude-opus-5-5": 4787}, "permission_denials": 0, "cost_usd": 0.10451179999999999}

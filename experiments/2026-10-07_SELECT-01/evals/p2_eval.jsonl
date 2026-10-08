@@ -1,0 +1,324 @@
+{"task": "WH_7301", "arm": "B_zayavka", "i": 4, "choice": 3, "shown_choice": 6, "error": null, "inp": 6767, "out": 1754, "models": {"claude-opus-5-5": 1754}, "retried": false}
+{"task": "WH_7301", "arm": "B_zayavka", "i": 3, "choice": 3, "shown_choice": 6, "error": null, "inp": 6765, "out": 1798, "models": {"claude-opus-5-5": 1798}, "retried": false}
+{"task": "WH_7301", "arm": "B_zayavka", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6767, "out": 1947, "models": {"claude-opus-5-5": 1947}, "retried": false}
+{"task": "WH_7301", "arm": "B_zayavka", "i": 1, "choice": 3, "shown_choice": 6, "error": null, "inp": 6767, "out": 1977, "models": {"claude-opus-5-5": 1977}, "retried": false}
+{"task": "WH_7301", "arm": "B_zayavka", "i": 2, "choice": 3, "shown_choice": 6, "error": null, "inp": 6765, "out": 1936, "models": {"claude-opus-5-5": 1936}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 2, "choice": 3, "shown_choice": 6, "error": null, "inp": 6112, "out": 2174, "models": {"claude-opus-5-5": 2174}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 1, "choice": 3, "shown_choice": 6, "error": null, "inp": 6112, "out": 2402, "models": {"claude-opus-5-5": 2402}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 0, "choice": 4, "shown_choice": 7, "error": null, "inp": 6108, "out": 3292, "models": {"claude-opus-5-5": 3292}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 5, "choice": 3, "shown_choice": 6, "error": null, "inp": 6106, "out": 1925, "models": {"claude-opus-5-5": 1925}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 3, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 2166, "models": {"claude-opus-5-5": 2166}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 6, "choice": 3, "shown_choice": 6, "error": null, "inp": 6112, "out": 2152, "models": {"claude-opus-5-5": 2152}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 8, "choice": 3, "shown_choice": 6, "error": null, "inp": 6108, "out": 2154, "models": {"claude-opus-5-5": 2154}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 4, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 2643, "models": {"claude-opus-5-5": 2643}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 9, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 2715, "models": {"claude-opus-5-5": 2715}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 7, "choice": 3, "shown_choice": 6, "error": null, "inp": 6112, "out": 3501, "models": {"claude-opus-5-5": 3501}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 10, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 2839, "models": {"claude-opus-5-5": 2839}, "retried": false}
+{"task": "WH_7301", "arm": "B_blind", "i": 11, "choice": 5, "shown_choice": 0, "error": null, "inp": 6110, "out": 2655, "models": {"claude-opus-5-5": 2655}, "retried": false}
+{"task": "WH_7301", "arm": "C_N", "i": 3, "choice": 3, "shown_choice": 6, "error": null, "inp": 6304, "out": 2668, "models": {"claude-opus-5-5": 2668}, "retried": false}
+{"task": "WH_7301", "arm": "C_N", "i": 1, "choice": 3, "shown_choice": 6, "error": null, "inp": 6304, "out": 3158, "models": {"claude-opus-5-5": 3158}, "retried": false}
+{"task": "WH_7301", "arm": "C_N", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6304, "out": 3254, "models": {"claude-opus-5-5": 3254}, "retried": false}
+{"task": "WH_7301", "arm": "C_N", "i": 2, "choice": 3, "shown_choice": 6, "error": null, "inp": 6300, "out": 3833, "models": {"claude-opus-5-5": 3833}, "retried": false}
+{"task": "WH_7301", "arm": "D_N", "i": 1, "choice": 3, "shown_choice": 6, "error": null, "inp": 6373, "out": 3024, "models": {"claude-opus-5-5": 3024}, "retried": false}
+{"task": "WH_7302", "arm": "B_zayavka", "i": 0, "choice": 1, "shown_choice": 0, "error": null, "inp": 6816, "out": 1908, "models": {"claude-opus-5-5": 1908}, "retried": false}
+{"task": "WH_7301", "arm": "C_N", "i": 4, "choice": 3, "shown_choice": 6, "error": null, "inp": 6302, "out": 4188, "models": {"claude-opus-5-5": 4188}, "retried": false}
+{"task": "WH_7301", "arm": "D_N", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6375, "out": 4471, "models": {"claude-opus-5-5": 4471}, "retried": false}
+{"task": "WH_7302", "arm": "B_zayavka", "i": 1, "choice": 1, "shown_choice": 0, "error": null, "inp": 6816, "out": 1652, "models": {"claude-opus-5-5": 1652}, "retried": false}
+{"task": "WH_7301", "arm": "D_N", "i": 2, "choice": 4, "shown_choice": 7, "error": null, "inp": 6371, "out": 3946, "models": {"claude-opus-5-5": 3946}, "retried": false}
+{"task": "WH_7302", "arm": "B_zayavka", "i": 4, "choice": 1, "shown_choice": 0, "error": null, "inp": 6820, "out": 1342, "models": {"claude-opus-5-5": 1342}, "retried": false}
+{"task": "WH_7302", "arm": "B_zayavka", "i": 2, "choice": 1, "shown_choice": 0, "error": null, "inp": 6820, "out": 1729, "models": {"claude-opus-5-5": 1729}, "retried": false}
+{"task": "WH_7302", "arm": "B_zayavka", "i": 3, "choice": 1, "shown_choice": 0, "error": null, "inp": 6818, "out": 1869, "models": {"claude-opus-5-5": 1869}, "retried": false}
+{"task": "WH_7301", "arm": "D_N", "i": 3, "choice": 3, "shown_choice": 6, "error": null, "inp": 6373, "out": 4355, "models": {"claude-opus-5-5": 4355}, "retried": false}
+{"task": "WH_7301", "arm": "D_N", "i": 4, "choice": 3, "shown_choice": 6, "error": null, "inp": 6371, "out": 4695, "models": {"claude-opus-5-5": 4695}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 1, "choice": 1, "shown_choice": 0, "error": null, "inp": 6108, "out": 2860, "models": {"claude-opus-5-5": 2860}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 2, "choice": 5, "shown_choice": 7, "error": null, "inp": 6110, "out": 2320, "models": {"claude-opus-5-5": 2320}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 0, "choice": 1, "shown_choice": 0, "error": null, "inp": 6110, "out": 3560, "models": {"claude-opus-5-5": 3560}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 4, "choice": 5, "shown_choice": 7, "error": null, "inp": 6108, "out": 2227, "models": {"claude-opus-5-5": 2227}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 6, "choice": 5, "shown_choice": 7, "error": null, "inp": 6110, "out": 2060, "models": {"claude-opus-5-5": 2060}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 5, "choice": 1, "shown_choice": 0, "error": null, "inp": 6108, "out": 2728, "models": {"claude-opus-5-5": 2728}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 7, "choice": 1, "shown_choice": 0, "error": null, "inp": 6110, "out": 2824, "models": {"claude-opus-5-5": 2824}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 8, "choice": 1, "shown_choice": 0, "error": null, "inp": 6110, "out": 2192, "models": {"claude-opus-5-5": 2192}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 9, "choice": 1, "shown_choice": 0, "error": null, "inp": 6110, "out": 2595, "models": {"claude-opus-5-5": 2595}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 11, "choice": 1, "shown_choice": 0, "error": null, "inp": 6108, "out": 2283, "models": {"claude-opus-5-5": 2283}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 3, "choice": 1, "shown_choice": 0, "error": null, "inp": 6112, "out": 5634, "models": {"claude-opus-5-5": 5634}, "retried": false}
+{"task": "WH_7302", "arm": "B_blind", "i": 10, "choice": 1, "shown_choice": 0, "error": null, "inp": 6112, "out": 2895, "models": {"claude-opus-5-5": 2895}, "retried": false}
+{"task": "WH_7302", "arm": "C_N", "i": 0, "choice": 5, "shown_choice": 7, "error": null, "inp": 6304, "out": 2988, "models": {"claude-opus-5-5": 2988}, "retried": false}
+{"task": "WH_7302", "arm": "C_N", "i": 1, "choice": 5, "shown_choice": 7, "error": null, "inp": 6302, "out": 3028, "models": {"claude-opus-5-5": 3028}, "retried": false}
+{"task": "WH_7302", "arm": "C_N", "i": 2, "choice": 5, "shown_choice": 7, "error": null, "inp": 6300, "out": 2403, "models": {"claude-opus-5-5": 2403}, "retried": false}
+{"task": "WH_7302", "arm": "D_N", "i": 0, "choice": 1, "shown_choice": 0, "error": null, "inp": 6371, "out": 2453, "models": {"claude-opus-5-5": 2453}, "retried": false}
+{"task": "WH_7302", "arm": "C_N", "i": 3, "choice": 1, "shown_choice": 0, "error": null, "inp": 6302, "out": 3111, "models": {"claude-opus-5-5": 3111}, "retried": false}
+{"task": "WH_7303", "arm": "B_zayavka", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6789, "out": 1399, "models": {"claude-opus-5-5": 1399}, "retried": false}
+{"task": "WH_7302", "arm": "C_N", "i": 4, "choice": 5, "shown_choice": 7, "error": null, "inp": 6304, "out": 2992, "models": {"claude-opus-5-5": 2992}, "retried": false}
+{"task": "WH_7303", "arm": "B_zayavka", "i": 1, "choice": 3, "shown_choice": 6, "error": null, "inp": 6789, "out": 1201, "models": {"claude-opus-5-5": 1201}, "retried": false}
+{"task": "WH_7302", "arm": "D_N", "i": 1, "choice": 5, "shown_choice": 7, "error": null, "inp": 6371, "out": 3323, "models": {"claude-opus-5-5": 3323}, "retried": false}
+{"task": "WH_7303", "arm": "B_zayavka", "i": 4, "choice": 3, "shown_choice": 6, "error": null, "inp": 6789, "out": 1216, "models": {"claude-opus-5-5": 1216}, "retried": false}
+{"task": "WH_7302", "arm": "D_N", "i": 2, "choice": 1, "shown_choice": 0, "error": null, "inp": 6373, "out": 3955, "models": {"claude-opus-5-5": 3955}, "retried": false}
+{"task": "WH_7303", "arm": "B_zayavka", "i": 2, "choice": 3, "shown_choice": 6, "error": null, "inp": 6789, "out": 1741, "models": {"claude-opus-5-5": 1741}, "retried": false}
+{"task": "WH_7303", "arm": "B_zayavka", "i": 3, "choice": 3, "shown_choice": 6, "error": null, "inp": 6789, "out": 1838, "models": {"claude-opus-5-5": 1838}, "retried": false}
+{"task": "WH_7302", "arm": "D_N", "i": 4, "choice": 1, "shown_choice": 0, "error": null, "inp": 6371, "out": 4082, "models": {"claude-opus-5-5": 4082}, "retried": false}
+{"task": "WH_7302", "arm": "D_N", "i": 3, "choice": 1, "shown_choice": 0, "error": null, "inp": 6369, "out": 5431, "models": {"claude-opus-5-5": 5431}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 1, "choice": 3, "shown_choice": 6, "error": null, "inp": 6108, "out": 2969, "models": {"claude-opus-5-5": 2969}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 3, "choice": 3, "shown_choice": 6, "error": null, "inp": 6108, "out": 2311, "models": {"claude-opus-5-5": 2311}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 5, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 2127, "models": {"claude-opus-5-5": 2127}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 2, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 2883, "models": {"claude-opus-5-5": 2883}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 3807, "models": {"claude-opus-5-5": 3807}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 6, "choice": 2, "shown_choice": 7, "error": null, "inp": 6112, "out": 3342, "models": {"claude-opus-5-5": 3342}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 7, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 2637, "models": {"claude-opus-5-5": 2637}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 8, "choice": 3, "shown_choice": 6, "error": null, "inp": 6108, "out": 2261, "models": {"claude-opus-5-5": 2261}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 9, "choice": 3, "shown_choice": 6, "error": null, "inp": 6110, "out": 2154, "models": {"claude-opus-5-5": 2154}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 4, "choice": 0, "shown_choice": 3, "error": null, "inp": 6110, "out": 4811, "models": {"claude-opus-5-5": 4811}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 11, "choice": 3, "shown_choice": 6, "error": null, "inp": 6112, "out": 2352, "models": {"claude-opus-5-5": 2352}, "retried": false}
+{"task": "WH_7303", "arm": "C_N", "i": 0, "choice": 0, "shown_choice": 3, "error": null, "inp": 6300, "out": 3224, "models": {"claude-opus-5-5": 3224}, "retried": false}
+{"task": "WH_7303", "arm": "C_N", "i": 1, "choice": 3, "shown_choice": 6, "error": null, "inp": 6302, "out": 2831, "models": {"claude-opus-5-5": 2831}, "retried": false}
+{"task": "WH_7303", "arm": "C_N", "i": 3, "choice": 2, "shown_choice": 7, "error": null, "inp": 6302, "out": 2194, "models": {"claude-opus-5-5": 2194}, "retried": false}
+{"task": "WH_7303", "arm": "B_blind", "i": 10, "choice": 3, "shown_choice": 6, "error": null, "inp": 6112, "out": 4354, "models": {"claude-opus-5-5": 4354}, "retried": false}
+{"task": "WH_7304", "arm": "B_zayavka", "i": 0, "choice": 5, "shown_choice": 0, "error": null, "inp": 6776, "out": 1326, "models": {"claude-opus-5-5": 1326}, "retried": false}
+{"task": "WH_7303", "arm": "C_N", "i": 4, "choice": 2, "shown_choice": 7, "error": null, "inp": 6304, "out": 3799, "models": {"claude-opus-5-5": 3799}, "retried": false}
+{"task": "WH_7303", "arm": "C_N", "i": 2, "choice": 0, "shown_choice": 3, "error": null, "inp": 6302, "out": 5051, "models": {"claude-opus-5-5": 5051}, "retried": false}
+{"task": "WH_7304", "arm": "B_zayavka", "i": 2, "choice": 5, "shown_choice": 0, "error": null, "inp": 6776, "out": 1712, "models": {"claude-opus-5-5": 1712}, "retried": false}
+{"task": "WH_7304", "arm": "B_zayavka", "i": 1, "choice": 3, "shown_choice": 2, "error": null, "inp": 6778, "out": 2165, "models": {"claude-opus-5-5": 2165}, "retried": false}
+{"task": "WH_7303", "arm": "D_N", "i": 1, "choice": 0, "shown_choice": 3, "error": null, "inp": 6373, "out": 6227, "models": {"claude-opus-5-5": 6227}, "retried": false}
+{"task": "WH_7303", "arm": "D_N", "i": 2, "choice": 3, "shown_choice": 6, "error": null, "inp": 6375, "out": 5370, "models": {"claude-opus-5-5": 5370}, "retried": false}
+{"task": "WH_7303", "arm": "D_N", "i": 4, "choice": 0, "shown_choice": 3, "error": null, "inp": 6373, "out": 4451, "models": {"claude-opus-5-5": 4451}, "retried": false}
+{"task": "WH_7304", "arm": "B_zayavka", "i": 3, "choice": 0, "shown_choice": 7, "error": null, "inp": 6776, "out": 2125, "models": {"claude-opus-5-5": 2125}, "retried": false}
+{"task": "WH_7303", "arm": "D_N", "i": 3, "choice": 0, "shown_choice": 3, "error": null, "inp": 6375, "out": 5749, "models": {"claude-opus-5-5": 5749}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 0, "choice": 0, "shown_choice": 7, "error": null, "inp": 6110, "out": 2477, "models": {"claude-opus-5-5": 2477}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 1, "choice": 0, "shown_choice": 7, "error": null, "inp": 6112, "out": 2262, "models": {"claude-opus-5-5": 2262}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 3, "choice": 4, "shown_choice": 5, "error": null, "inp": 6110, "out": 2283, "models": {"claude-opus-5-5": 2283}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 5, "choice": 5, "shown_choice": 0, "error": null, "inp": 6110, "out": 1844, "models": {"claude-opus-5-5": 1844}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 4, "choice": 3, "shown_choice": 2, "error": null, "inp": 6110, "out": 2456, "models": {"claude-opus-5-5": 2456}, "retried": false}
+{"task": "WH_7304", "arm": "B_zayavka", "i": 4, "choice": 0, "shown_choice": 7, "error": null, "inp": 6780, "out": 4436, "models": {"claude-opus-5-5": 4436}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 2, "choice": 1, "shown_choice": 6, "error": null, "inp": 6108, "out": 3907, "models": {"claude-opus-5-5": 3907}, "retried": false}
+{"task": "WH_7303", "arm": "D_N", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6371, "out": 11247, "models": {"claude-opus-5-5": 11247}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 8, "choice": 0, "shown_choice": 7, "error": null, "inp": 6108, "out": 1896, "models": {"claude-opus-5-5": 1896}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 6, "choice": 4, "shown_choice": 5, "error": null, "inp": 6110, "out": 2833, "models": {"claude-opus-5-5": 2833}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 9, "choice": 5, "shown_choice": 0, "error": null, "inp": 6108, "out": 2236, "models": {"claude-opus-5-5": 2236}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 7, "choice": 3, "shown_choice": 2, "error": null, "inp": 6110, "out": 2880, "models": {"claude-opus-5-5": 2880}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 10, "choice": 0, "shown_choice": 7, "error": null, "inp": 6110, "out": 2681, "models": {"claude-opus-5-5": 2681}, "retried": false}
+{"task": "WH_7304", "arm": "B_blind", "i": 11, "choice": 3, "shown_choice": 2, "error": null, "inp": 6110, "out": 2465, "models": {"claude-opus-5-5": 2465}, "retried": false}
+{"task": "WH_7304", "arm": "C_N", "i": 0, "choice": 5, "shown_choice": 0, "error": null, "inp": 6304, "out": 2723, "models": {"claude-opus-5-5": 2723}, "retried": false}
+{"task": "WH_7304", "arm": "C_N", "i": 2, "choice": 3, "shown_choice": 2, "error": null, "inp": 6304, "out": 3817, "models": {"claude-opus-5-5": 3817}, "retried": false}
+{"task": "WH_7304", "arm": "C_N", "i": 1, "choice": 1, "shown_choice": 6, "error": null, "inp": 6298, "out": 5916, "models": {"claude-opus-5-5": 5916}, "retried": false}
+{"task": "WH_7304", "arm": "D_N", "i": 1, "choice": 4, "shown_choice": 5, "error": null, "inp": 6375, "out": 5228, "models": {"claude-opus-5-5": 5228}, "retried": false}
+{"task": "WH_7304", "arm": "D_N", "i": 2, "choice": 4, "shown_choice": 5, "error": null, "inp": 6373, "out": 5167, "models": {"claude-opus-5-5": 5167}, "retried": false}
+{"task": "WH_7304", "arm": "D_N", "i": 3, "choice": 3, "shown_choice": 2, "error": null, "inp": 6375, "out": 4306, "models": {"claude-opus-5-5": 4306}, "retried": false}
+{"task": "WH_7305", "arm": "B_zayavka", "i": 0, "choice": 7, "shown_choice": 7, "error": null, "inp": 6673, "out": 1412, "models": {"claude-opus-5-5": 1412}, "retried": false}
+{"task": "WH_7304", "arm": "C_N", "i": 4, "choice": 3, "shown_choice": 2, "error": null, "inp": 6298, "out": 6463, "models": {"claude-opus-5-5": 6463}, "retried": false}
+{"task": "WH_7304", "arm": "D_N", "i": 4, "choice": 0, "shown_choice": 7, "error": null, "inp": 6375, "out": 2787, "models": {"claude-opus-5-5": 2787}, "retried": false}
+{"task": "WH_7305", "arm": "B_zayavka", "i": 2, "choice": 7, "shown_choice": 7, "error": null, "inp": 6671, "out": 1273, "models": {"claude-opus-5-5": 1273}, "retried": false}
+{"task": "WH_7304", "arm": "C_N", "i": 3, "choice": 3, "shown_choice": 2, "error": null, "inp": 6304, "out": 7751, "models": {"claude-opus-5-5": 7751}, "retried": false}
+{"task": "WH_7305", "arm": "B_zayavka", "i": 3, "choice": 7, "shown_choice": 7, "error": null, "inp": 6675, "out": 1439, "models": {"claude-opus-5-5": 1439}, "retried": false}
+{"task": "WH_7305", "arm": "B_zayavka", "i": 1, "choice": 7, "shown_choice": 7, "error": null, "inp": 6675, "out": 1570, "models": {"claude-opus-5-5": 1570}, "retried": false}
+{"task": "WH_7305", "arm": "B_zayavka", "i": 4, "choice": 7, "shown_choice": 7, "error": null, "inp": 6675, "out": 1352, "models": {"claude-opus-5-5": 1352}, "retried": false}
+{"task": "WH_7304", "arm": "D_N", "i": 0, "choice": 3, "shown_choice": 2, "error": null, "inp": 6373, "out": 7784, "models": {"claude-opus-5-5": 7784}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 1, "choice": 7, "shown_choice": 7, "error": null, "inp": 6108, "out": 1953, "models": {"claude-opus-5-5": 1953}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 4, "choice": 2, "shown_choice": 5, "error": null, "inp": 6110, "out": 2042, "models": {"claude-opus-5-5": 2042}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 6, "choice": 7, "shown_choice": 7, "error": null, "inp": 6110, "out": 1897, "models": {"claude-opus-5-5": 1897}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 5, "choice": 7, "shown_choice": 7, "error": null, "inp": 6110, "out": 1992, "models": {"claude-opus-5-5": 1992}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 7, "choice": 7, "shown_choice": 7, "error": null, "inp": 6106, "out": 2040, "models": {"claude-opus-5-5": 2040}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 3, "choice": 7, "shown_choice": 7, "error": null, "inp": 6110, "out": 2344, "models": {"claude-opus-5-5": 2344}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 8, "choice": 7, "shown_choice": 7, "error": null, "inp": 6112, "out": 1519, "models": {"claude-opus-5-5": 1519}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 0, "choice": 7, "shown_choice": 7, "error": null, "inp": 6112, "out": 4503, "models": {"claude-opus-5-5": 4503}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 9, "choice": 7, "shown_choice": 7, "error": null, "inp": 6108, "out": 2329, "models": {"claude-opus-5-5": 2329}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 2, "choice": 7, "shown_choice": 7, "error": null, "inp": 6112, "out": 5213, "models": {"claude-opus-5-5": 5213}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 11, "choice": 7, "shown_choice": 7, "error": null, "inp": 6110, "out": 3129, "models": {"claude-opus-5-5": 3129}, "retried": false}
+{"task": "WH_7305", "arm": "B_blind", "i": 10, "choice": 7, "shown_choice": 7, "error": null, "inp": 6110, "out": 4293, "models": {"claude-opus-5-5": 4293}, "retried": false}
+{"task": "WH_7305", "arm": "C_N", "i": 3, "choice": 7, "shown_choice": 7, "error": null, "inp": 6302, "out": 2704, "models": {"claude-opus-5-5": 2704}, "retried": false}
+{"task": "WH_7305", "arm": "C_N", "i": 0, "choice": 7, "shown_choice": 7, "error": null, "inp": 6302, "out": 4580, "models": {"claude-opus-5-5": 4580}, "retried": false}
+{"task": "WH_7305", "arm": "C_N", "i": 4, "choice": 7, "shown_choice": 7, "error": null, "inp": 6304, "out": 2803, "models": {"claude-opus-5-5": 2803}, "retried": false}
+{"task": "WH_7305", "arm": "C_N", "i": 2, "choice": 7, "shown_choice": 7, "error": null, "inp": 6302, "out": 4835, "models": {"claude-opus-5-5": 4835}, "retried": false}
+{"task": "WH_7305", "arm": "C_N", "i": 1, "choice": 7, "shown_choice": 7, "error": null, "inp": 6302, "out": 5504, "models": {"claude-opus-5-5": 5504}, "retried": false}
+{"task": "WH_7305", "arm": "D_N", "i": 1, "choice": 7, "shown_choice": 7, "error": null, "inp": 6375, "out": 3717, "models": {"claude-opus-5-5": 3717}, "retried": false}
+{"task": "WH_7306", "arm": "B_zayavka", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6794, "out": 1848, "models": {"claude-opus-5-5": 1848}, "retried": false}
+{"task": "WH_7305", "arm": "D_N", "i": 3, "choice": 7, "shown_choice": 7, "error": null, "inp": 6375, "out": 3528, "models": {"claude-opus-5-5": 3528}, "retried": false}
+{"task": "WH_7306", "arm": "B_zayavka", "i": 1, "choice": 6, "shown_choice": 0, "error": null, "inp": 6794, "out": 2487, "models": {"claude-opus-5-5": 2487}, "retried": false}
+{"task": "WH_7305", "arm": "D_N", "i": 2, "choice": 7, "shown_choice": 7, "error": null, "inp": 6371, "out": 3657, "models": {"claude-opus-5-5": 3657}, "retried": false}
+{"task": "WH_7305", "arm": "D_N", "i": 4, "choice": 7, "shown_choice": 7, "error": null, "inp": 6375, "out": 3039, "models": {"claude-opus-5-5": 3039}, "retried": false}
+{"task": "WH_7305", "arm": "D_N", "i": 0, "choice": 7, "shown_choice": 7, "error": null, "inp": 6369, "out": 5531, "models": {"claude-opus-5-5": 5531}, "retried": false}
+{"task": "WH_7306", "arm": "B_zayavka", "i": 2, "choice": 0, "shown_choice": 6, "error": null, "inp": 6794, "out": 2529, "models": {"claude-opus-5-5": 2529}, "retried": false}
+{"task": "WH_7306", "arm": "B_zayavka", "i": 4, "choice": 6, "shown_choice": 0, "error": null, "inp": 6794, "out": 1417, "models": {"claude-opus-5-5": 1417}, "retried": false}
+{"task": "WH_7306", "arm": "B_zayavka", "i": 3, "choice": 0, "shown_choice": 6, "error": null, "inp": 6796, "out": 2294, "models": {"claude-opus-5-5": 2294}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6110, "out": 2456, "models": {"claude-opus-5-5": 2456}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 4, "choice": 3, "shown_choice": 3, "error": null, "inp": 6104, "out": 2328, "models": {"claude-opus-5-5": 2328}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 6, "choice": 0, "shown_choice": 6, "error": null, "inp": 6108, "out": 1989, "models": {"claude-opus-5-5": 1989}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 1, "choice": 0, "shown_choice": 6, "error": null, "inp": 6112, "out": 3625, "models": {"claude-opus-5-5": 3625}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 2, "choice": 0, "shown_choice": 6, "error": null, "inp": 6112, "out": 3473, "models": {"claude-opus-5-5": 3473}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 5, "choice": 3, "shown_choice": 3, "error": null, "inp": 6110, "out": 3109, "models": {"claude-opus-5-5": 3109}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 3, "choice": 6, "shown_choice": 0, "error": null, "inp": 6110, "out": 4315, "models": {"claude-opus-5-5": 4315}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 10, "choice": 0, "shown_choice": 6, "error": null, "inp": 6112, "out": 1972, "models": {"claude-opus-5-5": 1972}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 7, "choice": 0, "shown_choice": 6, "error": null, "inp": 6110, "out": 4047, "models": {"claude-opus-5-5": 4047}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 9, "choice": 0, "shown_choice": 6, "error": null, "inp": 6110, "out": 3360, "models": {"claude-opus-5-5": 3360}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 11, "choice": 0, "shown_choice": 6, "error": null, "inp": 6108, "out": 2603, "models": {"claude-opus-5-5": 2603}, "retried": false}
+{"task": "WH_7306", "arm": "B_blind", "i": 8, "choice": 6, "shown_choice": 0, "error": null, "inp": 6110, "out": 3761, "models": {"claude-opus-5-5": 3761}, "retried": false}
+{"task": "WH_7306", "arm": "C_N", "i": 1, "choice": 0, "shown_choice": 6, "error": null, "inp": 6300, "out": 3400, "models": {"claude-opus-5-5": 3400}, "retried": false}
+{"task": "WH_7306", "arm": "C_N", "i": 2, "choice": 0, "shown_choice": 6, "error": null, "inp": 6300, "out": 2933, "models": {"claude-opus-5-5": 2933}, "retried": false}
+{"task": "WH_7306", "arm": "C_N", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6300, "out": 4385, "models": {"claude-opus-5-5": 4385}, "retried": false}
+{"task": "WH_7306", "arm": "C_N", "i": 3, "choice": 0, "shown_choice": 6, "error": null, "inp": 6304, "out": 3732, "models": {"claude-opus-5-5": 3732}, "retried": false}
+{"task": "WH_7306", "arm": "C_N", "i": 4, "choice": 0, "shown_choice": 6, "error": null, "inp": 6302, "out": 4102, "models": {"claude-opus-5-5": 4102}, "retried": false}
+{"task": "WH_7306", "arm": "D_N", "i": 1, "choice": 0, "shown_choice": 6, "error": null, "inp": 6375, "out": 3258, "models": {"claude-opus-5-5": 3258}, "retried": false}
+{"task": "WH_7307", "arm": "B_zayavka", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6714, "out": 1690, "models": {"claude-opus-5-5": 1690}, "retried": false}
+{"task": "WH_7306", "arm": "D_N", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6373, "out": 4123, "models": {"claude-opus-5-5": 4123}, "retried": false}
+{"task": "WH_7307", "arm": "B_zayavka", "i": 3, "choice": 0, "shown_choice": 0, "error": null, "inp": 6712, "out": 1233, "models": {"claude-opus-5-5": 1233}, "retried": false}
+{"task": "WH_7307", "arm": "B_zayavka", "i": 1, "choice": 0, "shown_choice": 0, "error": null, "inp": 6714, "out": 1751, "models": {"claude-opus-5-5": 1751}, "retried": false}
+{"task": "WH_7307", "arm": "B_zayavka", "i": 4, "choice": 0, "shown_choice": 0, "error": null, "inp": 6710, "out": 1577, "models": {"claude-opus-5-5": 1577}, "retried": false}
+{"task": "WH_7307", "arm": "B_zayavka", "i": 2, "choice": 0, "shown_choice": 0, "error": null, "inp": 6716, "out": 2104, "models": {"claude-opus-5-5": 2104}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6108, "out": 2089, "models": {"claude-opus-5-5": 2089}, "retried": false}
+{"task": "WH_7306", "arm": "D_N", "i": 4, "choice": 0, "shown_choice": 6, "error": null, "inp": 6369, "out": 5734, "models": {"claude-opus-5-5": 5734}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 1, "choice": 0, "shown_choice": 0, "error": null, "inp": 6108, "out": 1853, "models": {"claude-opus-5-5": 1853}, "retried": false}
+{"task": "WH_7306", "arm": "D_N", "i": 2, "choice": 0, "shown_choice": 6, "error": null, "inp": 6373, "out": 6343, "models": {"claude-opus-5-5": 6343}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 2, "choice": 4, "shown_choice": 6, "error": null, "inp": 6110, "out": 2153, "models": {"claude-opus-5-5": 2153}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 3, "choice": 4, "shown_choice": 6, "error": null, "inp": 6110, "out": 2218, "models": {"claude-opus-5-5": 2218}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 4, "choice": 4, "shown_choice": 6, "error": null, "inp": 6110, "out": 2430, "models": {"claude-opus-5-5": 2430}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 5, "choice": 0, "shown_choice": 0, "error": null, "inp": 6108, "out": 2122, "models": {"claude-opus-5-5": 2122}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 6, "choice": 0, "shown_choice": 0, "error": null, "inp": 6112, "out": 1816, "models": {"claude-opus-5-5": 1816}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 7, "choice": 0, "shown_choice": 0, "error": null, "inp": 6110, "out": 2229, "models": {"claude-opus-5-5": 2229}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 8, "choice": 0, "shown_choice": 0, "error": null, "inp": 6106, "out": 2458, "models": {"claude-opus-5-5": 2458}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 9, "choice": 0, "shown_choice": 0, "error": null, "inp": 6110, "out": 2455, "models": {"claude-opus-5-5": 2455}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 10, "choice": 0, "shown_choice": 0, "error": null, "inp": 6112, "out": 2725, "models": {"claude-opus-5-5": 2725}, "retried": false}
+{"task": "WH_7306", "arm": "D_N", "i": 3, "choice": -1, "shown_choice": -1, "error": null, "inp": 6373, "out": 10144, "models": {"claude-opus-5-5": 10144}, "retried": false}
+{"task": "WH_7307", "arm": "B_blind", "i": 11, "choice": 0, "shown_choice": 0, "error": null, "inp": 6110, "out": 3142, "models": {"claude-opus-5-5": 3142}, "retried": false}
+{"task": "WH_7307", "arm": "C_N", "i": 3, "choice": 0, "shown_choice": 0, "error": null, "inp": 6304, "out": 2234, "models": {"claude-opus-5-5": 2234}, "retried": false}
+{"task": "WH_7307", "arm": "C_N", "i": 2, "choice": 0, "shown_choice": 0, "error": null, "inp": 6298, "out": 2719, "models": {"claude-opus-5-5": 2719}, "retried": false}
+{"task": "WH_7307", "arm": "C_N", "i": 4, "choice": 0, "shown_choice": 0, "error": null, "inp": 6304, "out": 2929, "models": {"claude-opus-5-5": 2929}, "retried": false}
+{"task": "WH_7307", "arm": "C_N", "i": 1, "choice": 0, "shown_choice": 0, "error": null, "inp": 6302, "out": 4162, "models": {"claude-opus-5-5": 4162}, "retried": false}
+{"task": "WH_7307", "arm": "C_N", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6302, "out": 5231, "models": {"claude-opus-5-5": 5231}, "retried": false}
+{"task": "WH_7307", "arm": "D_N", "i": 1, "choice": 0, "shown_choice": 0, "error": null, "inp": 6371, "out": 3457, "models": {"claude-opus-5-5": 3457}, "retried": false}
+{"task": "WH_7307", "arm": "D_N", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6371, "out": 4107, "models": {"claude-opus-5-5": 4107}, "retried": false}
+{"task": "WH_7308", "arm": "B_zayavka", "i": 2, "choice": 5, "shown_choice": 0, "error": null, "inp": 6756, "out": 1889, "models": {"claude-opus-5-5": 1889}, "retried": false}
+{"task": "WH_7307", "arm": "D_N", "i": 4, "choice": 4, "shown_choice": 6, "error": null, "inp": 6375, "out": 3356, "models": {"claude-opus-5-5": 3356}, "retried": false}
+{"task": "WH_7307", "arm": "D_N", "i": 3, "choice": 0, "shown_choice": 0, "error": null, "inp": 6371, "out": 3593, "models": {"claude-opus-5-5": 3593}, "retried": false}
+{"task": "WH_7307", "arm": "D_N", "i": 2, "choice": 0, "shown_choice": 0, "error": null, "inp": 6371, "out": 5664, "models": {"claude-opus-5-5": 5664}, "retried": false}
+{"task": "WH_7308", "arm": "B_zayavka", "i": 1, "choice": 1, "shown_choice": 2, "error": null, "inp": 6756, "out": 3943, "models": {"claude-opus-5-5": 3943}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 0, "choice": 1, "shown_choice": 2, "error": null, "inp": 6108, "out": 1600, "models": {"claude-opus-5-5": 1600}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 1, "choice": 1, "shown_choice": 2, "error": null, "inp": 6110, "out": 1865, "models": {"claude-opus-5-5": 1865}, "retried": false}
+{"task": "WH_7308", "arm": "B_zayavka", "i": 4, "choice": 1, "shown_choice": 2, "error": null, "inp": 6754, "out": 3078, "models": {"claude-opus-5-5": 3078}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 3, "choice": 1, "shown_choice": 2, "error": null, "inp": 6112, "out": 1982, "models": {"claude-opus-5-5": 1982}, "retried": false}
+{"task": "WH_7308", "arm": "B_zayavka", "i": 3, "choice": 1, "shown_choice": 2, "error": null, "inp": 6756, "out": 4669, "models": {"claude-opus-5-5": 4669}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 4, "choice": 3, "shown_choice": 4, "error": null, "inp": 6108, "out": 1942, "models": {"claude-opus-5-5": 1942}, "retried": false}
+{"task": "WH_7308", "arm": "B_zayavka", "i": 0, "choice": 5, "shown_choice": 0, "error": null, "inp": 6752, "out": 6541, "models": {"claude-opus-5-5": 6541}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 6, "choice": 1, "shown_choice": 2, "error": null, "inp": 6110, "out": 1757, "models": {"claude-opus-5-5": 1757}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 5, "choice": 1, "shown_choice": 2, "error": null, "inp": 6110, "out": 2791, "models": {"claude-opus-5-5": 2791}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 2, "choice": 1, "shown_choice": 2, "error": null, "inp": 6108, "out": 4423, "models": {"claude-opus-5-5": 4423}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 8, "choice": 1, "shown_choice": 2, "error": null, "inp": 6108, "out": 1771, "models": {"claude-opus-5-5": 1771}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 7, "choice": 1, "shown_choice": 2, "error": null, "inp": 6108, "out": 3177, "models": {"claude-opus-5-5": 3177}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 9, "choice": 1, "shown_choice": 2, "error": null, "inp": 6110, "out": 1764, "models": {"claude-opus-5-5": 1764}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 10, "choice": 3, "shown_choice": 4, "error": null, "inp": 6108, "out": 3291, "models": {"claude-opus-5-5": 3291}, "retried": false}
+{"task": "WH_7308", "arm": "B_blind", "i": 11, "choice": 0, "shown_choice": 1, "error": null, "inp": 6110, "out": 3490, "models": {"claude-opus-5-5": 3490}, "retried": false}
+{"task": "WH_7308", "arm": "C_N", "i": 0, "choice": 1, "shown_choice": 2, "error": null, "inp": 6304, "out": 3625, "models": {"claude-opus-5-5": 3625}, "retried": false}
+{"task": "WH_7308", "arm": "C_N", "i": 4, "choice": 0, "shown_choice": 1, "error": null, "inp": 6302, "out": 4759, "models": {"claude-opus-5-5": 4759}, "retried": false}
+{"task": "WH_7308", "arm": "D_N", "i": 3, "choice": 1, "shown_choice": 2, "error": null, "inp": 6371, "out": 2552, "models": {"claude-opus-5-5": 2552}, "retried": false}
+{"task": "WH_7308", "arm": "D_N", "i": 0, "choice": 1, "shown_choice": 2, "error": null, "inp": 6373, "out": 5393, "models": {"claude-opus-5-5": 5393}, "retried": false}
+{"task": "WH_7308", "arm": "C_N", "i": 1, "choice": 1, "shown_choice": 2, "error": null, "inp": 6304, "out": 7767, "models": {"claude-opus-5-5": 7767}, "retried": false}
+{"task": "WH_7309", "arm": "B_zayavka", "i": 0, "choice": 2, "shown_choice": 0, "error": null, "inp": 6709, "out": 1458, "models": {"claude-opus-5-5": 1458}, "retried": false}
+{"task": "WH_7308", "arm": "D_N", "i": 1, "choice": 0, "shown_choice": 1, "error": null, "inp": 6373, "out": 5253, "models": {"claude-opus-5-5": 5253}, "retried": false}
+{"task": "WH_7308", "arm": "C_N", "i": 3, "choice": 1, "shown_choice": 2, "error": null, "inp": 6302, "out": 7477, "models": {"claude-opus-5-5": 7477}, "retried": false}
+{"task": "WH_7309", "arm": "B_zayavka", "i": 1, "choice": 2, "shown_choice": 0, "error": null, "inp": 6707, "out": 1633, "models": {"claude-opus-5-5": 1633}, "retried": false}
+{"task": "WH_7308", "arm": "D_N", "i": 4, "choice": 1, "shown_choice": 2, "error": null, "inp": 6373, "out": 3250, "models": {"claude-opus-5-5": 3250}, "retried": false}
+{"task": "WH_7309", "arm": "B_zayavka", "i": 2, "choice": 2, "shown_choice": 0, "error": null, "inp": 6705, "out": 1524, "models": {"claude-opus-5-5": 1524}, "retried": false}
+{"task": "WH_7309", "arm": "B_zayavka", "i": 3, "choice": 2, "shown_choice": 0, "error": null, "inp": 6703, "out": 1467, "models": {"claude-opus-5-5": 1467}, "retried": false}
+{"task": "WH_7309", "arm": "B_zayavka", "i": 4, "choice": 2, "shown_choice": 0, "error": null, "inp": 6709, "out": 1437, "models": {"claude-opus-5-5": 1437}, "retried": false}
+{"task": "WH_7308", "arm": "C_N", "i": 2, "choice": 1, "shown_choice": 2, "error": null, "inp": 6298, "out": 10107, "models": {"claude-opus-5-5": 10107}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 1, "choice": 2, "shown_choice": 0, "error": null, "inp": 6108, "out": 2048, "models": {"claude-opus-5-5": 2048}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 0, "choice": 2, "shown_choice": 0, "error": null, "inp": 6108, "out": 2491, "models": {"claude-opus-5-5": 2491}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 4, "choice": 2, "shown_choice": 0, "error": null, "inp": 6112, "out": 1854, "models": {"claude-opus-5-5": 1854}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 5, "choice": 2, "shown_choice": 0, "error": null, "inp": 6110, "out": 2153, "models": {"claude-opus-5-5": 2153}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 3, "choice": 7, "shown_choice": 7, "error": null, "inp": 6110, "out": 2429, "models": {"claude-opus-5-5": 2429}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 6, "choice": 7, "shown_choice": 7, "error": null, "inp": 6108, "out": 2055, "models": {"claude-opus-5-5": 2055}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 2, "choice": 2, "shown_choice": 0, "error": null, "inp": 6112, "out": 3484, "models": {"claude-opus-5-5": 3484}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 8, "choice": 2, "shown_choice": 0, "error": null, "inp": 6110, "out": 2235, "models": {"claude-opus-5-5": 2235}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 9, "choice": 2, "shown_choice": 0, "error": null, "inp": 6110, "out": 2048, "models": {"claude-opus-5-5": 2048}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 10, "choice": 2, "shown_choice": 0, "error": null, "inp": 6110, "out": 2596, "models": {"claude-opus-5-5": 2596}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 7, "choice": 2, "shown_choice": 0, "error": null, "inp": 6108, "out": 3873, "models": {"claude-opus-5-5": 3873}, "retried": false}
+{"task": "WH_7309", "arm": "C_N", "i": 1, "choice": 2, "shown_choice": 0, "error": null, "inp": 6302, "out": 2588, "models": {"claude-opus-5-5": 2588}, "retried": false}
+{"task": "WH_7309", "arm": "C_N", "i": 0, "choice": 2, "shown_choice": 0, "error": null, "inp": 6300, "out": 3588, "models": {"claude-opus-5-5": 3588}, "retried": false}
+{"task": "WH_7309", "arm": "C_N", "i": 3, "choice": 2, "shown_choice": 0, "error": null, "inp": 6300, "out": 2148, "models": {"claude-opus-5-5": 2148}, "retried": false}
+{"task": "WH_7309", "arm": "B_blind", "i": 11, "choice": 2, "shown_choice": 0, "error": null, "inp": 6108, "out": 3930, "models": {"claude-opus-5-5": 3930}, "retried": false}
+{"task": "WH_7308", "arm": "D_N", "i": 2, "choice": 0, "shown_choice": 1, "error": null, "inp": 6373, "out": 15680, "models": {"claude-opus-5-5": 15680}, "retried": false}
+{"task": "WH_7309", "arm": "C_N", "i": 4, "choice": 2, "shown_choice": 0, "error": null, "inp": 6304, "out": 2542, "models": {"claude-opus-5-5": 2542}, "retried": false}
+{"task": "WH_7309", "arm": "C_N", "i": 2, "choice": 6, "shown_choice": 2, "error": null, "inp": 6302, "out": 4377, "models": {"claude-opus-5-5": 4377}, "retried": false}
+{"task": "WH_7309", "arm": "D_N", "i": 2, "choice": 2, "shown_choice": 0, "error": null, "inp": 6373, "out": 3264, "models": {"claude-opus-5-5": 3264}, "retried": false}
+{"task": "WH_7309", "arm": "D_N", "i": 1, "choice": 0, "shown_choice": 6, "error": null, "inp": 6373, "out": 4004, "models": {"claude-opus-5-5": 4004}, "retried": false}
+{"task": "WH_7309", "arm": "D_N", "i": 4, "choice": 2, "shown_choice": 0, "error": null, "inp": 6373, "out": 3750, "models": {"claude-opus-5-5": 3750}, "retried": false}
+{"task": "WH_7310", "arm": "B_zayavka", "i": 0, "choice": 0, "shown_choice": 3, "error": null, "inp": 6854, "out": 3660, "models": {"claude-opus-5-5": 3660}, "retried": false}
+{"task": "WH_7309", "arm": "D_N", "i": 0, "choice": 6, "shown_choice": 2, "error": null, "inp": 6373, "out": 6359, "models": {"claude-opus-5-5": 6359}, "retried": false}
+{"task": "WH_7309", "arm": "D_N", "i": 3, "choice": 6, "shown_choice": 2, "error": null, "inp": 6373, "out": 6380, "models": {"claude-opus-5-5": 6380}, "retried": false}
+{"task": "WH_7310", "arm": "B_zayavka", "i": 2, "choice": 6, "shown_choice": 4, "error": null, "inp": 6858, "out": 4750, "models": {"claude-opus-5-5": 4750}, "retried": false}
+{"task": "WH_7310", "arm": "B_zayavka", "i": 4, "choice": 6, "shown_choice": 4, "error": null, "inp": 6860, "out": 2697, "models": {"claude-opus-5-5": 2697}, "retried": false}
+{"task": "WH_7310", "arm": "B_zayavka", "i": 3, "choice": 6, "shown_choice": 4, "error": null, "inp": 6862, "out": 3318, "models": {"claude-opus-5-5": 3318}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 1, "choice": 6, "shown_choice": 4, "error": null, "inp": 6112, "out": 2448, "models": {"claude-opus-5-5": 2448}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 4, "choice": 6, "shown_choice": 4, "error": null, "inp": 6106, "out": 1637, "models": {"claude-opus-5-5": 1637}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 2, "choice": 6, "shown_choice": 4, "error": null, "inp": 6112, "out": 3205, "models": {"claude-opus-5-5": 3205}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6108, "out": 4325, "models": {"claude-opus-5-5": 4325}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 6, "choice": 6, "shown_choice": 4, "error": null, "inp": 6112, "out": 2463, "models": {"claude-opus-5-5": 2463}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 5, "choice": 6, "shown_choice": 4, "error": null, "inp": 6108, "out": 2425, "models": {"claude-opus-5-5": 2425}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 3, "choice": 7, "shown_choice": 7, "error": null, "inp": 6110, "out": 3595, "models": {"claude-opus-5-5": 3595}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 7, "choice": 6, "shown_choice": 4, "error": null, "inp": 6108, "out": 2861, "models": {"claude-opus-5-5": 2861}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 8, "choice": 6, "shown_choice": 4, "error": null, "inp": 6108, "out": 2509, "models": {"claude-opus-5-5": 2509}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 10, "choice": 6, "shown_choice": 4, "error": null, "inp": 6110, "out": 2239, "models": {"claude-opus-5-5": 2239}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 9, "choice": 6, "shown_choice": 4, "error": null, "inp": 6106, "out": 2869, "models": {"claude-opus-5-5": 2869}, "retried": false}
+{"task": "WH_7310", "arm": "B_zayavka", "i": 1, "choice": 3, "shown_choice": 6, "error": null, "inp": 6860, "out": 10709, "models": {"claude-opus-5-5": 10709}, "retried": false}
+{"task": "WH_7310", "arm": "B_blind", "i": 11, "choice": 0, "shown_choice": 3, "error": null, "inp": 6112, "out": 3302, "models": {"claude-opus-5-5": 3302}, "retried": false}
+{"task": "WH_7310", "arm": "C_N", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6304, "out": 3635, "models": {"claude-opus-5-5": 3635}, "retried": false}
+{"task": "WH_7310", "arm": "C_N", "i": 2, "choice": 6, "shown_choice": 4, "error": null, "inp": 6300, "out": 3631, "models": {"claude-opus-5-5": 3631}, "retried": false}
+{"task": "WH_7310", "arm": "C_N", "i": 4, "choice": 6, "shown_choice": 4, "error": null, "inp": 6302, "out": 4781, "models": {"claude-opus-5-5": 4781}, "retried": false}
+{"task": "WH_7310", "arm": "C_N", "i": 3, "choice": 6, "shown_choice": 4, "error": null, "inp": 6304, "out": 5062, "models": {"claude-opus-5-5": 5062}, "retried": false}
+{"task": "WH_7310", "arm": "D_N", "i": 4, "choice": 6, "shown_choice": 4, "error": null, "inp": 6371, "out": 3008, "models": {"claude-opus-5-5": 3008}, "retried": false}
+{"task": "WH_7310", "arm": "D_N", "i": 0, "choice": 6, "shown_choice": 4, "error": null, "inp": 6371, "out": 6700, "models": {"claude-opus-5-5": 6700}, "retried": false}
+{"task": "WH_7310", "arm": "D_N", "i": 2, "choice": 6, "shown_choice": 4, "error": null, "inp": 6371, "out": 5566, "models": {"claude-opus-5-5": 5566}, "retried": false}
+{"task": "WH_7311", "arm": "B_zayavka", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6708, "out": 2387, "models": {"claude-opus-5-5": 2387}, "retried": false}
+{"task": "WH_7311", "arm": "B_zayavka", "i": 1, "choice": 1, "shown_choice": 2, "error": null, "inp": 6712, "out": 2236, "models": {"claude-opus-5-5": 2236}, "retried": false}
+{"task": "WH_7311", "arm": "B_zayavka", "i": 2, "choice": 1, "shown_choice": 2, "error": null, "inp": 6712, "out": 1620, "models": {"claude-opus-5-5": 1620}, "retried": false}
+{"task": "WH_7311", "arm": "B_zayavka", "i": 3, "choice": 1, "shown_choice": 2, "error": null, "inp": 6710, "out": 1506, "models": {"claude-opus-5-5": 1506}, "retried": false}
+{"task": "WH_7311", "arm": "B_zayavka", "i": 4, "choice": 1, "shown_choice": 2, "error": null, "inp": 6708, "out": 1702, "models": {"claude-opus-5-5": 1702}, "retried": false}
+{"task": "WH_7310", "arm": "D_N", "i": 3, "choice": 1, "shown_choice": 2, "error": null, "inp": 6375, "out": 7298, "models": {"claude-opus-5-5": 7298}, "retried": false}
+{"task": "WH_7311", "arm": "B_blind", "i": 1, "choice": 0, "shown_choice": 6, "error": null, "inp": 6108, "out": 2712, "models": {"claude-opus-5-5": 2712}, "retried": false}
+{"task": "WH_7311", "arm": "B_blind", "i": 3, "choice": 4, "shown_choice": 7, "error": null, "inp": 6110, "out": 2015, "models": {"claude-opus-5-5": 2015}, "retried": false}
+{"task": "WH_7311", "arm": "B_blind", "i": 0, "choice": 2, "shown_choice": 4, "error": null, "inp": 6110, "out": 3847, "models": {"claude-opus-5-5": 3847}, "retried": false}
+{"task": "WH_7311", "arm": "B_blind", "i": 2, "choice": 0, "shown_choice": 6, "error": null, "inp": 6108, "out": 4115, "models": {"claude-opus-5-5": 4115}, "retried": false}
+{"task": "WH_7311", "arm": "B_blind", "i": 5, "choice": 0, "shown_choice": 6, "error": null, "inp": 6110, "out": 2427, "models": {"claude-opus-5-5": 2427}, "retried": false}
+{"task": "WH_7311", "arm": "B_blind", "i": 4, "choice": 1, "shown_choice": 2, "error": null, "inp": 6108, "out": 3562, "models": {"claude-opus-5-5": 3562}, "retried": false}
+{"task": "WH_7310", "arm": "C_N", "i": 1, "choice": 1, "shown_choice": 2, "error": null, "inp": 6302, "out": 14265, "models": {"claude-opus-5-5": 14265}, "retried": false}
+{"task": "WH_7310", "arm": "D_N", "i": 1, "choice": 1, "shown_choice": 2, "error": null, "inp": 6375, "out": 12845, "models": {"claude-opus-5-5": 12845}, "retried": false}
+{"task": "WH_7311", "arm": "B_blind", "i": 11, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "C_N", "i": 0, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "C_N", "i": 1, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "B_blind", "i": 6, "choice": 4, "shown_choice": 7, "error": null, "inp": 6110, "out": 2678, "models": {"claude-opus-5-5": 2678}, "retried": false}
+{"task": "WH_7311", "arm": "C_N", "i": 2, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "C_N", "i": 4, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "C_N", "i": 3, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "D_N", "i": 0, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "D_N", "i": 1, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "D_N", "i": 2, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "D_N", "i": 3, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "B_blind", "i": 7, "choice": 0, "shown_choice": 6, "error": null, "inp": 6106, "out": 2961, "models": {"claude-opus-5-5": 2961}, "retried": false}
+{"task": "WH_7311", "arm": "D_N", "i": 4, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_zayavka", "i": 0, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_zayavka", "i": 1, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_zayavka", "i": 2, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_zayavka", "i": 3, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_zayavka", "i": 4, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 0, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 1, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 3, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 2, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "B_blind", "i": 10, "choice": 0, "shown_choice": 6, "error": null, "inp": 6110, "out": 2801, "models": {"claude-opus-5-5": 2801}, "retried": false}
+{"task": "WH_7312", "arm": "B_blind", "i": 4, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 5, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 6, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 8, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 7, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 10, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 9, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "B_blind", "i": 11, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "C_N", "i": 0, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "C_N", "i": 1, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "C_N", "i": 2, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "C_N", "i": 3, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "C_N", "i": 4, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "D_N", "i": 0, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "D_N", "i": 1, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "D_N", "i": 2, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "D_N", "i": 3, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7312", "arm": "D_N", "i": 4, "choice": null, "shown_choice": null, "error": "нет structured_output: You've hit your session limit · resets 7:30pm (UTC)", "inp": 0, "out": 0, "models": {}, "retried": true}
+{"task": "WH_7311", "arm": "B_blind", "i": 8, "choice": 0, "shown_choice": 6, "error": null, "inp": 6110, "out": 4706, "models": {"claude-opus-5-5": 4706}, "retried": false}
+{"task": "WH_7311", "arm": "B_blind", "i": 9, "choice": 0, "shown_choice": 6, "error": null, "inp": 6108, "out": 4787, "models": {"claude-opus-5-5": 4787}, "retried": false}
