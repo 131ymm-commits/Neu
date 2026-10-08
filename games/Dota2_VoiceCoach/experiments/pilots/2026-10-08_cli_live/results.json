@@ -1,0 +1,156 @@
+[
+ {
+  "scen": "s3",
+  "model_arg": "алиас самой быстрой модели",
+  "latency_s": 5.77,
+  "error": null,
+  "model": "fast",
+  "usage": {
+   "input_tokens": 4,
+   "cache_creation_input_tokens": 7136,
+   "cache_read_input_tokens": 6405,
+   "output_tokens": 1014,
+   "thinking_tokens": 286
+  },
+  "cost_usd": 0.00240565,
+  "decision": {
+   "plan": "fight",
+   "where": "mid",
+   "target": "luna",
+   "ally": 2,
+   "cast": [
+    {
+     "ability": "sniper_assassinate",
+     "target": "luna"
+    },
+    {
+     "ability": "sniper_shrapnel",
+     "target": "luna"
+    }
+   ],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 25,
+   "buyback": false,
+   "say": "Драка! Бью Луну (700 хп), Виппер, держи Лину.",
+   "to": []
+  },
+  "notes": [],
+  "system_chars": 6575,
+  "user_chars": 2349
+ },
+ {
+  "scen": "s3",
+  "model_arg": "модель Claude Code по умолчанию (средняя)",
+  "latency_s": 4.15,
+  "error": null,
+  "model": "mid,fast",
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 6402,
+   "cache_read_input_tokens": 0,
+   "output_tokens": 378,
+   "thinking_tokens": 0
+  },
+  "cost_usd": 0.029817999999999997,
+  "decision": {
+   "plan": "fight",
+   "where": "mid",
+   "target": "luna",
+   "ally": 0,
+   "cast": [
+    {
+     "ability": "sniper_assassinate",
+     "target": "luna"
+    },
+    {
+     "ability": "sniper_take_aim",
+     "target": "self"
+    },
+    {
+     "ability": "sniper_shrapnel",
+     "target": "luna"
+    },
+    {
+     "ability": "item_maelstrom",
+     "target": "luna"
+    }
+   ],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 30,
+   "buyback": false,
+   "say": "Драка, бью Луну ультой.",
+   "to": []
+  },
+  "notes": [],
+  "system_chars": 6575,
+  "user_chars": 2349
+ },
+ {
+  "scen": "s1",
+  "model_arg": "алиас самой быстрой модели",
+  "latency_s": 4.24,
+  "error": null,
+  "model": "fast",
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 2320,
+   "cache_read_input_tokens": 3817,
+   "output_tokens": 613,
+   "thinking_tokens": 279
+  },
+  "cost_usd": 0.0012024700000000002,
+  "decision": {
+   "plan": "farm",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [],
+   "level": [],
+   "retreat_hp": 30,
+   "buyback": false,
+   "say": "Фармлю бот, Луна на своей Т1. Лина, БЛ, ВД и Джаки пропали с базы 4 мин назад — будьте внимательны.",
+   "to": []
+  },
+  "notes": [],
+  "system_chars": 6575,
+  "user_chars": 1928
+ },
+ {
+  "scen": "s1",
+  "model_arg": "модель Claude Code по умолчанию (средняя)",
+  "latency_s": 3.89,
+  "error": null,
+  "model": "mid,fast",
+  "usage": {
+   "input_tokens": 2,
+   "cache_creation_input_tokens": 2325,
+   "cache_read_input_tokens": 3817,
+   "output_tokens": 293,
+   "thinking_tokens": 0
+  },
+  "cost_usd": 0.0134045,
+  "decision": {
+   "plan": "farm",
+   "where": "bot",
+   "target": "",
+   "ally": 0,
+   "cast": [],
+   "buy": [
+    "item_slippers",
+    "item_circlet",
+    "item_tango"
+   ],
+   "level": [],
+   "retreat_hp": 35,
+   "buyback": false,
+   "say": "",
+   "to": []
+  },
+  "notes": [],
+  "system_chars": 6575,
+  "user_chars": 1928
+ }
+]

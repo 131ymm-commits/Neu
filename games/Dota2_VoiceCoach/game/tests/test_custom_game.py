@@ -39,6 +39,7 @@ ABILITY_TYPE_ULTIMATE, ABILITY_CAN_BE_UPGRADED = 1, 0
 DOTA_ABILITY_BEHAVIOR_NO_TARGET, DOTA_ABILITY_BEHAVIOR_UNIT_TARGET, DOTA_ABILITY_BEHAVIOR_POINT = 4, 8, 16
 DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC = 1, 2, 18
 DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, DOTA_SHOP_HOME, DOTA_ModifyGold_PurchaseItem = 0, 1, 0, 15
+DOTA_ITEM_TP_SCROLL, DOTA_ITEM_NEUTRAL_ACTIVE_SLOT = 15, 16
 LUA_MODIFIER_MOTION_NONE = 0
 __now, __thinks, __printed, __orders, __said, __to_player, __to_team, __assign = 0, {}, {}, {}, {}, {}, {}, {}
 print = function(...)
@@ -210,6 +211,7 @@ local function make_hero(name, team, pid)
   function h:GetIdealSpeed() return 300 end
   function h:IsChanneling() return false end
   function h:Buyback() self.alive = true; self.bought_back = true end
+  function h:UpgradeAbility(ab) if self.points > 0 then ab.level = ab.level + 1; self.points = self.points - 1 end end
   return h
 end
 __players[0] = { team = 2, fake = false, hero = make_hero("npc_dota_hero_pudge", 2, 0) }
@@ -307,6 +309,7 @@ ORDER = {"move": 1, "attack_move": 3, "attack": 4, "cast_point": 5, "cast_target
 class Game(unittest.TestCase):
     """Общая часть: Lua с имитацией Доты, кастомка, по желанию — сервер тренера с агентами-правилами."""
     server = False
+    backends = None
 
     def setUp(self):
         L = self.L = lupa_rt.LuaRuntime(unpack_returned_tuples=True)
@@ -317,8 +320,8 @@ class Game(unittest.TestCase):
             L.execute(f'package.preload["{mod}"] = function() return dofile("{(GAME / "shared" / src).as_posix()}") end')
         self.srv = None
         if self.server:
-            self.srv = serve("127.0.0.1", 0, lambda name: A.AgentHub(
-                {"radiant": A.RulesBackend(), "dire": A.RulesBackend()}, sync=True))
+            backends = self.backends or {"radiant": A.RulesBackend(), "dire": A.RulesBackend()}
+            self.srv = serve("127.0.0.1", 0, lambda name: A.AgentHub(dict(backends), sync=True))
             threading.Thread(target=self.srv.serve_forever, daemon=True).start()
             port = self.srv.server_address[1]
 
@@ -469,6 +472,21 @@ class WithAgents(Game):
         voice = [e for e in evs if e["kind"] == "voice"]
         self.assertTrue(any(e["pos"] == 1 and "пуш бот" in e["text"] and e["hero_ru"] == "Снайпер" for e in voice), voice)
 
+    def test_applied_reported_and_xy_for_map(self):
+        self.start_match()
+        self.step(3)
+        sent = self.payloads()
+        applied = [a for p in sent for a in p.get("applied") or []]
+        self.assertTrue(any(a["team"] == "radiant" and a["pos"] == 1 for a in applied))
+        self.assertTrue(all(isinstance(a["clock"], (int, float)) for a in applied))
+        # сервер считает возраст решения: от наблюдения, по которому агент решал, до начала выполнения
+        ages = self.srv.hub.room("local").agents.summary()["teams"]["radiant"]["decision_age_p50_s"]
+        self.assertIsNotNone(ages)
+        self.assertGreaterEqual(ages, 0)
+        o = next(h for h in sent[-1]["heroes"] if h["team"] == "radiant" and h["pos"] == 1)
+        self.assertEqual(len(o["xy"]), 2)
+        self.assertIn("backpack_free", o)
+
     def test_lua_observation_passes_python_checks(self):
         self.start_match()
         self.step(2)
@@ -476,6 +494,35 @@ class WithAgents(Game):
             d, notes = A.parse_decision(A.rules_decision(o), o)
             self.assertIsNotNone(d)
             self.assertEqual(notes, [], (o["hero"], notes))
+
+
+class Broken(A.RulesBackend):
+    label = "сломанный мотор"
+    free = False
+
+    def decide(self, *a, **k):
+        raise A.BackendError("HTTP 401: нет ключа")
+
+
+class AgentsFailing(Game):
+    """Сервер на связи, но мотор отвечает ошибкой: герои не стоят, приказы тренера выполняет запасной."""
+    server = True
+    backends = {"radiant": Broken(), "dire": A.RulesBackend()}
+
+    def test_fallback_when_no_decisions(self):
+        self.start_match()
+        self.step(2)
+        mode, rows = self.hud_rows()
+        self.assertIn("без решений агента: 5", mode)
+        n0 = self.n_orders()
+        self.hud("все назад !")
+        self.step(0.5)
+        for pos in range(1, 6):
+            o = self.unit_orders(self.hero(pos), n0)[-1]
+            self.assertEqual((o["OrderType"], self.xy(o)), (ORDER["move"], (-7000, -6500)))
+        self.assertIn("без агента: 1,2,3,4,5", self.replies("order")[-1]["text"])
+        self.assertTrue(all(r["source"] == "fallback" for r in rows))
+        self.assertTrue(rows[0]["agent"].startswith("ошибка"), rows[0])
 
 
 class Executor(Game):
@@ -590,6 +637,80 @@ class Executor(Game):
         r = self.replies("say")[-1]
         self.assertEqual((r["pos"], r["to"], r["text"]), (2, "", "Иду"))
         self.assertEqual(list(self.G["__said"].values())[-1], "Иду")
+
+    def test_tp_slot_and_teleport_to_base(self):
+        self.start_match()
+        sniper = self.hero(1)
+        sniper["pos"] = self.L.eval("Vector(5000, -4500, 0)")
+        tp = self.L.eval("__make_ability")("item_tpscroll", False, 16, 1)
+        sniper["slots"][15] = tp                                             # отдельный слот телепорта
+        self.decide(2, 1, {"plan": "retreat", "cast": [{"ability": "item_tpscroll", "target": "base"}]})
+        n0 = self.n_orders()
+        self.step(0.25)
+        cast = [o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["cast_point"]]
+        self.assertEqual((cast[0]["AbilityIndex"], self.xy(cast[0])), (tp["idx"], (-7000, -6500)))
+
+    def test_ward_walk_survives_repeated_decision(self):
+        self.start_match()
+        cm = self.hero(5)
+        cm["pos"] = self.L.eval("Vector(5000, -4500, 0)")
+        ward = self.L.eval("__make_ability")("item_ward_observer", False, 16, 1)
+        cm["slots"][0] = ward
+        d = {"plan": "farm", "where": "bot", "cast": [{"ability": "item_ward_observer", "target": "top"}]}
+        self.decide(2, 5, d)
+        n0 = self.n_orders()
+        self.step(0.25)
+        cast = [o for o in self.unit_orders(cm, n0) if o["OrderType"] == ORDER["cast_point"]]
+        self.assertEqual(self.xy(cast[0]), (-6200, 1800))                    # своя Т1 топ — далеко, идёт ставить
+        n1 = self.n_orders()
+        self.step(4.0)
+        self.assertEqual(self.unit_orders(cm, n1), [])                       # фарм не сбивает подход к варду
+        self.decide(2, 5, d)                                                 # агент повторил — продолжает
+        self.step(1.0)
+        self.assertEqual(self.unit_orders(cm, n1), [])
+        ward["ready"] = False                                                # вард поставлен
+        self.step(0.5)
+        self.assertTrue(self.unit_orders(cm, n1))                            # дальше — по плану
+
+    def test_no_target_ability_waits_for_enemy(self):
+        self.start_match()
+        sniper, luna = self.hero(1), self.by_name("luna")
+        sniper["pos"] = self.L.eval("Vector(0, 0, 0)")
+        luna["pos"] = self.L.eval("Vector(7000, 0, 0)")
+        self.decide(2, 1, {"plan": "hold", "cast": [{"ability": "sniper_e", "target": ""}]})   # без цели
+        n0 = self.n_orders()
+        self.step(0.5)
+        self.assertFalse([o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["cast_none"]])
+        luna["pos"] = self.L.eval("Vector(500, 0, 0)")
+        self.step(0.5)
+        self.assertTrue([o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["cast_none"]])
+
+    def test_level_falls_back_to_upgrade(self):
+        self.start_match()
+        sniper = self.hero(1)
+        sniper["points"], sniper["lvl"] = 1, 2
+        self.decide(2, 1, {"plan": "hold", "level": ["sniper_q"]})
+        n0 = self.n_orders()
+        self.step(0.25)
+        self.assertEqual(len([o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["train"]]), 1)
+        self.assertEqual(sniper["abilities"][1]["level"], 1)                 # приказ в имитации не качает
+        self.step(1.25)
+        self.assertEqual(sniper["abilities"][1]["level"], 2)                 # вкачано напрямую
+        self.assertEqual(sniper["points"], 0)
+        n1 = self.n_orders()
+        self.step(3)
+        self.assertFalse([o for o in self.unit_orders(sniper, n1) if o["OrderType"] == ORDER["train"]])
+
+    def test_loop_survives_errors(self):
+        self.start_match()
+        self.L.execute("CustomGameEventManager.Send_ServerToTeam = function() error('сломалось') end")
+        self.hero(3)["GetMana"] = self.L.eval("function() error('нет маны') end")
+        self.step(2)
+        self.assertTrue(any("ошибка цикла" in l for l in self.G["__printed"].values()))
+        self.assertTrue(any(th["fn"] for th in self.G["__thinks"].values()))   # думание продолжается
+        sent = self.payloads()
+        self.assertEqual(len(sent[-1]["heroes"]), 9)                         # сломанный герой — только он
+        self.assertTrue(any("наблюдение героя 3" in l for l in self.G["__printed"].values()))
 
     def test_old_decision_ignored_and_server_restart(self):
         self.start_match()

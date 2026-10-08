@@ -12,6 +12,12 @@ local function int(v)
   return math.floor((tonumber(v) or 0) + 0.5)
 end
 
+-- координаты для карты на пульте тренера (агенту в промпт не идут — сервер их вырезает)
+local function xy(world, unit)
+  local p = world.pos(unit)
+  return { int(p.x), int(p.y) }
+end
+
 local function team_name(team)
   return team == DOTA_TEAM_GOODGUYS and "radiant" or "dire"
 end
@@ -64,6 +70,7 @@ function O.build(ag, world, ctx)
     o.hp = { int(world.hp(hero)), int(world.max_hp(hero)) }
     o.mp = { int(world.mana(hero)), int(world.max_mana(hero)) }
     o.where = world.zone(team, world.pos(hero))
+    o.xy = xy(world, hero)
     o.attack = { dmg = int(world.attack_damage(hero)), range = int(world.attack_range(hero)) }
     o.near = near_block(hero, team, world)
   else
@@ -82,12 +89,15 @@ function O.build(ag, world, ctx)
   for _, it in ipairs(world.items(hero)) do
     local i = world.ability_info(it.item, hero)
     local row = { name = i.name, slot = it.slot, use = i.behavior }
-    if it.slot <= 5 and i.behavior ~= "passive" then row.ready = i.ready and true or false end
+    local usable = it.slot <= 5 or not world.is_backpack(it.slot)
+    if usable and i.behavior ~= "passive" then row.ready = i.ready and true or false end
     if it.charges and it.charges > 0 then row.charges = it.charges end
-    if it.slot >= 6 then row.backpack = true end
+    if world.is_backpack(it.slot) then row.backpack = true end
+    if world.is_tp_slot(it.slot) then row.tp_slot = true end
     o.items[#o.items + 1] = row
   end
-  o.slots_free = world.free_slots(hero)
+  o.slots_free = world.free_main(hero)                   -- инвентарь; сверх него предметы ложатся в рюкзак
+  o.backpack_free = world.free_slots(hero) - o.slots_free
   o.in_shop = alive and world.in_shop(hero) and true or false
 
   o.doing = st.status or ""
@@ -107,6 +117,7 @@ function O.build(ag, world, ctx)
         row.hp = int(world.hp_pct(ally))
         row.where = world.zone(team, world.pos(ally))
         row.d = int(world.dist(world.pos(ally), my))
+        row.xy = xy(world, ally)
       end
       row.doing = (ctx.statuses or {})[pos]
       o.allies[#o.allies + 1] = row
@@ -119,7 +130,8 @@ function O.build(ag, world, ctx)
     o.enemy_team[#o.enemy_team + 1] = name
     if world.alive(e) and world.visible(team, e) then
       o.enemies[#o.enemies + 1] = { hero = name, lvl = world.level(e), hp = { int(world.hp(e)), int(world.max_hp(e)) },
-                                    where = world.zone(team, world.pos(e)), d = int(world.dist(world.pos(e), my)) }
+                                    where = world.zone(team, world.pos(e)), d = int(world.dist(world.pos(e), my)),
+                                    xy = xy(world, e) }
     else
       local seen = world.last_seen(team, name)
       local row = { hero = name, dead = not world.alive(e) or nil }

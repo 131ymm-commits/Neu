@@ -44,6 +44,10 @@
     color: #ffb07f;
 }
 
+.CoachAgent.Trouble {
+    color: #ff7a6e;
+}
+
 #CoachLog {
     horizontal-align: left;
     vertical-align: bottom;

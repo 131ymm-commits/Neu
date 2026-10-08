@@ -40,6 +40,7 @@ G.THINK = 0.25                -- с: шаг исполнителя
 G.TICK = 1.0                  -- с: обмен с сервером агентов
 G.AGENTS_URL = "http://127.0.0.1:8787/api/local/tick"
 G.FALLBACK_AFTER = 6          -- с без ответа сервера → запасной исполнитель
+G.AGENT_STALE = 20            -- с игры без нового решения агента героя → этим героем правит запасной исполнитель
 G.CAMERA_DISTANCE = 1600      -- дальше обычного (в Доте 1134): тренер смотрит сверху
 G.CHAT_REPLIES = true         -- реплики агентов — и в командный чат
 G.COACH_KEEP = 3              -- сколько последних приказов тренера видит агент
@@ -80,7 +81,8 @@ function G:Init()
                       now = function() return GameRules:GetGameTime() end,
                       log = function(s) log("%s", s) end, interval = G.TICK, stale = G.FALLBACK_AFTER })
   gm:SetContextThink("vc_coach_think", function() return G:Think() end, 1)
-  log("кастомка загружена: героев ведут агенты Claude, сервер агентов %s", G.AGENTS_URL)
+  log("кастомка загружена: героев ведут агенты (Claude или правила — строка режима в HUD), сервер агентов %s",
+    G.AGENTS_URL)
 end
 
 local function humans()
@@ -170,7 +172,7 @@ function G:SetupAgents()
   G.teams = {}
   for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
     local T = { agents = {}, exec = {}, status = {}, seq = 0, commanders = {}, coach = {}, events = {},
-                dec_seq = {}, said = {}, thinking = {} }
+                dec_seq = {}, dec_t = {}, said = {}, thinking = {} }
     for pid = 0, 23 do
       if PlayerResource:IsValidPlayerID(pid) and PlayerResource:GetTeam(pid) == team then
         local hero = PlayerResource:GetSelectedHeroEntity(pid)
@@ -238,8 +240,12 @@ function G:Apply(hero, a)
   elseif a.kind == "cast" then
     G:Cast(hero, a)
   elseif a.kind == "level" then
-    ExecuteOrderFromTable({ UnitIndex = hero:entindex(), OrderType = DOTA_UNIT_ORDER_TRAIN_ABILITY,
-                            AbilityIndex = a.ability:entindex(), Queue = false })
+    if a.method == "upgrade" then                    -- приказ прокачки не сработал — напрямую (coach_exec.lua)
+      World.upgrade(hero, a.ability)
+    else
+      ExecuteOrderFromTable({ UnitIndex = hero:entindex(), OrderType = DOTA_UNIT_ORDER_TRAIN_ABILITY,
+                              AbilityIndex = a.ability:entindex(), Queue = false })
+    end
   elseif a.kind == "buy" then
     G:Buy(hero, a.item, a.cost)
   elseif a.kind == "buyback" then
@@ -250,7 +256,13 @@ end
 -- --- цикл ---
 
 function G:Think()
-  if not G.ready then return G.THINK end
+  local ok, err = pcall(G.ThinkBody, G)
+  if not ok then log("ошибка цикла: %s", tostring(err)) end
+  return G.THINK
+end
+
+function G:ThinkBody()
+  if not G.ready then return end
   local now = GameRules:GetGameTime()
   local linked = Link.alive(G.link)
   G:UpdateMode(linked)
@@ -269,7 +281,11 @@ function G:Think()
     for team in pairs(G.teams) do World.update_seen(team, now) end
     Link.tick(G.link, function() return G:TickPayload(now) end, function(data) G:OnAgents(data) end)
   end
-  return G.THINK
+end
+
+-- ведёт ли героя агент: связь есть и решение агента свежее (иначе — запасной исполнитель, приказы тренера не теряются)
+function G:AgentAlive(T, pos, now, linked)
+  return linked and T.dec_t[pos] ~= nil and now - T.dec_t[pos] <= G.AGENT_STALE
 end
 
 local function enemy_namer(team)
@@ -281,7 +297,7 @@ end
 
 function G:ThinkHero(team, T, pos, hero, now, linked)
   local st = T.exec[pos]
-  if linked then
+  if G:AgentAlive(T, pos, now, linked) then
     -- мгновенные приказы (ульт, тп, предмет) агент получил сообщением — запасному они не нужны
     for _, it in ipairs(Intents.pending_instant(T.intents, pos, now)) do Intents.done_instant(T.intents, pos, it.seq) end
   else
@@ -335,13 +351,22 @@ function G:TickPayload(now)
     for pos = 1, 5 do
       local hero = T.agents[pos]
       if hero then
-        heroes[#heroes + 1] = Obs.build({ team = team, pos = pos, hero = hero }, World,
+        local ok, o = pcall(Obs.build, { team = team, pos = pos, hero = hero }, World,
           { clock = clock, now = now, st = T.exec[pos], coach = G:CoachFor(T, pos, now), events = T.events[pos],
             statuses = T.status })
+        if ok then
+          heroes[#heroes + 1] = o
+        elseif not T.obs_err then
+          T.obs_err = true
+          log("наблюдение героя %d не собралось: %s", pos, tostring(o))
+        end
       end
     end
   end
-  return { clock = math.floor(clock + 0.5), heroes = heroes, coached = coached }
+  local applied = G.applied or {}
+  G.applied = {}
+  -- часы с точностью 0.1 с — для замера задержки решений (в наблюдениях героев — целые секунды)
+  return { clock = math.floor(clock * 10 + 0.5) / 10, heroes = heroes, coached = coached, applied = applied }
 end
 
 local function team_of(name)
@@ -366,8 +391,11 @@ function G:OnAgents(data)
     local T = G.teams[team_of(d.team) or -1]
     local pos, seq = tonumber(d.pos), tonumber(d.seq) or 0
     if T and pos and T.exec[pos] and type(d.decision) == "table" and seq > T.dec_seq[pos] then
-      T.dec_seq[pos] = seq
+      T.dec_seq[pos], T.dec_t[pos] = seq, now
       Exec.set(T.exec[pos], d.decision, now, "agent")
+      G.applied = G.applied or {}                    -- серверу: решение дошло до рук (замер задержки)
+      G.applied[#G.applied + 1] = { team = d.team, pos = pos, seq = seq,
+                                    clock = math.floor(GameRules:GetDOTATime(false, true) * 10 + 0.5) / 10 }
       local say = d.decision.say
       if type(say) == "string" and say ~= "" and say ~= T.said[pos] then
         local to = {}
@@ -392,6 +420,13 @@ function G:UpdateMode(linked)
       if b then parts[#parts + 1] = (name == "radiant" and "Свет: " or "Тьма: ") .. tostring(b) end
     end
     mode = "агенты на связи" .. (#parts > 0 and (" (" .. table.concat(parts, ", ") .. ")") or "")
+    local now, idle = GameRules:GetGameTime(), 0
+    for _, T in pairs(G.teams) do
+      for pos in pairs(T.agents) do
+        if not G:AgentAlive(T, pos, now, true) then idle = idle + 1 end
+      end
+    end
+    if idle > 0 then mode = mode .. "; без решений агента: " .. idle .. " — их ведёт запасной исполнитель" end
   else
     mode = "нет связи с сервером агентов — героев ведёт запасной исполнитель по приказам тренера"
   end
@@ -477,10 +512,17 @@ function G:Command(pid, text)
     end
     return
   end
+  G:TeamCommand(team, text)
+end
+
+-- приказ тренера команде: из HUD, из командного чата или с пульта второго тренера через сервер (Д13)
+function G:TeamCommand(team, text)
+  local T = G.teams[team]
+  if not T then return false end
   local r = Text.parse(text, G:TextCtx(team))
   if #r.errors > 0 then
     G:Reply(T, 0, "error", "Не понял: " .. r.errors[1])
-    return
+    return false
   end
   local now = GameRules:GetGameTime()
   local linked = Link.alive(G.link)
@@ -488,11 +530,12 @@ function G:Command(pid, text)
     T.seq = T.seq + 1
     cmd.seq = T.seq
     Intents.apply(T.intents, cmd, now)
-    local who = {}
+    local who, solo = {}, {}
     for _, pos in ipairs(cmd.agents) do
       local hero = T.agents[pos]
       if hero then
         who[#who + 1] = tostring(pos)
+        if not G:AgentAlive(T, pos, now, linked) then solo[#solo + 1] = tostring(pos) end
         local list = T.coach[pos]
         list[#list + 1] = { seq = cmd.seq, t = now, text = cmd.text, urgent = cmd.urgent and true or false }
         while #list > G.COACH_KEEP do table.remove(list, 1) end
@@ -504,10 +547,11 @@ function G:Command(pid, text)
     end
     if #who > 0 and cmd.action ~= "report" then
       G:Reply(T, 0, "order", "→ " .. table.concat(who, "") .. ": " .. tostring(cmd.text)
-        .. (linked and "" or " (агентов нет на связи — выполняет запасной исполнитель)"))
+        .. (#solo > 0 and (" (без агента: " .. table.concat(solo, ",") .. " — выполняет запасной исполнитель)") or ""))
     end
   end
   G:SendAgents(team)
+  return true
 end
 
 function G:OnHudCommand(ev)

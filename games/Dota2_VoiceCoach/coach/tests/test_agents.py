@@ -4,6 +4,7 @@
 в API и в `claude -p` и как разбирается ответ. Настоящий вызов — на ПК автора (журнал агентов)."""
 import io
 import json
+import os
 import tempfile
 import threading
 import time
@@ -11,6 +12,7 @@ import unittest
 import urllib.error
 import urllib.request
 from pathlib import Path
+from unittest import mock
 
 from voicecoach import agents as A
 from voicecoach.server import serve
@@ -222,6 +224,81 @@ class Hub(unittest.TestCase):
             self.assertEqual((s["calls"], s["in"], s["out"], s["cache_read"]), (2, 2000, 100, 4000))
             self.assertAlmostEqual(s["cost_usd_est"], (2000 * 1 + 100 * 5 + 4000 * 0.1) / 1e6)
 
+    def test_failures_free_the_agent(self):
+        class Weird(FakeBackend):
+            def decide(self, system, user, obs, extra=None):
+                self.calls.append(1)
+                raise RuntimeError("неожиданное")
+
+        h = self.hub(Weird())
+        h.tick({"heroes": [obs(clock=0)]})
+        ag = h.agents[("radiant", 1)]
+        self.assertEqual((ag.busy, h.inflight, ag.calls), (False, 0, 1))
+        self.assertIn("RuntimeError", ag.state)
+        h = self.hub()
+        with mock.patch.object(A, "user_prompt", side_effect=KeyError("поле")):    # сломалось до вызова модели
+            h.tick({"heroes": [obs(clock=0)]})
+        ag = h.agents[("radiant", 1)]
+        self.assertEqual((ag.busy, h.inflight, len(self.backend.calls)), (False, 0, 0))
+        h.tick({"heroes": [obs(clock=1)]})                                    # после ошибки — пауза 3 с, не каждый тик
+        self.assertEqual(len(self.backend.calls), 0)
+        h.tick({"heroes": [obs(clock=4)]})
+        self.assertEqual(len(self.backend.calls), 1)
+        with mock.patch.object(A, "memory_line", side_effect=ValueError("учёт")):  # сломался учёт после ответа
+            h.tick({"heroes": [obs(clock=9)]})
+        self.assertEqual((ag.busy, h.inflight), (False, 0))
+        self.assertIn("сбой сервера", ag.state)
+
+    def test_bad_observation_does_not_stop_others(self):
+        h = self.hub()
+        r = h.tick({"heroes": [{"team": "radiant", "pos": None}, {"team": "radiant", "pos": 9, "clock": 0},
+                               "мусор", obs(clock=0, pos=2)]})
+        self.assertEqual([(d["team"], d["pos"]) for d in r["decisions"]], [("radiant", 2)])
+
+    def test_free_backends_not_counted_and_pause_per_side(self):
+        paid = FakeBackend()
+        h = A.AgentHub({"radiant": A.RulesBackend(), "dire": paid}, sync=True, max_calls=1)
+        heroes = [obs(clock=0, pos=p) for p in (1, 2, 3)] + [obs(clock=0, pos=p, team="dire") for p in (1, 2)]
+        r = h.tick({"heroes": heroes})
+        self.assertEqual(sum(d["team"] == "radiant" for d in r["decisions"]), 3)   # правила предел не тратят
+        self.assertEqual(len(paid.calls), 1)
+        self.assertEqual(h.agents[("dire", 2)].state, "лимит вызовов исчерпан")
+        s = h.summary()
+        self.assertEqual((s["calls"], s["paid_calls"]), (4, 1))
+        self.assertEqual(s["teams"]["radiant"]["backend"], "правила (не Claude)")
+        self.assertEqual(s["teams"]["dire"]["calls"], 1)
+        slow = FakeBackend(error=A.BackendError("HTTP 429", retry_after=30))
+        h = A.AgentHub({"radiant": slow, "dire": A.RulesBackend()}, sync=True)
+        h.tick({"heroes": [obs(clock=0), obs(clock=0, team="dire")]})
+        r = h.tick({"heroes": [obs(clock=10), obs(clock=10, team="dire")]})
+        self.assertIn("пауза", h.agents[("radiant", 1)].state)
+        self.assertEqual(next(d["seq"] for d in r["decisions"] if d["team"] == "dire"), 2)  # Тьма не ждёт чужой 429
+
+    def test_applied_measures_decision_age(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            log = Path(tmp) / "a.jsonl"
+            h = self.hub(log_path=log)
+            h.tick({"heroes": [obs(clock=10)]})
+            h.tick({"heroes": [obs(clock=11)], "clock": 11,
+                    "applied": [{"team": "radiant", "pos": 1, "seq": 1, "clock": 11.5},
+                                {"team": "radiant", "pos": 1, "seq": 7, "clock": 11.5}, {"pos": "x"}]})
+            s = h.summary()
+            self.assertEqual(s["teams"]["radiant"]["decision_age_p50_s"], 1.5)
+            self.assertEqual(s["decision_age_p95_s"], 1.5)
+            recs = [json.loads(x) for x in log.read_text(encoding="utf-8").splitlines()]
+            applied = [r for r in recs if r.get("event") == "applied"]
+            self.assertEqual([(r["pos"], r["seq"], r["decision_age_s"]) for r in applied], [(1, 1, 1.5)])
+            self.assertEqual(recs[0]["seq"], 1)
+            self.assertNotIn("raw", recs[0])                                  # чистый ответ — без сырого текста
+
+    def test_coordinates_not_in_prompt(self):
+        o = obs(clock=0, xy=[100, -200], allies=[{"pos": 2, "hero": "viper", "xy": [1, 2]}],
+                enemies=[{"hero": "luna", "d": 900, "xy": [3, 4]}])
+        u = A.user_prompt(o, [], [], "x")
+        self.assertNotIn('"xy"', u)
+        self.assertIn('"luna"', u)
+        self.assertEqual(o["xy"], [100, -200])                                 # наблюдение не тронуто — оно для карты
+
     def test_background_calls(self):
         slow = FakeBackend(delay=0.2)
         h = A.AgentHub({"radiant": slow, "dire": slow})
@@ -337,7 +414,8 @@ class Api(unittest.TestCase):
     def test_request_and_reply(self):
         ok = {"content": [{"type": "text", "text": '{"plan":"retreat","where":"base","target":"","ally":0,"cast":[],'
                                                   '"buy":[],"level":[],"retreat_hp":40,"buyback":false,"say":"Ухожу"}'}],
-              "usage": {"input_tokens": 900, "output_tokens": 60, "cache_read_input_tokens": 2100}}
+              "usage": {"input_tokens": 900, "output_tokens": 60, "cache_read_input_tokens": 2100},
+              "stop_reason": "end_turn", "model": "model-x"}
         http = FakeHTTP([ok])
         b = A.ApiBackend("model-x", api_key="k", opener=http)
         h = A.AgentHub({"radiant": b, "dire": b}, sync=True)
@@ -350,69 +428,149 @@ class Api(unittest.TestCase):
         body = json.loads(req.data)
         self.assertEqual(body["model"], "model-x")
         self.assertEqual(body["system"][0]["cache_control"], {"type": "ephemeral"})
-        self.assertEqual(body["output_config"]["format"], {"type": "json_schema", "schema": A.DECISION_SCHEMA})
+        self.assertEqual(body["output_config"], {"format": {"type": "json_schema", "schema": A.DECISION_SCHEMA},
+                                                 "effort": "low"})
+        self.assertEqual(body["max_tokens"], 4000)                             # запас на думание (входит в max_tokens)
+        self.assertNotIn("thinking", body)                                     # по умолчанию — как решила модель
         self.assertEqual(body["messages"][0]["role"], "user")
         self.assertEqual(h.summary()["cache_read"], 2100)
         self.assertEqual(b.label, "Claude API (model-x)")
+        thinking = A.ApiBackend("m", api_key="k", thinking="between_tools", effort=None, max_tokens=900)
+        body = thinking.body("s", "u")
+        self.assertEqual((body["thinking"], body["max_tokens"]), ({"type": "between_tools"}, 900))
+        self.assertNotIn("effort", body["output_config"])
 
-    def test_errors(self):
+    def test_unsupported_params_are_dropped(self):
         ok = {"content": [{"type": "text", "text": '{"plan":"hold"}'}], "usage": {}}
-        http = FakeHTTP([http_error(400, '{"error":{"message":"output_config: unsupported"}}'), ok])
+        http = FakeHTTP([http_error(400, '{"error":{"message":"effort: not supported by this model"}}'),
+                         http_error(400, '{"error":{"message":"output_config.format: unsupported"}}'), ok])
         b = A.ApiBackend("m", api_key="k", opener=http)
         self.assertEqual(A.parse_decision(b.decide("s", "u", obs())["text"])[0]["plan"], "hold")
-        self.assertFalse(b.structured)                                         # дальше без схемы
-        self.assertNotIn("output_config", json.loads(http.requests[1].data))
+        self.assertEqual(b.dropped, ["effort", "structured"])
+        self.assertEqual(json.loads(http.requests[1].data)["output_config"], {"format": {
+            "type": "json_schema", "schema": A.DECISION_SCHEMA}})
+        self.assertNotIn("output_config", json.loads(http.requests[2].data))  # дальше без схемы: JSON по промпту
+        other = A.ApiBackend("m", api_key="k", opener=FakeHTTP([http_error(400, "messages: too long")]))
+        with self.assertRaises(A.BackendError):                                # чужая 400 — не повторять вслепую
+            other.decide("s", "u", obs())
+        self.assertEqual(other.dropped, [])
+
+    def test_errors(self):
         b2 = A.ApiBackend("m", api_key="k", opener=FakeHTTP([http_error(429, "slow down", {"retry-after": "7"})]))
         with self.assertRaises(A.BackendError) as cm:
             b2.decide("s", "u", obs())
         self.assertEqual(cm.exception.retry_after, 7.0)
+        b3 = A.ApiBackend("m", api_key="k", opener=FakeHTTP([
+            http_error(529, "overloaded", {"retry-after": "Wed, 07 Oct 2026 10:00:00 GMT"})]))
+        with self.assertRaises(A.BackendError) as cm:
+            b3.decide("s", "u", obs())
+        self.assertEqual(cm.exception.retry_after, 30.0)                       # дата вместо секунд
         with self.assertRaises(ValueError):
             A.ApiBackend("", api_key="k")
 
+    def test_truncated_reply_is_error_but_tokens_counted(self):
+        cut = {"content": [{"type": "text", "text": '{"plan":"fa'}], "stop_reason": "max_tokens", "model": "m",
+               "usage": {"input_tokens": 3000, "output_tokens": 4000}}
+        b = A.ApiBackend("m", api_key="k", opener=FakeHTTP([cut]))
+        with tempfile.TemporaryDirectory() as tmp:
+            log = Path(tmp) / "a.jsonl"
+            h = A.AgentHub({"radiant": b, "dire": A.RulesBackend()}, sync=True, log_path=log)
+            r = h.tick({"heroes": [obs(clock=0)]})
+            self.assertEqual(r["decisions"], [])
+            self.assertIn("max_tokens", h.agents[("radiant", 1)].state)
+            s = h.summary()
+            self.assertEqual((s["errors"], s["in"], s["out"]), (1, 3000, 4000))   # обрезанный ответ оплачен
+            rec = json.loads(log.read_text(encoding="utf-8").splitlines()[0])
+            self.assertEqual((rec["stop_reason"], rec["model"], rec["raw"]), ("max_tokens", "m", '{"plan":"fa'))
+
 
 class Cli(unittest.TestCase):
-    def test_argv_and_reply(self):
+    REPLY = {"type": "result", "subtype": "success", "is_error": False, "result": '{"plan":"push"}',
+             "structured_output": {"plan": "push", "where": "mid", "target": "", "ally": 0, "cast": [], "buy": [],
+                                   "level": [], "retreat_hp": 30, "buyback": False, "say": "Пушу", "to": []},
+             "usage": {"input_tokens": 10, "output_tokens": 5}, "total_cost_usd": 0.01,
+             "modelUsage": {"small-model": {"costUSD": 0.0001}, "big-model": {"costUSD": 0.0099}}}
+
+    def runner(self, reply=None, code=0):
         seen = {}
 
-        def runner(argv, **kw):
+        def run(argv, **kw):
             seen["argv"], seen["kw"] = argv, kw
+            seen["system"] = Path(argv[argv.index("--system-prompt-file") + 1]).read_text(encoding="utf-8")
 
             class P:
-                returncode = 0
-                stdout = json.dumps({"type": "result", "is_error": False, "result": "",
-                                     "structured_output": {"plan": "push", "where": "mid", "target": "", "ally": 0,
-                                                           "cast": [], "buy": [], "level": [], "retreat_hp": 30,
-                                                           "buyback": False, "say": "Пушу"},
-                                     "usage": {"input_tokens": 10, "output_tokens": 5}, "total_cost_usd": 0.01})
+                returncode = code
+                stdout = json.dumps(reply or self.REPLY)
                 stderr = ""
             return P()
+        return run, seen
 
-        b = A.CliBackend(model="m", runner=runner)
-        out = b.decide("СИСТЕМА", "НАБЛЮДЕНИЕ", obs())
+    def test_argv_and_reply(self):
+        run, seen = self.runner()
+        b = A.CliBackend(model="m", runner=run, effort="low", which=lambda name: "/opt/bin/claude")
+        out = b.decide("СИСТЕМА\nв две строки", "НАБЛЮДЕНИЕ", obs())
         self.assertEqual(out["data"]["say"], "Пушу")
+        self.assertEqual((out["model"], out["stop_reason"], out["cost_usd"]), ("big-model,small-model", "success", 0.01))
         argv = seen["argv"]
-        self.assertEqual(argv[:4], ["claude", "--model", "m", "-p"])
-        self.assertEqual(argv[argv.index("--system-prompt") + 1], "СИСТЕМА")
-        self.assertEqual(argv[argv.index("--tools") + 1], "")
-        self.assertEqual(json.loads(argv[argv.index("--json-schema") + 1]), A.DECISION_SCHEMA)
+        self.assertEqual(argv[:6], ["/opt/bin/claude", "--model", "m", "--effort", "low", "-p"])
+        self.assertEqual(seen["system"], "СИСТЕМА\nв две строки")              # промпт — файлом, не строкой
+        self.assertNotIn("--system-prompt", argv)
+        self.assertIn("--safe-mode", argv)                                     # без CLAUDE.md, хуков, MCP, навыков
         self.assertNotIn("--bare", argv)                                       # --bare не берёт подписку
+        self.assertEqual(argv[argv.index("--tools") + 1], "")
+        self.assertEqual(argv[argv.index("--disallowedTools") + 1], "mcp__*")
+        self.assertIn("--no-session-persistence", argv)
+        self.assertEqual(json.loads(argv[argv.index("--json-schema") + 1]), A.DECISION_SCHEMA)
         self.assertEqual(seen["kw"]["input"], "НАБЛЮДЕНИЕ")
+        self.assertEqual((seen["kw"]["encoding"], seen["kw"]["errors"]), ("utf-8", "replace"))
+        self.assertEqual(seen["kw"]["cwd"], b.cwd)                             # пустая папка: чужой CLAUDE.md не найдётся
+        b.decide("СИСТЕМА\nв две строки", "ещё", obs())
+        self.assertEqual(seen["argv"][seen["argv"].index("--system-prompt-file") + 1],
+                         argv[argv.index("--system-prompt-file") + 1])           # тот же файл, не новый на вызов
+        plain = A.CliBackend(runner=run, which=lambda name: None)
+        self.assertEqual(plain.argv("s")[:2], ["claude", "-p"])                # не нашёл в PATH — как есть
 
+    def test_failures(self):
         def missing(argv, **kw):
             raise FileNotFoundError
 
         with self.assertRaises(A.BackendError):
             A.CliBackend(runner=missing).decide("s", "u", obs())
+        run, _ = self.runner({"is_error": True, "result": "Not logged in"}, code=1)
+        with self.assertRaises(A.BackendError) as cm:
+            A.CliBackend(runner=run).decide("s", "u", obs())
+        self.assertIn("Not logged in", str(cm.exception))
 
-        def failing(argv, **kw):
+        def garbage(argv, **kw):
             class P:
-                returncode = 1
-                stdout = json.dumps({"is_error": True, "result": "Not logged in"})
-                stderr = ""
+                returncode = 2
+                stdout = ""
+                stderr = "error: unknown option '--safe-mode'"
             return P()
 
-        with self.assertRaises(A.BackendError):
-            A.CliBackend(runner=failing).decide("s", "u", obs())
+        with self.assertRaises(A.BackendError) as cm:
+            A.CliBackend(runner=garbage).decide("s", "u", obs())
+        self.assertIn("unknown option", str(cm.exception))                    # старая версия Claude Code — видно, почему
+
+    def test_cli_cost_not_counted_twice(self):
+        run, _ = self.runner()
+        cli = A.CliBackend(runner=run, which=lambda name: None)
+        h = A.AgentHub({"radiant": cli, "dire": FakeBackend()}, sync=True, prices={"in": 1.0, "out": 5.0})
+        h.tick({"heroes": [obs(clock=0), obs(clock=0, team="dire")]})
+        s = h.summary()
+        self.assertEqual(s["cost_cli"], 0.01)
+        self.assertAlmostEqual(s["cost_usd_est"], (1000 * 1 + 50 * 5) / 1e6)  # только сторона без своей цены
+        self.assertEqual(s["teams"]["radiant"]["in"], 10)
+
+    def test_make_backend(self):
+        self.assertIsInstance(A.make_backend("rules"), A.RulesBackend)
+        with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "k"}):
+            b = A.make_backend("api", "m", effort="medium", thinking="between_tools", max_tokens=1234)
+        self.assertEqual((b.effort, b.thinking, b.max_tokens), ("medium", "between_tools", 1234))
+        c = A.make_backend("cli", "m", "claude", effort=None)
+        self.assertNotIn("--effort", c.argv("s"))
+        with self.assertRaises(ValueError):
+            A.make_backend("telepathy")
 
 
 class Args(unittest.TestCase):
@@ -424,7 +582,8 @@ class Args(unittest.TestCase):
             p.write_text(json.dumps({"name": "Вася", "style": {"aggression": 0.9}}, ensure_ascii=False), encoding="utf-8")
             a = argparse.Namespace(agents="rules", radiant=None, dire=None, model=None, claude="claude", period=4.0,
                                    max_calls=None, personas=None, persona=[f"radiant:1={p}"], price_in=None,
-                                   price_out=None, price_cache_read=None, price_cache_write=None)
+                                   price_out=None, price_cache_read=None, price_cache_write=None, effort="off",
+                                   thinking=None, max_tokens=4000)
             factory, backends = agent_factory_from_args(a)
             hub = factory("t")
             hub.log_path = None
@@ -440,6 +599,15 @@ class Args(unittest.TestCase):
             a.persona, a.agents = [], "api"
             with self.assertRaises(ValueError):                                # api без модели и ключа — отказ
                 agent_factory_from_args(a)
+            a.agents, a.dire, a.model, a.effort, a.max_tokens = "api", "rules", "m", "medium", 2000
+            with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "k"}):
+                _, backends = agent_factory_from_args(a)
+            self.assertEqual((backends["radiant"].effort, backends["radiant"].max_tokens), ("medium", 2000))
+            self.assertIsInstance(backends["dire"], A.RulesBackend)
+            a.effort = "off"
+            with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "k"}):
+                _, backends = agent_factory_from_args(a)
+            self.assertIsNone(backends["radiant"].effort)
 
 
 class Route(unittest.TestCase):

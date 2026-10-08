@@ -17,9 +17,11 @@
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import threading
@@ -309,7 +311,7 @@ def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, o
 - where: "", "top", "mid", "bot", "base", "roshan".
 - target: имя героя врага из enemy_team (например "luna") или "".
 - ally: номер союзника 1–5 или 0.
-- cast: до 4 применений {{"ability": имя из abilities или items, "target": цель}}. Цель: "" (цель плана или ближайший видимый враг), "self", "creeps" (крипы рядом — для способностей по площади), номер союзника "1"–"5", место "base"/"top"/"mid"/"bot" (своя внешняя вышка линии: для телепорта item_tpscroll и вардов), имя героя врага. Каждое применение — один раз; ждёт цели и отката до 8 с. Варды (item_ward_observer, item_ward_sentry) руки ставят только у своей внешней вышки линии; точек рун и лагерей руки не знают.
+- cast: до 4 применений {{"ability": имя из abilities или items, "target": цель}}. Цель: "" — цель плана, а без неё ближайший видимый враг: руки применят, когда он в досягаемости (способность без цели — когда враг рядом); "self" — сразу, на себя или без цели; "creeps" — крипы рядом (для способностей по площади); номер союзника "1"–"5"; место "base"/"top"/"mid"/"bot" — своя внешняя вышка линии (для телепорта item_tpscroll и вардов); имя героя врага. Каждое применение — один раз; ждёт цели и отката до 8 с. Новое решение заменяет невыполненные применения прошлого: нужное повтори (вард, к которому герой уже идёт, он донесёт, только если ты его повторил). Варды (item_ward_observer, item_ward_sentry) руки ставят только у своей внешней вышки линии; точек рун и лагерей руки не знают.
 - buy: очередь покупок — внутренние имена предметов Доты ("item_tango", "item_power_treads"). Пустой список — очередь не менять. Есть золото, а ты у фонтана или мёртв — закажи, что нужно по роли и сборке.
 - level: очередь прокачки из can_level (есть, когда есть очки). Пустой — руки качают сами: ульту, потом младшую способность.
 - retreat_hp: порог отхода, проценты здоровья; обычно 25–40. 0 — не отходить вовсе: только осознанно (например, добить цель).
@@ -325,7 +327,7 @@ def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, o
 Твою реплику (say) слышат тренер и все четверо союзников; их реплики ты видишь в сообщении в разделе «Голосовой чат» (кто, кому, сколько секунд назад). Говори как живой игрок в голосе Доты: коротко и по делу — где враги и куда пропали, у кого из врагов нет ульты или выкупа, кому нужна помощь, договорённости (Рошан, драка, пуш, отход), ответы тренеру и союзникам. Хочешь, чтобы союзник что-то сделал, — обратись к нему (to) и скажи что. Если обратились к тебе — ответь коротко (to — тот, кто обратился) и, если согласен, сделай. Молчать — нормально: не повторяй то, что уже сказано, и не болтай без нового.
 
 ЧТО В НАБЛЮДЕНИИ
-clock — игровые часы, с; hp, mp — [сейчас, максимум]; where — где ты (линия и ближайшая вышка); attack — урон и дальность атаки; abilities — способности (use: target/point/none/passive; ready; cd — откат, с; mana; range); items — предметы (backpack — в рюкзаке); points и can_level — очки способностей и что можно качать; gold; buyback — цена и можно ли; in_shop — у фонтана; doing — что сейчас делают руки; queue — очереди рук; notes — что руки не смогли сделать; near — крипы и вражеская вышка рядом (weak_enemy_creeps — можно добить сразу); allies — союзники; enemies — видимые враги (d — расстояние до тебя); missing — невидимые враги (seen — где, ago — сколько секунд назад видели); towers — уровень внешней живой вышки на линиях (0 — вышек нет); roshan — жив ли Рошан; events — недавние события.
+clock — игровые часы, с; hp, mp — [сейчас, максимум]; where — где ты (линия и ближайшая вышка); attack — урон и дальность атаки; abilities — способности (use: target/point/none/passive; ready; cd — откат, с; mana; range); items — предметы (backpack — в рюкзаке: там предмет не действует и не применяется; tp_slot — ячейка телепорта); slots_free и backpack_free — свободные ячейки инвентаря и рюкзака: при полном инвентаре купленное ложится в рюкзак; points и can_level — очки способностей и что можно качать; gold; buyback — цена и можно ли; in_shop — у фонтана; doing — что сейчас делают руки; queue — очереди рук; notes — что руки не смогли сделать; near — крипы и вражеская вышка рядом (weak_enemy_creeps — можно добить сразу); allies — союзники; enemies — видимые враги (d — расстояние до тебя); missing — невидимые враги (seen — где, ago — сколько секунд назад видели); towers — уровень внешней живой вышки на линиях (0 — вышек нет); roshan — жив ли Рошан; events — недавние события.
 
 Отвечай ТОЛЬКО JSON-объектом решения, без пояснений и без markdown.
 Пример: {{"plan":"farm","where":"{default_lane(team, pos)}","target":"","ally":0,"cast":[],"buy":["item_tango","item_branches"],"level":[],"retreat_hp":30,"buyback":false,"say":"","to":[]}}"""
@@ -337,6 +339,18 @@ SHOP_HINT_GOLD = 600         # с таким золотом у фонтана и
 OBS_ORDER = ("clock", "alive", "respawn", "lvl", "hp", "mp", "gold", "buyback", "where", "attack", "abilities",
              "points", "can_level", "items", "slots_free", "in_shop", "doing", "queue", "notes", "near", "enemies",
              "missing", "allies", "towers", "roshan", "coach", "events", "stats", "enemy_team")
+
+
+PROMPT_SKIP = {"xy"}         # координаты — для карты на пульте тренера; агенту хватает where и d
+
+
+def _without(keys: set, v):
+    """Копия наблюдения без полей keys на любой глубине."""
+    if isinstance(v, dict):
+        return {k: _without(keys, x) for k, x in v.items() if k not in keys}
+    if isinstance(v, list):
+        return [_without(keys, x) for x in v]
+    return v
 
 
 def chat_line(e: dict, me: int, clock) -> str:
@@ -370,7 +384,7 @@ def user_prompt(obs: dict, memory: list[str], new_coach: list[dict], trigger: st
         lines.append(f"Ты {'мёртв' if not obs.get('alive', True) else 'у фонтана'}, золота {gold}, "
                      "очередь покупок пуста — самое время заказать покупки (buy).")
     rest = [k for k in obs if k not in OBS_ORDER and k not in ("team", "pos", "hero")]
-    view = {k: obs[k] for k in (*OBS_ORDER, *rest) if k in obs}
+    view = _without(PROMPT_SKIP, {k: obs[k] for k in (*OBS_ORDER, *rest) if k in obs})
     lines.append("Наблюдение: " + json.dumps(view, ensure_ascii=False, separators=(",", ":")))
     lines.append("Твоё решение (только JSON):")
     return "\n".join(lines)
@@ -394,9 +408,10 @@ def memory_line(obs: dict, d: dict, new_coach: list[dict]) -> str:
 # --- моторы ---
 
 class BackendError(Exception):
-    def __init__(self, msg: str, retry_after: float | None = None):
+    def __init__(self, msg: str, retry_after: float | None = None, reply: dict | None = None):
         super().__init__(msg)
         self.retry_after = retry_after
+        self.reply = reply or {}                            # что всё же пришло (токены, stop_reason) — в журнал
 
 
 START_ITEMS = {
@@ -472,18 +487,33 @@ def rules_decision(obs: dict, new_coach: list[dict] | None = None, extra: dict |
 
 class RulesBackend:
     label = "правила (не Claude)"
+    free = True                                             # не тратит предел вызовов и не входит в цену
 
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
         return {"data": rules_decision(obs, (extra or {}).get("new_coach"), extra), "usage": {}}
 
 
+def _retry_after(value) -> float | None:
+    """Заголовок retry-after: секунды или дата (тогда — 30 с)."""
+    if not value:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return 30.0
+
+
 class ApiBackend:
-    """Claude через Messages API (ключ — переменная окружения ANTHROPIC_API_KEY)."""
+    """Claude через Messages API (ключ — переменная окружения ANTHROPIC_API_KEY).
+
+    Новые модели думают по умолчанию, и думание входит в max_tokens (документация Anthropic, «Troubleshooting
+    thinking», 07.10.2026) — поэтому запас max_tokens большой, а effort по умолчанию low. Параметр, который модель
+    не принимает (effort, thinking, структурированный ответ), после ответа 400 отключается, и запрос повторяется."""
     URL = "https://api.anthropic.com/v1/messages"
     VERSION = "2023-06-01"
 
-    def __init__(self, model: str, api_key: str | None = None, timeout: float = 20.0, max_tokens: int = 500,
-                 structured: bool = True, opener=None):
+    def __init__(self, model: str, api_key: str | None = None, timeout: float = 30.0, max_tokens: int = 4000,
+                 structured: bool = True, effort: str | None = "low", thinking: str | None = None, opener=None):
         if not model:
             raise ValueError("нужна модель (--model): имя из документации Anthropic")
         self.model = model
@@ -491,51 +521,109 @@ class ApiBackend:
         if not self.api_key:
             raise ValueError("нет ключа: задайте переменную окружения ANTHROPIC_API_KEY")
         self.timeout, self.max_tokens, self.structured = timeout, max_tokens, structured
+        self.effort, self.thinking = effort, thinking
         self.opener = opener or urllib.request.urlopen
         self.label = f"Claude API ({model})"
+        self.dropped: list[str] = []                       # что модель не приняла — в журнал и сводку
 
     def body(self, system: str, user: str) -> dict:
         b = {"model": self.model, "max_tokens": self.max_tokens,
              "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
              "messages": [{"role": "user", "content": user}]}
+        cfg = {}
         if self.structured:
-            b["output_config"] = {"format": {"type": "json_schema", "schema": DECISION_SCHEMA}}
+            cfg["format"] = {"type": "json_schema", "schema": DECISION_SCHEMA}
+        if self.effort:
+            cfg["effort"] = self.effort
+        if cfg:
+            b["output_config"] = cfg
+        if self.thinking:
+            b["thinking"] = {"type": self.thinking}
         return b
 
+    def _drop(self, text: str) -> bool:
+        """400 из-за параметра, которого модель не знает, — отключить его и повторить."""
+        low = text.lower()
+        if self.effort and "effort" in low:
+            self.effort = None
+            self.dropped.append("effort")
+            return True
+        if self.thinking and "thinking" in low:
+            self.thinking = None
+            self.dropped.append("thinking")
+            return True
+        if self.structured and ("output_config" in low or "json_schema" in low or "format" in low):
+            self.structured = False                         # дальше просим JSON словами
+            self.dropped.append("structured")
+            return True
+        return False
+
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
-        req = urllib.request.Request(
-            self.URL, data=json.dumps(self.body(system, user)).encode("utf-8"), method="POST",
-            headers={"x-api-key": self.api_key, "anthropic-version": self.VERSION, "content-type": "application/json"})
-        try:
-            with self.opener(req, timeout=self.timeout) as r:
-                data = json.loads(r.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            text = e.read().decode("utf-8", "replace")[:300] if hasattr(e, "read") else ""
-            retry = e.headers.get("retry-after") if getattr(e, "headers", None) else None
-            if e.code == 400 and self.structured and "output_config" in text:
-                self.structured = False                     # модель без structured outputs — дальше просим JSON словами
-                return self.decide(system, user, obs, extra)
-            raise BackendError(f"HTTP {e.code}: {text}", float(retry) if retry else None) from None
-        except (urllib.error.URLError, TimeoutError, OSError) as e:
-            raise BackendError(f"нет связи с API: {e}") from None
+        for _ in range(4):
+            req = urllib.request.Request(
+                self.URL, data=json.dumps(self.body(system, user)).encode("utf-8"), method="POST",
+                headers={"x-api-key": self.api_key, "anthropic-version": self.VERSION,
+                         "content-type": "application/json"})
+            try:
+                with self.opener(req, timeout=self.timeout) as r:
+                    data = json.loads(r.read().decode("utf-8"))
+                break
+            except urllib.error.HTTPError as e:
+                text = e.read().decode("utf-8", "replace")[:400] if hasattr(e, "read") else ""
+                if e.code == 400 and self._drop(text):
+                    continue
+                retry = e.headers.get("retry-after") if getattr(e, "headers", None) else None
+                raise BackendError(f"HTTP {e.code}: {text}", _retry_after(retry)) from None
+            except (urllib.error.URLError, TimeoutError, OSError) as e:
+                raise BackendError(f"нет связи с API: {e}") from None
+        else:
+            raise BackendError("API отклоняет запрос и после отключения необязательных параметров")
         text = "".join(b.get("text", "") for b in data.get("content") or [] if b.get("type") == "text")
-        return {"text": text, "usage": data.get("usage") or {}, "stop_reason": data.get("stop_reason")}
+        out = {"text": text, "usage": data.get("usage") or {}, "stop_reason": data.get("stop_reason"),
+               "model": data.get("model")}
+        if data.get("stop_reason") == "max_tokens":
+            raise BackendError(f"ответ обрезан на max_tokens={self.max_tokens} (думание съело лимит?)",
+                               reply=out)
+        return out
+
+
+CLI_SYSTEM_PROMPTS: dict[str, str] = {}
 
 
 class CliBackend:
     """Claude через Claude Code: `claude -p` (вход по подписке или ключом — как настроен Claude Code).
-    Без --bare: режим --bare подписку не использует (документация Claude Code, «headless»)."""
 
-    def __init__(self, model: str | None = None, claude: str = "claude", timeout: float = 90.0, runner=None):
-        self.model, self.claude, self.timeout = model, claude, timeout
+    Без --bare: режим --bare подписку не использует (документация Claude Code, «headless»). Вместо него --safe-mode:
+    не грузит CLAUDE.md, навыки, плагины, хуки, MCP и автопамять, а вход и модель работают как обычно.
+    Системный промпт — файлом (--system-prompt-file): длинная строка с переводами строк в командной строке
+    Windows ломается. На Windows лучше нативный claude.exe: обёртку claude.cmd из npm запускает cmd.exe."""
+
+    def __init__(self, model: str | None = None, claude: str = "claude", timeout: float = 90.0, runner=None,
+                 effort: str | None = None, which=shutil.which):
+        self.model, self.timeout, self.effort = model, timeout, effort
+        self.claude = which(claude) or claude
         self.runner = runner or subprocess.run
-        self.cwd = tempfile.mkdtemp(prefix="vc_agent_")      # пустая папка: чужой CLAUDE.md не подмешается
+        self.cwd = tempfile.mkdtemp(prefix="vc_agent_")      # пустая рабочая папка
         self.label = "Claude Code" + (f" ({model})" if model else "")
+        self.self_cost = True        # цену считает сам Claude Code (cost_cli); по подписке это оценка, не списание
+
+    def prompt_file(self, system: str) -> str:
+        key = hashlib.sha1(system.encode("utf-8")).hexdigest()[:16]
+        path = CLI_SYSTEM_PROMPTS.get(key)
+        if path is None or not os.path.exists(path):
+            path = os.path.join(self.cwd, f"system_{key}.txt")
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(system)
+            CLI_SYSTEM_PROMPTS[key] = path
+        return path
 
     def argv(self, system: str) -> list[str]:
-        a = [self.claude, "-p", "--output-format", "json", "--system-prompt", system, "--tools", "",
-             "--disallowedTools", "mcp__*", "--no-session-persistence", "--json-schema", json.dumps(DECISION_SCHEMA),
+        a = [self.claude, "-p", "--output-format", "json", "--safe-mode", "--system-prompt-file",
+             self.prompt_file(system), "--tools", "", "--disallowedTools", "mcp__*", "--no-session-persistence",
+             "--json-schema", json.dumps(DECISION_SCHEMA, separators=(",", ":")),
              "Реши, что делать герою сейчас. Наблюдение и приказы — во входных данных."]
+        if self.effort:
+            a[1:1] = ["--effort", self.effort]
         if self.model:
             a[1:1] = ["--model", self.model]
         return a
@@ -543,7 +631,7 @@ class CliBackend:
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
         try:
             p = self.runner(self.argv(system), input=user, capture_output=True, text=True, encoding="utf-8",
-                            timeout=self.timeout, cwd=self.cwd)
+                            errors="replace", timeout=self.timeout, cwd=self.cwd)
         except FileNotFoundError:
             raise BackendError(f"не нашёл {self.claude}: установите Claude Code или укажите --claude") from None
         except subprocess.TimeoutExpired:
@@ -554,17 +642,22 @@ class CliBackend:
             raise BackendError(f"claude -p: не JSON (код {p.returncode}): {(p.stdout or p.stderr)[:200]}") from None
         if data.get("is_error"):
             raise BackendError(f"claude -p: {str(data.get('result'))[:200]}")
+        # modelUsage: кроме модели агента Claude Code зовёт и малую служебную — главная та, что дороже
+        mu = data.get("modelUsage") or {}
+        models = sorted(mu, key=lambda m: -float((mu[m] or {}).get("costUSD") or 0))
         return {"data": data.get("structured_output"), "text": data.get("result") or "",
-                "usage": data.get("usage") or {}, "cost_usd": data.get("total_cost_usd")}
+                "usage": data.get("usage") or {}, "cost_usd": data.get("total_cost_usd"),
+                "model": ",".join(models) or None, "stop_reason": data.get("subtype")}
 
 
-def make_backend(kind: str, model: str | None = None, claude: str = "claude"):
+def make_backend(kind: str, model: str | None = None, claude: str = "claude", effort: str | None = "low",
+                 thinking: str | None = None, max_tokens: int = 4000):
     if kind == "rules":
         return RulesBackend()
     if kind == "api":
-        return ApiBackend(model or "")
+        return ApiBackend(model or "", effort=effort, thinking=thinking, max_tokens=max_tokens)
     if kind == "cli":
-        return CliBackend(model, claude)
+        return CliBackend(model, claude, effort=effort)
     raise ValueError(f"неизвестный мотор агентов: {kind}")
 
 
@@ -588,11 +681,13 @@ class HeroAgent:
     state: str = "ждёт"
     calls: int = 0
     errors: int = 0
+    decided: dict = field(default_factory=dict)   # seq → (часы наблюдения, время готовности) — для замера задержки
 
 
 ASKED = "к тебе обратился союзник"
 CHAT_WINDOW = 60          # с игры: столько агент «помнит» голосовой чат
 CHAT_KEEP = 6             # и не больше стольких реплик
+RAW_KEEP = 400            # столько знаков сырого ответа модели — в журнал, когда ответ не разобрался чисто
 
 
 def _hp_pct(obs: dict | None) -> float:
@@ -604,6 +699,23 @@ def _near_enemies(obs: dict | None, radius: float = 1500) -> set:
     return {e.get("hero") for e in (obs or {}).get("enemies") or [] if (e.get("d") or 1e9) <= radius}
 
 
+def _clock(obs) -> float:
+    try:
+        return float((obs or {}).get("clock") or 0)
+    except (TypeError, ValueError, AttributeError):
+        return 0.0
+
+
+def _q(xs: list, p: float):
+    xs = sorted(xs)
+    return round(xs[min(len(xs) - 1, int(p * len(xs)))], 2) if xs else None
+
+
+def _new_stats() -> dict:
+    return {"calls": 0, "errors": 0, "latency": [], "age": [], "in": 0, "out": 0, "cache_read": 0,
+            "cache_write": 0, "cost_cli": 0.0}
+
+
 class AgentHub:
     """Агенты одной комнаты (одного матча): по агенту на героя, решения в фоне."""
 
@@ -613,7 +725,8 @@ class AgentHub:
                  prices: dict | None = None, sync: bool = False):
         self.backends = backends                  # {"radiant": мотор, "dire": мотор}
         self.period, self.dead_period, self.min_gap, self.error_gap = period, dead_period, min_gap, error_gap
-        self.max_inflight, self.max_calls = max_inflight, max_calls
+        self.max_inflight = max_inflight
+        self.max_calls = max_calls                # предел платных вызовов (правила не считаются)
         self.personas = personas or {}
         self.obedience = obedience
         self.prices = prices or {}
@@ -622,21 +735,25 @@ class AgentHub:
         self.lock = threading.Lock()
         self.agents: dict[tuple, HeroAgent] = {}
         self.inflight = 0
-        self.calls_total = 0
-        self.pause_until = 0.0
+        self.calls_total = 0                      # платные вызовы
+        self.pause_until = {t: 0.0 for t in backends}         # пауза по retry-after — у стороны, которой ответили 429
         self.log_path = Path(log_path) if log_path else None
         self.run = f"{time.time():.0f}-{id(self) % 10000}"   # новый запуск сервера — номера решений с 1, игра их сбрасывает
         self.chat = {t: deque(maxlen=40) for t in backends}   # голосовой чат каждой команды (слышит только своя)
         self.chat_seq = 0
         self.on_say = None                                    # on_say(team, реплика) — сервер шлёт её тренеру
-        self.stats = {"calls": 0, "errors": 0, "latency": [], "in": 0, "out": 0, "cache_read": 0, "cache_write": 0,
-                      "cost_cli": 0.0}
+        self.stats = {t: _new_stats() for t in backends}      # по сторонам: у сторон могут быть разные моторы
+
+    def _paid(self, team: str) -> bool:
+        return not getattr(self.backends.get(team), "free", False)
 
     def _persona(self, team: str, pos: int) -> dict | None:
         return (self.personas.get(team) or {}).get(str(pos)) or (self.personas.get(team) or {}).get(pos)
 
     def _agent(self, obs: dict) -> HeroAgent:
         team, pos, hero = obs.get("team"), int(obs.get("pos")), str(obs.get("hero") or "")
+        if not 1 <= pos <= 5:
+            raise ValueError(f"позиция {pos} вне 1–5")
         key = (team, pos)
         ag = self.agents.get(key)
         clock = float(obs.get("clock") or 0)
@@ -687,32 +804,69 @@ class AgentHub:
             return "очередное решение"
         return None
 
+    def _schedule(self, obs, now: float, t_obs=None):
+        """Нужно ли агенту этого героя решать сейчас; да — задание для фона (под замком).
+        t_obs — точные часы игры, когда собраны наблюдения (в самих наблюдениях часы округлены до секунд)."""
+        if not isinstance(obs, dict) or obs.get("team") not in self.backends:
+            return None
+        ag = self._agent(obs)
+        if ag.busy:
+            return None
+        trig = self._trigger(ag, obs)
+        if trig is None:
+            return None
+        paid = self._paid(ag.team)
+        if paid and self.max_calls is not None and self.calls_total >= self.max_calls:
+            ag.state = "лимит вызовов исчерпан"
+            return None
+        if now < self.pause_until.get(ag.team, 0.0):
+            ag.state = "пауза: лимит API"
+            return None
+        if self.inflight >= self.max_inflight:
+            return None
+        ag.busy, ag.state = True, "думает"
+        self.inflight += 1
+        if paid:
+            self.calls_total += 1
+        try:
+            t_obs = float(t_obs)
+        except (TypeError, ValueError):
+            t_obs = _clock(obs)
+        return (ag, obs, trig, self._chat_for(ag, _clock(obs)), self._asked(ag), self.chat_seq, t_obs)
+
+    def _applied(self, payload: dict) -> list[dict]:
+        """Игра сообщила, какие решения дошли до рук. Возраст решения — секунды игры от наблюдения, по которому
+        агент решал, до начала выполнения: обмен с игрой, думание модели и ожидание следующего обмена (под замком)."""
+        out = []
+        for a in payload.get("applied") or []:
+            try:
+                team, pos, seq = a.get("team"), int(a.get("pos")), int(a.get("seq"))
+                ag = self.agents.get((team, pos))
+                got = ag.decided.pop(seq, None) if ag else None
+                if got is None:
+                    continue
+                age = round(float(a.get("clock", payload.get("clock"))) - got[0], 2)
+            except (TypeError, ValueError, AttributeError):
+                continue
+            self.stats[team]["age"].append(age)
+            out.append({"t": round(time.time(), 3), "event": "applied", "team": team, "pos": pos, "seq": seq,
+                        "decision_age_s": age, "ready_to_report_s": round(time.time() - got[1], 2)})
+        return out
+
     def tick(self, payload: dict) -> dict:
         jobs = []
         now = time.monotonic()
         with self.lock:
+            applied = self._applied(payload)
             for obs in payload.get("heroes") or []:
-                if not isinstance(obs, dict) or obs.get("team") not in self.backends:
-                    continue
-                ag = self._agent(obs)
-                if ag.busy:
-                    continue
-                trig = self._trigger(ag, obs)
-                if trig is None:
-                    continue
-                if self.max_calls is not None and self.calls_total >= self.max_calls:
-                    ag.state = "лимит вызовов исчерпан"
-                    continue
-                if now < self.pause_until:
-                    ag.state = "пауза: лимит API"
-                    continue
-                if self.inflight >= self.max_inflight:
-                    continue
-                ag.busy, ag.state = True, "думает"
-                self.inflight += 1
-                self.calls_total += 1
-                clock = float(obs.get("clock") or 0)
-                jobs.append((ag, obs, trig, self._chat_for(ag, clock), self._asked(ag), self.chat_seq))
+                try:
+                    job = self._schedule(obs, now, payload.get("clock"))
+                except (TypeError, ValueError, KeyError, AttributeError):
+                    continue                              # битое наблюдение одного героя не мешает остальным
+                if job is not None:
+                    jobs.append(job)
+        for rec in applied:
+            self._log(rec)
         for job in jobs:
             if self.sync:
                 self._run(*job)
@@ -728,14 +882,29 @@ class AgentHub:
             }
 
     def _run(self, ag: HeroAgent, obs: dict, trig: str, chat: list | None = None, asked: list | None = None,
-             heard: int = 0) -> None:
+             heard: int = 0, t_obs: float | None = None) -> None:
+        """Один вызов модели в фоне. Что бы ни случилось, агент освобождается — иначе он замолчит до конца матча."""
+        try:
+            self._run_once(ag, obs, trig, chat, asked, heard, _clock(obs) if t_obs is None else t_obs)
+        except Exception as e:                                     # noqa: BLE001 — сбой учёта, не модели
+            with self.lock:
+                ag.state = "сбой сервера: " + f"{type(e).__name__}: {e}"[:80]
+                ag.last_error, ag.last_clock, ag.called_obs = True, _clock(obs), obs
+                ag.calls += 1
+        finally:
+            with self.lock:
+                ag.busy = False
+                self.inflight -= 1
+
+    def _run_once(self, ag: HeroAgent, obs: dict, trig: str, chat: list | None, asked: list | None,
+                  heard: int, t_obs: float) -> None:
         t0 = time.monotonic()
-        new_coach = [c for c in obs.get("coach") or [] if (c.get("seq") or 0) > ag.seen_coach]
-        user = user_prompt(obs, list(ag.memory), new_coach, trig, chat or [], ag.pos, ag.seen_chat)
         backend = self.backends[ag.team]
-        reply, decision, notes, err = {}, None, [], None
+        reply, decision, notes, err, new_coach = {}, None, [], None, []
         said = None
         try:
+            new_coach = [c for c in obs.get("coach") or [] if (c.get("seq") or 0) > ag.seen_coach]
+            user = user_prompt(obs, list(ag.memory), new_coach, trig, chat or [], ag.pos, ag.seen_chat)
             reply = backend.decide(ag.system, user, obs, {"new_coach": new_coach, "trigger": trig,
                                                           "chat_to_me": asked or []}) or {}
             raw = reply.get("data") if reply.get("data") is not None else (reply.get("text") or "")
@@ -744,54 +913,62 @@ class AgentHub:
                 err = "; ".join(notes) or "пустой ответ"
         except BackendError as e:
             err = str(e)
+            reply = dict(e.reply or {})                            # обрезанный ответ тоже оплачен — токены в учёт
             if e.retry_after:
                 with self.lock:
-                    self.pause_until = max(self.pause_until, time.monotonic() + e.retry_after)
+                    self.pause_until[ag.team] = max(self.pause_until.get(ag.team, 0.0),
+                                                    time.monotonic() + e.retry_after)
         except Exception as e:                                     # noqa: BLE001 — агент не должен ронять сервер
             err = f"{type(e).__name__}: {e}"
         latency = time.monotonic() - t0
         usage = reply.get("usage") or {}
+        clock = _clock(obs)
         with self.lock:
-            ag.busy = False
-            self.inflight -= 1
+            st = self.stats[ag.team]
             ag.calls += 1
-            ag.last_clock = float(obs.get("clock") or 0)
+            ag.last_clock = clock
             ag.called_obs = obs
             ag.last_error = decision is None
-            self.stats["calls"] += 1
-            self.stats["latency"].append(latency)
-            self.stats["in"] += int(usage.get("input_tokens") or 0)
-            self.stats["out"] += int(usage.get("output_tokens") or 0)
-            self.stats["cache_read"] += int(usage.get("cache_read_input_tokens") or 0)
-            self.stats["cache_write"] += int(usage.get("cache_creation_input_tokens") or 0)
+            st["calls"] += 1
+            st["latency"].append(latency)
+            st["in"] += int(usage.get("input_tokens") or 0)
+            st["out"] += int(usage.get("output_tokens") or 0)
+            st["cache_read"] += int(usage.get("cache_read_input_tokens") or 0)
+            st["cache_write"] += int(usage.get("cache_creation_input_tokens") or 0)
             if reply.get("cost_usd"):
-                self.stats["cost_cli"] += float(reply["cost_usd"])
+                st["cost_cli"] += float(reply["cost_usd"])
             if decision is not None:
                 ag.seq += 1
                 ag.decision = decision
+                ag.decided[ag.seq] = (t_obs, time.time())
+                for old in [k for k in ag.decided if k < ag.seq - 8]:
+                    del ag.decided[old]
                 ag.state = "решил" + (f": «{decision['say']}»" if decision.get("say") else "")
                 ag.seen_coach = max([ag.seen_coach] + [int(c.get("seq") or 0) for c in obs.get("coach") or []])
                 ag.seen_chat = max(ag.seen_chat, heard)
                 ag.memory.append(memory_line(obs, decision, new_coach))
                 if decision.get("say"):
                     self.chat_seq += 1
-                    said = {"seq": self.chat_seq, "clock": float(obs.get("clock") or 0), "from": ag.pos,
-                            "hero": ag.hero, "text": decision["say"], "to": list(decision.get("to") or []),
-                            "reply": trig == ASKED}
+                    said = {"seq": self.chat_seq, "clock": clock, "from": ag.pos, "hero": ag.hero,
+                            "text": decision["say"], "to": list(decision.get("to") or []), "reply": trig == ASKED}
                     self.chat[ag.team].append(said)
             else:
                 ag.errors += 1
-                self.stats["errors"] += 1
+                st["errors"] += 1
                 ag.state = "ошибка: " + (err or "")[:80]
         if said is not None and self.on_say is not None:
             try:
                 self.on_say(ag.team, dict(said))
             except Exception:                                      # noqa: BLE001 — тренеру не дошло, игра идёт
                 pass
-        self._log({"t": round(time.time(), 3), "clock": obs.get("clock"), "team": ag.team, "pos": ag.pos,
-                   "hero": ag.hero, "trigger": trig, "backend": getattr(backend, "label", ""),
-                   "latency_s": round(latency, 3), "usage": usage, "cost_usd": reply.get("cost_usd"),
-                   "decision": decision, "notes": notes, "error": err})
+        rec = {"t": round(time.time(), 3), "clock": obs.get("clock"), "team": ag.team, "pos": ag.pos,
+               "hero": ag.hero, "trigger": trig, "backend": getattr(backend, "label", ""),
+               "model": reply.get("model"), "stop_reason": reply.get("stop_reason"),
+               "latency_s": round(latency, 3), "usage": usage, "cost_usd": reply.get("cost_usd"),
+               "seq": ag.seq if decision is not None else None, "decision": decision, "notes": notes, "error": err}
+        if err or notes:
+            rec["raw"] = (reply.get("text") or json.dumps(reply.get("data"), ensure_ascii=False))[:RAW_KEEP]
+        self._log(rec)
 
     def _log(self, rec: dict) -> None:
         if not self.log_path:
@@ -803,28 +980,57 @@ class AgentHub:
                 f.write(line + "\n")
 
     def summary(self) -> dict:
+        """Сводка: всего и по сторонам. Задержка вверху — только платных моторов (правила отвечают мгновенно)."""
+        keys = ("calls", "errors", "in", "out", "cache_read", "cache_write", "cost_cli")
         with self.lock:
-            lat = sorted(self.stats["latency"])
-            s = {k: v for k, v in self.stats.items() if k != "latency"}
-
-        def q(p):
-            return round(lat[min(len(lat) - 1, int(p * len(lat)))], 2) if lat else None
-
-        s.update({"latency_p50_s": q(0.5), "latency_p95_s": q(0.95)})
+            per = {t: {**{k: s[k] for k in keys}, "latency": list(s["latency"]), "age": list(s["age"])}
+                   for t, s in self.stats.items()}
+            labels = {t: getattr(b, "label", str(b)) for t, b in self.backends.items()}
+            dropped = {t: list(getattr(b, "dropped", []) or []) for t, b in self.backends.items()}
+            paid = {t: self._paid(t) for t in self.backends}
+            self_cost = {t: bool(getattr(b, "self_cost", False)) for t, b in self.backends.items()}
+            calls_paid = self.calls_total
+        total = {k: 0 for k in keys}
+        total["cost_cli"] = 0.0
+        priced = {k: 0 for k in ("in", "out", "cache_read", "cache_write")}   # токены моторов без своей цены
+        lat_paid, ages = [], []
+        teams = {}
+        for t, s in per.items():
+            row = {"backend": labels[t], **{k: s[k] for k in keys},
+                   "latency_p50_s": _q(s["latency"], 0.5), "latency_p95_s": _q(s["latency"], 0.95),
+                   "decision_age_p50_s": _q(s["age"], 0.5), "decision_age_p95_s": _q(s["age"], 0.95)}
+            if dropped[t]:
+                row["dropped"] = dropped[t]                       # что модель не приняла (effort, thinking, схема)
+            teams[t] = row
+            for k in keys:
+                total[k] += s[k]
+            if not self_cost[t]:
+                for k in priced:
+                    priced[k] += s[k]
+            if paid[t]:
+                lat_paid += s["latency"]
+            ages += s["age"]
+        out = dict(total)
+        out["cost_cli"] = round(out["cost_cli"], 6)
+        out["paid_calls"] = calls_paid
+        out.update({"latency_p50_s": _q(lat_paid, 0.5), "latency_p95_s": _q(lat_paid, 0.95),
+                    "decision_age_p50_s": _q(ages, 0.5), "decision_age_p95_s": _q(ages, 0.95)})
         p = self.prices
-        if p:
-            s["cost_usd_est"] = round((s["in"] * p.get("in", 0) + s["out"] * p.get("out", 0)
-                                       + s["cache_read"] * p.get("cache_read", 0)
-                                       + s["cache_write"] * p.get("cache_write", 0)) / 1e6, 4)
-        return s
+        if p:                      # оценка по ценам API — без сторон на Claude Code: их цену уже дал он сам (cost_cli)
+            out["cost_usd_est"] = round((priced["in"] * p.get("in", 0) + priced["out"] * p.get("out", 0)
+                                         + priced["cache_read"] * p.get("cache_read", 0)
+                                         + priced["cache_write"] * p.get("cache_write", 0)) / 1e6, 6)
+        out["teams"] = teams
+        return out
 
     def status(self) -> dict:
+        summary = self.summary()
         with self.lock:
             agents = [{"team": a.team, "pos": a.pos, "hero": a.hero, "state": a.state, "calls": a.calls,
                        "errors": a.errors, "decision": a.decision, "memory": list(a.memory)}
                       for a in sorted(self.agents.values(), key=lambda a: (a.team, a.pos))]
             chat = {t: list(c) for t, c in self.chat.items()}
-        return {"agents": agents, "summary": self.summary(), "chat": chat,
+        return {"agents": agents, "summary": summary, "chat": chat,
                 "backend": {t: getattr(b, "label", str(b)) for t, b in self.backends.items()}}
 
     def close(self) -> None:

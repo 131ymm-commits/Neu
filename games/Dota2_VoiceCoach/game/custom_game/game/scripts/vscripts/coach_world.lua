@@ -282,10 +282,27 @@ function W.ult(hero)
   return nil
 end
 
--- способность или предмет из инвентаря по внутреннему имени («sniper_shrapnel», «item_blink»)
+-- слоты предметов: 0–5 — инвентарь, 6–8 — рюкзак, отдельный слот телепорта и нейтральный (dota-data, перечисление
+-- DOTAScriptInventorySlot_t); тайник (9–14) не смотрим — из него предметом не воспользоваться
+local function item_slots()
+  local out = {}
+  for slot = 0, 8 do out[#out + 1] = slot end
+  out[#out + 1] = DOTA_ITEM_TP_SCROLL
+  out[#out + 1] = DOTA_ITEM_NEUTRAL_ACTIVE_SLOT
+  return out
+end
+
+-- способность или предмет по внутреннему имени («sniper_shrapnel», «item_blink»); предмет ищем по слотам сами:
+-- ищет ли FindItemInInventory в слоте телепорта, по описанию API не ясно
 function W.ability(hero, name)
   if type(name) ~= "string" or name == "" then return nil end
-  if name:sub(1, 5) == "item_" then return hero:FindItemInInventory(name) end
+  if name:sub(1, 5) == "item_" then
+    for _, slot in ipairs(item_slots()) do
+      local it = hero:GetItemInSlot(slot)
+      if it and it:GetAbilityName() == name then return it end
+    end
+    return nil
+  end
   return hero:FindAbilityByName(name)
 end
 
@@ -301,23 +318,30 @@ function W.ability_info(ab, hero)
            cast_point = ab:GetCastPoint(), ult = ab:GetAbilityType() == ABILITY_TYPE_ULTIMATE }
 end
 
--- предметы: слоты 0–5 — инвентарь, 6–8 — рюкзак
+-- предметы: инвентарь, рюкзак, слот телепорта, нейтральный
 function W.items(hero)
   local out = {}
-  for slot = 0, 8 do
+  for _, slot in ipairs(item_slots()) do
     local it = hero:GetItemInSlot(slot)
     if it then out[#out + 1] = { item = it, slot = slot, charges = it:GetCurrentCharges() } end
   end
   return out
 end
 
-function W.free_slots(hero)
+function W.is_backpack(slot) return slot >= 6 and slot <= 8 end
+function W.is_tp_slot(slot) return slot == DOTA_ITEM_TP_SCROLL end
+
+local function free_in(hero, from, to)
   local n = 0
-  for slot = 0, 8 do
+  for slot = from, to do
     if hero:GetItemInSlot(slot) == nil then n = n + 1 end
   end
   return n
 end
+
+-- свободные места: всего (инвентарь и рюкзак) и только в инвентаре — предмет из рюкзака не работает
+function W.free_slots(hero) return free_in(hero, 0, 8) end
+function W.free_main(hero) return free_in(hero, 0, 5) end
 
 -- CanAbilityBeUpgraded: в @moddota/dota-data 0.47.2 возвращает bool, а константы ABILITY_CAN_BE_UPGRADED…
 -- там же описаны как перечисление — что вернёт игра, не проверено, поэтому принимаем оба ответа
@@ -340,6 +364,7 @@ function W.can_level(hero)
 end
 
 W.is_talent = is_talent
+function W.upgrade(hero, ab) hero:UpgradeAbility(ab) end
 function W.ability_name(ab) return ab:GetAbilityName() end
 function W.ability_level(ab) return ab:GetLevel() end
 function W.is_ult(ab) return ab:GetAbilityType() == ABILITY_TYPE_ULTIMATE end

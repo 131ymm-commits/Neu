@@ -21,6 +21,10 @@ X.FARM_NEAR = 1500      -- крипы ближе — фармим их, даль
 X.CAST_SLACK = 150
 X.AFTER_CAST = 0.3      -- с к замаху: не сбивать применение приказом движения
 X.REFRESH = { move = 1.0, attack_move = 2.0, attack = 3.0 }   -- частый повтор атаки сбивает замах (research/01)
+X.WALK_CAST = 20        -- с: дольше не идём к месту применения (вард у дальней вышки); к герою — не дольше 4 с
+X.LEVEL_CHECK = 1.0     -- с: через столько проверяем, выросла ли способность после прокачки
+X.LEVEL_SKIP = 30       -- с: способность, которую не удалось вкачать, пропускаем
+local TELEPORTS = { item_tpscroll = true, item_travel_boots = true, item_travel_boots_2 = true }
 
 local PLANS = { farm = true, push = true, defend = true, fight = true, retreat = true, roshan = true,
                 move = true, follow = true, save = true, group = true, hold = true }
@@ -43,7 +47,7 @@ end
 function X.new()
   return { plan = nil, casts = {}, buy = {}, level = {}, retreat_hp = 25, buyback = false, retreating = false,
            last = nil, notes = {}, busy_until = 0, level_wait = 0, buy_wait = 0, source = nil, set_t = nil,
-           status = "ждёт решения агента" }
+           active = nil, level_try = nil, level_bad = {}, status = "ждёт решения агента" }
 end
 
 local function note(st, text)
@@ -81,15 +85,42 @@ function X.set(st, d, now, source)
   if tonumber(d.retreat_hp) then st.retreat_hp = clamp(tonumber(d.retreat_hp), 0, 90) end
   st.buyback = d.buyback == true
   st.source, st.set_t, st.notes = source, now, {}
-  -- новое решение отменяет долгий подход к цели способности, но не замах, который уже идёт
+  -- новое решение заменяет ждущие применения. Начатое (герой идёт ставить вард) продолжается, только если агент
+  -- его повторил; иначе подход отменяется, а замах, который уже идёт, доигрывается
+  local a = st.active
+  if a and now < (st.busy_until or 0) then
+    for i, c in ipairs(st.casts) do
+      if c.ability == a.name and c.target == a.target then
+        table.remove(st.casts, i)
+        return
+      end
+    end
+  end
+  st.active = nil
   st.busy_until = math.min(st.busy_until or 0, now + X.AFTER_CAST)
 end
 
 -- --- рефлексы ---
 
 local function level_step(st, hero, world, now)
-  if now < st.level_wait or world.ability_points(hero) <= 0 then return nil end
-  local can = world.can_level(hero)
+  local try = st.level_try
+  if try and now - try.t >= X.LEVEL_CHECK then
+    local ab = world.ability(hero, try.name)
+    st.level_try = nil
+    if ab and world.ability_level(ab) <= try.before then
+      if try.method == "order" then                  -- приказ не сработал — вкачать напрямую
+        st.level_try = { name = try.name, before = try.before, t = now, method = "upgrade" }
+        return { kind = "level", ability = ab, name = try.name, method = "upgrade", by = "повтор" }
+      end
+      st.level_bad[try.name] = now + X.LEVEL_SKIP
+      note(st, "не удалось вкачать " .. try.name)
+    end
+  end
+  if st.level_try or now < st.level_wait or world.ability_points(hero) <= 0 then return nil end
+  local can = {}
+  for _, ab in ipairs(world.can_level(hero)) do
+    if now >= (st.level_bad[world.ability_name(ab)] or 0) then can[#can + 1] = ab end
+  end
   if #can == 0 then return nil end
   local by_name = {}
   for _, ab in ipairs(can) do by_name[world.ability_name(ab)] = ab end
@@ -110,7 +141,9 @@ local function level_step(st, hero, world, now)
     pick, why = best or can[1], "сам"
   end
   st.level_wait = now + 1.0
-  return { kind = "level", ability = pick, name = world.ability_name(pick), by = why }
+  local name = world.ability_name(pick)
+  st.level_try = { name = name, before = world.ability_level(pick), t = now, method = "order" }
+  return { kind = "level", ability = pick, name = name, method = "order", by = why }
 end
 
 local function buy_step(st, hero, world, now, dead)
@@ -128,6 +161,7 @@ local function buy_step(st, hero, world, now, dead)
     st.buy_wait = now + 5
     return nil
   end
+  if world.free_main(hero) <= 0 then note(st, name .. " ляжет в рюкзак: инвентарь полон") end
   if world.gold(hero) < cost then
     st.saving = name
     return nil
@@ -172,7 +206,7 @@ local function resolve(target, info, st, ag, world)
   if t == "self" then return { unit = hero } end
   if PLACES[t] then
     local p = place_point(t, team, world)
-    return p and { point = p, global = true } or nil
+    return p and { point = p, place = true } or nil
   end
   local n = tonumber(t)
   if n and n >= 1 and n <= 5 then
@@ -187,14 +221,14 @@ local function resolve(target, info, st, ag, world)
     if info.behavior == "point" then return { point = creep_center(creeps, world, 4) } end
     return { unit = creeps[1] }
   end
-  if t == "" then
+  if t == "" then                                 -- цель плана или ближайший видимый враг; «сразу» — это "self"
     local plan = st.plan
     if plan and plan.target ~= "" then
       local e = world.enemy_hero(team, plan.target)
       if e then return { unit = e } end
     end
-    if info.behavior == "none" then return { none = true } end
-    local near = world.nearest_enemy(team, world.pos(hero), range + 300)
+    local reach = (info.behavior == "none") and math.max(range, 400) or range
+    local near = world.nearest_enemy(team, world.pos(hero), reach + 300)
     return near and { unit = near } or nil
   end
   local e = world.enemy_hero(team, t)
@@ -231,20 +265,22 @@ local function cast_step(st, ag, world, now)
           elseif info.behavior == "target" and tg.unit then
             local d = world.dist(my, world.pos(tg.unit))
             local walk = math.max(0, d - range) / math.max(100, world.speed(hero))
-            act = { kind = "cast", ability = ab, behavior = "target", target = tg.unit, name = c.ability,
+            act = { kind = "cast", ability = ab, behavior = "target", target = tg.unit, name = c.ability, src = c,
                     busy = math.min(4, walk + (info.cast_point or 0) + X.AFTER_CAST) }
           elseif info.behavior == "point" and (tg.point or tg.unit) then
             local p = tg.point or world.pos(tg.unit)
             local d = world.dist(my, p)
-            local walk = tg.global and 0 or math.max(0, d - range) / math.max(100, world.speed(hero))
-            act = { kind = "cast", ability = ab, behavior = "point", point = p, name = c.ability,
-                    busy = math.min(4, walk + (info.cast_point or 0) + X.AFTER_CAST) }
+            local teleport = TELEPORTS[c.ability]
+            local walk = teleport and 0 or math.max(0, d - range) / math.max(100, world.speed(hero))
+            local cap = (tg.place and not teleport) and X.WALK_CAST or 4
+            act = { kind = "cast", ability = ab, behavior = "point", point = p, name = c.ability, src = c,
+                    busy = math.min(cap, walk + (info.cast_point or 0) + X.AFTER_CAST) }
           elseif info.behavior == "none" then
             -- без цели: применяем, когда цель (если есть) рядом — радиус не знаем, берём дальность или 400
             if tg.unit and tg.unit ~= hero and world.dist(my, world.pos(tg.unit)) > math.max(range, 400) + X.CAST_SLACK then
               keep[#keep + 1] = c
             else
-              act = { kind = "cast", ability = ab, behavior = "none", name = c.ability,
+              act = { kind = "cast", ability = ab, behavior = "none", name = c.ability, src = c,
                       busy = (info.cast_point or 0) + X.AFTER_CAST }
             end
           else
@@ -255,6 +291,7 @@ local function cast_step(st, ag, world, now)
     end
   end
   st.casts = keep
+  if act then st.active = { name = act.src.ability, target = act.src.target, t = now } end
   return act
 end
 
@@ -388,6 +425,13 @@ function X.step(st, ag, world, now)
   if lv then acts[#acts + 1] = lv end
   local b = buy_step(st, hero, world, now, false)
   if b then acts[#acts + 1] = b end
+  local a = st.active
+  if a and now < st.busy_until and now - (a.t or now) >= X.AFTER_CAST then
+    local ab = a.name == "#ult" and world.ult(hero) or world.ability(hero, a.name)
+    if ab == nil or not world.ability_info(ab, hero).ready then
+      st.busy_until, st.active = now, nil              -- применено: пошёл откат или предмет израсходован
+    end
+  end
   if world.is_channeling(hero) or now < st.busy_until then return acts end
 
   local hp = world.hp_pct(hero)

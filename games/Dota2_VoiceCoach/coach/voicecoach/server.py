@@ -408,7 +408,10 @@ LOGS = Path(__file__).resolve().parent.parent / "logs"
 def agent_factory_from_args(a):
     """Моторы сторон и журнал вызовов из аргументов командной строки."""
     kinds = {"radiant": a.radiant or a.agents, "dire": a.dire or a.agents}
-    backends = {t: make_backend(k, a.model, a.claude) for t, k in kinds.items()}
+    effort = getattr(a, "effort", "low")
+    opts = {"effort": None if effort in (None, "off") else effort, "thinking": getattr(a, "thinking", None),
+            "max_tokens": getattr(a, "max_tokens", 4000)}
+    backends = {t: make_backend(k, a.model, a.claude, **opts) for t, k in kinds.items()}
     personas = json.loads(Path(a.personas).read_text(encoding="utf-8")) if a.personas else {}
     for spec in a.persona or []:                     # radiant:1=digitizer/agents/vasya.json
         try:
@@ -446,7 +449,18 @@ def main(argv=None):
     ag.add_argument("--model", help="модель Claude (имя из документации Anthropic); для api обязательна")
     ag.add_argument("--claude", default="claude", help="путь к Claude Code для --agents cli")
     ag.add_argument("--period", type=float, default=4.0, help="решение агента не реже раза в столько секунд игры")
-    ag.add_argument("--max-calls", type=int, help="предел вызовов модели за запуск сервера (защита кошелька)")
+    ag.add_argument("--max-calls", type=int,
+                    help="предел платных вызовов модели на комнату за запуск сервера (защита кошелька; правила не в счёт)")
+    ag.add_argument("--effort", choices=("low", "medium", "high", "xhigh", "max", "off"), default="low",
+                    help="сколько модели думать (api: output_config.effort, cli: --effort); off — не передавать. "
+                         "Модель, которая effort не знает, получит запрос без него")
+    ag.add_argument("--thinking", metavar="ТИП",
+                    help="api: thinking.type. Выключить думание (быстрее и дешевле): у самой быстрой модели — "
+                         "disabled, у средней — between_tools (думать только между инструментами, а их у агента нет); "
+                         "по документации Anthropic 08.10.2026. Модель, которая тип не примет, получит запрос без него")
+    ag.add_argument("--max-tokens", type=int, default=4000,
+                    help="api: предел ответа вместе с думанием (по умолчанию 4000: ответ ~150 токенов, остальное — "
+                         "запас на думание)")
     ag.add_argument("--personas", help="JSON характеров: {\"radiant\": {\"1\": {…agent_params…}}, …}")
     ag.add_argument("--persona", action="append", metavar="СТОРОНА:ПОЗ=ФАЙЛ",
                     help="характер одного агента из оцифровки: radiant:1=../digitizer/agents/vasya.json (можно несколько)")
@@ -479,7 +493,11 @@ def main(argv=None):
         pass
     for name, room in srv.hub.rooms.items():
         if room.agents is not None:
-            print(f"Агенты комнаты {name}: {json.dumps(room.agents.summary(), ensure_ascii=False)}")
+            s = room.agents.summary()
+            teams = s.pop("teams", {})
+            print(f"Агенты комнаты {name}, всего: {json.dumps(s, ensure_ascii=False)}")
+            for t, row in teams.items():
+                print(f"  {'Свет' if t == 'radiant' else 'Тьма'}: {json.dumps(row, ensure_ascii=False)}")
             room.agents.close()
 
 

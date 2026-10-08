@@ -67,11 +67,17 @@
     for (var k in agents) {                 // таблица Lua приходит объектом с ключами «1», «2», …
       var a = agents[k];
       var row = $.CreatePanel('Label', box, '');
-      var think = a.agent === 'думает' ? ' · думает…' : '';
-      row.text = a.pos + ' ' + a.hero + ' — ' + (a.alive ? (a.hp + '% · ') : 'мёртв · ') + a.status + think;
+      var state = a.agent || '';
+      var think = state === 'думает' ? ' · думает…' : '';
+      // ошибка мотора, предел вызовов, пауза по лимиту API — тренер должен видеть, что агент не отвечает
+      var trouble = /^(ошибка|лимит|пауза|сбой)/.test(state) ? ' · агент: ' + state.substring(0, 60) : '';
+      var fallback = a.source === 'fallback' ? ' · без агента' : '';
+      row.text = a.pos + ' ' + a.hero + ' — ' + (a.alive ? (a.hp + '% · ') : 'мёртв · ') + a.status + think +
+        trouble + fallback;
       row.AddClass('CoachAgent');
       row.SetHasClass('Dead', !a.alive);
       row.SetHasClass('Fallback', a.source === 'fallback');
+      row.SetHasClass('Trouble', trouble !== '');
     }
   }
 
@@ -96,6 +102,6 @@
   Game.CreateCustomKeyBind('F2', 'vc_coach_focus');
   hideHeroUi();
   setupCamera(1600);
-  addLog('Тренер: пишите приказы в поле внизу (F2 — к полю), «?» — шпаргалка; героев ведут агенты Claude', 'ack');
+  addLog('Тренер: пишите приказы в поле внизу (F2 — к полю), «?» — шпаргалка; кто ведёт героев — строка вверху', 'ack');
   sendReady();
 })();
