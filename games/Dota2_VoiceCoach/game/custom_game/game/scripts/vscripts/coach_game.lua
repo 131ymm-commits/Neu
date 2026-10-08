@@ -171,8 +171,8 @@ function G:SetupAgents()
   local towers, fountains = World.init()
   G.teams = {}
   for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
-    local T = { agents = {}, exec = {}, status = {}, seq = 0, commanders = {}, coach = {}, events = {},
-                dec_seq = {}, dec_t = {}, said = {}, thinking = {} }
+    local T = { name = Obs.team_name(team), agents = {}, exec = {}, status = {}, seq = 0, commanders = {}, coach = {},
+                events = {}, dec_seq = {}, dec_t = {}, said = {}, thinking = {} }
     for pid = 0, 23 do
       if PlayerResource:IsValidPlayerID(pid) and PlayerResource:GetTeam(pid) == team then
         local hero = PlayerResource:GetSelectedHeroEntity(pid)
@@ -190,6 +190,10 @@ function G:SetupAgents()
     World.agents[team] = T.agents
     G.teams[team] = T
   end
+  local ok, bounds = pcall(function()
+    return { math.floor(GetWorldMinX()), math.floor(GetWorldMinY()), math.ceil(GetWorldMaxX()), math.ceil(GetWorldMaxY()) }
+  end)
+  G.bounds = ok and bounds or nil                  -- границы карты — для схемы на пульте тренера (Д13)
   G.ready = true
   log("карта: вышек %d, фонтаны %s; героев: Свет %d, Тьма %d", towers, tostring(fountains),
     #G.teams[DOTA_TEAM_GOODGUYS].agents, #G.teams[DOTA_TEAM_BADGUYS].agents)
@@ -365,8 +369,30 @@ function G:TickPayload(now)
   end
   local applied = G.applied or {}
   G.applied = {}
+  local replies = G.outbox or {}
+  G.outbox = {}
   -- часы с точностью 0.1 с — для замера задержки решений (в наблюдениях героев — целые секунды)
-  return { clock = math.floor(clock * 10 + 0.5) / 10, heroes = heroes, coached = coached, applied = applied }
+  return { clock = math.floor(clock * 10 + 0.5) / 10, heroes = heroes, coached = coached, applied = applied,
+           replies = replies, map = G:MapInfo(), cmd_ack = G.remote_seq or 0, cmd_run = G.agents_run }
+end
+
+-- схема карты для пульта тренера (Д13): вышки (где стоят и живы ли — это видят обе команды), фонтаны, границы, счёт
+function G:MapInfo()
+  local towers = {}
+  for _, t in ipairs(World.towers) do
+    towers[#towers + 1] = { team = Obs.team_name(t.team), lane = t.lane, tier = t.tier, x = math.floor(t.pos.x + 0.5),
+                            y = math.floor(t.pos.y + 0.5), alive = World.tower_alive(t) and true or false }
+  end
+  local fountains = {}
+  for team, p in pairs(World.fountains) do
+    if team == DOTA_TEAM_GOODGUYS or team == DOTA_TEAM_BADGUYS then
+      fountains[Obs.team_name(team)] = { math.floor(p.x + 0.5), math.floor(p.y + 0.5) }
+    end
+  end
+  local ok, score = pcall(function()
+    return { radiant = PlayerResource:GetTeamKills(DOTA_TEAM_GOODGUYS), dire = PlayerResource:GetTeamKills(DOTA_TEAM_BADGUYS) }
+  end)
+  return { towers = towers, fountains = fountains, bounds = G.bounds, score = ok and score or nil }
 end
 
 local function team_of(name)
@@ -383,10 +409,12 @@ function G:OnAgents(data)
   if data.run ~= nil and data.run ~= G.agents_run then          -- сервер перезапущен: его номера решений снова с 1
     if G.agents_run ~= nil then log("агенты: сервер перезапущен, жду новых решений") end
     G.agents_run = data.run
+    G.remote_seq = 0                                              -- и номера приказов с пульта — тоже
     for _, T in pairs(G.teams) do
       for pos in pairs(T.dec_seq) do T.dec_seq[pos] = 0 end
     end
   end
+  G:RemoteCommands(data.commands)
   for _, d in ipairs(data.decisions or {}) do
     local T = G.teams[team_of(d.team) or -1]
     local pos, seq = tonumber(d.pos), tonumber(d.seq) or 0
@@ -408,6 +436,27 @@ function G:OnAgents(data)
     local T = G.teams[team_of(a.team) or -1]
     local pos = tonumber(a.pos)
     if T and pos then T.thinking[pos] = a.state end
+  end
+end
+
+-- приказы второго тренера с пульта (Д13): сервер шлёт их, пока игра не подтвердит номер (cmd_ack в обмене)
+function G:RemoteCommands(list)
+  if type(list) ~= "table" then return end
+  local cmds = {}
+  for _, c in ipairs(list) do
+    if type(c) == "table" and tonumber(c.seq) and type(c.text) == "string" then cmds[#cmds + 1] = c end
+  end
+  table.sort(cmds, function(a, b) return tonumber(a.seq) < tonumber(b.seq) end)
+  for _, c in ipairs(cmds) do
+    local seq = tonumber(c.seq)
+    if seq > (G.remote_seq or 0) then
+      G.remote_seq = seq
+      local team = team_of(c.team)
+      if team and G.teams[team] then
+        log("приказ с пульта (%s): %s", tostring(c.team), c.text)
+        G:TeamCommand(team, c.text)
+      end
+    end
   end
 end
 
@@ -498,6 +547,11 @@ function G:Reply(T, pos, kind, text, to)
   end
   local line = (to ~= "" and ("→" .. to .. " ") or "") .. text
   if G.CHAT_REPLIES and hero and (kind == "say" or kind == "report" or kind == "refuse") then Say(hero, line, true) end
+  if kind ~= "say" and T.name then                    -- серверу: на пульт тренера этой команды (Д13)
+    G.outbox = G.outbox or {}
+    G.outbox[#G.outbox + 1] = { team = T.name, pos = pos or 0, hero = name, kind = kind, text = text, to = to }
+    while #G.outbox > 30 do table.remove(G.outbox, 1) end
+  end
   log("%s%s: %s", pos and pos > 0 and (tostring(pos) .. " ") or "", name, line)
 end
 

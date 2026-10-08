@@ -225,6 +225,11 @@ function PlayerResource:GetPlayer(pid) return __players[pid] and { pid = pid } e
 function PlayerResource:GetGold(pid) return __players[pid].hero.gold end
 function PlayerResource:SpendGold(pid, cost, reason) __players[pid].hero.gold = __players[pid].hero.gold - cost end
 function PlayerResource:SetCustomTeamAssignment(pid, team) __assign[pid] = team; __players[pid].team = team end
+function PlayerResource:GetTeamKills(team) return team == 2 and 3 or 5 end
+function GetWorldMinX() return -8288 end
+function GetWorldMinY() return -8288 end
+function GetWorldMaxX() return 8288 end
+function GetWorldMaxY() return 8288 end
 Tutorial = { started = false }
 function Tutorial:AddBot(hero, lane, difficulty, good)
   local pid = 0
@@ -486,6 +491,35 @@ class WithAgents(Game):
         o = next(h for h in sent[-1]["heroes"] if h["team"] == "radiant" and h["pos"] == 1)
         self.assertEqual(len(o["xy"]), 2)
         self.assertIn("backpack_free", o)
+
+    def test_console_order_reaches_dire_once(self):
+        """Приказ второго тренера с пульта (Д13): через ответ сервера — агентам Тьмы, ровно один раз."""
+        self.start_match()
+        self.step(2)
+        room = self.srv.hub.room("local")
+        res = room.remote_order("dire", "все назад")
+        self.assertEqual(res["errors"], [])
+        self.step(4)
+        logs = [l for l in self.G["__printed"].values() if "приказ с пульта" in l]
+        self.assertEqual(len(logs), 1, logs)                                # сервер слал, пока игра не подтвердила
+        last = self.payloads()[-1]
+        self.assertEqual(last["cmd_ack"], res["queued"])
+        dire = [h for h in last["heroes"] if h["team"] == "dire"]
+        self.assertEqual(len(dire), 5)
+        self.assertTrue(all(any(c["text"] == "все назад" for c in h["coach"]) for h in dire))
+        self.assertFalse(any(h["coach"] for h in last["heroes"] if h["team"] == "radiant"))
+        self.assertEqual(room.agents.agents[("dire", 1)].decision["plan"], "retreat")
+        evs = room.events_after("dire", 0, 0)                               # ответ игры — на пульт Тьмы
+        self.assertTrue(any(e["kind"] == "order" and "все назад" in e["text"] for e in evs), evs)
+        self.assertFalse(any("все назад" in e["text"] for e in room.events_after("radiant", 0, 0)))
+        m = last["map"]
+        self.assertEqual(len(m["towers"]), 18)
+        self.assertEqual((m["fountains"]["dire"], m["bounds"], m["score"]),
+                         ([7000, 6400], [-8288, -8288, 8288, 8288], {"radiant": 3, "dire": 5}))
+        self.assertTrue(all(t["alive"] for t in m["towers"]))
+        bad = room.remote_order("dire", "1 летать")                          # не понял — в игру не уходит
+        self.assertTrue(bad["errors"])
+        self.assertNotIn("queued", bad)
 
     def test_lua_observation_passes_python_checks(self):
         self.start_match()

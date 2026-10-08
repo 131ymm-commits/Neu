@@ -43,6 +43,8 @@ local function tower_alive(t)
   return IsValidEntity(t.unit) and t.unit:IsAlive()
 end
 
+W.tower_alive = tower_alive
+
 -- внешняя живая вышка команды на линии (меньший уровень — дальше от базы)
 local function outer(team, lane)
   local best = nil

@@ -40,6 +40,7 @@ api — ключ в ANTHROPIC_API_KEY и --model; cli — Claude Code (`claude -
 from __future__ import annotations
 
 import argparse
+import atexit
 import html
 import json
 import os
@@ -50,14 +51,25 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
 from .agents import AgentHub, hero_ru, make_backend
+from .console import TEAM_RU, console_url, load_keys, serve_console, start_tunnel
 from .describe import describe
 from .parser import Agent, MatchContext, parse
 from .textcmd import parse_short, suggest
 
 TEAMS = ("radiant", "dire")
 MAX_QUEUE = 500
+REMOTE_KEEP = 100         # приказов с пульта в памяти
+REMOTE_TTL = 30.0         # с: приказ с пульта старше — игре уже не отдаётся
+GAME_STALE = 5.0          # с без обмена — «игра не на связи»
 STATIC = Path(__file__).resolve().parent.parent / "web"
 STATIC_FILES = {"voice.html": "text/html; charset=utf-8", "voices.js": "application/javascript; charset=utf-8"}
+
+
+def _int(v, default: int = 0) -> int:
+    try:
+        return int(v)
+    except (TypeError, ValueError):
+        return default
 
 
 def to_lua(v) -> str:
@@ -93,6 +105,10 @@ class Room:
         self.log: list[dict] = []
         self.roster_source = "нет"
         self.agents: AgentHub | None = None       # агенты героев кастомки — при первом /tick
+        self.last_tick: dict | None = None        # последний обмен с игрой — для пульта тренера (Д13)
+        self.last_tick_t = 0.0
+        self.remote: list[dict] = []              # приказы с пульта для игры: {seq, team, text, t}
+        self.remote_seq = 0
 
     def _next(self) -> int:
         self.seq += 1
@@ -211,6 +227,61 @@ class Room:
                 self._event(team, item)
             self.lock.notify_all()
 
+    # --- кастомка и пульт второго тренера (Д13) ---
+
+    def on_tick(self, payload: dict) -> None:
+        """Обмен с игрой: запомнить для пульта, обновить состав (для разбора приказов) и переслать ответы героев."""
+        heroes = [o for o in payload.get("heroes") or [] if isinstance(o, dict)]
+        with self.lock:
+            self.last_tick, self.last_tick_t = payload, time.time()
+        for team in TEAMS:
+            mine = [o for o in heroes if o.get("team") == team and 1 <= _int(o.get("pos")) <= 5]
+            if not mine:
+                continue
+            agents = [{"pos": _int(o.get("pos")), "hero": "npc_dota_hero_" + str(o.get("hero") or "")} for o in mine]
+            enemies = ["npc_dota_hero_" + str(h) for h in mine[0].get("enemy_team") or [] if isinstance(h, str)]
+            self.set_state(team, {"agents": agents, "enemy_heroes": enemies})
+        replies = {}
+        for r in payload.get("replies") or []:
+            if isinstance(r, dict) and r.get("team") in TEAMS and r.get("text"):
+                item = {"pos": _int(r.get("pos")), "kind": str(r.get("kind") or "reply"), "text": str(r["text"])[:300]}
+                if r.get("hero"):
+                    item["hero"], item["hero_ru"] = str(r["hero"]), hero_ru(r["hero"])
+                if r.get("to"):
+                    item["to"] = [int(x) for x in str(r["to"]).split(",") if x.strip().isdigit()]
+                replies.setdefault(r["team"], []).append(item)
+        for team, items in replies.items():
+            self.add_events(team, items)
+
+    def remote_order(self, team: str, text: str, source: str = "console") -> dict:
+        """Приказ второго тренера с пульта: разбор коротким форматом; верный — в очередь для игры."""
+        entry = self.say_short(team, text, source)
+        if not entry.get("errors"):
+            with self.lock:
+                self.remote_seq += 1
+                self.remote.append({"seq": self.remote_seq, "team": team, "text": text, "t": time.time()})
+                del self.remote[:-REMOTE_KEEP]
+                entry["queued"] = self.remote_seq
+        entry["game_linked"] = self.game_linked()
+        return entry
+
+    def remote_for_game(self, payload: dict, run: str | None) -> list[dict]:
+        """Приказы с пульта, которых игра ещё не подтвердила (cmd_ack того же запуска сервера) и не старше
+        REMOTE_TTL: игра применяет каждый ровно раз, а приказ, пролежавший без игры, не выстрелит в новом матче."""
+        ack = 0
+        if payload.get("cmd_run") == run:
+            try:
+                ack = int(payload.get("cmd_ack") or 0)
+            except (TypeError, ValueError):
+                ack = 0
+        now = time.time()
+        with self.lock:
+            return [{"seq": c["seq"], "team": c["team"], "text": c["text"]} for c in self.remote
+                    if c["seq"] > ack and now - c["t"] <= REMOTE_TTL]
+
+    def game_linked(self) -> bool:
+        return self.last_tick is not None and time.time() - self.last_tick_t <= GAME_STALE
+
     def events_after(self, team: str, after: int, wait: float) -> list[dict]:
         deadline = time.time() + wait
         with self.lock:
@@ -268,7 +339,10 @@ def make_handler(hub: Hub):
             self.send_header("Access-Control-Allow-Origin", "*")
             self.send_header("Access-Control-Allow-Headers", "Content-Type")
             self.end_headers()
-            self.wfile.write(body)
+            try:
+                self.wfile.write(body)
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+                pass                                    # страница ушла, не дождавшись ответа (long-poll)
 
         def do_OPTIONS(self):
             self._send(204, raw=b"")
@@ -359,7 +433,10 @@ def make_handler(hub: Hub):
                 body = self._body()
                 if len(parts) == 3 and parts[0] == "api" and parts[2] == "tick":
                     room = hub.room(parts[1])
-                    return self._send(200, hub.agents(room).tick(body))
+                    room.on_tick(body)
+                    reply = hub.agents(room).tick(body)
+                    reply["commands"] = room.remote_for_game(body, reply.get("run"))
+                    return self._send(200, reply)
                 if len(parts) == 3 and parts[0] == "api":
                     room = hub.room(parts[1])
                     team = self._team(q, body)
@@ -433,6 +510,36 @@ def agent_factory_from_args(a):
     return factory, backends
 
 
+def start_remote(a, hub: "Hub"):
+    """Пульт удалённого тренера (Д13): отдельный порт, ссылка с ключом; по --tunnel — адрес в интернете."""
+    if not a.remote:
+        return None, None
+    teams = TEAMS if a.remote == "both" else (a.remote,)
+    keys = load_keys(teams, new=a.new_key)
+    console = serve_console(hub, a.console_host, a.console_port, a.room, keys)
+    threading.Thread(target=console.serve_forever, daemon=True, name="console").start()
+    local = "127.0.0.1" if a.console_host in ("0.0.0.0", "::") else a.console_host
+    for t in teams:
+        print(f"Пульт тренера ({TEAM_RU[t]}) на этом ПК: {console_url(f'http://{local}:{a.console_port}', keys[t])}")
+    if a.console_host in ("0.0.0.0", "::"):
+        print(f"Пульт слушает все адреса ПК, порт {a.console_port}: по пробросу порта ссылка — "
+              f"http://<ваш внешний адрес>:{a.console_port}/c/<ключ>/ (без шифрования; туннель надёжнее)")
+    tunnel = None
+    if a.tunnel:
+        def on_url(url):
+            for t in teams:
+                print(f"\n>>> Ссылка для тренера ({TEAM_RU[t]}) через интернет — отправьте её: "
+                      f"{console_url(url, keys[t])}\n", flush=True)
+        tunnel = start_tunnel(a.console_port, on_url, a.cloudflared)
+        if tunnel is None:
+            print("Туннель: не нашёл cloudflared. Установите (Windows: winget install --id Cloudflare.cloudflared) "
+                  "или укажите путь --cloudflared; пока пульт доступен только на этом ПК.")
+        else:
+            atexit.register(tunnel.terminate)                 # туннель не переживает сервер, как бы тот ни вышел
+            print("Туннель Cloudflare запускается — ссылка появится здесь через несколько секунд…")
+    return console, tunnel
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description="Сервер голосового тренера Dota 2")
     ap.add_argument("--host", default="127.0.0.1",
@@ -466,7 +573,19 @@ def main(argv=None):
                     help="характер одного агента из оцифровки: radiant:1=../digitizer/agents/vasya.json (можно несколько)")
     for k in ("in", "out", "cache-read", "cache-write"):
         ag.add_argument(f"--price-{k}", type=float, help="цена за 1 млн токенов, $ — для оценки цены в журнале")
+    rc = ap.add_argument_group("второй тренер через интернет (решение Д13)")
+    rc.add_argument("--remote", choices=("dire", "radiant", "both"),
+                    help="включить пульт для удалённого тренера этой команды (обычно dire: хост в игре — за Свет)")
+    rc.add_argument("--console-port", type=int, default=8788, help="порт пульта (отдельный от порта игры)")
+    rc.add_argument("--console-host", default="127.0.0.1",
+                    help="0.0.0.0 — если пульт открывают по пробросу порта или в локальной сети, а не через туннель")
+    rc.add_argument("--tunnel", action="store_true",
+                    help="вывести пульт в интернет туннелем Cloudflare (нужен cloudflared; адрес меняется при запуске)")
+    rc.add_argument("--cloudflared", default="cloudflared", help="путь к cloudflared")
+    rc.add_argument("--new-key", action="store_true", help="выдать новые ключи пультов: старые ссылки перестанут работать")
     a = ap.parse_args(argv)
+    if a.tunnel and not a.remote:
+        raise SystemExit("--tunnel нужен вместе с --remote (чей пульт выводить в интернет)")
     try:
         factory, backends = agent_factory_from_args(a)
     except ValueError as e:
@@ -486,11 +605,16 @@ def main(argv=None):
     else:
         load_roster(srv.hub, str(DEMO_ROSTER), a.room, source="демо")
         print("Состав — демо (Вася, Петя, Коля, Дима, Саша); свой — через --roster")
+    console, tunnel = start_remote(a, srv.hub)
     print(f"Тренер слушает http://{a.host}:{a.port}/  (Ctrl+C — выход)")
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
         pass
+    if tunnel is not None:
+        tunnel.terminate()
+    if console is not None:
+        console.shutdown()
     for name, room in srv.hub.rooms.items():
         if room.agents is not None:
             s = room.agents.summary()
