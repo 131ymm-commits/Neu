@@ -159,6 +159,26 @@ class Access(Servers):
             code, loc = e.code, e.headers.get("Location")
         self.assertEqual((code, loc), (301, f"/c/{self.keys['dire']}/"))
 
+    def test_csp_by_host_and_ping(self):
+        """Через туннель (Host *.trycloudflare.com) пульт может спросить только свой адрес, ящик и другие адреса
+        туннелей; чужие порты этого ПК — только странице, открытой на нём самом (Д14)."""
+        import http.client
+
+        def csp(host):
+            c = http.client.HTTPConnection("127.0.0.1", self.cport, timeout=5)
+            c.request("GET", f"/c/{self.keys['dire']}/", headers={"Host": host})
+            r = c.getresponse()
+            r.read()
+            c.close()
+            return r.getheader("Content-Security-Policy")
+        remote, local = csp("abc-def-ghi.trycloudflare.com"), csp(f"127.0.0.1:{self.cport}")
+        self.assertIn("connect-src 'self' https://*.trycloudflare.com;", remote)
+        self.assertNotIn("127.0.0.1:*", remote)
+        self.assertIn("http://127.0.0.1:* http://localhost:*", local)
+        r, body = self.get("api/ping")
+        self.assertEqual(json.loads(body), {"ok": True})
+        self.assertEqual(r.headers["Access-Control-Allow-Origin"], "*")       # файл друга с диска спрашивает сам
+
 
 class View(Servers):
     def test_fog_of_war_and_map(self):

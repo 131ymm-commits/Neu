@@ -244,6 +244,28 @@ class Launcher(unittest.TestCase):
         with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-env"}):
             self.assertEqual(P.setup_claude({}, P.parse([]), opener=ok, offer=never)[0], "sk-env")
 
+    def test_changing_key_keeps_it_on_empty_enter(self):
+        """Рецензия 2: случайная клавиша за 3 с и Enter на вопросе стирали сохранённый ключ."""
+        ok = opener_for({P.MODELS_API: self.MODELS})
+        P.save_config({"api_key": "sk-saved-key-0123456789", "model": self.NEW})
+        cfg = P.load_config(self.cfg_path)
+        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: "", opener=ok, offer=lambda t: True),
+                         ("sk-saved-key-0123456789", self.NEW))                 # пустой Enter — как было
+        self.assertEqual(P.load_config(self.cfg_path)["api_key"], "sk-saved-key-0123456789")
+        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: (_ for _ in ()).throw(KeyboardInterrupt()),
+                                        opener=ok, offer=lambda t: True)[0], "sk-saved-key-0123456789")   # Ctrl+C
+        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: "0", opener=ok, offer=lambda t: True),
+                         (None, None))                                          # «0» — выключить Claude
+        self.assertEqual(P.load_config(self.cfg_path)["api_key"], "")
+        # «без Claude» сохранено; сменить и снова пустой Enter — так и остаётся без Claude
+        self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "", opener=ok,
+                                        offer=lambda t: True), (None, None))
+
+    def test_friend_version_same_in_python_and_js(self):
+        """Разные версии в rendezvous.py и rv.js — свежий файл друга вечно просил бы новый."""
+        js = (P.WEB / "rv.js").read_text(encoding="utf-8")
+        self.assertEqual(int(re.search(r"FRIEND_VERSION:\s*(\d+)", js).group(1)), RV.FRIEND_VERSION)
+
     def test_key_failures_do_not_turn_claude_off(self):
         # Ctrl+C на вопросе — ничего не запоминаем
         def ctrl_c(prompt):
@@ -278,7 +300,11 @@ class Launcher(unittest.TestCase):
     def test_running_reads_console_bytes(self):
         """Блокер рецензии Д14: русская tasklist пишет в cp866 — разбор текстом в UTF-8 падал."""
         def run_with(out):
-            return lambda argv, **kw: SimpleNamespace(stdout=out, returncode=0)
+            def run(argv, **kw):                     # как subprocess.run: с text=True или encoding — строгое декодирование
+                if kw.get("text") or kw.get("encoding"):
+                    return SimpleNamespace(stdout=out.decode(kw.get("encoding") or "utf-8"), returncode=0)
+                return SimpleNamespace(stdout=out, returncode=0)
+            return run
         found = '"dota2.exe","1234","Console","1","1 234 567 КБ"\r\n'.encode("cp866")
         none = "ИНФОРМАЦИЯ: Задачи, отвечающие заданным критериям, отсутствуют.\r\n".encode("cp866")
         self.assertTrue(P._running("dota2.exe", run=run_with(found)))
@@ -381,17 +407,17 @@ class Launcher(unittest.TestCase):
                 ExclusiveServer(("127.0.0.1", a.server_address[1]), BaseHTTPRequestHandler)
         finally:
             a.server_close()
-        # путь Windows: SO_EXCLUSIVEADDRUSE вместо SO_REUSEADDR (здесь Linux — опцию подменяем и записываем)
+        # путь Windows: без SO_REUSEADDR (он отдаёт порт второму процессу) и без SO_EXCLUSIVEADDRUSE (с ним порт
+        # не отпускают, пока живы соединения прежнего окна); здесь Linux — опции сокета записываем
         win = type("Win", (ExclusiveServer,), {"exclusive": True})
         srv = win(("127.0.0.1", 0), BaseHTTPRequestHandler, bind_and_activate=False)
         real, opts = srv.socket, []
         srv.socket = mock.Mock(wraps=real)
         srv.socket.setsockopt.side_effect = lambda *a: opts.append(a)
         try:
-            with mock.patch.object(socket, "SO_EXCLUSIVEADDRUSE", 0x7FFB, create=True):
-                srv.server_bind()
-            self.assertIn((socket.SOL_SOCKET, 0x7FFB, 1), opts)
-            self.assertFalse(any(o[1] == socket.SO_REUSEADDR for o in opts))
+            srv.server_bind()
+            self.assertFalse(any(o[1] == socket.SO_REUSEADDR for o in opts), opts)
+            self.assertEqual(opts, [])
         finally:
             real.close()
 
@@ -416,13 +442,65 @@ class Launcher(unittest.TestCase):
         self.assertTrue(procs[-1].killed)
         self.assertFalse(P.TunnelKeeper(1, urls.append, "cf", start=lambda *a, **k: None).start())
 
-    def test_wait_enter(self):
+    def test_wait_enter_needs_two_enters(self):
+        """Рецензия 2: Enter, нажатый заранее (во время закачки), сразу заканчивал игру."""
+        def answers(*times):
+            seq = iter(times)
+            clock = SimpleNamespace(t=0.0)
+
+            def ask(prompt):
+                t = next(seq, None)
+                if t is None:
+                    raise EOFError
+                clock.t = t
+                return ""
+            return ask, (lambda: clock.t)
         stop = threading.Event()
-        P.wait_enter(stop, ask=lambda p: "")
-        self.assertTrue(stop.is_set())
-        stop = threading.Event()
-        P.wait_enter(stop, ask=lambda p: (_ for _ in ()).throw(EOFError()))     # окно без ввода — не выходить
+        ask, clock = answers(0.0)                                              # один Enter — игра идёт
+        P.wait_enter(stop, ask=ask, clock=clock)
         self.assertFalse(stop.is_set())
+        ask, clock = answers(0.0, 9.0)                                         # второй — слишком поздно
+        P.wait_enter(stop, ask=ask, clock=clock)
+        self.assertFalse(stop.is_set())
+        ask, clock = answers(0.0, 9.0, 11.0)                                   # два подряд — конец
+        P.wait_enter(stop, ask=ask, clock=clock)
+        self.assertTrue(stop.is_set())
+        self.assertIn("Enter ещё раз", self.out[0])
+
+    def test_bind_waits_for_port_or_reports(self):
+        tries = iter([OSError("busy"), OSError("busy"), "server"])
+
+        def make():
+            x = next(tries)
+            if isinstance(x, Exception):
+                raise x
+            return x
+        self.assertEqual(P.bind(make, 8787, "серверу", wait=lambda s: None, ours=lambda: False), "server")
+        self.assertIsNone(P.bind(lambda: (_ for _ in ()).throw(OSError("busy")), 8787, "серверу",
+                                 wait=lambda s: None, ours=lambda: True))
+        self.assertIn("уже запущена", self.out[-1])                            # второе окно — не «чужая программа»
+        self.assertIsNone(P.bind(lambda: (_ for _ in ()).throw(OSError("busy")), 8788, "пульту",
+                                 tries=3, wait=lambda s: None))
+        self.assertIn("занят другой программой", self.out[-1])
+
+    def test_tunnel_keeper_close_during_restart(self):
+        """Рецензия 2: закрыли во время перезапуска — новый cloudflared оставался жить."""
+        procs = []
+        keeper = None
+
+        def start(port, on_url, cf, on_error=None, on_exit=None):
+            proc = FakeProc()
+            procs.append(proc)
+            if len(procs) == 2:
+                keeper.stop.set()                                              # хост закрыл окно, пока запускали
+            return proc
+        keeper = P.TunnelKeeper(8788, lambda u: None, "cf", start=start, period=0.01, backoff=0.0)
+        self.assertTrue(keeper.start())
+        procs[0].code = 1
+        deadline = time.time() + 10
+        while not (len(procs) == 2 and procs[1].killed) and time.time() < deadline:
+            time.sleep(0.01)
+        self.assertTrue(procs[1].killed)
 
     def test_watch_reports_changes(self):
         room = SimpleNamespace(console_seen={}, game_linked=lambda: False)
@@ -563,6 +641,31 @@ class Updater(unittest.TestCase):
             U._get("https://example.invalid/x", missing, wait=lambda s: None)
         self.assertEqual(len(calls), 1)                                        # 404 не повторяем
 
+    def test_no_release_is_not_blamed_on_internet(self):
+        with tempfile.TemporaryDirectory() as tmp, mock.patch("builtins.print") as out:
+            with mock.patch.object(U, "sync", side_effect=U.NoRelease("нет RELEASE")):
+                self.assertEqual(U.main([tmp]), 1)
+            text = " ".join(str(c.args[0]) for c in out.call_args_list)
+            self.assertIn("выпуск ещё не готов", text)
+            self.assertNotIn("интернет", text)
+
+    def test_replace_retries_locked_file(self):
+        """Антивирус или OneDrive держат файл: замена повторяется, а не бросает обновление на полпути."""
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path, dest = Path(tmp) / "a.part", Path(tmp) / "a"
+            tmp_path.write_bytes(b"new")
+            real, calls = Path.replace, []
+
+            def flaky(self_, target):
+                calls.append(1)
+                if len(calls) < 3:
+                    raise PermissionError("занят")
+                return real(self_, target)
+            with mock.patch.object(Path, "replace", flaky):
+                U.replace(tmp_path, dest, wait=lambda s: None)
+            self.assertEqual(dest.read_bytes(), b"new")
+            self.assertEqual(len(calls), 3)
+
     def test_main_plays_on_old_files_after_any_failure(self):
         import http.client
         with tempfile.TemporaryDirectory() as tmp, mock.patch("builtins.print"):
@@ -600,6 +703,11 @@ class BatchFile(unittest.TestCase):
         self.assertIn(r'update.py" "%PROJ%." && ', runs[0])
         self.assertIn("pull --ff-only", runs[1])
         self.assertEqual(lines[lines.index(":run_update") + 1], runs[0])
+        for bad in ("Invoke-WebRequest", "Expand-Archive", "Move-Item", "-OutFile"):   # пути-шаблоны: «[» в пути
+            self.assertNotIn(bad, text)
+        boot = next(x for x in lines if "update.py" in x and x.startswith("%PS%"))
+        self.assertIn("/RELEASE", boot)                                        # первая загрузка — из выпуска
+        self.assertRegex(text, r'if exist "%PROJ%%~nx0" \(call "%PROJ%%~nx0" %\* & exit /b\)')   # свежая копия
         self.assertEqual(hashlib.sha1(b"blob 0\0").hexdigest(), U.blob_sha(b""))
 
 

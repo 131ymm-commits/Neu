@@ -6,12 +6,13 @@
   const te = new TextEncoder(), td = new TextDecoder();
   const SINCE = '10m';            // окно свежести по часам ntfy (хост повторяет ссылку раз в 5 мин): часы ПК не важны
 
-  // запрос с пределом ожидания: зависший ответ не держит проверку дольше ms
+  // запрос с пределом ожидания на весь ответ, вместе с телом: зависший ответ не держит проверку дольше ms
   async function get(url, ms) {
     const ctl = root.AbortController ? new AbortController() : null;
     const timer = ctl ? setTimeout(() => ctl.abort(), ms) : 0;
     try {
-      return await fetch(url, { cache: 'no-store', signal: ctl ? ctl.signal : undefined });
+      const r = await fetch(url, { cache: 'no-store', signal: ctl ? ctl.signal : undefined });
+      return { ok: r.ok, status: r.status, text: await r.text() };
     } finally {
       clearTimeout(timer);
     }
@@ -75,7 +76,7 @@
     const r = await get(String(base).replace(/\/$/, '') + '/' + name + '/json?poll=1&since=' + SINCE, 15000);
     if (!r.ok) throw new Error('HTTP ' + r.status);
     let best = null;
-    for (const line of (await r.text()).split('\n')) {
+    for (const line of r.text.split('\n')) {
       let m;
       try { m = JSON.parse(line); } catch (e) { continue; }
       if (!m || m.event !== 'message' || typeof m.message !== 'string') continue;
@@ -88,14 +89,15 @@
   async function alive(url) {
     try {
       const r = await get(String(url).replace(/\/?$/, '/') + 'api/ping', 8000);
-      return r.ok && (await r.json()).ok === true;
+      return r.ok && JSON.parse(r.text).ok === true;
     } catch (e) {
       return false;
     }
   }
   // ссылка на пульт: https-туннель Cloudflare или адрес этого ПК / домашней сети (только им отдаём секрет после #)
   function pultUrl(url) {
-    const m = /^(https?):\/\/([^\/\s#?]+)(\/c\/[^\s#?]+)$/.exec(String(url || '').trim());
+    // хвост «?…» и «#…» отрезаем: ссылку могли скопировать из адресной строки целиком
+    const m = /^(https?):\/\/([^\/\s#?]+)(\/c\/[^\s#?]+)$/.exec(String(url || '').trim().split(/[?#]/)[0]);
     if (!m) return null;
     const host = m[2].toLowerCase().replace(/:\d+$/, '');
     const ok = (m[1] === 'https' && /^[a-z0-9-]+\.trycloudflare\.com$/.test(host)) ||

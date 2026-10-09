@@ -290,13 +290,14 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_time
 class ExclusiveServer(ThreadingHTTPServer):
     """HTTP-сервер, который не делит порт. На Windows SO_REUSEADDR (его ставит HTTPServer) позволяет второму процессу
     занять тот же порт: второй запуск лаунчера не узнал бы, что игра уже идёт, а Дота и пульт попали бы в разные
-    экземпляры. Там порт держим исключительно (SO_EXCLUSIVEADDRUSE), как test.support.socket_helper в CPython."""
+    экземпляры. Там SO_REUSEADDR не ставим: тогда занятый порт второму не дают. SO_EXCLUSIVEADDRUSE не берём:
+    по документации Microsoft с ним порт может не освободиться, пока живы соединения прежнего процесса, —
+    быстрый перезапуск игры упирался бы в «порт занят». На Linux SO_REUSEADDR чужой порт не отдаёт — как было."""
     exclusive = os.name == "nt"
 
     def server_bind(self):
-        if self.exclusive and hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+        if self.exclusive:
             self.allow_reuse_address = False
-            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
         super().server_bind()
 
 

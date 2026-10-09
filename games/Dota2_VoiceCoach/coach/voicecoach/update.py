@@ -38,6 +38,10 @@ HEADERS = {"User-Agent": "DotaCoach-updater", "Accept": "application/vnd.github+
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 
 
+class NoRelease(OSError):
+    """На GitHub нет файла RELEASE: выпуск не опубликован (дело не в интернете)."""
+
+
 def blob_sha(data: bytes) -> str:
     return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
 
@@ -76,7 +80,7 @@ def release(opener=urllib.request.urlopen) -> str:
         if SHA_RE.match(sha):
             return sha
         raise ValueError(f"в RELEASE ветки {ref} не хеш коммита: {sha[:60]!r}")
-    raise OSError("на GitHub не нашёл выпуска игры (файла RELEASE)")
+    raise NoRelease("выпуск игры на GitHub не опубликован (нет файла RELEASE)")
 
 
 def subtree(sha: str, opener=urllib.request.urlopen) -> dict:
@@ -139,13 +143,24 @@ def sync(dest: Path, opener=urllib.request.urlopen, log=print, workers: int = 4)
                 tmp = p.with_name(p.name + ".part")
                 tmp.write_bytes(data)
                 staged.append((tmp, p))
-        except OSError:
+            for tmp, p in staged:
+                replace(tmp, p)
+        finally:
             for tmp, _ in staged:
-                tmp.unlink(missing_ok=True)
-            raise
-        for tmp, p in staged:
-            tmp.replace(p)
+                tmp.unlink(missing_ok=True)              # недописанное не оставлять; заменённых .part уже нет
     return len(todo), len(files), sha
+
+
+def replace(tmp: Path, p: Path, tries: int = 10, wait=time.sleep) -> None:
+    """Заменить файл. Антивирус или облачная папка (OneDrive) держат файл секунду-другую — тогда повторить."""
+    for attempt in range(tries):
+        try:
+            tmp.replace(p)
+            return
+        except PermissionError:
+            if attempt == tries - 1:
+                raise
+            wait(0.5)
 
 
 def main(argv=None) -> int:
@@ -162,7 +177,8 @@ def main(argv=None) -> int:
         if have:
             print("Играем на тех, что уже есть.")
             return 0
-        print("Файлов игры нет — проверьте интернет и запустите ещё раз.")
+        print("Файлов игры нет — " + ("выпуск ещё не готов: запустите позже." if isinstance(e, NoRelease)
+                                      else "проверьте интернет и запустите ещё раз."))
         return 1
 
 

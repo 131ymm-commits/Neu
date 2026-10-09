@@ -115,6 +115,35 @@ class FriendPage(unittest.TestCase):
             page.wait_for_selector("#title:has-text('Тьма')", timeout=10000)
             browser.close()
 
+    def test_pult_does_not_follow_dead_address(self):
+        """Рецензия 2: у пульта проверку «жив ли адрес» тесты не ловили. Хост перезапустил игру и сразу упал: в ящике
+        новый адрес, но он мёртв — открытый пульт туда не уходит, а уходит на следующий живой."""
+        friend = P.make_friend_file(Path(self.tmp.name) / "ДЛЯ_ДРУГА.html", self.secret, self.box.base)
+        con_a, url_a = self.console()
+        with sync_playwright() as p:
+            browser = p.chromium.launch(executable_path=CHROMIUM)
+            page = browser.new_page()
+            page.goto(friend.as_uri() + "?every=300")
+            self.post({"url": url_a})
+            page.wait_for_url(url_a + "#rv=*", timeout=10000)
+            page.wait_for_selector("#title:has-text('Тьма')", timeout=10000)
+            dead, dead_url = self.console()
+            dead.shutdown()
+            dead.server_close()
+            self.consoles.remove(dead)
+            self.post({"url": dead_url})
+            con_a.shutdown()
+            con_a.server_close()
+            self.consoles.remove(con_a)
+            page.wait_for_selector("#link:has-text('не отвечает')", timeout=15000)
+            page.wait_for_timeout(6000)                                        # пульт уже спросил ящик хотя бы раз
+            self.assertTrue(page.url.startswith(url_a), page.url)
+            con_c, url_c = self.console()
+            self.post({"url": url_c})
+            page.wait_for_url(url_c + "#rv=*", timeout=25000)
+            page.wait_for_selector("#title:has-text('Тьма')", timeout=10000)
+            browser.close()
+
     def test_without_scripts_says_what_to_do(self):
         friend = P.make_friend_file(Path(self.tmp.name) / "ДЛЯ_ДРУГА.html", self.secret, self.box.base)
         with sync_playwright() as p:
@@ -133,6 +162,8 @@ class FriendPage(unittest.TestCase):
             page = browser.new_page()
             page.goto(friend.as_uri() + "?every=200")
             page.wait_for_selector("#manual:not(.hidden)", timeout=10000)
+            self.assertEqual(page.evaluate("Rendezvous.pultUrl('https://a-b.trycloudflare.com/c/K?x=1#rv=z')"),
+                             "https://a-b.trycloudflare.com/c/K/")              # хвост из адресной строки — мимо
             page.fill("#link", "javascript:alert(1)")
             page.click("#go")
             self.assertIn("не ссылка на пульт", page.inner_text("#why"))

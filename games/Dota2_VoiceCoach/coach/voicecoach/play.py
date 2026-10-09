@@ -76,18 +76,31 @@ def offer(text: str, seconds: float = OFFER_S) -> bool:
         import msvcrt  # noqa: PLC0415 — есть только на Windows
         if not sys.stdin.isatty():
             return False
-        while msvcrt.kbhit():
-            msvcrt.getwch()
+        flush_input()
         say(text)
         end = time.monotonic() + seconds
         while time.monotonic() < end:
             if msvcrt.kbhit():
-                msvcrt.getwch()
+                if msvcrt.getwch() in ("\x00", "\xe0"):      # стрелки и F-клавиши приходят двумя кодами
+                    msvcrt.getwch()
+                flush_input()                                # хвост нажатия не приклеится к ключу
                 return True
             time.sleep(0.05)
     except Exception:                                   # noqa: BLE001 — меню не должно ронять запуск
         return False
     return False
+
+
+def flush_input() -> None:
+    """Windows: выбросить нажатое заранее — Enter, нажатый во время закачки, не должен ни на что ответить."""
+    if os.name != "nt":
+        return
+    try:
+        import msvcrt  # noqa: PLC0415
+        while msvcrt.kbhit():
+            msvcrt.getwch()
+    except Exception:                                   # noqa: BLE001 — не консоль: нечего чистить
+        pass
 
 
 # --- настройки ---
@@ -150,18 +163,26 @@ def pick_model(api_key: str, opener=urllib.request.urlopen) -> tuple[str | None,
     return max(fast, key=lambda m: str(m.get("created_at") or ""))["id"], "", ""
 
 
-def ask_key(cfg: dict, ask, opener) -> tuple[str | None, str | None]:
-    """Спросить ключ. Пустой Enter — «без Claude» (запоминается); ключ проверяется списком моделей. Нет связи —
-    ключ всё равно сохраняется (проверится в следующий раз); Ctrl+C — ничего не запоминать."""
+def ask_key(cfg: dict, ask, opener, keep: bool = False) -> tuple[str | None, str | None] | None:
+    """Спросить ключ; он проверяется списком моделей. Пустой Enter — «без Claude» (запоминается), а при смене
+    сохранённого (keep=True) — оставить как было (→ None); «без Claude» тогда — «0». Нет связи — ключ всё равно
+    сохраняется (проверится в следующий раз); Ctrl+C — ничего не менять."""
     say("  Ключ API Anthropic: вставьте его (Ctrl+V или правый щелчок мыши) и нажмите Enter. На экране ключ")
     say("  не появится — так и задумано. Ключ берут на console.anthropic.com → API Keys.")
-    say("  Без ключа просто нажмите Enter: агенты сыграют на правилах — бесплатно, но это не Claude.")
+    if keep:
+        say("  Оставить как было — просто Enter. Выключить Claude (агенты на правилах, бесплатно) — 0 и Enter.")
+    else:
+        say("  Без ключа просто нажмите Enter: агенты сыграют на правилах — бесплатно, но это не Claude.")
     for _ in range(3):
         key = _ask(ask, "  ключ> ")
         if key is None:
+            if keep:
+                return None
             say("  Ключ не ввели — в этот раз правила, спрошу при следующем запуске.")
             return None, None
-        if not key:
+        if keep and not key:
+            return None                                  # оставить как было
+        if not key or key == "0":
             cfg["api_key"] = ""                          # «без Claude»: при запуске можно будет сменить
             save_config(cfg)
             return None, None
@@ -190,12 +211,14 @@ def setup_claude(cfg: dict, args, ask=getpass.getpass, opener=urllib.request.url
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
         key = cfg.get("api_key")
-        if key is not None and not args.ask_key:        # решение уже есть — показать и дать сменить одной клавишей
-            shown = f"ключ {mask(key)}" if key else "выключен — агенты на правилах"
-            if offer(f"  Claude: {shown}. Сменить ключ — нажмите любую клавишу в ближайшие {OFFER_S:.0f} секунды…"):
-                key = None
         if key is None or args.ask_key:
             return ask_key(cfg, ask, opener)
+        shown = f"ключ {mask(key)}" if key else "выключен — агенты на правилах"   # решение уже есть: дать сменить
+        if offer(f"  Claude: {shown}. Сменить ключ — нажмите любую клавишу в ближайшие {OFFER_S:.0f} секунды…"):
+            got = ask_key(cfg, ask, opener, keep=True)
+            if got is not None:
+                return got
+            say("  Оставляю как было.")
     if not key:
         return None, None
     model, why, kind = pick_model(key, opener)
@@ -414,6 +437,9 @@ class TunnelKeeper:
                 say("  cloudflared не запускается — туннель не поднять. Пульт друга работает только на этом ПК.")
                 return
             self.proc = proc
+            if self.stop.is_set():                       # закрыли, пока запускали: новый не оставлять
+                self.close()
+                return
 
     def close(self) -> None:
         self.stop.set()
@@ -480,14 +506,42 @@ def already_running(opener=LOCAL) -> bool:
         return False
 
 
-def wait_enter(stop: threading.Event, ask=input) -> None:
-    """Enter в окне — закончить игру. Окно без ввода — ждать только Ctrl+C."""
-    try:
-        ask("")
-    except (EOFError, OSError):
-        return
-    except KeyboardInterrupt:
-        pass
+def bind(make, port: int, who: str, tries: int = 10, wait=time.sleep, ours=None):
+    """Занять порт: make() → сервер. Занят — это наш же сервер (второе окно; ours() — проверка) или порт ещё не
+    отпустило только что закрытое окно: подождать до ~20 с. → сервер или None (хосту уже сказано, что делать)."""
+    for attempt in range(tries):
+        try:
+            return make()
+        except OSError as e:
+            if ours is not None and ours():
+                say("  Игра уже запущена в другом окне ИГРАТЬ.bat — переключитесь на него (второе окно не нужно).")
+                return None
+            if attempt == tries - 1:
+                say(f"  Порт {port} занят другой программой ({e}) — {who} некуда встать. Закройте её или "
+                    "перезагрузите ПК и запустите снова.")
+                return None
+            if attempt == 0:
+                say(f"  Порт {port} пока занят — жду, пока его отпустят…")
+            wait(2.0)
+    return None
+
+
+def wait_enter(stop: threading.Event, ask=input, window: float = 5.0, clock=time.monotonic) -> None:
+    """Закончить игру — Enter два раза (второй — за window секунд): один случайный Enter не обрывает игру друга.
+    Окно без ввода — ждать только Ctrl+C."""
+    first = None
+    while not stop.is_set():
+        try:
+            ask("")
+        except (EOFError, OSError):
+            return
+        except KeyboardInterrupt:
+            break
+        now = clock()
+        if first is not None and now - first <= window:
+            break
+        first = now
+        say(f"  Закончить игру? Нажмите Enter ещё раз в ближайшие {window:.0f} секунд.")
     stop.set()
 
 
@@ -533,29 +587,27 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
     dota = find_dota(cfg, args, ask, prompt=not args.no_dota)
     if dota:
         say("  " + install_custom_game(dota))
+    elif args.no_dota:
+        say("  Доту не нашёл (запуск Доты выключен).")
     else:
         say("  Доту не нашёл — спрошу путь при следующем запуске.")
     quickedit_off()                                                 # вопросов больше не будет
 
     say("[3/6] Сервер тренера")
     log = LOGS / f"agents_local_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
-    try:
-        srv = serve("127.0.0.1", GAME_PORT, lambda room: AgentHub(
-            {"radiant": backend, "dire": backend}, max_calls=args.max_calls, log_path=log))
-    except OSError as e:
-        say(f"  Порт {GAME_PORT} занят другой программой ({e}) — серверу тренера некуда встать. Закройте её и "
-            "запустите снова.")
+    srv = bind(lambda: serve("127.0.0.1", GAME_PORT, lambda room: AgentHub(
+        {"radiant": backend, "dire": backend}, max_calls=args.max_calls, log_path=log)), GAME_PORT, "серверу тренера",
+        ours=already_running)
+    if srv is None:
         return 1
     threading.Thread(target=srv.serve_forever, daemon=True, name="game").start()
     room = srv.hub.room("local")
     keys = load_keys((REMOTE,), new=args.new_friend)
-    try:
-        console = serve_console(srv.hub, "127.0.0.1", CONSOLE_PORT, "local", keys, rv_origin=args.rv)
-    except OSError as e:
+    console = bind(lambda: serve_console(srv.hub, "127.0.0.1", CONSOLE_PORT, "local", keys, rv_origin=args.rv),
+                   CONSOLE_PORT, "пульту друга")
+    if console is None:
         srv.shutdown()
         srv.server_close()
-        say(f"  Порт {CONSOLE_PORT} занят другой программой ({e}) — пульту друга некуда встать. Закройте её и "
-            "запустите снова.")
         return 1
     threading.Thread(target=console.serve_forever, daemon=True, name="console").start()
     local_link = console_url(f"http://127.0.0.1:{CONSOLE_PORT}", keys[REMOTE])
@@ -615,7 +667,8 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
         say(f"  Запустите Доту с инструментами и в её консоли:  dota_launch_custom_game {ADDON} dota")
 
     say("")
-    say("Окно не закрывайте, пока играете. Закончить игру — Enter.")
+    say("Окно не закрывайте, пока играете. Закончить игру — Enter два раза.")
+    flush_input()                                                 # Enter, нажатый раньше, игру не закончит
     stop = threading.Event()
     threading.Thread(target=wait_enter, args=(stop, enter), daemon=True, name="enter").start()
     try:
@@ -623,18 +676,21 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
     except KeyboardInterrupt:
         pass
     say("Заканчиваю…")
+    if keeper is not None:                                        # сначала входы: туннель, пульт, игра —
+        keeper.close()
+    for server in (console, srv):                                 # тогда новый тик не придёт к закрытым агентам
+        server.shutdown()
+        server.server_close()
     if room.agents is not None:
         room.agents.close()                                       # вызовы из очереди не ждём и не оплачиваем
     pub.close()
-    if keeper is not None:
-        keeper.close()
-    for server in (console, srv):
-        server.shutdown()
-        server.server_close()
     if room.agents is not None:
         s = room.agents.summary()
         say(f"Вызовов Claude: {s.get('paid_calls', 0)}, ошибок: {s.get('errors', 0)}, "
             f"задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
+        time.sleep(0.2)
+        if any(t.name.startswith("agent") and t.is_alive() for t in threading.enumerate()):
+            say("Жду, пока агенты закончат начатые ходы (до 30 с)…")
     return 0
 
 
