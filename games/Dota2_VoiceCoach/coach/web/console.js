@@ -4,6 +4,7 @@
 const $ = id => document.getElementById(id);
 const COLORS = { radiant: '#59c36a', dire: '#e05a4f' };
 let view = null, soundOn = false, lastEvent = -1, lastRun = null, viewFails = 0, wakeLock = null;
+let hostNote = '';                // что известно из ящика игры, пока сервер хоста молчит (Д14)
 
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -157,10 +158,11 @@ async function refreshView() {
     if (!r.ok) throw new Error('HTTP ' + r.status);
     view = await r.json();
     viewFails = 0;
+    hostNote = '';
     renderView();
   } catch (e) {
     viewFails += 1;
-    if (viewFails >= 3) { $('link').className = 'link off'; $('link').textContent = 'сервер тренера не отвечает'; }
+    if (viewFails >= 3) { $('link').className = 'link off'; $('link').textContent = hostNote || 'сервер тренера не отвечает'; }
     if (viewFails >= 3 && viewFails % 10 === 3) follow();   // через 3 с без связи и дальше раз в 10 с
   }
 }
@@ -172,12 +174,13 @@ async function follow() {
   if (!RV) return;
   try {
     const msg = await Rendezvous.find(RV.base, RV.secret);
-    const here = location.href.split('#')[0];
-    if (msg && msg.url && /^https?:\/\/[^\s#]+\/c\/[^\s#]+$/.test(msg.url) && msg.url !== here) {
-      $('link').textContent = 'друг перезапустил игру — перехожу на новый адрес…';
-      location.replace(msg.url + location.hash);
-    } else if (msg && msg.closed) {
-      $('link').textContent = 'друг закрыл игру — жду, когда запустит снова';
+    const url = msg && Rendezvous.pultUrl(msg.url);
+    if (url && url !== location.href.split('#')[0] && await Rendezvous.alive(url)) {   // мёртвый адрес не берём
+      hostNote = 'друг перезапустил игру — перехожу на новый адрес…';
+      $('link').textContent = hostNote;
+      location.replace(url + location.hash);
+    } else {
+      hostNote = msg && msg.closed ? 'друг закрыл игру — жду, когда запустит снова' : '';
     }
   } catch (e) { /* ящик недоступен — попробуем позже */ }
 }

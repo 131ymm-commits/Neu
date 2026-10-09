@@ -4,18 +4,22 @@
 
 Хост запускает ИГРАТЬ.bat — он находит или скачивает Python, обновляет файлы игры и запускает этот лаунчер:
   1. ключ API Anthropic — спрашивает один раз и запоминает (coach/logs/play.json, вне git); без ключа агенты играют
-     на правилах (бесплатно, не Claude); модель — самая новая из линии быстрых по списку моделей ключа;
-  2. ставит кастомку в Доту (папку Доты ищет сам, не нашёл — спрашивает один раз);
+     на правилах (бесплатно, не Claude); модель — самая новая из линии быстрых по списку моделей ключа; сменить ключ
+     можно при каждом запуске — нажать любую клавишу, пока лаунчер это предлагает;
+  2. ставит кастомку в Доту (папку Доты ищет сам, не нашёл — спрашивает);
   3. скачивает cloudflared (туннель Cloudflare) в .runtime/ — один раз;
   4. запускает сервер тренера, пульт Тьмы и туннель; ссылку на пульт кладёт в ящик (rendezvous.py) и копирует;
+     туннель упал — поднимает заново;
   5. делает файл соперника ДЛЯ_ДРУГА.html — один раз, подходит ко всем играм — и показывает его в Проводнике;
   6. запускает Доту с инструментами и сразу кастомку (так запускает аддоны шаблон ModDota: dota2.exe -tools -addon).
 Соперник открывает ДЛЯ_ДРУГА.html: файл находит игру в ящике и открывает пульт; перезапуск игры пульт переживает.
+Закончить игру — Enter в окне лаунчера.
 """
 from __future__ import annotations
 
 import argparse
 import atexit
+import getpass
 import json
 import os
 import shutil
@@ -28,7 +32,7 @@ import urllib.request
 from pathlib import Path
 
 from . import rendezvous as RV
-from .agents import AgentHub, make_backend
+from .agents import AgentHub, ApiBackend, make_backend
 from .console import console_url, load_keys, serve_console, start_tunnel
 from .server import LOGS, serve
 
@@ -40,24 +44,50 @@ CONFIG = LOGS / "play.json"
 FRIEND_FILE = "ДЛЯ_ДРУГА.html"
 ADDON = "voicecoach"
 GAME_PORT, CONSOLE_PORT = 8787, 8788          # 8787 — адрес, который знает кастомка (coach_game.lua)
+HEALTH = f"http://127.0.0.1:{GAME_PORT}/api/health"
 REMOTE = "dire"                                # хост в Доте — тренер Света, друг — Тьмы
 MAX_CALLS = 3000                               # платных вызовов на сторону: ≈ 30–40 минут игры
 MODELS_API = "https://api.anthropic.com/v1/models"
-FAST_LINE = "haiku"                            # линия самых быстрых моделей в списке моделей API (поле line)
+FAST_LINE = "haiku"                            # линия самых быстрых моделей: ищется в имени (id) модели из списка
 CLOUDFLARED_URL = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe"
 DETACHED = 0x00000008 | 0x00000200            # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP: Дота живёт без окна
+OFFER_S = 3.0                                  # с: сколько ждать нажатия «сменить ключ» при запуске
+LOCAL = urllib.request.build_opener(urllib.request.ProxyHandler({})).open   # свой ПК — мимо прокси системы
 
 
 def say(text: str = "") -> None:
     print(text, flush=True)
 
 
-def _ask(ask, prompt: str) -> str:
-    """Ответ человека; окно без ввода (запуск не из консоли) — пустой ответ, а не падение."""
+def _ask(ask, prompt: str) -> str | None:
+    """Ответ человека. Ctrl+C или окно без ввода (запуск не из консоли) — None: человек ничего не выбрал."""
     try:
         return (ask(prompt) or "").strip()
     except (EOFError, KeyboardInterrupt):
-        return ""
+        return None
+
+
+def offer(text: str, seconds: float = OFFER_S) -> bool:
+    """Предложить действие одной клавишей: нажата ли любая клавиша за seconds секунд. Только окно Windows; иначе — нет.
+    Раскладка не важна (любая клавиша), нажатое раньше не считается."""
+    if os.name != "nt":
+        return False
+    try:
+        import msvcrt  # noqa: PLC0415 — есть только на Windows
+        if not sys.stdin.isatty():
+            return False
+        while msvcrt.kbhit():
+            msvcrt.getwch()
+        say(text)
+        end = time.monotonic() + seconds
+        while time.monotonic() < end:
+            if msvcrt.kbhit():
+                msvcrt.getwch()
+                return True
+            time.sleep(0.05)
+    except Exception:                                   # noqa: BLE001 — меню не должно ронять запуск
+        return False
+    return False
 
 
 # --- настройки ---
@@ -82,89 +112,163 @@ def save_config(cfg: dict, path: Path | None = None) -> None:
 
 # --- Claude ---
 
-def pick_model(api_key: str, opener=urllib.request.urlopen) -> tuple[str | None, str]:
-    """Самая новая модель линии быстрых из списка моделей, доступных ключу. → (имя модели или None, почему нет)."""
+def mask(key: str) -> str:
+    """Ключ для экрана: начало и четыре последних знака (окно хоста могут прислать в чат — ключ туда не попадёт)."""
+    return f"{key[:7]}…{key[-4:]}" if len(key) > 16 else "…"
+
+
+def api_error(e: urllib.error.HTTPError) -> str:
+    """Ошибка API Anthropic словами: код и текст из ответа ({"error": {"message": …}})."""
+    text = ""
+    try:
+        body = json.loads(e.read().decode("utf-8", "replace"))
+        text = str(((body or {}).get("error") or {}).get("message") or "")
+    except Exception:                                   # noqa: BLE001 — нет тела или не JSON
+        pass
+    hint = {401: "ключ не принят", 403: "ключу запрещён доступ"}.get(e.code, "ошибка API")
+    return f"{hint} (HTTP {e.code}{': ' + text[:200] if text else ''})"
+
+
+def pick_model(api_key: str, opener=urllib.request.urlopen) -> tuple[str | None, str, str]:
+    """Самая новая модель линии быстрых из списка моделей, доступных ключу.
+    → (модель или None, почему нет, вид сбоя: "" — всё хорошо, "key" — ключ не принят (401/403),
+       "net" — нет связи или сбой API, "none" — среди моделей нет быстрой линии)."""
     req = urllib.request.Request(MODELS_API + "?limit=100",
                                  headers={"x-api-key": api_key, "anthropic-version": "2023-06-01"})
     try:
         with opener(req, timeout=20) as r:
             data = json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
-        return None, "ключ не подошёл" if e.code in (401, 403) else f"API ответил HTTP {e.code}"
+        return None, api_error(e), "key" if e.code in (401, 403) else "net"
     except (OSError, ValueError) as e:
-        return None, f"нет связи с API Anthropic ({e})"
-    models = [m for m in data.get("data") or [] if isinstance(m, dict) and m.get("id")]
-    fast = [m for m in models if m.get("line") == FAST_LINE] or [m for m in models if FAST_LINE in str(m["id"])]
+        return None, f"нет связи с API Anthropic ({e})", "net"
+    models = [m for m in (data.get("data") if isinstance(data, dict) else None) or []
+              if isinstance(m, dict) and m.get("id")]
+    fast = [m for m in models if FAST_LINE in str(m["id"]).lower()]
     if not fast:
-        return None, "среди моделей ключа нет быстрой линии"
-    return max(fast, key=lambda m: str(m.get("created_at") or ""))["id"], ""
+        return None, "среди моделей ключа нет быстрой линии", "none"
+    return max(fast, key=lambda m: str(m.get("created_at") or ""))["id"], "", ""
 
 
-def setup_claude(cfg: dict, args, ask=input, opener=urllib.request.urlopen) -> tuple[str | None, str | None]:
+def ask_key(cfg: dict, ask, opener) -> tuple[str | None, str | None]:
+    """Спросить ключ. Пустой Enter — «без Claude» (запоминается); ключ проверяется списком моделей. Нет связи —
+    ключ всё равно сохраняется (проверится в следующий раз); Ctrl+C — ничего не запоминать."""
+    say("  Ключ API Anthropic: вставьте его (Ctrl+V или правый щелчок мыши) и нажмите Enter. На экране ключ")
+    say("  не появится — так и задумано. Ключ берут на console.anthropic.com → API Keys.")
+    say("  Без ключа просто нажмите Enter: агенты сыграют на правилах — бесплатно, но это не Claude.")
+    for _ in range(3):
+        key = _ask(ask, "  ключ> ")
+        if key is None:
+            say("  Ключ не ввели — в этот раз правила, спрошу при следующем запуске.")
+            return None, None
+        if not key:
+            cfg["api_key"] = ""                          # «без Claude»: при запуске можно будет сменить
+            save_config(cfg)
+            return None, None
+        model, why, kind = pick_model(key, opener)
+        if model:
+            cfg["api_key"], cfg["model"] = key, model
+            save_config(cfg)
+            say(f"  Ключ {mask(key)} принят.")
+            return key, model
+        if kind == "net":
+            cfg["api_key"] = key
+            save_config(cfg)
+            say(f"  Ключ {mask(key)} сохранил, но проверить не смог: {why}.")
+            say("  В этот раз агенты сыграют на правилах, Claude — со следующего запуска.")
+            return None, None
+        say(f"  Ключ {mask(key)} не подошёл: {why}. Вставьте другой или Enter — без Claude.")
+    say("  Ключи не подошли — в этот раз правила. Ключ спрошу при следующем запуске.")
+    return None, None
+
+
+def setup_claude(cfg: dict, args, ask=getpass.getpass, opener=urllib.request.urlopen,
+                 offer=offer) -> tuple[str | None, str | None]:
     """Ключ и модель для агентов. → (ключ, модель) или (None, None) — играть на правилах."""
     if args.rules:
         return None, None
-    key = os.environ.get("ANTHROPIC_API_KEY") or cfg.get("api_key")
-    if key is None or args.ask_key:
-        say("  Ключ API Anthropic: вставьте его (Ctrl+V или правый щелчок мыши) и нажмите Enter.")
-        say("  Ключ берут на console.anthropic.com → API Keys. Без ключа просто нажмите Enter —")
-        say("  агенты сыграют на правилах: бесплатно, но это не Claude. Ключ запоминается — спрошу один раз.")
-        for _ in range(3):
-            key = _ask(ask, "  ключ> ")
-            if not key:
-                break
-            model, why = pick_model(key, opener)
-            if model:
-                cfg["api_key"], cfg["model"] = key, model
-                save_config(cfg)
-                return key, model
-            say(f"  Не вышло: {why}. Попробуйте ещё раз или Enter — без Claude.")
-        cfg["api_key"] = ""                                  # выбрали «без Claude» — больше не спрашиваем
-        save_config(cfg)
-        return None, None
+    key = os.environ.get("ANTHROPIC_API_KEY")
+    if not key:
+        key = cfg.get("api_key")
+        if key is not None and not args.ask_key:        # решение уже есть — показать и дать сменить одной клавишей
+            shown = f"ключ {mask(key)}" if key else "выключен — агенты на правилах"
+            if offer(f"  Claude: {shown}. Сменить ключ — нажмите любую клавишу в ближайшие {OFFER_S:.0f} секунды…"):
+                key = None
+        if key is None or args.ask_key:
+            return ask_key(cfg, ask, opener)
     if not key:
         return None, None
-    model, why = pick_model(key, opener)
+    model, why, kind = pick_model(key, opener)
     if model:
         if model != cfg.get("model"):
             cfg["model"] = model
             save_config(cfg)
         return key, model
-    if cfg.get("model") and why.startswith("нет связи"):
-        return key, cfg["model"]                              # список моделей недоступен — берём прошлую
-    say(f"  Claude: {why} — агенты сыграют на правилах. Сменить ключ: ИГРАТЬ.bat --ask-key")
+    if kind == "key" and not os.environ.get("ANTHROPIC_API_KEY"):
+        say(f"  Сохранённый ключ {mask(key)} не подошёл: {why}.")
+        return ask_key(cfg, ask, opener)
+    if kind == "net" and cfg.get("model"):
+        say(f"  Список моделей недоступен ({why}) — беру прошлую модель.")
+        return key, cfg["model"]
+    say(f"  Claude: {why} — в этот раз агенты сыграют на правилах.")
     return None, None
 
 
 # --- загрузки ---
 
 def download(url: str, dest: Path, opener=urllib.request.urlopen, label: str = "") -> None:
+    """Скачать в dest через dest.part. Обрыв посреди ответа (пришло меньше Content-Length) — OSError, файла нет."""
     dest.parent.mkdir(parents=True, exist_ok=True)
     part = dest.with_name(dest.name + ".part")
-    with opener(url, timeout=60) as r, open(part, "wb") as f:
-        total, done, shown = int(r.headers.get("Content-Length") or 0), 0, -1
-        while True:
-            chunk = r.read(1 << 16)
-            if not chunk:
-                break
-            f.write(chunk)
-            done += len(chunk)
-            if total and label and (pct := done * 100 // total) // 20 != shown:
-                shown = pct // 20
-                say(f"  {label}: {pct}%")
-    os.replace(part, dest)
+    try:
+        with opener(url, timeout=60) as r, open(part, "wb") as f:
+            total, done, shown = int(r.headers.get("Content-Length") or 0), 0, -1
+            while True:
+                chunk = r.read(1 << 16)
+                if not chunk:
+                    break
+                f.write(chunk)
+                done += len(chunk)
+                if total and label and (pct := done * 100 // total) // 20 != shown:
+                    shown = pct // 20
+                    say(f"  {label}: {pct}%")
+        if total and done != total:
+            raise OSError(f"скачалось {done} байт из {total} — связь оборвалась")
+        os.replace(part, dest)
+    except BaseException:
+        try:
+            part.unlink()
+        except OSError:
+            pass
+        raise
 
 
-def ensure_cloudflared(opener=urllib.request.urlopen, which=shutil.which, windows: bool = os.name == "nt") -> str | None:
+def runs(exe: str, run=subprocess.run) -> bool:
+    """Запускается ли программа: `<exe> --version` с кодом 0 (битый или недокачанный exe — нет)."""
+    try:
+        return run([exe, "--version"], capture_output=True, timeout=30).returncode == 0
+    except Exception:                                   # noqa: BLE001 — WinError 193, нет файла, таймаут
+        return False
+
+
+def ensure_cloudflared(opener=urllib.request.urlopen, which=shutil.which, windows: bool = os.name == "nt",
+                       check=runs) -> str | None:
+    """cloudflared: из PATH, свой в .runtime/ или скачать (Windows). Свой проверяется запуском; не запустился —
+    удалить и скачать заново. → путь или None (не Windows и в PATH нет)."""
     found = which("cloudflared")
     if found:
         return found
     local = RUNTIME / ("cloudflared.exe" if windows else "cloudflared")
-    if local.exists() and local.stat().st_size > 1_000_000:
-        return str(local)
+    if local.exists():
+        if check(str(local)):
+            return str(local)
+        local.unlink()
     if not windows:
         return None
     download(CLOUDFLARED_URL, local, opener, "туннель Cloudflare")
+    if not check(str(local)):
+        local.unlink()
+        raise OSError("скачанный cloudflared не запускается")
     return str(local)
 
 
@@ -189,7 +293,7 @@ def find_dota(cfg: dict, args, ask=input, prompt: bool = True) -> Path | None:
         return found
     say("  Не нашёл Dota 2. Вставьте путь к папке «dota 2 beta» (например D:\\SteamLibrary\\steamapps\\common\\dota 2 beta)")
     say("  или Enter — без Доты (пульт и сервер всё равно запустятся).")
-    p = _ask(ask, "  папка> ").strip('"')
+    p = (_ask(ask, "  папка> ") or "").strip('"')
     if ok(p):
         cfg["dota"] = p
         save_config(cfg)
@@ -197,20 +301,33 @@ def find_dota(cfg: dict, args, ask=input, prompt: bool = True) -> Path | None:
     return None
 
 
-def _running(image: str) -> bool:
-    if os.name != "nt":
+def _running(image: str, run=subprocess.run) -> bool:
+    """Запущена ли программа (Windows, tasklist). Вывод tasklist — в кодировке консоли (на русской Windows — cp866,
+    с кириллицей), поэтому читаем байты и ищем латинское имя образа, а не разбираем текст."""
+    if os.name != "nt" and run is subprocess.run:
         return False
     try:
-        out = subprocess.run(["tasklist", "/FI", f"IMAGENAME eq {image}", "/NH"], capture_output=True, text=True,
-                             timeout=10).stdout
-    except (OSError, subprocess.SubprocessError):
+        out = run(["tasklist", "/FI", f"IMAGENAME eq {image}", "/FO", "CSV", "/NH"], capture_output=True,
+                  timeout=10).stdout or b""
+    except Exception:                                   # noqa: BLE001 — нет tasklist, таймаут: считаем «не запущена»
         return False
-    return image.lower() in out.lower()
+    return f'"{image}"'.lower().encode("ascii") in out.lower()
 
 
 def dota_argv(dota: Path) -> list[str]:
     exe = dota / "game" / "bin" / "win64" / "dota2.exe"
     return [str(exe), "-novid", "-tools", "-addon", ADDON, "-condebug", "+dota_launch_custom_game", ADDON, "dota"]
+
+
+def install_custom_game(dota: Path, running=_running) -> str:
+    """Поставить или обновить кастомку. Открытая Дота держит файлы — тогда не трогаем. → что сказать хосту."""
+    if running("dota2.exe"):
+        return "Дота уже открыта — кастомку не обновляю (её файлы заняты). Закройте Доту и запустите снова."
+    try:
+        _install_module().install(dota, log=lambda s: None)
+        return f"Установлена: {dota}"
+    except (SystemExit, OSError) as e:
+        return f"Не установил: {e}"
 
 
 def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.sleep) -> str:
@@ -234,11 +351,70 @@ def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.
     kw = {"cwd": str(win64), "close_fds": True}
     if os.name == "nt":
         kw["creationflags"] = DETACHED
-    popen(dota_argv(dota), **kw)
+    try:
+        popen(dota_argv(dota), **kw)
+    except OSError as e:
+        return f"Не запустил Доту: {e}. Запустите её сами и в консоли Доты:  dota_launch_custom_game {ADDON} dota"
     note = "" if (win64 / "resourcecompiler.exe").exists() else (
         " Если кастомка не откроется — поставьте бесплатное дополнение Dota 2 Workshop Tools: Steam → Dota 2 → "
         "Свойства → DLC.")
     return "Дота запускается с кастомкой: возьмите любого героя — вы тренер Света." + note
+
+
+# --- туннель ---
+
+class TunnelKeeper:
+    """Туннель для друга. cloudflared упал или оборвался — поднять заново: адрес будет новым, лаунчер положит его в
+    ящик, и файл друга или открытый пульт найдут его сами. Падает подряд — пауза растёт до минуты."""
+
+    def __init__(self, port: int, on_url, cloudflared: str, start=start_tunnel, period: float = 5.0,
+                 backoff: float = 5.0):
+        self.port, self.on_url, self.cf, self.start_fn, self.period = port, on_url, cloudflared, start, period
+        self.backoff = backoff                           # с: пауза перед новым запуском растёт с числом падений
+        self.proc = None
+        self.fails = 0                                   # падений подряд, без нового адреса
+        self.stop = threading.Event()
+
+    def _start(self):
+        return self.start_fn(self.port, self._url, self.cf, on_error=self._err, on_exit=lambda code, had: None)
+
+    def start(self) -> bool:
+        self.proc = self._start()
+        if self.proc is None:
+            return False
+        threading.Thread(target=self._loop, daemon=True, name="tunnel-keeper").start()
+        return True
+
+    def _url(self, url: str) -> None:
+        self.fails = 0
+        self.on_url(url)
+
+    def _err(self, msg: str) -> None:
+        if not self.stop.is_set() and self.fails <= 1:    # при повторных падениях — без потока одинаковых строк
+            say("  " + msg)
+
+    def _loop(self) -> None:
+        while not self.stop.wait(self.period):
+            if self.proc.poll() is None:
+                continue
+            self.fails += 1
+            if self.fails == 1:
+                say("  Туннель оборвался — поднимаю заново; новый адрес файл друга и пульт найдут сами.")
+            if self.stop.wait(min(60.0, self.backoff * self.fails)):
+                return
+            proc = self._start()
+            if proc is None:
+                say("  cloudflared не запускается — туннель не поднять. Пульт друга работает только на этом ПК.")
+                return
+            self.proc = proc
+
+    def close(self) -> None:
+        self.stop.set()
+        if self.proc is not None:
+            try:
+                self.proc.terminate()
+            except OSError:
+                pass
 
 
 # --- файл друга и мелочи Windows ---
@@ -252,10 +428,11 @@ def make_friend_file(path: Path, secret: str, base: str) -> Path:
 
 
 def copy_text(text: str) -> bool:
+    """В буфер обмена Windows (clip). Ссылка — латиница: её clip понимает в любой кодировке консоли."""
     if os.name != "nt":
         return False
     try:
-        subprocess.run(["clip"], input=text.encode("utf-16-le"), timeout=5, check=True)
+        subprocess.run(["clip"], input=text.encode("ascii", "replace"), timeout=5, check=True)
         return True
     except (OSError, subprocess.SubprocessError):
         return False
@@ -267,6 +444,44 @@ def reveal(path: Path) -> None:
             subprocess.Popen(["explorer", "/select,", str(path)])
         except OSError:
             pass
+
+
+def quickedit_off() -> None:
+    """Windows: выделение мышью в окне (QuickEdit) останавливает вывод программы, а с ним и чтение журнала
+    cloudflared — туннель встанет. На время игры выключаем; ссылка на пульт и так копируется сама."""
+    if os.name != "nt":
+        return
+    try:
+        import ctypes  # noqa: PLC0415
+        k = ctypes.windll.kernel32
+        h = k.GetStdHandle(-10)                         # STD_INPUT_HANDLE
+        mode = ctypes.c_uint32()
+        if k.GetConsoleMode(h, ctypes.byref(mode)):
+            old = mode.value
+            k.SetConsoleMode(h, (old | 0x0080) & ~0x0040)   # ENABLE_EXTENDED_FLAGS, без ENABLE_QUICK_EDIT_MODE
+            atexit.register(k.SetConsoleMode, h, old)
+    except Exception:                                   # noqa: BLE001 — не консоль: и не нужно
+        pass
+
+
+def already_running(opener=LOCAL) -> bool:
+    """Отвечает ли на этом ПК сервер тренера (второй запуск ИГРАТЬ.bat, пока первый идёт)."""
+    try:
+        with opener(HEALTH, timeout=2) as r:
+            return json.loads(r.read().decode("utf-8")).get("ok") is True
+    except Exception:                                   # noqa: BLE001 — не отвечает: значит, не запущен
+        return False
+
+
+def wait_enter(stop: threading.Event, ask=input) -> None:
+    """Enter в окне — закончить игру. Окно без ввода — ждать только Ctrl+C."""
+    try:
+        ask("")
+    except (EOFError, OSError):
+        return
+    except KeyboardInterrupt:
+        pass
+    stop.set()
 
 
 # --- главное ---
@@ -285,9 +500,12 @@ def parse(argv=None):
     return ap.parse_args(argv)
 
 
-def main(argv=None, ask=input) -> int:
+def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=input) -> int:
     args = parse(argv)
     say("=== Тренер Доты: игра вдвоём ===")
+    if already_running():
+        say("Игра уже запущена в другом окне ИГРАТЬ.bat — переключитесь на него (второе окно не нужно).")
+        return 1
     cfg = load_config()
     if args.new_friend or not cfg.get("secret"):
         cfg["secret"] = RV.new_secret()
@@ -295,38 +513,43 @@ def main(argv=None, ask=input) -> int:
     secret = cfg["secret"]
 
     say("[1/6] Агенты героев")
-    key, model = setup_claude(cfg, args, ask)
+    key, model = setup_claude(cfg, args, ask_secret, offer=offer)
     if key:
-        os.environ["ANTHROPIC_API_KEY"] = key
-        backend = make_backend("api", model)
+        backend = ApiBackend(model, api_key=key)        # ключ — только агентам, не в окружение Доты и cloudflared
         say(f"  Героев ведёт Claude (быстрая модель), предел {args.max_calls} вызовов на сторону. Платите вы.")
     else:
         backend = make_backend("rules")
-        say("  Героев ведут правила (не Claude). Подключить Claude: ИГРАТЬ.bat --ask-key")
+        say("  Героев ведут правила (не Claude). Подключить Claude: при следующем запуске нажмите любую клавишу,")
+        say("  когда лаунчер предложит сменить ключ.")
 
     say("[2/6] Кастомка в Доте")
     dota = find_dota(cfg, args, ask, prompt=not args.no_dota)
     if dota:
-        try:
-            _install_module().install(dota, log=lambda s: None)
-            say(f"  Установлена: {dota}")
-        except SystemExit as e:
-            say(f"  Не установил: {e}")
+        say("  " + install_custom_game(dota))
     else:
-        say("  Доту не нашёл — кастомку поставлю, когда скажете путь (ИГРАТЬ.bat --dota \"папка\")")
+        say("  Доту не нашёл — спрошу путь при следующем запуске.")
+    quickedit_off()                                                 # вопросов больше не будет
 
     say("[3/6] Сервер тренера")
     log = LOGS / f"agents_local_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
     try:
         srv = serve("127.0.0.1", GAME_PORT, lambda room: AgentHub(
             {"radiant": backend, "dire": backend}, max_calls=args.max_calls, log_path=log))
-    except OSError:
-        say("  Порт 8787 занят: похоже, сервер уже запущен в другом окне. Закройте его и запустите снова.")
+    except OSError as e:
+        say(f"  Порт {GAME_PORT} занят другой программой ({e}) — серверу тренера некуда встать. Закройте её и "
+            "запустите снова.")
         return 1
     threading.Thread(target=srv.serve_forever, daemon=True, name="game").start()
     room = srv.hub.room("local")
     keys = load_keys((REMOTE,), new=args.new_friend)
-    console = serve_console(srv.hub, "127.0.0.1", CONSOLE_PORT, "local", keys, rv_origin=args.rv)
+    try:
+        console = serve_console(srv.hub, "127.0.0.1", CONSOLE_PORT, "local", keys, rv_origin=args.rv)
+    except OSError as e:
+        srv.shutdown()
+        srv.server_close()
+        say(f"  Порт {CONSOLE_PORT} занят другой программой ({e}) — пульту друга некуда встать. Закройте её и "
+            "запустите снова.")
+        return 1
     threading.Thread(target=console.serve_forever, daemon=True, name="console").start()
     local_link = console_url(f"http://127.0.0.1:{CONSOLE_PORT}", keys[REMOTE])
     say(f"  Работает. Пульт друга на этом ПК: {local_link}")
@@ -341,12 +564,12 @@ def main(argv=None, ask=input) -> int:
             say("  Ящик игры (ntfy.sh) недоступен: если у друга файл не найдёт игру — отправьте ему ссылку на пульт "
                 "(она скопирована).")
     pub = RV.Publisher(secret, args.rv, on_result=on_publish)
-    tunnel = None
+    keeper = None
     if not args.no_tunnel:
         cf = None
         try:
             cf = ensure_cloudflared()
-        except (OSError, urllib.error.URLError) as e:
+        except Exception as e:                                      # noqa: BLE001 — обрыв, битый файл, нет места
             say(f"  Не скачал туннель Cloudflare: {e}")
         if cf:
             def on_url(url):
@@ -354,21 +577,26 @@ def main(argv=None, ask=input) -> int:
                 pub.set_url(link)
                 say(f"  Готово. Ссылка на пульт друга{' (скопирована)' if copy_text(link) else ''}: {link}")
                 say(f"  Друг открывает файл {FRIEND_FILE} — пульт откроется сам.")
-            tunnel = start_tunnel(CONSOLE_PORT, on_url, cf, on_error=lambda m: say("  " + m))
-            if tunnel is not None:
-                atexit.register(tunnel.terminate)
+            keeper = TunnelKeeper(CONSOLE_PORT, on_url, cf)
+            if keeper.start():
+                atexit.register(keeper.close)
                 say("  Туннель поднимается — несколько секунд…")
-    if tunnel is None:
+            else:
+                keeper = None
+    if keeper is None:
         say("  Без туннеля: пульт открывается только на этом ПК.")
 
     say("[5/6] Файл для друга")
-    first = not cfg.get("friend_shown") or args.new_friend
     say(f"  {friend}")
-    if first:
-        say("  Отправьте этот файл другу ОДИН раз (в мессенджере, как документ). Он подходит ко всем следующим играм:")
-        say("  друг открывает его двойным щелчком, файл сам находит вашу игру. Показываю файл в Проводнике.")
+    if cfg.get("friend_version") != RV.FRIEND_VERSION or args.new_friend:
+        if cfg.get("friend_version") or cfg.get("friend_shown"):
+            say("  Файл для друга обновился — отправьте его другу ЗАНОВО (в мессенджере, как документ): старый может")
+            say("  не найти игру. Показываю файл в Проводнике.")
+        else:
+            say("  Отправьте этот файл другу ОДИН раз (в мессенджере, как документ). Он подходит ко всем следующим")
+            say("  играм: друг открывает его двойным щелчком, файл сам находит вашу игру. Показываю файл в Проводнике.")
         reveal(friend)
-        cfg["friend_shown"] = True
+        cfg["friend_version"] = RV.FRIEND_VERSION
         save_config(cfg)
     else:
         say("  Друг уже получал этот файл — пусть просто откроет его.")
@@ -380,17 +608,22 @@ def main(argv=None, ask=input) -> int:
         say(f"  Запустите Доту с инструментами и в её консоли:  dota_launch_custom_game {ADDON} dota")
 
     say("")
-    say("Окно не закрывайте, пока играете. Ctrl+C — закончить игру.")
+    say("Окно не закрывайте, пока играете. Закончить игру — Enter.")
+    stop = threading.Event()
+    threading.Thread(target=wait_enter, args=(stop, enter), daemon=True, name="enter").start()
     try:
-        watch(room)
+        watch(room, stop=stop.is_set, sleep=stop.wait)
     except KeyboardInterrupt:
         pass
     say("Заканчиваю…")
+    if room.agents is not None:
+        room.agents.close()                                       # вызовы из очереди не ждём и не оплачиваем
     pub.close()
-    if tunnel is not None:
-        tunnel.terminate()
-    console.shutdown()
-    srv.shutdown()
+    if keeper is not None:
+        keeper.close()
+    for server in (console, srv):
+        server.shutdown()
+        server.server_close()
     if room.agents is not None:
         s = room.agents.summary()
         say(f"Вызовов Claude: {s.get('paid_calls', 0)}, ошибок: {s.get('errors', 0)}, "

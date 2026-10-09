@@ -9,7 +9,8 @@
 <!-- Файл соперника (решение Д14). Делает его лаунчер хоста (coach/voicecoach/play.py) из этого шаблона: вписывает
      секрет ящика и сам код ящика (web/rv.js). Открыть двойным щелчком — найдёт игру друга и откроет пульт. -->
 <style>
-  :root { --bg:#14161a; --fg:#e8e6e3; --muted:#9aa0a6; --card:#1e2127; --acc:#2e7d32; --bad:#ff7a6e; --dire:#e05a4f; }
+  :root { --bg:#14161a; --fg:#e8e6e3; --muted:#9aa0a6; --card:#1e2127; --acc:#2e7d32; --bad:#ff7a6e; --dire:#e05a4f;
+          --warn:#e0b84f; }
   * { box-sizing:border-box; }
   body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px;
          font:17px/1.45 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
@@ -21,14 +22,17 @@
           border-radius:50%; animation:s 1s linear infinite; margin-right:8px; vertical-align:-1px; }
   @keyframes s { to { transform:rotate(360deg); } }
   #manual { margin-top:16px; }
-  #manual.hidden { display:none; }
+  .hidden { display:none; }
   .row { display:flex; gap:8px; margin-top:8px; }
   input, button { font:inherit; padding:10px 12px; border-radius:8px; border:1px solid #3a3f47; background:#14161a;
                   color:var(--fg); }
   input { flex:1; min-width:0; font-size:16px; }
   button { background:var(--acc); border-color:var(--acc); cursor:pointer; }
   .bad { color:var(--bad); }
+  #note { margin-top:12px; color:var(--warn); font-size:15px; }
+  .noscript { margin-top:16px; font-size:17px; }
 </style>
+<noscript><style>#status, #when { display:none; }</style></noscript>
 </head>
 <body>
 <main>
@@ -37,6 +41,10 @@
     карту, ваших пятерых героев и поле приказов.</div>
   <div id="status"><span class="spin"></span>Ищу игру друга…</div>
   <div class="muted" id="when"></div>
+  <div id="note" class="hidden"></div>
+  <noscript><div class="noscript bad">Здесь файл не работает: скрипты выключены. Откройте его в Chrome, Edge или Firefox
+    на компьютере (не в предпросмотре мессенджера) — или попросите у друга ссылку на пульт и откройте её в браузере.
+  </div></noscript>
   <div id="manual" class="hidden">
     <div id="why" class="bad"></div>
     <div class="muted">Попросите у друга ссылку на пульт — у него она уже скопирована — и вставьте сюда:</div>
@@ -55,16 +63,14 @@
 const BASE = '__RV_BASE__', SECRET = '__SECRET__';
 const EVERY = Number(new URLSearchParams(location.search).get('every')) || 10000;   // мс между проверками
 const $ = id => document.getElementById(id);
-let fails = 0;
+let fails = 0, dead = 0;
 
 function frag() { return '#rv=' + encodeURIComponent(SECRET) + '&b=' + encodeURIComponent(BASE); }
 function status(text, busy) { $('status').innerHTML = (busy ? '<span class="spin"></span>' : '') + text; }
 function manual(why) { $('why').textContent = why; $('manual').classList.remove('hidden'); }
-function goTo(url) {
-  if (!/^https?:\/\/[^\s#]+\/c\/[^\s#]+$/.test(url)) return false;    // только ссылка на пульт, ничего другого
+function openPult(url) {
   status('Нашёл игру — открываю пульт…', true);
-  location.replace(url.replace(/\/?$/, '/') + frag());              // секрет — после «#», на сервер он не уходит
-  return true;
+  location.replace(url + frag());                 // секрет ящика — после «#», на сервер он не уходит
 }
 
 async function look() {
@@ -76,20 +82,34 @@ async function look() {
   try {
     const msg = await Rendezvous.find(BASE, SECRET);
     fails = 0;
-    if (msg && msg.url && goTo(msg.url)) return;
-    status(msg && msg.closed ? 'Друг закрыл игру — жду, когда запустит снова.'
-                             : 'Друг ещё не запустил игру — жду. Как запустит, пульт откроется сам.', true);
+    if (msg && msg.fv > Rendezvous.FRIEND_VERSION) {
+      $('note').textContent = 'Друг обновил игру: попросите у него новый файл ДЛЯ_ДРУГА.html — этот может перестать работать.';
+      $('note').classList.remove('hidden');
+    }
+    const url = msg && Rendezvous.pultUrl(msg.url);
+    if (url && await Rendezvous.alive(url)) return openPult(url);  // адрес из ящика жив — открываем
+    if (url) {
+      dead += 1;                                   // в ящике адрес, но пульт по нему не отвечает
+      status('Игра друга не отвечает — жду. Если друг сейчас играет, попросите у него ссылку на пульт.', true);
+      if (dead >= 3) manual('Адрес игры из ящика не отвечает.');
+    } else {
+      dead = 0;
+      status(msg && msg.closed ? 'Друг закрыл игру — жду, когда запустит снова.'
+                               : 'Друг ещё не запустил игру — жду. Как запустит, пульт откроется сам.', true);
+    }
   } catch (e) {
     fails += 1;
     if (fails >= 2) manual('Не получается связаться с ящиком игры (ntfy.sh): ' + (e && e.message || 'нет связи') + '.');
   }
-  $('when').textContent = 'Проверено в ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ', следующая проверка через '
-    + Math.round(EVERY / 1000) + ' с';
+  $('when').textContent = 'Проверено в ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) +
+    ', следующая проверка через ' + Math.round(EVERY / 1000) + ' с';
   setTimeout(look, EVERY);
 }
 
 $('go').addEventListener('click', () => {
-  if (!goTo($('link').value.trim())) $('why').textContent = 'Это не ссылка на пульт: она выглядит как https://….trycloudflare.com/c/…/';
+  const url = Rendezvous.pultUrl($('link').value);
+  if (url) openPult(url);
+  else $('why').textContent = 'Это не ссылка на пульт: она выглядит как https://….trycloudflare.com/c/…/';
 });
 $('link').addEventListener('keydown', ev => { if (ev.key === 'Enter') $('go').click(); });
 look();

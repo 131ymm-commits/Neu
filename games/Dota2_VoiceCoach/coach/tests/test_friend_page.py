@@ -1,8 +1,9 @@
 """Файл друга ДЛЯ_ДРУГА.html и пульт (решение Д14) в настоящем Chromium, открытые как у соперника: файл с диска.
 
 Ящик — локальный двойник ntfy (tests/test_play.FakeNtfy), пульт — настоящий сервер пульта. Проверяется: файл ждёт,
-пока хост не запустил игру; находит ссылку в ящике и открывает пульт; подделку в ящике не слушает; когда хост
-перезапустил игру (новый адрес туннеля), открытый пульт сам переходит на новый адрес; без ящика — ввод ссылки руками.
+пока хост не запустил игру; находит ссылку в ящике и открывает пульт; подделку в ящике не слушает; на мёртвую ссылку
+не уходит; когда хост перезапустил игру (новый адрес туннеля), открытый пульт сам переходит на новый адрес; без
+ящика — ввод ссылки руками; без скриптов — объясняет, что делать.
 Нужен Playwright с Chromium; без него тест пропускается."""
 import os
 import tempfile
@@ -86,6 +87,42 @@ class FriendPage(unittest.TestCase):
             con_b.server_close()
             self.consoles.remove(con_b)
             page.wait_for_selector("#link:has-text('закрыл игру')", timeout=25000)   # под CSP пульта — селектор
+            for _ in range(5):                                                 # надпись не затирается каждую секунду
+                page.wait_for_timeout(600)
+                self.assertIn("закрыл игру", page.inner_text("#link"))
+            browser.close()
+
+    def test_dead_link_is_not_opened(self):
+        """Хост закрыл окно крестиком: в ящике осталась ссылка, но пульт по ней не отвечает — файл друга туда не
+        уходит (раньше вкладка застревала на странице ошибки), а когда хост запускает игру снова — открывает пульт."""
+        friend = P.make_friend_file(Path(self.tmp.name) / "ДЛЯ_ДРУГА.html", self.secret, self.box.base)
+        dead_con, dead_url = self.console()
+        dead_con.shutdown()
+        dead_con.server_close()
+        self.consoles.remove(dead_con)
+        self.post({"url": dead_url, "fv": RV.FRIEND_VERSION + 1})             # и хост уже с новой версией файла
+        with sync_playwright() as p:
+            browser = p.chromium.launch(executable_path=CHROMIUM)
+            page = browser.new_page()
+            page.goto(friend.as_uri() + "?every=300")
+            page.wait_for_selector("#status:has-text('не отвечает')", timeout=10000)
+            page.wait_for_selector("#manual:not(.hidden)", timeout=10000)      # после трёх проверок — ручной ввод
+            self.assertTrue(page.url.startswith("file://"))
+            self.assertIn("новый файл", page.inner_text("#note"))
+            con, url = self.console()
+            self.post({"url": url})                                            # хост запустил игру снова
+            page.wait_for_url(url + "#rv=*", timeout=10000)
+            page.wait_for_selector("#title:has-text('Тьма')", timeout=10000)
+            browser.close()
+
+    def test_without_scripts_says_what_to_do(self):
+        friend = P.make_friend_file(Path(self.tmp.name) / "ДЛЯ_ДРУГА.html", self.secret, self.box.base)
+        with sync_playwright() as p:
+            browser = p.chromium.launch(executable_path=CHROMIUM)
+            page = browser.new_context(java_script_enabled=False).new_page()
+            page.goto(friend.as_uri())
+            self.assertIn("скрипты выключены", page.inner_text("body"))
+            self.assertFalse(page.is_visible("#status"))                       # не «Ищу игру…» навсегда
             browser.close()
 
     def test_manual_link_when_mailbox_unreachable(self):

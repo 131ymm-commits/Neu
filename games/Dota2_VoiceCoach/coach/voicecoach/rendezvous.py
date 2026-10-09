@@ -7,7 +7,9 @@
 Секрет — 32 случайных байта, общие у хоста (coach/logs/play.json) и файла соперника; на сервис он не уходит.
 Из секрета выводятся имя темы и два ключа. Сообщение зашифровано и подписано (HMAC-SHA256 — есть и в Python,
 и в браузере через WebCrypto, web/rv.js): сервис и посторонние не прочтут ссылку с ключом пульта и не подсунут
-свою, а подделку и старьё файл соперника отбрасывает.
+свою. Свежесть — по часам сервиса: хост повторяет ссылку раз в REFRESH, файл соперника берёт сообщения за
+SINCE (since= считает ntfy), и часы на ПК хоста и друга не важны. Жива ли ссылка, файл друга проверяет сам —
+спрашивает пульт (/api/ping), прежде чем открыть.
 
   сообщение = "vc1." + b64(nonce) + "." + b64(шифртекст) + "." + b64(подпись)
   шифртекст = JSON {"url"|"closed", "t"} XOR поток HMAC(k_enc, nonce ‖ номер блока)
@@ -27,9 +29,11 @@ import urllib.request
 
 RV_DEFAULT = "https://ntfy.sh"
 TOPIC_PREFIX = "dcoach-"
-MAX_AGE = 12 * 3600            # с: старше — не верим (ntfy.sh хранит сообщения недолго, часы)
-REFRESH = 20 * 60              # с: хост повторяет ссылку, пока игра идёт
+REFRESH = 5 * 60               # с: хост повторяет ссылку, пока игра идёт
+SINCE = "10m"                  # окно свежести по часам ntfy: два повтора хоста
+NONCE = 16                     # байт
 VERSION = "vc1"
+FRIEND_VERSION = 2             # версия файла друга: новее у хоста — лаунчер попросит переслать файл
 
 
 def b64e(b: bytes) -> str:
@@ -81,6 +85,8 @@ def unseal(secret: str, text: str) -> dict | None:
         if ver != VERSION:
             return None
         nonce, ct, tag = b64d(n), b64d(c), b64d(tag)
+        if len(nonce) != NONCE:
+            return None
         k_enc, k_mac = _keys(secret)
         if not hmac.compare_digest(tag, _h(k_mac, nonce + ct)):
             return None
@@ -90,13 +96,12 @@ def unseal(secret: str, text: str) -> dict | None:
         return None
 
 
-def latest(secret: str, messages, now: float | None = None) -> dict | None:
-    """Самое свежее подлинное сообщение не старше MAX_AGE (тексты сообщений темы)."""
-    now = time.time() if now is None else now
+def latest(secret: str, messages) -> dict | None:
+    """Самое новое подлинное сообщение из текстов темы (окно свежести задаёт since= у ntfy, не часы на ПК)."""
     best = None
     for m in messages:
         obj = unseal(secret, m)
-        if obj and now - obj["t"] <= MAX_AGE and obj["t"] <= now + 300 and (best is None or obj["t"] > best["t"]):
+        if obj and (best is None or obj["t"] > best["t"]):
             best = obj
     return best
 
@@ -111,7 +116,7 @@ def publish(base: str, name: str, text: str, opener=urllib.request.urlopen, time
         return False
 
 
-def fetch(base: str, name: str, since: str = "12h", opener=urllib.request.urlopen, timeout: float = 10.0) -> list:
+def fetch(base: str, name: str, since: str = SINCE, opener=urllib.request.urlopen, timeout: float = 10.0) -> list:
     """Тексты сообщений темы за since (ntfy: /<тема>/json?poll=1&since=…, по JSON-объекту на строку)."""
     url = f"{base.rstrip('/')}/{name}/json?" + urllib.parse.urlencode({"poll": "1", "since": since})
     with opener(url, timeout=timeout) as r:
@@ -141,7 +146,8 @@ class Publisher:
         self.thread: threading.Thread | None = None
 
     def send(self, obj: dict) -> bool:
-        ok = publish(self.base, self.name, seal(self.secret, {**obj, "t": time.time()}), self.opener)
+        ok = publish(self.base, self.name, seal(self.secret, {**obj, "t": time.time(), "fv": FRIEND_VERSION}),
+                     self.opener)
         self.on_result(ok, obj)
         return ok
 

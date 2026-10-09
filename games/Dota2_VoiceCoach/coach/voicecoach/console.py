@@ -11,6 +11,7 @@
   GET  /c/<ключ>/api/view                что видит команда: часы, счёт, свои герои, видимые враги, вышки
   GET  /c/<ключ>/api/events?after=N&wait=20   реплики агентов и ответы игры своей команде (long-poll)
   POST /c/<ключ>/api/say   {"text": …}   приказ коротким форматом → игре в ответе на её /tick
+  GET  /c/<ключ>/api/ping                жив ли этот адрес (Д14): файл друга и пульт спрашивают, прежде чем перейти
 
 Ключ определяет команду: с ключом Тьмы виден только обзор Тьмы (наблюдения её героев), и приказы идут только её
 агентам. Порт игры (8787) наружу не выставляется. В интернет пульт выводит туннель Cloudflare (`--tunnel`:
@@ -50,7 +51,12 @@ TUNNEL_WAIT = 40.0        # с: не дождались адреса тунне�
 # адрес быстрого туннеля: несколько слов через дефис (служебный api.trycloudflare.com — не он)
 TUNNEL_RE = re.compile(r"https://[a-z0-9]+(?:-[a-z0-9]+)+\.trycloudflare\.com", re.I)
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
-       "connect-src 'self'{rv}; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
+       "connect-src {connect}; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
+# пульт игры вдвоём (Д14) спрашивает ящик игры о новом адресе и проверяет, жив ли он: адреса туннелей, а у страницы,
+# открытой на этом ПК, — и другие порты этого ПК (так пульт переходит с адреса на адрес в тестах)
+FOLLOW = "https://*.trycloudflare.com"
+FOLLOW_LOCAL = "http://127.0.0.1:* http://localhost:*"
+LOCAL_HOST_RE = re.compile(r"^(127\.0\.0\.1|localhost)(:\d+)?$", re.I)
 
 
 def _int(v, default: int = 0) -> int:
@@ -171,8 +177,8 @@ def _origin(url: str | None) -> str:
 
 def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_timeout: float = SOCKET_TIMEOUT,
                          rv_origin: str | None = None):
-    rv = _origin(rv_origin)
-    csp = CSP.format(rv=f" {rv}" if rv else "")       # пульт может спросить ящик игры о новом адресе (Д14)
+    connect = " ".join(x for x in ("'self'", _origin(rv_origin), FOLLOW) if x)
+    csp = {False: CSP.format(connect=connect), True: CSP.format(connect=f"{connect} {FOLLOW_LOCAL}")}
     by_key = [(k.encode("utf-8"), t) for t, k in keys.items()]
     buckets: dict[str, tuple[float, float]] = {}
     guard = threading.Lock()
@@ -214,7 +220,8 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_time
             self.send_header("X-Robots-Tag", "noindex, nofollow")       # страницы туннелей попадают в поиск
             self.send_header("X-Frame-Options", "DENY")
             if ctype.startswith("text/html"):
-                self.send_header("Content-Security-Policy", csp)
+                local = bool(LOCAL_HOST_RE.match(self.headers.get("Host") or ""))
+                self.send_header("Content-Security-Policy", csp[local])
             for k, v in (extra or {}).items():
                 self.send_header(k, v)
             self.end_headers()
@@ -249,6 +256,8 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_time
             if rest == ["api", "view"]:
                 room.console_seen[team] = time.time()            # лаунчер хоста видит, что друг на пульте
                 return self._send(200, team_view(room, team))
+            if rest == ["api", "ping"]:                     # «адрес жив»: спрашивает и файл друга с диска (Д14)
+                return self._send(200, {"ok": True}, extra={"Access-Control-Allow-Origin": "*"})
             if rest == ["api", "events"]:
                 try:
                     wait = min(max(float(q.get("wait", 0)), 0.0), WAIT_MAX)
@@ -278,7 +287,20 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_time
     return Handler
 
 
-class ConsoleServer(ThreadingHTTPServer):
+class ExclusiveServer(ThreadingHTTPServer):
+    """HTTP-сервер, который не делит порт. На Windows SO_REUSEADDR (его ставит HTTPServer) позволяет второму процессу
+    занять тот же порт: второй запуск лаунчера не узнал бы, что игра уже идёт, а Дота и пульт попали бы в разные
+    экземпляры. Там порт держим исключительно (SO_EXCLUSIVEADDRUSE), как test.support.socket_helper в CPython."""
+    exclusive = os.name == "nt"
+
+    def server_bind(self):
+        if self.exclusive and hasattr(socket, "SO_EXCLUSIVEADDRUSE"):
+            self.allow_reuse_address = False
+            self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_EXCLUSIVEADDRUSE, 1)
+        super().server_bind()
+
+
+class ConsoleServer(ExclusiveServer):
     """Сервер пульта: не больше max_conn соединений сразу — лишние закрываются, не заводя поток."""
     max_conn = MAX_CONN
 
@@ -320,11 +342,12 @@ def console_url(base: str, key: str) -> str:
 
 
 def start_tunnel(port: int, on_url, cloudflared: str = "cloudflared", popen=subprocess.Popen, which=shutil.which,
-                 on_error=None, wait: float = TUNNEL_WAIT):
+                 on_error=None, wait: float = TUNNEL_WAIT, on_exit=None):
     """Быстрый туннель Cloudflare (без учётной записи): `cloudflared tunnel --url http://127.0.0.1:<порт>`.
     Адрес https://….trycloudflare.com cloudflared пишет в журнал при запуске — on_url(адрес) зовётся один раз.
     Адрес случайный и меняется при каждом запуске; гарантий работы Cloudflare не даёт (тестовый режим).
-    Ошибки cloudflared (строки ERR), его выход и «адреса нет за wait секунд» — в on_error. Нет cloudflared — None."""
+    Ошибки cloudflared (строки ERR) и «адреса нет за wait секунд» — в on_error; его выход — в on_exit(код, был ли
+    адрес), а без on_exit — тоже в on_error. Нет cloudflared — None."""
     on_error = on_error or (lambda msg: print(msg, flush=True))
     exe = which(cloudflared) or cloudflared
     try:
@@ -346,6 +369,8 @@ def start_tunnel(port: int, on_url, cloudflared: str = "cloudflared", popen=subp
                 errors += 1
                 on_error("cloudflared: " + line.strip()[:300])
         code = proc.wait() if hasattr(proc, "wait") else None
+        if on_exit is not None:
+            return on_exit(code, got.is_set())
         on_error(f"Туннель закрыт: cloudflared завершился (код {code}). Ссылка через интернет больше не работает."
                  if got.is_set() else f"Туннель не поднялся: cloudflared завершился (код {code}) — строки выше.")
 

@@ -4,7 +4,18 @@
 (function (root) {
   'use strict';
   const te = new TextEncoder(), td = new TextDecoder();
-  const MAX_AGE = 12 * 3600;
+  const SINCE = '10m';            // окно свежести по часам ntfy (хост повторяет ссылку раз в 5 мин): часы ПК не важны
+
+  // запрос с пределом ожидания: зависший ответ не держит проверку дольше ms
+  async function get(url, ms) {
+    const ctl = root.AbortController ? new AbortController() : null;
+    const timer = ctl ? setTimeout(() => ctl.abort(), ms) : 0;
+    try {
+      return await fetch(url, { cache: 'no-store', signal: ctl ? ctl.signal : undefined });
+    } finally {
+      clearTimeout(timer);
+    }
+  }
 
   function b64d(s) {
     s = String(s).replace(/-/g, '+').replace(/_/g, '/');
@@ -44,6 +55,7 @@
       const k = b64d(secret);
       const kEnc = await hmac(k, te.encode('enc')), kMac = await hmac(k, te.encode('mac'));
       const nonce = b64d(p[1]), ct = b64d(p[2]), tag = b64d(p[3]);
+      if (nonce.length !== 16) return null;
       if (!same(tag, await hmac(kMac, cat(nonce, ct)))) return null;       // подделка или чужое — мимо
       const pt = new Uint8Array(ct.length);
       for (let i = 0, blk = 0; i < ct.length; blk++) {
@@ -57,26 +69,44 @@
       return null;
     }
   }
-  // самое свежее подлинное сообщение не старше 12 ч: { url } или { closed }, или null; нет связи — исключение
+  // самое новое подлинное сообщение за последние 10 минут: { url, fv } или { closed }, или null; нет связи — исключение
   async function find(base, secret) {
     const name = await topic(secret);
-    const r = await fetch(String(base).replace(/\/$/, '') + '/' + name + '/json?poll=1&since=12h', { cache: 'no-store' });
+    const r = await get(String(base).replace(/\/$/, '') + '/' + name + '/json?poll=1&since=' + SINCE, 15000);
     if (!r.ok) throw new Error('HTTP ' + r.status);
-    const now = Date.now() / 1000;
     let best = null;
     for (const line of (await r.text()).split('\n')) {
       let m;
       try { m = JSON.parse(line); } catch (e) { continue; }
       if (!m || m.event !== 'message' || typeof m.message !== 'string') continue;
       const obj = await unseal(secret, m.message);
-      if (obj && now - obj.t <= MAX_AGE && obj.t <= now + 300 && (!best || obj.t > best.t)) best = obj;
+      if (obj && (!best || obj.t > best.t)) best = obj;
     }
     return best;
+  }
+  // жив ли пульт по ссылке: он отвечает на /api/ping (туннель, который хост закрыл, отвечает страницей ошибки)
+  async function alive(url) {
+    try {
+      const r = await get(String(url).replace(/\/?$/, '/') + 'api/ping', 8000);
+      return r.ok && (await r.json()).ok === true;
+    } catch (e) {
+      return false;
+    }
+  }
+  // ссылка на пульт: https-туннель Cloudflare или адрес этого ПК / домашней сети (только им отдаём секрет после #)
+  function pultUrl(url) {
+    const m = /^(https?):\/\/([^\/\s#?]+)(\/c\/[^\s#?]+)$/.exec(String(url || '').trim());
+    if (!m) return null;
+    const host = m[2].toLowerCase().replace(/:\d+$/, '');
+    const ok = (m[1] === 'https' && /^[a-z0-9-]+\.trycloudflare\.com$/.test(host)) ||
+      /^(127\.0\.0\.1|localhost|10\.\d+\.\d+\.\d+|192\.168\.\d+\.\d+|172\.(1[6-9]|2\d|3[01])\.\d+\.\d+)$/.test(host);
+    return ok ? m[1] + '://' + m[2] + m[3].replace(/\/?$/, '/') : null;
   }
   // параметры ящика из адреса пульта: «#rv=<секрет>&b=<адрес ящика>» (часть после # на сервер не уходит)
   function fromHash(hash) {
     const m = /(?:^#|&)rv=([^&]+)&b=([^&]+)/.exec(hash || '');
     return m ? { secret: decodeURIComponent(m[1]), base: decodeURIComponent(m[2]) } : null;
   }
-  root.Rendezvous = { topic: topic, unseal: unseal, find: find, fromHash: fromHash };
+  root.Rendezvous = { topic: topic, unseal: unseal, find: find, alive: alive, pultUrl: pultUrl, fromHash: fromHash,
+                      FRIEND_VERSION: 2 };
 })(window);

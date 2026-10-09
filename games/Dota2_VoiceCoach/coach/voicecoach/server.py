@@ -58,7 +58,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
 from .agents import AgentHub, hero_ru, make_backend
-from .console import TEAM_RU, console_url, load_keys, serve_console, start_tunnel
+from .console import TEAM_RU, ExclusiveServer, console_url, load_keys, serve_console, start_tunnel
 from .describe import describe
 from .parser import Agent, MatchContext, parse
 from .textcmd import parse_short, suggest
@@ -530,7 +530,7 @@ def load_roster(hub: "Hub", path: str, room: str = "local", source: str | None =
 
 def serve(host="127.0.0.1", port=8787, agent_factory=None) -> ThreadingHTTPServer:
     hub = Hub(agent_factory)
-    srv = ThreadingHTTPServer((host, port), make_handler(hub))
+    srv = ExclusiveServer((host, port), make_handler(hub))           # второй сервер на том же порту не встанет
     srv.hub = hub
     return srv
 
