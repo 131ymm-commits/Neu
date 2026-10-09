@@ -192,6 +192,10 @@ class Launcher(unittest.TestCase):
         env.start()
         self.addCleanup(env.stop)
         os.environ.pop("ANTHROPIC_API_KEY", None)
+        for target in ("builtins.input", "getpass.getpass"):                 # забытый ask в тесте — не зависание
+            patcher = mock.patch(target, side_effect=EOFError)
+            patcher.start()
+            self.addCleanup(patcher.stop)
 
     MODELS = json.dumps({"data": [                                         # поля как у API: id, created_at, …
         {"id": f"x-{P.FAST_LINE}-old", "created_at": "2025-10-01T00:00:00Z"},
@@ -205,16 +209,17 @@ class Launcher(unittest.TestCase):
         return urllib.error.HTTPError(P.MODELS_API, code, "x", {}, io.BytesIO(body))
 
     def test_pick_model_newest_fast(self):
-        self.assertEqual(P.pick_model("k", opener_for({P.MODELS_API: self.MODELS})), (self.NEW, "", ""))
-        model, why, kind = P.pick_model("k", opener_for({P.MODELS_API: self.http_error(401, "invalid x-api-key")}))
+        K = "sk-ant-test-key-0123456789"
+        self.assertEqual(P.pick_model(K, opener_for({P.MODELS_API: self.MODELS})), (self.NEW, "", ""))
+        model, why, kind = P.pick_model(K, opener_for({P.MODELS_API: self.http_error(401, "invalid x-api-key")}))
         self.assertEqual((model, kind), (None, "key"))
         self.assertIn("invalid x-api-key", why)                                # текст ответа API — хосту
-        model, why, kind = P.pick_model("k", opener_for({P.MODELS_API: self.http_error(403, "Request not allowed")}))
+        model, why, kind = P.pick_model(K, opener_for({P.MODELS_API: self.http_error(403, "Request not allowed")}))
         self.assertEqual(kind, "key")
         self.assertIn("HTTP 403: Request not allowed", why)
-        self.assertEqual(P.pick_model("k", opener_for({P.MODELS_API: self.http_error(529)}))[2], "net")
-        self.assertEqual(P.pick_model("k", opener_for({}))[2], "net")
-        self.assertEqual(P.pick_model("k", opener_for({P.MODELS_API: b'{"data": [{"id": "x-big"}]}'}))[2], "none")
+        self.assertEqual(P.pick_model(K, opener_for({P.MODELS_API: self.http_error(529)}))[2], "net")
+        self.assertEqual(P.pick_model(K, opener_for({}))[2], "net")
+        self.assertEqual(P.pick_model(K, opener_for({P.MODELS_API: b'{"data": [{"id": "x-big"}]}'}))[2], "none")
         self.assertEqual(P.mask("sk-ant-api03-abcdefghijklmnop"), "sk-ant-…mnop")
         self.assertEqual(P.mask("short"), "…")
 
@@ -232,33 +237,39 @@ class Launcher(unittest.TestCase):
                          (None, None))
         # нажал клавишу при запуске — вводит ключ
         cfg = P.load_config(self.cfg_path)
-        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: " sk-test ", opener=ok, offer=lambda t: True),
-                         ("sk-test", self.NEW))
+        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: " sk-test-key-0123456789 ", opener=ok,
+                                        offer=lambda t: True), ("sk-test-key-0123456789", self.NEW))
         saved = P.load_config(self.cfg_path)
-        self.assertEqual((saved["api_key"], saved["model"]), ("sk-test", self.NEW))
-        self.assertFalse(any("sk-test" in line for line in self.out))         # ключ на экран не выводится
+        self.assertEqual((saved["api_key"], saved["model"]), ("sk-test-key-0123456789", self.NEW))
+        self.assertFalse(any("sk-test-key-0123456789" in line for line in self.out))         # ключ на экран не выводится
         # без сети берём прошлую модель; с --rules ключ не нужен
-        self.assertEqual(P.setup_claude(saved, P.parse([]), opener=opener_for({}), offer=no_offer), ("sk-test", self.NEW))
+        self.assertEqual(P.setup_claude(saved, P.parse([]), opener=opener_for({}), offer=no_offer),
+                         ("sk-test-key-0123456789", self.NEW))
         self.assertEqual(P.setup_claude(saved, P.parse(["--rules"])), (None, None))
         # сохранённый ключ отозвали — спрашивает новый; Enter — не сейчас
         revoked = opener_for({P.MODELS_API: self.http_error(401, "invalid x-api-key")})
-        answers = iter(["sk-new", ""])
+        answers = iter(["sk-new-key-0123456789", ""])
         self.assertEqual(P.setup_claude(dict(saved), P.parse([]), ask=lambda p: next(answers), opener=revoked,
                                         offer=no_offer), (None, None))
-        with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-env"}):
-            self.assertEqual(P.setup_claude({}, P.parse([]), opener=ok, offer=never)[0], "sk-env")
+        with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-env-key-0123456789"}):
+            self.assertEqual(P.setup_claude({}, P.parse([]), opener=ok, offer=never)[0], "sk-env-key-0123456789")
 
     def test_key_without_credit_is_explained(self):
         """Рецензия 3: ключ из организации без кредита принимался, и весь матч стоял на паузе."""
         ok = opener_for({P.MODELS_API: self.MODELS})
         nocredit = lambda key, model, opener: (False, "nocredit")             # noqa: E731
-        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "sk-no-credit-0123456789", opener=ok,
+        answers = iter(["sk-no-credit-0123456789", ""])                      # ключ без кредита, потом «не сейчас»
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: next(answers), opener=ok,
                                         offer=lambda t: False, probe=nocredit), (None, None))
         self.assertEqual(P.load_config(self.cfg_path)["api_key"], "sk-no-credit-0123456789")   # ключ сохранён
         self.assertTrue(any("нет кредита" in line for line in self.out))
+        self.assertTrue(any("переключите организацию" in line for line in self.out))   # совет и при чужой привязке
+        # при следующем запуске — сказать и сразу дать вставить ключ из организации с кредитом
         self.out.clear()
-        self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), opener=ok, offer=lambda t: False,
-                                        probe=nocredit), (None, None))      # и при следующем запуске — сказать
+        credit = lambda key, model, opener: (key != "sk-no-credit-0123456789", "" if key != "sk-no-credit-0123456789" else "nocredit")   # noqa: E731
+        self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "sk-with-credit-0123456",
+                                        opener=ok, offer=lambda t: False, probe=credit),
+                         ("sk-with-credit-0123456", self.NEW))
         self.assertTrue(any("нет кредита" in line for line in self.out))
         # проба кредита по-настоящему: 400 «credit balance» → nocredit; 429 — ключ рабочий
         body = b'{"type":"error","error":{"message":"Your credit balance is too low to access the Anthropic API."}}'
@@ -430,6 +441,24 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.find_claude(which=lambda n: "/usr/bin/claude", home=empty), "/usr/bin/claude")
         self.assertIsNone(P.find_claude(which=lambda n: r"C:\npm\claude.CMD", home=empty))   # обёртка npm — нет
 
+    def test_old_config_without_mode_sees_menu(self):
+        """Рецензия 4: прежний play.json {"api_key": ""} (Enter на старом вопросе о ключе) — меню Д15 один раз."""
+        asked = []
+        P.setup_agents({"api_key": ""}, P.parse([]), ask=lambda p: asked.append(p) or "0", offer=lambda t: False)
+        self.assertEqual(len(asked), 1)
+        self.assertEqual(P.load_config(self.cfg_path)["mode"], "off")
+
+    def test_cyrillic_is_not_saved_as_key(self):
+        """Рецензия 4: «нет» на вопросе о ключе сохранялось как ключ и давало «нет связи» на каждом запуске."""
+        ok = opener_for({P.MODELS_API: self.MODELS})
+        answers = iter(["нет", "sk ant api 03 с пробелами 0123", ""])
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: next(answers), opener=ok,
+                                        offer=lambda t: False), (None, None))
+        self.assertNotIn("api_key", P.load_config(self.cfg_path))
+        self.assertTrue(any("не похоже на ключ" in line for line in self.out))
+        # и сохранённая раньше кириллица — «ключ не подошёл», а не «нет связи»: лаунчер спросит новый
+        self.assertEqual(P.pick_model("ключ", opener_for({}))[2], "key")
+
     def test_friend_version_same_in_python_and_js(self):
         """Разные версии в rendezvous.py и rv.js — свежий файл друга вечно просил бы новый."""
         js = (P.WEB / "rv.js").read_text(encoding="utf-8")
@@ -443,15 +472,15 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=ctrl_c, opener=opener_for({})), (None, None))
         self.assertNotIn("api_key", P.load_config(self.cfg_path))
         # нет сети при вводе — ключ сохранён, в этот раз правила, в следующий — Claude
-        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "sk-later", opener=opener_for({})), (None, None))
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "sk-later-key-01234567", opener=opener_for({})), (None, None))
         saved = P.load_config(self.cfg_path)
-        self.assertEqual(saved["api_key"], "sk-later")
+        self.assertEqual(saved["api_key"], "sk-later-key-01234567")
         self.assertEqual(P.setup_claude(saved, P.parse([]), opener=opener_for({P.MODELS_API: self.MODELS}),
-                                        offer=lambda t: False), ("sk-later", self.NEW))
+                                        offer=lambda t: False), ("sk-later-key-01234567", self.NEW))
         # три неверных ключа — правила, но «без Claude» не запоминается
         bad = opener_for({P.MODELS_API: self.http_error(401)})
         self.cfg_path.unlink()
-        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "sk-bad", opener=bad), (None, None))
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "sk-bad-key-0123456789", opener=bad), (None, None))
         self.assertNotIn("api_key", P.load_config(self.cfg_path))
         self.assertIsNone(P._ask(lambda p: (_ for _ in ()).throw(EOFError()), "?"))   # окно без ввода
 
