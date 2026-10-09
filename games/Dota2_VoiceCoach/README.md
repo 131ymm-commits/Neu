@@ -14,7 +14,7 @@
 ## Играть вдвоём — два файла (Д14)
 
 1. **Вы (хост, Windows, Dota 2 с бесплатным дополнением Workshop Tools):** скачайте и запустите `ИГРАТЬ.bat`
-   (https://github.com/131ymm-commits/Neu/blob/ccr-9d6c6e9e-yuegyb/games/Dota2_VoiceCoach/ИГРАТЬ.bat → «Download raw
+   (https://github.com/131ymm-commits/Neu/blob/e09a66fcb380d8abc9368b7c7e6218fd70bd7fe0/games/Dota2_VoiceCoach/ИГРАТЬ.bat → «Download raw
    file»). Он сам поставит всё нужное, один раз спросит, как думать героям (с подпиской Max — ключ API из её
    кредита, без доплат, если не покупать кредиты и не включать автопополнение; Д15), и запустит Доту с кастомкой —
    вы тренер Света.
