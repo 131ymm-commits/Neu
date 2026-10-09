@@ -739,6 +739,9 @@ class AgentHub:
                  prices: dict | None = None, sync: bool = False, coach_gap: float = 3.0):
         self.backends = backends                  # {"radiant": мотор, "dire": мотор}
         self.period, self.dead_period, self.min_gap, self.error_gap = period, dead_period, min_gap, error_gap
+        # сколько игре держать решение агента, прежде чем героем возьмётся править запасной исполнитель:
+        # период плюс запас на думание (по подписке решения реже — игра узнаёт это из ответа на обмен)
+        self.stale = max(20.0, period + 15.0)
         self.max_inflight = max_inflight
         self.max_calls = max_calls                # предел платных вызовов у каждой стороны (правила не считаются)
         self.personas = personas or {}
@@ -821,9 +824,9 @@ class AgentHub:
             return "очередное решение"
         return None
 
-    def _schedule(self, obs, now: float, t_obs=None):
-        """Нужно ли агенту этого героя решать сейчас; да — задание для фона (под замком).
-        t_obs — точные часы игры, когда собраны наблюдения (в самих наблюдениях часы округлены до секунд)."""
+    def _want(self, obs, now: float):
+        """Нужно ли агенту этого героя решать сейчас и можно ли (предел вызовов, пауза). → (агент, повод) или None.
+        Место в пуле не занимает — это делает _schedule (под замком)."""
         if not isinstance(obs, dict) or obs.get("team") not in self.backends:
             return None
         ag = self._agent(obs)
@@ -832,14 +835,24 @@ class AgentHub:
         trig = self._trigger(ag, obs)
         if trig is None:
             return None
-        paid = self._paid(ag.team)
-        if paid and self.max_calls is not None and self.calls_paid.get(ag.team, 0) >= self.max_calls:
+        if self._paid(ag.team) and self.max_calls is not None and self.calls_paid.get(ag.team, 0) >= self.max_calls:
             ag.state = "лимит вызовов исчерпан"
             return None
         if now < self.pause_until.get(ag.team, 0.0):
             ag.state = "пауза: " + self.pause_why.get(ag.team, "лимит")
             return None
-        if self.inflight >= self.max_inflight:
+        return ag, trig
+
+    def _schedule(self, obs, now: float, t_obs=None, want=None):
+        """Нужно ли агенту этого героя решать сейчас; да — задание для фона (под замком).
+        t_obs — точные часы игры, когда собраны наблюдения (в самих наблюдениях часы округлены до секунд)."""
+        want = want or self._want(obs, now)
+        if want is None or self.inflight >= self.max_inflight:
+            return None
+        ag, trig = want
+        paid = self._paid(ag.team)
+        if paid and self.max_calls is not None and self.calls_paid.get(ag.team, 0) >= self.max_calls:
+            ag.state = "лимит вызовов исчерпан"                # в этом же обмене предел могли выбрать соседи
             return None
         ag.busy, ag.state = True, "думает"
         self.inflight += 1
@@ -877,11 +890,24 @@ class AgentHub:
         now = time.monotonic()
         with self.lock:
             applied = self._applied(payload)
+            wants = []
             for obs in payload.get("heroes") or []:
                 try:
-                    job = self._schedule(obs, now, payload.get("clock"))
+                    w = self._want(obs, now)
                 except (TypeError, ValueError, KeyError, AttributeError):
                     continue                              # битое наблюдение одного героя не мешает остальным
+                if w is not None:
+                    wants.append((w, obs))
+            # места в пуле — сначала приказам тренера и обращениям союзников, дальше тем, кто дольше всех без
+            # решения: при узком пуле (по подписке — 4 вызова сразу) ни одна сторона и ни один герой не голодает
+            wants.sort(key=lambda x: (x[0][1] not in (COACH, ASKED), x[0][0].last_clock))
+            for w, obs in wants:
+                if self.inflight >= self.max_inflight:
+                    break
+                try:
+                    job = self._schedule(obs, now, payload.get("clock"), want=w)
+                except (TypeError, ValueError, KeyError, AttributeError):
+                    continue
                 if job is not None:
                     jobs.append(job)
         for rec in applied:
@@ -898,6 +924,7 @@ class AgentHub:
                 "agents": [{"team": a.team, "pos": a.pos, "state": a.state} for a in self.agents.values()],
                 "backend": {t: getattr(b, "label", str(b)) for t, b in self.backends.items()},
                 "run": self.run,
+                "stale": self.stale,
             }
 
     def _run(self, ag: HeroAgent, obs: dict, trig: str, chat: list | None = None, asked: list | None = None,
@@ -935,10 +962,11 @@ class AgentHub:
             reply = dict(e.reply or {})                            # обрезанный ответ тоже оплачен — токены в учёт
             if e.retry_after:
                 with self.lock:
-                    self.pause_until[ag.team] = max(self.pause_until.get(ag.team, 0.0),
-                                                    time.monotonic() + e.retry_after)
-                    self.pause_why[ag.team] = ("кредит API кончился" if "кредит" in err else
-                                               "лимит подписки" if getattr(backend, "self_cost", False) else "лимит API")
+                    until = time.monotonic() + e.retry_after
+                    if until > self.pause_until.get(ag.team, 0.0):     # причину пишет самая долгая пауза
+                        self.pause_until[ag.team] = until
+                        self.pause_why[ag.team] = ("кредит API кончился" if "кредит" in err else "лимит подписки"
+                                                   if getattr(backend, "self_cost", False) else "лимит API")
         except Exception as e:                                     # noqa: BLE001 — агент не должен ронять сервер
             err = f"{type(e).__name__}: {e}"
         latency = time.monotonic() - t0

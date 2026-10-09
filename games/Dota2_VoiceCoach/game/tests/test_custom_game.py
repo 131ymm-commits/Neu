@@ -611,6 +611,22 @@ class Executor(Game):
             return self.L.table_from([self.lua(x) for x in v])
         return v
 
+    def test_decision_kept_as_long_as_server_says(self):
+        """По подписке (Д15) решения реже: сервер сообщает, сколько держать решение, — иначе через 20 с героем
+        зря правил бы запасной исполнитель."""
+        self.start_match()
+        G = self.G["CoachGame"]
+        T = G["teams"][2]
+        alive = lambda dt: G["AgentAlive"](G, T, 1, T["dec_t"][1] + dt, True)   # noqa: E731
+        self.decide(2, 1, {"plan": "farm", "where": "bot"})
+        self.assertTrue(alive(19))
+        self.assertFalse(alive(21))                                            # по умолчанию — 20 с
+        G["OnAgents"](G, self.lua({"stale": 30, "decisions": []}))
+        self.assertTrue(alive(29))
+        self.assertFalse(alive(31))
+        G["OnAgents"](G, self.lua({"stale": 1e6, "decisions": []}))            # нелепое значение — не берём
+        self.assertFalse(alive(31))
+
     def test_last_hit_deny_and_wait(self):
         self.start_match()
         sniper = self.hero(1)

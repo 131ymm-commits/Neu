@@ -15,8 +15,6 @@ set "NET=[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]
 
 rem --- papka igry: ryadom s etim fajlom ili DotaCoach ---
 if exist "%HERE%coach\voicecoach\play.py" (set "PROJ=%HERE%") else (set "PROJ=%HERE%DotaCoach\")
-rem --- v papke igry uzhe est svezhaya kopiya etogo fajla: zapustit ee - ona obnovlyaetsya vmeste s igroj ---
-if /i not "%PROJ%"=="%HERE%" if exist "%PROJ%coach\voicecoach\play.py" if exist "%PROJ%%~nx0" (call "%PROJ%%~nx0" %* & exit /b)
 set "RT=%PROJ%.runtime"
 if not exist "%RT%" mkdir "%RT%"
 
@@ -45,7 +43,7 @@ if exist "%PROJ%coach\voicecoach\update.py" goto run_update
 if not exist "%PROJ%coach\voicecoach" mkdir "%PROJ%coach\voicecoach"
 %PS% "%NET% $f = [IO.Path]::Combine($env:PROJ, 'coach\voicecoach\update.py'); foreach ($b in @($env:RAW1, $env:RAW2)) { try { $s = $w.DownloadString($b + '/RELEASE').Trim().Split()[0]; if ($s -notmatch '^[0-9a-f]{40}$') { continue }; $t = [IO.Path]::GetTempFileName(); $w.DownloadFile('https://raw.githubusercontent.com/131ymm-commits/Neu/' + $s + '/games/Dota2_VoiceCoach/coach/voicecoach/update.py', $t); [IO.File]::Copy($t, $f, $true); [IO.File]::Delete($t); break } catch { } }"
 if exist "%PROJ%coach\voicecoach\update.py" goto run_update
-echo Ne udalos skachat fajly igry s GitHub. Proverte internet i zapustite etot fajl snova.
+echo Ne udalos skachat fajly igry s GitHub: net interneta ili vypusk igry eshche ne opublikovan. Zapustite pozzhe.
 pause
 exit /b 1
 :run_update

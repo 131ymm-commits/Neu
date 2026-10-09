@@ -16,7 +16,7 @@
   5. делает файл соперника ДЛЯ_ДРУГА.html — один раз, подходит ко всем играм — и показывает его в Проводнике;
   6. запускает Доту с инструментами и сразу кастомку (так запускает аддоны шаблон ModDota: dota2.exe -tools -addon).
 Соперник открывает ДЛЯ_ДРУГА.html: файл находит игру в ящике и открывает пульт; перезапуск игры пульт переживает.
-Закончить игру — Enter в окне лаунчера.
+Закончить игру — Enter два раза в окне лаунчера.
 """
 from __future__ import annotations
 
@@ -54,7 +54,9 @@ REMOTE = "dire"                                # хост в Доте — тре
 MAX_CALLS = 3000                               # платных вызовов на сторону (ключ API): ≈ 30–40 минут игры
 SUB_MAX_CALLS = 1000                           # по подписке: вызовов на сторону за запуск (лимиты подписки не опубликованы)
 # по подписке герои думают реже: каждый вызов — процесс Claude Code на ПК хоста, и всё идёт из лимитов подписки
-SUB_PACE = {"period": 12.0, "dead_period": 30.0, "min_gap": 3.0, "error_gap": 10.0, "max_inflight": 4}
+# (замер на модели игры: при 6–11 с на вызов 6 вызовов сразу дают каждому из 10 героев решение раз в 15–22 с;
+# игра держит решение period + 15 = 30 с — запасной исполнитель не перехватывает героев между решениями)
+SUB_PACE = {"period": 15.0, "dead_period": 30.0, "min_gap": 4.0, "error_gap": 10.0, "max_inflight": 6}
 CLAUDE_FAST = "haiku"                          # имя линии быстрых моделей для `claude --model`
 KEY_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")   # по подписке их нельзя отдавать claude: -p платит ключом
 CREDITS_PAGE = "https://claude.ai/settings/billing"        # подписка Max → «API credits»: привязать организацию Console
@@ -176,15 +178,42 @@ def pick_model(api_key: str, opener=urllib.request.urlopen) -> tuple[str | None,
     return max(fast, key=lambda m: str(m.get("created_at") or ""))["id"], "", ""
 
 
-def ask_key(cfg: dict, ask, opener, keep: bool = False) -> tuple[str | None, str | None] | None:
-    """Спросить ключ; он проверяется списком моделей. Пустой Enter — «без Claude» (запоминается), а при смене
-    сохранённого (keep=True) — оставить как было (→ None); «без Claude» тогда — «0». Нет связи — ключ всё равно
-    сохраняется (проверится в следующий раз); Ctrl+C — ничего не менять."""
+def probe_key(key: str, model: str, opener=urllib.request.urlopen) -> tuple[bool, str]:
+    """Есть ли у ключа кредит: крошечный запрос (1 токен ответа, доли цента). Список моделей отвечает и без
+    кредита — без этой пробы весь матч прошёл бы на паузе «кредит кончился». → (можно играть, почему нет)."""
+    body = json.dumps({"model": model, "max_tokens": 1, "messages": [{"role": "user", "content": "ok"}]}).encode()
+    req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=body, method="POST",
+                                 headers={"x-api-key": key, "anthropic-version": "2023-06-01",
+                                          "content-type": "application/json"})
+    try:
+        with opener(req, timeout=30) as r:
+            r.read()
+        return True, ""
+    except urllib.error.HTTPError as e:
+        why = api_error(e)
+        if "credit balance" in why.lower():
+            return False, "nocredit"
+        return e.code not in (400, 401, 403), why        # 429, 5xx — ключ рабочий, просто занято
+    except (OSError, ValueError) as e:
+        return True, f"нет связи ({e})"                  # проверим в игре
+
+
+def no_credit_help() -> None:
+    say("  У организации Console, где создан этот ключ, нет кредита на API. Привяжите кредит Max к ЭТОЙ ЖЕ")
+    say("  организации: claude.ai → Settings → Billing → «API credits» (новым подписчикам — через 7 дней после")
+    say("  оформления Max). Ключ сохранил: как только кредит появится, герои заработают на Claude.")
+
+
+def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tuple[str | None, str | None] | None:
+    """Спросить ключ; он проверяется списком моделей и крошечным запросом (есть ли кредит).
+    Пустой Enter — «не сейчас» (ничего не запоминается; при смене ключа, keep=True, — оставить как было → None);
+    «0» — без Claude (запоминается). Нет связи — ключ сохраняется (проверится в следующий раз); Ctrl+C — ничего не
+    менять."""
     if not cfg.get("api_key"):
         say("  Ключ API из кредита подписки Max — один раз:")
         say("    1. В браузере откроется claude.ai → Settings → Billing. В разделе «API credits» привяжите организацию")
         say("       Console (если её нет — создадите там же) и примите условия. Новым подписчикам — через 7 дней.")
-        say("    2. Потом откроется platform.claude.com → API Keys: Create Key — скопируйте ключ.")
+        say("    2. Потом откроется platform.claude.com → API Keys: в ТОЙ ЖЕ организации — Create Key, скопируйте.")
         for url in (CREDITS_PAGE, KEYS_PAGE):
             try:
                 open_page(url)
@@ -195,17 +224,16 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False) -> tuple[str | None, str
     if keep:
         say("  Оставить как было — просто Enter. Выключить Claude (агенты на правилах, бесплатно) — 0 и Enter.")
     else:
-        say("  Без ключа просто нажмите Enter: агенты сыграют на правилах — бесплатно, но это не Claude.")
+        say("  Ключа пока нет — просто Enter: в этот раз сыграют правила, ключ спрошу при следующем запуске.")
+        say("  Без Claude насовсем — 0 и Enter (вернуть можно при запуске).")
     for _ in range(3):
         key = _ask(ask, "  ключ> ")
-        if key is None:
-            if keep:
-                return None
-            say("  Ключ не ввели — в этот раз правила, спрошу при следующем запуске.")
+        if key is None or (not key and keep):
+            return None if keep else (None, None)        # Ctrl+C или «оставить как было»
+        if not key:
+            say("  Хорошо, в этот раз правила. Ключ спрошу при следующем запуске.")
             return None, None
-        if keep and not key:
-            return None                                  # оставить как было
-        if not key or key == "0":
+        if key == "0":
             cfg["api_key"] = ""                          # «без Claude»: при запуске можно будет сменить
             save_config(cfg)
             return None, None
@@ -213,6 +241,10 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False) -> tuple[str | None, str
         if model:
             cfg["api_key"], cfg["model"] = key, model
             save_config(cfg)
+            ok, why = probe(key, model, opener)
+            if why == "nocredit":
+                no_credit_help()
+                return None, None
             say(f"  Ключ {mask(key)} принят.")
             return key, model
         if kind == "net":
@@ -221,13 +253,17 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False) -> tuple[str | None, str
             say(f"  Ключ {mask(key)} сохранил, но проверить не смог: {why}.")
             say("  В этот раз агенты сыграют на правилах, Claude — со следующего запуска.")
             return None, None
-        say(f"  Ключ {mask(key)} не подошёл: {why}. Вставьте другой или Enter — без Claude.")
+        say(f"  Ключ {mask(key)} не подошёл: {why}. Вставьте другой" + (" или Enter — оставить как было."
+                                                                       if keep else " или Enter — не сейчас."))
+    if keep:
+        say("  Ключи не подошли — оставляю прежний.")
+        return None
     say("  Ключи не подошли — в этот раз правила. Ключ спрошу при следующем запуске.")
     return None, None
 
 
 def setup_claude(cfg: dict, args, ask=getpass.getpass, opener=urllib.request.urlopen,
-                 offer=offer) -> tuple[str | None, str | None]:
+                 offer=offer, probe=probe_key) -> tuple[str | None, str | None]:
     """Ключ и модель для агентов. → (ключ, модель) или (None, None) — играть на правилах."""
     if args.rules:
         return None, None
@@ -235,10 +271,10 @@ def setup_claude(cfg: dict, args, ask=getpass.getpass, opener=urllib.request.url
     if not key:
         key = cfg.get("api_key")
         if key is None or args.ask_key:
-            return ask_key(cfg, ask, opener)
+            return ask_key(cfg, ask, opener, probe=probe)
         shown = f"ключ {mask(key)}" if key else "выключен — агенты на правилах"   # решение уже есть: дать сменить
         if offer(f"  Claude: {shown}. Сменить ключ — нажмите любую клавишу в ближайшие {OFFER_S:.0f} секунды…"):
-            got = ask_key(cfg, ask, opener, keep=True)
+            got = ask_key(cfg, ask, opener, keep=True, probe=probe)
             if got is not None:
                 return got
             say("  Оставляю как было.")
@@ -249,10 +285,16 @@ def setup_claude(cfg: dict, args, ask=getpass.getpass, opener=urllib.request.url
         if model != cfg.get("model"):
             cfg["model"] = model
             save_config(cfg)
+        ok, why = probe(key, model, opener)
+        if why == "nocredit":
+            no_credit_help()
+            say("  В этот раз героев ведут правила.")
+            return None, None
         return key, model
     if kind == "key" and not os.environ.get("ANTHROPIC_API_KEY"):
         say(f"  Сохранённый ключ {mask(key)} не подошёл: {why}.")
-        return ask_key(cfg, ask, opener)
+        cfg.pop("api_key", None)
+        return ask_key(cfg, ask, opener, probe=probe)
     if kind == "net" and cfg.get("model"):
         say(f"  Список моделей недоступен ({why}) — беру прошлую модель.")
         return key, cfg["model"]
@@ -265,14 +307,14 @@ def setup_claude(cfg: dict, args, ask=getpass.getpass, opener=urllib.request.url
 def find_claude(which=shutil.which, home: Path | None = None) -> str | None:
     """Claude Code: из PATH или из папки, куда его ставит официальный установщик (~/.local/bin) — PATH окна
     лаунчера после установки ещё старый."""
-    found = which("claude")
-    if found:
-        return found
     home = home or Path(os.environ.get("USERPROFILE") or Path.home())
-    for name in ("claude.exe", "claude"):
+    for name in ("claude.exe", "claude"):                  # сначала родной claude от установщика Anthropic
         cand = home / ".local" / "bin" / name
         if cand.is_file():
             return str(cand)
+    found = which("claude")
+    if found and not found.lower().endswith((".cmd", ".bat")):   # обёртку npm запускает cmd.exe — ломает кавычки
+        return found
     return None
 
 
@@ -331,10 +373,20 @@ def claude_check(exe: str, run=subprocess.run) -> tuple[bool, str]:
 def setup_subscription(find=find_claude, install=install_claude, auth=claude_auth, login=claude_login,
                        check=claude_check) -> str | None:
     """Claude Code со входом подпиской: найти или поставить, войти (браузер), проверить пробным вызовом.
-    → путь к claude или None (в этот раз — правила)."""
+    → путь к claude или None (в этот раз — правила). Ctrl+C на любом шаге — пропустить: в этот раз правила."""
+    try:
+        return _setup_subscription(find, install, auth, login, check)
+    except KeyboardInterrupt:
+        say("")
+        say("  Пропускаю Claude Code — в этот раз героев ведут правила.")
+        return None
+
+
+def _setup_subscription(find, install, auth, login, check) -> str | None:
     exe = find()
     if exe is None:
-        say("  Ставлю Claude Code — официальную программу Anthropic, она входит в подписку. Один раз, 1–2 минуты…")
+        say("  Ставлю Claude Code — официальную программу Anthropic, она входит в подписку. Один раз, 1–2 минуты")
+        say("  (пропустить — Ctrl+C)…")
         install()
         exe = find()
         if exe is None:
@@ -342,11 +394,12 @@ def setup_subscription(find=find_claude, install=install_claude, auth=claude_aut
             say("  в этот раз героев ведут правила.")
             return None
     st = auth(exe)
-    if not st.get("loggedIn"):
-        say("  Вход подпиской: сейчас откроется браузер — войдите в аккаунт Claude, где у вас подписка.")
+    if st and not st.get("loggedIn"):                       # {} — старая версия без `auth status`: судит проба
+        say("  Вход подпиской: сейчас откроется браузер — войдите в аккаунт Claude, где у вас подписка")
+        say("  (пропустить — Ctrl+C).")
         login(exe)
         st = auth(exe)
-        if not st.get("loggedIn"):
+        if st and not st.get("loggedIn"):
             say("  Вход не получился — в этот раз героев ведут правила. Попробую при следующем запуске.")
             return None
     if st.get("authMethod") == "api_key":
@@ -360,25 +413,31 @@ def setup_subscription(find=find_claude, install=install_claude, auth=claude_aut
     return None
 
 
-def choose_mode(ask=input) -> str | None:
-    """Как думать героям. → "key" | "sub" | "off" или None (ничего не выбрали — Ctrl+C, окно без ввода).
-    Решение Д15: по умолчанию — ключ API из кредита, который входит в подписку Max (путь, который Anthropic прямо
-    разрешает для программ, и без доплат); вход подпиской в Claude Code — второй вариант, с предупреждением."""
+def choose_mode(ask=input, change: bool = False) -> str | None:
+    """Как думать героям. → "key" | "sub" | "off" или None (ничего не выбрали: Ctrl+C, окно без ввода, а при смене —
+    Enter «оставить как было»). Решение Д15: по умолчанию — ключ API из кредита, который входит в подписку Max
+    (путь, который Anthropic прямо разрешает для программ); вход подпиской в Claude Code — второй, с предупреждением."""
     say("  Как будут думать герои?")
-    say("    Enter — Claude по ключу API (советую). С подпиской Max без доплат: в неё входит $100 (Max 5x) или $200")
-    say("            (Max 20x) в месяц на API — по расчёту около 30 матчей на $100. Кончится — герои доиграют на")
-    say("            правилах, денег не спишут. Один раз привязать кредит и создать ключ — покажу как.")
-    say("    2     — Claude через вход подпиской в Claude Code: из общих лимитов вашей подписки, вместе с вашим Claude.")
-    say("            Anthropic рассчитывает их на обычное личное использование, а 10 агентов — нагрузка куда больше.")
+    if change:
+        say("    Enter — оставить как было")
+    first = "Enter" if not change else "1    "
+    say(f"    {first} — Claude по ключу API (советую). В подписку Max входит кредит на API: $100 (Max 5x) или $200")
+    say("            (Max 20x) в месяц — по расчёту около 30 матчей на $100. Доплат нет, если не покупать кредиты и не")
+    say("            включать автопополнение в Console: кредит кончится — герои доиграют месяц на правилах.")
+    say("    2     — Claude через вход подпиской в Claude Code: из общих лимитов вашей подписки, вместе с вашим Claude")
+    say("            (доплат нет, если на claude.ai не включены Usage credits). Anthropic рассчитывает этот вход на")
+    say("            обычное личное использование, а 10 агентов — нагрузка куда больше.")
     say("    0     — без Claude: простые правила, бесплатно.")
+    options = {"1": "key", "2": "sub", "0": "off"}
+    options[""] = None if change else "key"
     for _ in range(3):
         a = _ask(ask, "  выбор> ")
         if a is None:
             return None
-        mode = {"": "key", "1": "key", "2": "sub", "0": "off"}.get(a.strip())
-        if mode:
-            return mode
-        say("  Не понял: Enter, 2 или 0.")
+        a = a.strip()
+        if a in options:
+            return options[a]
+        say("  Не понял: " + ("Enter, 1, 2 или 0." if change else "Enter, 2 или 0."))
     return None
 
 
@@ -389,13 +448,13 @@ def describe_mode(cfg: dict, mode: str) -> str:
 
 
 def setup_agents(cfg: dict, args, ask=input, ask_secret=getpass.getpass, opener=urllib.request.urlopen,
-                 offer=offer, subscription=setup_subscription):
+                 offer=offer, subscription=setup_subscription, probe=probe_key):
     """Мотор героев. → ("sub", путь к claude) | ("key", (ключ, модель)) | ("off", None).
     Выбор запоминается; при каждом запуске его можно сменить одной клавишей."""
     if args.rules:
         return "off", None
     if os.environ.get("ANTHROPIC_API_KEY"):                  # ключ в окружении — выбор сделан явно
-        key, model = setup_claude(cfg, args, ask_secret, opener, offer=lambda t: False)
+        key, model = setup_claude(cfg, args, ask_secret, opener, offer=lambda t: False, probe=probe)
         return ("key", (key, model)) if key else ("off", None)
     mode = cfg.get("mode") or ("key" if cfg.get("api_key") else ("off" if cfg.get("api_key") == "" else None))
     rekey = False
@@ -405,7 +464,7 @@ def setup_agents(cfg: dict, args, ask=input, ask_secret=getpass.getpass, opener=
             say("  Ничего не выбрали — в этот раз правила, спрошу при следующем запуске.")
             return "off", None
     elif offer(f"  Герои: {describe_mode(cfg, mode)}. Сменить — нажмите любую клавишу в ближайшие {OFFER_S:.0f} секунды…"):
-        new = choose_mode(ask)
+        new = choose_mode(ask, change=True)
         if new is None:
             say("  Оставляю как было.")
         else:
@@ -416,8 +475,12 @@ def setup_agents(cfg: dict, args, ask=input, ask_secret=getpass.getpass, opener=
         save_config(cfg)
     if mode == "off":
         return "off", None
+    if mode == "key" and cfg.get("api_key") == "":            # раньше выбрали «без Claude» — теперь спросить ключ
+        cfg.pop("api_key")
+        save_config(cfg)
     if mode == "key":
-        key, model = setup_claude(cfg, args, ask_secret, opener, offer=lambda t: rekey and bool(cfg.get("api_key")))
+        key, model = setup_claude(cfg, args, ask_secret, opener, offer=lambda t: rekey and bool(cfg.get("api_key")),
+                                  probe=probe)
         if not key and cfg.get("api_key") == "":             # выбрали «без Claude» на вопросе о ключе
             cfg["mode"] = "off"
             save_config(cfg)
@@ -771,7 +834,8 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
         pace = SUB_PACE
         max_calls = args.max_calls or SUB_MAX_CALLS
         say("  Героев ведёт Claude через вход подпиской (Claude Code, быстрая модель): из общих лимитов подписки.")
-        say(f"  Думают реже, чем по ключу API (раз в {SUB_PACE['period']:.0f} с и по событию), предел {max_calls} вызовов на сторону.")
+        say(f"  Думают реже, чем по ключу API (раз в {SUB_PACE['period']:.0f}–20 с и по событию), предел {max_calls} вызовов"
+            " на сторону.")
         say("  Кончится лимит подписки — герои доиграют на правилах.")
     elif mode == "key":
         key, model = info
@@ -892,7 +956,7 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
             f"задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
         time.sleep(0.2)
         if any(t.name.startswith("agent") and t.is_alive() for t in threading.enumerate()):
-            say("Жду, пока агенты закончат начатые ходы (до 30 с)…")
+            say(f"Жду, пока агенты закончат начатые ходы (до {getattr(backend, 'timeout', 30):.0f} с)…")
     return 0
 
 

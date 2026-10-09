@@ -287,6 +287,18 @@ class Hub(unittest.TestCase):
         h.tick({"heroes": [obs(clock=8, coach=list(orders))]})                 # следующее решение видит все приказы
         self.assertIn("1 пуш бот 7", self.backend.calls[-1]["user"])
 
+    def test_narrow_pool_serves_both_sides(self):
+        """Рецензия 3: при узком пуле (по подписке) места доставались в порядке героев в обмене — сначала одной
+        стороне; герои второй стороны почти не получали решений. Теперь — тем, кто дольше без решения."""
+        light, dark = FakeBackend(), FakeBackend()
+        h = A.AgentHub({"radiant": light, "dire": dark}, sync=True, max_inflight=4, period=2.0, min_gap=0.5)
+        heroes = [obs(team=t, pos=p) for t in ("radiant", "dire") for p in range(1, 6)]
+        for clock in (0.0, 1.0, 2.0):
+            h.tick({"clock": clock, "heroes": [dict(o, clock=clock) for o in heroes]})
+        got = {(c["obs"]["team"], c["obs"]["pos"]) for b in (light, dark) for c in b.calls}
+        self.assertEqual(len(got), 10, sorted(got))                              # все десять уже решали
+        self.assertEqual(h.tick({"clock": 3.0, "heroes": []})["stale"], 20.0)     # игра держит решение 20 с
+
     def test_paid_call_limit_is_per_side(self):
         """Предел платных вызовов — у каждой стороны свой: соперник не исчерпает предел хоста."""
         light, dark = FakeBackend(), FakeBackend()

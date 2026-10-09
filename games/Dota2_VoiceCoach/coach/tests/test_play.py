@@ -222,8 +222,11 @@ class Launcher(unittest.TestCase):
         ok = opener_for({P.MODELS_API: self.MODELS})
         never = lambda p: 1 / 0                                               # noqa: E731 — спрашивать нельзя
         no_offer = lambda text: False                                         # noqa: E731
-        # пустой Enter — «без Claude», запомнено; при следующем запуске не спрашивает
+        # пустой Enter — «не сейчас»: ничего не запомнено, в следующий раз спросит снова
         self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "", opener=ok, offer=no_offer), (None, None))
+        self.assertNotIn("api_key", P.load_config(self.cfg_path))
+        # «0» — без Claude, запомнено; при следующем запуске не спрашивает
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "0", opener=ok, offer=no_offer), (None, None))
         self.assertEqual(P.load_config(self.cfg_path)["api_key"], "")
         self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=never, offer=no_offer),
                          (None, None))
@@ -237,13 +240,34 @@ class Launcher(unittest.TestCase):
         # без сети берём прошлую модель; с --rules ключ не нужен
         self.assertEqual(P.setup_claude(saved, P.parse([]), opener=opener_for({}), offer=no_offer), ("sk-test", self.NEW))
         self.assertEqual(P.setup_claude(saved, P.parse(["--rules"])), (None, None))
-        # сохранённый ключ отозвали — спрашивает новый
+        # сохранённый ключ отозвали — спрашивает новый; Enter — не сейчас
         revoked = opener_for({P.MODELS_API: self.http_error(401, "invalid x-api-key")})
         answers = iter(["sk-new", ""])
         self.assertEqual(P.setup_claude(dict(saved), P.parse([]), ask=lambda p: next(answers), opener=revoked,
                                         offer=no_offer), (None, None))
         with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-env"}):
             self.assertEqual(P.setup_claude({}, P.parse([]), opener=ok, offer=never)[0], "sk-env")
+
+    def test_key_without_credit_is_explained(self):
+        """Рецензия 3: ключ из организации без кредита принимался, и весь матч стоял на паузе."""
+        ok = opener_for({P.MODELS_API: self.MODELS})
+        nocredit = lambda key, model, opener: (False, "nocredit")             # noqa: E731
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "sk-no-credit-0123456789", opener=ok,
+                                        offer=lambda t: False, probe=nocredit), (None, None))
+        self.assertEqual(P.load_config(self.cfg_path)["api_key"], "sk-no-credit-0123456789")   # ключ сохранён
+        self.assertTrue(any("нет кредита" in line for line in self.out))
+        self.out.clear()
+        self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), opener=ok, offer=lambda t: False,
+                                        probe=nocredit), (None, None))      # и при следующем запуске — сказать
+        self.assertTrue(any("нет кредита" in line for line in self.out))
+        # проба кредита по-настоящему: 400 «credit balance» → nocredit; 429 — ключ рабочий
+        body = b'{"type":"error","error":{"message":"Your credit balance is too low to access the Anthropic API."}}'
+        low = urllib.error.HTTPError("u", 400, "x", {}, io.BytesIO(body))
+        self.assertEqual(P.probe_key("k", "m", opener_for({"https://api.anthropic.com/v1/messages": low})),
+                         (False, "nocredit"))
+        busy = urllib.error.HTTPError("u", 429, "x", {}, io.BytesIO(b"{}"))
+        self.assertTrue(P.probe_key("k", "m", opener_for({"https://api.anthropic.com/v1/messages": busy}))[0])
+        self.assertTrue(P.probe_key("k", "m", opener_for({"https://api.anthropic.com/v1/messages": b"{}"}))[0])
 
     def test_changing_key_keeps_it_on_empty_enter(self):
         """Рецензия 2: случайная клавиша за 3 с и Enter на вопросе стирали сохранённый ключ."""
@@ -258,9 +282,27 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: "0", opener=ok, offer=lambda t: True),
                          (None, None))                                          # «0» — выключить Claude
         self.assertEqual(P.load_config(self.cfg_path)["api_key"], "")
-        # «без Claude» сохранено; сменить и снова пустой Enter — так и остаётся без Claude
+        # «без Claude» сохранено; сменить и пустой Enter — так и остаётся без Claude
         self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "", opener=ok,
                                         offer=lambda t: True), (None, None))
+
+    def test_no_trap_from_rules_back_to_key(self):
+        """Рецензия 3 (блокер): после «без Claude» вернуться к ключу из меню было нельзя — ключ не спрашивался."""
+        ok = opener_for({P.MODELS_API: self.MODELS})
+        for old_cfg in ({"mode": "off", "api_key": ""}, {"api_key": ""}):          # новый и прежний play.json
+            P.save_config(dict(old_cfg))
+            asked = []
+            got = P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "1",
+                                 ask_secret=lambda p: asked.append(p) or "sk-back-key-0123456789", opener=ok,
+                                 offer=lambda t: True)
+            self.assertEqual(got, ("key", ("sk-back-key-0123456789", self.NEW)), old_cfg)
+            self.assertEqual(len(asked), 1)                                    # ключ спрошен
+            self.assertEqual(P.load_config(self.cfg_path)["mode"], "key")
+        # в меню смены Enter — оставить как было
+        P.save_config({"mode": "off", "api_key": ""})
+        self.assertEqual(P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "",
+                                        offer=lambda t: True), ("off", None))
+        self.assertEqual(P.load_config(self.cfg_path)["mode"], "off")
 
     def test_choose_mode(self):
         def answers(*a):
@@ -270,8 +312,11 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.choose_mode(answers("2")), "sub")                # вход подпиской в Claude Code
         self.assertEqual(P.choose_mode(answers("x", " 0 ")), "off")          # непонятное — спросить ещё раз
         self.assertIsNone(P.choose_mode(lambda p: (_ for _ in ()).throw(EOFError())))
+        self.assertIsNone(P.choose_mode(answers(""), change=True))           # смена: Enter — как было
+        self.assertEqual(P.choose_mode(answers("1"), change=True), "key")
         text = "\n".join(self.out)
         self.assertIn("$100 (Max 5x)", text)                                 # без доплат — сказано прямо
+        self.assertIn("автопополнение", text)                                 # и при каком условии
         self.assertIn("обычное личное использование", text)                 # и чем рискует вход подпиской
 
     def test_modes_chosen_once_and_changed_by_key(self):
@@ -309,7 +354,11 @@ class Launcher(unittest.TestCase):
         cfg = {}
         self.assertEqual(P.setup_agents(cfg, P.parse([]), ask=lambda p: "", ask_secret=lambda p: "",
                                         offer=lambda t: False), ("off", None))
-        self.assertEqual(P.load_config(self.cfg_path)["mode"], "off")
+        self.assertEqual(P.load_config(self.cfg_path)["mode"], "key")          # ключа пока нет — спросит снова
+        self.assertNotIn("api_key", P.load_config(self.cfg_path))
+        self.assertEqual(P.setup_agents({}, P.parse([]), ask=lambda p: "", ask_secret=lambda p: "0",
+                                        offer=lambda t: False), ("off", None))
+        self.assertEqual(P.load_config(self.cfg_path)["mode"], "off")           # «0» — без Claude насовсем
 
     def test_subscription_setup_installs_and_logs_in(self):
         found = iter([None, "/x/claude"])
@@ -332,6 +381,17 @@ class Launcher(unittest.TestCase):
         self.assertIsNone(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {"loggedIn": True},
                                                check=lambda e: (False, "You've hit your session limit")))
         self.assertTrue(any("session limit" in line for line in self.out))
+        # Ctrl+C во время установки или входа — пропустить, без трассировки
+        def interrupt(*a):
+            raise KeyboardInterrupt
+        self.assertIsNone(P.setup_subscription(find=lambda: None, install=interrupt))
+        self.assertIsNone(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {"loggedIn": False},
+                                               login=interrupt))
+        # старая версия без `auth status` ({}): вход не навязываем, судит пробный вызов
+        login.reset_mock()
+        self.assertEqual(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {}, login=login,
+                                              check=lambda e: (True, "")), "/x/claude")
+        login.assert_not_called()
 
     def test_claude_calls_without_api_keys_in_env(self):
         """Документация Claude Code: в режиме -p ключ из окружения берётся раньше подписки — его убираем."""
@@ -363,7 +423,12 @@ class Launcher(unittest.TestCase):
         (home / ".local" / "bin").mkdir(parents=True)
         (home / ".local" / "bin" / "claude.exe").write_bytes(b"")
         self.assertEqual(P.find_claude(which=lambda n: None, home=home), str(home / ".local" / "bin" / "claude.exe"))
-        self.assertEqual(P.find_claude(which=lambda n: "/usr/bin/claude", home=home), "/usr/bin/claude")
+        self.assertEqual(P.find_claude(which=lambda n: "/usr/bin/claude", home=home),
+                         str(home / ".local" / "bin" / "claude.exe"))             # родной — раньше PATH
+        empty = home / "empty"
+        empty.mkdir()
+        self.assertEqual(P.find_claude(which=lambda n: "/usr/bin/claude", home=empty), "/usr/bin/claude")
+        self.assertIsNone(P.find_claude(which=lambda n: r"C:\npm\claude.CMD", home=empty))   # обёртка npm — нет
 
     def test_friend_version_same_in_python_and_js(self):
         """Разные версии в rendezvous.py и rv.js — свежий файл друга вечно просил бы новый."""
@@ -710,6 +775,16 @@ class Updater(unittest.TestCase):
             self.assertFalse((dest / "ИГРАТЬ.bat").exists())
             self.assertEqual(list(dest.rglob("*.part")), [])
 
+    def test_failed_replace_leaves_no_part_files(self):
+        """Файл заняли насовсем: обновление падает, недописанные .part не остаются (рецензия 3: не было теста)."""
+        routes = self.routes(self.FILES)
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(U, "replace",
+                                                                     side_effect=PermissionError("занят")):
+            dest = Path(tmp)
+            with self.assertRaises(PermissionError):
+                U.sync(dest, opener=opener_for(routes), log=lambda s: None)
+            self.assertEqual(list(dest.rglob("*.part")), [])
+
     def test_release_falls_back_to_main_and_checks_format(self):
         routes = self.routes(self.FILES, branch="main")
         routes[U.RAW + U.BRANCH + "/" + quote(U.PREFIX + U.RELEASE)] = urllib.error.HTTPError(
@@ -811,7 +886,7 @@ class BatchFile(unittest.TestCase):
             self.assertNotIn(bad, text)
         boot = next(x for x in lines if "update.py" in x and x.startswith("%PS%"))
         self.assertIn("/RELEASE", boot)                                        # первая загрузка — из выпуска
-        self.assertRegex(text, r'if exist "%PROJ%%~nx0" \(call "%PROJ%%~nx0" %\* & exit /b\)')   # свежая копия
+        self.assertNotIn("call ", text)              # трамплин на копию bat из папки игры убран (рецензия 3: call и ^, %)
         self.assertEqual(hashlib.sha1(b"blob 0\0").hexdigest(), U.blob_sha(b""))
 
 

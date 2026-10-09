@@ -292,7 +292,7 @@ end
 
 -- ведёт ли героя агент: связь есть и решение агента свежее (иначе — запасной исполнитель, приказы тренера не теряются)
 function G:AgentAlive(T, pos, now, linked)
-  return linked and T.dec_t[pos] ~= nil and now - T.dec_t[pos] <= G.AGENT_STALE
+  return linked and T.dec_t[pos] ~= nil and now - T.dec_t[pos] <= (G.agent_stale or G.AGENT_STALE)
 end
 
 local function enemy_namer(team)
@@ -410,6 +410,7 @@ end
 
 -- ответ сервера: { decisions = { {team, pos, seq, decision}, … }, agents = { {team, pos, state}, … },
 --                  backend = { radiant = "…", dire = "…" }, run = "номер запуска сервера",
+--                  stale = сколько с держать решение агента (по подписке решения реже — Д15),
 --                  commands = { {seq, team, text}, … } — приказы с пульта второго тренера (Д13) }
 -- в обмене игра шлёт: clock, heroes, coached, applied, replies (ответы игры для пульта), map (схема карты),
 --                     cmd_ack и cmd_run (какой приказ с пульта применён и с какого запуска сервера), game_id
@@ -417,6 +418,8 @@ function G:OnAgents(data)
   for _ = 1, math.min(G.outbox_sent or 0, #(G.outbox or {})) do table.remove(G.outbox, 1) end   -- сервер их принял
   G.outbox_sent = 0
   G.backend = type(data.backend) == "table" and data.backend or {}
+  local stale = tonumber(data.stale)
+  if stale and stale >= 10 and stale <= 120 then G.agent_stale = stale end
   local now = GameRules:GetGameTime()
   if data.run ~= nil and data.run ~= G.agents_run then          -- сервер перезапущен: его номера решений снова с 1
     if G.agents_run ~= nil then log("агенты: сервер перезапущен, жду новых решений") end
