@@ -118,6 +118,7 @@ class Room:
         self.remote_seq = 0
         self.game_id: str | None = None           # номер матча из обмена игры
         self.run = secrets.token_hex(4)           # запуск сервера: страницы сбрасывают номера событий
+        self.console_seen: dict[str, float] = {}  # когда пульт команды последний раз спрашивал вид (Д14)
 
     def _next(self) -> int:
         self.seq += 1

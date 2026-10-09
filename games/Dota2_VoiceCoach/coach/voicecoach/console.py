@@ -38,7 +38,8 @@ TEAMS = ("radiant", "dire")
 TEAM_RU = {"radiant": "Свет", "dire": "Тьма"}
 WEB = Path(__file__).resolve().parent.parent / "web"
 KEYS_FILE = Path(__file__).resolve().parent.parent / "logs" / "console_keys.json"   # logs/ — вне git
-FILES = {"voices.js": "application/javascript; charset=utf-8", "console.js": "application/javascript; charset=utf-8"}
+FILES = {"voices.js": "application/javascript; charset=utf-8", "console.js": "application/javascript; charset=utf-8",
+         "rv.js": "application/javascript; charset=utf-8"}
 MAX_BODY = 2048           # байт в запросе приказа
 MAX_TEXT = 200            # знаков в приказе
 WAIT_MAX = 25.0           # с: long-poll событий (у туннеля Cloudflare свой предел ожидания — держимся ниже)
@@ -49,7 +50,7 @@ TUNNEL_WAIT = 40.0        # с: не дождались адреса тунне�
 # адрес быстрого туннеля: несколько слов через дефис (служебный api.trycloudflare.com — не он)
 TUNNEL_RE = re.compile(r"https://[a-z0-9]+(?:-[a-z0-9]+)+\.trycloudflare\.com", re.I)
 CSP = ("default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; "
-       "connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
+       "connect-src 'self'{rv}; frame-ancestors 'none'; base-uri 'none'; form-action 'none'")
 
 
 def _int(v, default: int = 0) -> int:
@@ -163,7 +164,15 @@ def team_view(room, team: str) -> dict:
             "score": m.get("score"), "events": sorted(events, key=_stamp)[-8:]}
 
 
-def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_timeout: float = SOCKET_TIMEOUT):
+def _origin(url: str | None) -> str:
+    u = urlparse(url or "")
+    return f"{u.scheme}://{u.netloc}" if u.scheme in ("http", "https") and u.netloc else ""
+
+
+def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_timeout: float = SOCKET_TIMEOUT,
+                         rv_origin: str | None = None):
+    rv = _origin(rv_origin)
+    csp = CSP.format(rv=f" {rv}" if rv else "")       # пульт может спросить ящик игры о новом адресе (Д14)
     by_key = [(k.encode("utf-8"), t) for t, k in keys.items()]
     buckets: dict[str, tuple[float, float]] = {}
     guard = threading.Lock()
@@ -205,7 +214,7 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_time
             self.send_header("X-Robots-Tag", "noindex, nofollow")       # страницы туннелей попадают в поиск
             self.send_header("X-Frame-Options", "DENY")
             if ctype.startswith("text/html"):
-                self.send_header("Content-Security-Policy", CSP)
+                self.send_header("Content-Security-Policy", csp)
             for k, v in (extra or {}).items():
                 self.send_header(k, v)
             self.end_headers()
@@ -238,6 +247,7 @@ def make_console_handler(hub, room_name: str, keys: dict, rate=RATE, socket_time
             if len(rest) == 1 and rest[0] in FILES:
                 return self._send(200, raw=(WEB / rest[0]).read_bytes(), ctype=FILES[rest[0]])
             if rest == ["api", "view"]:
+                room.console_seen[team] = time.time()            # лаунчер хоста видит, что друг на пульте
                 return self._send(200, team_view(room, team))
             if rest == ["api", "events"]:
                 try:
@@ -294,12 +304,13 @@ class ConsoleServer(ThreadingHTTPServer):
 
 
 def serve_console(hub, host: str = "127.0.0.1", port: int = 8788, room: str = "local", keys: dict | None = None,
-                  max_conn: int = MAX_CONN, socket_timeout: float = SOCKET_TIMEOUT):
+                  max_conn: int = MAX_CONN, socket_timeout: float = SOCKET_TIMEOUT, rv_origin: str | None = None):
     attrs = {"max_conn": max_conn}
     if ":" in host:                                       # адрес IPv6
         attrs["address_family"] = socket.AF_INET6
     cls = type("ConsoleServerOn", (ConsoleServer,), attrs)
-    srv = cls((host, port), make_console_handler(hub, room, keys or {}, socket_timeout=socket_timeout))
+    srv = cls((host, port), make_console_handler(hub, room, keys or {}, socket_timeout=socket_timeout,
+                                                 rv_origin=rv_origin))
     srv.keys = dict(keys or {})
     return srv
 

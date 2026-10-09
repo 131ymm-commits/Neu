@@ -57,7 +57,7 @@ function show(ev) {
   const div = document.createElement('div');
   div.className = 'line';
   const to = (ev.to && ev.to.length) ? ` <span class="to">→ ${esc(ev.to.join(','))}</span>` : '';
-  const time = new Date().toLocaleTimeString().slice(0, 5);
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   div.innerHTML = `<span class="muted">${time}</span> <span class="who">${esc(ev.pos)} ${esc(ev.hero_ru || ev.hero || '')}</span>${to}: ${esc(ev.text)}`;
   log.appendChild(div);
   while (log.children.length > 60) log.removeChild(log.firstChild);

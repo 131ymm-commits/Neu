@@ -161,7 +161,25 @@ async function refreshView() {
   } catch (e) {
     viewFails += 1;
     if (viewFails >= 3) { $('link').className = 'link off'; $('link').textContent = 'сервер тренера не отвечает'; }
+    if (viewFails >= 3 && viewFails % 10 === 3) follow();   // через 3 с без связи и дальше раз в 10 с
   }
+}
+
+// игра вдвоём (Д14): пульт открыт из файла друга — в адресе после «#» секрет ящика игры (на сервер он не уходит).
+// Хост перезапустил игру — у туннеля новый адрес: находим его в ящике и переходим туда сами.
+const RV = window.Rendezvous ? Rendezvous.fromHash(location.hash) : null;
+async function follow() {
+  if (!RV) return;
+  try {
+    const msg = await Rendezvous.find(RV.base, RV.secret);
+    const here = location.href.split('#')[0];
+    if (msg && msg.url && /^https?:\/\/[^\s#]+\/c\/[^\s#]+$/.test(msg.url) && msg.url !== here) {
+      $('link').textContent = 'друг перезапустил игру — перехожу на новый адрес…';
+      location.replace(msg.url + location.hash);
+    } else if (msg && msg.closed) {
+      $('link').textContent = 'друг закрыл игру — жду, когда запустит снова';
+    }
+  } catch (e) { /* ящик недоступен — попробуем позже */ }
 }
 
 // --- лента и голос ---
@@ -169,7 +187,7 @@ function feed(cls, html) {
   const box = $('feed'), div = document.createElement('div');
   if (box.firstElementChild && !box.firstElementChild.classList.contains('line')) box.innerHTML = '';
   div.className = 'line ' + cls;
-  div.innerHTML = `<span class="muted">${new Date().toLocaleTimeString().slice(0, 5)}</span> ${html}`;
+  div.innerHTML = `<span class="muted">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span> ${html}`;
   box.appendChild(div);
   while (box.children.length > 80) box.removeChild(box.firstChild);
   box.scrollTop = box.scrollHeight;

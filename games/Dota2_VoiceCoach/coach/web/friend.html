@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:,">
+<title>Тренер Доты — вход для друга</title>
+<!-- Файл соперника (решение Д14). Делает его лаунчер хоста (coach/voicecoach/play.py) из этого шаблона: вписывает
+     секрет ящика и сам код ящика (web/rv.js). Открыть двойным щелчком — найдёт игру друга и откроет пульт. -->
+<style>
+  :root { --bg:#14161a; --fg:#e8e6e3; --muted:#9aa0a6; --card:#1e2127; --acc:#2e7d32; --bad:#ff7a6e; --dire:#e05a4f; }
+  * { box-sizing:border-box; }
+  body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:16px;
+         font:17px/1.45 system-ui, sans-serif; background:var(--bg); color:var(--fg); }
+  main { max-width:520px; width:100%; background:var(--card); border-radius:14px; padding:22px 22px 18px; }
+  h1 { font-size:22px; margin:0 0 4px; color:var(--dire); }
+  .muted { color:var(--muted); font-size:14px; }
+  #status { margin:18px 0 6px; font-size:19px; }
+  .spin { display:inline-block; width:14px; height:14px; border:2px solid var(--muted); border-top-color:transparent;
+          border-radius:50%; animation:s 1s linear infinite; margin-right:8px; vertical-align:-1px; }
+  @keyframes s { to { transform:rotate(360deg); } }
+  #manual { margin-top:16px; }
+  #manual.hidden { display:none; }
+  .row { display:flex; gap:8px; margin-top:8px; }
+  input, button { font:inherit; padding:10px 12px; border-radius:8px; border:1px solid #3a3f47; background:#14161a;
+                  color:var(--fg); }
+  input { flex:1; min-width:0; font-size:16px; }
+  button { background:var(--acc); border-color:var(--acc); cursor:pointer; }
+  .bad { color:var(--bad); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Тренер Доты — вы тренер Тьмы</h1>
+  <div class="muted">Этот файл прислал друг. Держите его открытым: он сам найдёт игру друга и откроет ваш пульт —
+    карту, ваших пятерых героев и поле приказов.</div>
+  <div id="status"><span class="spin"></span>Ищу игру друга…</div>
+  <div class="muted" id="when"></div>
+  <div id="manual" class="hidden">
+    <div id="why" class="bad"></div>
+    <div class="muted">Попросите у друга ссылку на пульт — у него она уже скопирована — и вставьте сюда:</div>
+    <div class="row">
+      <input id="link" placeholder="https://….trycloudflare.com/c/…/" autocapitalize="off" autocorrect="off"
+             spellcheck="false">
+      <button id="go" type="button">Открыть</button>
+    </div>
+  </div>
+</main>
+<script>
+/*__RV_JS__*/
+</script>
+<script>
+'use strict';
+const BASE = '__RV_BASE__', SECRET = '__SECRET__';
+const EVERY = Number(new URLSearchParams(location.search).get('every')) || 10000;   // мс между проверками
+const $ = id => document.getElementById(id);
+let fails = 0;
+
+function frag() { return '#rv=' + encodeURIComponent(SECRET) + '&b=' + encodeURIComponent(BASE); }
+function status(text, busy) { $('status').innerHTML = (busy ? '<span class="spin"></span>' : '') + text; }
+function manual(why) { $('why').textContent = why; $('manual').classList.remove('hidden'); }
+function goTo(url) {
+  if (!/^https?:\/\/[^\s#]+\/c\/[^\s#]+$/.test(url)) return false;    // только ссылка на пульт, ничего другого
+  status('Нашёл игру — открываю пульт…', true);
+  location.replace(url.replace(/\/?$/, '/') + frag());              // секрет — после «#», на сервер он не уходит
+  return true;
+}
+
+async function look() {
+  if (!window.crypto || !crypto.subtle) {
+    status('Этот браузер не умеет проверять подпись игры.');
+    manual('Откройте файл в Chrome или Edge — или вставьте ссылку вручную.');
+    return;
+  }
+  try {
+    const msg = await Rendezvous.find(BASE, SECRET);
+    fails = 0;
+    if (msg && msg.url && goTo(msg.url)) return;
+    status(msg && msg.closed ? 'Друг закрыл игру — жду, когда запустит снова.'
+                             : 'Друг ещё не запустил игру — жду. Как запустит, пульт откроется сам.', true);
+  } catch (e) {
+    fails += 1;
+    if (fails >= 2) manual('Не получается связаться с ящиком игры (ntfy.sh): ' + (e && e.message || 'нет связи') + '.');
+  }
+  $('when').textContent = 'Проверено в ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ', следующая проверка через '
+    + Math.round(EVERY / 1000) + ' с';
+  setTimeout(look, EVERY);
+}
+
+$('go').addEventListener('click', () => {
+  if (!goTo($('link').value.trim())) $('why').textContent = 'Это не ссылка на пульт: она выглядит как https://….trycloudflare.com/c/…/';
+});
+$('link').addEventListener('keydown', ev => { if (ev.key === 'Enter') $('go').click(); });
+look();
+</script>
+</body>
+</html>
