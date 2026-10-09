@@ -265,7 +265,14 @@ def ensure_cloudflared(opener=urllib.request.urlopen, which=shutil.which, window
         local.unlink()
     if not windows:
         return None
-    download(CLOUDFLARED_URL, local, opener, "туннель Cloudflare")
+    for attempt in range(2):                            # разовый обрыв связи — повторить один раз
+        try:
+            download(CLOUDFLARED_URL, local, opener, "туннель Cloudflare")
+            break
+        except OSError:
+            if attempt:
+                raise
+            say("  Связь оборвалась — качаю ещё раз…")
     if not check(str(local)):
         local.unlink()
         raise OSError("скачанный cloudflared не запускается")

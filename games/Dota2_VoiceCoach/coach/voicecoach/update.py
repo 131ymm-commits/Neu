@@ -14,9 +14,11 @@
 from __future__ import annotations
 
 import hashlib
+import http.client
 import json
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -40,13 +42,25 @@ def blob_sha(data: bytes) -> str:
     return hashlib.sha1(b"blob %d\0" % len(data) + data).hexdigest()
 
 
-def _get(url: str, opener, timeout: float = 30) -> bytes:
-    with opener(urllib.request.Request(url, headers=HEADERS), timeout=timeout) as r:
-        data = r.read()
-        n = (getattr(r, "headers", None) or {}).get("Content-Length")
-    if n is not None and str(n).isdigit() and int(n) != len(data):
-        raise OSError(f"{url}: ответ оборвался ({len(data)} из {n} байт)")
-    return data
+def _get(url: str, opener, timeout: float = 30, tries: int = 4, wait=time.sleep) -> bytes:
+    """Тело ответа целиком. Обрыв связи или ответа, 429 и 5xx — повторить (до tries раз, с паузой): на 65 файлов
+    разовый обрыв — обычное дело, а без повтора он отменял бы всё обновление. 404 и прочие 4xx — сразу ошибка."""
+    for attempt in range(tries):
+        try:
+            with opener(urllib.request.Request(url, headers=HEADERS), timeout=timeout) as r:
+                data = r.read()
+                n = (getattr(r, "headers", None) or {}).get("Content-Length")
+            if n is not None and str(n).isdigit() and int(n) != len(data):
+                raise OSError(f"{url}: ответ оборвался ({len(data)} из {n} байт)")
+            return data
+        except urllib.error.HTTPError as e:
+            if (e.code < 500 and e.code != 429) or attempt == tries - 1:
+                raise
+        except (OSError, http.client.HTTPException):
+            if attempt == tries - 1:
+                raise
+        wait(1.0 + 2.0 * attempt)
+    raise OSError(f"{url}: не скачалось")                # сюда не дойдёт: последняя попытка поднимает ошибку
 
 
 def release(opener=urllib.request.urlopen) -> str:
@@ -91,7 +105,7 @@ def wanted(tree: dict) -> list[tuple[str, str]]:
     return out
 
 
-def sync(dest: Path, opener=urllib.request.urlopen, log=print, workers: int = 8) -> tuple[int, int, str]:
+def sync(dest: Path, opener=urllib.request.urlopen, log=print, workers: int = 4) -> tuple[int, int, str]:
     """Привести папку игры к выпуску на GitHub. → (скачано файлов, всего файлов игры, хеш выпуска).
     Любой сбой — исключение, и тогда ни один файл не заменён."""
     sha = release(opener)

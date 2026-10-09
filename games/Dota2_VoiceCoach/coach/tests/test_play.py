@@ -541,7 +541,27 @@ class Updater(unittest.TestCase):
         def short(req, timeout=None):
             return FakeResponse(b"abc", {"Content-Length": "10"})
         with self.assertRaises(OSError):
-            U._get("https://example.invalid/x", short)
+            U._get("https://example.invalid/x", short, wait=lambda s: None)
+
+    def test_get_retries_dropped_connections_not_404(self):
+        """Живая проверка 09.10: из 65 файлов один оборвался (SSL EOF) — и без повтора отменилась вся установка."""
+        calls = []
+
+        def flaky(req, timeout=None):
+            calls.append(req)
+            if len(calls) < 3:
+                raise urllib.error.URLError("EOF occurred in violation of protocol")
+            return FakeResponse(b"data", {"Content-Length": "4"})
+        self.assertEqual(U._get("https://example.invalid/x", flaky, wait=lambda s: None), b"data")
+        self.assertEqual(len(calls), 3)
+        calls.clear()
+
+        def missing(req, timeout=None):
+            calls.append(req)
+            raise urllib.error.HTTPError("u", 404, "Not Found", {}, io.BytesIO(b""))
+        with self.assertRaises(urllib.error.HTTPError):
+            U._get("https://example.invalid/x", missing, wait=lambda s: None)
+        self.assertEqual(len(calls), 1)                                        # 404 не повторяем
 
     def test_main_plays_on_old_files_after_any_failure(self):
         import http.client
