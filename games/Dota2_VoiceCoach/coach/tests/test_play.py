@@ -182,7 +182,8 @@ class Launcher(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.cfg_path = Path(self.tmp.name) / "play.json"
         self.out = []
-        for name, value in (("CONFIG", self.cfg_path), ("say", self.out.append)):
+        self.pages = []
+        for name, value in (("CONFIG", self.cfg_path), ("say", self.out.append), ("open_page", self.pages.append)):
             patcher = mock.patch.object(P, name, value)
             patcher.start()
             self.addCleanup(patcher.stop)
@@ -260,6 +261,109 @@ class Launcher(unittest.TestCase):
         # «без Claude» сохранено; сменить и снова пустой Enter — так и остаётся без Claude
         self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "", opener=ok,
                                         offer=lambda t: True), (None, None))
+
+    def test_choose_mode(self):
+        def answers(*a):
+            it = iter(a)
+            return lambda p: next(it)
+        self.assertEqual(P.choose_mode(answers("")), "key")                 # Enter — ключ API (кредит Max)
+        self.assertEqual(P.choose_mode(answers("2")), "sub")                # вход подпиской в Claude Code
+        self.assertEqual(P.choose_mode(answers("x", " 0 ")), "off")          # непонятное — спросить ещё раз
+        self.assertIsNone(P.choose_mode(lambda p: (_ for _ in ()).throw(EOFError())))
+        text = "\n".join(self.out)
+        self.assertIn("$100 (Max 5x)", text)                                 # без доплат — сказано прямо
+        self.assertIn("обычное личное использование", text)                 # и чем рискует вход подпиской
+
+    def test_modes_chosen_once_and_changed_by_key(self):
+        """Слова автора 09.10.2026: «у меня есть подписка макс … давай в рамках тарифного плана» (Д15)."""
+        never = lambda p: 1 / 0                                               # noqa: E731 — спрашивать нельзя
+        ok = opener_for({P.MODELS_API: self.MODELS})
+        # первый запуск: Enter — ключ API; лаунчер открывает страницы кредита и ключей
+        got = P.setup_agents({}, P.parse([]), ask=lambda p: "", ask_secret=lambda p: "sk-test-key-0123456789",
+                             opener=ok, offer=lambda t: False)
+        self.assertEqual(got, ("key", ("sk-test-key-0123456789", self.NEW)))
+        self.assertEqual(self.pages, [P.CREDITS_PAGE, P.KEYS_PAGE])
+        self.assertEqual(P.load_config(self.cfg_path)["mode"], "key")
+        # следующий запуск: не спрашивает и страниц не открывает
+        self.pages.clear()
+        self.assertEqual(P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=never, opener=ok,
+                                        offer=lambda t: False)[0], "key")
+        self.assertEqual(self.pages, [])
+        # сменил на вход подпиской клавишей при запуске
+        sub = mock.Mock(return_value="C:/Users/u/.local/bin/claude.exe")
+        self.assertEqual(P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "2",
+                                        offer=lambda t: True, subscription=sub),
+                         ("sub", "C:/Users/u/.local/bin/claude.exe"))
+        self.assertEqual(P.load_config(self.cfg_path)["mode"], "sub")
+        # Claude Code не готов — в этот раз правила, выбор не теряется
+        self.assertEqual(P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=never, offer=lambda t: False,
+                                        subscription=lambda: None), ("off", None))
+        self.assertEqual(P.load_config(self.cfg_path)["mode"], "sub")
+        # прежняя настройка без «mode», но с ключом — режим ключа, без вопроса
+        self.cfg_path.unlink()
+        self.assertEqual(P.setup_agents({"api_key": "sk-old-key-0123456789", "model": self.NEW}, P.parse([]),
+                                        ask=never, opener=ok, offer=lambda t: False)[0], "key")
+        # «0» — правила; --rules — без вопросов; на вопросе о ключе Enter — тоже правила, и это запоминается
+        self.assertEqual(P.setup_agents({}, P.parse([]), ask=lambda p: "0", offer=lambda t: False), ("off", None))
+        self.assertEqual(P.setup_agents({}, P.parse(["--rules"]), ask=never), ("off", None))
+        cfg = {}
+        self.assertEqual(P.setup_agents(cfg, P.parse([]), ask=lambda p: "", ask_secret=lambda p: "",
+                                        offer=lambda t: False), ("off", None))
+        self.assertEqual(P.load_config(self.cfg_path)["mode"], "off")
+
+    def test_subscription_setup_installs_and_logs_in(self):
+        found = iter([None, "/x/claude"])
+        install, login = mock.Mock(return_value=True), mock.Mock(return_value=True)
+        states = iter([{"loggedIn": False}, {"loggedIn": True, "authMethod": "claude.ai"}])
+        exe = P.setup_subscription(find=lambda: next(found), install=install, auth=lambda e: next(states),
+                                   login=login, check=lambda e: (True, ""))
+        self.assertEqual(exe, "/x/claude")
+        install.assert_called_once()
+        login.assert_called_once_with("/x/claude")                           # вход — один раз, браузером
+        # уже вошёл — без входа
+        login.reset_mock()
+        self.assertEqual(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {"loggedIn": True},
+                                              login=login, check=lambda e: (True, "")), "/x/claude")
+        login.assert_not_called()
+        # не поставился, не вошёл, не ответил — правила, с причиной на экране
+        self.assertIsNone(P.setup_subscription(find=lambda: None, install=lambda: False))
+        self.assertIsNone(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {"loggedIn": False},
+                                               login=lambda e: False))
+        self.assertIsNone(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {"loggedIn": True},
+                                               check=lambda e: (False, "You've hit your session limit")))
+        self.assertTrue(any("session limit" in line for line in self.out))
+
+    def test_claude_calls_without_api_keys_in_env(self):
+        """Документация Claude Code: в режиме -p ключ из окружения берётся раньше подписки — его убираем."""
+        seen = []
+
+        def run(argv, **kw):
+            seen.append((argv, kw))
+            return SimpleNamespace(stdout='{"is_error": false, "result": "готов", "loggedIn": true}', stderr="",
+                                   returncode=0)
+        with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-should-not-leak", "ANTHROPIC_AUTH_TOKEN": "t"}):
+            self.assertEqual(P.claude_check("c", run=run), (True, ""))
+            P.claude_auth("c", run=run)
+            P.claude_login("c", run=run)
+            from voicecoach.agents import CliBackend
+            b = CliBackend(model=P.CLAUDE_FAST, claude="c", runner=run, subscription=True, which=lambda n: None)
+        for argv, kw in seen:
+            self.assertNotIn("ANTHROPIC_API_KEY", kw["env"])
+            self.assertNotIn("ANTHROPIC_AUTH_TOKEN", kw["env"])
+        self.assertNotIn("ANTHROPIC_API_KEY", b.env)
+        self.assertEqual(seen[0][0][seen[0][0].index("--model") + 1], P.CLAUDE_FAST)   # пробный вызов — быстрой моделью
+        self.assertEqual(seen[2][0][1:], ["auth", "login", "--claudeai"])
+        ok, why = P.claude_check("c", run=lambda a, **kw: SimpleNamespace(
+            stdout='{"is_error": true, "result": "Invalid API key · Please run /login"}', stderr="", returncode=1))
+        self.assertEqual((ok, "/login" in why), (False, True))
+        self.assertFalse(P.claude_check("c", run=lambda a, **kw: SimpleNamespace(stdout="", stderr="нет", returncode=1))[0])
+
+    def test_find_claude(self):
+        home = Path(self.tmp.name)
+        (home / ".local" / "bin").mkdir(parents=True)
+        (home / ".local" / "bin" / "claude.exe").write_bytes(b"")
+        self.assertEqual(P.find_claude(which=lambda n: None, home=home), str(home / ".local" / "bin" / "claude.exe"))
+        self.assertEqual(P.find_claude(which=lambda n: "/usr/bin/claude", home=home), "/usr/bin/claude")
 
     def test_friend_version_same_in_python_and_js(self):
         """Разные версии в rendezvous.py и rv.js — свежий файл друга вечно просил бы новый."""

@@ -407,6 +407,10 @@ def memory_line(obs: dict, d: dict, new_coach: list[dict]) -> str:
 
 # --- моторы ---
 
+LIMIT_RE = re.compile(r"limit|лимит", re.I)          # «usage limit reached» и подобное в ответе claude -p
+KEY_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")
+
+
 class BackendError(Exception):
     def __init__(self, msg: str, retry_after: float | None = None, reply: dict | None = None):
         super().__init__(msg)
@@ -572,6 +576,9 @@ class ApiBackend:
                 text = e.read().decode("utf-8", "replace")[:400] if hasattr(e, "read") else ""
                 if e.code == 400 and self._drop(text):
                     continue
+                if "credit balance" in text.lower():          # кредит организации кончился: до пополнения не стучаться
+                    raise BackendError("кредит API кончился (запросы стоят до нового месяца или пополнения)",
+                                       3600.0) from None
                 retry = e.headers.get("retry-after") if getattr(e, "headers", None) else None
                 raise BackendError(f"HTTP {e.code}: {text}", _retry_after(retry)) from None
             except (urllib.error.URLError, TimeoutError, OSError) as e:
@@ -599,8 +606,11 @@ class CliBackend:
     Windows ломается. На Windows лучше нативный claude.exe: обёртку claude.cmd из npm запускает cmd.exe."""
 
     def __init__(self, model: str | None = None, claude: str = "claude", timeout: float = 90.0, runner=None,
-                 effort: str | None = None, which=shutil.which):
+                 effort: str | None = None, which=shutil.which, subscription: bool = False):
         self.model, self.timeout, self.effort = model, timeout, effort
+        # по подписке: ключ из окружения убрать — в режиме -p Claude Code берёт ключ, если он есть (документация,
+        # «Authentication»), и вызовы ушли бы в оплату по ключу
+        self.env = {k: v for k, v in os.environ.items() if k not in KEY_VARS} if subscription else None
         self.claude = which(claude) or claude
         self.runner = runner or subprocess.run
         self.cwd = tempfile.mkdtemp(prefix="vc_agent_")      # пустая рабочая папка
@@ -631,7 +641,7 @@ class CliBackend:
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
         try:
             p = self.runner(self.argv(system), input=user, capture_output=True, text=True, encoding="utf-8",
-                            errors="replace", timeout=self.timeout, cwd=self.cwd)
+                            errors="replace", timeout=self.timeout, cwd=self.cwd, env=self.env)
         except FileNotFoundError:
             raise BackendError(f"не нашёл {self.claude}: установите Claude Code или укажите --claude") from None
         except subprocess.TimeoutExpired:
@@ -641,7 +651,9 @@ class CliBackend:
         except json.JSONDecodeError:
             raise BackendError(f"claude -p: не JSON (код {p.returncode}): {(p.stdout or p.stderr)[:200]}") from None
         if data.get("is_error"):
-            raise BackendError(f"claude -p: {str(data.get('result'))[:200]}")
+            text = str(data.get("result"))
+            # кончился лимит подписки: сторона ждёт 10 минут, а не стучится каждые несколько секунд
+            raise BackendError(f"claude -p: {text[:200]}", 600.0 if LIMIT_RE.search(text) else None)
         # modelUsage: кроме модели агента Claude Code зовёт и малую служебную — главная та, что дороже
         mu = data.get("modelUsage") or {}
         models = sorted(mu, key=lambda m: -float((mu[m] or {}).get("costUSD") or 0))
@@ -740,6 +752,7 @@ class AgentHub:
         self.calls_paid = {t: 0 for t in backends}     # платные вызовы по сторонам: соперник не тратит предел хоста
         self.coach_gap = coach_gap
         self.pause_until = {t: 0.0 for t in backends}         # пауза по retry-after — у стороны, которой ответили 429
+        self.pause_why = {t: "лимит API" for t in backends}
         self.log_path = Path(log_path) if log_path else None
         self.run = f"{time.time():.0f}-{id(self) % 10000}"   # новый запуск сервера — номера решений с 1, игра их сбрасывает
         self.chat = {t: deque(maxlen=40) for t in backends}   # голосовой чат каждой команды (слышит только своя)
@@ -824,7 +837,7 @@ class AgentHub:
             ag.state = "лимит вызовов исчерпан"
             return None
         if now < self.pause_until.get(ag.team, 0.0):
-            ag.state = "пауза: лимит API"
+            ag.state = "пауза: " + self.pause_why.get(ag.team, "лимит")
             return None
         if self.inflight >= self.max_inflight:
             return None
@@ -924,6 +937,8 @@ class AgentHub:
                 with self.lock:
                     self.pause_until[ag.team] = max(self.pause_until.get(ag.team, 0.0),
                                                     time.monotonic() + e.retry_after)
+                    self.pause_why[ag.team] = ("кредит API кончился" if "кредит" in err else
+                                               "лимит подписки" if getattr(backend, "self_cost", False) else "лимит API")
         except Exception as e:                                     # noqa: BLE001 — агент не должен ронять сервер
             err = f"{type(e).__name__}: {e}"
         latency = time.monotonic() - t0

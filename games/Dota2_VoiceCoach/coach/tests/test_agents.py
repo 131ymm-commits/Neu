@@ -564,6 +564,21 @@ class Cli(unittest.TestCase):
         with self.assertRaises(A.BackendError) as cm:
             A.CliBackend(runner=run).decide("s", "u", obs())
         self.assertIn("Not logged in", str(cm.exception))
+        self.assertIsNone(cm.exception.retry_after)                           # не вошёл — это не лимит
+        run, _ = self.runner({"is_error": True, "result": "Claude AI usage limit reached|1760000000"}, code=1)
+        with self.assertRaises(A.BackendError) as cm:
+            A.CliBackend(runner=run).decide("s", "u", obs())
+        self.assertEqual(cm.exception.retry_after, 600.0)                     # лимит подписки — сторона ждёт
+        # кредит API кончился (текст ответа API из документации) — пауза на час, а не стук каждые 3 с
+        body = b'{"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."}}'
+        err = urllib.error.HTTPError(A.ApiBackend.URL, 400, "Bad Request", {}, io.BytesIO(body))
+
+        def broke(req, timeout=None):
+            raise err
+        with self.assertRaises(A.BackendError) as cm:
+            A.ApiBackend("m", api_key="k", opener=broke).decide("s", "u", obs())
+        self.assertEqual(cm.exception.retry_after, 3600.0)
+        self.assertIn("кредит API кончился", str(cm.exception))
 
         def garbage(argv, **kw):
             class P:
