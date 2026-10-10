@@ -36,6 +36,7 @@ from pathlib import Path
 
 from . import rendezvous as RV
 from .agents import AgentHub, ApiBackend, CliBackend, make_backend
+from .ai_coach import AICoach, ClaudeCoach, RulesCoach
 from .console import console_url, load_keys, serve_console, start_tunnel
 from .server import LOGS, serve
 
@@ -585,15 +586,16 @@ TOOLS_HELP = ("Нет бесплатного дополнения Dota 2 Worksho
               + TOOLS_MANUAL)
 
 
-def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.sleep) -> str:
-    """Запустить Доту с инструментами и сразу кастомку. → что сказать хосту."""
+def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.sleep, force: bool = False) -> str:
+    """Запустить Доту с инструментами и сразу кастомку. → что сказать хосту. force — запускать, даже если признака
+    Workshop Tools не видно (хост сказал, что дополнение стоит)."""
     if running("dota2.exe"):
         return ("Дота уже запущена. Закройте её и запустите ИГРАТЬ.bat снова — или введите в консоли Доты:  "
                 f"dota_launch_custom_game {ADDON} dota")
     win64 = dota / "game" / "bin" / "win64"
     if not (win64 / "dota2.exe").exists():
         return f"Не нашёл {win64 / 'dota2.exe'} — запустите Доту сами"
-    if not has_tools(dota):                          # первый живой запуск 10.10.2026: без них Steam даёт ошибку
+    if not force and not has_tools(dota):            # первый живой запуск 10.10.2026: без них Steam даёт ошибку
         return TOOLS_HELP
     if os.name == "nt" and not running("steam.exe"):
         try:
@@ -618,15 +620,26 @@ def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.
 
 
 def launch_when_tools(dota: Path, stop: threading.Event, has=has_tools, launch=None, period: float = 10.0,
-                      settle: float = 30.0) -> None:
+                      settle: float = 30.0, remind: float = 120.0, started: threading.Event | None = None) -> None:
     """Steam ещё качает Workshop Tools: ждать (окно лаунчера открыто — сервер и туннель уже работают) и, как только
-    дополнение на месте, запустить Доту — без второго окна ИГРАТЬ.bat (Д15, дополнение 2)."""
+    дополнение на месте, запустить Доту — без второго окна ИГРАТЬ.bat (Д15, дополнение 2). Раз в remind секунд —
+    напоминание: окно не зависло. started — Доту уже запустили иначе (хост набрал «д»): больше не ждать."""
     launch = launch or launch_dota
+    waited = 0.0
     while not stop.wait(period):
+        if started is not None and started.is_set():
+            return
+        waited += period
+        if remind and waited >= remind:
+            waited = 0.0
+            say("  …жду Workshop Tools (Steam → Библиотека → Dota 2 → Свойства → DLC). Окно не зависло. Если дополнение")
+            say("  уже стоит — наберите д и Enter, запущу Доту сразу.")
         if has(dota):
             say("  Workshop Tools на месте — через полминуты запускаю Доту (Steam доводит файлы)…")
-            if stop.wait(settle):
+            if stop.wait(settle) or (started is not None and started.is_set()):
                 return
+            if started is not None:
+                started.set()
             say("  " + launch(dota))
             return
 
@@ -767,17 +780,21 @@ def bind(make, port: int, who: str, tries: int = 10, wait=time.sleep, ours=None)
     return None
 
 
-def wait_enter(stop: threading.Event, ask=input, window: float = 5.0, clock=time.monotonic) -> None:
+def wait_enter(stop: threading.Event, ask=input, window: float = 5.0, clock=time.monotonic, on_word=None) -> None:
     """Закончить игру — Enter два раза (второй — за window секунд): один случайный Enter не обрывает игру друга.
-    Окно без ввода — ждать только Ctrl+C."""
+    «д» и Enter (в любой раскладке: д, l, d) — on_word: запустить Доту сразу. Окно без ввода — ждать только Ctrl+C."""
     first = None
     while not stop.is_set():
         try:
-            ask("")
+            line = ask("")
         except (EOFError, OSError):
             return
         except KeyboardInterrupt:
             break
+        if on_word is not None and str(line or "").strip().lower() in ("д", "l", "d"):
+            on_word()
+            first = None
+            continue
         now = clock()
         if first is not None and now - first <= window:
             break
@@ -931,25 +948,40 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
         say("  Друг уже получал этот файл — пусть просто откроет его.")
 
     say("[6/6] Дота")
-    stop = threading.Event()
+    stop, started = threading.Event(), threading.Event()
+    on_word = None
     if dota and not args.no_dota and not has_tools(dota):
         say("  Жду дополнение Workshop Tools: не закрывайте это окно — как только Steam его докачает, Дота запустится")
-        say("  сама. " + TOOLS_MANUAL)
-        threading.Thread(target=launch_when_tools, args=(dota, stop), daemon=True, name="tools").start()
+        say("  сама. Если дополнение уже стоит — наберите д и Enter, запущу Доту сразу.")
+
+        def on_word():
+            if not started.is_set():
+                started.set()
+                say("  " + launch_dota(dota, force=True))
+        threading.Thread(target=launch_when_tools, args=(dota, stop), kwargs={"started": started}, daemon=True,
+                         name="tools").start()
     elif dota and not args.no_dota:
         say("  " + launch_dota(dota))
     else:
         say(f"  Запустите Доту с инструментами и в её консоли:  dota_launch_custom_game {ADDON} dota")
 
+    coach_log = LOGS / f"ai_coach_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
+    ai = AICoach(room, REMOTE, ClaudeCoach(info, CLAUDE_FAST) if mode == "sub" else RulesCoach(), log_path=coach_log)
+    ai.start()
+    say("  Соперник: Тьмой командует ИИ-тренер (" + ("Claude" if mode == "sub" else "правила, не Claude") +
+        ") — пока друг не откроет пульт; откроет — ИИ-тренер замолчит. Его приказы в окно не пишутся.")
+
     say("")
     say("Окно не закрывайте, пока играете. Закончить игру — Enter два раза.")
     flush_input()                                                 # Enter, нажатый раньше, игру не закончит
-    threading.Thread(target=wait_enter, args=(stop, enter), daemon=True, name="enter").start()
+    threading.Thread(target=wait_enter, args=(stop, enter), kwargs={"on_word": on_word}, daemon=True,
+                     name="enter").start()
     try:
         watch(room, stop=stop.is_set, sleep=stop.wait)
     except KeyboardInterrupt:
         pass
     say("Заканчиваю…")
+    ai.close()
     if keeper is not None:                                        # сначала входы: туннель, пульт, игра —
         keeper.close()
     for server in (console, srv):                                 # тогда новый тик не придёт к закрытым агентам
