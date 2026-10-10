@@ -3,6 +3,7 @@
 // героя нет (Д10); героев ведут агенты Claude (Д11).
 (function () {
   'use strict';
+  $.Msg('[ТРЕНЕР] интерфейс: скрипт запущен');     // в консоли Доты — лаунчер покажет хосту, что интерфейс есть
   var CAMERA_PITCH = 70;          // наклон камеры, градусы: «вид сверху» (проверить в игре)
   var acked = false, readyTries = 0;
 
@@ -98,10 +99,18 @@
   GameEvents.Subscribe('vc_ack', function (ev) { acked = true; setupCamera(ev.camera); startVoice(); });
   $('#CoachInput').SetPanelEvent('oninputsubmit', send);
   $('#CoachHelpButton').SetPanelEvent('onactivate', function () { $('#CoachSheet').ToggleClass('Hidden'); });
-  Game.AddCommand('vc_coach_focus', focusInput, '', 0);
-  Game.CreateCustomKeyBind('F2', 'vc_coach_focus');
-  hideHeroUi();
-  setupCamera(1600);
+  try {
+    Game.AddCommand('vc_coach_focus', focusInput, '', 0);
+    Game.CreateCustomKeyBind('F2', 'vc_coach_focus');
+  } catch (e) {                                    // без клавиши F2 поле приказа работает и так
+    $.Msg('[ТРЕНЕР] интерфейс: клавиша F2 не назначилась: ' + e);
+  }
+  try {
+    hideHeroUi();
+    setupCamera(1600);
+  } catch (e) {                                    // имя панели из старой версии Доты не роняет весь интерфейс
+    $.Msg('[ТРЕНЕР] интерфейс: не скрыл панели героя или не настроил камеру: ' + e);
+  }
   addLog('Тренер: пишите приказы в поле внизу (F2 — к полю), «?» — шпаргалка; кто ведёт героев — строка вверху', 'ack');
   sendReady();
 })();

@@ -41,6 +41,8 @@ G.TICK = 1.0                  -- с: обмен с сервером агенто
 G.AGENTS_URL = "http://127.0.0.1:8787/api/local/tick"
 G.FALLBACK_AFTER = 6          -- с без ответа сервера → запасной исполнитель
 G.AGENT_STALE = 20            -- с игры без нового решения агента героя → этим героем правит запасной исполнитель
+G.SETUP_WAIT = 30             -- с: столько в начале PRE_GAME ждём героев ботов (Дота может создать их не сразу)
+G.PULSE = 60                  -- с: раз в столько — строка «пульс» в консоль (лаунчер показывает её хосту)
 G.CAMERA_DISTANCE = 1600      -- дальше обычного (в Доте 1134): тренер смотрит сверху
 G.CHAT_REPLIES = true         -- реплики агентов — и в командный чат
 G.COACH_KEEP = 3              -- сколько последних приказов тренера видит агент
@@ -104,8 +106,42 @@ function G:OnState()
   elseif s == DOTA_GAMERULES_STATE_HERO_SELECTION then
     gm:SetContextThink("vc_add_bots", function() G:AddBots() return nil end, 2)
   elseif s == DOTA_GAMERULES_STATE_PRE_GAME then
-    gm:SetContextThink("vc_setup_agents", function() G:SetupAgents() return nil end, 1)
+    G.setup_since, G.setup_waiting = nil, nil
+    gm:SetContextThink("vc_setup_agents", function() return G:TrySetup() end, 1)
   end
+end
+
+-- боты команд без героя: сколько их и сколько всего ботов
+local function bots_without_hero()
+  local missing, total = 0, 0
+  for pid = 0, 23 do
+    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) then
+      local team = PlayerResource:GetTeam(pid)
+      if team == DOTA_TEAM_GOODGUYS or team == DOTA_TEAM_BADGUYS then
+        total = total + 1
+        if PlayerResource:GetSelectedHeroEntity(pid) == nil then missing = missing + 1 end
+      end
+    end
+  end
+  return missing, total
+end
+
+-- агенты получают героев, когда у всех ботов есть герой (или прошло SETUP_WAIT с): раздать раньше — агентам
+-- достанется не вся команда, и оставшиеся герои простоят матч у фонтана
+function G:TrySetup()
+  local now = GameRules:GetGameTime()
+  G.setup_since = G.setup_since or now
+  local missing, total = bots_without_hero()
+  if missing > 0 and now - G.setup_since < G.SETUP_WAIT then
+    if not G.setup_waiting then
+      G.setup_waiting = true
+      log("жду героев ботов: без героя %d из %d", missing, total)
+    end
+    return 1
+  end
+  if missing > 0 then log("не дождался героев ботов: без героя %d из %d — раздаю агентам, что есть", missing, total) end
+  G:SetupAgents()
+  return nil
 end
 
 local function taken_heroes()
@@ -200,6 +236,14 @@ function G:SetupAgents()
   G.ready = true
   log("карта: вышек %d, фонтаны %s; героев: Свет %d, Тьма %d", towers, tostring(fountains),
     #G.teams[DOTA_TEAM_GOODGUYS].agents, #G.teams[DOTA_TEAM_BADGUYS].agents)
+  for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
+    local T, names = G.teams[team], {}
+    for pos = 1, 5 do
+      if T.agents[pos] then names[#names + 1] = pos .. " " .. World.short(T.agents[pos]:GetUnitName()) end
+    end
+    log("%s: агенты ведут %s; тренеров-людей %d", team == DOTA_TEAM_GOODGUYS and "Свет" or "Тьма",
+      #names > 0 and table.concat(names, ", ") or "никого", #T.commanders)
+  end
   for team in pairs(G.teams) do G:SendAgents(team) end
 end
 
@@ -288,6 +332,23 @@ function G:ThinkBody()
     for team in pairs(G.teams) do World.update_seen(team, now) end
     Link.tick(G.link, function() return G:TickPayload(now) end, function(data) G:OnAgents(data) end)
   end
+  if now >= (G.next_pulse or 0) then
+    G.next_pulse = now + G.PULSE
+    G:Pulse(now, linked)
+  end
+end
+
+-- строка «пульс» в консоль: связь, обмены, сколько героев ведут агенты (лаунчер показывает её в окне хоста)
+function G:Pulse(now, linked)
+  local heroes, led = 0, 0
+  for _, T in pairs(G.teams) do
+    for pos in pairs(T.agents) do
+      heroes = heroes + 1
+      if G:AgentAlive(T, pos, now, linked) then led = led + 1 end
+    end
+  end
+  log("пульс: связь с сервером %s, обменов %d (с ответом %d), героев %d, из них ведут агенты %d",
+    linked and "есть" or "нет", G.link.sent, G.link.ok, heroes, led)
 end
 
 -- ведёт ли героя агент: связь есть и решение агента свежее (иначе — запасной исполнитель, приказы тренера не теряются)
@@ -659,6 +720,11 @@ end
 function G:OnReady(ev)
   local pid = tonumber(ev.PlayerID) or -1
   if pid < 0 then return end
+  G.hud_seen = G.hud_seen or {}
+  if not G.hud_seen[pid] then
+    G.hud_seen[pid] = true
+    log("интерфейс тренера загрузился (игрок %d)", pid)
+  end
   local player = PlayerResource:GetPlayer(pid)
   if player then CustomGameEventManager:Send_ServerToPlayer(player, "vc_ack", { camera = G.CAMERA_DISTANCE }) end
   local team = PlayerResource:GetTeam(pid)

@@ -23,6 +23,7 @@ import atexit
 import getpass
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -664,6 +665,119 @@ def launch_when_tools(dota: Path, stop: threading.Event, start, has=has_tools, l
             return
 
 
+# --- журнал Доты: что делает кастомка (первый живой матч, 10.10.2026: «агентов нет» — а окно хоста молчало) ---
+
+CONSOLE_LOG = Path("game") / "dota" / "console.log"    # консоль Доты по -condebug — в папке «dota 2 beta» (по памяти)
+AGENT_SPEECH = re.compile(r"\[ТРЕНЕР\] \d \S*: ")       # реплики агентов — в чате игры; окну хоста хватит остального
+GAME_TROUBLE = re.compile(r"script runtime error|script error|stack traceback|error loading|failed to load|"
+                          r"\.lua:\d+|coach_|vc_\w+\.lua|voicecoach|custom_ui_manifest", re.I)
+PANORAMA_TROUBLE = re.compile(r"panorama.*(error|fail)|(error|fail).*panorama", re.I)
+
+
+class DotaLog:
+    """Новые строки консоли Доты (console.log): строки кастомки «[ТРЕНЕР]» (кроме реплик агентов) и ошибки скриптов и
+    интерфейса — в окно хоста, всё новое — копией в журнал лаунчера (её можно прислать). Строки прошлых запусков
+    не показывает. Одна и та же строка — не чаще раза в repeat секунд, всего — не больше per_window строк за window
+    секунд: поток ошибок окно не заливает, о скрытых строках окно говорит."""
+
+    MAX_READ = 4_000_000
+
+    def __init__(self, path: Path, copy: Path | None = None, show=None, clock=time.monotonic,
+                 per_window: int = 12, window: float = 10.0, repeat: float = 60.0):
+        self.path, self.copy = Path(path), Path(copy) if copy else None
+        self.show = show or (lambda line: say("  Дота: " + line))
+        self.clock = clock
+        self.per_window, self.window, self.repeat = per_window, window, repeat
+        try:
+            self.pos = self.path.stat().st_size
+        except OSError:
+            self.pos = 0
+        self.tail = b""
+        self.seen: dict[str, float] = {}
+        self.win_start, self.win_count, self.hidden = -1e18, 0, 0
+        self.ours = 0                                  # сколько строк «[ТРЕНЕР]» пришло — кастомка пишет в журнал
+
+    @staticmethod
+    def wanted(line: str) -> bool:
+        if "[ТРЕНЕР]" in line:
+            return not AGENT_SPEECH.search(line)
+        return bool(GAME_TROUBLE.search(line) or PANORAMA_TROUBLE.search(line))
+
+    def poll(self) -> int:
+        """Дочитать файл; вернуть, сколько строк показано в окне."""
+        try:
+            size = self.path.stat().st_size
+        except OSError:
+            return 0
+        if size < self.pos:                            # файл начат заново — новый запуск Доты
+            self.pos, self.tail = 0, b""
+        shown = 0
+        if size > self.pos:
+            with self.path.open("rb") as f:
+                f.seek(self.pos)
+                data = f.read(min(size - self.pos, self.MAX_READ))
+            self.pos += len(data)
+            parts = (self.tail + data).split(b"\n")
+            self.tail = parts.pop()                    # неполная последняя строка — дочитается в следующий раз
+            if len(self.tail) > 100_000:
+                self.tail = b""
+            lines = [p.decode("utf-8", "replace").rstrip("\r") for p in parts]
+            if self.copy and lines:
+                try:
+                    self.copy.parent.mkdir(parents=True, exist_ok=True)
+                    with self.copy.open("a", encoding="utf-8") as f:
+                        f.write("\n".join(lines) + "\n")
+                except OSError:
+                    self.copy = None                   # нет места или прав — копию не пишем, окно работает
+            for line in lines:
+                if "[ТРЕНЕР]" in line:
+                    self.ours += 1
+                if self.wanted(line) and self._emit(line):
+                    shown += 1
+        self._flush_hidden()
+        return shown
+
+    def _emit(self, line: str) -> bool:
+        at = line.find("[ТРЕНЕР]")
+        line = (line[at + len("[ТРЕНЕР] "):] if at >= 0 else line).strip()[:240]
+        if not line:
+            return False
+        now = self.clock()
+        last = self.seen.get(line)
+        if last is not None and now - last < self.repeat:
+            return False
+        self.seen[line] = now
+        if len(self.seen) > 1000:
+            self.seen = {k: v for k, v in self.seen.items() if now - v < self.repeat}
+        self._flush_hidden()
+        if self.win_count >= self.per_window:
+            self.hidden += 1
+            return False
+        self.win_count += 1
+        self.show(line)
+        return True
+
+    def _flush_hidden(self) -> None:
+        now = self.clock()
+        if now - self.win_start < self.window:
+            return
+        if self.hidden:
+            self.show(f"…и ещё строк: {self.hidden} (весь журнал Доты: {self.copy or self.path})")
+        self.win_start, self.win_count, self.hidden = now, 0, 0
+
+
+def follow_dota_log(log: DotaLog, stop: threading.Event, period: float = 1.0) -> None:
+    """Раз в period секунд — новые строки консоли Доты в окно хоста. Сбой чтения окно не роняет."""
+    told = False
+    while not stop.wait(period):
+        try:
+            log.poll()
+        except Exception as e:                         # noqa: BLE001 — журнал вспомогательный: игра идёт без него
+            if not told:
+                say(f"  Журнал Доты не читается: {e}")
+                told = True
+
+
 # --- туннель ---
 
 class TunnelKeeper:
@@ -970,6 +1084,11 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     say("[6/6] Дота")
     stop = threading.Event()
     on_word = None
+    dlog = None
+    if dota:                                                      # консоль Доты (-condebug) — в окно и копией в журнал
+        dlog = DotaLog(dota / CONSOLE_LOG, LOGS / f"dota_console_{time.strftime('%Y%m%d_%H%M%S')}.log")
+        threading.Thread(target=follow_dota_log, args=(dlog, stop), daemon=True, name="dota-log").start()
+        say("  Что делает кастомка (строки «[ТРЕНЕР]») и её ошибки покажу здесь, с пометкой «Дота:».")
     if dota and not args.no_dota:
         starter = DotaStarter(dota)
 
@@ -1018,25 +1137,95 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
         s = room.agents.summary()
         say(f"Вызовов Claude: {s.get('paid_calls', 0)} (герои) + {ai.claude_calls} (ИИ-тренер), ошибок: "
             f"{s.get('errors', 0)}, задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
+    if dlog is not None and dlog.copy is not None and dlog.copy.exists():
+        say(f"Журнал Доты за эту игру: {dlog.copy}")
+    if room.agents is not None:
         time.sleep(0.2)
         if any(t.name.startswith("agent") and t.is_alive() for t in threading.enumerate()):
             say(f"Жду, пока агенты закончат начатые ходы (до {getattr(backend, 'timeout', 30):.0f} с)…")
     return 0
 
 
-def watch(room, period: float = 2.0, stop=lambda: False, sleep=time.sleep) -> None:
-    """Сообщать хосту, что изменилось: друг открыл пульт, игра на связи."""
+SIDE_OF = {"radiant": "Света", "dire": "Тьмы"}
+ERRORS_SHOWN = 3                                   # ошибок агентов стороны в окне хоста — дальше они только в журнале
+
+
+def hero_counts(tick) -> dict:
+    """Сколько героев каждой стороны игра отдала агентам в последнем обмене."""
+    out = {"radiant": 0, "dire": 0}
+    for o in (tick or {}).get("heroes") or []:
+        if isinstance(o, dict) and o.get("team") in out:
+            out[o["team"]] += 1
+    return out
+
+
+def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
+    """Агенты стороны приняли первое решение; ошибка агента (первые ERRORS_SHOWN); пауза стороны; раз в every
+    секунд — сводка: окно хоста показывает, что агенты ведут героев, а не только что сервер работает."""
+    hub = getattr(room, "agents", None)
+    if hub is None or not hasattr(hub, "progress"):
+        return
+    prog = hub.progress()
+    for team, p in prog.items():
+        side = SIDE_OF.get(team, team)
+        if p["decisions"] and not told.get(("first", team)):
+            told[("first", team)] = True
+            say(f"  ● Агенты {side} ведут героев: первые решения пришли.")
+        if p["error"] and p["error"] != told.get(("error", team)):
+            told[("error", team)] = p["error"]
+            n = told.get(("errors", team), 0) + 1
+            told[("errors", team)] = n
+            if n <= ERRORS_SHOWN:
+                say(f"  ! Агент {side} {p['error'][:160]}")
+            if n == ERRORS_SHOWN:
+                say(f"    Дальше ошибки агентов {side} — только в журнале агентов (coach\\logs\\agents_local_*.jsonl).")
+        pause = p.get("pause") or ""
+        if pause != told.get(("pause", team), ""):
+            told[("pause", team)] = pause
+            if pause:
+                say(f"  ! Агенты {side} на паузе: {pause}. Пока героями правит запасной исполнитель (приказы тренера).")
+    if now - told.get("summary_t", now) >= every:
+        parts = [f"{SIDE_OF.get(t, t)} — решений {p['decisions']}, ошибок {p['errors']}" for t, p in prog.items()]
+        say("  Агенты: " + "; ".join(parts) + ".")
+        told["summary_t"] = now
+    told.setdefault("summary_t", now)
+
+
+def watch(room, period: float = 2.0, stop=lambda: False, sleep=time.sleep, clock=time.time,
+          empty_after: float = 15.0) -> None:
+    """Сообщать хосту, что изменилось: друг открыл пульт; игра на связи и сколько героев отдала агентам (ни одного
+    дольше empty_after секунд — сказать прямо); агенты ведут героев, их ошибки и паузы."""
     friend_on = game_on = False
+    heroes = None
+    linked_at = 0.0
+    told: dict = {}
     while not stop():
-        now = time.time()
+        now = clock()
         f = now - room.console_seen.get(REMOTE, 0) < 10
         g = room.game_linked()
         if f != friend_on:
             say("  ● Друг открыл пульт." if f else "  ○ Пульт друга закрыт или потерял связь.")
             friend_on = f
         if g != game_on:
-            say("  ● Игра на связи с сервером тренера." if g else "  ○ Игра не отвечает (матч кончился или Дота закрыта).")
             game_on = g
+            if g:
+                linked_at, heroes = now, hero_counts(getattr(room, "last_tick", None))
+                say(f"  ● Игра на связи с сервером тренера. Героев у агентов: Свет {heroes['radiant']}, "
+                    f"Тьма {heroes['dire']}.")
+            else:
+                heroes = None
+                say("  ○ Игра не отвечает (матч кончился или Дота закрыта).")
+        elif g:
+            n = hero_counts(getattr(room, "last_tick", None))
+            if n != heroes:
+                heroes = n
+                say(f"  ● Героев у агентов: Свет {n['radiant']}, Тьма {n['dire']}.")
+            if not any(n.values()) and now - linked_at >= empty_after and not told.get("empty"):
+                told["empty"] = True
+                say("  ! Игра на связи, но героев агентам не отдаёт: кастомка не нашла героев ботов. Пришлите снимок")
+                say("    этого окна — строки «Дота: …» покажут причину.")
+        if g:
+            report_agents(room, told, now)
         sleep(period)
 
 

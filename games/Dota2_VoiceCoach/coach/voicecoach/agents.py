@@ -1072,6 +1072,21 @@ class AgentHub:
         out["teams"] = teams
         return out
 
+    def progress(self) -> dict:
+        """Для окна хоста (лаунчер): по сторонам — сколько героев у агентов, решений, вызовов и ошибок, первая
+        ошибка агента («1 sniper: ошибка: …») и пауза стороны, если она идёт."""
+        now = time.monotonic()
+        with self.lock:
+            out = {}
+            for t in self.backends:
+                ags = sorted((a for a in self.agents.values() if a.team == t), key=lambda a: a.pos)
+                err = next((f"{a.pos} {short_hero(a.hero)}: {a.state}" for a in ags
+                            if a.state.startswith(("ошибка", "сбой"))), "")
+                out[t] = {"heroes": len(ags), "decisions": sum(a.seq for a in ags), "calls": self.stats[t]["calls"],
+                          "errors": self.stats[t]["errors"], "error": err,
+                          "pause": self.pause_why.get(t, "") if now < self.pause_until.get(t, 0.0) else ""}
+            return out
+
     def status(self) -> dict:
         summary = self.summary()
         with self.lock:

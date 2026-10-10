@@ -731,7 +731,120 @@ class Launcher(unittest.TestCase):
             return n is None
 
         P.watch(room, stop=stop, sleep=lambda s: None)
-        self.assertEqual(self.out, ["  ● Друг открыл пульт.", "  ● Игра на связи с сервером тренера."])
+        self.assertEqual(self.out, ["  ● Друг открыл пульт.",
+                                    "  ● Игра на связи с сервером тренера. Героев у агентов: Свет 0, Тьма 0."])
+
+    def test_watch_tells_heroes_and_agents(self):
+        """Первый живой матч (10.10.2026): «агентов нет», а окно писало только «игра на связи». Теперь — сколько
+        героев игра отдала агентам (ни одного — прямо), первые решения агентов, их ошибки (не больше трёх) и паузы."""
+        prog = {"radiant": {"heroes": 0, "decisions": 0, "calls": 0, "errors": 0, "error": "", "pause": ""},
+                "dire": {"heroes": 0, "decisions": 0, "calls": 0, "errors": 0, "error": "", "pause": ""}}
+        room = SimpleNamespace(console_seen={}, game_linked=lambda: True, last_tick={"heroes": []},
+                               agents=SimpleNamespace(progress=lambda: {t: dict(p) for t, p in prog.items()}))
+        now = [1000.0]
+        script = []
+
+        def stop():
+            if not script:
+                return True
+            script.pop(0)()
+            now[0] += 2
+            return False
+        steps = [lambda: None,                                                   # связь есть, героев нет
+                 lambda: now.__setitem__(0, now[0] + 20),                        # 20 с без героев — сказать прямо
+                 lambda: room.last_tick.update(heroes=[{"team": "radiant", "pos": p} for p in range(1, 6)] +
+                                               [{"team": "dire", "pos": 1}, "мусор"]),
+                 lambda: prog["radiant"].update(decisions=3, heroes=5),
+                 lambda: prog["dire"].update(error="1 luna: ошибка: таймаут", errors=1)]
+        for n in range(2, 6):                                                    # ещё 4 разные ошибки: в окно — три
+            steps.append(lambda n=n: prog["dire"].update(error=f"1 luna: ошибка: номер {n}", errors=n))
+        steps += [lambda: prog["dire"].update(pause="лимит подписки"),
+                  lambda: prog["dire"].update(pause=""),
+                  lambda: now.__setitem__(0, now[0] + 400)]                      # раз в 5 минут — сводка
+        script.extend(steps)
+        P.watch(room, stop=stop, sleep=lambda s: None, clock=lambda: now[0])
+        text = "\n".join(self.out)
+        self.assertIn("Героев у агентов: Свет 0, Тьма 0.", self.out[0])
+        self.assertEqual(sum("героев агентам не отдаёт" in x for x in self.out), 1)
+        self.assertIn("  ● Героев у агентов: Свет 5, Тьма 1.", self.out)
+        self.assertIn("  ● Агенты Света ведут героев: первые решения пришли.", self.out)
+        self.assertIn("  ! Агент Тьмы 1 luna: ошибка: таймаут", self.out)
+        self.assertEqual(sum(x.startswith("  ! Агент Тьмы") for x in self.out), 3)
+        self.assertIn("номер 3", text)
+        self.assertNotIn("номер 4", text)
+        self.assertEqual(sum("только в журнале агентов" in x for x in self.out), 1)
+        self.assertEqual(sum("на паузе: лимит подписки" in x for x in self.out), 1)
+        self.assertIn("  Агенты: Света — решений 3, ошибок 0; Тьмы — решений 0, ошибок 5.", self.out)
+
+    def test_dota_log_shows_game_lines_and_errors(self):
+        """Консоль Доты (-condebug): строки кастомки и ошибки — в окно хоста, всё новое — в копию; старое не
+        показывается; реплики агентов и шум Доты — нет; неполная строка ждёт конца; файл заново — читать сначала."""
+        tmp = Path(self.tmp.name)
+        log, copy = tmp / "console.log", tmp / "logs" / "dota_console.log"
+        log.write_text("[ТРЕНЕР] старый запуск: не показывать\n", encoding="utf-8")
+        shown = []
+        d = P.DotaLog(log, copy, show=shown.append)
+        with log.open("a", encoding="utf-8") as f:
+            f.write("10/10 19:09:01 [VScript] [ТРЕНЕР] Свет: агенты ведут 1 sniper; тренеров-людей 1\n"
+                    "[ТРЕНЕР] 2 viper: иду на мид\n"                              # реплика агента — в чате игры
+                    "Loading map dota\n"
+                    "Script Runtime Error: scripts/vscripts/coach_game.lua:42: attempt to index a nil value\n"
+                    "[Panorama] Failed to load layout file://{resources}/layout/custom_game/coach_hud.xml\n"
+                    "[ТРЕНЕР] пульс: связь с сервером ")
+        self.assertEqual(d.poll(), 3)
+        self.assertEqual(shown, ["Свет: агенты ведут 1 sniper; тренеров-людей 1",
+                                 "Script Runtime Error: scripts/vscripts/coach_game.lua:42: attempt to index a nil value",
+                                 "[Panorama] Failed to load layout file://{resources}/layout/custom_game/coach_hud.xml"])
+        with log.open("a", encoding="utf-8") as f:
+            f.write("есть\r\n")
+        d.poll()
+        self.assertEqual(shown[-1], "пульс: связь с сервером есть")
+        copied = copy.read_text(encoding="utf-8")
+        self.assertIn("Loading map dota", copied)                               # копия — вся, с шумом
+        self.assertNotIn("старый запуск", copied)
+        log.write_text("[ТРЕНЕР] кастомка загружена\n", encoding="utf-8")       # Дота начала файл заново
+        d.poll()
+        self.assertEqual(shown[-1], "кастомка загружена")
+        self.assertEqual(d.ours, 4)
+
+    def test_dota_log_does_not_flood_window(self):
+        tmp = Path(self.tmp.name)
+        log = tmp / "console.log"
+        log.write_text("", encoding="utf-8")
+        now = [0.0]
+        shown = []
+        d = P.DotaLog(log, None, show=shown.append, clock=lambda: now[0], per_window=3, window=10, repeat=60)
+        with log.open("a", encoding="utf-8") as f:
+            f.write("[ТРЕНЕР] ошибка героя 1: x\n" * 20)                         # одна строка каждые 0.25 с
+            f.write("".join(f"[ТРЕНЕР] строка {i}\n" for i in range(5)))
+        d.poll()
+        self.assertEqual(shown, ["ошибка героя 1: x", "строка 0", "строка 1"])
+        now[0] = 11
+        d.poll()
+        self.assertEqual(shown[-1], f"…и ещё строк: 3 (весь журнал Доты: {log})")
+        with log.open("a", encoding="utf-8") as f:
+            f.write("[ТРЕНЕР] ошибка героя 1: x\n")
+        d.poll()
+        self.assertEqual(len(shown), 4)                                        # та же строка — не раньше чем через минуту
+        now[0] = 75
+        with log.open("a", encoding="utf-8") as f:
+            f.write("[ТРЕНЕР] ошибка героя 1: x\n")
+        d.poll()
+        self.assertEqual(shown[-1], "ошибка героя 1: x")
+
+    def test_follow_dota_log_survives_errors(self):
+        stop = threading.Event()
+        calls = []
+
+        class Bad:
+            def poll(self):
+                calls.append(1)
+                if len(calls) >= 3:
+                    stop.set()
+                raise OSError("нет доступа")
+        P.follow_dota_log(Bad(), stop, period=0.001)
+        self.assertEqual(len(calls), 3)
+        self.assertEqual(sum("Журнал Доты не читается" in x for x in self.out), 1)
 
     def test_main_runs_and_ends_on_enter(self):
         """Весь лаунчер без Доты и туннеля: сервер, пульт, файл друга; Enter — конец, ящик получает «закрыто»."""

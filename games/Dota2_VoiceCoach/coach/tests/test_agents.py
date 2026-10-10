@@ -274,6 +274,21 @@ class Hub(unittest.TestCase):
         self.assertIn("пауза", h.agents[("radiant", 1)].state)
         self.assertEqual(next(d["seq"] for d in r["decisions"] if d["team"] == "dire"), 2)  # Тьма не ждёт чужой 429
 
+    def test_progress_for_host_window(self):
+        """Окно хоста (лаунчер) видит по сторонам: героев, решений, ошибок, первую ошибку агента и паузу."""
+        bad = FakeBackend(error=A.BackendError("HTTP 429: лимит", retry_after=30))
+        h = A.AgentHub({"radiant": A.RulesBackend(), "dire": bad}, sync=True)
+        self.assertEqual(h.progress()["radiant"], {"heroes": 0, "decisions": 0, "calls": 0, "errors": 0, "error": "",
+                                                   "pause": ""})
+        h.tick({"heroes": [obs(clock=0, pos=p) for p in (1, 2)] + [obs(clock=0, pos=3, team="dire")]})
+        p = h.progress()
+        self.assertEqual((p["radiant"]["heroes"], p["radiant"]["decisions"], p["radiant"]["errors"]), (2, 2, 0))
+        self.assertEqual((p["dire"]["decisions"], p["dire"]["errors"]), (0, 1))
+        self.assertEqual(p["dire"]["error"], "3 sniper: ошибка: HTTP 429: лимит")
+        self.assertEqual(p["dire"]["pause"], "лимит API")
+        h.pause_until["dire"] = 0.0                                             # пауза кончилась
+        self.assertEqual(h.progress()["dire"]["pause"], "")
+
     def test_coach_orders_wake_at_most_every_coach_gap(self):
         """Поток приказов не множит вызовы: приказ будит агента не чаще раза в coach_gap с (остальное — в очереди)."""
         h = self.hub()

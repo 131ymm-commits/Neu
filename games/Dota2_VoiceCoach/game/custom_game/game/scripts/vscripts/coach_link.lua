@@ -10,8 +10,8 @@ local L = {}
 -- FretBots/Chat.lua, и в game/shared/coach_bridge.lua). Вне игры не вызывается.
 function L.dota_http(method, url, body, callback)
   local req = CreateHTTPRequestScriptVM(method, url)
-  if req == nil then
-    callback(0, nil)
+  if req == nil then                 -- так бывает в лобби из аркады (research/01): HTTP из игры не уходит вовсе
+    callback(0, nil, "игра не дала создать HTTP-запрос (CreateHTTPRequestScriptVM вернул nil)")
     return
   end
   req:SetHTTPRequestAbsoluteTimeoutMS(5000)
@@ -64,10 +64,12 @@ function L.tick(k, build, on_reply)
     return false
   end
   k.in_flight, k.sent_at, k.sent = true, now, k.sent + 1
-  k.http("POST", k.url, body, function(code, resp)
+  k.http("POST", k.url, body, function(code, resp, why)
     k.in_flight = false
     local t = k.now()
-    if code ~= 200 or resp == nil then return fail(k, t, "HTTP " .. tostring(code)) end
+    if code ~= 200 or resp == nil then
+      return fail(k, t, why or ("HTTP " .. tostring(code) .. (code == 0 and ": сервер тренера не ответил" or "")))
+    end
     local okd, data = pcall(k.json.decode, resp)
     if not okd or type(data) ~= "table" then return fail(k, t, "плохой JSON") end
     if not k.connected then k.log("агенты: связь с сервером есть") end

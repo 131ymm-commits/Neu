@@ -875,6 +875,99 @@ class Fallback(Game):
         self.assertEqual(acks[0]["data"]["camera"], 1600)
 
 
+LATE_HEROES = """
+__late = {}
+local add = Tutorial.AddBot
+function Tutorial:AddBot(hero, lane, difficulty, good)        -- бот есть, а его героя Дота ещё не создала
+  local ok = add(self, hero, lane, difficulty, good)
+  for pid, p in pairs(__players) do
+    if p.fake and p.hero then __late[pid] = p.hero; p.hero = nil end
+  end
+  return ok
+end
+function PlayerResource:GetSelectedHeroName(pid)
+  local p = __players[pid]
+  return (p.hero or __late[pid] or {}).name
+end
+function __reveal()
+  for pid, h in pairs(__late) do __players[pid].hero = h end
+  __late = {}
+end
+"""
+
+
+class Diagnostics(Game):
+    """Первый живой матч (10.10.2026, «агентов нет»): консоль Доты (лаунчер показывает её хосту) говорит, кого ведут
+    агенты, есть ли связь и почему нет, загрузился ли интерфейс; герои ботов, созданные не сразу, достаются агентам."""
+
+    def printed(self, part):
+        return [line for line in self.G["__printed"].values() if part in line]
+
+    def pre_game(self):
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP)")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_HERO_SELECTION)")
+        self.step(2.5)
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_PRE_GAME)")
+
+    def test_late_bot_heroes_still_go_to_agents(self):
+        self.L.execute(LATE_HEROES)
+        self.pre_game()
+        self.step(3)
+        self.assertFalse(self.G["CoachGame"]["ready"])                      # раздать сейчас — агентам некого вести
+        self.assertEqual(len(self.printed("жду героев ботов: без героя 10 из 10")), 1)
+        self.L.execute("__reveal()")
+        self.step(1.5)
+        self.assertTrue(self.G["CoachGame"]["ready"])
+        self.assertTrue(self.printed("Свет 5, Тьма 5"))
+        self.assertEqual(self.printed("Свет: агенты ведут"),
+                         ["[ТРЕНЕР] Свет: агенты ведут 1 sniper, 2 viper, 3 axe, 4 lion, 5 crystal_maiden; "
+                          "тренеров-людей 1"])
+        self.assertIn("тренеров-людей 0", self.printed("Тьма: агенты ведут")[0])
+        n0 = self.n_orders()
+        self.step(1)
+        self.assertTrue(self.unit_orders(self.hero(1), n0))                 # и герои пошли (запасной — нет сервера)
+
+    def test_heroes_never_come_says_so(self):
+        self.L.execute(LATE_HEROES)
+        self.pre_game()
+        self.step(32)
+        self.assertTrue(self.G["CoachGame"]["ready"])                       # ждать вечно нельзя: игра идёт
+        self.assertTrue(self.printed("не дождался героев ботов: без героя 10 из 10"))
+        self.assertEqual(self.printed("Свет: агенты ведут")[0], "[ТРЕНЕР] Свет: агенты ведут никого; тренеров-людей 1")
+
+    def test_pulse_link_reason_and_hud_ready(self):
+        self.start_match()
+        self.assertTrue(self.printed("агенты: нет связи с сервером (HTTP 0: сервер тренера не ответил)"))
+        pulse = self.printed("пульс:")
+        self.assertEqual(len(pulse), 1)
+        self.assertIn("связь с сервером нет", pulse[0])
+        self.assertIn("героев 10, из них ведут агенты 0", pulse[0])
+        self.step(60)
+        self.assertEqual(len(self.printed("пульс:")), 2)                      # раз в минуту
+        for _ in range(2):                                                    # интерфейс шлёт «готов», пока не ответят
+            self.G["__listeners"]["vc_ready"](0, self.L.table_from({"PlayerID": 0}))
+        self.assertEqual(self.printed("интерфейс тренера"), ["[ТРЕНЕР] интерфейс тренера загрузился (игрок 0)"])
+
+    def test_no_http_in_game_named(self):
+        self.L.execute("CreateHTTPRequestScriptVM = function() return nil end")   # так в лобби из аркады (research/01)
+        self.start_match()
+        self.assertTrue(self.printed("игра не дала создать HTTP-запрос"))
+        n0 = self.n_orders()
+        self.step(1)
+        self.assertTrue(self.unit_orders(self.hero(1), n0))                 # героев ведёт запасной исполнитель
+
+
+class PulseWithAgents(Game):
+    server = True
+
+    def test_pulse_counts_agent_led_heroes(self):
+        self.start_match()
+        self.step(61)
+        last = [line for line in self.G["__printed"].values() if "пульс:" in line][-1]
+        self.assertIn("связь с сервером есть", last)
+        self.assertIn("героев 10, из них ведут агенты 10", last)
+
+
 class SameRules(Game):
     """Lua и Python договорены об одном: планы, места, линии по позиции."""
 
