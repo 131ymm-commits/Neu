@@ -214,6 +214,7 @@ local function make_hero(name, team, pid)
   function h:UpgradeAbility(ab) if self.points > 0 then ab.level = ab.level + 1; self.points = self.points - 1 end end
   return h
 end
+__make_hero = make_hero
 __players[0] = { team = 2, fake = false, hero = make_hero("npc_dota_hero_pudge", 2, 0) }
 PlayerResource = {}
 function PlayerResource:IsValidPlayerID(pid) return __players[pid] ~= nil end
@@ -226,6 +227,12 @@ function PlayerResource:GetGold(pid) return __players[pid].hero.gold end
 function PlayerResource:SpendGold(pid, cost, reason) __players[pid].hero.gold = __players[pid].hero.gold - cost end
 function PlayerResource:SetCustomTeamAssignment(pid, team) __assign[pid] = team; __players[pid].team = team end
 function PlayerResource:GetTeamKills(team) return team == 2 and 3 or 5 end
+__shared = {}
+function PlayerResource:SetUnitShareMaskForPlayer(pid, other, flag, state)
+  __shared[#__shared + 1] = { pid = pid, other = other, flag = flag, state = state }
+end
+__precached = {}
+function PrecacheUnitByNameAsync(name, cb) __precached[#__precached + 1] = name; cb(1) end
 function RandomInt(a, b) return math.random(a, b) end
 function Time() return __now end
 HeroList = {}
@@ -1099,6 +1106,62 @@ class FindBotHeroes(Game):
         self.assertTrue(self.G["CoachGame"]["ready"])
         self.assertTrue(any("ошибка при ожидании героев ботов" in line for line in self.G["__printed"].values()))
         self.assertEqual(len(self.agents(2)), 5)
+
+
+NAMED_BOTS = """
+__named = {}
+function GameRules:AddBotPlayerWithEntityScript(hero, name, team, script, flag)
+  if __named_fail then return nil end
+  local pid = 0
+  while __players[pid] do pid = pid + 1 end
+  local p = { team = team, fake = true, name = name, hero = __make_hero(hero, team, pid) }
+  p.hero.pos = Vector(0, 0, 0)                                  -- такой бот появляется в центре карты
+  __players[pid] = p
+  __named[#__named + 1] = name
+  return p.hero
+end
+local tut = Tutorial.AddBot
+__tutorial = 0
+function Tutorial:AddBot(...) __tutorial = __tutorial + 1; return tut(self, ...) end
+"""
+
+
+class NamedAgentBots(Game):
+    """Д17: агенты — отдельные игроки под своими именами («Claude N · Герой»), мышью тренер тоже может."""
+
+    def agents(self, team=2):
+        T = self.G["CoachGame"]["teams"][team]
+        return [T["agents"][p]["name"].replace("npc_dota_hero_", "") for p in range(1, 6) if T["agents"][p]]
+
+    def test_bots_named_at_fountain_and_shared_with_coach(self):
+        self.L.execute(NAMED_BOTS)
+        self.start_match()
+        self.assertEqual(list(self.G["__named"].values()),
+                         ["Claude 1 · Sniper", "Claude 2 · Viper", "Claude 3 · Axe", "Claude 4 · Lion",
+                          "Claude 5 · Crystal Maiden", "Claude 1 · Luna", "Claude 2 · Lina", "Claude 3 · Bristleback",
+                          "Claude 4 · Witch Doctor", "Claude 5 · Jakiro"])
+        self.assertEqual(self.G["__tutorial"], 0)                                 # обычных ботов не понадобилось
+        self.assertEqual(len(list(self.G["__precached"].values())), 10)          # герои — заранее в память
+        for pid in range(1, 11):                                                   # не в центре карты — у фонтана
+            pos = self.hero(pid)["pos"]
+            self.assertGreater(abs(pos["x"]) + abs(pos["y"]), 10000, pid)
+        self.assertEqual(len(self.agents(2)), 5)
+        self.assertEqual(len(self.agents(3)), 5)
+        shared = [(e["pid"], e["other"], e["flag"]) for e in self.G["__shared"].values()]
+        self.assertEqual(sorted(shared), sorted([(p, 0, f) for p in range(1, 6) for f in (1, 2)]))   # только Свет
+        n0 = self.n_orders()
+        self.step(1)
+        self.assertTrue(self.unit_orders(self.hero(1), n0))
+
+    def test_named_bots_refused_fall_back_to_tutorial(self):
+        self.L.execute(NAMED_BOTS)
+        self.L.execute("__named_fail = true")
+        self.start_match()
+        self.assertEqual(self.G["__tutorial"], 10)
+        refused = [x for x in self.G["__printed"].values() if "под именем агента не создался" in x]
+        self.assertEqual(len(refused), 1)                                         # один раз, не на каждого бота
+        self.assertEqual(len(self.agents(2)), 5)
+        self.assertEqual(len(self.agents(3)), 5)
 
 
 class GameMovesHidden(Game):

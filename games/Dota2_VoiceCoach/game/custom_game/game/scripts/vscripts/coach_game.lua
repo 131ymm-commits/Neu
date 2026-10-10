@@ -43,6 +43,7 @@ G.FALLBACK_AFTER = 6          -- с без ответа сервера → за�
 G.AGENT_STALE = 20            -- с игры без нового решения агента героя → этим героем правит запасной исполнитель
 G.SETUP_WAIT = 30             -- с: столько в начале PRE_GAME ждём героев ботов (Дота может создать их не сразу)
 G.PULSE = 60                  -- с: раз в столько — строка «пульс» в консоль (лаунчер показывает её хосту)
+G.AGENT_NAME = "Claude %d · %s"   -- имя бота агента в матче (Д17): номер в команде и герой
 G.CAMERA_DISTANCE = 1600      -- дальше обычного (в Доте 1134): тренер смотрит сверху
 G.CHAT_REPLIES = true         -- реплики агентов — и в командный чат
 G.COACH_KEEP = 3              -- сколько последних приказов тренера видит агент
@@ -242,25 +243,75 @@ local function bots_on_team(team)
   return n
 end
 
+local function pretty_hero(name)                   -- «npc_dota_hero_crystal_maiden» → «Crystal Maiden»
+  local s = World.short(name):gsub("_", " ")
+  return (s:gsub("(%a)([%w']*)", function(a, b) return a:upper() .. b end))
+end
+
+local function fountain_of(team)
+  for _, f in pairs(Entities:FindAllByClassname("ent_dota_fountain")) do
+    if f:GetTeamNumber() == team then return f:GetAbsOrigin() end
+  end
+  return nil
+end
+
+-- бот агента под его именем (Д17: «ты агентами должен заходить отдельно в игру»): отдельный игрок с именем
+-- «Claude N · Герой». Такого бота Дота ставит в центр карты (код чужой кастомки) — переносим к фонтану. Не вышло —
+-- обычный бот Tutorial:AddBot, без имени. → удалось ли
+function G:SpawnAgentBot(hero, team, pos)
+  local name = string.format(G.AGENT_NAME, pos, pretty_hero(hero))
+  if GameRules.AddBotPlayerWithEntityScript ~= nil and not G.named_off then
+    local ok, h = pcall(function() return GameRules:AddBotPlayerWithEntityScript(hero, name, team, "", true) end)
+    if ok and h ~= nil then
+      local f = fountain_of(team)
+      if f then FindClearSpaceForUnit(h, f, true) end
+      return true
+    end
+    G.named_off = true                             -- один отказ — дальше обычные боты, без повторных попыток
+    log("бот под именем агента не создался (%s) — дальше обычные боты", ok and "Дота не дала героя" or tostring(h))
+  end
+  local ok = Tutorial:AddBot(hero, "", "unfair", team == DOTA_TEAM_GOODGUYS)
+  if not ok then log("бот %s не добавился", World.short(hero)) end
+  return ok
+end
+
 function G:AddBots()
-  local taken, added, failed = taken_heroes(), 0, {}
+  local taken, asked = taken_heroes(), 0
+  local named = GameRules.AddBotPlayerWithEntityScript ~= nil
   for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
     local need = 5 - bots_on_team(team)
+    local pos = 5 - need
     for _, hero in ipairs(G.BOT_HEROES[team]) do
       if need <= 0 then break end
       if not taken[hero] then
-        if Tutorial:AddBot(hero, "", "unfair", team == DOTA_TEAM_GOODGUYS) then
-          added, need, taken[hero] = added + 1, need - 1, true
+        taken[hero], need, pos, asked = true, need - 1, pos + 1, asked + 1
+        if named then                              -- героя — заранее в память, тогда бот появляется сразу целым
+          local h, t, p = hero, team, pos
+          PrecacheUnitByNameAsync(h, function() G:SpawnAgentBot(h, t, p) end)
         else
-          failed[#failed + 1] = hero
+          G:SpawnAgentBot(hero, team, pos)
         end
       end
     end
   end
   GameRules:GetGameModeEntity():SetBotThinkingEnabled(false)       -- Д11: героев ведут агенты, не ИИ Доты
   Tutorial:StartTutorialMode()
-  log("герои добавлены: %d%s; встроенный ИИ ботов выключен", added,
-    #failed > 0 and (", не вышло: " .. table.concat(failed, " ")) or "")
+  log("боты агентов заказаны: %d%s; встроенный ИИ ботов выключен", asked, named and " (под именами агентов)" or "")
+end
+
+-- мышь (Д17: «мышью тоже можно»): управление героем агента — тренерам его команды явно, не по милости режима
+-- инструментов (в нём героем бота из AddBotPlayerWithEntityScript мышью не управлять — код чужой кастомки)
+function G:ShareWithCoaches(T, hero)
+  local owner = hero:GetPlayerOwnerID()
+  if owner == nil or owner < 0 then return end
+  for _, cpid in ipairs(T.commanders) do
+    if cpid ~= owner then
+      pcall(function()
+        PlayerResource:SetUnitShareMaskForPlayer(owner, cpid, 1, true)    -- герой
+        PlayerResource:SetUnitShareMaskForPlayer(owner, cpid, 2, true)    -- его юниты
+      end)
+    end
+  end
 end
 
 -- тренер без героя: его герой прячется у своей базы (Д10)
@@ -301,6 +352,7 @@ function G:LateAgent(hero)
     if T.agents[pos] == nil then
       T.agents[pos] = hero
       T.exec[pos], T.coach[pos], T.events[pos], T.dec_seq[pos] = Exec.new(), {}, {}, 0
+      G:ShareWithCoaches(T, hero)
       log("%s: герой бота появился позже — агент %d ведёт %s", team == DOTA_TEAM_GOODGUYS and "Свет" or "Тьма", pos,
         World.short(hero:GetUnitName()))
       G:SendAgents(team)
@@ -325,8 +377,9 @@ function G:SetupAgents()
     for pid = 0, 23 do
       if is_human(pid) and PlayerResource:GetTeam(pid) == team then T.commanders[#T.commanders + 1] = pid end
     end
-    for pos in pairs(T.agents) do
+    for pos, hero in pairs(T.agents) do
       T.exec[pos], T.coach[pos], T.events[pos], T.dec_seq[pos] = Exec.new(), {}, {}, 0
+      G:ShareWithCoaches(T, hero)
     end
     T.intents = Intents.new({})
     World.agents[team] = T.agents
