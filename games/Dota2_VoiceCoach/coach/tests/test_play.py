@@ -776,6 +776,20 @@ class Launcher(unittest.TestCase):
         self.assertEqual(sum("на паузе: лимит подписки" in x for x in self.out), 1)
         self.assertIn("  Агенты: Света — решений 3, ошибок 0; Тьмы — решений 0, ошибок 5.", self.out)
 
+    def test_watch_survives_broken_agents_and_odd_ticks(self):
+        """Сводка вспомогательная: странный обмен или сбой агентов не роняет окно (а с ним сервер игры)."""
+        def boom():
+            raise RuntimeError("сломалось")
+        room = SimpleNamespace(console_seen={}, game_linked=lambda: True,
+                               last_tick={"heroes": [{"team": ["radiant"]}, {"team": "dire"}, 7]},
+                               agents=SimpleNamespace(progress=boom))
+        ticks = iter(range(3))
+        P.watch(room, stop=lambda: next(ticks, None) is None, sleep=lambda s: None)
+        self.assertIn("Свет 0, Тьма 1", self.out[0])
+        self.assertEqual(sum("не смог прочитать состояние агентов" in x for x in self.out), 1)
+        self.assertEqual(P.hero_counts(["не словарь"]), {"radiant": 0, "dire": 0})
+        self.assertEqual(P.hero_counts({"heroes": "не список"}), {"radiant": 0, "dire": 0})
+
     def test_dota_log_shows_game_lines_and_errors(self):
         """Консоль Доты (-condebug): строки кастомки и ошибки — в окно хоста, всё новое — в копию; старое не
         показывается; реплики агентов и шум Доты — нет; неполная строка ждёт конца; файл заново — читать сначала."""

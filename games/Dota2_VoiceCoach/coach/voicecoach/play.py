@@ -1153,8 +1153,9 @@ ERRORS_SHOWN = 3                                   # ошибок агентов
 def hero_counts(tick) -> dict:
     """Сколько героев каждой стороны игра отдала агентам в последнем обмене."""
     out = {"radiant": 0, "dire": 0}
-    for o in (tick or {}).get("heroes") or []:
-        if isinstance(o, dict) and o.get("team") in out:
+    heroes = tick.get("heroes") if isinstance(tick, dict) else None
+    for o in heroes if isinstance(heroes, list) else []:
+        if isinstance(o, dict) and isinstance(o.get("team"), str) and o["team"] in out:
             out[o["team"]] += 1
     return out
 
@@ -1225,7 +1226,12 @@ def watch(room, period: float = 2.0, stop=lambda: False, sleep=time.sleep, clock
                 say("  ! Игра на связи, но героев агентам не отдаёт: кастомка не нашла героев ботов. Пришлите снимок")
                 say("    этого окна — строки «Дота: …» покажут причину.")
         if g:
-            report_agents(room, told, now)
+            try:
+                report_agents(room, told, now)
+            except Exception as e:                    # noqa: BLE001 — сводка вспомогательная: окно и игра живут
+                if not told.get("broken"):
+                    told["broken"] = True
+                    say(f"  (не смог прочитать состояние агентов: {type(e).__name__}: {e})")
         sleep(period)
 
 
