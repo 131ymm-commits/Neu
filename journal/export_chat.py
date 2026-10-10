@@ -1,8 +1,14 @@
 """Выгружает чат сессии Claude Code в markdown: реплики человека и текстовые ответы Claude.
-Вызовы инструментов показаны одной строкой (что делалось), их выводы и системные вставки не включаются."""
+Вызовы инструментов показаны одной строкой (что делалось), их выводы и системные вставки не включаются.
+
+  python3 journal/export_chat.py <transcript.jsonl> <журнал.md> [ссылка или подпись сессии]
+
+Реплики человека, присланные во время хода Claude (в транскрипте — вложения queued_command), включаются; отчёты
+подагентов («Another Claude session sent a message») подписаны как отчёты, не как слова человека (ERRORS № 99)."""
 import json, sys, re
 src, dst = sys.argv[1], sys.argv[2]
-out = ['# Журнал чата сессии\n\nСессия: https://claude.ai/code/session_01EAUcgUVu3BhYQ16NUm8BDT\n'
+session = sys.argv[3] if len(sys.argv) > 3 else 'не указана'
+out = [f'# Журнал чата сессии\n\nСессия: {session}\n'
        'Формат: реплики человека — полностью (длинные вставки сокращены до начала), ответы Claude — полностью, '
        'действия — одной строкой. Выводы инструментов и служебные сообщения среды не включены.\n']
 def clean(t):
@@ -16,6 +22,16 @@ for line in open(src):
     except Exception: continue
     t, msg, ts = j.get('type'), j.get('message') or {}, (j.get('timestamp') or '')[:16].replace('T', ' ')
     c = msg.get('content')
+    a = j.get('attachment') or {}
+    if t == 'attachment' and a.get('type') == 'queued_command' and (a.get('origin') or {}).get('kind') == 'human':
+        pr = a.get('prompt')                            # реплика человека, присланная во время хода Claude
+        if isinstance(pr, list):
+            imgs = sum(1 for x in pr if isinstance(x, dict) and x.get('type') == 'image')
+            pr = '\n'.join(x.get('text', '') for x in pr if isinstance(x, dict) and x.get('type') == 'text')
+            pr = (pr + (f'\n\n[снимков экрана: {imgs}]' if imgs else '')).strip()
+        if isinstance(pr, str) and pr.strip():
+            out.append(f'\n---\n\n## Человек (во время хода Claude) · {ts}\n\n{pr.strip()[:4000]}\n')
+        continue
     if t == 'user':
         if isinstance(c, str): txt = clean(c)
         elif isinstance(c, list): txt = clean('\n'.join(x.get('text', '') for x in c if isinstance(x, dict) and x.get('type') == 'text'))
@@ -28,6 +44,9 @@ for line in open(src):
             out.append(f'\n---\n\n## Проверка среды (stop hook, не человек) · {ts}\n\n{txt[:800]}\n'); continue
         if txt.startswith('# Workflow authoring reference') or txt.startswith('<skill-format>'):
             out.append('\n- _среда загрузила справку по Workflow (не человек)_\n'); continue
+        if txt.startswith('Another Claude session sent a message'):
+            if len(txt) > 4000: txt = txt[:3000] + f'\n\n[… отчёт сокращён, всего {len(txt)} символов …]'
+            out.append(f'\n---\n\n## Отчёт подагента (не человек) · {ts}\n\n{txt}\n'); continue
         if txt:
             if len(txt) > 4000: txt = txt[:1500] + f'\n\n[… вставка сокращена, всего {len(txt)} символов …]'
             out.append(f'\n---\n\n## Человек · {ts}\n\n{txt}\n')
