@@ -1035,6 +1035,33 @@ class FindBotHeroes(Game):
         self.step(1)
         self.assertTrue(self.unit_orders(self.hero(1), n0))
 
+    def test_bot_heroes_owned_by_human(self):
+        """Повторная проверка: если Дота назовёт владельцем героев ботов человека (он ими управляет — живой матч),
+        героев всё равно получают агенты; прячется только выбранный герой человека."""
+        self.L.execute("""
+          local add = Tutorial.AddBot
+          function Tutorial:AddBot(hero, lane, difficulty, good)
+            local ok = add(self, hero, lane, difficulty, good)
+            for pid, p in pairs(__players) do
+              if p.fake then function p.hero:GetPlayerOwnerID() return 0 end end   -- «владелец» — человек 0
+            end
+            return ok
+          end""")
+        self.start_match()
+        self.assertEqual(self.agents(2), ["sniper", "viper", "axe", "lion", "crystal_maiden"])
+        self.assertEqual(len(self.agents(3)), 5)
+        self.assertTrue(self.hero(0)["nodraw"])                               # герой тренера спрятан
+        self.assertFalse(any(self.hero(p)["nodraw"] for p in range(1, 11)))   # герои ботов — нет
+        line = [x for x in self.G["__printed"].values() if "герои агентов:" in x][0]
+        self.assertIn("по номеру бота 10", line)
+
+    def test_coach_hero_without_owner_is_not_agent(self):
+        self.L.execute("__players[0].hero.GetPlayerOwnerID = function() return -1 end")   # у героя тренера нет владельца
+        self.start_match()
+        self.assertEqual(self.agents(2), ["sniper", "viper", "axe", "lion", "crystal_maiden"])
+        self.assertNotIn("pudge", self.agents(2) + self.agents(3))
+        self.assertTrue(self.hero(0)["nodraw"])                               # и спрятан — по самому герою
+
     def test_setup_error_still_gives_heroes(self):
         self.L.execute("function CoachGame:TrySetup() error('сломалось ожидание') end")
         self.start_match()

@@ -49,6 +49,7 @@ G.COACH_KEEP = 3              -- сколько последних приказ�
 G.EVENTS_KEEP = 5
 G.teams = G.teams or {}
 G.bot_heroes = G.bot_heroes or {}   -- номер игрока-бота → его герой (из события появления героя)
+G.spawned = G.spawned or {}         -- герои не людей-тренеров из события появления (владелец может быть любым)
 G.ready = false
 G.mode = "нет связи с сервером агентов"
 
@@ -126,37 +127,77 @@ end
 local function bots_count()
   local n = 0
   for pid = 0, 23 do
-    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) then n = n + 1 end
+    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) then
+      local team = PlayerResource:GetTeam(pid)
+      if team == DOTA_TEAM_GOODGUYS or team == DOTA_TEAM_BADGUYS then n = n + 1 end
+    end
   end
   return n
 end
 
--- герои агентов по командам: все настоящие герои, кроме героев людей-тренеров. Ищем тремя путями — выбранный
--- герой игрока-бота, герой из события появления, список всех героев: первый живой матч (10.10.2026) — игра на
--- связи, а героев агентам не досталось; какой путь в Доте не сработал, не проверено. Позиции 1–5 — по номеру бота.
-local function agent_heroes()
-  local out, seen = { [DOTA_TEAM_GOODGUYS] = {}, [DOTA_TEAM_BADGUYS] = {} }, {}
-  local function add(hero)
-    if hero == nil or seen[hero] or not IsValidEntity(hero) or not hero:IsRealHero() then return end
-    local pid = hero:GetPlayerOwnerID()
-    if is_human(pid) then return end
-    local list = out[hero:GetTeamNumber()]
-    if list then
-      seen[hero] = true
-      list[#list + 1] = { pid = pid or -1, hero = hero }
-    end
+-- герой человека-тренера: его выбранный герой; пока не выбран (бывает в первую секунду) — первый его герой.
+-- По владельцу одному судить нельзя: если Дота назовёт владельцем героев ботов человека (человек ими управляет —
+-- первый живой матч), прежний признак спрятал бы и не отдал агентам героя бота (повторная проверка, 10.10.2026)
+local function commander_of(unit)
+  for pid = 0, 23 do                               -- выбранный герой человека — по самому герою, не по владельцу
+    if is_human(pid) and PlayerResource:GetSelectedHeroEntity(pid) == unit then return pid end
   end
+  local pid = unit:GetPlayerOwnerID()
+  if is_human(pid) and PlayerResource:GetSelectedHeroEntity(pid) == nil and (G.commander_heroes or {})[pid] == nil then
+    return pid                                     -- выбранный ещё не назначен — первый герой человека
+  end
+  return nil
+end
+
+-- герои людей-тренеров — их не отдаём агентам
+local function human_heroes()
+  local out = {}
   for pid = 0, 23 do
-    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) then
-      add(PlayerResource:GetSelectedHeroEntity(pid))
-      add(G.bot_heroes[pid])
+    if is_human(pid) then
+      local h = PlayerResource:GetSelectedHeroEntity(pid)
+      if h ~= nil then out[h] = true end
     end
   end
-  for _, hero in pairs(HeroList:GetAllHeroes() or {}) do add(hero) end
-  for _, list in pairs(out) do
-    table.sort(list, function(a, b) return a.pid < b.pid end)
-  end
+  for _, h in pairs(G.commander_heroes or {}) do out[h] = true end
   return out
+end
+
+-- герои агентов по командам: все настоящие герои, кроме героев людей-тренеров. Ищем тремя путями — выбранный
+-- герой игрока-бота, герои из события появления, список всех героев: второй живой матч (10.10.2026) — игра на
+-- связи, а героев агентам не досталось; какой путь в Доте не сработал, не проверено, поэтому раздача пишет, сколько
+-- героев дал каждый путь. Позиции 1–5 — по номеру бота, у найденных не по номеру — по порядку появления.
+local function agent_heroes()
+  local out, seen, humans = { [DOTA_TEAM_GOODGUYS] = {}, [DOTA_TEAM_BADGUYS] = {} }, {}, human_heroes()
+  local got = { bot = 0, spawn = 0, list = 0 }
+  local listed = {}
+  local function add(hero, key, how)
+    if hero == nil or seen[hero] or humans[hero] or not IsValidEntity(hero) or not hero:IsRealHero() then return end
+    local list = out[hero:GetTeamNumber()]
+    if list == nil then return end
+    seen[hero] = true
+    list[#list + 1] = { key = key, idx = hero:entindex(), hero = hero }
+    got[how] = got[how] + 1
+    if how == "list" then
+      local owner = hero:GetPlayerOwnerID() or -1
+      listed[#listed + 1] = string.format("%s (владелец %d%s)", World.short(hero:GetUnitName()), owner,
+        (owner >= 0 and PlayerResource:IsValidPlayerID(owner) and PlayerResource:IsFakeClient(owner)) and ", бот" or "")
+    end
+  end
+  for pid = 0, 23 do                               -- герой бота по номеру бота — какой бы владелец ни значился
+    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) then
+      add(PlayerResource:GetSelectedHeroEntity(pid), pid, "bot")
+      add(G.bot_heroes[pid], pid, "bot")
+    end
+  end
+  for hero in pairs(G.spawned) do add(hero, 100, "spawn") end
+  for _, hero in pairs(HeroList:GetAllHeroes() or {}) do add(hero, 100, "list") end
+  for _, list in pairs(out) do
+    table.sort(list, function(a, b)
+      if a.key ~= b.key then return a.key < b.key end
+      return a.idx < b.idx
+    end)
+  end
+  return out, got, listed
 end
 
 -- агенты получают героев, когда у всех ботов есть герой (или прошло SETUP_WAIT с): раздать раньше — агентам
@@ -225,9 +266,14 @@ end
 function G:OnSpawn(ev)
   local unit = EntIndexToHScript(ev.entindex)
   if unit == nil or not unit:IsRealHero() then return end
-  local pid = unit:GetPlayerOwnerID()
-  if not is_human(pid) then                        -- герой бота (или без владельца) — агентам
-    if pid ~= nil and pid >= 0 and G.bot_heroes[pid] == nil then G.bot_heroes[pid] = unit end
+  local pid = commander_of(unit)
+  if pid == nil then                               -- не герой человека-тренера — агентам
+    local owner = unit:GetPlayerOwnerID()
+    if owner ~= nil and owner >= 0 and PlayerResource:IsValidPlayerID(owner) and PlayerResource:IsFakeClient(owner)
+        and G.bot_heroes[owner] == nil then
+      G.bot_heroes[owner] = unit
+    end
+    G.spawned[unit] = true
     if G.ready then G:LateAgent(unit) end
     return
   end
@@ -266,7 +312,9 @@ end
 function G:SetupAgents()
   local towers, fountains = World.init()
   G.teams = {}
-  local found = agent_heroes()
+  local found, got, listed = agent_heroes()
+  log("герои агентов: по номеру бота %d, по событию появления %d, из списка героев %d%s", got.bot, got.spawn, got.list,
+    #listed > 0 and (" — " .. table.concat(listed, ", ")) or "")
   for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
     local T = { name = Obs.team_name(team), agents = {}, exec = {}, status = {}, seq = 0, commanders = {}, coach = {},
                 events = {}, dec_seq = {}, dec_t = {}, said = {}, thinking = {} }

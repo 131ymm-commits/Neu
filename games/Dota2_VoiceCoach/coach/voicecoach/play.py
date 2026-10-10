@@ -600,24 +600,33 @@ def compile_panorama(dota: Path, run=subprocess.run, timeout: float = 180.0) -> 
         return False, f"нет исходников {src}"
     argv = [str(rc), "-game", str(dota / "game" / "dota"), "-r", "-i", str(src / "*")]
     kw = {"creationflags": NO_WINDOW} if os.name == "nt" else {}
-    try:
-        p = run(argv, cwd=str(win64), capture_output=True, text=True, encoding="utf-8", errors="replace",
-                timeout=timeout, **kw)
-    except (OSError, subprocess.SubprocessError) as e:
-        return False, f"сборщик не запустился или не уложился в {timeout:.0f} с: {e}"
     stray = [dota / "game" / "dota" / "panorama" / x for x in PANORAMA_OUT]
-    if stray[1].exists():                      # собрал в папку самой Доты, а не аддона — убрать: манифест там
-        for f in stray:                        # заменил бы стандартный интерфейс всем кастомкам
-            try:
-                f.unlink()
-            except OSError:
-                pass
-        return False, "сборщик положил файлы в папку самой Доты, а не кастомки — убрал их"
-    missing = [x for x in PANORAMA_OUT if not (out / x).exists()]
-    if missing:
-        said = [line.strip() for line in f"{p.stdout or ''}\n{p.stderr or ''}".splitlines() if line.strip()]
-        tail = " | ".join(said[-4:])[-400:]
-        return False, f"нет {', '.join(missing)} (код {p.returncode}){': ' + tail if tail else ''}"
+    # вывод — во временный файл, не в трубу: на Windows run() после убийства по таймауту ждёт трубу без срока, если
+    # её держит дочерний процесс сборщика (повторная проверка); ввод — пустой: окно хоста сборщику не отдаём
+    with tempfile.TemporaryFile() as log:
+        try:
+            p = run(argv, cwd=str(win64), stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
+                    timeout=timeout, **kw)
+        except (OSError, subprocess.SubprocessError) as e:
+            p, failed = None, f"сборщик не запустился или не уложился в {timeout:.0f} с: {e}"
+        else:
+            failed = None
+        finally:
+            if stray[1].exists():              # собрал в папку самой Доты, а не аддона — убрать: манифест там
+                for f in stray:                # заменил бы стандартный интерфейс всем кастомкам
+                    try:
+                        f.unlink()
+                    except OSError:
+                        pass
+                failed = "сборщик положил файлы в папку самой Доты, а не кастомки — убрал их"
+        if failed:
+            return False, failed
+        missing = [x for x in PANORAMA_OUT if not (out / x).exists()]
+        if missing:
+            log.seek(0)
+            said = [line.strip() for line in log.read().decode("utf-8", "replace").splitlines() if line.strip()]
+            tail = " | ".join(said[-4:])[-400:]
+            return False, f"нет {', '.join(missing)} (код {p.returncode}){': ' + tail if tail else ''}"
     return True, "собран"
 
 
@@ -741,10 +750,8 @@ OURS_TAG = "[ТРЕНЕР]"
 # ходы игры — реплики агентов и тренеров, приказы с пульта, в том числе ИИ-тренера соперника (Д16: «его приказы в
 # окно не пишутся»), покупки: окну хоста не нужны (рецензия 7)
 GAME_MOVE = re.compile(r"\[ТРЕНЕР\] (ход |\d \S*: |: |приказ с пульта)")
-GAME_ERROR = re.compile(r"script runtime error|stack traceback|error running script|script not found|"
-                        r"unable to load layout|failed to load a layout|error in layout file|error recompiling|"
-                        r"failed on-demand recompile|resource compile failed", re.I)
-OUR_FILES = re.compile(r"coach_|vc_\w+\.lua|voicecoach|custom_ui_manifest|addon_game_mode", re.I)
+GAME_ERROR = re.compile(r"script runtime error|stack traceback|error running script|script not found", re.I)
+OUR_FILES = re.compile(r"coach_|vc_\w+\.lua|voicecoach|custom_ui_manifest|addon_game_mode|custom_game", re.I)
 NOTABLE = re.compile(r"error|fail|not found|unable|cannot|exception|ошибк|recompil", re.I)
 STAMP = re.compile(r"^\ufeff?(\d\d/\d\d \d\d:\d\d:\d\d )?")
 
@@ -867,8 +874,9 @@ class DotaLog:
     def health(self, linked: bool) -> str | None:
         """Через пару минут после запуска Доты: пишет ли она консоль и есть ли там кастомка. → что сказать хосту."""
         if self.new_bytes == 0:
-            return (f"Консоль Доты не пишется ({self.path}): Дота запущена не этим окном? Закройте Доту, здесь — "
-                    "Enter два раза, и запустите ИГРАТЬ.bat снова: тогда окно покажет, что делает игра.")
+            return (f"Консоль Доты не пишется в {self.path}. Если Дота запущена не этим окном — закройте её, здесь — "
+                    "Enter два раза, и запустите ИГРАТЬ.bat снова; иначе Дота пишет консоль в другое место — пришлите "
+                    "снимок этого окна.")
         if self.ours == 0:
             if linked:
                 return f"Игра на связи, но строк кастомки в {self.path} нет — Дота пишет консоль в другое место."
@@ -888,7 +896,7 @@ def follow_dota_log(log: DotaLog, stop: threading.Event, period: float = 1.0, st
         try:
             log.poll()
             if not checked:
-                if since is None and started():
+                if since is None and (started() or linked()):
                     since = clock()
                 if since is not None and clock() - since >= check_after:
                     checked = True
@@ -1296,7 +1304,8 @@ def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
     prog = hub.progress()
     for team, p in prog.items():
         side = SIDE_OF.get(team, team)
-        if p["decisions"] and not told.get(("first", team)):
+        base = told.setdefault(("base", team), 0)                         # решений на начало этого матча
+        if p["decisions"] > base and not told.get(("first", team)):
             told[("first", team)] = True
             model = p.get("model") or ""                              # имя модели — как его назвал Claude Code
             say(f"  ● Агенты {side} ведут героев: первые решения пришли" + (f" (модель: {model})." if model else "."))
@@ -1315,8 +1324,8 @@ def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
                 say(f"  ! Агенты {side} на паузе: {pause}. Пока героями правит запасной исполнитель (приказы тренера).")
         if p.get("limit") and not told.get(("limit", team)):             # рецензия 7: иначе снова «агентов нет»
             told[("limit", team)] = True
-            say(f"  ! Агенты {side} выбрали предел вызовов Claude на эту игру ({p.get('max_calls')}): дальше героями "
-                "правит запасной исполнитель по приказам тренера.")
+            say(f"  ! Агенты {side} выбрали предел вызовов Claude на этот запуск ({p.get('max_calls')}): дальше "
+                "героями правит запасной исполнитель по приказам тренера.")
     if now - told.get("summary_t", now) >= every:
         parts = [f"{SIDE_OF.get(t, t)} — решений {p['decisions']}, ошибок {p['errors']}" for t, p in prog.items()]
         say("  Агенты: " + "; ".join(parts) + ".")
@@ -1339,6 +1348,11 @@ def watch(room, period: float = 2.0, stop=lambda: False, sleep=time.sleep, clock
         if gid != game:                                # новый матч: снова сказать про героев и первые решения
             if game is not None:
                 told, heroes, linked_at = {}, None, now
+                try:                                   # решения считаются с запуска лаунчера — запомнить начало
+                    for team, p in room.agents.progress().items():
+                        told[("base", team)] = p["decisions"]
+                except Exception:                      # noqa: BLE001 — без агентов начало — ноль
+                    pass
             game = gid
         f = now - room.console_seen.get(REMOTE, 0) < 10
         g = room.game_linked()
