@@ -94,7 +94,8 @@ class Coach(unittest.TestCase):
         self.assertIn("--json-schema", argv)
         self.assertNotIn("ANTHROPIC_API_KEY", kw["env"])                      # по подписке, не по ключу
         view = json.loads(kw["input"])
-        self.assertEqual(view["часы"], 900)
+        self.assertEqual(view["часы"], "15:00")                                # часы как в игре, не секунды
+        self.assertEqual(view["события_за_2_минуты"], [])                     # «4:50 у них погиб axe» — давно
         self.assertNotIn("СЕКРЕТ", kw["input"])                               # туман войны: чужие наблюдения не видны
         self.assertEqual(self.records()[-1]["why"], "у врага слабый бот")
 
@@ -117,6 +118,42 @@ class Coach(unittest.TestCase):
         now[0] += AI.LIMIT_PAUSE + 1
         coach.step()
         self.assertEqual(len(calls), 2)                                         # пауза кончилась — снова Claude
+
+
+    def test_claude_calls_capped_then_rules(self):
+        """Рецензия 6: ИИ-тренер звал Claude без потолка — теперь свой предел, дальше правила; считает вызовы."""
+        calls = []
+
+        def run(argv, **kw):
+            calls.append(1)
+            out = {"is_error": False, "structured_output": {"orders": ["все-1 пуш бот т2"], "why": "давим"}}
+            return SimpleNamespace(stdout=json.dumps(out), stderr="", returncode=0)
+        coach = AI.AICoach(self.room, "dire", AI.ClaudeCoach("claude", runner=run), max_calls=2)
+        self.tick(900)
+        for _ in range(4):
+            coach.step()
+        self.assertEqual((len(calls), coach.claude_calls), (2, 2))
+        coach.close()
+
+    def test_no_json_answer_falls_back_to_rules(self):
+        def run(argv, **kw):
+            return SimpleNamespace(stdout=json.dumps({"is_error": False, "result": "не знаю"}), stderr="", returncode=0)
+        coach = AI.AICoach(self.room, "dire", AI.ClaudeCoach("claude", runner=run), log_path=self.log)
+        self.tick(900)
+        self.assertEqual([g["text"] for g in coach.step()], ["все-1 пуш мид т1"])
+        self.assertIn("без JSON", self.records()[-1]["error"])
+
+    def test_friend_arrives_while_coach_thinks(self):
+        coach = None
+
+        def run(argv, **kw):
+            self.room.console_seen["dire"] = time.time()                       # пока Claude думал, друг открыл пульт
+            out = {"is_error": False, "structured_output": {"orders": ["все назад"]}}
+            return SimpleNamespace(stdout=json.dumps(out), stderr="", returncode=0)
+        coach = AI.AICoach(self.room, "dire", AI.ClaudeCoach("claude", runner=run))
+        self.tick(900)
+        self.assertEqual(coach.step(), [])
+        self.assertEqual(self.room.remote, [])
 
 
 if __name__ == "__main__":

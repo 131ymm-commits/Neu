@@ -13,13 +13,14 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import threading
 import time
 from pathlib import Path
 
-from .console import team_view
+from .console import _stamp, team_view
 
 PERIOD = 60.0              # с между решениями тренера (живой тренер отдаёт приказ раз в минуту-две)
 FRIEND_FRESH = 15.0        # с: друг на пульте, если его пульт спрашивал обзор не раньше
@@ -65,8 +66,11 @@ def compact_view(view: dict) -> dict:
         side = "свои" if t.get("team") == view.get("team") else "их"
         if t.get("alive"):
             towers.setdefault(side, {}).setdefault(t.get("lane"), []).append(t.get("tier"))
+    clock = view.get("game", {}).get("clock")
+    recent = [e for e in view.get("events") or [] if clock is None or _stamp(e) >= clock - 120]   # за 2 минуты
     return {
-        "часы": view.get("game", {}).get("clock"), "счёт": view.get("score"),
+        "часы": f"{int(clock) // 60}:{int(clock) % 60:02d}" if isinstance(clock, (int, float)) and clock >= 0
+        else clock, "счёт": view.get("score"),
         "мои": [{"поз": h.get("pos"), "герой": h.get("hero_ru"), "ур": h.get("lvl"), "жив": h.get("alive"),
                  "здоровье%": pct(h.get("hp")), "где": h.get("where"), "делает": h.get("doing"),
                  "возрождение": h.get("respawn")} for h in view.get("heroes") or []],
@@ -74,7 +78,7 @@ def compact_view(view: dict) -> dict:
                          "где": e.get("where")} for e in view.get("enemies") or []],
         "враги_пропали": [{"герой": m.get("hero_ru"), "где_видели": m.get("seen"), "с_назад": m.get("ago"),
                            "мёртв": m.get("dead")} for m in view.get("missing") or []],
-        "живые_вышки": towers, "события": (view.get("events") or [])[-4:],
+        "живые_вышки": towers, "события_за_2_минуты": recent[-4:],
     }
 
 
@@ -136,19 +140,26 @@ class ClaudeCoach:
             try:
                 out = json.loads(data.get("result") or "")
             except (TypeError, ValueError):
-                out = {}
+                out = None
+        if not isinstance(out, dict):                    # ни схемы, ни JSON — сбой мотора, а не «приказов нет»
+            raise RuntimeError(f"claude -p: ответ без JSON: {str(data.get('result'))[:200]}")
         orders = [str(o).strip() for o in out.get("orders") or [] if str(o).strip()][:MAX_ORDERS]
         return orders, str(out.get("why") or "")
+
+    def close(self) -> None:
+        shutil.rmtree(self.cwd, ignore_errors=True)
 
 
 class AICoach:
     """Командует стороной `team`, пока на её пульте нет человека. step() — одно решение (для тестов)."""
 
     def __init__(self, room, team: str, backend, period: float = PERIOD, log_path: Path | None = None,
-                 fallback=None, clock=time.monotonic):
+                 fallback=None, clock=time.monotonic, max_calls: int | None = None):
         self.room, self.team, self.backend, self.period = room, team, backend, period
         self.fallback = fallback or RulesCoach()
         self.log_path, self.clock = log_path, clock
+        self.max_calls = max_calls                   # вызовов Claude за запуск: дальше правила (лимит подписки)
+        self.claude_calls = 0
         self.pause_until = 0.0
         self.stop = threading.Event()
         self.sent = 0
@@ -163,8 +174,11 @@ class AICoach:
         if (view.get("game") or {}).get("clock") is None:
             return []
         backend, err = self.backend, None
-        if self.clock() < self.pause_until:
+        out_of_calls = self.max_calls is not None and self.claude_calls >= self.max_calls
+        if self.clock() < self.pause_until or (out_of_calls and backend is not self.fallback):
             backend = self.fallback
+        if backend is not self.fallback:
+            self.claude_calls += 1
         try:
             orders, why = backend.orders(view)
         except Exception as e:                       # noqa: BLE001 — сбой мотора: в этот раз правила
@@ -173,6 +187,8 @@ class AICoach:
                 self.pause_until = self.clock() + LIMIT_PAUSE
             backend = self.fallback
             orders, why = backend.orders(view)
+        if self.stop.is_set() or self.friend_on():   # пока думал (до полутора минут), друг открыл пульт или выход
+            return []
         results = []
         for text in orders[:MAX_ORDERS]:
             entry = self.room.remote_order(self.team, text, source="ai_coach")
@@ -205,3 +221,6 @@ class AICoach:
 
     def close(self) -> None:
         self.stop.set()
+        for b in (self.backend, self.fallback):
+            if hasattr(b, "close"):
+                b.close()

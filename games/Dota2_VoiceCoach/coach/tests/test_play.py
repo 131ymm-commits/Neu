@@ -484,12 +484,57 @@ class Launcher(unittest.TestCase):
         dota = Path(self.tmp.name) / "dota 2 beta"
         checks, launched = iter([False, False, True]), []
         stop = threading.Event()
-        P.launch_when_tools(dota, stop, has=lambda d: next(checks), launch=lambda d: launched.append(d) or "пуск",
+        P.launch_when_tools(dota, stop, lambda: launched.append(1) or "пуск", has=lambda d: next(checks),
                             period=0.0, settle=0.0)
-        self.assertEqual(launched, [dota])
+        self.assertEqual(launched, [1])
         self.assertTrue(any("Workshop Tools на месте" in x for x in self.out))
         stop.set()                                                               # закрыли окно — не запускать
-        P.launch_when_tools(dota, stop, has=lambda d: True, launch=lambda d: 1 / 0, period=0.0)
+        P.launch_when_tools(dota, stop, lambda: 1 / 0, has=lambda d: True, period=0.0)
+        # игра уже на связи (хост запустил Доту сам) — ждать нечего, напоминаний нет
+        self.out.clear()
+        P.launch_when_tools(dota, threading.Event(), lambda: 1 / 0, has=lambda d: False, linked=lambda: True,
+                            period=0.0, remind=0.0)
+        self.assertEqual(self.out, [])
+        # напоминание, что окно не зависло
+        n = iter(range(30))
+        stop2 = threading.Event()
+        P.launch_when_tools(dota, stop2, lambda: "пуск", has=lambda d: next(n) >= 25, period=0.001, settle=0.0,
+                            remind=0.002)
+        self.assertTrue(any("Окно не зависло" in x for x in self.out))
+
+    def test_starter_no_double_launch_and_retry_after_failure(self):
+        """Рецензия 6: «д» во время закачки гасил ожидание; два пути могли запустить Доту дважды."""
+        dota = Path(self.tmp.name) / "dota 2 beta"
+        results = iter(["Нет бесплатного дополнения…", "Дота запускается с кастомкой", "Дота запускается снова"])
+        launched, running = [], [False]
+
+        def launch(d, force=False):
+            launched.append(force)
+            return next(results)
+        st = P.DotaStarter(dota, launch=launch, running=lambda name: running[0])
+        self.assertTrue(st.start(force=True).startswith("Нет"))                  # «д» раньше времени — не вышло
+        self.assertFalse(st.started)
+        self.assertTrue(st.start().startswith("Дота запускается"))               # дополнение пришло — запуск
+        running[0] = True
+        self.assertIn("уже запущена", st.start(force=True))                      # «д» после запуска — ответ
+        self.assertEqual(launched, [True, False])
+        # под замком: два потока сразу — один запуск
+        calls = []
+        st2 = P.DotaStarter(dota, launch=lambda d, force=False: (calls.append(1), time.sleep(0.05),
+                                                                 "Дота запускается")[-1], running=lambda n: True)
+        ts = [threading.Thread(target=st2.start) for _ in range(2)]
+        for x in ts:
+            x.start()
+        for x in ts:
+            x.join()
+        self.assertEqual(len(calls), 1)
+
+    def test_wait_enter_d_launches_without_ending_game(self):
+        got, stop = [], threading.Event()
+        answers = iter(["д", "", "l", "", ""])
+        P.wait_enter(stop, ask=lambda p: next(answers), on_word=lambda: got.append(1), clock=lambda: 0.0)
+        self.assertEqual(got, [1, 1])                                            # «д» и «l» (английская раскладка)
+        self.assertTrue(stop.is_set())                                           # два Enter подряд — конец
 
     def test_main_waits_for_tools_instead_of_failing(self):
         tmp = Path(self.tmp.name)

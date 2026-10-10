@@ -58,6 +58,7 @@ SUB_MAX_CALLS = 300                            # по подписке: вызо
 # игра держит решение period + 15 = 30 с — запасной исполнитель не перехватывает героев между решениями)
 SUB_PACE = {"period": 15.0, "dead_period": 30.0, "min_gap": 4.0, "error_gap": 10.0, "max_inflight": 6}
 CLAUDE_FAST = "haiku"                          # имя линии быстрых моделей для `claude --model`
+COACH_MAX_CALLS = 60                           # ИИ-тренер соперника: вызовов Claude за запуск (≈ раз в минуту), дальше правила
 KEY_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")   # по подписке их нельзя отдавать claude: -p платит ключом
 CREDITS_PAGE = "https://claude.ai/settings/billing"        # подписка Max → «API credits»: привязать организацию Console
 KEYS_PAGE = "https://platform.claude.com/settings/keys"    # Console → API Keys → Create Key
@@ -619,15 +620,36 @@ def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.
             "файлов» и проверьте галочку Workshop Tools в «Дополнительный контент».")
 
 
-def launch_when_tools(dota: Path, stop: threading.Event, has=has_tools, launch=None, period: float = 10.0,
-                      settle: float = 30.0, remind: float = 120.0, started: threading.Event | None = None) -> None:
+class DotaStarter:
+    """Один запуск Доты на окно лаунчера: и поток ожидания Workshop Tools, и «д» хоста идут сюда, под замком —
+    двойного запуска нет. Повторный вызов, пока Дота работает, отвечает «уже запущена»; запуск не удался (Steam:
+    «файл отсутствует») — следующий вызов пробует снова."""
+
+    def __init__(self, dota: Path, launch=None, running=None):
+        self.dota = dota
+        self.launch = launch or launch_dota
+        self.running = running or _running
+        self.lock = threading.Lock()
+        self.started = False
+
+    def start(self, force: bool = False) -> str:
+        with self.lock:
+            if self.started and self.running("dota2.exe"):
+                return "Дота уже запущена — переключитесь на неё."
+            msg = self.launch(self.dota, force=force)
+            self.started = msg.startswith("Дота запускается")
+            return msg
+
+
+def launch_when_tools(dota: Path, stop: threading.Event, start, has=has_tools, linked=lambda: False,
+                      period: float = 10.0, settle: float = 30.0, remind: float = 120.0) -> None:
     """Steam ещё качает Workshop Tools: ждать (окно лаунчера открыто — сервер и туннель уже работают) и, как только
     дополнение на месте, запустить Доту — без второго окна ИГРАТЬ.bat (Д15, дополнение 2). Раз в remind секунд —
-    напоминание: окно не зависло. started — Доту уже запустили иначе (хост набрал «д»): больше не ждать."""
-    launch = launch or launch_dota
+    напоминание: окно не зависло. Игра на связи (хост запустил Доту сам или «д») — ждать больше нечего.
+    start — DotaStarter.start: «д» хоста ожидание не гасит, двойного запуска нет."""
     waited = 0.0
     while not stop.wait(period):
-        if started is not None and started.is_set():
+        if linked():
             return
         waited += period
         if remind and waited >= remind:
@@ -636,11 +658,9 @@ def launch_when_tools(dota: Path, stop: threading.Event, has=has_tools, launch=N
             say("  уже стоит — наберите д и Enter, запущу Доту сразу.")
         if has(dota):
             say("  Workshop Tools на месте — через полминуты запускаю Доту (Steam доводит файлы)…")
-            if stop.wait(settle) or (started is not None and started.is_set()):
+            if stop.wait(settle) or linked():
                 return
-            if started is not None:
-                started.set()
-            say("  " + launch(dota))
+            say("  " + start())
             return
 
 
@@ -948,25 +968,29 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
         say("  Друг уже получал этот файл — пусть просто откроет его.")
 
     say("[6/6] Дота")
-    stop, started = threading.Event(), threading.Event()
+    stop = threading.Event()
     on_word = None
+    if dota and not args.no_dota:
+        starter = DotaStarter(dota)
+
+        def on_word():                                            # «д» и Enter: запустить сейчас
+            if not has_tools(dota):
+                say("  Признака Workshop Tools не вижу — запускаю всё равно. Если Steam напишет «файл отсутствует»,")
+                say("  дополнение ещё не готово: окно продолжит ждать и запустит Доту, когда Steam его докачает.")
+            say("  " + starter.start(force=True))
     if dota and not args.no_dota and not has_tools(dota):
         say("  Жду дополнение Workshop Tools: не закрывайте это окно — как только Steam его докачает, Дота запустится")
         say("  сама. Если дополнение уже стоит — наберите д и Enter, запущу Доту сразу.")
-
-        def on_word():
-            if not started.is_set():
-                started.set()
-                say("  " + launch_dota(dota, force=True))
-        threading.Thread(target=launch_when_tools, args=(dota, stop), kwargs={"started": started}, daemon=True,
-                         name="tools").start()
+        threading.Thread(target=launch_when_tools, args=(dota, stop, starter.start),
+                         kwargs={"linked": room.game_linked}, daemon=True, name="tools").start()
     elif dota and not args.no_dota:
-        say("  " + launch_dota(dota))
+        say("  " + starter.start())
     else:
         say(f"  Запустите Доту с инструментами и в её консоли:  dota_launch_custom_game {ADDON} dota")
 
     coach_log = LOGS / f"ai_coach_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
-    ai = AICoach(room, REMOTE, ClaudeCoach(info, CLAUDE_FAST) if mode == "sub" else RulesCoach(), log_path=coach_log)
+    ai = AICoach(room, REMOTE, ClaudeCoach(info, CLAUDE_FAST) if mode == "sub" else RulesCoach(), log_path=coach_log,
+                 max_calls=COACH_MAX_CALLS)
     ai.start()
     say("  Соперник: Тьмой командует ИИ-тренер (" + ("Claude" if mode == "sub" else "правила, не Claude") +
         ") — пока друг не откроет пульт; откроет — ИИ-тренер замолчит. Его приказы в окно не пишутся.")
@@ -992,8 +1016,8 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     pub.close()
     if room.agents is not None:
         s = room.agents.summary()
-        say(f"Вызовов Claude: {s.get('paid_calls', 0)}, ошибок: {s.get('errors', 0)}, "
-            f"задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
+        say(f"Вызовов Claude: {s.get('paid_calls', 0)} (герои) + {ai.claude_calls} (ИИ-тренер), ошибок: "
+            f"{s.get('errors', 0)}, задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
         time.sleep(0.2)
         if any(t.name.startswith("agent") and t.is_alive() for t in threading.enumerate()):
             say(f"Жду, пока агенты закончат начатые ходы (до {getattr(backend, 'timeout', 30):.0f} с)…")
