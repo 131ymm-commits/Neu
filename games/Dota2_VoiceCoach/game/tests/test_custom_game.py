@@ -1055,6 +1055,37 @@ class FindBotHeroes(Game):
         line = [x for x in self.G["__printed"].values() if "герои агентов:" in x][0]
         self.assertIn("по номеру бота 10", line)
 
+    def test_bot_hero_spawning_before_coach_hero_not_hidden(self):
+        """Повторная проверка (узкий случай): владелец героев ботов — человек, и герой бота появился раньше, чем у
+        человека назначен выбранный герой — прятать его как героя тренера нельзя."""
+        self.L.execute("""
+          local add = Tutorial.AddBot
+          function Tutorial:AddBot(hero, lane, difficulty, good)
+            local ok = add(self, hero, lane, difficulty, good)
+            for pid, p in pairs(__players) do
+              if p.fake then function p.hero:GetPlayerOwnerID() return 0 end end
+            end
+            return ok
+          end
+          local sel = PlayerResource.GetSelectedHeroEntity
+          __coach_ready = false
+          function PlayerResource:GetSelectedHeroEntity(pid)
+            if pid == 0 and not __coach_ready then return nil end      -- выбранный герой человека ещё не назначен
+            return sel(self, pid)
+          end""")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP)")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_HERO_SELECTION)")
+        self.step(2.5)
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_PRE_GAME)")
+        self.L.execute("__fire('npc_spawned', { entindex = __players[1].hero.idx, is_respawn = 0 })")   # бот — первым
+        self.L.execute("__coach_ready = true")
+        for pid in [0] + list(range(2, 11)):
+            self.L.execute(f"__fire('npc_spawned', {{ entindex = __players[{pid}].hero.idx, is_respawn = 0 }})")
+        self.step(1.5)
+        self.assertFalse(self.hero(1)["nodraw"])                              # sniper не спрятан
+        self.assertTrue(self.hero(0)["nodraw"])                               # спрятан герой человека
+        self.assertEqual(self.agents(2), ["sniper", "viper", "axe", "lion", "crystal_maiden"])
+
     def test_coach_hero_without_owner_is_not_agent(self):
         self.L.execute("__players[0].hero.GetPlayerOwnerID = function() return -1 end")   # у героя тренера нет владельца
         self.start_match()

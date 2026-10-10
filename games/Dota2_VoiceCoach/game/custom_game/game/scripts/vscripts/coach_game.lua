@@ -143,8 +143,9 @@ local function commander_of(unit)
     if is_human(pid) and PlayerResource:GetSelectedHeroEntity(pid) == unit then return pid end
   end
   local pid = unit:GetPlayerOwnerID()
-  if is_human(pid) and PlayerResource:GetSelectedHeroEntity(pid) == nil and (G.commander_heroes or {})[pid] == nil then
-    return pid                                     -- выбранный ещё не назначен — первый герой человека
+  if is_human(pid) and PlayerResource:GetSelectedHeroEntity(pid) == nil and (G.commander_heroes or {})[pid] == nil
+      and unit:GetUnitName() == PlayerResource:GetSelectedHeroName(pid) then
+    return pid                                     -- выбранный ещё не назначен — герой с именем, выбранным человеком
   end
   return nil
 end
