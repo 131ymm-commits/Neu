@@ -66,10 +66,54 @@ function W.lane_enemy_front(team, lane)
   return t and t.pos or W.fountain(W.other(team))
 end
 
--- середина между своей и чужой внешними вышками линии — там встречаются волны, пока вышки стоят
+-- точка на ломаной pts, пройдя долю frac её длины
+function W.along(pts, frac)
+  local total = 0
+  for i = 2, #pts do total = total + W.dist(pts[i - 1], pts[i]) end
+  local left = total * frac
+  for i = 2, #pts do
+    local seg = W.dist(pts[i - 1], pts[i])
+    if seg > 0 and left <= seg then
+      local t = left / seg
+      return Vector(pts[i - 1].x + (pts[i].x - pts[i - 1].x) * t, pts[i - 1].y + (pts[i].y - pts[i - 1].y) * t, 0)
+    end
+    left = left - seg
+  end
+  return Vector(pts[#pts].x, pts[#pts].y, 0)
+end
+
+W.CLEAR_STEP, W.CLEAR_STEPS, W.TREE_R = 200, 15, 150
+
+-- точка в деревьях или непроходима — шагами по CLEAR_STEP к toward (по линии к своей вышке); нет навигации — как есть
+function W.clear(p, toward)
+  if GridNav == nil then return p end
+  local function bad(q)
+    local ok, res = pcall(function() return GridNav:IsNearbyTree(q, W.TREE_R, true) or not GridNav:IsTraversable(q) end)
+    return ok and res
+  end
+  local q = p
+  for _ = 1, W.CLEAR_STEPS do
+    if not bad(q) then return q end
+    local d = W.dist(q, toward)
+    if d <= W.CLEAR_STEP then return toward end
+    local t = W.CLEAR_STEP / d
+    q = Vector(q.x + (toward.x - q.x) * t, q.y + (toward.y - q.y) * t, 0)
+  end
+  return p
+end
+
+-- середина линии — там встречаются волны, пока вышки стоят. Считается по самой линии: верхняя и нижняя линии идут
+-- углом вдоль края карты, и середина отрезка между вышками попадала в лес (живой матч 10.10.2026: «акс и леон
+-- застряли в деревьях»). Путь: своя вышка → угол → их вышка; угол — тот из двух вариантов, что дальше от центра
+-- карты (линии огибают карту по краю); точка в деревьях — сдвигается к своей вышке.
 function W.lane_mid(team, lane)
   local a, b = W.lane_front(team, lane), W.lane_enemy_front(team, lane)
-  return Vector((a.x + b.x) / 2, (a.y + b.y) / 2, 0)
+  local pts = { a, b }
+  if lane ~= "mid" then
+    local c1, c2 = Vector(a.x, b.y, 0), Vector(b.x, a.y, 0)
+    pts = { a, (c1.x * c1.x + c1.y * c1.y >= c2.x * c2.x + c2.y * c2.y) and c1 or c2, b }
+  end
+  return W.clear(W.along(pts, 0.5), a)
 end
 
 -- уровень внешней живой вышки на каждой линии (0 — на линии вышек не осталось)
@@ -178,6 +222,17 @@ function W.nearest_enemy(team, point, max_dist)
   return best
 end
 
+-- видимые живые враги не дальше radius от точки
+function W.enemies_near(team, point, radius)
+  local out = {}
+  for _, hero in pairs(W.agents[W.other(team)] or {}) do
+    if W.alive(hero) and W.visible(team, hero) and W.dist(hero:GetAbsOrigin(), point) <= radius then
+      out[#out + 1] = hero
+    end
+  end
+  return out
+end
+
 function W.team_center(team)
   local sx, sy, n = 0, 0, 0
   for _, hero in pairs(W.agents[team] or {}) do
@@ -258,6 +313,7 @@ function W.stats(hero)
 end
 
 local function has_flag(value, flag)
+  if flag == nil or value == nil then return false end   -- константы нет — флага нет (наблюдение не ломается)
   return math.floor(value / flag) % 2 == 1          -- без библиотеки bit: флаги — степени двойки
 end
 
@@ -314,10 +370,18 @@ function W.ability_info(ab, hero)
   if ab:IsPassive() then kind = "passive"
   elseif has_flag(behavior, DOTA_ABILITY_BEHAVIOR_UNIT_TARGET) then kind = "target"
   elseif has_flag(behavior, DOTA_ABILITY_BEHAVIOR_POINT) then kind = "point" end
+  -- по кому способность (для рефлекса «способности в бою»): враги — ENEMY или BOTH; нет ответа — не по врагу
+  local okt, tt = pcall(function() return ab:GetAbilityTargetTeam() end)
+  tt = okt and tonumber(tt) or DOTA_UNIT_TARGET_TEAM_NONE
+  local oka, aoe = pcall(function() return ab:GetAOERadius() end)
   return { name = ab:GetAbilityName(), level = ab:GetLevel(), max = ab:GetMaxLevel(),
            ready = ab:IsFullyCastable(), behavior = kind, cooldown = ab:GetCooldownTimeRemaining(),
            mana = ab:GetManaCost(-1), range = ab:GetCastRange(hero and hero:GetAbsOrigin() or nil, nil),
-           cast_point = ab:GetCastPoint(), ult = ab:GetAbilityType() == ABILITY_TYPE_ULTIMATE }
+           cast_point = ab:GetCastPoint(), ult = ab:GetAbilityType() == ABILITY_TYPE_ULTIMATE,
+           enemy = tt == DOTA_UNIT_TARGET_TEAM_ENEMY or tt == DOTA_UNIT_TARGET_TEAM_BOTH,
+           aoe = oka and tonumber(aoe) or 0,
+           toggle = has_flag(behavior, DOTA_ABILITY_BEHAVIOR_TOGGLE),
+           autocast = has_flag(behavior, DOTA_ABILITY_BEHAVIOR_AUTOCAST) }
 end
 
 -- предметы: инвентарь, рюкзак, слот телепорта, нейтральный

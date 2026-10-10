@@ -37,6 +37,8 @@ DOTA_UNIT_ORDER_CAST_POSITION, DOTA_UNIT_ORDER_CAST_TARGET, DOTA_UNIT_ORDER_CAST
 DOTA_UNIT_ORDER_HOLD_POSITION, DOTA_UNIT_ORDER_TRAIN_ABILITY = 10, 11
 ABILITY_TYPE_ULTIMATE, ABILITY_CAN_BE_UPGRADED = 1, 0
 DOTA_ABILITY_BEHAVIOR_NO_TARGET, DOTA_ABILITY_BEHAVIOR_UNIT_TARGET, DOTA_ABILITY_BEHAVIOR_POINT = 4, 8, 16
+DOTA_ABILITY_BEHAVIOR_CHANNELLED, DOTA_ABILITY_BEHAVIOR_TOGGLE, DOTA_ABILITY_BEHAVIOR_AUTOCAST = 128, 512, 4096
+DOTA_UNIT_TARGET_TEAM_NONE, DOTA_UNIT_TARGET_TEAM_BOTH = 0, 3
 DOTA_UNIT_TARGET_TEAM_FRIENDLY, DOTA_UNIT_TARGET_TEAM_ENEMY, DOTA_UNIT_TARGET_BASIC = 1, 2, 18
 DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, DOTA_SHOP_HOME, DOTA_ModifyGold_PurchaseItem = 0, 1, 0, 15
 DOTA_ITEM_TP_SCROLL, DOTA_ITEM_NEUTRAL_ACTIVE_SLOT = 15, 16
@@ -153,6 +155,8 @@ local function make_ability(name, ult, behavior, level)
   function ab:GetCastPoint() return 0.3 end
   function ab:CanAbilityBeUpgraded() return self.level < self.max end     -- в dota-data — bool
   function ab:GetCurrentCharges() return self.charges or 0 end
+  function ab:GetAbilityTargetTeam() return self.tt or 0 end      -- по умолчанию NONE: рефлекс боя не трогает
+  function ab:GetAOERadius() return self.aoe or 0 end
   return ab
 end
 __make_ability = make_ability
@@ -451,7 +455,7 @@ class WithAgents(Game):
         self.assertLess(sniper["gold"], 600)
         moves = [o for o in self.unit_orders(sniper) if o["OrderType"] == ORDER["move"]]
         self.assertTrue(moves)
-        self.assertEqual(self.xy(moves[-1]), (5550, -3850))                  # середина бот-линии (лёгкая у Света)
+        self.assertEqual(self.xy(moves[-1]), (6200, -4500))   # середина бот-линии по самой линии (через угол карты)
         self.assertTrue(all(r["source"] == "agent" for r in rows))
 
     def test_coach_order_goes_through_agent(self):
@@ -709,6 +713,101 @@ class Executor(Game):
         att = [o for o in self.unit_orders(sniper, n1) if o["OrderType"] == ORDER["attack"]]
         self.assertEqual(att[-1]["TargetIndex"], luna["idx"])               # после применения — бой с целью плана
 
+    def fight_setup(self, plan, luna_hp=600, sniper_hp=600, dist=500):
+        self.start_match()
+        sniper, luna = self.hero(1), self.by_name("luna")
+        sniper["pos"] = self.L.eval("Vector(0, 0, 0)")
+        luna["pos"] = self.L.eval(f"Vector({dist}, 0, 0)")
+        luna["health"], sniper["health"] = luna_hp, sniper_hp
+        for ab in list(sniper["abilities"].values()):
+            ab["tt"] = 2                                                      # все — по врагам
+        sniper["abilities"][4]["level"] = 1                                   # ульта изучена
+        self.decide(2, 1, plan)
+        return sniper, luna
+
+    def casts(self, hero, since):
+        return [o for o in self.unit_orders(hero, since)
+                if o["OrderType"] in (ORDER["cast_point"], ORDER["cast_target"], ORDER["cast_none"])]
+
+    def test_auto_spells_in_fight(self):
+        """Живой матч: «только простые действия» — агент не называл способности заранее, руки их не применяли.
+        Теперь в драке руки сами бьют способностями по врагу в досягаемости; ульта — когда враг ранен."""
+        sniper, luna = self.fight_setup({"plan": "fight", "target": "luna"})
+        n0 = self.n_orders()
+        self.step(2)
+        names = {o["AbilityIndex"] for o in self.casts(sniper, n0)}
+        q, w, e, r = (sniper["abilities"][i]["idx"] for i in (1, 2, 3, 4))
+        self.assertIn(q, names)                                               # точечная — в точку врага
+        self.assertIn(w, names)                                               # по цели — во врага
+        self.assertNotIn(e, names)                                            # без цели: враг дальше 300
+        self.assertNotIn(r, names)                                            # враг цел — ульту бережём
+        luna["health"] = 300                                                  # 50 %
+        n1 = self.n_orders()
+        self.step(4)
+        self.assertIn(r, {o["AbilityIndex"] for o in self.casts(sniper, n1)})
+        _, rows = self.hud_rows()
+        self.assertTrue(any("способност" in r_["status"] or r_["status"].startswith("бой") for r_ in rows[:1]))
+
+    def test_auto_spells_in_lane_only_to_kill_or_defend(self):
+        sniper, luna = self.fight_setup({"plan": "farm", "where": "bot"}, dist=400)
+        n0 = self.n_orders()
+        self.step(1.5)
+        self.assertEqual(self.casts(sniper, n0), [])                          # оба целы — фарм, без размена
+        luna["health"] = 200                                                  # 33 % — добить
+        n1 = self.n_orders()
+        self.step(1)
+        got = self.casts(sniper, n1)
+        self.assertTrue(got)
+        self.assertNotIn(sniper["abilities"][4]["idx"], {o["AbilityIndex"] for o in got})   # не драка — без ульты
+
+    def test_auto_spells_skip_toggles_and_friendly(self):
+        sniper, luna = self.fight_setup({"plan": "fight", "target": "luna"})
+        sniper["abilities"][1]["tt"] = 1                                      # по союзникам
+        sniper["abilities"][2]["behavior"] = 8 + 512                          # переключатель
+        n0 = self.n_orders()
+        self.step(1.5)
+        idx = {o["AbilityIndex"] for o in self.casts(sniper, n0)}
+        self.assertNotIn(sniper["abilities"][1]["idx"], idx)
+        self.assertNotIn(sniper["abilities"][2]["idx"], idx)
+
+    def test_escape_hits_chaser_without_ult(self):
+        sniper, luna = self.fight_setup({"plan": "farm", "where": "bot", "retreat_hp": 40}, sniper_hp=120, dist=350,
+                                        luna_hp=200)
+        n0 = self.n_orders()
+        self.step(1)
+        got = self.casts(sniper, n0)
+        self.assertTrue(got)                                                  # отходя — бьёт догоняющего
+        self.assertNotIn(sniper["abilities"][4]["idx"], {o["AbilityIndex"] for o in got})
+
+    def test_support_does_not_steal_last_hits(self):
+        """Д18: саппорт на линии рядом со своим кором вражеских крипов не добивает, своих — добивает, бьёт врага,
+        когда безопасно, иначе стоит у своего."""
+        self.start_match()
+        axe, lion = self.by_name("axe"), self.by_name("lion")                 # 3 и 4 — сложная линия Света
+        axe["pos"] = self.L.eval("Vector(-6200, 3000, 0)")
+        lion["pos"] = self.L.eval("Vector(-6250, 2900, 0)")
+        self.decide(2, 4, {"plan": "farm", "where": "top"})
+        self.decide(2, 3, {"plan": "hold"})
+        weak = self.L.eval("__creep(3, -6150, 3200, 30)")                     # вражеский — добил бы с удара
+        n0 = self.n_orders()
+        self.step(1)
+        att = [o for o in self.unit_orders(lion, n0) if o["OrderType"] == ORDER["attack"]]
+        self.assertFalse([o for o in att if o["TargetIndex"] == weak["idx"]])  # добивание — керри/оффлейнеру
+        mine = self.L.eval("__creep(2, -6230, 2950, 40)")                     # свой, ниже половины — добить
+        n1 = self.n_orders()
+        self.step(0.5)
+        last = self.unit_orders(lion, n1)[-1]
+        self.assertEqual((last["OrderType"], last["TargetIndex"]), (ORDER["attack"], mine["idx"]))
+        mine["alive"] = False
+        weak["alive"] = False
+        axe["pos"] = self.L.eval("Vector(-6200, 3500, 0)")                    # кор отошёл на 600 — саппорт к нему
+        n2 = self.n_orders()
+        self.step(1)
+        o = self.unit_orders(lion, n2)[-1]
+        self.assertEqual(o["OrderType"], ORDER["move"])
+        x, y = self.xy(o)
+        self.assertLess(((x + 6200) ** 2 + (y - 3500) ** 2) ** 0.5, 300)       # встаёт за своим, ближе к базе
+
     def test_default_level_ult_first_and_unknown_names(self):
         self.start_match()
         sniper = self.hero(1)
@@ -857,7 +956,7 @@ class Fallback(Game):
         n3 = self.n_orders()
         self.step(1.0)
         o = self.unit_orders(self.hero(1), n3)[-1]
-        self.assertEqual((o["OrderType"], self.xy(o)), (ORDER["move"], (5550, -3850)))   # «сам» без агента — фарм своей линии
+        self.assertEqual((o["OrderType"], self.xy(o)), (ORDER["move"], (6200, -4500)))   # «сам» без агента — фарм своей линии
 
     def test_tower_falls_front_moves(self):
         self.start_match()
@@ -1162,6 +1261,37 @@ class NamedAgentBots(Game):
         self.assertEqual(len(refused), 1)                                         # один раз, не на каждого бота
         self.assertEqual(len(self.agents(2)), 5)
         self.assertEqual(len(self.agents(3)), 5)
+
+
+class LaneMiddle(Game):
+    """Живой матч 10.10.2026: «акс и леон застряли в деревьях». Середина отрезка между вышками изогнутой линии лежит
+    в лесу; теперь — середина пути по линии через угол карты, а точка в деревьях сдвигается к своей вышке."""
+
+    def lane_mid(self, team, lane):
+        p = self.L.eval(f'CoachGame and require("coach_world").lane_mid({team}, "{lane}")')
+        return (round(p["x"]), round(p["y"]))
+
+    def test_mid_along_lane_not_in_forest(self):
+        self.start_match()
+        self.assertEqual(self.lane_mid(2, "bot"), (6200, -4500))     # Свет: вдоль низа, потом вверх по правому краю
+        self.assertEqual(self.lane_mid(2, "top"), (-6200, 4650))     # Свет: вверх по левому краю
+        self.assertEqual(self.lane_mid(3, "top"), (-6200, 4650))     # та же точка с другой стороны — встреча волн
+        self.assertEqual(self.lane_mid(2, "mid"), (-500, -375))      # мид прямой — середина отрезка
+        n0 = self.n_orders()
+        self.step(1)
+        axe = self.unit_orders(self.by_name("axe"), n0)[-1]           # Axe (3) — на сложной линии Света (верх)
+        self.assertEqual(self.xy(axe), (-6200, 4650))
+
+    def test_point_in_trees_moves_toward_own_tower(self):
+        self.L.execute("""
+          GridNav = {}
+          function GridNav:IsNearbyTree(p, r, full) return p.y > 3500 and p.y < 5000 and p.x < -5800 end   -- рощица
+          function GridNav:IsTraversable(p) return true end""")
+        self.start_match()
+        x, y = self.lane_mid(2, "top")
+        self.assertEqual(x, -6200)
+        self.assertLessEqual(y, 3500)                                 # вышла из деревьев — к своей вышке (-6200, 1800)
+        self.assertGreater(y, 1800)
 
 
 class GameMovesHidden(Game):

@@ -25,6 +25,17 @@ X.WALK_CAST = 20        -- с: дольше не идём к месту прим
 X.LEVEL_CHECK = 1.0     -- с: через столько проверяем, выросла ли способность после прокачки
 X.LEVEL_SKIP = 30       -- с: способность, которую не удалось вкачать, пропускаем
 local TELEPORTS = { item_tpscroll = true, item_travel_boots = true, item_travel_boots_2 = true }
+-- рефлекс «способности в бою» (живой матч 10.10.2026: «ведут себя очень плохо. только простые действия»: агент
+-- решает раз в 15–20 с и о драке заранее не знает, а руки применяли только названное им): руки сами бьют
+-- способностями по врагу видимому и в досягаемости
+X.AUTO_PLANS = { fight = true, defend = true, save = true, push = true }   -- здесь — всеми, ульта — в драке
+X.ULT_PLANS = { fight = true, defend = true, save = true }
+X.AUTO_GAP = 0.5        -- с между автоприменениями
+X.AUTO_RETRY = 3        -- с: ту же способность, если приказ не прошёл (она всё ещё готова), — не раньше
+X.KILL_HP = 40          -- на фарме и в прочих планах: враг слабее этого процента — добить способностями
+X.DEFEND_HP = 50        -- на фарме: у себя меньше этого и враг вплотную — отбиваться
+X.DEFEND_NEAR = 500
+X.SUPPORT_SHARE = 900   -- саппорт (4, 5) на фарме линии: свой кор ближе — вражеских крипов не добивает
 
 local PLANS = { farm = true, push = true, defend = true, fight = true, retreat = true, roshan = true,
                 move = true, follow = true, save = true, group = true, hold = true }
@@ -295,12 +306,98 @@ local function cast_step(st, ag, world, now)
   return act
 end
 
+-- рефлекс «способности в бою»: одно применение за шаг. В драке, обороне, спасении и пуше — по ближайшему видимому
+-- врагу (или цели плана), ульта — только в драке, обороне и спасении (и когда враг ранен или их двое рядом). В прочих
+-- планах — только добить слабого врага или отбиться, когда сам ранен и враг вплотную; при отходе — без ульты, по
+-- догоняющему. Только способности по врагам: не переключатели, не автоатаки, не по союзникам — их называет агент.
+local function auto_cast(st, ag, world, now, mode)
+  if now < (st.auto_next or 0) then return nil end
+  local hero, team = ag.hero, ag.team
+  local plan = st.plan and st.plan.kind or ""
+  local my = world.pos(hero)
+  local target = nil
+  if st.plan and st.plan.target ~= "" then target = world.enemy_hero(team, st.plan.target) end
+  target = target or world.nearest_enemy(team, my, 1600)
+  if target == nil then return nil end
+  local d = world.dist(my, world.pos(target))
+  local fight = mode ~= "escape" and X.AUTO_PLANS[plan]
+  if not fight then
+    local weak = world.hp_pct(target) <= X.KILL_HP
+    local pressed = world.hp_pct(hero) < X.DEFEND_HP and d <= X.DEFEND_NEAR
+    if mode == "escape" then
+      if d > X.DEFEND_NEAR then return nil end
+    elseif not weak and not pressed then
+      return nil
+    end
+  end
+  st.auto_tried = st.auto_tried or {}
+  local ult_ok = mode ~= "escape" and X.ULT_PLANS[plan]
+      and (world.hp_pct(target) <= 70 or #world.enemies_near(team, world.pos(target), 700) >= 2)
+  local pick = nil
+  for pass = 1, 2 do                                        -- сначала обычные способности, потом ульта
+    for _, ab in ipairs(world.abilities(hero)) do
+      local i = world.ability_info(ab, hero)
+      local usable = i.level > 0 and i.behavior ~= "passive" and i.ready and i.enemy and not i.toggle
+          and not i.autocast and (pass == 2) == i.ult and (not i.ult or ult_ok)
+          and now - (st.auto_tried[i.name] or -1e9) >= X.AUTO_RETRY
+      if usable then
+        local range = (i.range and i.range > 0) and i.range or 600
+        if i.behavior == "none" then
+          if d <= ((i.aoe and i.aoe > 0) and i.aoe or 300) then pick = { ab = ab, i = i } end
+        elseif d <= range + 50 then
+          pick = { ab = ab, i = i }
+        end
+      end
+      if pick then break end
+    end
+    if pick then break end
+  end
+  if pick == nil then return nil end
+  local i = pick.i
+  st.auto_next, st.auto_tried[i.name] = now + X.AUTO_GAP, now
+  local act = { kind = "cast", ability = pick.ab, behavior = i.behavior, name = i.name, auto = true,
+                busy = (i.cast_point or 0) + X.AFTER_CAST }
+  if i.behavior == "target" then act.target = target
+  elseif i.behavior == "point" then act.point = world.pos(target) end
+  return act
+end
+
 -- --- план → приказ движения/атаки ---
+
+-- кор (позиции 1–3) рядом с саппортом — добивания ему
+local function core_near(ag, world)
+  if ag.pos ~= 4 and ag.pos ~= 5 then return nil end
+  local my = world.pos(ag.hero)
+  for pos = 1, 3 do
+    local ally = world.ally_hero(ag.team, pos)
+    if ally and ally ~= ag.hero and world.dist(my, world.pos(ally)) <= X.SUPPORT_SHARE then return ally, pos end
+  end
+  return nil
+end
 
 local function farm_order(st, ag, world, lane)
   local hero, team = ag.hero, ag.team
   local my = world.pos(hero)
   local tag = "фарм " .. LANE_RU[lane]
+  local core, core_pos = core_near(ag, world)
+  if core then                                  -- саппорт на линии с кором: свои крипы — добить, враг — бить, если
+    tag = "линия с " .. core_pos                 -- безопасно; вражеских крипов не добивать: опыт идёт и так
+    local range = world.attack_range(hero)
+    for _, c in ipairs(world.lane_creeps(hero, range + 300, false)) do
+      if world.hp_pct(c) < X.DENY_PCT and world.hp(c) <= world.damage(hero, c) * X.LASTHIT then
+        return { kind = "attack", target = c, why = tag .. ": добиваю своего" }
+      end
+    end
+    local e = world.nearest_enemy(team, my, range + 100)
+    if e and world.hp_pct(hero) >= 60 and world.hp_pct(e) <= world.hp_pct(hero) then
+      return { kind = "attack", target = e, why = tag .. ": бью врага" }
+    end
+    local cp = world.pos(core)
+    if world.dist(my, cp) > 350 then
+      return { kind = "move", point = toward(cp, world.fountain(team) or my, 250), why = tag .. ": иду к своему" }
+    end
+    return { kind = "hold", why = tag .. ": стою у своего" }
+  end
   local enemies = world.lane_creeps(hero, X.FARM_NEAR, true)
   if #enemies == 0 then
     local p = world.lane_mid(team, lane)
@@ -438,16 +535,23 @@ function X.step(st, ag, world, now)
   if st.retreat_hp > 0 and hp < st.retreat_hp then st.retreating = true end
   if st.retreating and hp >= math.min(95, st.retreat_hp + X.RETREAT_HYST) then st.retreating = false end
   if st.retreating then
+    local esc = auto_cast(st, ag, world, now, "escape")
+    if esc then
+      acts[#acts + 1] = esc
+      st.busy_until, st.last = now + esc.busy, nil
+      st.status = "отхожу, бью догоняющего: " .. esc.name
+      return acts
+    end
     return issue(st, acts, { kind = "move", point = world.fountain(ag.team),
                              why = string.format("отхожу, здоровья %d%%", math.floor(hp + 0.5)) }, now, world)
   end
 
-  local c = cast_step(st, ag, world, now)
+  local c = cast_step(st, ag, world, now) or auto_cast(st, ag, world, now)
   if c then
     acts[#acts + 1] = c
     st.busy_until = now + (c.busy or X.AFTER_CAST)
     st.last = nil                                            -- после применения приказ движения выдать заново
-    st.status = "применяю " .. c.name
+    st.status = (c.auto and "бью способностью " or "применяю ") .. c.name
     return acts
   end
 
