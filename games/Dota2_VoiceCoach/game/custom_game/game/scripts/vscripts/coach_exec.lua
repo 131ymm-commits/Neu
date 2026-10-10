@@ -362,6 +362,44 @@ local function auto_cast(st, ag, world, now, mode)
   return act
 end
 
+-- рефлекс «расходники»: как делает каждый игрок — лечилка и кларити, когда ранен и врага рядом нет (их сбивает урон),
+-- волшебный огонь и палочка, когда здоровья мало и враг рядом. Раз в секунду, только из инвентаря.
+X.FLASK_HP, X.CLARITY_MP, X.PANIC_HP, X.SAFE_R = 55, 35, 25, 900
+local function consume(st, ag, world, now)
+  if now < (st.consume_next or 0) then return nil end
+  local hero = ag.hero
+  local hp = world.hp_pct(hero)
+  local danger = world.nearest_enemy(ag.team, world.pos(hero), X.SAFE_R) ~= nil
+  local function use(name, self_target)
+    local it = world.main_item(hero, name)
+    if it == nil or not world.ability_info(it, hero).ready then return nil end
+    st.consume_next = now + 1.0
+    if self_target then return { kind = "cast", ability = it, behavior = "target", target = hero, name = name, auto = true, busy = 0.1 } end
+    return { kind = "cast", ability = it, behavior = "none", name = name, auto = true, busy = 0.1 }
+  end
+  if danger and hp <= X.PANIC_HP then
+    local wand = world.main_item(hero, "item_magic_wand") or world.main_item(hero, "item_magic_stick")
+    if wand and world.charges(wand) >= 3 then
+      local a = use(world.ability_name(wand), false)
+      if a then return a end
+    end
+    local a = use("item_faerie_fire", false)
+    if a then return a end
+  end
+  if not danger then
+    if hp <= X.FLASK_HP and not world.has_modifier(hero, "modifier_flask_healing") then
+      local a = use("item_flask", true)
+      if a then return a end
+    end
+    if world.mana_pct(hero) <= X.CLARITY_MP and not world.has_modifier(hero, "modifier_clarity_potion") then
+      local a = use("item_clarity", true)
+      if a then return a end
+    end
+  end
+  st.consume_next = now + 1.0
+  return nil
+end
+
 -- --- план → приказ движения/атаки ---
 
 -- кор (позиции 1–3) рядом с саппортом — добивания ему
@@ -530,6 +568,14 @@ function X.step(st, ag, world, now)
     end
   end
   if world.is_channeling(hero) or now < st.busy_until then return acts end
+
+  local u = consume(st, ag, world, now)
+  if u then
+    acts[#acts + 1] = u
+    st.busy_until = now + u.busy
+    st.status = "пью/жму " .. u.name
+    return acts
+  end
 
   local hp = world.hp_pct(hero)
   if st.retreat_hp > 0 and hp < st.retreat_hp then st.retreating = true end

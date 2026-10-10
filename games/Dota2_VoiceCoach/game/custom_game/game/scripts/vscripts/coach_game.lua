@@ -44,6 +44,9 @@ G.AGENT_STALE = 20            -- с игры без нового решения 
 G.SETUP_WAIT = 30             -- с: столько в начале PRE_GAME ждём героев ботов (Дота может создать их не сразу)
 G.PULSE = 60                  -- с: раз в столько — строка «пульс» в консоль (лаунчер показывает её хосту)
 G.AGENT_NAME = "Claude %d · %s"   -- имя бота агента в матче (Д17): номер в команде и герой
+-- Д17 (имена ботов) выключен до проверочного выпуска (рецензия 9): функция в Доте есть всегда, и каждый матч шёл бы
+-- по непроверенному пути вместо Tutorial:AddBot, с которым у автора агенты играют. Включает проверочный выпуск.
+G.NAMED_BOTS = false
 G.CAMERA_DISTANCE = 1600      -- дальше обычного (в Доте 1134): тренер смотрит сверху
 G.CHAT_REPLIES = true         -- реплики агентов — и в командный чат
 G.COACH_KEEP = 3              -- сколько последних приказов тренера видит агент
@@ -172,10 +175,18 @@ local function agent_heroes()
   local out, seen, humans = { [DOTA_TEAM_GOODGUYS] = {}, [DOTA_TEAM_BADGUYS] = {} }, {}, human_heroes()
   local got = { bot = 0, spawn = 0, list = 0 }
   local listed = {}
+  local bot_has = {}                               -- номер бота → герой уже есть
   local function add(hero, key, how)
     if hero == nil or seen[hero] or humans[hero] or not IsValidEntity(hero) or not hero:IsRealHero() then return end
     local list = out[hero:GetTeamNumber()]
     if list == nil then return end
+    local owner = hero:GetPlayerOwnerID()
+    local bot = (how == "bot") and key or ((owner ~= nil and owner >= 0 and PlayerResource:IsValidPlayerID(owner)
+      and PlayerResource:IsFakeClient(owner)) and owner or nil)
+    if bot ~= nil then
+      if bot_has[bot] then return end              -- второй герой того же бота (если Дота создаст) — не агенту
+      bot_has[bot] = true
+    end
     seen[hero] = true
     list[#list + 1] = { key = key, idx = hero:entindex(), hero = hero }
     got[how] = got[how] + 1
@@ -243,8 +254,11 @@ local function bots_on_team(team)
   return n
 end
 
+local HERO_TITLE = { skeleton_king = "Wraith King" }   -- внутренние имена, отставшие от названий в игре
 local function pretty_hero(name)                   -- «npc_dota_hero_crystal_maiden» → «Crystal Maiden»
-  local s = World.short(name):gsub("_", " ")
+  local short = World.short(name)
+  if HERO_TITLE[short] then return HERO_TITLE[short] end
+  local s = short:gsub("_", " ")
   return (s:gsub("(%a)([%w']*)", function(a, b) return a:upper() .. b end))
 end
 
@@ -260,14 +274,24 @@ end
 -- обычный бот Tutorial:AddBot, без имени. → удалось ли
 function G:SpawnAgentBot(hero, team, pos)
   local name = string.format(G.AGENT_NAME, pos, pretty_hero(hero))
-  if GameRules.AddBotPlayerWithEntityScript ~= nil and not G.named_off then
+  if G.NAMED_BOTS and GameRules.AddBotPlayerWithEntityScript ~= nil and not G.named_off then
+    local before = bots_on_team(team)
     local ok, h = pcall(function() return GameRules:AddBotPlayerWithEntityScript(hero, name, team, "", true) end)
     if ok and h ~= nil then
       local f = fountain_of(team)
-      if f then FindClearSpaceForUnit(h, f, true) end
+      pcall(function() if f then FindClearSpaceForUnit(h, f, true) end end)
+      local pid = h:GetPlayerOwnerID()                -- диагностика для проверочного выпуска (рецензия 9)
+      local okn, shown = pcall(function() return PlayerResource:GetPlayerName(pid) end)
+      log("бот %s: игрок %s, имя в игре «%s», выбранный герой %s, до фонтана %d", name, tostring(pid),
+        okn and tostring(shown) or "?", PlayerResource:GetSelectedHeroEntity(pid) == h and "тот же" or "другой",
+        f and math.floor(World.dist(World.pos(h), f) + 0.5) or -1)
       return true
     end
-    G.named_off = true                             -- один отказ — дальше обычные боты, без повторных попыток
+    if ok and bots_on_team(team) > before then     -- игрок посажен, герой будет позже (отложенное создание):
+      log("бот %s посажен, герой будет позже — запасного не добавляю", name)   -- второго бота не добавлять
+      return true
+    end
+    G.named_off = true                             -- настоящий отказ — дальше обычные боты, без повторных попыток
     log("бот под именем агента не создался (%s) — дальше обычные боты", ok and "Дота не дала героя" or tostring(h))
   end
   local ok = Tutorial:AddBot(hero, "", "unfair", team == DOTA_TEAM_GOODGUYS)
@@ -275,9 +299,20 @@ function G:SpawnAgentBot(hero, team, pos)
   return ok
 end
 
+-- ботов под именами создаём строго по порядку позиций: предзагрузки могут закончиться в любом порядке, а позиция
+-- агента — это порядок игроков-ботов (рецензия 9: иначе «Claude 5 · Crystal Maiden» стал бы агентом 1)
+function G:FlushNamed()
+  local q = G.named_queue or {}
+  while q[1] and q[1].ready do
+    local r = table.remove(q, 1)
+    G:SpawnAgentBot(r.hero, r.team, r.pos)
+  end
+end
+
 function G:AddBots()
   local taken, asked = taken_heroes(), 0
-  local named = GameRules.AddBotPlayerWithEntityScript ~= nil
+  local named = G.NAMED_BOTS and GameRules.AddBotPlayerWithEntityScript ~= nil
+  G.named_queue = {}
   for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
     local need = 5 - bots_on_team(team)
     local pos = 5 - need
@@ -286,8 +321,9 @@ function G:AddBots()
       if not taken[hero] then
         taken[hero], need, pos, asked = true, need - 1, pos + 1, asked + 1
         if named then                              -- героя — заранее в память, тогда бот появляется сразу целым
-          local h, t, p = hero, team, pos
-          PrecacheUnitByNameAsync(h, function() G:SpawnAgentBot(h, t, p) end)
+          local r = { hero = hero, team = team, pos = pos, ready = false }
+          G.named_queue[#G.named_queue + 1] = r
+          PrecacheUnitByNameAsync(hero, function() r.ready = true; G:FlushNamed() end)
         else
           G:SpawnAgentBot(hero, team, pos)
         end
@@ -310,6 +346,9 @@ function G:ShareWithCoaches(T, hero)
         PlayerResource:SetUnitShareMaskForPlayer(owner, cpid, 1, true)    -- герой
         PlayerResource:SetUnitShareMaskForPlayer(owner, cpid, 2, true)    -- его юниты
       end)
+      if G.NAMED_BOTS then                         -- бот под именем в режиме инструментов мышью не берётся
+        pcall(function() hero:SetControllableByPlayer(cpid, true) end)
+      end
     end
   end
 end

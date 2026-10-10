@@ -214,6 +214,7 @@ local function make_hero(name, team, pid)
   function h:Script_GetAttackRange() return self.range end
   function h:GetIdealSpeed() return 300 end
   function h:IsChanneling() return false end
+  function h:HasModifier(n) return self.mods[n] == true end
   function h:Buyback() self.alive = true; self.bought_back = true end
   function h:UpgradeAbility(ab) if self.points > 0 then ab.level = ab.level + 1; self.points = self.points - 1 end end
   return h
@@ -808,6 +809,33 @@ class Executor(Game):
         x, y = self.xy(o)
         self.assertLess(((x + 6200) ** 2 + (y - 3500) ** 2) ** 0.5, 300)       # встаёт за своим, ближе к базе
 
+    def test_consumables_reflex(self):
+        """Лечилка и кларити — когда ранен и врага рядом нет; палочка и волшебный огонь — когда здоровья мало и враг
+        рядом. Из рюкзака — нет."""
+        self.start_match()
+        sniper, luna = self.hero(1), self.by_name("luna")
+        sniper["pos"] = self.L.eval("Vector(0, 0, 0)")
+        luna["pos"] = self.L.eval("Vector(5000, 5000, 0)")                   # врага рядом нет
+        flask = self.L.eval('__players[1].hero:AddItemByName("item_flask")')
+        self.decide(2, 1, {"plan": "hold"})
+        sniper["health"] = 300                                                # 50 %
+        n0 = self.n_orders()
+        self.step(0.5)
+        got = [o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["cast_target"]]
+        self.assertEqual((got[0]["AbilityIndex"], got[0]["TargetIndex"]), (flask["idx"], sniper["idx"]))
+        sniper["mods"]["modifier_flask_healing"] = True                       # уже лечится — второй не пьёт
+        n1 = self.n_orders()
+        self.step(1.5)
+        self.assertFalse([o for o in self.unit_orders(sniper, n1) if o.get("AbilityIndex") == flask["idx"]])
+        ff = self.L.eval('__players[1].hero:AddItemByName("item_faerie_fire")')
+        ff["behavior"] = 4
+        luna["pos"] = self.L.eval("Vector(300, 0, 0)")                        # враг вплотную
+        sniper["health"] = 120                                                # 20 %
+        n2 = self.n_orders()
+        self.step(1.5)
+        self.assertTrue([o for o in self.unit_orders(sniper, n2)
+                         if o["OrderType"] == ORDER["cast_none"] and o["AbilityIndex"] == ff["idx"]])
+
     def test_default_level_ult_first_and_unknown_names(self):
         self.start_match()
         sniper = self.hero(1)
@@ -1192,6 +1220,25 @@ class FindBotHeroes(Game):
         self.assertTrue(self.hero(0)["nodraw"])                               # спрятан герой человека
         self.assertEqual(self.agents(2), ["sniper", "viper", "axe", "lion", "crystal_maiden"])
 
+    def test_coach_hero_before_selection_hidden_by_name(self):
+        """Повторная проверка: герой человека появился раньше, чем назначен выбранный, — прячется по имени выбранного."""
+        self.L.execute("""
+          local sel = PlayerResource.GetSelectedHeroEntity
+          __coach_ready = false
+          function PlayerResource:GetSelectedHeroEntity(pid)
+            if pid == 0 and not __coach_ready then return nil end
+            return sel(self, pid)
+          end""")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP)")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_HERO_SELECTION)")
+        self.step(2.5)
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_PRE_GAME)")
+        self.L.execute("__fire('npc_spawned', { entindex = __players[0].hero.idx, is_respawn = 0 })")
+        self.assertTrue(self.hero(0)["nodraw"])
+        self.L.execute("__coach_ready = true")
+        self.step(1.5)
+        self.assertNotIn("pudge", self.agents(2))
+
     def test_coach_hero_without_owner_is_not_agent(self):
         self.L.execute("__players[0].hero.GetPlayerOwnerID = function() return -1 end")   # у героя тренера нет владельца
         self.start_match()
@@ -1232,8 +1279,50 @@ class NamedAgentBots(Game):
         T = self.G["CoachGame"]["teams"][team]
         return [T["agents"][p]["name"].replace("npc_dota_hero_", "") for p in range(1, 6) if T["agents"][p]]
 
+    def test_names_off_by_default(self):
+        """Рецензия 9: до проверочного выпуска — прежние боты Tutorial:AddBot, хоть функция в Доте и есть."""
+        self.L.execute(NAMED_BOTS)
+        self.start_match()
+        self.assertEqual(list(self.G["__named"].values()), [])
+        self.assertEqual(self.G["__tutorial"], 10)
+        self.assertEqual(len(self.agents(2)), 5)
+
+    def test_names_in_order_when_precache_finishes_backwards(self):
+        """Рецензия 9: предзагрузки кончились в обратном порядке — боты всё равно создаются по порядку позиций."""
+        self.L.execute(NAMED_BOTS)
+        self.L.execute("""
+          CoachGame.NAMED_BOTS = true
+          __pending = {}
+          function PrecacheUnitByNameAsync(name, cb) __pending[#__pending + 1] = cb end""")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP)")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_HERO_SELECTION)")
+        self.step(2.5)
+        self.L.execute("for i = #__pending, 1, -1 do __pending[i](1) end")
+        self.assertEqual(list(self.G["__named"].values())[:5],
+                         ["Claude 1 · Sniper", "Claude 2 · Viper", "Claude 3 · Axe", "Claude 4 · Lion",
+                          "Claude 5 · Crystal Maiden"])
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_PRE_GAME)")
+        self.step(1.5)
+        self.assertEqual(self.agents(2), ["sniper", "viper", "axe", "lion", "crystal_maiden"])
+
+    def test_seated_without_hero_no_second_bot(self):
+        """Рецензия 9: Дота посадила бота, но героя не вернула (создаст позже) — запасного бота не добавлять."""
+        self.L.execute(NAMED_BOTS)
+        self.L.execute("""
+          CoachGame.NAMED_BOTS = true
+          local named = GameRules.AddBotPlayerWithEntityScript
+          function GameRules:AddBotPlayerWithEntityScript(...)
+            named(self, ...)
+            return nil                                                    -- игрок есть, героя «пока нет»
+          end""")
+        self.start_match()
+        self.assertEqual(self.G["__tutorial"], 0)
+        bots = [p for p in self.G["__players"].values() if p["fake"]]
+        self.assertEqual(len(bots), 10)
+
     def test_bots_named_at_fountain_and_shared_with_coach(self):
         self.L.execute(NAMED_BOTS)
+        self.L.execute("CoachGame.NAMED_BOTS = true")
         self.start_match()
         self.assertEqual(list(self.G["__named"].values()),
                          ["Claude 1 · Sniper", "Claude 2 · Viper", "Claude 3 · Axe", "Claude 4 · Lion",
@@ -1254,7 +1343,7 @@ class NamedAgentBots(Game):
 
     def test_named_bots_refused_fall_back_to_tutorial(self):
         self.L.execute(NAMED_BOTS)
-        self.L.execute("__named_fail = true")
+        self.L.execute("CoachGame.NAMED_BOTS = true; __named_fail = true")
         self.start_match()
         self.assertEqual(self.G["__tutorial"], 10)
         refused = [x for x in self.G["__printed"].values() if "под именем агента не создался" in x]

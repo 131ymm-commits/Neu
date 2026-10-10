@@ -364,6 +364,22 @@ function W.ability(hero, name)
   return hero:FindAbilityByName(name)
 end
 
+-- предмет в инвентаре (не в рюкзаке: там он не действует)
+function W.main_item(hero, name)
+  for slot = 0, 5 do
+    local it = hero:GetItemInSlot(slot)
+    if it and it:GetAbilityName() == name then return it end
+  end
+  return nil
+end
+
+function W.has_modifier(hero, name) return hero:HasModifier(name) end
+function W.mana_pct(hero)
+  local m = hero:GetMaxMana()
+  return m > 0 and 100 * hero:GetMana() / m or 100
+end
+function W.charges(item) return item:GetCurrentCharges() end
+
 function W.ability_info(ab, hero)
   local behavior = ab:GetBehaviorInt()
   local kind = "none"
