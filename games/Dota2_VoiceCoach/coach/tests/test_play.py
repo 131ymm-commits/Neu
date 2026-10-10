@@ -457,16 +457,20 @@ class Launcher(unittest.TestCase):
         win64.mkdir(parents=True)
         (win64 / "dota2.exe").write_bytes(b"")
         argv = P.dota_argv(dota)
-        self.assertEqual(argv[1:], ["-novid", "-tools", "-addon", "voicecoach", "-condebug",
+        self.assertEqual(argv[1:], ["-novid", "-tools", "-addon", "voicecoach", "-condebug", "-conclearlog",
                                     "+dota_launch_custom_game", "voicecoach", "dota"])
-        started = []
+        started, built = [], []
+        ok_build = (lambda d: built.append(d) or (True, "собран"))
         msg = P.launch_dota(dota, popen=lambda a, **kw: started.append((a, kw)), running=lambda name: False,
-                            wait=lambda s: None)
+                            wait=lambda s: None, build=ok_build)
         self.assertEqual(started, [])                  # первый живой запуск: без Workshop Tools Steam даёт ошибку —
         self.assertIn("Dota 2 Workshop Tools DLC", msg)  # Доту не запускаем, а говорим, что поставить
+        self.assertEqual(built, [])                                              # и интерфейс не собираем
         (win64 / "resourcecompiler.exe").write_bytes(b"")
         msg = P.launch_dota(dota, popen=lambda a, **kw: started.append((a, kw)), running=lambda name: False,
-                            wait=lambda s: None)
+                            wait=lambda s: None, build=ok_build)
+        self.assertEqual(built, [dota])                                          # интерфейс собран до запуска
+        self.assertIn("  Интерфейс тренера собран.", self.out)
         self.assertEqual(started[0][0], argv)
         self.assertEqual(started[0][1]["cwd"], str(win64))
         self.assertIn("вы тренер Света", msg)
@@ -475,8 +479,63 @@ class Launcher(unittest.TestCase):
         self.assertEqual(started, [])
         self.assertIn("dota_launch_custom_game voicecoach dota", msg)            # Дота уже открыта — не дублируем
         msg = P.launch_dota(dota, popen=mock.Mock(side_effect=OSError("нет доступа")), running=lambda n: False,
-                            wait=lambda s: None)
+                            wait=lambda s: None, build=ok_build)
         self.assertIn("Не запустил Доту: нет доступа", msg)
+        self.out.clear()                                                         # не собрался — Доту всё равно
+        msg = P.launch_dota(dota, popen=lambda a, **kw: started.append((a, kw)), running=lambda name: False,
+                            wait=lambda s: None, build=lambda d: (False, "нет layout/x.vxml_c (код 1)"))
+        self.assertTrue(msg.startswith("Дота запускается"))
+        self.assertIn("  Интерфейс тренера не собран: нет layout/x.vxml_c (код 1)", self.out)
+        self.assertTrue(any("в чат команды" in x for x in self.out))
+
+    def test_compile_panorama(self):
+        """Первый живой матч: обычная панель героя вместо нашей — интерфейс не был собран. Лаунчер собирает его сам
+        (команда как у x-template) и проверяет, что собранные файлы появились в папке кастомки."""
+        dota = Path(self.tmp.name) / "dota 2 beta"
+        win64 = dota / "game" / "bin" / "win64"
+        src = dota / "content" / "dota_addons" / "voicecoach" / "panorama"
+        out = dota / "game" / "dota_addons" / "voicecoach" / "panorama"
+        calls = []
+
+        def run(argv, **kw):
+            calls.append((argv, kw))
+            for x in P.PANORAMA_OUT:
+                (out / x).parent.mkdir(parents=True, exist_ok=True)
+                (out / x).write_bytes(b"c")
+            return SimpleNamespace(returncode=0, stdout="ok", stderr="")
+        self.assertIn("resourcecompiler", P.compile_panorama(dota, run=run)[1])   # нет Workshop Tools
+        win64.mkdir(parents=True)
+        (win64 / "resourcecompiler.exe").write_bytes(b"")
+        self.assertIn("нет исходников", P.compile_panorama(dota, run=run)[1])
+        src.mkdir(parents=True)
+        self.assertEqual(P.compile_panorama(dota, run=run), (True, "собран"))
+        argv, kw = calls[0]
+        self.assertEqual(argv, [str(win64 / "resourcecompiler.exe"), "-game", str(dota / "game" / "dota"), "-r",
+                                "-i", str(src / "*")])
+        self.assertNotIn("-pauseiferror", argv)                                   # он ждёт клавишу
+        self.assertEqual(kw["cwd"], str(win64))
+        for x in P.PANORAMA_OUT:                                                  # установщик стирает собранное
+            (out / x).unlink()
+        ok, note = P.compile_panorama(dota, run=lambda a, **k: SimpleNamespace(returncode=1, stdout="a\nb\nERROR: x",
+                                                                               stderr=""))
+        self.assertFalse(ok)
+        self.assertIn("custom_ui_manifest.vxml_c", note)
+        self.assertIn("ERROR: x", note)
+        boom = mock.Mock(side_effect=OSError("не тот файл"))
+        self.assertIn("не запустился", P.compile_panorama(dota, run=boom)[1])
+        slow = mock.Mock(side_effect=P.subprocess.TimeoutExpired("rc", 180))
+        self.assertIn("не уложился", P.compile_panorama(dota, run=slow)[1])
+        base = dota / "game" / "dota" / "panorama"
+
+        def wrong_place(argv, **kw):                                              # собрал в папку самой Доты
+            for x in P.PANORAMA_OUT:
+                (base / x).parent.mkdir(parents=True, exist_ok=True)
+                (base / x).write_bytes(b"c")
+            return SimpleNamespace(returncode=0, stdout="", stderr="")
+        ok, note = P.compile_panorama(dota, run=wrong_place)
+        self.assertFalse(ok)
+        self.assertIn("папку самой Доты", note)
+        self.assertFalse(any((base / x).exists() for x in P.PANORAMA_OUT))       # манифест Доты не подменён
 
     def test_dota_starts_by_itself_when_tools_arrive(self):
         """Рецензия 5: без Workshop Tools лаунчер говорил «запустите снова», а второе окно — «уже запущена».
@@ -558,6 +617,7 @@ class Launcher(unittest.TestCase):
             box.close()
         text = "\n".join(self.out)
         self.assertIn("Внимание: нет дополнения Dota 2 Workshop Tools", text)      # совет — уже на шаге [2/6]
+        self.assertIn("с пометкой «Дота:»", text)                                  # журнал Доты подключён
         self.assertIn("Жду дополнение Workshop Tools", text)
         self.assertNotIn("запустите ИГРАТЬ.bat снова", text)
 
@@ -760,6 +820,7 @@ class Launcher(unittest.TestCase):
             steps.append(lambda n=n: prog["dire"].update(error=f"1 luna: ошибка: номер {n}", errors=n))
         steps += [lambda: prog["dire"].update(pause="лимит подписки"),
                   lambda: prog["dire"].update(pause=""),
+                  lambda: prog["radiant"].update(limit=True, max_calls=300),      # предел вызовов выбран
                   lambda: now.__setitem__(0, now[0] + 400)]                      # раз в 5 минут — сводка
         script.extend(steps)
         P.watch(room, stop=stop, sleep=lambda s: None, clock=lambda: now[0])
@@ -775,6 +836,26 @@ class Launcher(unittest.TestCase):
         self.assertEqual(sum("только в журнале агентов" in x for x in self.out), 1)
         self.assertEqual(sum("на паузе: лимит подписки" in x for x in self.out), 1)
         self.assertIn("  Агенты: Света — решений 3, ошибок 0; Тьмы — решений 0, ошибок 5.", self.out)
+        self.assertEqual(sum("выбрали предел вызовов Claude на эту игру (300)" in x for x in self.out), 1)
+
+    def test_watch_new_match_and_model(self):
+        """Второй матч в том же окне: снова «первые решения» (рецензия 7); имя модели — как его дал Claude Code."""
+        prog = {"radiant": {"heroes": 5, "decisions": 2, "calls": 2, "errors": 0, "error": "", "pause": "",
+                            "model": "модель-икс"}}
+        room = SimpleNamespace(console_seen={}, game_linked=lambda: True, game_id="1-1",
+                               last_tick={"heroes": [{"team": "radiant"}] * 5},
+                               agents=SimpleNamespace(progress=lambda: {t: dict(p) for t, p in prog.items()}))
+        script = [lambda: None, lambda: None, lambda: setattr(room, "game_id", "2-2"), lambda: None]
+
+        def stop():
+            if not script:
+                return True
+            script.pop(0)()
+            return False
+        P.watch(room, stop=stop, sleep=lambda s: None)
+        first = [x for x in self.out if "первые решения" in x]
+        self.assertEqual(len(first), 2)
+        self.assertIn("(модель: модель-икс)", first[0])
 
     def test_watch_survives_broken_agents_and_odd_ticks(self):
         """Сводка вспомогательная: странный обмен или сбой агентов не роняет окно (а с ним сервер игры)."""
@@ -799,16 +880,28 @@ class Launcher(unittest.TestCase):
         shown = []
         d = P.DotaLog(log, copy, show=shown.append)
         with log.open("a", encoding="utf-8") as f:
-            f.write("10/10 19:09:01 [VScript] [ТРЕНЕР] Свет: агенты ведут 1 sniper; тренеров-людей 1\n"
+            f.write("\ufeff10/10 19:09:01 [VScript] [ТРЕНЕР] Свет: агенты ведут 1 sniper; тренеров-людей 1\n"
                     "[ТРЕНЕР] 2 viper: иду на мид\n"                              # реплика агента — в чате игры
+                    "10/10 19:09:02 [VScript] [ТРЕНЕР] ход radiant 2 viper: иду на мид\n"
+                    "[ТРЕНЕР] ход dire: приказ с пульта: все назад\n"            # приказ ИИ-тренера соперника (Д16)
+                    "[ТРЕНЕР] ход dire : → 12345: все назад\n"
+                    "[ТРЕНЕР] приказ с пульта (dire): все назад\n"               # старый вид тех же строк
+                    "[ТРЕНЕР] : Не понял: летай\n"
                     "Loading map dota\n"
-                    "Script Runtime Error: scripts/vscripts/coach_game.lua:42: attempt to index a nil value\n"
+                    "Compiling panorama/layout/custom_game/coach_hud.xml for voicecoach\n"   # шум с именем аддона
+                    "[Panorama] Error: base hud widget failed\n"                 # шум стандартного интерфейса
+                    "10/10 19:09:03 [VScript] Script Runtime Error: scripts/vscripts/coach_game.lua:42: attempt to "
+                    "index a nil value\n"
+                    "Script not found (scripts/vscripts/addon_game_mode.lua)\n"
                     "[Panorama] Failed to load layout file://{resources}/layout/custom_game/coach_hud.xml\n"
                     "[ТРЕНЕР] пульс: связь с сервером ")
-        self.assertEqual(d.poll(), 3)
+        self.assertEqual(d.poll(), 4)
         self.assertEqual(shown, ["Свет: агенты ведут 1 sniper; тренеров-людей 1",
-                                 "Script Runtime Error: scripts/vscripts/coach_game.lua:42: attempt to index a nil value",
+                                 "[VScript] Script Runtime Error: scripts/vscripts/coach_game.lua:42: attempt to index "
+                                 "a nil value",
+                                 "Script not found (scripts/vscripts/addon_game_mode.lua)",
                                  "[Panorama] Failed to load layout file://{resources}/layout/custom_game/coach_hud.xml"])
+        self.assertNotIn("все назад", " ".join(shown))
         with log.open("a", encoding="utf-8") as f:
             f.write("есть\r\n")
         d.poll()
@@ -819,7 +912,11 @@ class Launcher(unittest.TestCase):
         log.write_text("[ТРЕНЕР] кастомка загружена\n", encoding="utf-8")       # Дота начала файл заново
         d.poll()
         self.assertEqual(shown[-1], "кастомка загружена")
-        self.assertEqual(d.ours, 4)
+        self.assertEqual(d.ours, 9)
+        # начат заново, но за секунду стал длиннее прежнего: узнаём по началу файла (рецензия 7)
+        log.write_text("[ТРЕНЕР] новый запуск: " + "я" * 400 + "\n", encoding="utf-8")
+        d.poll()
+        self.assertTrue(shown[-1].startswith("новый запуск"))
 
     def test_dota_log_does_not_flood_window(self):
         tmp = Path(self.tmp.name)
@@ -827,24 +924,87 @@ class Launcher(unittest.TestCase):
         log.write_text("", encoding="utf-8")
         now = [0.0]
         shown = []
-        d = P.DotaLog(log, None, show=shown.append, clock=lambda: now[0], per_window=3, window=10, repeat=60)
+        d = P.DotaLog(log, None, show=shown.append, clock=lambda: now[0], per_window=3, other_window=1, window=10,
+                      repeat=60)
         with log.open("a", encoding="utf-8") as f:
+            f.write("".join(f"Script Runtime Error: шум {i}\n" for i in range(14)))   # шум не вытесняет кастомку
             f.write("[ТРЕНЕР] ошибка героя 1: x\n" * 20)                         # одна строка каждые 0.25 с
             f.write("".join(f"[ТРЕНЕР] строка {i}\n" for i in range(5)))
         d.poll()
-        self.assertEqual(shown, ["ошибка героя 1: x", "строка 0", "строка 1"])
+        self.assertEqual(shown, ["Script Runtime Error: шум 0", "ошибка героя 1: x", "строка 0", "строка 1"])
         now[0] = 11
         d.poll()
-        self.assertEqual(shown[-1], f"…и ещё строк: 3 (весь журнал Доты: {log})")
+        self.assertEqual(shown[-1], f"…и ещё строк: 16 (весь журнал Доты: {log})")
+        with log.open("a", encoding="utf-8") as f:
+            f.write("[ТРЕНЕР] строка 2\n")                                       # скрытая раньше — теперь видна
+        d.poll()
+        self.assertEqual(shown[-1], "строка 2")
+        n = len(shown)
         with log.open("a", encoding="utf-8") as f:
             f.write("[ТРЕНЕР] ошибка героя 1: x\n")
         d.poll()
-        self.assertEqual(len(shown), 4)                                        # та же строка — не раньше чем через минуту
+        self.assertEqual(len(shown), n)                                        # та же строка — не раньше чем через минуту
         now[0] = 75
         with log.open("a", encoding="utf-8") as f:
             f.write("[ТРЕНЕР] ошибка героя 1: x\n")
         d.poll()
         self.assertEqual(shown[-1], "ошибка героя 1: x")
+
+    def test_dota_log_health_and_follow_check(self):
+        """Рецензия 7: файла нет или кастомка не пишет — окно молчало. Теперь через время после запуска Доты одна
+        строка с причиной: консоль не пишется / нет строк кастомки / игра на связи, а строк нет."""
+        tmp = Path(self.tmp.name)
+        log = tmp / "console.log"
+        d = P.DotaLog(log, None, show=lambda s: None)
+        self.assertIn("не пишется", d.health(False))                             # файла нет вовсе
+        log.write_text("Loading map dota\n", encoding="utf-8")
+        d.poll()
+        self.assertIn("кастомка не загрузилась", d.health(False))
+        self.assertIn("в другое место", d.health(True))
+        with log.open("a", encoding="utf-8") as f:
+            f.write("[ТРЕНЕР] кастомка загружена\n")
+        d.poll()
+        self.assertIsNone(d.health(False))
+        # проверка — одна, и не раньше, чем через check_after после запуска Доты
+        log2 = tmp / "other.log"
+        d2 = P.DotaLog(log2, None, show=lambda s: None)
+        stop, now, polls, calls = threading.Event(), [0.0], [0], []
+        real_poll = d2.poll
+
+        def poll():                                                              # предохранитель: не дольше 20 кругов
+            polls[0] += 1
+            if polls[0] > 20:
+                stop.set()
+            return real_poll()
+        d2.poll = poll
+
+        def started():
+            calls.append(now[0])
+            return len(calls) >= 3                                               # Дота запущена на третьем круге
+
+        def clock():
+            now[0] += 100
+            return now[0]
+        P.follow_dota_log(d2, stop, period=0.0, started=started, linked=lambda: False, check_after=250, clock=clock)
+        self.assertEqual(sum("Консоль Доты не пишется" in x for x in self.out), 1)
+        # копия не пишется (нет места, нет прав) — окно работает
+        (tmp / "copydir").mkdir()
+        shown = []
+        d3 = P.DotaLog(tmp / "c3.log", tmp / "copydir", show=shown.append)
+        (tmp / "c3.log").write_text("[ТРЕНЕР] кастомка загружена\n", encoding="utf-8")
+        d3.poll()
+        self.assertIsNone(d3.copy)
+        self.assertEqual(shown, ["кастомка загружена"])
+
+    def test_dota_log_finish_tells_hidden(self):
+        tmp = Path(self.tmp.name)
+        log = tmp / "console.log"
+        log.write_text("", encoding="utf-8")
+        shown = []
+        d = P.DotaLog(log, None, show=shown.append, clock=lambda: 0.0, per_window=1)
+        log.write_text("[ТРЕНЕР] а\n[ТРЕНЕР] б\n[ТРЕНЕР] в\n", encoding="utf-8")
+        d.finish()
+        self.assertEqual(shown, ["а", f"…и ещё строк: 2 (весь журнал Доты: {log})"])
 
     def test_follow_dota_log_survives_errors(self):
         stop = threading.Event()

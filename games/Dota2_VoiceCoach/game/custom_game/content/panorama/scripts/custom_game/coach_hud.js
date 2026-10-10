@@ -96,7 +96,11 @@
 
   GameEvents.Subscribe('vc_reply', onReply);
   GameEvents.Subscribe('vc_agents', onAgents);
-  GameEvents.Subscribe('vc_ack', function (ev) { acked = true; setupCamera(ev.camera); startVoice(); });
+  GameEvents.Subscribe('vc_ack', function (ev) {
+    acked = true;
+    try { setupCamera(ev.camera); } catch (e) { $.Msg('[ТРЕНЕР] интерфейс: камера не настроилась: ' + e); }
+    startVoice();
+  });
   $('#CoachInput').SetPanelEvent('oninputsubmit', send);
   $('#CoachHelpButton').SetPanelEvent('onactivate', function () { $('#CoachSheet').ToggleClass('Hidden'); });
   try {

@@ -762,6 +762,7 @@ class AgentHub:
         self.chat_seq = 0
         self.on_say = None                                    # on_say(team, реплика) — сервер шлёт её тренеру
         self.stats = {t: _new_stats() for t in backends}      # по сторонам: у сторон могут быть разные моторы
+        self.model_seen = {t: "" for t in backends}           # какая модель ответила последней (её имя дал мотор)
 
     def _paid(self, team: str) -> bool:
         return not getattr(self.backends.get(team), "free", False)
@@ -987,6 +988,8 @@ class AgentHub:
             if reply.get("cost_usd"):
                 st["cost_cli"] += float(reply["cost_usd"])
             if decision is not None:
+                if reply.get("model"):
+                    self.model_seen[ag.team] = str(reply["model"])
                 ag.seq += 1
                 ag.decision = decision
                 ag.decided[ag.seq] = (t_obs, time.time())
@@ -1074,7 +1077,7 @@ class AgentHub:
 
     def progress(self) -> dict:
         """Для окна хоста (лаунчер): по сторонам — сколько героев у агентов, решений, вызовов и ошибок, первая
-        ошибка агента («1 sniper: ошибка: …») и пауза стороны, если она идёт."""
+        ошибка агента («1 sniper: ошибка: …»), пауза стороны, если она идёт, и выбран ли предел вызовов."""
         now = time.monotonic()
         with self.lock:
             out = {}
@@ -1082,9 +1085,13 @@ class AgentHub:
                 ags = sorted((a for a in self.agents.values() if a.team == t), key=lambda a: a.pos)
                 err = next((f"{a.pos} {short_hero(a.hero)}: {a.state}" for a in ags
                             if a.state.startswith(("ошибка", "сбой"))), "")
+                limit = (self._paid(t) and self.max_calls is not None
+                         and self.calls_paid.get(t, 0) >= self.max_calls)       # предел вызовов стороны выбран
                 out[t] = {"heroes": len(ags), "decisions": sum(a.seq for a in ags), "calls": self.stats[t]["calls"],
                           "errors": self.stats[t]["errors"], "error": err,
-                          "pause": self.pause_why.get(t, "") if now < self.pause_until.get(t, 0.0) else ""}
+                          "pause": self.pause_why.get(t, "") if now < self.pause_until.get(t, 0.0) else "",
+                          "limit": bool(limit), "max_calls": self.max_calls,
+                          "model": self.model_seen.get(t, "")}
             return out
 
     def status(self) -> dict:

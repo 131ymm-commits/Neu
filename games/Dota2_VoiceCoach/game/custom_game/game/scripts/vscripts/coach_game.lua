@@ -48,6 +48,7 @@ G.CHAT_REPLIES = true         -- реплики агентов — и в ком�
 G.COACH_KEEP = 3              -- сколько последних приказов тренера видит агент
 G.EVENTS_KEEP = 5
 G.teams = G.teams or {}
+G.bot_heroes = G.bot_heroes or {}   -- номер игрока-бота → его герой (из события появления героя)
 G.ready = false
 G.mode = "нет связи с сервером агентов"
 
@@ -107,23 +108,55 @@ function G:OnState()
     gm:SetContextThink("vc_add_bots", function() G:AddBots() return nil end, 2)
   elseif s == DOTA_GAMERULES_STATE_PRE_GAME then
     G.setup_since, G.setup_waiting = nil, nil
-    gm:SetContextThink("vc_setup_agents", function() return G:TrySetup() end, 1)
+    gm:SetContextThink("vc_setup_agents", function()
+      local ok, again = pcall(G.TrySetup, G)
+      if ok then return again end
+      log("ошибка при ожидании героев ботов: %s — раздаю агентам, что есть", tostring(again))   -- рецензия 7
+      local ok2, err = pcall(G.SetupAgents, G)
+      if not ok2 then log("ошибка раздачи героев агентам: %s", tostring(err)) end
+      return nil
+    end, 1)
   end
 end
 
--- боты команд без героя: сколько их и сколько всего ботов
-local function bots_without_hero()
-  local missing, total = 0, 0
+local function is_human(pid)
+  return pid ~= nil and pid >= 0 and PlayerResource:IsValidPlayerID(pid) and not PlayerResource:IsFakeClient(pid)
+end
+
+local function bots_count()
+  local n = 0
   for pid = 0, 23 do
-    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) then
-      local team = PlayerResource:GetTeam(pid)
-      if team == DOTA_TEAM_GOODGUYS or team == DOTA_TEAM_BADGUYS then
-        total = total + 1
-        if PlayerResource:GetSelectedHeroEntity(pid) == nil then missing = missing + 1 end
-      end
+    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) then n = n + 1 end
+  end
+  return n
+end
+
+-- герои агентов по командам: все настоящие герои, кроме героев людей-тренеров. Ищем тремя путями — выбранный
+-- герой игрока-бота, герой из события появления, список всех героев: первый живой матч (10.10.2026) — игра на
+-- связи, а героев агентам не досталось; какой путь в Доте не сработал, не проверено. Позиции 1–5 — по номеру бота.
+local function agent_heroes()
+  local out, seen = { [DOTA_TEAM_GOODGUYS] = {}, [DOTA_TEAM_BADGUYS] = {} }, {}
+  local function add(hero)
+    if hero == nil or seen[hero] or not IsValidEntity(hero) or not hero:IsRealHero() then return end
+    local pid = hero:GetPlayerOwnerID()
+    if is_human(pid) then return end
+    local list = out[hero:GetTeamNumber()]
+    if list then
+      seen[hero] = true
+      list[#list + 1] = { pid = pid or -1, hero = hero }
     end
   end
-  return missing, total
+  for pid = 0, 23 do
+    if PlayerResource:IsValidPlayerID(pid) and PlayerResource:IsFakeClient(pid) then
+      add(PlayerResource:GetSelectedHeroEntity(pid))
+      add(G.bot_heroes[pid])
+    end
+  end
+  for _, hero in pairs(HeroList:GetAllHeroes() or {}) do add(hero) end
+  for _, list in pairs(out) do
+    table.sort(list, function(a, b) return a.pid < b.pid end)
+  end
+  return out
 end
 
 -- агенты получают героев, когда у всех ботов есть герой (или прошло SETUP_WAIT с): раздать раньше — агентам
@@ -131,7 +164,9 @@ end
 function G:TrySetup()
   local now = GameRules:GetGameTime()
   G.setup_since = G.setup_since or now
-  local missing, total = bots_without_hero()
+  local found = agent_heroes()
+  local total = bots_count()
+  local missing = math.max(0, total - #found[DOTA_TEAM_GOODGUYS] - #found[DOTA_TEAM_BADGUYS])
   if missing > 0 and now - G.setup_since < G.SETUP_WAIT then
     if not G.setup_waiting then
       G.setup_waiting = true
@@ -191,7 +226,11 @@ function G:OnSpawn(ev)
   local unit = EntIndexToHScript(ev.entindex)
   if unit == nil or not unit:IsRealHero() then return end
   local pid = unit:GetPlayerOwnerID()
-  if pid == nil or pid < 0 or PlayerResource:IsFakeClient(pid) then return end
+  if not is_human(pid) then                        -- герой бота (или без владельца) — агентам
+    if pid ~= nil and pid >= 0 and G.bot_heroes[pid] == nil then G.bot_heroes[pid] = unit end
+    if G.ready then G:LateAgent(unit) end
+    return
+  end
   G.commander_heroes = G.commander_heroes or {}
   if G.commander_heroes[pid] then return end
   G.commander_heroes[pid] = unit
@@ -202,22 +241,40 @@ function G:OnSpawn(ev)
   log("тренер %d (команда %d): герой спрятан", pid, team)
 end
 
+-- герой бота появился после раздачи (Дота создаёт их не сразу — поиск 10.10.2026: Tutorial:AddBot подключает бота
+-- не мгновенно; Windy собирает ботов по событию npc_spawned): отдать агентам на свободную позицию
+function G:LateAgent(hero)
+  local team = hero:GetTeamNumber()
+  local T = G.teams[team]
+  if T == nil then return end
+  for _, h in pairs(T.agents) do
+    if h == hero then return end                   -- уже ведут (возрождение — то же событие)
+  end
+  for pos = 1, 5 do
+    if T.agents[pos] == nil then
+      T.agents[pos] = hero
+      T.exec[pos], T.coach[pos], T.events[pos], T.dec_seq[pos] = Exec.new(), {}, {}, 0
+      log("%s: герой бота появился позже — агент %d ведёт %s", team == DOTA_TEAM_GOODGUYS and "Свет" or "Тьма", pos,
+        World.short(hero:GetUnitName()))
+      G:SendAgents(team)
+      return
+    end
+  end
+end
+
 -- герои команды: боты в порядке номеров игроков — позиции 1–5
 function G:SetupAgents()
   local towers, fountains = World.init()
   G.teams = {}
+  local found = agent_heroes()
   for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
     local T = { name = Obs.team_name(team), agents = {}, exec = {}, status = {}, seq = 0, commanders = {}, coach = {},
                 events = {}, dec_seq = {}, dec_t = {}, said = {}, thinking = {} }
+    for _, x in ipairs(found[team]) do
+      if #T.agents < 5 then T.agents[#T.agents + 1] = x.hero end
+    end
     for pid = 0, 23 do
-      if PlayerResource:IsValidPlayerID(pid) and PlayerResource:GetTeam(pid) == team then
-        local hero = PlayerResource:GetSelectedHeroEntity(pid)
-        if PlayerResource:IsFakeClient(pid) then
-          if hero and #T.agents < 5 then T.agents[#T.agents + 1] = hero end
-        else
-          T.commanders[#T.commanders + 1] = pid
-        end
-      end
+      if is_human(pid) and PlayerResource:GetTeam(pid) == team then T.commanders[#T.commanders + 1] = pid end
     end
     for pos in pairs(T.agents) do
       T.exec[pos], T.coach[pos], T.events[pos], T.dec_seq[pos] = Exec.new(), {}, {}, 0
@@ -279,7 +336,7 @@ end
 function G:Buy(hero, name, cost)
   local item = hero:AddItemByName(name)
   if item == nil then
-    log("не купил %s для %s", name, hero:GetUnitName())
+    log("ход %s: не купил %s для %s", Obs.team_name(hero:GetTeamNumber()), name, hero:GetUnitName())
     return
   end
   PlayerResource:SpendGold(hero:GetPlayerID(), cost, DOTA_ModifyGold_PurchaseItem)
@@ -529,7 +586,7 @@ function G:RemoteCommands(list)
       G.remote_seq = seq
       local team = team_of(c.team)
       if team and G.teams[team] then
-        log("приказ с пульта (%s): %s", tostring(c.team), c.text)
+        log("ход %s: приказ с пульта: %s", tostring(c.team), c.text)
         G:TeamCommand(team, c.text)
       end
     end
@@ -557,7 +614,11 @@ function G:UpdateMode(linked)
   end
   if mode ~= G.mode then
     G.mode = mode
-    log("%s", mode)
+    local base = mode:match("^[^;]*")              -- без «без решений агента: N»: оно скачет, его даёт пульс
+    if base ~= G.mode_base then
+      G.mode_base = base
+      log("%s", mode)
+    end
   end
 end
 
@@ -628,7 +689,8 @@ function G:Reply(T, pos, kind, text, to)
     G.outbox[#G.outbox + 1] = { team = T.name, pos = pos or 0, hero = name, kind = kind, text = text, to = to }
     while #G.outbox > 30 do table.remove(G.outbox, 1) end
   end
-  log("%s%s: %s", pos and pos > 0 and (tostring(pos) .. " ") or "", name, line)
+  -- «ход <сторона>»: реплики и приказы — ходы игры; лаунчер не показывает их хосту (приказы соперника — тоже, Д16)
+  log("ход %s %s%s: %s", T.name or "?", pos and pos > 0 and (tostring(pos) .. " ") or "", name, line)
 end
 
 function G:Command(pid, text)

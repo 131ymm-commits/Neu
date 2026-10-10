@@ -71,8 +71,18 @@ DETACHED = 0x00000008 | 0x00000200            # DETACHED_PROCESS | CREATE_NEW_PR
 LOCAL = urllib.request.build_opener(urllib.request.ProxyHandler({})).open   # свой ПК — мимо прокси системы
 
 
+_SAY = threading.Lock()
+
+
 def say(text: str = "") -> None:
-    print(text, flush=True)
+    """Строка в окно хоста. Пишут несколько потоков (журнал Доты, ожидание Workshop Tools, сводка) — одной записью
+    под замком, чтобы строки не склеивались (рецензия 7)."""
+    out = sys.stdout
+    if out is None:                                    # без консоли (pythonw) писать некуда — как print()
+        return
+    with _SAY:
+        out.write(f"{text}\n")
+        out.flush()
 
 
 def _ask(ask, prompt: str) -> str | None:
@@ -559,8 +569,56 @@ def _running(image: str, run=subprocess.run) -> bool:
 
 
 def dota_argv(dota: Path) -> list[str]:
+    """-condebug — консоль в console.log (её читает окно хоста), -conclearlog — с чистого листа на каждый запуск
+    (так запускает Доту с инструментами Windy10v10AI, поиск 10.10.2026)."""
     exe = dota / "game" / "bin" / "win64" / "dota2.exe"
-    return [str(exe), "-novid", "-tools", "-addon", ADDON, "-condebug", "+dota_launch_custom_game", ADDON, "dota"]
+    return [str(exe), "-novid", "-tools", "-addon", ADDON, "-condebug", "-conclearlog", "+dota_launch_custom_game",
+            ADDON, "dota"]
+
+
+# что должно появиться после сборки интерфейса (Panorama: .xml → .vxml_c, .js → .vjs_c, .css → .vcss_c)
+PANORAMA_OUT = ("layout/custom_game/custom_ui_manifest.vxml_c", "layout/custom_game/coach_hud.vxml_c",
+                "scripts/custom_game/coach_hud.vjs_c", "styles/custom_game/coach_hud.vcss_c")
+NO_WINDOW = 0x08000000                         # CREATE_NO_WINDOW: сборщик без своего окна
+
+
+def compile_panorama(dota: Path, run=subprocess.run, timeout: float = 180.0) -> tuple[bool, str]:
+    """Собрать интерфейс тренера (Panorama) до запуска Доты. → (собран ли, что сказать).
+
+    Первый живой матч (10.10.2026): вместо нашей панели — обычная панель героя. В pak01 самой Доты есть свой
+    panorama/layout/custom_game/custom_ui_manifest.vxml_c: если наш манифест не собран, Дота молча берёт его (вывод
+    поиска, не проверен). Собирает ли режим инструментов Panorama сам — источники расходятся, а установщик кастомки
+    каждый раз стирает собранное, поэтому собираем сами. Команда — как у шаблона x-template, без -pauseiferror (он
+    ждёт клавишу) и -verbose."""
+    win64 = dota / "game" / "bin" / "win64"
+    rc = win64 / "resourcecompiler.exe"
+    src = dota / "content" / "dota_addons" / ADDON / "panorama"
+    out = dota / "game" / "dota_addons" / ADDON / "panorama"
+    if not rc.exists():
+        return False, "нет сборщика resourcecompiler.exe (он в Workshop Tools)"
+    if not src.is_dir():
+        return False, f"нет исходников {src}"
+    argv = [str(rc), "-game", str(dota / "game" / "dota"), "-r", "-i", str(src / "*")]
+    kw = {"creationflags": NO_WINDOW} if os.name == "nt" else {}
+    try:
+        p = run(argv, cwd=str(win64), capture_output=True, text=True, encoding="utf-8", errors="replace",
+                timeout=timeout, **kw)
+    except (OSError, subprocess.SubprocessError) as e:
+        return False, f"сборщик не запустился или не уложился в {timeout:.0f} с: {e}"
+    stray = [dota / "game" / "dota" / "panorama" / x for x in PANORAMA_OUT]
+    if stray[1].exists():                      # собрал в папку самой Доты, а не аддона — убрать: манифест там
+        for f in stray:                        # заменил бы стандартный интерфейс всем кастомкам
+            try:
+                f.unlink()
+            except OSError:
+                pass
+        return False, "сборщик положил файлы в папку самой Доты, а не кастомки — убрал их"
+    missing = [x for x in PANORAMA_OUT if not (out / x).exists()]
+    if missing:
+        said = [line.strip() for line in f"{p.stdout or ''}\n{p.stderr or ''}".splitlines() if line.strip()]
+        tail = " | ".join(said[-4:])[-400:]
+        return False, f"нет {', '.join(missing)} (код {p.returncode}){': ' + tail if tail else ''}"
+    return True, "собран"
 
 
 def install_custom_game(dota: Path, running=_running) -> str:
@@ -588,9 +646,10 @@ TOOLS_HELP = ("Нет бесплатного дополнения Dota 2 Worksho
               + TOOLS_MANUAL)
 
 
-def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.sleep, force: bool = False) -> str:
+def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.sleep, force: bool = False,
+                build=compile_panorama) -> str:
     """Запустить Доту с инструментами и сразу кастомку. → что сказать хосту. force — запускать, даже если признака
-    Workshop Tools не видно (хост сказал, что дополнение стоит)."""
+    Workshop Tools не видно (хост сказал, что дополнение стоит). Перед запуском — сборка интерфейса тренера."""
     if running("dota2.exe"):
         return ("Дота уже запущена. Закройте её и запустите ИГРАТЬ.bat снова — или введите в консоли Доты:  "
                 f"dota_launch_custom_game {ADDON} dota")
@@ -609,6 +668,13 @@ def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.
                 break
             wait(1)
         wait(10)
+    say("  Собираю интерфейс тренера для Доты (до пары минут)…")
+    ok, note = build(dota)
+    if ok:
+        say("  Интерфейс тренера собран.")
+    else:
+        say(f"  Интерфейс тренера не собран: {note}")
+        say("  Дота попробует собрать его сама. Если в игре не будет поля «Приказ:» — пишите приказы в чат команды.")
     kw = {"cwd": str(win64), "close_fds": True}
     if os.name == "nt":
         kw["creationflags"] = DETACHED
@@ -667,41 +733,61 @@ def launch_when_tools(dota: Path, stop: threading.Event, start, has=has_tools, l
 
 # --- журнал Доты: что делает кастомка (первый живой матч, 10.10.2026: «агентов нет» — а окно хоста молчало) ---
 
-CONSOLE_LOG = Path("game") / "dota" / "console.log"    # консоль Доты по -condebug — в папке «dota 2 beta» (по памяти)
-AGENT_SPEECH = re.compile(r"\[ТРЕНЕР\] \d \S*: ")       # реплики агентов — в чате игры; окну хоста хватит остального
-GAME_TROUBLE = re.compile(r"script runtime error|script error|stack traceback|error loading|failed to load|"
-                          r"\.lua:\d+|coach_|vc_\w+\.lua|voicecoach|custom_ui_manifest", re.I)
-PANORAMA_TROUBLE = re.compile(r"panorama.*(error|fail)|(error|fail).*panorama", re.I)
+# Консоль Доты по -condebug: «…\dota 2 beta\game\dota\console.log», дописывается; -conclearlog очищает её при запуске;
+# UTF-8 с BOM, строки «ММ/ДД ЧЧ:ММ:СС [Канал] текст»; print() сервера — канал [VScript], $.Msg() — [PanoramaScript]
+# (код Windy10v10AI и других кастомок, строки бинарников Доты — поиск 10.10.2026, journal/ERRORS.md № 98)
+CONSOLE_LOG = Path("game") / "dota" / "console.log"
+OURS_TAG = "[ТРЕНЕР]"
+# ходы игры — реплики агентов и тренеров, приказы с пульта, в том числе ИИ-тренера соперника (Д16: «его приказы в
+# окно не пишутся»), покупки: окну хоста не нужны (рецензия 7)
+GAME_MOVE = re.compile(r"\[ТРЕНЕР\] (ход |\d \S*: |: |приказ с пульта)")
+GAME_ERROR = re.compile(r"script runtime error|stack traceback|error running script|script not found|"
+                        r"unable to load layout|failed to load a layout|error in layout file|error recompiling|"
+                        r"failed on-demand recompile|resource compile failed", re.I)
+OUR_FILES = re.compile(r"coach_|vc_\w+\.lua|voicecoach|custom_ui_manifest|addon_game_mode", re.I)
+NOTABLE = re.compile(r"error|fail|not found|unable|cannot|exception|ошибк|recompil", re.I)
+STAMP = re.compile(r"^\ufeff?(\d\d/\d\d \d\d:\d\d:\d\d )?")
 
 
 class DotaLog:
-    """Новые строки консоли Доты (console.log): строки кастомки «[ТРЕНЕР]» (кроме реплик агентов) и ошибки скриптов и
+    """Новые строки консоли Доты (console.log): строки кастомки «[ТРЕНЕР]» (кроме ходов игры) и ошибки скриптов и
     интерфейса — в окно хоста, всё новое — копией в журнал лаунчера (её можно прислать). Строки прошлых запусков
-    не показывает. Одна и та же строка — не чаще раза в repeat секунд, всего — не больше per_window строк за window
-    секунд: поток ошибок окно не заливает, о скрытых строках окно говорит."""
+    не показывает. Одна и та же строка — не чаще раза в repeat секунд; за window секунд — не больше per_window строк
+    кастомки и other_window прочих: шум Доты не вытесняет строки кастомки, о скрытых строках окно говорит."""
 
     MAX_READ = 4_000_000
+    HEAD = 64
 
     def __init__(self, path: Path, copy: Path | None = None, show=None, clock=time.monotonic,
-                 per_window: int = 12, window: float = 10.0, repeat: float = 60.0):
+                 per_window: int = 12, other_window: int = 4, window: float = 10.0, repeat: float = 60.0):
         self.path, self.copy = Path(path), Path(copy) if copy else None
         self.show = show or (lambda line: say("  Дота: " + line))
         self.clock = clock
-        self.per_window, self.window, self.repeat = per_window, window, repeat
+        self.limit = {"ours": per_window, "other": other_window}
+        self.window, self.repeat = window, repeat
         try:
             self.pos = self.path.stat().st_size
         except OSError:
             self.pos = 0
+        self.head = self._head()
         self.tail = b""
         self.seen: dict[str, float] = {}
-        self.win_start, self.win_count, self.hidden = -1e18, 0, 0
-        self.ours = 0                                  # сколько строк «[ТРЕНЕР]» пришло — кастомка пишет в журнал
+        self.win_start, self.count, self.hidden = -1e18, {"ours": 0, "other": 0}, 0
+        self.ours = 0                                  # строк «[ТРЕНЕР]» с начала — кастомка пишет в консоль
+        self.new_bytes = 0                             # Дота вообще пишет консоль (запущена с -condebug)
+
+    def _head(self) -> bytes:
+        try:
+            with self.path.open("rb") as f:
+                return f.read(self.HEAD)
+        except OSError:
+            return b""
 
     @staticmethod
     def wanted(line: str) -> bool:
-        if "[ТРЕНЕР]" in line:
-            return not AGENT_SPEECH.search(line)
-        return bool(GAME_TROUBLE.search(line) or PANORAMA_TROUBLE.search(line))
+        if OURS_TAG in line:
+            return not GAME_MOVE.search(line)
+        return bool(GAME_ERROR.search(line) or (OUR_FILES.search(line) and NOTABLE.search(line)))
 
     def poll(self) -> int:
         """Дочитать файл; вернуть, сколько строк показано в окне."""
@@ -709,19 +795,23 @@ class DotaLog:
             size = self.path.stat().st_size
         except OSError:
             return 0
-        if size < self.pos:                            # файл начат заново — новый запуск Доты
+        head = self._head() if size else b""
+        n = min(len(head), len(self.head))
+        if size < self.pos or head[:n] != self.head[:n]:   # файл начат заново (-conclearlog, новый запуск Доты)
             self.pos, self.tail = 0, b""
+        self.head = head
         shown = 0
         if size > self.pos:
             with self.path.open("rb") as f:
                 f.seek(self.pos)
                 data = f.read(min(size - self.pos, self.MAX_READ))
             self.pos += len(data)
+            self.new_bytes += len(data)
             parts = (self.tail + data).split(b"\n")
             self.tail = parts.pop()                    # неполная последняя строка — дочитается в следующий раз
             if len(self.tail) > 100_000:
                 self.tail = b""
-            lines = [p.decode("utf-8", "replace").rstrip("\r") for p in parts]
+            lines = [p.decode("utf-8", "replace").rstrip("\r").lstrip("\ufeff") for p in parts]
             if self.copy and lines:
                 try:
                     self.copy.parent.mkdir(parents=True, exist_ok=True)
@@ -730,7 +820,7 @@ class DotaLog:
                 except OSError:
                     self.copy = None                   # нет места или прав — копию не пишем, окно работает
             for line in lines:
-                if "[ТРЕНЕР]" in line:
+                if OURS_TAG in line:
                     self.ours += 1
                 if self.wanted(line) and self._emit(line):
                     shown += 1
@@ -738,40 +828,73 @@ class DotaLog:
         return shown
 
     def _emit(self, line: str) -> bool:
-        at = line.find("[ТРЕНЕР]")
-        line = (line[at + len("[ТРЕНЕР] "):] if at >= 0 else line).strip()[:240]
-        if not line:
+        kind = "ours" if OURS_TAG in line else "other"
+        at = line.find(OURS_TAG)
+        text = (line[at + len(OURS_TAG):] if at >= 0 else STAMP.sub("", line)).strip()[:240]
+        if not text:
             return False
         now = self.clock()
-        last = self.seen.get(line)
+        last = self.seen.get(text)
         if last is not None and now - last < self.repeat:
             return False
-        self.seen[line] = now
+        self._flush_hidden()
+        if self.count[kind] >= self.limit[kind]:
+            self.hidden += 1                           # скрытая строка не запоминается: её повтор покажется позже
+            return False
+        self.count[kind] += 1
+        self.seen[text] = now
         if len(self.seen) > 1000:
             self.seen = {k: v for k, v in self.seen.items() if now - v < self.repeat}
-        self._flush_hidden()
-        if self.win_count >= self.per_window:
-            self.hidden += 1
-            return False
-        self.win_count += 1
-        self.show(line)
+        self.show(text)
         return True
 
-    def _flush_hidden(self) -> None:
+    def _flush_hidden(self, force: bool = False) -> None:
         now = self.clock()
-        if now - self.win_start < self.window:
+        if not force and now - self.win_start < self.window:
             return
         if self.hidden:
             self.show(f"…и ещё строк: {self.hidden} (весь журнал Доты: {self.copy or self.path})")
-        self.win_start, self.win_count, self.hidden = now, 0, 0
+        self.win_start, self.count, self.hidden = now, {"ours": 0, "other": 0}, 0
+
+    def finish(self) -> None:
+        """Перед выходом: дочитать файл и сказать о скрытых строках."""
+        try:
+            self.poll()
+        except Exception:                              # noqa: BLE001 — выход не должен падать из-за журнала
+            pass
+        self._flush_hidden(force=True)
+
+    def health(self, linked: bool) -> str | None:
+        """Через пару минут после запуска Доты: пишет ли она консоль и есть ли там кастомка. → что сказать хосту."""
+        if self.new_bytes == 0:
+            return (f"Консоль Доты не пишется ({self.path}): Дота запущена не этим окном? Закройте Доту, здесь — "
+                    "Enter два раза, и запустите ИГРАТЬ.bat снова: тогда окно покажет, что делает игра.")
+        if self.ours == 0:
+            if linked:
+                return f"Игра на связи, но строк кастомки в {self.path} нет — Дота пишет консоль в другое место."
+            return ("В консоли Доты нет строк кастомки: кастомка не загрузилась (или Дота ещё грузится). Если в Доте "
+                    f"главное меню — введите в её консоли  dota_launch_custom_game {ADDON} dota. Пришлите снимок окна.")
+        return None
 
 
-def follow_dota_log(log: DotaLog, stop: threading.Event, period: float = 1.0) -> None:
-    """Раз в period секунд — новые строки консоли Доты в окно хоста. Сбой чтения окно не роняет."""
-    told = False
+def follow_dota_log(log: DotaLog, stop: threading.Event, period: float = 1.0, started=lambda: True,
+                    linked=lambda: False, check_after: float = 300.0, clock=time.monotonic) -> None:
+    """Раз в period секунд — новые строки консоли Доты в окно хоста; через check_after секунд после запуска Доты (у
+    автора от запуска до матча прошло около 4 минут) — одна проверка, пишет ли Дота консоль и есть ли там кастомка
+    (рецензия 7: без файла окно снова молчало). Сбой чтения окно не роняет."""
+    told = checked = False
+    since = None
     while not stop.wait(period):
         try:
             log.poll()
+            if not checked:
+                if since is None and started():
+                    since = clock()
+                if since is not None and clock() - since >= check_after:
+                    checked = True
+                    msg = log.health(linked())
+                    if msg:
+                        say("  ! " + msg)
         except Exception as e:                         # noqa: BLE001 — журнал вспомогательный: игра идёт без него
             if not told:
                 say(f"  Журнал Доты не читается: {e}")
@@ -1084,14 +1207,16 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     say("[6/6] Дота")
     stop = threading.Event()
     on_word = None
-    dlog = None
-    if dota:                                                      # консоль Доты (-condebug) — в окно и копией в журнал
-        dlog = DotaLog(dota / CONSOLE_LOG, LOGS / f"dota_console_{time.strftime('%Y%m%d_%H%M%S')}.log")
-        threading.Thread(target=follow_dota_log, args=(dlog, stop), daemon=True, name="dota-log").start()
-        say("  Что делает кастомка (строки «[ТРЕНЕР]») и её ошибки покажу здесь, с пометкой «Дота:».")
+    dlog = starter = None
     if dota and not args.no_dota:
         starter = DotaStarter(dota)
-
+    if dota:                                                      # консоль Доты (-condebug) — в окно и копией в журнал
+        dlog = DotaLog(dota / CONSOLE_LOG, LOGS / f"dota_console_{time.strftime('%Y%m%d_%H%M%S')}.log")
+        threading.Thread(target=follow_dota_log, args=(dlog, stop), daemon=True, name="dota-log",
+                         kwargs={"started": (lambda: starter.started) if starter else (lambda: False),
+                                 "linked": room.game_linked}).start()
+        say("  Что делает кастомка (строки «[ТРЕНЕР]») и её ошибки покажу здесь, с пометкой «Дота:».")
+    if starter is not None:
         def on_word():                                            # «д» и Enter: запустить сейчас
             if not has_tools(dota):
                 say("  Признака Workshop Tools не вижу — запускаю всё равно. Если Steam напишет «файл отсутствует»,")
@@ -1124,6 +1249,8 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     except KeyboardInterrupt:
         pass
     say("Заканчиваю…")
+    if dlog is not None:
+        dlog.finish()                                             # последние строки Доты и «…и ещё строк»
     ai.close()
     if keeper is not None:                                        # сначала входы: туннель, пульт, игра —
         keeper.close()
@@ -1171,7 +1298,8 @@ def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
         side = SIDE_OF.get(team, team)
         if p["decisions"] and not told.get(("first", team)):
             told[("first", team)] = True
-            say(f"  ● Агенты {side} ведут героев: первые решения пришли.")
+            model = p.get("model") or ""                              # имя модели — как его назвал Claude Code
+            say(f"  ● Агенты {side} ведут героев: первые решения пришли" + (f" (модель: {model})." if model else "."))
         if p["error"] and p["error"] != told.get(("error", team)):
             told[("error", team)] = p["error"]
             n = told.get(("errors", team), 0) + 1
@@ -1185,6 +1313,10 @@ def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
             told[("pause", team)] = pause
             if pause:
                 say(f"  ! Агенты {side} на паузе: {pause}. Пока героями правит запасной исполнитель (приказы тренера).")
+        if p.get("limit") and not told.get(("limit", team)):             # рецензия 7: иначе снова «агентов нет»
+            told[("limit", team)] = True
+            say(f"  ! Агенты {side} выбрали предел вызовов Claude на эту игру ({p.get('max_calls')}): дальше героями "
+                "правит запасной исполнитель по приказам тренера.")
     if now - told.get("summary_t", now) >= every:
         parts = [f"{SIDE_OF.get(t, t)} — решений {p['decisions']}, ошибок {p['errors']}" for t, p in prog.items()]
         say("  Агенты: " + "; ".join(parts) + ".")
@@ -1200,8 +1332,14 @@ def watch(room, period: float = 2.0, stop=lambda: False, sleep=time.sleep, clock
     heroes = None
     linked_at = 0.0
     told: dict = {}
+    game = None
     while not stop():
         now = clock()
+        gid = getattr(room, "game_id", None)
+        if gid != game:                                # новый матч: снова сказать про героев и первые решения
+            if game is not None:
+                told, heroes, linked_at = {}, None, now
+            game = gid
         f = now - room.console_seen.get(REMOTE, 0) < 10
         g = room.game_linked()
         if f != friend_on:

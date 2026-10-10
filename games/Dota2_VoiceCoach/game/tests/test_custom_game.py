@@ -228,6 +228,12 @@ function PlayerResource:SetCustomTeamAssignment(pid, team) __assign[pid] = team;
 function PlayerResource:GetTeamKills(team) return team == 2 and 3 or 5 end
 function RandomInt(a, b) return math.random(a, b) end
 function Time() return __now end
+HeroList = {}
+function HeroList:GetAllHeroes()
+  local out = {}
+  for _, p in pairs(__players) do if p.hero then out[#out + 1] = p.hero end end
+  return out
+end
 function GetWorldMinX() return -8288 end
 function GetWorldMinY() return -8288 end
 function GetWorldMaxX() return 8288 end
@@ -955,6 +961,112 @@ class Diagnostics(Game):
         n0 = self.n_orders()
         self.step(1)
         self.assertTrue(self.unit_orders(self.hero(1), n0))                 # героев ведёт запасной исполнитель
+
+
+class FindBotHeroes(Game):
+    """Игра на связи, а героев агентам не досталось (первый живой матч): находим героев ботов не одним путём."""
+
+    def agents(self, team=2):
+        T = self.G["CoachGame"]["teams"][team]
+        return [T["agents"][p]["name"].replace("npc_dota_hero_", "") for p in range(1, 6) if T["agents"][p]]
+
+    def test_selected_hero_nil_for_bots(self):
+        self.L.execute("""
+          local sel = PlayerResource.GetSelectedHeroEntity
+          function PlayerResource:GetSelectedHeroEntity(pid)
+            if __players[pid] and __players[pid].fake then return nil end   -- для ботов Дота не отдаёт героя
+            return sel(self, pid)
+          end""")
+        self.start_match()
+        self.assertEqual(self.agents(2), ["sniper", "viper", "axe", "lion", "crystal_maiden"])   # из списка героев
+        self.assertEqual(len(self.agents(3)), 5)
+        n0 = self.n_orders()
+        self.step(1)
+        self.assertTrue(self.unit_orders(self.hero(1), n0))
+
+    def test_only_hero_list_knows_them(self):
+        """Ни выбранного героя у ботов, ни события появления — герои есть только в списке всех героев."""
+        self.L.execute("""
+          local sel = PlayerResource.GetSelectedHeroEntity
+          function PlayerResource:GetSelectedHeroEntity(pid)
+            if __players[pid] and __players[pid].fake then return nil end
+            return sel(self, pid)
+          end""")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP)")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_HERO_SELECTION)")
+        self.step(2.5)
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_PRE_GAME)")
+        self.step(1.5)
+        self.assertEqual(len(self.agents(2)), 5)
+        self.assertEqual(len(self.agents(3)), 5)
+
+    def test_bot_heroes_without_owner(self):
+        self.L.execute("""
+          local add = Tutorial.AddBot
+          function Tutorial:AddBot(hero, lane, difficulty, good)
+            local ok = add(self, hero, lane, difficulty, good)
+            for pid, p in pairs(__players) do
+              if p.fake then function p.hero:GetPlayerOwnerID() return -1 end end   -- владелец не указан
+            end
+            return ok
+          end""")
+        self.start_match()
+        self.assertEqual(len(self.agents(2)), 5)
+        self.assertEqual(len(self.agents(3)), 5)
+        self.assertTrue(self.hero(0)["nodraw"])                              # тренер — по-прежнему не агент
+
+    def test_hero_after_setup_goes_to_agent(self):
+        self.L.execute(LATE_HEROES)
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_CUSTOM_GAME_SETUP)")
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_HERO_SELECTION)")
+        self.step(2.5)
+        self.L.execute("__set_state(DOTA_GAMERULES_STATE_PRE_GAME)")
+        self.step(32)                                                         # не дождались: раздали, что есть
+        self.assertEqual(self.agents(2), [])
+        self.L.execute("__reveal()")
+        for pid in range(1, 11):
+            self.L.execute(f"__fire('npc_spawned', {{ entindex = __players[{pid}].hero.idx, is_respawn = 0 }})")
+        self.assertEqual(self.agents(2), ["sniper", "viper", "axe", "lion", "crystal_maiden"])
+        late = [line for line in self.G["__printed"].values() if "появился позже" in line]
+        self.assertEqual(len(late), 10)
+        self.L.execute("__fire('npc_spawned', { entindex = __players[1].hero.idx, is_respawn = 1 })")
+        self.assertEqual(len(self.agents(2)), 5)                              # возрождение — не новый агент
+        n0 = self.n_orders()
+        self.step(1)
+        self.assertTrue(self.unit_orders(self.hero(1), n0))
+
+    def test_setup_error_still_gives_heroes(self):
+        self.L.execute("function CoachGame:TrySetup() error('сломалось ожидание') end")
+        self.start_match()
+        self.assertTrue(self.G["CoachGame"]["ready"])
+        self.assertTrue(any("ошибка при ожидании героев ботов" in line for line in self.G["__printed"].values()))
+        self.assertEqual(len(self.agents(2)), 5)
+
+
+class GameMovesHidden(Game):
+    """Рецензия 7: приказы соперника (ИИ-тренер Тьмы, Д16: «его приказы в окно не пишутся») и реплики — ходы игры;
+    в окно хоста из консоли Доты они не попадают."""
+    server = True
+
+    def test_launcher_filter_hides_moves(self):
+        from voicecoach import play as P
+        self.start_match()
+        room = self.srv.hub.room("local")
+        self.step(2)
+        room.remote_order("dire", "все назад")
+        self.step(2)
+        room.remote_order("dire", "летай куда хочешь")
+        self.hud("1 фарм лес")
+        self.hud("2 летай")
+        self.step(5)
+        lines = list(self.G["__printed"].values())
+        self.assertTrue(any("приказ с пульта: все назад" in line for line in lines))   # в консоли есть
+        shown = [line for line in lines if P.DotaLog.wanted(line)]
+        for word in ("все назад", "летай", "фарм лес"):
+            self.assertFalse([line for line in shown if word in line], word)
+        self.assertTrue(any("пульс:" in line for line in shown))
+        modes = [line for line in lines if "агенты на связи" in line]
+        self.assertEqual(len(modes), 1, modes)                                 # «без решений: N» в консоль не скачет
 
 
 class PulseWithAgents(Game):
