@@ -449,7 +449,25 @@ function W.has_modifier(hero, name) return hero:HasModifier(name) end
 function W.magic_immune(unit) return unit:IsMagicImmune() end
 function W.silenced(unit) return unit:IsSilenced() end
 
--- ближайшее дерево не дальше radius (для танго); нет навигации или деревьев — nil
+-- дерево для танго: не дальше radius, не ближе keep к живой вражеской вышке, из оставшихся — ближе к своему фонтану
+-- (Valve в npx_2019 ищет дерево у своей вышки)
+function W.safe_tree(team, point, radius, keep)
+  if GridNav == nil then return nil end
+  local ok, trees = pcall(function() return GridNav:GetAllTreesAroundPoint(point, radius, true) end)
+  if not ok or type(trees) ~= "table" then return nil end
+  local home = W.fountain(team) or point
+  local best, bd = nil, 1e18
+  for _, t in pairs(trees) do
+    local p = t:GetAbsOrigin()
+    if not W.near_enemy_tower(team, p, keep) then
+      local d = W.dist(p, home)
+      if d < bd then best, bd = t, d end
+    end
+  end
+  return best
+end
+
+-- ближайшее дерево не дальше radius; нет навигации или деревьев — nil
 function W.nearest_tree(point, radius)
   if GridNav == nil then return nil end
   local ok, trees = pcall(function() return GridNav:GetAllTreesAroundPoint(point, radius, true) end)

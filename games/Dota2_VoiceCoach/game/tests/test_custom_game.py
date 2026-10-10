@@ -896,6 +896,11 @@ class Executor(Game):
         self.step(0.5)
         eat = [o for o in self.unit_orders(sniper, n0) if o["OrderType"] == 7]
         self.assertEqual((eat[0]["AbilityIndex"], eat[0]["TargetIndex"]), (tango["idx"], 9000 + 777))
+        n_try = self.n_orders()                                              # не съел (здоровье то же) — не замирает:
+        self.step(6)                                                          # следующая попытка не раньше чем через 20 с
+        self.assertEqual(len([o for o in self.unit_orders(sniper, n_try) if o["OrderType"] == 7]), 0)
+        # дерево у вражеской вышки не годится: Т1 Тьмы на боте (6200, -1600)
+        self.assertIsNone(self.L.eval('require("coach_world").safe_tree(2, Vector(6200, -2200, 0), 400, 900)'))
         sniper["pos"] = self.L.eval("Vector(-6800, -6300, 0)")                # у фонтана
         self.decide(2, 1, {"plan": "hold", "buy": ["item_ward_observer"]})
         self.step(0.5)

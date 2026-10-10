@@ -378,6 +378,7 @@ end
 -- рефлекс «расходники»: как делает каждый игрок — лечилка и кларити, когда ранен и врага рядом нет (их сбивает урон),
 -- волшебный огонь и палочка, когда здоровья мало и враг рядом. Раз в секунду, только из инвентаря.
 X.FLASK_HP, X.CLARITY_MP, X.PANIC_HP, X.SAFE_R, X.TANGO_HP, X.TREE_R = 55, 35, 25, 900, 75, 400
+X.TANGO_RETRY = 20      -- с между попытками съесть танго
 local function consume(st, ag, world, now)
   if now < (st.consume_next or 0) then return nil end
   local hero = ag.hero
@@ -409,11 +410,13 @@ local function consume(st, ag, world, now)
       local a = use("item_clarity", true)
       if a then return a end
     end
-    if hp <= X.TANGO_HP and not world.has_modifier(hero, "modifier_tango_heal") then   -- живой матч: 3 пачки не тронуты
-      local it = world.main_item(hero, "item_tango_single") or world.main_item(hero, "item_tango")
-      local tree = it and world.ability_info(it, hero).ready and world.nearest_tree(world.pos(hero), X.TREE_R)
+    if hp <= X.TANGO_HP and now >= (st.tango_next or 0) and not world.has_modifier(hero, "modifier_tango_heal") then
+      local it = world.main_item(hero, "item_tango_single") or world.main_item(hero, "item_tango")   -- живой матч:
+      local tree = it and world.ability_info(it, hero).ready                                        -- 3 пачки не тронуты
+          and world.safe_tree(ag.team, world.pos(hero), X.TREE_R, X.TOWER_KEEP)
       if tree then
         st.consume_next = now + 1.0
+        st.tango_next = now + X.TANGO_RETRY          -- не съел (дерево не достать) — не замирать на попытках (рецензия 10б)
         return { kind = "cast", ability = it, behavior = "tree", tree = tree, name = world.ability_name(it), auto = true,
                  busy = 1.5 }
       end
@@ -459,7 +462,8 @@ local function farm_order(st, ag, world, lane)
       return { kind = "attack", target = e, why = tag .. ": бью врага" }
     end
     local cp = world.pos(core)
-    local spot = toward(cp, world.lane_enemy_front(team, lane), 200)  -- впереди кора, к врагу (гайды: research/05)
+    local spot = world.keep_from_tower(team, lane, toward(cp, world.lane_enemy_front(team, lane), 200), X.TOWER_KEEP)
+                                                     -- впереди кора, к врагу (гайды: research/05), не под их вышкой
     if world.dist(my, spot) > 300 then
       return { kind = "move", point = spot, why = tag .. ": встаю впереди своего" }
     end
