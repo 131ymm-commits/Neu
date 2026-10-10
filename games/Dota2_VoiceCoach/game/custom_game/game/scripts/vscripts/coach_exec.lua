@@ -25,6 +25,7 @@ X.WALK_CAST = 20        -- с: дольше не идём к месту прим
 X.LEVEL_CHECK = 1.0     -- с: через столько проверяем, выросла ли способность после прокачки
 X.LEVEL_SKIP = 30       -- с: способность, которую не удалось вкачать, пропускаем
 local TELEPORTS = { item_tpscroll = true, item_travel_boots = true, item_travel_boots_2 = true }
+local FREE_ITEMS = { item_ward_observer = true }      -- из запаса магазина бесплатно: цена 0 — не «нет предмета»
 -- рефлекс «способности в бою» (живой матч 10.10.2026: «ведут себя очень плохо. только простые действия»: агент
 -- решает раз в 15–20 с и о драке заранее не знает, а руки применяли только названное им): руки сами бьют
 -- способностями по врагу видимому и в досягаемости
@@ -36,6 +37,12 @@ X.KILL_HP = 40          -- на фарме и в прочих планах: вр
 X.DEFEND_HP = 50        -- на фарме: у себя меньше этого и враг вплотную — отбиваться
 X.DEFEND_NEAR = 500
 X.SUPPORT_SHARE = 900   -- саппорт (4, 5) на фарме линии: свой кор ближе — вражеских крипов не добивает
+X.TOWER_KEEP = 900      -- к живой вражеской вышке на фарме ближе не подходить (бьёт примерно на 700 — по памяти)
+-- площадные способности по врагам, у которых в KV цель не указана (рецензия 10 сверила KV героев списка ботов):
+-- без списка рефлекс их не видит
+X.ENEMY_AOE = { sniper_shrapnel = true, viper_nethertoxin = true, axe_berserkers_call = true,
+                crystal_maiden_crystal_nova = true, lina_light_strike_array = true, witch_doctor_maledict = true }
+X.ULT_BY_CAST = { axe_culling_blade = true }   -- убивает только ниже порога — рефлекс не угадает; агент называет сам
 
 local PLANS = { farm = true, push = true, defend = true, fight = true, retreat = true, roshan = true,
                 move = true, follow = true, save = true, group = true, hold = true }
@@ -162,7 +169,7 @@ local function buy_step(st, hero, world, now, dead)
   if not dead and not world.in_shop(hero) then return nil end
   local name = st.buy[1]
   local cost = tonumber(world.item_cost(name)) or 0
-  if cost <= 0 then
+  if cost <= 0 and not FREE_ITEMS[name] then
     table.remove(st.buy, 1)
     note(st, "нет такого предмета: " .. tostring(name))
     return nil
@@ -319,6 +326,8 @@ local function auto_cast(st, ag, world, now, mode)
   if st.plan and st.plan.target ~= "" then target = world.enemy_hero(team, st.plan.target) end
   target = target or world.nearest_enemy(team, my, 1600)
   if target == nil then return nil end
+  if world.magic_immune(target) or world.silenced(hero) then return nil end   -- приказ отклонят — не дёргать
+  if plan == "retreat" then mode = "escape" end      -- отход выбрал агент — руки отходят, а не добивают
   local d = world.dist(my, world.pos(target))
   local fight = mode ~= "escape" and X.AUTO_PLANS[plan]
   if not fight then
@@ -337,8 +346,12 @@ local function auto_cast(st, ag, world, now, mode)
   for pass = 1, 2 do                                        -- сначала обычные способности, потом ульта
     for _, ab in ipairs(world.abilities(hero)) do
       local i = world.ability_info(ab, hero)
-      local usable = i.level > 0 and i.behavior ~= "passive" and i.ready and i.enemy and not i.toggle
-          and not i.autocast and (pass == 2) == i.ult and (not i.ult or ult_ok)
+      -- канальные — только через cast (рецензия 10: Mana Drain при отходе держал героя на месте 5 с); при отходе и
+      -- «отбиться» — только по цели или в точку: без цели бывают баффы на себя с замедлением (Take Aim)
+      local calm = fight or (i.behavior == "target" or i.behavior == "point")
+      local usable = i.level > 0 and i.behavior ~= "passive" and i.ready and (i.enemy or X.ENEMY_AOE[i.name])
+          and not i.toggle and not i.autocast and not i.channel and calm and not X.ULT_BY_CAST[i.name]
+          and (pass == 2) == i.ult and (not i.ult or ult_ok)
           and now - (st.auto_tried[i.name] or -1e9) >= X.AUTO_RETRY
       if usable then
         local range = (i.range and i.range > 0) and i.range or 600
@@ -364,12 +377,13 @@ end
 
 -- рефлекс «расходники»: как делает каждый игрок — лечилка и кларити, когда ранен и врага рядом нет (их сбивает урон),
 -- волшебный огонь и палочка, когда здоровья мало и враг рядом. Раз в секунду, только из инвентаря.
-X.FLASK_HP, X.CLARITY_MP, X.PANIC_HP, X.SAFE_R = 55, 35, 25, 900
+X.FLASK_HP, X.CLARITY_MP, X.PANIC_HP, X.SAFE_R, X.TANGO_HP, X.TREE_R = 55, 35, 25, 900, 75, 400
 local function consume(st, ag, world, now)
   if now < (st.consume_next or 0) then return nil end
   local hero = ag.hero
   local hp = world.hp_pct(hero)
   local danger = world.nearest_enemy(ag.team, world.pos(hero), X.SAFE_R) ~= nil
+  local at_fountain = world.in_shop(hero)               -- у фонтана лечит фонтан
   local function use(name, self_target)
     local it = world.main_item(hero, name)
     if it == nil or not world.ability_info(it, hero).ready then return nil end
@@ -386,7 +400,7 @@ local function consume(st, ag, world, now)
     local a = use("item_faerie_fire", false)
     if a then return a end
   end
-  if not danger then
+  if not danger and not at_fountain then
     if hp <= X.FLASK_HP and not world.has_modifier(hero, "modifier_flask_healing") then
       local a = use("item_flask", true)
       if a then return a end
@@ -395,6 +409,15 @@ local function consume(st, ag, world, now)
       local a = use("item_clarity", true)
       if a then return a end
     end
+    if hp <= X.TANGO_HP and not world.has_modifier(hero, "modifier_tango_heal") then   -- живой матч: 3 пачки не тронуты
+      local it = world.main_item(hero, "item_tango_single") or world.main_item(hero, "item_tango")
+      local tree = it and world.ability_info(it, hero).ready and world.nearest_tree(world.pos(hero), X.TREE_R)
+      if tree then
+        st.consume_next = now + 1.0
+        return { kind = "cast", ability = it, behavior = "tree", tree = tree, name = world.ability_name(it), auto = true,
+                 busy = 1.5 }
+      end
+    end
   end
   st.consume_next = now + 1.0
   return nil
@@ -402,13 +425,17 @@ end
 
 -- --- план → приказ движения/атаки ---
 
--- кор (позиции 1–3) рядом с саппортом — добивания ему
-local function core_near(ag, world)
+-- кор своей линии рядом с саппортом — добивания ему. Только кор, чья линия — эта (рецензия 10: на старте у фонтана
+-- Lion шёл за Sniper на бот), и только когда кор у линии (не провожать его на базу)
+local function core_near(ag, world, lane)
   if ag.pos ~= 4 and ag.pos ~= 5 then return nil end
   local my = world.pos(ag.hero)
   for pos = 1, 3 do
     local ally = world.ally_hero(ag.team, pos)
-    if ally and ally ~= ag.hero and world.dist(my, world.pos(ally)) <= X.SUPPORT_SHARE then return ally, pos end
+    if ally and ally ~= ag.hero and X.default_lane(ag.team, pos) == lane
+        and world.dist(my, world.pos(ally)) <= X.SUPPORT_SHARE and world.lane_dist(ag.team, lane, world.pos(ally)) <= 1500 then
+      return ally, pos
+    end
   end
   return nil
 end
@@ -417,7 +444,7 @@ local function farm_order(st, ag, world, lane)
   local hero, team = ag.hero, ag.team
   local my = world.pos(hero)
   local tag = "фарм " .. LANE_RU[lane]
-  local core, core_pos = core_near(ag, world)
+  local core, core_pos = core_near(ag, world, lane)
   if core then                                  -- саппорт на линии с кором: свои крипы — добить, враг — бить, если
     tag = "линия с " .. core_pos                 -- безопасно; вражеских крипов не добивать: опыт идёт и так
     local range = world.attack_range(hero)
@@ -427,20 +454,26 @@ local function farm_order(st, ag, world, lane)
       end
     end
     local e = world.nearest_enemy(team, my, range + 100)
-    if e and world.hp_pct(hero) >= 60 and world.hp_pct(e) <= world.hp_pct(hero) then
+    if e and world.hp_pct(hero) >= 60 and world.hp_pct(e) <= world.hp_pct(hero)
+        and not world.near_enemy_tower(team, world.pos(e), X.TOWER_KEEP) then
       return { kind = "attack", target = e, why = tag .. ": бью врага" }
     end
     local cp = world.pos(core)
-    if world.dist(my, cp) > 350 then
-      return { kind = "move", point = toward(cp, world.fountain(team) or my, 250), why = tag .. ": иду к своему" }
+    local spot = toward(cp, world.lane_enemy_front(team, lane), 200)  -- впереди кора, к врагу (гайды: research/05)
+    if world.dist(my, spot) > 300 then
+      return { kind = "move", point = spot, why = tag .. ": встаю впереди своего" }
     end
-    return { kind = "hold", why = tag .. ": стою у своего" }
+    return { kind = "hold", why = tag .. ": стою впереди своего" }
   end
-  local enemies = world.lane_creeps(hero, X.FARM_NEAR, true)
+  local enemies = {}
+  for _, c in ipairs(world.lane_creeps(hero, X.FARM_NEAR, true)) do   -- под вражеской вышкой не добивать
+    if not world.near_enemy_tower(team, world.pos(c), X.TOWER_KEEP) then enemies[#enemies + 1] = c end
+  end
   if #enemies == 0 then                         -- вражеских крипов рядом нет: к своей волне, без неё — к середине линии
     local front = world.wave_front(team, lane)
     local base = world.lane_front(team, lane)
     local p = front and world.clear(toward(front, base, 250), base) or world.lane_mid(team, lane)
+    p = world.keep_from_tower(team, lane, p, X.TOWER_KEEP)
     if world.dist(my, p) > 300 then
       return { kind = "move", point = p, why = tag .. (front and ": иду к своей волне" or ": иду к линии") }
     end
@@ -572,6 +605,12 @@ function X.step(st, ag, world, now)
     end
   end
   if world.is_channeling(hero) or now < st.busy_until then return acts end
+
+  local want_acquire = not (st.plan and st.plan.kind == "farm")
+  if st.acquire ~= want_acquire then                    -- на фарме руки бьют только добивания и денаи сами
+    st.acquire = want_acquire
+    acts[#acts + 1] = { kind = "acquire", on = want_acquire }
+  end
 
   local u = consume(st, ag, world, now)
   if u then

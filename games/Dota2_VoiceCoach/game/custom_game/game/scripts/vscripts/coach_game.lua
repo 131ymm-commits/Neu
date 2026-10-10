@@ -319,13 +319,13 @@ function G:AddBots()
     for _, hero in ipairs(G.BOT_HEROES[team]) do
       if need <= 0 then break end
       if not taken[hero] then
-        taken[hero], need, pos, asked = true, need - 1, pos + 1, asked + 1
         if named then                              -- героя — заранее в память, тогда бот появляется сразу целым
+          taken[hero], need, pos, asked = true, need - 1, pos + 1, asked + 1
           local r = { hero = hero, team = team, pos = pos, ready = false }
           G.named_queue[#G.named_queue + 1] = r
           PrecacheUnitByNameAsync(hero, function() r.ready = true; G:FlushNamed() end)
-        else
-          G:SpawnAgentBot(hero, team, pos)
+        elseif G:SpawnAgentBot(hero, team, pos + 1) then   -- не добавился — следующий герой из списка (рецензия 10)
+          taken[hero], need, pos, asked = true, need - 1, pos + 1, asked + 1
         end
       end
     end
@@ -463,7 +463,9 @@ end
 
 function G:Cast(hero, act)
   local t = { UnitIndex = hero:entindex(), AbilityIndex = act.ability:entindex(), Queue = false }
-  if act.behavior == "target" then
+  if act.behavior == "tree" then                       -- танго: приказ по дереву берёт номер дерева, а не сущности
+    t.OrderType, t.TargetIndex = DOTA_UNIT_ORDER_CAST_TARGET_TREE, GetTreeIdForEntityIndex(act.tree:entindex())
+  elseif act.behavior == "target" then
     t.OrderType, t.TargetIndex = DOTA_UNIT_ORDER_CAST_TARGET, act.target:entindex()
   elseif act.behavior == "point" then
     t.OrderType, t.Position = DOTA_UNIT_ORDER_CAST_POSITION, act.point
@@ -499,6 +501,8 @@ function G:Apply(hero, a)
     G:Buy(hero, a.item, a.cost)
   elseif a.kind == "buyback" then
     hero:Buyback()
+  elseif a.kind == "acquire" then                      -- на ботах не проверено (research/05): нет — руки как раньше
+    pcall(function() hero:SetIdleAcquire(a.on) end)
   end
 end
 

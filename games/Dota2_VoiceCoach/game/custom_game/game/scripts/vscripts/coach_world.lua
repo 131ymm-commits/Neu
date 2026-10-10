@@ -110,8 +110,11 @@ end
 function W.lane_path(team, lane)
   local a, b = W.lane_front(team, lane), W.lane_enemy_front(team, lane)
   if lane == "mid" then return { a, b } end
-  local c1, c2 = Vector(a.x, b.y, 0), Vector(b.x, a.y, 0)
-  return { a, (c1.x * c1.x + c1.y * c1.y >= c2.x * c2.x + c2.y * c2.y) and c1 or c2, b }
+  -- угол — по имени линии (рецензия 10: «дальше от центра» ошибался, когда вышки падали): верх идёт по левому краю и
+  -- верху карты — угол слева вверху, низ — по низу и правому краю — угол справа внизу
+  local corner = lane == "top" and Vector(math.min(a.x, b.x), math.max(a.y, b.y), 0)
+                 or Vector(math.max(a.x, b.x), math.min(a.y, b.y), 0)
+  return { a, corner, b }
 end
 
 function W.lane_mid(team, lane)
@@ -137,6 +140,36 @@ function W.project(pts, p)
 end
 
 W.WAVE_NEAR = 900       -- крип ближе к пути линии — крип этой линии
+
+local function path_len(pts)
+  local total = 0
+  for i = 2, #pts do total = total + W.dist(pts[i - 1], pts[i]) end
+  return total
+end
+
+-- расстояние точки до пути линии
+function W.lane_dist(team, lane, p)
+  local d = W.project(W.lane_path(team, lane), p)
+  return d
+end
+
+-- живая вражеская вышка ближе r к точке
+function W.near_enemy_tower(team, p, r)
+  for _, t in ipairs(W.towers) do
+    if t.team ~= team and tower_alive(t) and W.dist(t.pos, p) <= r then return true end
+  end
+  return false
+end
+
+-- точку на линии не ближе keep к вражеской внешней вышке (по пути линии): ближе — отвести назад по линии
+function W.keep_from_tower(team, lane, p, keep)
+  local pts = W.lane_path(team, lane)
+  local total = path_len(pts)
+  if total <= 0 then return p end
+  local _, at = W.project(pts, p)
+  if total - at >= keep and not W.near_enemy_tower(team, p, keep) then return p end
+  return W.along(pts, math.max(0, total - keep) / total)
+end
 
 -- где своя волна крипов линии: передовой свой крип на пути линии (ближе всех к их вышке). Живой матч 10.10.2026: на
 -- 15-й минуте у героев 4–5 уровень — ждали волну в расчётной точке, а волна шла в другом месте; опыт дают только
@@ -413,6 +446,21 @@ function W.main_item(hero, name)
 end
 
 function W.has_modifier(hero, name) return hero:HasModifier(name) end
+function W.magic_immune(unit) return unit:IsMagicImmune() end
+function W.silenced(unit) return unit:IsSilenced() end
+
+-- ближайшее дерево не дальше radius (для танго); нет навигации или деревьев — nil
+function W.nearest_tree(point, radius)
+  if GridNav == nil then return nil end
+  local ok, trees = pcall(function() return GridNav:GetAllTreesAroundPoint(point, radius, true) end)
+  if not ok or type(trees) ~= "table" then return nil end
+  local best, bd = nil, 1e18
+  for _, t in pairs(trees) do
+    local d = W.dist(t:GetAbsOrigin(), point)
+    if d < bd then best, bd = t, d end
+  end
+  return best
+end
 function W.mana_pct(hero)
   local m = hero:GetMaxMana()
   return m > 0 and 100 * hero:GetMana() / m or 100
@@ -436,7 +484,8 @@ function W.ability_info(ab, hero)
            enemy = tt == DOTA_UNIT_TARGET_TEAM_ENEMY or tt == DOTA_UNIT_TARGET_TEAM_BOTH,
            aoe = oka and tonumber(aoe) or 0,
            toggle = has_flag(behavior, DOTA_ABILITY_BEHAVIOR_TOGGLE),
-           autocast = has_flag(behavior, DOTA_ABILITY_BEHAVIOR_AUTOCAST) }
+           autocast = has_flag(behavior, DOTA_ABILITY_BEHAVIOR_AUTOCAST),
+           channel = has_flag(behavior, DOTA_ABILITY_BEHAVIOR_CHANNELLED) }
 end
 
 -- предметы: инвентарь, рюкзак, слот телепорта, нейтральный

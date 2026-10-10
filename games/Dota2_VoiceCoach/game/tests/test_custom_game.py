@@ -215,6 +215,9 @@ local function make_hero(name, team, pid)
   function h:GetIdealSpeed() return 300 end
   function h:IsChanneling() return false end
   function h:HasModifier(n) return self.mods[n] == true end
+  function h:IsMagicImmune() return self.immune == true end
+  function h:IsSilenced() return self.silenced == true end
+  function h:SetIdleAcquire(on) self.idle_acquire = on end
   function h:Buyback() self.alive = true; self.bought_back = true end
   function h:UpgradeAbility(ab) if self.points > 0 then ab.level = ab.level + 1; self.points = self.points - 1 end end
   return h
@@ -780,6 +783,27 @@ class Executor(Game):
         self.assertTrue(got)                                                  # отходя — бьёт догоняющего
         self.assertNotIn(sniper["abilities"][4]["idx"], {o["AbilityIndex"] for o in got})
 
+    def test_support_keeps_own_lane_core(self):
+        """Рецензия 10: на старте у фонтана саппорт сложной линии (Lion, 4) не уходит за керри (Sniper) на бот."""
+        self.start_match()
+        lion = self.by_name("lion")
+        for name in ("sniper", "lion", "axe"):
+            self.by_name(name)["pos"] = self.L.eval("Vector(-6700, -6200, 0)")
+        self.decide(2, 4, {"plan": "farm", "where": "top"})
+        self.decide(2, 1, {"plan": "farm", "where": "bot"})
+        n0 = self.n_orders()
+        self.step(1)
+        o = self.unit_orders(lion, n0)[-1]
+        x, y = self.xy(o)
+        self.assertLess(x, -5000)                                            # идёт на верх (левый край), не на бот
+        self.assertGreater(y, 0)
+        # керри зашёл на верхнюю линию к саппорту — это не кор его линии: саппорт фармит сам, а не встаёт к нему
+        lion["pos"] = self.L.eval("Vector(-6200, 3000, 0)")
+        self.by_name("sniper")["pos"] = self.L.eval("Vector(-6250, 3100, 0)")
+        self.step(1)
+        _, rows = self.hud_rows()
+        self.assertFalse(rows[3]["status"].startswith("линия с 1"), rows[3])
+
     def test_support_does_not_steal_last_hits(self):
         """Д18: саппорт на линии рядом со своим кором вражеских крипов не добивает, своих — добивает, бьёт врага,
         когда безопасно, иначе стоит у своего."""
@@ -808,6 +832,74 @@ class Executor(Game):
         self.assertEqual(o["OrderType"], ORDER["move"])
         x, y = self.xy(o)
         self.assertLess(((x + 6200) ** 2 + (y - 3500) ** 2) ** 0.5, 300)       # встаёт за своим, ближе к базе
+
+    def test_review10_spell_rules(self):
+        """Рецензия 10: канальные — только через cast; при отходе — только по цели/в точку; площадные из списка — да;
+        по невосприимчивому к магии — нет; отход, выбранный агентом, — режим отхода."""
+        sniper, luna = self.fight_setup({"plan": "fight", "target": "luna"}, dist=250)
+        q, w, e, r = (sniper["abilities"][i] for i in (1, 2, 3, 4))
+        w["behavior"] = 8 + 128                                              # канальная по цели
+        q["name"], q["tt"] = "sniper_shrapnel", 0                            # площадная без цели в KV — из списка
+        n0 = self.n_orders()
+        self.step(1.5)
+        idx = {o["AbilityIndex"] for o in self.casts(sniper, n0)}
+        self.assertIn(q["idx"], idx)
+        self.assertNotIn(w["idx"], idx)
+        luna["immune"] = True                                                # BKB — приказ отклонят
+        n1 = self.n_orders()
+        self.step(4)
+        self.assertEqual(self.casts(sniper, n1), [])
+        luna["immune"] = False
+        luna["health"] = 200                                                 # слаб — на farm добили бы, но план retreat
+        self.decide(2, 1, {"plan": "retreat"})
+        e["behavior"] = 4                                                    # без цели — при отходе нельзя
+        q["ready"] = False
+        n2 = self.n_orders()
+        self.step(4)
+        got = {o["AbilityIndex"] for o in self.casts(sniper, n2)}
+        self.assertNotIn(e["idx"], got)
+        self.assertNotIn(r["idx"], got)
+
+    def test_farm_acquire_off_tango_and_free_ward(self):
+        """Д18 по гайдам: на фарме крипов бьют только добиванием (без атаки ближайшего); танго — у дерева; вард из
+        запаса магазина (цена 0) покупается."""
+        self.L.execute("""
+          __trees = {}
+          GridNav = {}
+          function GridNav:IsNearbyTree() return false end
+          function GridNav:IsTraversable() return true end
+          function GridNav:GetAllTreesAroundPoint(p, r, full)
+            local out = {}
+            for _, t in ipairs(__trees) do
+              if math.sqrt((t.pos.x - p.x) ^ 2 + (t.pos.y - p.y) ^ 2) <= r then out[#out + 1] = t end
+            end
+            return out
+          end
+          function GetTreeIdForEntityIndex(i) return 9000 + i end
+          DOTA_UNIT_ORDER_CAST_TARGET_TREE = 7""")
+        self.start_match()
+        sniper = self.hero(1)
+        self.decide(2, 1, {"plan": "farm", "where": "bot"})
+        self.step(0.5)
+        self.assertIs(sniper["idle_acquire"], False)                          # на фарме — только добивания
+        self.decide(2, 1, {"plan": "push", "where": "bot"})
+        self.step(0.5)
+        self.assertIs(sniper["idle_acquire"], True)
+        sniper["pos"] = self.L.eval("Vector(0, -3000, 0)")
+        tree = self.L.eval("(function() local t = { pos = Vector(150, -3000, 0) }; t.idx = 777; "
+                           "function t:GetAbsOrigin() return self.pos end; function t:entindex() return self.idx end; "
+                           "__trees[1] = t; return t end)()")
+        tango = self.L.eval('__players[1].hero:AddItemByName("item_tango")')
+        sniper["health"] = 400                                                 # 66 %
+        self.decide(2, 1, {"plan": "hold"})
+        n0 = self.n_orders()
+        self.step(0.5)
+        eat = [o for o in self.unit_orders(sniper, n0) if o["OrderType"] == 7]
+        self.assertEqual((eat[0]["AbilityIndex"], eat[0]["TargetIndex"]), (tango["idx"], 9000 + 777))
+        sniper["pos"] = self.L.eval("Vector(-6800, -6300, 0)")                # у фонтана
+        self.decide(2, 1, {"plan": "hold", "buy": ["item_ward_observer"]})
+        self.step(0.5)
+        self.assertTrue(any(it and it["name"] == "item_ward_observer" for it in sniper["slots"].values()))
 
     def test_consumables_reflex(self):
         """Лечилка и кларити — когда ранен и врага рядом нет; палочка и волшебный огонь — когда здоровья мало и враг
@@ -1387,6 +1479,26 @@ class LaneMiddle(Game):
         self.assertLess(((x - 6200) ** 2 + (y + 3000) ** 2) ** 0.5, 300)   # чуть позади передового крипа
         _, rows = self.hud_rows()
         self.assertIn("к своей волне", rows[0]["status"])
+
+    def test_wave_at_enemy_tower_stays_out_of_range(self):
+        """Рецензия 10: своя волна у вражеской вышки — герой не встаёт под неё."""
+        self.start_match()
+        sniper = self.hero(1)
+        sniper["pos"] = self.L.eval("Vector(6000, -4000, 0)")
+        self.L.eval("__creep(2, 6200, -2100, 550)")                  # своя волна у их Т1 боте (6200, -1600)
+        n0 = self.n_orders()
+        self.step(1)
+        x, y = self.xy(self.unit_orders(sniper, n0)[-1])
+        self.assertGreaterEqual(((x - 6200) ** 2 + (y + 1600) ** 2) ** 0.5, 890)
+
+    def test_corner_by_lane_name_when_towers_fall(self):
+        self.start_match()
+        for t in self.G["__towers"].values():
+            if t["name"].endswith("_top"):
+                t["alive"] = False                                   # пали все вышки топа
+        x, y = self.lane_mid(2, "top")
+        self.assertLess(x, 0)                                        # точка на верхней линии (слева вверху),
+        self.assertGreater(y, 0)                                     # а не в углу нижней
 
     def test_point_in_trees_moves_toward_own_tower(self):
         self.L.execute("""
