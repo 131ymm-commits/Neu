@@ -228,39 +228,37 @@ class Launcher(unittest.TestCase):
         never = lambda p: 1 / 0                                               # noqa: E731 — спрашивать нельзя
         no_offer = lambda text: False                                         # noqa: E731
         # пустой Enter — «не сейчас»: ничего не запомнено, в следующий раз спросит снова
-        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "", opener=ok, offer=no_offer), (None, None))
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "", opener=ok), (None, None))
         self.assertNotIn("api_key", P.load_config(self.cfg_path))
         # «0» — без Claude, запомнено; при следующем запуске не спрашивает
-        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "0", opener=ok, offer=no_offer), (None, None))
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "0", opener=ok), (None, None))
         self.assertEqual(P.load_config(self.cfg_path)["api_key"], "")
-        self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=never, offer=no_offer),
+        self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=never),
                          (None, None))
         # нажал клавишу при запуске — вводит ключ
         cfg = P.load_config(self.cfg_path)
-        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: " sk-test-key-0123456789 ", opener=ok,
-                                        offer=lambda t: True), ("sk-test-key-0123456789", self.NEW))
+        self.assertEqual(P.setup_claude(cfg, P.parse(["--ask-key"]), ask=lambda p: " sk-test-key-0123456789 ",
+                                        opener=ok), ("sk-test-key-0123456789", self.NEW))
         saved = P.load_config(self.cfg_path)
         self.assertEqual((saved["api_key"], saved["model"]), ("sk-test-key-0123456789", self.NEW))
         self.assertFalse(any("sk-test-key-0123456789" in line for line in self.out))         # ключ на экран не выводится
         # без сети берём прошлую модель; с --rules ключ не нужен
-        self.assertEqual(P.setup_claude(saved, P.parse([]), opener=opener_for({}), offer=no_offer),
+        self.assertEqual(P.setup_claude(saved, P.parse([]), opener=opener_for({})),
                          ("sk-test-key-0123456789", self.NEW))
         self.assertEqual(P.setup_claude(saved, P.parse(["--rules"])), (None, None))
         # сохранённый ключ отозвали — спрашивает новый; Enter — не сейчас
         revoked = opener_for({P.MODELS_API: self.http_error(401, "invalid x-api-key")})
         answers = iter(["sk-new-key-0123456789", ""])
-        self.assertEqual(P.setup_claude(dict(saved), P.parse([]), ask=lambda p: next(answers), opener=revoked,
-                                        offer=no_offer), (None, None))
+        self.assertEqual(P.setup_claude(dict(saved), P.parse([]), ask=lambda p: next(answers), opener=revoked), (None, None))
         with mock.patch.dict(os.environ, {"ANTHROPIC_API_KEY": "sk-env-key-0123456789"}):
-            self.assertEqual(P.setup_claude({}, P.parse([]), opener=ok, offer=never)[0], "sk-env-key-0123456789")
+            self.assertEqual(P.setup_claude({}, P.parse([]), opener=ok)[0], "sk-env-key-0123456789")
 
     def test_key_without_credit_is_explained(self):
         """Рецензия 3: ключ из организации без кредита принимался, и весь матч стоял на паузе."""
         ok = opener_for({P.MODELS_API: self.MODELS})
         nocredit = lambda key, model, opener: (False, "nocredit")             # noqa: E731
         answers = iter(["sk-no-credit-0123456789", ""])                      # ключ без кредита, потом «не сейчас»
-        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: next(answers), opener=ok,
-                                        offer=lambda t: False, probe=nocredit), (None, None))
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: next(answers), opener=ok, probe=nocredit), (None, None))
         self.assertEqual(P.load_config(self.cfg_path)["api_key"], "sk-no-credit-0123456789")   # ключ сохранён
         self.assertTrue(any("нет кредита" in line for line in self.out))
         self.assertTrue(any("переключите организацию" in line for line in self.out))   # совет и при чужой привязке
@@ -268,7 +266,7 @@ class Launcher(unittest.TestCase):
         self.out.clear()
         credit = lambda key, model, opener: (key != "sk-no-credit-0123456789", "" if key != "sk-no-credit-0123456789" else "nocredit")   # noqa: E731
         self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "sk-with-credit-0123456",
-                                        opener=ok, offer=lambda t: False, probe=credit),
+                                        opener=ok, probe=credit),
                          ("sk-with-credit-0123456", self.NEW))
         self.assertTrue(any("нет кредита" in line for line in self.out))
         # проба кредита по-настоящему: 400 «credit balance» → nocredit; 429 — ключ рабочий
@@ -285,17 +283,17 @@ class Launcher(unittest.TestCase):
         ok = opener_for({P.MODELS_API: self.MODELS})
         P.save_config({"api_key": "sk-saved-key-0123456789", "model": self.NEW})
         cfg = P.load_config(self.cfg_path)
-        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: "", opener=ok, offer=lambda t: True),
+        self.assertEqual(P.setup_claude(cfg, P.parse(["--ask-key"]), ask=lambda p: "", opener=ok),
                          ("sk-saved-key-0123456789", self.NEW))                 # пустой Enter — как было
         self.assertEqual(P.load_config(self.cfg_path)["api_key"], "sk-saved-key-0123456789")
-        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: (_ for _ in ()).throw(KeyboardInterrupt()),
-                                        opener=ok, offer=lambda t: True)[0], "sk-saved-key-0123456789")   # Ctrl+C
-        self.assertEqual(P.setup_claude(cfg, P.parse([]), ask=lambda p: "0", opener=ok, offer=lambda t: True),
+        self.assertEqual(P.setup_claude(cfg, P.parse(["--ask-key"]), ask=lambda p: (_ for _ in ()).throw(KeyboardInterrupt()),
+                                        opener=ok)[0], "sk-saved-key-0123456789")   # Ctrl+C
+        self.assertEqual(P.setup_claude(cfg, P.parse(["--ask-key"]), ask=lambda p: "0", opener=ok),
                          (None, None))                                          # «0» — выключить Claude
         self.assertEqual(P.load_config(self.cfg_path)["api_key"], "")
         # «без Claude» сохранено; сменить и пустой Enter — так и остаётся без Claude
-        self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "", opener=ok,
-                                        offer=lambda t: True), (None, None))
+        self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse(["--ask-key"]), ask=lambda p: "",
+                                        opener=ok), (None, None))
 
     def test_always_subscription_no_menu(self):
         """Слова автора 10.10.2026: «Не нужно меню с выбиранием системы использования, всегда будет 2»."""
@@ -387,8 +385,7 @@ class Launcher(unittest.TestCase):
         """Рецензия 4: «нет» на вопросе о ключе сохранялось как ключ и давало «нет связи» на каждом запуске."""
         ok = opener_for({P.MODELS_API: self.MODELS})
         answers = iter(["нет", "sk ant api 03 с пробелами 0123", ""])
-        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: next(answers), opener=ok,
-                                        offer=lambda t: False), (None, None))
+        self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: next(answers), opener=ok), (None, None))
         self.assertNotIn("api_key", P.load_config(self.cfg_path))
         self.assertTrue(any("не похоже на ключ" in line for line in self.out))
         # и сохранённая раньше кириллица — «ключ не подошёл», а не «нет связи»: лаунчер спросит новый
@@ -410,8 +407,7 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: "sk-later-key-01234567", opener=opener_for({})), (None, None))
         saved = P.load_config(self.cfg_path)
         self.assertEqual(saved["api_key"], "sk-later-key-01234567")
-        self.assertEqual(P.setup_claude(saved, P.parse([]), opener=opener_for({P.MODELS_API: self.MODELS}),
-                                        offer=lambda t: False), ("sk-later-key-01234567", self.NEW))
+        self.assertEqual(P.setup_claude(saved, P.parse([]), opener=opener_for({P.MODELS_API: self.MODELS})), ("sk-later-key-01234567", self.NEW))
         # три неверных ключа — правила, но «без Claude» не запоминается
         bad = opener_for({P.MODELS_API: self.http_error(401)})
         self.cfg_path.unlink()
@@ -481,6 +477,44 @@ class Launcher(unittest.TestCase):
         msg = P.launch_dota(dota, popen=mock.Mock(side_effect=OSError("нет доступа")), running=lambda n: False,
                             wait=lambda s: None)
         self.assertIn("Не запустил Доту: нет доступа", msg)
+
+    def test_dota_starts_by_itself_when_tools_arrive(self):
+        """Рецензия 5: без Workshop Tools лаунчер говорил «запустите снова», а второе окно — «уже запущена».
+        Теперь окно ждёт, пока Steam докачает дополнение, и запускает Доту само."""
+        dota = Path(self.tmp.name) / "dota 2 beta"
+        checks, launched = iter([False, False, True]), []
+        stop = threading.Event()
+        P.launch_when_tools(dota, stop, has=lambda d: next(checks), launch=lambda d: launched.append(d) or "пуск",
+                            period=0.0, settle=0.0)
+        self.assertEqual(launched, [dota])
+        self.assertTrue(any("Workshop Tools на месте" in x for x in self.out))
+        stop.set()                                                               # закрыли окно — не запускать
+        P.launch_when_tools(dota, stop, has=lambda d: True, launch=lambda d: 1 / 0, period=0.0)
+
+    def test_main_waits_for_tools_instead_of_failing(self):
+        tmp = Path(self.tmp.name)
+        dota = tmp / "dota 2 beta"
+        (dota / "game" / "bin" / "win64").mkdir(parents=True)
+        (dota / "game" / "bin" / "win64" / "dota2.exe").write_bytes(b"")
+        box = FakeNtfy()
+        patches = [mock.patch.object(P, "GAME_PORT", 0), mock.patch.object(P, "CONSOLE_PORT", 0),
+                   mock.patch.object(P, "PROJECT", tmp), mock.patch.object(P, "already_running", lambda: False),
+                   mock.patch.object(P, "load_keys", lambda teams, new=False: {"dire": "k" * 22}),
+                   mock.patch.object(P, "reveal", lambda path: None), mock.patch.object(P, "LOGS", tmp / "logs"),
+                   mock.patch.object(P, "find_dota", lambda *a, **k: dota),
+                   mock.patch.object(P, "install_custom_game", lambda d: "Установлена"),
+                   mock.patch.object(P, "launch_dota", mock.Mock(side_effect=AssertionError("рано")))]
+        for x in patches:
+            x.start()
+            self.addCleanup(x.stop)
+        try:
+            self.assertEqual(P.main(["--rules", "--no-tunnel", "--rv", box.base], enter=lambda p: ""), 0)
+        finally:
+            box.close()
+        text = "\n".join(self.out)
+        self.assertIn("Внимание: нет дополнения Dota 2 Workshop Tools", text)      # совет — уже на шаге [2/6]
+        self.assertIn("Жду дополнение Workshop Tools", text)
+        self.assertNotIn("запустите ИГРАТЬ.bat снова", text)
 
     def test_cloudflared_found_downloaded_and_checked(self):
         self.assertEqual(P.ensure_cloudflared(which=lambda n: "/usr/bin/cloudflared"), "/usr/bin/cloudflared")
@@ -616,7 +650,7 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.bind(make, 8787, "серверу", wait=lambda s: None, ours=lambda: False), "server")
         self.assertIsNone(P.bind(lambda: (_ for _ in ()).throw(OSError("busy")), 8787, "серверу",
                                  wait=lambda s: None, ours=lambda: True))
-        self.assertIn("уже запущена", self.out[-1])                            # второе окно — не «чужая программа»
+        self.assertTrue(any("уже запущена" in x for x in self.out[-2:]))         # второе окно — не «чужая программа»
         self.assertIsNone(P.bind(lambda: (_ for _ in ()).throw(OSError("busy")), 8788, "пульту",
                                  tries=3, wait=lambda s: None))
         self.assertIn("занят другой программой", self.out[-1])
@@ -690,7 +724,7 @@ class Launcher(unittest.TestCase):
         with mock.patch.object(P, "already_running", lambda: True):
             self.out.clear()
             self.assertEqual(P.main(["--rules"]), 1)
-            self.assertIn("уже запущена", self.out[-1])
+            self.assertTrue(any("уже запущена" in x for x in self.out[-2:]))
 
 
 class Updater(unittest.TestCase):

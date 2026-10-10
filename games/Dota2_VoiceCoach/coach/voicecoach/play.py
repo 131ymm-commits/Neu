@@ -50,7 +50,8 @@ GAME_PORT, CONSOLE_PORT = 8787, 8788          # 8787 — адрес, котор�
 HEALTH = f"http://127.0.0.1:{GAME_PORT}/api/health"
 REMOTE = "dire"                                # хост в Доте — тренер Света, друг — Тьмы
 MAX_CALLS = 3000                               # платных вызовов на сторону (ключ API): ≈ 30–40 минут игры
-SUB_MAX_CALLS = 1000                           # по подписке: вызовов на сторону за запуск (лимиты подписки не опубликованы)
+SUB_MAX_CALLS = 300                            # по подписке: вызовов на сторону за запуск (≈ 15–20 минут Claude): игра не
+                                               # должна съесть недельный лимит автора (лимиты подписки не опубликованы)
 # по подписке герои думают реже: каждый вызов — процесс Claude Code на ПК хоста, и всё идёт из лимитов подписки
 # (замер на модели игры: при 6–11 с на вызов 6 вызовов сразу дают каждому из 10 героев решение раз в 15–22 с;
 # игра держит решение period + 15 = 30 с — запасной исполнитель не перехватывает героев между решениями)
@@ -64,7 +65,6 @@ MODELS_API = "https://api.anthropic.com/v1/models"
 FAST_LINE = "haiku"                            # линия самых быстрых моделей: ищется в имени (id) модели из списка
 CLOUDFLARED_URL = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe"
 DETACHED = 0x00000008 | 0x00000200            # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP: Дота живёт без окна
-OFFER_S = 3.0                                  # с: сколько ждать нажатия «сменить ключ» при запуске
 LOCAL = urllib.request.build_opener(urllib.request.ProxyHandler({})).open   # свой ПК — мимо прокси системы
 
 
@@ -78,30 +78,6 @@ def _ask(ask, prompt: str) -> str | None:
         return (ask(prompt) or "").strip()
     except (EOFError, KeyboardInterrupt):
         return None
-
-
-def offer(text: str, seconds: float = OFFER_S) -> bool:
-    """Предложить действие одной клавишей: нажата ли любая клавиша за seconds секунд. Только окно Windows; иначе — нет.
-    Раскладка не важна (любая клавиша), нажатое раньше не считается."""
-    if os.name != "nt":
-        return False
-    try:
-        import msvcrt  # noqa: PLC0415 — есть только на Windows
-        if not sys.stdin.isatty():
-            return False
-        flush_input()
-        say(text)
-        end = time.monotonic() + seconds
-        while time.monotonic() < end:
-            if msvcrt.kbhit():
-                if msvcrt.getwch() in ("\x00", "\xe0"):      # стрелки и F-клавиши приходят двумя кодами
-                    msvcrt.getwch()
-                flush_input()                                # хвост нажатия не приклеится к ключу
-                return True
-            time.sleep(0.05)
-    except Exception:                                   # noqa: BLE001 — меню не должно ронять запуск
-        return False
-    return False
 
 
 def flush_input() -> None:
@@ -241,8 +217,8 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
     if keep:
         say("  Оставить как было — просто Enter. Выключить Claude (агенты на правилах, бесплатно) — 0 и Enter.")
     else:
-        say("  Ключа пока нет — просто Enter: в этот раз сыграют правила, ключ спрошу при следующем запуске.")
-        say("  Без Claude насовсем — 0 и Enter (вернуть можно при запуске).")
+        say("  Ключа пока нет — просто Enter: в этот раз сыграют правила.")
+        say("  Без Claude по ключу — 0 и Enter.")
     for _ in range(3):
         key = _ask(ask, "  ключ> ")
         if key is None or (not key and keep):
@@ -291,7 +267,7 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
 
 
 def setup_claude(cfg: dict, args, ask=None, opener=urllib.request.urlopen,
-                 offer=offer, probe=probe_key) -> tuple[str | None, str | None]:
+                 probe=probe_key) -> tuple[str | None, str | None]:
     """Ключ и модель для агентов. → (ключ, модель) или (None, None) — играть на правилах."""
     ask = ask or getpass.getpass
     if args.rules:
@@ -299,11 +275,10 @@ def setup_claude(cfg: dict, args, ask=None, opener=urllib.request.urlopen,
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
         key = cfg.get("api_key")
-        if key is None or args.ask_key:
+        if key is None:
             return ask_key(cfg, ask, opener, probe=probe)
-        shown = f"ключ {mask(key)}" if key else "выключен — агенты на правилах"   # решение уже есть: дать сменить
-        if offer(f"  Claude: {shown}. Сменить ключ — нажмите любую клавишу в ближайшие {OFFER_S:.0f} секунды…"):
-            got = ask_key(cfg, ask, opener, keep=True, probe=probe)
+        if args.ask_key:                                 # сменить ключ (Enter — оставить как было)
+            got = ask_key(cfg, ask, opener, keep=bool(key), probe=probe)
             if got is not None:
                 return got
             say("  Оставляю как было.")
@@ -445,6 +420,11 @@ def _setup_subscription(find, install, auth, login, check) -> str | None:
         say("  Внимание: Claude Code вошёл ключом API, а не подпиской — вызовы пойдут в оплату по ключу.")
     say("  Проверяю Claude Code пробным вопросом…")
     ok, why = check(exe)
+    if not ok and why.startswith("не запустился"):     # битый файл (прервали установку) — поставить заново один раз
+        say(f"  Claude Code не запускается ({why}) — ставлю заново…")
+        install()
+        exe = find() or exe
+        ok, why = check(exe)
     if ok:
         return exe
     say(f"  Claude Code не ответил: {why}")
@@ -459,11 +439,10 @@ def setup_agents(cfg: dict, args, ask_secret=None, opener=urllib.request.urlopen
     если у подписки появится кредит на API). → ("sub", путь к claude) | ("key", (ключ, модель)) | ("off", None)."""
     if args.rules:
         return "off", None
-    if args.api:
+    if args.api or args.ask_key:
         if cfg.get("api_key") == "":                       # прежнее «без Claude» — раз просят ключ, спросить
             cfg.pop("api_key")
-        key, model = setup_claude(cfg, args, ask_secret or getpass.getpass, opener, offer=lambda t: False,
-                                  probe=probe)
+        key, model = setup_claude(cfg, args, ask_secret or getpass.getpass, opener, probe=probe)
         return ("key", (key, model)) if key else ("off", None)
     exe = subscription()
     return ("sub", exe) if exe else ("off", None)
@@ -597,11 +576,13 @@ def has_tools(dota: Path) -> bool:
     return (dota / "game" / "bin" / "win64" / "resourcecompiler.exe").exists()
 
 
+TOOLS_HOW = ("Steam → Библиотека → правый щелчок по Dota 2 → Свойства → Дополнительный контент (DLC) → отметьте "
+             "«Dota 2 Workshop Tools DLC»")
+TOOLS_MANUAL = ("Если дополнение точно стоит — запустите Доту сами (Steam → Dota 2 → «Launch Dota 2 - Tools») и в её "
+                f"консоли:  dota_launch_custom_game {ADDON} dota")
 TOOLS_HELP = ("Нет бесплатного дополнения Dota 2 Workshop Tools — без него Дота с кастомкой не запускается (Steam пишет "
-              "«файл игры отсутствует или повреждён»). Поставьте его: Steam → Библиотека → правый щелчок по Dota 2 → "
-              "Свойства → Дополнительный контент (DLC) → отметьте «Dota 2 Workshop Tools DLC» и дождитесь загрузки. "
-              "Потом запустите ИГРАТЬ.bat снова. Если оно точно стоит — запустите Доту сами (Steam → Dota 2 → "
-              f"«Launch Dota 2 - Tools») и в её консоли:  dota_launch_custom_game {ADDON} dota")
+              "«файл игры отсутствует или повреждён»). Поставьте его: " + TOOLS_HOW + " — и дождитесь загрузки. "
+              + TOOLS_MANUAL)
 
 
 def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.sleep) -> str:
@@ -631,7 +612,23 @@ def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.
         popen(dota_argv(dota), **kw)
     except OSError as e:
         return f"Не запустил Доту: {e}. Запустите её сами и в консоли Доты:  dota_launch_custom_game {ADDON} dota"
-    return "Дота запускается с кастомкой: возьмите любого героя — вы тренер Света."
+    return ("Дота запускается с кастомкой: возьмите любого героя — вы тренер Света. Если Steam напишет «файл игры "
+            "отсутствует или повреждён» — Steam → Dota 2 → Свойства → Установленные файлы → «Проверить целостность "
+            "файлов» и проверьте галочку Workshop Tools в «Дополнительный контент».")
+
+
+def launch_when_tools(dota: Path, stop: threading.Event, has=has_tools, launch=None, period: float = 10.0,
+                      settle: float = 30.0) -> None:
+    """Steam ещё качает Workshop Tools: ждать (окно лаунчера открыто — сервер и туннель уже работают) и, как только
+    дополнение на месте, запустить Доту — без второго окна ИГРАТЬ.bat (Д15, дополнение 2)."""
+    launch = launch or launch_dota
+    while not stop.wait(period):
+        if has(dota):
+            say("  Workshop Tools на месте — через полминуты запускаю Доту (Steam доводит файлы)…")
+            if stop.wait(settle):
+                return
+            say("  " + launch(dota))
+            return
 
 
 # --- туннель ---
@@ -758,6 +755,7 @@ def bind(make, port: int, who: str, tries: int = 10, wait=time.sleep, ours=None)
         except OSError as e:
             if ours is not None and ours():
                 say("  Игра уже запущена в другом окне ИГРАТЬ.bat — переключитесь на него (второе окно не нужно).")
+                say("  Перезапустить игру: в том окне Enter два раза, потом ИГРАТЬ.bat снова.")
                 return None
             if attempt == tries - 1:
                 say(f"  Порт {port} занят другой программой ({e}) — {who} некуда встать. Закройте её или "
@@ -807,11 +805,12 @@ def parse(argv=None):
     return ap.parse_args(argv)
 
 
-def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=input) -> int:
+def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     args = parse(argv)
     say("=== Тренер Доты: игра вдвоём ===")
     if already_running():
         say("Игра уже запущена в другом окне ИГРАТЬ.bat — переключитесь на него (второе окно не нужно).")
+        say("Перезапустить игру: в том окне Enter два раза, потом ИГРАТЬ.bat снова.")
         return 1
     cfg = load_config()
     if args.new_friend or not cfg.get("secret"):
@@ -845,15 +844,19 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
         max_calls = args.max_calls or MAX_CALLS
         if args.rules:
             say("  Героев ведут правила (не Claude) — так просили (--rules).")
+        elif args.api:
+            say("  Героев ведут правила (не Claude): ключ API не готов (см. выше).")
         else:
-            say("  В этот раз героев ведут правила (не Claude). Claude Code лаунчер попробует снова при следующем запуске.")
+            say("  Героев ведут правила (не Claude).")             # почему — сказал setup_subscription
 
     say("[2/6] Кастомка в Доте")
     dota = find_dota(cfg, args, ask, prompt=not args.no_dota)
     if dota:
         say("  " + install_custom_game(dota))
         if not has_tools(dota):
-            say("  Внимание: " + TOOLS_HELP.split(" Потом")[0] + " Пока она качается, лаунчер доделает остальное.")
+            say("  Внимание: нет дополнения Dota 2 Workshop Tools — без него Дота с кастомкой не запустится.")
+            say("  Поставьте его сейчас: " + TOOLS_HOW + ".")
+            say("  Пока оно качается, лаунчер доделает остальное, а Доту запустит, когда дополнение будет готово.")
     elif args.no_dota:
         say("  Доту не нашёл (запуск Доты выключен).")
     else:
@@ -928,7 +931,12 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
         say("  Друг уже получал этот файл — пусть просто откроет его.")
 
     say("[6/6] Дота")
-    if dota and not args.no_dota:
+    stop = threading.Event()
+    if dota and not args.no_dota and not has_tools(dota):
+        say("  Жду дополнение Workshop Tools: не закрывайте это окно — как только Steam его докачает, Дота запустится")
+        say("  сама. " + TOOLS_MANUAL)
+        threading.Thread(target=launch_when_tools, args=(dota, stop), daemon=True, name="tools").start()
+    elif dota and not args.no_dota:
         say("  " + launch_dota(dota))
     else:
         say(f"  Запустите Доту с инструментами и в её консоли:  dota_launch_custom_game {ADDON} dota")
@@ -936,7 +944,6 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
     say("")
     say("Окно не закрывайте, пока играете. Закончить игру — Enter два раза.")
     flush_input()                                                 # Enter, нажатый раньше, игру не закончит
-    stop = threading.Event()
     threading.Thread(target=wait_enter, args=(stop, enter), daemon=True, name="enter").start()
     try:
         watch(room, stop=stop.is_set, sleep=stop.wait)
