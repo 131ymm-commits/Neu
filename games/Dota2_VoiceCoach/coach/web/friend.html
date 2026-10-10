@@ -53,6 +53,7 @@
              spellcheck="false">
       <button id="go" type="button">Открыть</button>
     </div>
+    <div id="err" class="bad"></div>
   </div>
 </main>
 <script>
@@ -106,10 +107,10 @@ async function look() {
   setTimeout(look, EVERY);
 }
 
-$('go').addEventListener('click', () => {
+$('go').addEventListener('click', () => {      // ошибка ввода — своей строкой: проверка ящика её не затирает
   const url = Rendezvous.pultUrl($('link').value);
+  $('err').textContent = url ? '' : 'Это не ссылка на пульт: она выглядит как https://….trycloudflare.com/c/…/';
   if (url) openPult(url);
-  else $('why').textContent = 'Это не ссылка на пульт: она выглядит как https://….trycloudflare.com/c/…/';
 });
 $('link').addEventListener('keydown', ev => { if (ev.key === 'Enter') $('go').click(); });
 look();

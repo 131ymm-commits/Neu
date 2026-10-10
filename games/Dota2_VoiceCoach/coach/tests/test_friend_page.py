@@ -166,7 +166,8 @@ class FriendPage(unittest.TestCase):
                              "https://a-b.trycloudflare.com/c/K/")              # хвост из адресной строки — мимо
             page.fill("#link", "javascript:alert(1)")
             page.click("#go")
-            self.assertIn("не ссылка на пульт", page.inner_text("#why"))
+            page.wait_for_timeout(500)                                         # ящик проверен ещё пару раз
+            self.assertIn("не ссылка на пульт", page.inner_text("#err"))       # и сообщение не затёрто
             self.assertTrue(page.url.startswith("file://"))
             page.fill("#link", url.rstrip("/"))
             page.click("#go")

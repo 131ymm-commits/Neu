@@ -3,12 +3,10 @@
 файл все остальное делаеш ты».
 
 Хост запускает ИГРАТЬ.bat — он находит или скачивает Python, обновляет файлы игры и запускает этот лаунчер:
-  1. как думать героям — спрашивает один раз и запоминает (coach/logs/play.json, вне git), решение Д15:
-     Claude по ключу API — по умолчанию: у подписки Max кредит на API входит в тариф (лаунчер открывает страницы,
-     где его привязать и создать ключ; модель — самая новая из линии быстрых по списку моделей ключа); Claude через
-     вход подпиской в Claude Code (лаунчер ставит Claude Code и запускает вход; из общих лимитов подписки, герои
-     думают реже) или правила (бесплатно, не Claude); сменить можно при каждом запуске — нажать любую клавишу,
-     пока лаунчер это предлагает;
+  1. Claude для героев — через вход подпиской в Claude Code (решение Д15 с дополнением автора 10.10.2026: «всегда
+     будет 2», без меню): лаунчер ставит Claude Code и запускает вход по подписке; из общих лимитов подписки, герои
+     думают реже, чем по ключу; не вышло — в этот раз правила. --rules — правила (бесплатно, не Claude);
+     --api — ключ API (если у подписки появится кредит на API; модель — самая новая из линии быстрых);
   2. ставит кастомку в Доту (папку Доты ищет сам, не нашёл — спрашивает);
   3. скачивает cloudflared (туннель Cloudflare) в .runtime/ — один раз;
   4. запускает сервер тренера, пульт Тьмы и туннель; ссылку на пульт кладёт в ящик (rendezvous.py) и копирует;
@@ -418,15 +416,16 @@ def setup_subscription(find=find_claude, install=install_claude, auth=claude_aut
         return _setup_subscription(find, install, auth, login, check)
     except KeyboardInterrupt:
         say("")
-        say("  Пропускаю Claude Code — в этот раз героев ведут правила.")
+        say("  Пропускаю Claude Code — в этот раз героев ведут правила; поставлю при следующем запуске.")
         return None
 
 
 def _setup_subscription(find, install, auth, login, check) -> str | None:
     exe = find()
     if exe is None:
-        say("  Ставлю Claude Code — официальную программу Anthropic, она входит в подписку. Один раз, 1–2 минуты")
-        say("  (пропустить — Ctrl+C)…")
+        say("  Игре нужен Claude Code для командной строки — отдельная маленькая программа Anthropic, входит в")
+        say("  подписку. Приложение Claude её не заменяет: игра сама запускает Claude Code на каждый ход героя.")
+        say("  Ставлю один раз, 1–2 минуты — не прерывайте (Ctrl+C — пропустить, тогда в этот раз правила)…")
         install()
         exe = find()
         if exe is None:
@@ -453,81 +452,18 @@ def _setup_subscription(find, install, auth, login, check) -> str | None:
     return None
 
 
-def choose_mode(ask=None, change: bool = False) -> str | None:
-    """Как думать героям. → "key" | "sub" | "off" или None (ничего не выбрали: Ctrl+C, окно без ввода, а при смене —
-    Enter «оставить как было»). Решение Д15: по умолчанию — ключ API из кредита, который входит в подписку Max
-    (путь, который Anthropic прямо разрешает для программ); вход подпиской в Claude Code — второй, с предупреждением."""
-    ask = ask or input
-    flush_input()
-    say("  Как будут думать герои?")
-    if change:
-        say("    Enter — оставить как было")
-    first = "Enter" if not change else "1    "
-    say(f"    {first} — Claude по ключу API (советую). В подписку Max входит кредит на API: $100 (Max 5x) или $200")
-    say("            (Max 20x) в месяц — по расчёту около 30 матчей на $100. Доплат нет, если не покупать кредиты и не")
-    say("            включать автопополнение в Console: кредит кончится — герои доиграют месяц на правилах.")
-    say("    2     — Claude через вход подпиской в Claude Code: из общих лимитов вашей подписки, вместе с вашим Claude")
-    say("            (доплат нет, если на claude.ai не включены Usage credits). Anthropic рассчитывает этот вход на")
-    say("            обычное личное использование, а 10 агентов — нагрузка куда больше.")
-    say("    0     — без Claude: простые правила, бесплатно.")
-    options = {"1": "key", "2": "sub", "0": "off"}
-    options[""] = None if change else "key"
-    for _ in range(3):
-        a = _ask(ask, "  выбор> ")
-        if a is None:
-            return None
-        a = a.strip()
-        if a in options:
-            return options[a]
-        say("  Не понял: " + ("Enter, 1, 2 или 0." if change else "Enter, 2 или 0."))
-    return None
-
-
-def describe_mode(cfg: dict, mode: str) -> str:
-    return {"sub": "Claude через вход подпиской в Claude Code",
-            "key": f"Claude по ключу API {mask(cfg['api_key'])}" if cfg.get("api_key") else
-                   "Claude по ключу API (ключа пока нет)",
-            "off": "без Claude — правила"}.get(mode, mode)
-
-
-def setup_agents(cfg: dict, args, ask=None, ask_secret=None, opener=urllib.request.urlopen,
-                 offer=offer, subscription=setup_subscription, probe=probe_key):
-    """Мотор героев. → ("sub", путь к claude) | ("key", (ключ, модель)) | ("off", None).
-    Выбор запоминается; при каждом запуске его можно сменить одной клавишей."""
-    ask, ask_secret = ask or input, ask_secret or getpass.getpass
+def setup_agents(cfg: dict, args, ask_secret=None, opener=urllib.request.urlopen, subscription=setup_subscription,
+                 probe=probe_key):
+    """Мотор героев. Слова автора, 10.10.2026: «Не нужно меню с выбиранием системы использования, всегда будет 2».
+    Поэтому всегда — Claude через вход подпиской в Claude Code; --rules — правила; --api — ключ API (на будущее:
+    если у подписки появится кредит на API). → ("sub", путь к claude) | ("key", (ключ, модель)) | ("off", None)."""
     if args.rules:
         return "off", None
-    if os.environ.get("ANTHROPIC_API_KEY"):                  # ключ в окружении — выбор сделан явно
-        key, model = setup_claude(cfg, args, ask_secret, opener, offer=lambda t: False, probe=probe)
-        return ("key", (key, model)) if key else ("off", None)
-    mode = cfg.get("mode") or ("key" if cfg.get("api_key") else None)    # прежний play.json без mode — меню Д15
-    rekey = False
-    if mode is None or args.ask_key:
-        mode = choose_mode(ask)
-        if mode is None:
-            say("  Ничего не выбрали — в этот раз правила, спрошу при следующем запуске.")
-            return "off", None
-    elif offer(f"  Герои: {describe_mode(cfg, mode)}. Сменить — нажмите любую клавишу в ближайшие {OFFER_S:.0f} секунды…"):
-        new = choose_mode(ask, change=True)
-        if new is None:
-            say("  Оставляю как было.")
-        else:
-            rekey = new == "key"
-            mode = new
-    if mode != cfg.get("mode"):
-        cfg["mode"] = mode
-        save_config(cfg)
-    if mode == "off":
-        return "off", None
-    if mode == "key" and cfg.get("api_key") == "":            # раньше выбрали «без Claude» — теперь спросить ключ
-        cfg.pop("api_key")
-        save_config(cfg)
-    if mode == "key":
-        key, model = setup_claude(cfg, args, ask_secret, opener, offer=lambda t: rekey and bool(cfg.get("api_key")),
+    if args.api:
+        if cfg.get("api_key") == "":                       # прежнее «без Claude» — раз просят ключ, спросить
+            cfg.pop("api_key")
+        key, model = setup_claude(cfg, args, ask_secret or getpass.getpass, opener, offer=lambda t: False,
                                   probe=probe)
-        if not key and cfg.get("api_key") == "":             # выбрали «без Claude» на вопросе о ключе
-            cfg["mode"] = "off"
-            save_config(cfg)
         return ("key", (key, model)) if key else ("off", None)
     exe = subscription()
     return ("sub", exe) if exe else ("off", None)
@@ -656,6 +592,18 @@ def install_custom_game(dota: Path, running=_running) -> str:
         return f"Не установил: {e}"
 
 
+def has_tools(dota: Path) -> bool:
+    """Стоит ли бесплатное дополнение Dota 2 Workshop Tools: его программы лежат рядом с dota2.exe."""
+    return (dota / "game" / "bin" / "win64" / "resourcecompiler.exe").exists()
+
+
+TOOLS_HELP = ("Нет бесплатного дополнения Dota 2 Workshop Tools — без него Дота с кастомкой не запускается (Steam пишет "
+              "«файл игры отсутствует или повреждён»). Поставьте его: Steam → Библиотека → правый щелчок по Dota 2 → "
+              "Свойства → Дополнительный контент (DLC) → отметьте «Dota 2 Workshop Tools DLC» и дождитесь загрузки. "
+              "Потом запустите ИГРАТЬ.bat снова. Если оно точно стоит — запустите Доту сами (Steam → Dota 2 → "
+              f"«Launch Dota 2 - Tools») и в её консоли:  dota_launch_custom_game {ADDON} dota")
+
+
 def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.sleep) -> str:
     """Запустить Доту с инструментами и сразу кастомку. → что сказать хосту."""
     if running("dota2.exe"):
@@ -664,6 +612,8 @@ def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.
     win64 = dota / "game" / "bin" / "win64"
     if not (win64 / "dota2.exe").exists():
         return f"Не нашёл {win64 / 'dota2.exe'} — запустите Доту сами"
+    if not has_tools(dota):                          # первый живой запуск 10.10.2026: без них Steam даёт ошибку
+        return TOOLS_HELP
     if os.name == "nt" and not running("steam.exe"):
         try:
             os.startfile("steam://open/main")              # noqa: S606 — Steam нужен Доте
@@ -681,10 +631,7 @@ def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.
         popen(dota_argv(dota), **kw)
     except OSError as e:
         return f"Не запустил Доту: {e}. Запустите её сами и в консоли Доты:  dota_launch_custom_game {ADDON} dota"
-    note = "" if (win64 / "resourcecompiler.exe").exists() else (
-        " Если кастомка не откроется — поставьте бесплатное дополнение Dota 2 Workshop Tools: Steam → Dota 2 → "
-        "Свойства → DLC.")
-    return "Дота запускается с кастомкой: возьмите любого героя — вы тренер Света." + note
+    return "Дота запускается с кастомкой: возьмите любого героя — вы тренер Света."
 
 
 # --- туннель ---
@@ -846,7 +793,9 @@ def wait_enter(stop: threading.Event, ask=input, window: float = 5.0, clock=time
 def parse(argv=None):
     ap = argparse.ArgumentParser(description="Тренер Доты: игра вдвоём одним файлом (ИГРАТЬ.bat)")
     ap.add_argument("--rules", action="store_true", help="агенты на правилах (без Claude, бесплатно)")
-    ap.add_argument("--ask-key", action="store_true", help="спросить заново, как думать героям (подписка, ключ, правила)")
+    ap.add_argument("--api", action="store_true",
+                    help="Claude по ключу API вместо входа подпиской (если у подписки есть кредит на API)")
+    ap.add_argument("--ask-key", action="store_true", help="с --api: спросить ключ заново")
     ap.add_argument("--max-calls", type=int, default=None,
                     help=f"предел вызовов Claude на сторону (по ключу API — {MAX_CALLS}, по подписке — {SUB_MAX_CALLS})")
     ap.add_argument("--dota", help="папка «dota 2 beta», если не нашлась сама")
@@ -872,8 +821,8 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
 
     say("[1/6] Агенты героев")
     try:
-        mode, info = setup_agents(cfg, args, ask, ask_secret, offer=offer)
-    except KeyboardInterrupt:                                     # Ctrl+C на проверке ключа (сеть медленная)
+        mode, info = setup_agents(cfg, args, ask_secret)
+    except KeyboardInterrupt:                                     # Ctrl+C на проверке (сеть медленная)
         say("")
         mode, info = "off", None
     pace = {}
@@ -884,7 +833,7 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
         say("  Героев ведёт Claude через вход подпиской (Claude Code, быстрая модель): из общих лимитов подписки.")
         say(f"  Думают реже, чем по ключу API (раз в {SUB_PACE['period']:.0f}–20 с и по событию), предел {max_calls} вызовов"
             " на сторону.")
-        say("  Кончится лимит подписки — герои доиграют на правилах.")
+        say("  Кончится лимит подписки — герои доиграют на правилах. Остаток лимитов — в приложении Claude: Settings → Usage.")
     elif mode == "key":
         key, model = info
         backend = ApiBackend(model, api_key=key)        # ключ — только агентам, не в окружение Доты и cloudflared
@@ -894,16 +843,17 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, offer=offer, enter=in
     else:
         backend = make_backend("rules")
         max_calls = args.max_calls or MAX_CALLS
-        if args.rules or cfg.get("mode") == "off":
-            say("  Героев ведут правила (не Claude). Подключить Claude: при следующем запуске нажмите любую клавишу,")
-            say("  когда лаунчер предложит сменить.")
+        if args.rules:
+            say("  Героев ведут правила (не Claude) — так просили (--rules).")
         else:
-            say("  В этот раз героев ведут правила (не Claude); Claude — как только всё будет готово, лаунчер спросит сам.")
+            say("  В этот раз героев ведут правила (не Claude). Claude Code лаунчер попробует снова при следующем запуске.")
 
     say("[2/6] Кастомка в Доте")
     dota = find_dota(cfg, args, ask, prompt=not args.no_dota)
     if dota:
         say("  " + install_custom_game(dota))
+        if not has_tools(dota):
+            say("  Внимание: " + TOOLS_HELP.split(" Потом")[0] + " Пока она качается, лаунчер доделает остальное.")
     elif args.no_dota:
         say("  Доту не нашёл (запуск Доты выключен).")
     else:

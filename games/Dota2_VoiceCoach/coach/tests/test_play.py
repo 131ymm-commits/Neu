@@ -297,79 +297,21 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "", opener=ok,
                                         offer=lambda t: True), (None, None))
 
-    def test_no_trap_from_rules_back_to_key(self):
-        """Рецензия 3 (блокер): после «без Claude» вернуться к ключу из меню было нельзя — ключ не спрашивался."""
-        ok = opener_for({P.MODELS_API: self.MODELS})
-        for old_cfg in ({"mode": "off", "api_key": ""}, {"api_key": ""}):          # новый и прежний play.json
-            P.save_config(dict(old_cfg))
-            asked = []
-            got = P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "1",
-                                 ask_secret=lambda p: asked.append(p) or "sk-back-key-0123456789", opener=ok,
-                                 offer=lambda t: True)
-            self.assertEqual(got, ("key", ("sk-back-key-0123456789", self.NEW)), old_cfg)
-            self.assertEqual(len(asked), 1)                                    # ключ спрошен
-            self.assertEqual(P.load_config(self.cfg_path)["mode"], "key")
-        # в меню смены Enter — оставить как было
-        P.save_config({"mode": "off", "api_key": ""})
-        self.assertEqual(P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "",
-                                        offer=lambda t: True), ("off", None))
-        self.assertEqual(P.load_config(self.cfg_path)["mode"], "off")
-
-    def test_choose_mode(self):
-        def answers(*a):
-            it = iter(a)
-            return lambda p: next(it)
-        self.assertEqual(P.choose_mode(answers("")), "key")                 # Enter — ключ API (кредит Max)
-        self.assertEqual(P.choose_mode(answers("2")), "sub")                # вход подпиской в Claude Code
-        self.assertEqual(P.choose_mode(answers("x", " 0 ")), "off")          # непонятное — спросить ещё раз
-        self.assertIsNone(P.choose_mode(lambda p: (_ for _ in ()).throw(EOFError())))
-        self.assertIsNone(P.choose_mode(answers(""), change=True))           # смена: Enter — как было
-        self.assertEqual(P.choose_mode(answers("1"), change=True), "key")
-        text = "\n".join(self.out)
-        self.assertIn("$100 (Max 5x)", text)                                 # без доплат — сказано прямо
-        self.assertIn("автопополнение", text)                                 # и при каком условии
-        self.assertIn("обычное личное использование", text)                 # и чем рискует вход подпиской
-
-    def test_modes_chosen_once_and_changed_by_key(self):
-        """Слова автора 09.10.2026: «у меня есть подписка макс … давай в рамках тарифного плана» (Д15)."""
-        never = lambda p: 1 / 0                                               # noqa: E731 — спрашивать нельзя
-        ok = opener_for({P.MODELS_API: self.MODELS})
-        # первый запуск: Enter — ключ API; лаунчер открывает страницы кредита и ключей
-        got = P.setup_agents({}, P.parse([]), ask=lambda p: "", ask_secret=lambda p: "sk-test-key-0123456789",
-                             opener=ok, offer=lambda t: False)
-        self.assertEqual(got, ("key", ("sk-test-key-0123456789", self.NEW)))
-        self.assertEqual(self.pages, [P.CREDITS_PAGE, P.KEYS_PAGE])
-        self.assertEqual(P.load_config(self.cfg_path)["mode"], "key")
-        # следующий запуск: не спрашивает и страниц не открывает
-        self.pages.clear()
-        self.assertEqual(P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=never, opener=ok,
-                                        offer=lambda t: False)[0], "key")
-        self.assertEqual(self.pages, [])
-        # сменил на вход подпиской клавишей при запуске
+    def test_always_subscription_no_menu(self):
+        """Слова автора 10.10.2026: «Не нужно меню с выбиранием системы использования, всегда будет 2»."""
         sub = mock.Mock(return_value="C:/Users/u/.local/bin/claude.exe")
-        self.assertEqual(P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "2",
-                                        offer=lambda t: True, subscription=sub),
-                         ("sub", "C:/Users/u/.local/bin/claude.exe"))
-        self.assertEqual(P.load_config(self.cfg_path)["mode"], "sub")
-        # Claude Code не готов — в этот раз правила, выбор не теряется
-        self.assertEqual(P.setup_agents(P.load_config(self.cfg_path), P.parse([]), ask=never, offer=lambda t: False,
-                                        subscription=lambda: None), ("off", None))
-        self.assertEqual(P.load_config(self.cfg_path)["mode"], "sub")
-        # прежняя настройка без «mode», но с ключом — режим ключа, без вопроса
-        self.cfg_path.unlink()
-        self.assertEqual(P.setup_agents({"api_key": "sk-old-key-0123456789", "model": self.NEW}, P.parse([]),
-                                        ask=never, opener=ok, offer=lambda t: False)[0], "key")
-        # «0» — правила; --rules — без вопросов; на вопросе о ключе Enter — тоже правила, и это запоминается
-        self.assertEqual(P.setup_agents({}, P.parse([]), ask=lambda p: "0", offer=lambda t: False), ("off", None))
-        self.assertEqual(P.setup_agents({}, P.parse(["--rules"]), ask=never), ("off", None))
-        cfg = {}
-        self.assertEqual(P.setup_agents(cfg, P.parse([]), ask=lambda p: "", ask_secret=lambda p: "",
-                                        offer=lambda t: False), ("off", None))
-        self.assertEqual(P.load_config(self.cfg_path)["mode"], "key")          # ключа пока нет — спросит снова
-        self.assertNotIn("api_key", P.load_config(self.cfg_path))
-        self.assertEqual(P.setup_agents({}, P.parse([]), ask=lambda p: "", ask_secret=lambda p: "0",
-                                        offer=lambda t: False), ("off", None))
-        self.assertEqual(P.load_config(self.cfg_path)["mode"], "off")           # «0» — без Claude насовсем
+        self.assertEqual(P.setup_agents({}, P.parse([]), subscription=sub), ("sub", "C:/Users/u/.local/bin/claude.exe"))
+        sub.assert_called_once()
+        self.assertEqual(self.pages, [])                                        # никаких страниц и вопросов
+        self.assertEqual(P.setup_agents({"mode": "key", "api_key": "sk-old-key-0123456789"}, P.parse([]),
+                                        subscription=sub)[0], "sub")            # прежний выбор ключа — тоже подписка
+        self.assertEqual(P.setup_agents({}, P.parse([]), subscription=lambda: None), ("off", None))   # не готов
+        self.assertEqual(P.setup_agents({}, P.parse(["--rules"]), subscription=sub), ("off", None))
+        # --api — ключ API (на будущее); прежнее «без Claude» ключ не блокирует
+        ok = opener_for({P.MODELS_API: self.MODELS})
+        self.assertEqual(P.setup_agents({"api_key": ""}, P.parse(["--api"]),
+                                        ask_secret=lambda p: "sk-api-key-0123456789", opener=ok, subscription=sub),
+                         ("key", ("sk-api-key-0123456789", self.NEW)))
 
     def test_subscription_setup_installs_and_logs_in(self):
         found = iter([None, "/x/claude"])
@@ -440,13 +382,6 @@ class Launcher(unittest.TestCase):
         empty.mkdir()
         self.assertEqual(P.find_claude(which=lambda n: "/usr/bin/claude", home=empty), "/usr/bin/claude")
         self.assertIsNone(P.find_claude(which=lambda n: r"C:\npm\claude.CMD", home=empty))   # обёртка npm — нет
-
-    def test_old_config_without_mode_sees_menu(self):
-        """Рецензия 4: прежний play.json {"api_key": ""} (Enter на старом вопросе о ключе) — меню Д15 один раз."""
-        asked = []
-        P.setup_agents({"api_key": ""}, P.parse([]), ask=lambda p: asked.append(p) or "0", offer=lambda t: False)
-        self.assertEqual(len(asked), 1)
-        self.assertEqual(P.load_config(self.cfg_path)["mode"], "off")
 
     def test_cyrillic_is_not_saved_as_key(self):
         """Рецензия 4: «нет» на вопросе о ключе сохранялось как ключ и давало «нет связи» на каждом запуске."""
@@ -531,9 +466,14 @@ class Launcher(unittest.TestCase):
         started = []
         msg = P.launch_dota(dota, popen=lambda a, **kw: started.append((a, kw)), running=lambda name: False,
                             wait=lambda s: None)
+        self.assertEqual(started, [])                  # первый живой запуск: без Workshop Tools Steam даёт ошибку —
+        self.assertIn("Dota 2 Workshop Tools DLC", msg)  # Доту не запускаем, а говорим, что поставить
+        (win64 / "resourcecompiler.exe").write_bytes(b"")
+        msg = P.launch_dota(dota, popen=lambda a, **kw: started.append((a, kw)), running=lambda name: False,
+                            wait=lambda s: None)
         self.assertEqual(started[0][0], argv)
         self.assertEqual(started[0][1]["cwd"], str(win64))
-        self.assertIn("Workshop Tools", msg)                                     # подсказка: инструментов не видно
+        self.assertIn("вы тренер Света", msg)
         started.clear()
         msg = P.launch_dota(dota, popen=lambda a, **kw: started.append(a), running=lambda name: name == "dota2.exe")
         self.assertEqual(started, [])
