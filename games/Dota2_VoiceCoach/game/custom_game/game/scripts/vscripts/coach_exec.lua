@@ -437,9 +437,13 @@ local function farm_order(st, ag, world, lane)
     return { kind = "hold", why = tag .. ": стою у своего" }
   end
   local enemies = world.lane_creeps(hero, X.FARM_NEAR, true)
-  if #enemies == 0 then
-    local p = world.lane_mid(team, lane)
-    if world.dist(my, p) > 300 then return { kind = "move", point = p, why = tag .. ": иду к волне" } end
+  if #enemies == 0 then                         -- вражеских крипов рядом нет: к своей волне, без неё — к середине линии
+    local front = world.wave_front(team, lane)
+    local base = world.lane_front(team, lane)
+    local p = front and world.clear(toward(front, base, 250), base) or world.lane_mid(team, lane)
+    if world.dist(my, p) > 300 then
+      return { kind = "move", point = p, why = tag .. (front and ": иду к своей волне" or ": иду к линии") }
+    end
     return { kind = "hold", why = tag .. ": жду волну" }
   end
   local range = world.attack_range(hero)

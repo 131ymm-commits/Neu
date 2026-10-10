@@ -1371,6 +1371,23 @@ class LaneMiddle(Game):
         axe = self.unit_orders(self.by_name("axe"), n0)[-1]           # Axe (3) — на сложной линии Света (верх)
         self.assertEqual(self.xy(axe), (-6200, 4650))
 
+    def test_farm_follows_own_wave(self):
+        """Живой матч: на 15-й минуте 4–5 уровень — герои ждали волну в расчётной точке. Теперь — к своей волне."""
+        self.start_match()
+        sniper = self.hero(1)                                        # керри Света — бот
+        sniper["pos"] = self.L.eval("Vector(5000, -6000, 0)")
+        self.L.eval("__creep(2, 6150, -3600, 550)")                  # свои крипы на боте, дальше по линии
+        self.L.eval("__creep(2, 6200, -3000, 550)")                  # передовой
+        self.L.eval("__creep(2, 1000, -2000, 550)")                  # в лесу, далеко от линии — не в счёт
+        n0 = self.n_orders()
+        self.step(1)
+        o = self.unit_orders(sniper, n0)[-1]
+        x, y = self.xy(o)
+        self.assertEqual(o["OrderType"], ORDER["move"])
+        self.assertLess(((x - 6200) ** 2 + (y + 3000) ** 2) ** 0.5, 300)   # чуть позади передового крипа
+        _, rows = self.hud_rows()
+        self.assertIn("к своей волне", rows[0]["status"])
+
     def test_point_in_trees_moves_toward_own_tower(self):
         self.L.execute("""
           GridNav = {}

@@ -106,14 +106,53 @@ end
 -- углом вдоль края карты, и середина отрезка между вышками попадала в лес (живой матч 10.10.2026: «акс и леон
 -- застряли в деревьях»). Путь: своя вышка → угол → их вышка; угол — тот из двух вариантов, что дальше от центра
 -- карты (линии огибают карту по краю); точка в деревьях — сдвигается к своей вышке.
-function W.lane_mid(team, lane)
+-- путь линии между внешними вышками: своя → угол → их (мид — прямой)
+function W.lane_path(team, lane)
   local a, b = W.lane_front(team, lane), W.lane_enemy_front(team, lane)
-  local pts = { a, b }
-  if lane ~= "mid" then
-    local c1, c2 = Vector(a.x, b.y, 0), Vector(b.x, a.y, 0)
-    pts = { a, (c1.x * c1.x + c1.y * c1.y >= c2.x * c2.x + c2.y * c2.y) and c1 or c2, b }
+  if lane == "mid" then return { a, b } end
+  local c1, c2 = Vector(a.x, b.y, 0), Vector(b.x, a.y, 0)
+  return { a, (c1.x * c1.x + c1.y * c1.y >= c2.x * c2.x + c2.y * c2.y) and c1 or c2, b }
+end
+
+function W.lane_mid(team, lane)
+  local pts = W.lane_path(team, lane)
+  return W.clear(W.along(pts, 0.5), pts[1])
+end
+
+-- проекция точки на ломаную: расстояние до неё и пройденная до проекции длина пути
+function W.project(pts, p)
+  local best_d, best_s, s = 1e18, 0, 0
+  for i = 2, #pts do
+    local a, b = pts[i - 1], pts[i]
+    local dx, dy = b.x - a.x, b.y - a.y
+    local len2 = dx * dx + dy * dy
+    local len = math.sqrt(len2)
+    local t = len2 > 0 and math.max(0, math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / len2)) or 0
+    local qx, qy = a.x + dx * t, a.y + dy * t
+    local d = math.sqrt((p.x - qx) ^ 2 + (p.y - qy) ^ 2)
+    if d < best_d then best_d, best_s = d, s + len * t end
+    s = s + len
   end
-  return W.clear(W.along(pts, 0.5), a)
+  return best_d, best_s
+end
+
+W.WAVE_NEAR = 900       -- крип ближе к пути линии — крип этой линии
+
+-- где своя волна крипов линии: передовой свой крип на пути линии (ближе всех к их вышке). Живой матч 10.10.2026: на
+-- 15-й минуте у героев 4–5 уровень — ждали волну в расчётной точке, а волна шла в другом месте; опыт дают только
+-- крипы, умершие рядом. Нет своих крипов на пути — nil.
+function W.wave_front(team, lane)
+  local pts = W.lane_path(team, lane)
+  local units = FindUnitsInRadius(team, W.along(pts, 0.5), nil, 6000, DOTA_UNIT_TARGET_TEAM_FRIENDLY,
+    DOTA_UNIT_TARGET_BASIC, DOTA_UNIT_TARGET_FLAG_NONE, FIND_CLOSEST, false)
+  local best, best_s = nil, -1
+  for _, u in pairs(units) do
+    if u:IsAlive() and u:IsCreep() and not u:IsNeutralUnitType() then
+      local d, s = W.project(pts, u:GetAbsOrigin())
+      if d <= W.WAVE_NEAR and s > best_s then best, best_s = u, s end
+    end
+  end
+  return best and best:GetAbsOrigin() or nil
 end
 
 -- уровень внешней живой вышки на каждой линии (0 — на линии вышек не осталось)
