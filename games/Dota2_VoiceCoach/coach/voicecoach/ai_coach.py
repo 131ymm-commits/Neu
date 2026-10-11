@@ -181,7 +181,7 @@ class AICoach:
         out_of_calls = self.max_calls is not None and self.claude_calls >= self.max_calls
         if self.clock() < self.pause_until or (out_of_calls and backend is not self.fallback):
             backend = self.fallback
-        if backend is not self.fallback:
+        if not isinstance(backend, RulesCoach):      # ERRORS №103: ходы правил «вызовами Claude» не считать
             self.claude_calls += 1
         try:
             orders, why = backend.orders(view)

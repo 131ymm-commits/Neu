@@ -279,7 +279,8 @@ class Hub(unittest.TestCase):
         bad = FakeBackend(error=A.BackendError("HTTP 429: лимит", retry_after=30))
         h = A.AgentHub({"radiant": A.RulesBackend(), "dire": bad}, sync=True)
         self.assertEqual(h.progress()["radiant"], {"heroes": 0, "decisions": 0, "calls": 0, "errors": 0, "error": "",
-                                                   "pause": "", "limit": False, "max_calls": None, "model": ""})
+                                                   "pause": "", "limit": False, "max_calls": None, "model": "",
+                                                   "claude": False, "paid_calls": 0})
         h.tick({"heroes": [obs(clock=0, pos=p) for p in (1, 2)] + [obs(clock=0, pos=3, team="dire")]})
         p = h.progress()
         self.assertEqual((p["radiant"]["heroes"], p["radiant"]["decisions"], p["radiant"]["errors"]), (2, 2, 0))
@@ -296,6 +297,9 @@ class Hub(unittest.TestCase):
         p2 = h2.progress()["radiant"]
         self.assertEqual((p2["limit"], p2["max_calls"], p2["decisions"], p2["model"]), (True, 1, 1, "модель-икс"))
         self.assertFalse(h2.progress()["dire"]["limit"])                       # правила предел не тратят
+        # ERRORS №103: окно хоста знает, Claude ли ведёт сторону и сколько было вызовов
+        self.assertEqual((p2["claude"], p2["paid_calls"]), (True, 1))
+        self.assertEqual((h2.progress()["dire"]["claude"], h2.progress()["dire"]["paid_calls"]), (False, 0))
 
     def test_coach_orders_wake_at_most_every_coach_gap(self):
         """Поток приказов не множит вызовы: приказ будит агента не чаще раза в coach_gap с (остальное — в очереди)."""

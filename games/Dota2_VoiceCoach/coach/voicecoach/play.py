@@ -72,17 +72,42 @@ LOCAL = urllib.request.build_opener(urllib.request.ProxyHandler({})).open   # с
 
 
 _SAY = threading.Lock()
+_LOG = None                                            # копия окна хоста в coach\logs\launcher_*.log (ERRORS №103)
 
 
 def say(text: str = "") -> None:
     """Строка в окно хоста. Пишут несколько потоков (журнал Доты, ожидание Workshop Tools, сводка) — одной записью
     под замком, чтобы строки не склеивались (рецензия 7)."""
     out = sys.stdout
-    if out is None:                                    # без консоли (pythonw) писать некуда — как print()
-        return
     with _SAY:
+        if _LOG is not None:
+            try:
+                _LOG.write(f"{text}\n")
+            except (OSError, ValueError):
+                pass
+        if out is None:                                # без консоли (pythonw) писать некуда — как print()
+            return
         out.write(f"{text}\n")
         out.flush()
+
+
+def open_window_log(path: Path) -> Path | None:
+    """Окно хоста — ещё и в файл: по нему видно, что было на старте (шаг 1/6: Claude или правила), когда окно
+    закрыто (ERRORS №103: причину, почему героями правили правила, по снимку конца окна было не узнать)."""
+    global _LOG
+    with _SAY:
+        if _LOG is not None:
+            try:
+                _LOG.close()
+            except OSError:
+                pass
+            _LOG = None
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            _LOG = open(path, "a", encoding="utf-8", buffering=1)
+        except OSError:
+            return None
+    return path
 
 
 def _ask(ask, prompt: str) -> str | None:
@@ -1087,8 +1112,26 @@ def parse(argv=None):
     return ap.parse_args(argv)
 
 
+def rules_ok(ask) -> bool:
+    """Claude не включился: сказать крупно и спросить, играть ли на правилах (матч автора 11.10.2026 прошёл на
+    правилах, а окно писало «агенты ведут героев» — ERRORS №103). → играть ли дальше."""
+    say("")
+    say("  !!! ВНИМАНИЕ: Claude не включился — героями будут править простые правила, а не агенты Claude.")
+    say("  !!! Почему — строками выше. Исправьте и запустите ИГРАТЬ.bat снова; снимок этих строк поможет найти причину.")
+    try:
+        ask("  Enter — всё равно играть на правилах, Ctrl+C — выйти: ")
+    except EOFError:                                   # без консоли спросить нельзя — играть
+        return True
+    except KeyboardInterrupt:
+        say("")
+        say("  Выхожу. Запустите ИГРАТЬ.bat снова, когда Claude Code будет готов.")
+        return False
+    return True
+
+
 def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     args = parse(argv)
+    open_window_log(LOGS / f"launcher_{time.strftime('%Y%m%d_%H%M%S')}.log")
     say("=== Тренер Доты: игра вдвоём ===")
     if already_running():
         say("Игра уже запущена в другом окне ИГРАТЬ.bat — переключитесь на него (второе окно не нужно).")
@@ -1130,6 +1173,8 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
             say("  Героев ведут правила (не Claude): ключ API не готов (см. выше).")
         else:
             say("  Героев ведут правила (не Claude).")             # почему — сказал setup_subscription
+        if not args.rules and not rules_ok(ask):                   # ERRORS №103: без Claude — не молча
+            return 1
 
     say("[2/6] Кастомка в Доте")
     dota = find_dota(cfg, args, ask, prompt=not args.no_dota)
@@ -1272,6 +1317,9 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
         s = room.agents.summary()
         say(f"Вызовов Claude: {s.get('paid_calls', 0)} (герои) + {ai.claude_calls} (ИИ-тренер), ошибок: "
             f"{s.get('errors', 0)}, задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
+        if getattr(backend, "free", False):
+            say("Героями в этой игре правили правила, а не агенты Claude (Claude Code не включился — см. начало окна "
+                "или coach\\logs\\launcher_*.log).")
     if dlog is not None and dlog.copy is not None and dlog.copy.exists():
         say(f"Журнал Доты за эту игру: {dlog.copy}")
     if room.agents is not None:
@@ -1308,7 +1356,11 @@ def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
         if p["decisions"] > base and not told.get(("first", team)):
             told[("first", team)] = True
             model = p.get("model") or ""                              # имя модели — как его назвал Claude Code
-            say(f"  ● Агенты {side} ведут героев: первые решения пришли" + (f" (модель: {model})." if model else "."))
+            if p.get("claude") is False:                              # ERRORS №103: правила — сказать прямо
+                say(f"  ! Героями {side} правят ПРАВИЛА, а не агенты Claude: Claude Code не включился (см. шаг 1/6).")
+            else:
+                say(f"  ● Агенты Claude {side} ведут героев: первые решения пришли" +
+                    (f" (модель: {model})." if model else "."))
         if p["error"] and p["error"] != told.get(("error", team)):
             told[("error", team)] = p["error"]
             n = told.get(("errors", team), 0) + 1
@@ -1327,8 +1379,13 @@ def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
             say(f"  ! Агенты {side} выбрали предел вызовов Claude на этот запуск ({p.get('max_calls')}): дальше "
                 "героями правит запасной исполнитель по приказам тренера.")
     if now - told.get("summary_t", now) >= every:
-        parts = [f"{SIDE_OF.get(t, t)} — решений {p['decisions']}, ошибок {p['errors']}" for t, p in prog.items()]
-        say("  Агенты: " + "; ".join(parts) + ".")
+        def part(t, p):
+            side = SIDE_OF.get(t, t)
+            if p.get("claude") is False:
+                return f"{side} — ПРАВИЛА, не Claude (решений {p['decisions']})"
+            calls = f", вызовов Claude {p['paid_calls']}" if "paid_calls" in p else ""
+            return f"{side} — решений {p['decisions']}{calls}, ошибок {p['errors']}"
+        say("  Агенты: " + "; ".join(part(t, p) for t, p in prog.items()) + ".")
         told["summary_t"] = now
     told.setdefault("summary_t", now)
 

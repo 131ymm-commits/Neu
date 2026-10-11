@@ -877,7 +877,7 @@ class Launcher(unittest.TestCase):
         self.assertIn("Героев у агентов: Свет 0, Тьма 0.", self.out[0])
         self.assertEqual(sum("героев агентам не отдаёт" in x for x in self.out), 1)
         self.assertIn("  ● Героев у агентов: Свет 5, Тьма 1.", self.out)
-        self.assertIn("  ● Агенты Света ведут героев: первые решения пришли.", self.out)
+        self.assertIn("  ● Агенты Claude Света ведут героев: первые решения пришли.", self.out)
         self.assertIn("  ! Агент Тьмы 1 luna: ошибка: таймаут", self.out)
         self.assertEqual(sum(x.startswith("  ! Агент Тьмы") for x in self.out), 3)
         self.assertIn("номер 3", text)
@@ -886,6 +886,48 @@ class Launcher(unittest.TestCase):
         self.assertEqual(sum("на паузе: лимит подписки" in x for x in self.out), 1)
         self.assertIn("  Агенты: Света — решений 3, ошибок 0; Тьмы — решений 0, ошибок 5.", self.out)
         self.assertEqual(sum("выбрали предел вызовов Claude на этот запуск (300)" in x for x in self.out), 1)
+
+    def test_watch_says_rules_are_not_claude(self):
+        """ERRORS №103: матч автора прошёл на правилах, а окно писало «агенты ведут героев». Теперь — прямо: правила,
+        не Claude; в сводке — мотор и число вызовов Claude."""
+        prog = {"radiant": {"heroes": 5, "decisions": 0, "calls": 0, "errors": 0, "error": "", "pause": "",
+                            "claude": False, "paid_calls": 0},
+                "dire": {"heroes": 5, "decisions": 0, "calls": 0, "errors": 0, "error": "", "pause": "",
+                         "claude": True, "paid_calls": 0}}
+        room = SimpleNamespace(console_seen={}, game_linked=lambda: True, last_tick={"heroes": [{"team": "radiant"}] * 5},
+                               agents=SimpleNamespace(progress=lambda: {t: dict(p) for t, p in prog.items()}))
+        now = [1000.0]
+        script = [lambda: None, lambda: prog["radiant"].update(decisions=40),
+                  lambda: prog["dire"].update(decisions=7, paid_calls=7), lambda: now.__setitem__(0, now[0] + 400)]
+
+        def stop():
+            if not script:
+                return True
+            script.pop(0)()
+            now[0] += 2
+            return False
+        P.watch(room, stop=stop, sleep=lambda s: None, clock=lambda: now[0])
+        text = "\n".join(self.out)
+        self.assertIn("Героями Света правят ПРАВИЛА, а не агенты Claude", text)
+        self.assertNotIn("Агенты Claude Света ведут героев", text)
+        self.assertIn("  ● Агенты Claude Тьмы ведут героев: первые решения пришли.", self.out)
+        self.assertIn("  Агенты: Света — ПРАВИЛА, не Claude (решений 40); Тьмы — решений 7, вызовов Claude 7, ошибок 0.",
+                      self.out)
+
+    def test_rules_warning_asks_before_playing(self):
+        """ERRORS №103: Claude не включился — крупное предупреждение и вопрос; Ctrl+C — выйти, Enter — играть."""
+        asked = []
+        self.assertTrue(P.rules_ok(lambda q: asked.append(q) or ""))
+        self.assertIn("Claude не включился", "\n".join(self.out))
+        self.assertIn("Enter — всё равно играть на правилах", asked[0])
+
+        def interrupt(q):
+            raise KeyboardInterrupt
+        self.assertFalse(P.rules_ok(interrupt))
+
+        def no_console(q):
+            raise EOFError
+        self.assertTrue(P.rules_ok(no_console))
 
     def test_watch_new_match_and_model(self):
         """Второй матч в том же окне: снова «первые решения» (рецензия 7); имя модели — как его дал Claude Code."""
@@ -1123,6 +1165,28 @@ class Launcher(unittest.TestCase):
             self.out.clear()
             self.assertEqual(P.main(["--rules"]), 1)
             self.assertTrue(any("уже запущена" in x for x in self.out[-2:]))
+
+
+class WindowLog(unittest.TestCase):
+    """ERRORS №103: окно хоста — ещё и в файл: по нему видно начало (шаг 1/6), когда окно уже закрыто."""
+
+    def test_window_copied_to_log_file(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "logs" / "launcher_x.log"
+            try:
+                with mock.patch.object(P.sys, "stdout", io.StringIO()) as out:
+                    self.assertEqual(P.open_window_log(path), path)
+                    P.say("строка окна")
+                    P.open_window_log(Path(tmp) / "logs" / "launcher_y.log")   # прежний файл закрывается
+                    P.say("вторая")
+                self.assertEqual(out.getvalue(), "строка окна\nвторая\n")
+                self.assertEqual(path.read_text(encoding="utf-8"), "строка окна\n")
+                self.assertEqual((Path(tmp) / "logs" / "launcher_y.log").read_text(encoding="utf-8"), "вторая\n")
+            finally:
+                with P._SAY:
+                    if P._LOG is not None:
+                        P._LOG.close()
+                    P._LOG = None
 
 
 class Updater(unittest.TestCase):

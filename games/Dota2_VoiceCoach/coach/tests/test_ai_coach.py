@@ -135,6 +135,15 @@ class Coach(unittest.TestCase):
         self.assertEqual((len(calls), coach.claude_calls), (2, 2))
         coach.close()
 
+    def test_rules_coach_is_not_counted_as_claude(self):
+        """ERRORS №103: ИИ-тренер на правилах (Claude не включился) не считает свои ходы «вызовами Claude»."""
+        coach = AI.AICoach(self.room, "dire", AI.RulesCoach())
+        self.tick(900)
+        for _ in range(3):
+            coach.step()
+        self.assertEqual(coach.claude_calls, 0)
+        coach.close()
+
     def test_no_json_answer_falls_back_to_rules(self):
         def run(argv, **kw):
             return SimpleNamespace(stdout=json.dumps({"is_error": False, "result": "не знаю"}), stderr="", returncode=0)
