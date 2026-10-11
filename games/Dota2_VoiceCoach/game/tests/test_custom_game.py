@@ -295,7 +295,15 @@ function Dynamic_Wrap(ctx, name) return function(...) return ctx[name](...) end 
 function LinkLuaModifier() end
 function EntIndexToHScript(idx) return __ents[idx] end
 function FindClearSpaceForUnit(unit, pos, grid) unit.pos = pos end
-function ExecuteOrderFromTable(t) __orders[#__orders + 1] = t end
+-- приказ атаки задаёт цель атаки героя, любой другой приказ (кроме прокачки) её снимает — как в Доте (по памяти);
+-- без этого стычки «поддерживали» сами себя, а тесты были зелёными (рецензия 11)
+function ExecuteOrderFromTable(t)
+  __orders[#__orders + 1] = t
+  local u = __ents[t.UnitIndex]
+  if u and t.OrderType ~= DOTA_UNIT_ORDER_TRAIN_ABILITY then
+    u.attack_target = (t.OrderType == DOTA_UNIT_ORDER_ATTACK_TARGET) and __ents[t.TargetIndex] or nil
+  end
+end
 function Say(ent, msg, teamOnly) __said[#__said + 1] = msg end
 
 -- HTTP: запрос уходит в Python (__py_http — настоящий сервер тренера); без него — «нет связи»
@@ -676,28 +684,90 @@ class Executor(Game):
         self.step(0.5)
         self.assertEqual(self.unit_orders(sniper, n2)[-1]["OrderType"], ORDER["hold"])  # рядом крип с полным здоровьем
 
+    def st(self, team, pos):
+        return self.G["CoachGame"]["teams"][team]["exec"][pos]
+
+    def status(self, team, pos):
+        return str(self.st(team, pos)["status"])
+
     def test_last_hit_with_lead_and_no_cancel(self):
         """Слова автора: «нужен ласт хит удар по крипу со слабым здоровьем». Крип теряет здоровье от своих крипов —
-        удар начинается заранее (к попаданию у крипа будет меньше урона), и пока идёт замах, удар не сбивается."""
+        удар начинается заранее (к попаданию у крипа будет не больше 0.85 урона), а пока идёт замах, герой не
+        переключается и на крипа, которого добить легче."""
         self.start_match()
         sniper = self.hero(1)
         sniper["pos"] = self.L.eval("Vector(5000, -4500, 0)")
         self.decide(2, 1, {"plan": "farm", "where": "bot"})
-        c = self.L.eval("__creep(3, 5300, -4300, 140)")                     # в досягаемости (≈360)
-        self.L.eval("__creep(3, 5600, -4000, 550)")
-        attack_hp, n0 = None, self.n_orders()
-        for _ in range(16):                                                  # теряет 40 здоровья в секунду
-            c["health"] = max(1, c["health"] - 10)
+        c = self.L.eval("__creep(3, 5300, -4300, 300)")                     # в 360: попадание через ≈0.3 + 0.4 с
+        other = self.L.eval("__creep(3, 5350, -4250, 550)")
+        attack_hp = None
+        for _ in range(30):                                                  # теряет 40 здоровья в секунду
+            c["health"] = c["health"] - 10
+            n = self.n_orders()
             self.L.execute("__step(0.25)")
-            got = [o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["attack"]
-                   and o["TargetIndex"] == c["idx"]]
-            if got and attack_hp is None:
+            if [o for o in self.unit_orders(sniper, n) if o["OrderType"] == ORDER["attack"] and o["TargetIndex"] == c["idx"]]:
                 attack_hp = c["health"]
-                n_after = self.n_orders()
+                break
         self.assertIsNotNone(attack_hp)
-        self.assertGreater(attack_hp, 60 * 0.9)                              # раньше прежнего порога «≤ 0.9 урона»
-        self.assertLessEqual(attack_hp, 100)                                 # но не по здоровому — линию не толкаем
-        self.assertGreater(c["health"], 0)
+        self.assertGreater(attack_hp, 60 * 0.85)                             # раньше, чем «хватает удара сейчас»
+        self.assertLessEqual(attack_hp - 40 * 0.7, 60 * 0.85)                # к попаданию — уже хватает
+        other["health"] = 40                                                 # другой крип стал добиваемым — но замах
+        n1 = self.n_orders()                                                 # (≈0.4 с) не сбивается
+        self.L.execute("__step(0.25)")
+        self.assertEqual(self.unit_orders(sniper, n1), [])
+
+    def test_last_hit_stepwise_damage(self):
+        """Рецензия 11: урон по крипу идёт ступеньками — каждый крип бьёт раз в ~1 с; замер скорости по окну, удар с
+        запасом. Модель: три наших крипа бьют вражеского по 21 раз в 1 с с разными фазами; удар героя (60) попадает через
+        0.3 + 500/900 с после приказа; добил — если к попаданию у крипа осталось от 1 до 60. Без упреждения удар
+        опаздывает почти всегда (≈54 урона за время полёта)."""
+        hit = 0.3 + 500 / 900
+        phases = [(0.10, 0.43, 0.77), (0.0, 0.33, 0.66), (0.2, 0.25, 0.9), (0.05, 0.5, 0.55), (0.3, 0.6, 0.95),
+                  (0.15, 0.4, 0.7), (0.12, 0.13, 0.62), (0.35, 0.8, 0.85)]
+        outcomes = []
+        for ph in phases:
+            self.tearDown()
+            self.setUp()
+            self.start_match()
+            sniper = self.hero(1)
+            sniper["pos"] = self.L.eval("Vector(2000, -5000, 0)")
+            self.decide(2, 1, {"plan": "farm", "where": "bot"})
+            c = self.L.eval("__creep(3, 2500, -5000, 550)")
+            hp_at = lambda t: 550 - 21 * sum(int((t - p) // 1.0) + 1 for p in ph if t >= p)   # noqa: E731
+            t, got = 0.0, None
+            n0 = self.n_orders()
+            while t < 40 and got is None:
+                t += 0.25
+                if hp_at(t) <= 0:
+                    break
+                c["health"] = hp_at(t)
+                self.L.execute("__step(0.25)")
+                if [o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["attack"]
+                        and o["TargetIndex"] == c["idx"]]:
+                    got = t
+            h = hp_at(got + hit) if got is not None else 0
+            outcomes.append("добил" if 0 < h <= 60 else "рано" if h > 60 else "поздно")
+        self.assertGreaterEqual(outcomes.count("добил"), 6, outcomes)
+
+    def test_melee_last_hit_only_when_one_hit_kills(self):
+        """Ближний бой попадает через ~0.3 с — за это время удара крипа может и не быть: бьёт, только когда хватает
+        удара уже сейчас (модель рецензии 11: с упреждением 9 ранних ударов из 60)."""
+        self.start_match()
+        axe = self.by_name("axe")
+        axe["range"] = 150
+        axe["pos"] = self.L.eval("Vector(-6200, 2500, 0)")
+        self.decide(2, 3, {"plan": "farm", "where": "top"})
+        c = self.L.eval("__creep(3, -6200, 2600, 160)")
+        attack_hp = None
+        for _ in range(16):
+            c["health"] = c["health"] - 10                                    # 40 в секунду
+            n = self.n_orders()
+            self.L.execute("__step(0.25)")
+            if [o for o in self.unit_orders(axe, n) if o["OrderType"] == ORDER["attack"] and o["TargetIndex"] == c["idx"]]:
+                attack_hp = c["health"]
+                break
+        self.assertIsNotNone(attack_hp)
+        self.assertLessEqual(attack_hp, 60)
 
     def test_leaves_tower_aggro(self):
         """Вражеская вышка бьёт героя на пуше — отходит за её досягаемость; в драке с запасом здоровья — нет."""
@@ -713,85 +783,254 @@ class Executor(Game):
         x, y = self.xy(o)
         self.assertEqual(o["OrderType"], ORDER["move"])
         self.assertGreater(((x - 6200) ** 2 + (y + 1600) ** 2) ** 0.5, 900)
+        self.assertEqual(self.status(2, 1), "отхожу из-под вышки")
         self.decide(2, 1, {"plan": "fight", "target": "luna"})                # драка, здоровье полное — не бежит
-        n1 = self.n_orders()
         self.step(0.5)
-        self.assertFalse([o for o in self.unit_orders(sniper, n1) if o["OrderType"] == ORDER["move"]
-                          and ((self.xy(o)[0] - 6200) ** 2 + (self.xy(o)[1] + 1600) ** 2) ** 0.5 > 1000])
+        self.assertNotEqual(self.status(2, 1), "отхожу из-под вышки")
+        self.hero(1)["health"] = 240                                         # 40 %: в драке тоже уходит
+        self.step(0.5)
+        self.assertEqual(self.status(2, 1), "отхожу из-под вышки")
+
+    def test_agent_cast_before_tower_reflex(self):
+        """Рецензия 11: применение агента (телепорт на базу) — раньше рефлекса «из-под вышки»."""
+        self.start_match()
+        sniper = self.hero(1)
+        t1 = next(t for t in self.G["__towers"].values() if t["name"] == "npc_dota_badguys_tower1_bot")
+        sniper["pos"] = self.L.eval("Vector(6200, -2100, 0)")
+        self.L.execute(f"__ents[{t1['idx']}].GetAttackTarget = function() return __players[1].hero end")
+        tp = self.L.eval("__make_ability")("item_tpscroll", False, 16, 1)
+        sniper["slots"][15] = tp
+        self.decide(2, 1, {"plan": "retreat", "cast": [{"ability": "item_tpscroll", "target": "base"}]})
+        n0 = self.n_orders()
+        self.step(0.25)
+        first = self.unit_orders(sniper, n0)[0]
+        self.assertEqual((first["OrderType"], first["AbilityIndex"]), (ORDER["cast_point"], tp["idx"]))
+
+    def test_retreat_interrupts_attack_windup(self):
+        """Рецензия 11: замах удара (до 1.5 с) не откладывает отход — здоровье ниже порога, и герой уходит сразу."""
+        self.start_match()
+        sniper = self.hero(1)
+        sniper["pos"] = self.L.eval("Vector(2000, -5000, 0)")
+        self.decide(2, 1, {"plan": "farm", "where": "bot", "retreat_hp": 30})
+        c = self.L.eval("__creep(3, 2600, -5000, 50)")                      # в 600: подойти 50 и замах ≈0.5 с
+        n0 = self.n_orders()
+        self.step(0.25)
+        self.assertEqual(self.unit_orders(sniper, n0)[-1]["TargetIndex"], c["idx"])
+        sniper["health"] = 120                                               # 20 %
+        n1 = self.n_orders()
+        self.step(0.25)
+        o = self.unit_orders(sniper, n1)
+        self.assertTrue(o and o[-1]["OrderType"] == ORDER["move"], o)
+        self.assertTrue(self.status(2, 1).startswith("отхожу"), self.status(2, 1))
 
     def test_lane_harass_hit_and_back(self):
         """Живой матч 11.10.2026: «очень мало действий делают». На линии вдали от вышек враг в досягаемости, у героя
-        здоровья не меньше — один удар по врагу, потом снова к линии; следующий удар — не раньше чем через 2.5 с
-        (дальний бой). Крип слабее двух ударов рядом — сначала он, героя не бьёт."""
+        здоровья не меньше — один удар по врагу, потом снова к линии (удар больше не идёт: цель атаки снята);
+        следующий удар — не раньше чем через 2.5 с (дальний бой). Крип слабее двух ударов рядом — сначала он."""
         self.start_match()
         sniper, luna = self.hero(1), self.by_name("luna")
         sniper["pos"] = self.L.eval("Vector(2000, -5000, 0)")
         luna["pos"] = self.L.eval("Vector(2450, -5000, 0)")
         self.decide(2, 1, {"plan": "farm", "where": "bot"})
-        times, n0 = [], self.n_orders()
+        self.decide(3, 1, {"plan": "hold"})
+        times = []
         for k in range(24):                                                   # 6 с
             n = self.n_orders()
             self.L.execute("__step(0.25)")
             if [o for o in self.unit_orders(sniper, n) if o["OrderType"] == ORDER["attack"]
                     and o["TargetIndex"] == luna["idx"]]:
                 times.append(k * 0.25)
+            elif times and k * 0.25 - times[-1] == 1.0:
+                self.assertIsNone(sniper["attack_target"])                   # через секунду после удара — не бьёт
         self.assertGreaterEqual(len(times), 2, times)
         self.assertTrue(all(b - a >= 2.5 - 1e-9 for a, b in zip(times, times[1:])), times)
-        self.assertTrue([o for o in self.unit_orders(sniper, n0) if o["OrderType"] in (ORDER["hold"], ORDER["move"])])
         self.L.eval("__creep(3, 2300, -4900, 100)")                           # добить с двух ударов — ждать его
         n1 = self.n_orders()
         self.step(3)
         self.assertFalse([o for o in self.unit_orders(sniper, n1) if o["OrderType"] == ORDER["attack"]
                           and o["TargetIndex"] == luna["idx"]])
 
+    def test_trade_does_not_snowball(self):
+        """Рецензия 11: у соперника те же руки (Д16). Оба на фарме в досягаемости друг друга — размены по одному удару,
+        стычки нет: «отвечаю» — только когда враг бьёт дольше секунды."""
+        self.start_match()
+        sniper, luna = self.hero(1), self.by_name("luna")
+        sniper["pos"] = self.L.eval("Vector(2000, -5000, 0)")
+        luna["pos"] = self.L.eval("Vector(2450, -5000, 0)")
+        self.decide(2, 1, {"plan": "farm", "where": "bot"})
+        self.decide(3, 1, {"plan": "farm", "where": "top"})
+        in_fight, hits = 0, {2: [], 3: []}
+        for k in range(48):                                                   # 12 с
+            n = self.n_orders()
+            self.L.execute("__step(0.25)")
+            for team, me, other in ((2, sniper, luna), (3, luna, sniper)):
+                if self.status(team, 1).startswith("стычка"):
+                    in_fight += 1
+                if [o for o in self.unit_orders(me, n) if o["OrderType"] == ORDER["attack"]
+                        and o["TargetIndex"] == other["idx"]]:
+                    hits[team].append(k * 0.25)
+        self.assertEqual(in_fight, 0)
+        for team, ts in hits.items():
+            self.assertGreaterEqual(len(ts), 2, (team, ts))
+            self.assertTrue(all(b - a >= 2.5 - 1e-9 for a, b in zip(ts, ts[1:])), (team, ts))
+
     def test_skirmish_helps_and_joins_ally(self):
-        """Стычка: враг бьёт раненого союзника рядом — выручить; союзник бьёт врага — поддержать; на «иду» — нет."""
+        """Стычка: враг бьёт раненого союзника дольше секунды — выручить; союзник бьёт раненого врага — поддержать, а
+        здорового — нет (это решение агента); на «иду» — не отвлекаться."""
         self.start_match()
         lion, axe, bb = self.by_name("lion"), self.by_name("axe"), self.by_name("bristleback")
         lion["pos"] = self.L.eval("Vector(-6000, 3500, 0)")
         axe["pos"] = self.L.eval("Vector(-5800, 3800, 0)")
         bb["pos"] = self.L.eval("Vector(-5600, 4100, 0)")                     # до их Т1 топ ≈ 2100
         axe["health"] = 300                                                   # 50 %
-        bb["attack_target"] = axe
         self.decide(2, 3, {"plan": "hold"})
         self.decide(2, 4, {"plan": "farm", "where": "top"})
+        self.decide(3, 3, {"plan": "fight", "target": "axe"})                 # BB бьёт Axe
+        self.step(0.5)
+        self.assertFalse(self.status(2, 4).startswith("стычка"), self.status(2, 4))   # бьёт меньше секунды
         n0 = self.n_orders()
-        self.step(1.25)
+        self.step(1.0)
+        self.assertTrue(self.status(2, 4).startswith("стычка: выручаю 3"), self.status(2, 4))
         att = [o for o in self.unit_orders(lion, n0) if o["OrderType"] == ORDER["attack"]]
         self.assertEqual(att[-1]["TargetIndex"], bb["idx"])
-        _, rows = self.hud_rows()
-        self.assertTrue(rows[3]["status"].startswith("стычка: выручаю 3"), rows[3])
-        bb["attack_target"], axe["health"], axe["attack_target"] = None, 600, bb   # союзник сам бьёт врага
-        self.step(1.25)
-        _, rows = self.hud_rows()
-        self.assertTrue(rows[3]["status"].startswith("стычка: вместе с 3"), rows[3])
-        self.decide(2, 4, {"plan": "move", "where": "mid"})                   # агент ведёт в другое место — не отвлекается
+        axe["health"] = 600
+        self.decide(3, 3, {"plan": "hold"})
+        self.decide(2, 3, {"plan": "fight", "target": "bristleback"})         # Axe сам бьёт BB, у BB полное здоровье
+        self.step(4)
+        self.assertFalse(self.status(2, 4).startswith("стычка"), self.status(2, 4))
+        bb["health"] = 380                                                    # 63 % — раненый: поддержать
+        self.step(0.5)
+        self.assertTrue(self.status(2, 4).startswith("стычка: вместе с 3"), self.status(2, 4))
+        self.decide(2, 4, {"plan": "move", "where": "mid"})                   # агент ведёт в другое место
         n1 = self.n_orders()
         self.step(1.25)
         self.assertFalse([o for o in self.unit_orders(lion, n1) if o["OrderType"] == ORDER["attack"]])
 
     def test_skirmish_answers_but_not_outnumbered(self):
-        """Враг бьёт героя — ответить; врагов рядом с ним трое, а свой один — ни стычки, ни размена."""
+        """Враг бьёт героя дольше секунды — ответить; врагов рядом с ним трое, а свой один — ни стычки, ни размена,
+        хотя враг в досягаемости."""
         self.start_match()
         sniper, luna = self.hero(1), self.by_name("luna")
         sniper["pos"] = self.L.eval("Vector(2000, -5000, 0)")
-        luna["pos"] = self.L.eval("Vector(2650, -5000, 0)")
-        luna["attack_target"] = sniper
+        luna["pos"] = self.L.eval("Vector(2650, -5000, 0)")                   # вне досягаемости: размена нет
         self.decide(2, 1, {"plan": "farm", "where": "bot"})
-        n0 = self.n_orders()
-        self.step(1.25)
-        att = [o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["attack"]]
-        self.assertEqual(att[-1]["TargetIndex"], luna["idx"])
-        _, rows = self.hud_rows()
-        self.assertTrue(rows[0]["status"].startswith("стычка: отвечаю"), rows[0])
-        for name, x in (("lina", 2900), ("bristleback", 3000)):
+        self.decide(3, 1, {"plan": "fight", "target": "sniper"})
+        self.step(1.75)
+        self.assertTrue(self.status(2, 1).startswith("стычка: отвечаю"), self.status(2, 1))
+        self.assertEqual(sniper["attack_target"]["idx"], luna["idx"])
+        luna["pos"] = self.L.eval("Vector(2450, -5000, 0)")                   # в досягаемости
+        for name, x in (("lina", 2700), ("bristleback", 2800)):
             self.by_name(name)["pos"] = self.L.eval(f"Vector({x}, -5100, 0)")
+        self.step(0.5)
         n1 = self.n_orders()
-        self.step(1.25)
+        self.step(2)
         self.assertFalse([o for o in self.unit_orders(sniper, n1) if o["OrderType"] == ORDER["attack"]
                           and o["TargetIndex"] == luna["idx"]])
-        _, rows = self.hud_rows()
-        self.assertFalse(rows[0]["status"].startswith("стычка"), rows[0])
+        self.assertFalse(self.status(2, 1).startswith("стычка"), self.status(2, 1))
+
+    def test_carry_on_farm_only_finishes_and_answers(self):
+        """Рецензия 11: керри на фарме не вступает в стычку союзника (гайды: керри на линии не дерётся), но раненого
+        врага в досягаемости + 300 добивает."""
+        self.start_match()
+        sniper, cm, luna = self.hero(1), self.by_name("crystal_maiden"), self.by_name("luna")
+        sniper["pos"] = self.L.eval("Vector(2000, -5000, 0)")
+        cm["pos"] = self.L.eval("Vector(2100, -4900, 0)")
+        luna["pos"] = self.L.eval("Vector(2800, -5000, 0)")                   # 800: вне досягаемости 550
+        luna["health"] = 380                                                  # 63 %
+        self.decide(2, 1, {"plan": "farm", "where": "bot"})
+        self.decide(2, 5, {"plan": "fight", "target": "luna"})
+        self.decide(3, 1, {"plan": "hold"})
+        self.step(1.5)
+        self.assertFalse(self.status(2, 1).startswith("стычка"), self.status(2, 1))
+        luna["health"] = 200                                                  # 33 %
+        self.step(0.5)
+        self.assertTrue(self.status(2, 1).startswith("стычка: добиваю"), self.status(2, 1))
+
+    def test_skirmish_leash(self):
+        """Рецензия 11: стычка не гонится дальше 1500 от места, где началась, и ту же цель сразу снова не берёт."""
+        self.start_match()
+        sniper, luna = self.hero(1), self.by_name("luna")
+        sniper["pos"] = self.L.eval("Vector(0, -5000, 0)")
+        luna["pos"] = self.L.eval("Vector(500, -5000, 0)")
+        luna["health"] = 200
+        self.decide(2, 1, {"plan": "farm", "where": "bot"})
+        self.decide(3, 1, {"plan": "hold"})
+        self.step(0.5)
+        self.assertTrue(self.status(2, 1).startswith("стычка: добиваю"), self.status(2, 1))
+        for x in (500, 1000):                                                 # бегут оба, Luna впереди на 500
+            sniper["pos"] = self.L.eval(f"Vector({x}, -5000, 0)")
+            luna["pos"] = self.L.eval(f"Vector({x + 500}, -5000, 0)")
+            self.step(0.5)
+        self.assertTrue(self.status(2, 1).startswith("стычка"), self.status(2, 1))   # Luna в 1500 — ещё можно
+        sniper["pos"] = self.L.eval("Vector(1400, -5000, 0)")
+        luna["pos"] = self.L.eval("Vector(1900, -5000, 0)")                   # в 1900 от начала
+        self.step(0.5)
+        self.assertFalse(self.status(2, 1).startswith("стычка"), self.status(2, 1))
+        self.step(3)
+        self.assertFalse(self.status(2, 1).startswith("стычка"), self.status(2, 1))   # снова не берёт
+
+    def test_skirmish_ult_only_below_half(self):
+        """Рецензия 11: в стычке ульта — только по врагу ниже половины здоровья, даже когда врагов рядом двое."""
+        self.start_match()
+        lion, axe, bb, wd = (self.by_name(n) for n in ("lion", "axe", "bristleback", "witch_doctor"))
+        lion["pos"] = self.L.eval("Vector(-5900, 3700, 0)")                   # до BB 500: способности достают
+        axe["pos"] = self.L.eval("Vector(-5800, 3800, 0)")
+        bb["pos"] = self.L.eval("Vector(-5600, 4100, 0)")
+        wd["pos"] = self.L.eval("Vector(-5500, 4300, 0)")
+        for ab in list(lion["abilities"].values()):
+            ab["tt"] = 2
+        lion["abilities"][4]["level"] = 1
+        ult = lion["abilities"][4]["idx"]
+        bb["health"] = 390                                                    # 65 %
+        self.decide(2, 3, {"plan": "fight", "target": "bristleback"})
+        self.decide(2, 4, {"plan": "farm", "where": "top"})
+        self.decide(3, 3, {"plan": "hold"})
+        self.decide(3, 4, {"plan": "hold"})
+        n0 = self.n_orders()
+        self.step(3)
+        self.assertTrue(self.status(2, 4).startswith(("стычка", "бью способностью")), self.status(2, 4))
+        got = {o["AbilityIndex"] for o in self.casts(lion, n0)}
+        self.assertTrue(got)
+        self.assertNotIn(ult, got)
+        bb["health"] = 270                                                    # 45 %
+        n1 = self.n_orders()
+        self.step(3)
+        self.assertIn(ult, {o["AbilityIndex"] for o in self.casts(lion, n1)})
+
+    def test_melee_waits_at_front_creeps(self):
+        """Рецензия 11: ближний бой ждёт добивания у передних крипов волны, а не уходит за спины вражеских ближних к их
+        дальнему крипу (у него меньше здоровья по KV)."""
+        self.start_match()
+        axe = self.by_name("axe")
+        axe["range"] = 150                                                    # ближний бой
+        axe["pos"] = self.L.eval("Vector(-6200, 2500, 0)")
+        self.decide(2, 3, {"plan": "farm", "where": "top"})
+        for dy in (300, 330, 360):
+            self.L.eval(f"__creep(3, -6200, {2500 + dy}, 550)")
+        self.L.eval("__creep(3, -6200, 3150, 300, 300)")                       # дальний за ними
+        n0 = self.n_orders()
+        self.step(1)
+        moves = [o for o in self.unit_orders(axe, n0) if o["OrderType"] == ORDER["move"]]
+        self.assertFalse([o for o in moves if self.xy(o)[1] > 2900], moves)
+
+    def test_support_harass_hit_and_back(self):
+        """Саппорт рядом со своим кором бьёт врага, когда безопасно: один удар — и назад к своему."""
+        self.start_match()
+        axe, lion, bb = self.by_name("axe"), self.by_name("lion"), self.by_name("bristleback")
+        axe["pos"] = self.L.eval("Vector(-6200, 3000, 0)")
+        lion["pos"] = self.L.eval("Vector(-6150, 3200, 0)")
+        bb["pos"] = self.L.eval("Vector(-6100, 3650, 0)")                      # в 455 от Lion
+        self.decide(2, 3, {"plan": "hold"})
+        self.decide(2, 4, {"plan": "farm", "where": "top"})
+        self.decide(3, 3, {"plan": "hold"})
+        hits = []
+        for k in range(20):                                                   # 5 с
+            n = self.n_orders()
+            self.L.execute("__step(0.25)")
+            if [o for o in self.unit_orders(lion, n) if o["OrderType"] == ORDER["attack"] and o["TargetIndex"] == bb["idx"]]:
+                hits.append(k)
+        self.assertGreaterEqual(len(hits), 2, hits)
+        self.assertTrue(all(b - a >= 10 for a, b in zip(hits, hits[1:])), hits)    # раз в 2.5 с
 
     def test_retreat_reflex_and_resume(self):
         self.start_match()
@@ -877,10 +1116,13 @@ class Executor(Game):
 
     def test_lane_spells_harass_with_mana_and_kill_with_ult(self):
         """Живой матч 11.10.2026: «очень мало действий делают». На фарме вдали от вышек: маны мало — способности
-        бережёт; маны с запасом — размен способностью, одной за 8 с и без ульты; враг ранен — стычка: способности
-        как в драке, ульта — по раненому до половины. У их вышки (центр карты в имитации — их Т1 мид) — без размена."""
+        бережёт; маны с запасом — размен способностью только из списка урона (рецензия 11: не оглушения), одной за 8 с,
+        без ульты и не когда на подходе добивание; враг ранен — стычка: способности как в драке, ульта — по раненому
+        до половины. У их вышки (центр карты в имитации — их Т1 мид) — без размена и без стычки."""
         sniper, luna = self.fight_setup({"plan": "farm", "where": "bot"}, dist=400, at=(2000, -5000))
-        ult = sniper["abilities"][4]["idx"]
+        self.decide(3, 1, {"plan": "hold"})
+        q, w, r = (sniper["abilities"][i] for i in (1, 2, 4))
+        q["name"] = "sniper_shrapnel"                                         # урон по площади — из списка размена
         sniper["mana"] = 120                                                  # 40 % — у керри порог 80 %
         n0 = self.n_orders()
         self.step(1.5)
@@ -888,27 +1130,35 @@ class Executor(Game):
         sniper["mana"] = 300
         n1 = self.n_orders()
         self.step(1.5)
-        got = self.casts(sniper, n1)
-        self.assertEqual(len(got), 1)                                         # один размен
-        self.assertNotEqual(got[0]["AbilityIndex"], ult)
+        got = [o["AbilityIndex"] for o in self.casts(sniper, n1)]
+        self.assertEqual(got, [q["idx"]])                                     # один размен, и только уроном
         n2 = self.n_orders()
         self.step(5)
         self.assertEqual(self.casts(sniper, n2), [])                          # следующий — не раньше чем через 8 с
-        luna["health"] = 200                                                  # 33 % — добить
+        weak = self.L.eval("__creep(3, 2300, -4900, 100)")                     # добивание на подходе — не до размена
         n3 = self.n_orders()
+        self.step(4)
+        self.assertEqual(self.casts(sniper, n3), [])
+        weak["alive"] = False
+        n4 = self.n_orders()
+        self.step(1)
+        self.assertEqual([o["AbilityIndex"] for o in self.casts(sniper, n4)], [q["idx"]])
+        luna["health"] = 200                                                  # 33 % — добить
+        n5 = self.n_orders()
         self.step(3)
-        got = self.casts(sniper, n3)
-        self.assertIn(ult, {o["AbilityIndex"] for o in got})
-        att = [o for o in self.unit_orders(sniper, n3) if o["OrderType"] == ORDER["attack"]]
-        self.assertEqual(att[-1]["TargetIndex"], luna["idx"])
+        got = {o["AbilityIndex"] for o in self.casts(sniper, n5)}
+        self.assertIn(r["idx"], got)
+        self.assertIn(w["idx"], got)                                          # в стычке — все способности по врагу
+        self.assertTrue(self.status(2, 1).startswith(("стычка: добиваю", "бью способностью")), self.status(2, 1))
         # у вражеской вышки (их Т1 мид в (500, 650)): ни размена, ни стычки
         sniper["pos"] = self.L.eval("Vector(0, 0, 0)")
         luna["pos"] = self.L.eval("Vector(400, 0, 0)")
         luna["health"] = 600
-        n4 = self.n_orders()
+        self.step(9)                                                          # пауза размена прошла
+        n6 = self.n_orders()
         self.step(2)
-        self.assertEqual(self.casts(sniper, n4), [])
-        self.assertFalse([o for o in self.unit_orders(sniper, n4) if o["OrderType"] == ORDER["attack"]
+        self.assertEqual(self.casts(sniper, n6), [])
+        self.assertFalse([o for o in self.unit_orders(sniper, n6) if o["OrderType"] == ORDER["attack"]
                           and o["TargetIndex"] == luna["idx"]])
 
     def test_auto_spells_skip_toggles_and_friendly(self):

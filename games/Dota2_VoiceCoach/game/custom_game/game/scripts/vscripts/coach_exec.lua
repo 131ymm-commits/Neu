@@ -15,13 +15,16 @@
 local X = {}
 X.CAST_TTL = 8          -- с: сколько способность из решения ждёт цели
 X.RETREAT_HYST = 40     -- отход длится, пока здоровье не поднимется на 40 пунктов выше порога
-X.LASTHIT = 0.9         -- (прежний порог; добивание теперь с упреждением — X.LH_*)
 -- добивание с упреждением (слова автора 11.10.2026: «нужен ласт хит удар по крипу со слабым здоровьем»): удар начинается,
--- когда к моменту попадания — дойти, замах, полёт снаряда — у крипа останется не больше урона героя; скорость, с которой
--- крип теряет здоровье, руки замеряют сами раз в шаг. Пока идёт замах, удар ничем не сбивается.
-X.LH_ALPHA = 0.5        -- сглаживание замера скорости потери здоровья
+-- когда к попаданию — дойти, замах, полёт снаряда — у крипа останется не больше LH_MARGIN урона героя (запас на разброс
+-- урона) и он ещё жив. Скорость потери здоровья — по окну LH_WINDOW: крипы бьют ступеньками раз в ~1 с, и замер по
+-- соседним шагам скакал на каждом ударе — герой бил рано (рецензия 11: на 60 модельных крипах 11 добиваний из 60).
+-- Пока идёт подход и замах, удар не сбивается ничем, кроме отхода и вражеской вышки.
+X.LH_WINDOW = 1.0       -- с: окно замера скорости — ровно период удара крипа (KV: AttackRate 1), тогда в окне
+                        -- каждый бьющий крип по одному разу; пока замеров на окно нет — скорость 0 (бить, только
+                        -- когда хватает удара сейчас)
+X.LH_MARGIN = 0.85      -- к попаданию у крипа не больше этой доли урона
 X.LH_KEEP = 3           -- с: замер крипа, которого столько не видели, — забыть
-X.LH_LATE = 0.25        -- крип умрёт раньше удара больше чем на эту долю урона — не успеть, не бить
 X.DENY_PCT = 50         -- своего крипа добиваем ниже этой доли здоровья
 X.FARM_NEAR = 1500      -- крипы ближе — фармим их, дальше — идём к середине линии
 X.CAST_SLACK = 150
@@ -45,13 +48,20 @@ X.DEFEND_NEAR = 500
 X.SUPPORT_SHARE = 900   -- саппорт (4, 5) на фарме линии: свой кор ближе — вражеских крипов не добивает
 X.TOWER_KEEP = 900      -- к живой вражеской вышке на фарме ближе не подходить (бьёт примерно на 700 — по памяти)
 -- больше действий (живой матч 11.10.2026, слова автора: «то что они ходят это хорошо. просто они очень мало действий
--- делают»): стычка рядом, размен ударом и способностью на линии. Пороги — наше правило, в игре не проверены
+-- делают»): стычка рядом, размен ударом и способностью на линии. Пороги — наше правило, в игре не проверены. Решение
+-- вступить в бой надолго — за агентом (ERRORS №102: в руки — моторика); руки вступают сами, только когда повод виден
+-- сейчас: раненый враг рядом, враг бьёт героя или союзника дольше секунды, союзник бьёт раненого врага (рецензия 11:
+-- стычка от одного удара-размена поддерживала сама себя и гналась без предела)
 X.SKIRMISH_PLANS = { farm = true, push = true, defend = true, group = true, follow = true }
 X.SKIRMISH_R = 900      -- враг ближе — можно вступить в стычку
 X.SKIRMISH_HP = 45      -- у себя меньше — в стычку не вступать (добить раненого — от 30)
 X.SKIRMISH_HOLD = 3     -- с: стычка держится после последнего повода
+X.SKIRMISH_LEASH = 1500 -- не гнаться дальше этого от места, где стычка началась (дальше теряется и опыт волны)
+X.SKIRMISH_BAN = 6      -- с: цель, за которой не погнались дальше поводка, столько не брать снова (иначе поводок
+                        -- начинался бы заново с нового места)
+X.HIT_SUSTAIN = 1.0     -- с: «бьёт» — бьёт столько подряд (один удар-размен — не повод)
 X.HELP_R = 700          -- враг ближе к союзнику — союзник в бою
-X.HELP_HP = 70          -- союзника, которого бьёт враг, выручать, пока у него здоровья меньше
+X.HELP_HP = 70          -- союзника выручать и раненого врага добивать вместе — ниже этой доли здоровья
 X.NUMBERS_R = 1200      -- своих и врагов считать в этом радиусе: против перевеса не вступать
 X.HARASS_HP = 60        -- размен ударом или способностью — когда у себя здоровья не меньше (research/05: удар с руки
                         -- переключает на ударившего вражеских крипов рядом; саппорту — не ниже 60 %)
@@ -59,6 +69,11 @@ X.HARASS_REACH = 150    -- за ударом-разменом подойти н�
                         -- керри на линии не дерётся — бьёт, только когда враг сам подошёл добивать)
 X.HARASS_GAP = { ranged = 2.5, melee = 3.5 }   -- с между ударами-разменами
 X.HARASS_CAST_GAP = 8   -- с между способностями-разменами
+-- размен способностью — только уроном, без оглушений и контроля (рецензия 11: Lion отдавал Earth Spike и хекс, и к гангу
+-- всё было в откате). Список — по KV героев списка ботов (сверил рецензент 11)
+X.HARASS_SPELLS = { lina_dragon_slave = true, jakiro_dual_breath = true, crystal_maiden_crystal_nova = true,
+                    viper_nethertoxin = true, sniper_shrapnel = true, luna_lucent_beam = true,
+                    bristleback_viscous_nasal_goo = true }
 X.HARASS_MANA = { 80, 70, 70, 50, 50 }          -- размен способностью при мане не меньше (%, по позициям 1–5)
 -- площадные способности по врагам, у которых в KV цель не указана (рецензия 10 сверила KV героев списка ботов):
 -- без списка рефлекс их не видит
@@ -335,6 +350,17 @@ local function cast_step(st, ag, world, now)
   return act
 end
 
+-- добивание на подходе: рядом вражеский крип, которому хватит двух ударов, — не отвлекаться на размен
+local function lasthit_soon(hero, world, creeps)
+  local my, range = world.pos(hero), world.attack_range(hero)
+  for _, c in ipairs(creeps or world.lane_creeps(hero, range + 300, true)) do
+    if world.dist(my, world.pos(c)) <= range + 300 and world.hp(c) <= 2 * world.damage(hero, c) * world.armor_factor(c) then
+      return true
+    end
+  end
+  return false
+end
+
 -- рефлекс «способности в бою»: одно применение за шаг. В драке, обороне, спасении и пуше — по ближайшему видимому
 -- врагу (или цели плана), ульта — только в драке, обороне и спасении (и когда враг ранен или их двое рядом). В прочих
 -- планах — только добить слабого врага или отбиться, когда сам ранен и враг вплотную; при отходе — без ульты, по
@@ -362,18 +388,25 @@ local function auto_cast(st, ag, world, now, mode)
     if mode == "escape" then
       if d > X.DEFEND_NEAR then return nil end
     elseif not weak and not pressed then
-      -- размен способностью на фарме: маны с запасом, здоровья хватает, враг не у своей вышки; не чаще HARASS_CAST_GAP
+      -- размен способностью на фарме: маны с запасом, здоровья хватает, враг не у своей вышки, добивание не на подходе;
+      -- не чаще HARASS_CAST_GAP и только уроном (HARASS_SPELLS)
       harass = plan == "farm" and now >= (st.harass_cast_next or 0) and world.hp_pct(hero) >= X.HARASS_HP
           and world.mana_pct(hero) >= (X.HARASS_MANA[ag.pos] or 70)
           and not world.near_enemy_tower(team, world.pos(target), X.TOWER_KEEP)
+          and not lasthit_soon(hero, world)
       if not harass then return nil end
     end
   end
   st.auto_tried = st.auto_tried or {}
-  -- ульта: в драке, обороне, спасении — по раненому (≤ 70 %) или когда врагов двое; в стычке — по раненому до половины
-  local ult_ok = mode ~= "escape" and (X.ULT_PLANS[plan] or mode == "skirmish")
-      and (world.hp_pct(target) <= (mode == "skirmish" and 50 or 70)
-           or #world.enemies_near(team, world.pos(target), 700) >= 2)
+  -- ульта: в драке, обороне, спасении — по раненому (≤ 70 %) или когда врагов двое; в стычке — только по врагу ниже
+  -- половины здоровья (рецензия 11: «двое врагов рядом» на боковой линии есть почти всегда — ульта уходила в первую стычку)
+  local ult_ok
+  if mode == "skirmish" and not X.ULT_PLANS[plan] then
+    ult_ok = world.hp_pct(target) <= 50
+  else
+    ult_ok = mode ~= "escape" and X.ULT_PLANS[plan]
+        and (world.hp_pct(target) <= 70 or #world.enemies_near(team, world.pos(target), 700) >= 2)
+  end
   local pick = nil
   for pass = 1, 2 do                                        -- сначала обычные способности, потом ульта
     for _, ab in ipairs(world.abilities(hero)) do
@@ -383,6 +416,7 @@ local function auto_cast(st, ag, world, now, mode)
       local calm = fight or (i.behavior == "target" or i.behavior == "point")
       local usable = i.level > 0 and i.behavior ~= "passive" and i.ready and (i.enemy or X.ENEMY_AOE[i.name])
           and not i.toggle and not i.autocast and not i.channel and calm and not X.ULT_BY_CAST[i.name]
+          and (not harass or X.HARASS_SPELLS[i.name])
           and (pass == 2) == i.ult and (not i.ult or ult_ok)
           and now - (st.auto_tried[i.name] or -1e9) >= X.AUTO_RETRY
       if usable then
@@ -408,11 +442,26 @@ local function auto_cast(st, ag, world, now, mode)
   return act
 end
 
--- рефлекс «стычка»: на фарме, пуше, обороне, сборе и «за» руки сами вступают в бой рядом — добить раненого врага,
--- ответить тому, кто бьёт героя, выручить союзника, которого бьёт враг, поддержать удар союзника по врагу. Не у
--- вражеской вышки и не против перевеса (врагов у цели больше, чем своих рядом; раненого — на одного больше). Цель
--- держится, пока у неё есть повод (новую берём, только если она раненая, а прежняя — нет), и ещё SKIRMISH_HOLD с
--- после — если по-прежнему не у их вышки и без перевеса. → { target, why } или nil
+-- кого враг бьёт и сколько уже подряд (по шагам): один удар-размен — не повод для стычки (рецензия 11)
+local function hits(st, world, e, now)
+  st.att = st.att or {}
+  local id, v = world.id(e), world.attack_target(e)
+  local r = st.att[id]
+  if r == nil or r.victim ~= v or now - r.seen > 1 then
+    r = { victim = v, since = now }
+    st.att[id] = r
+  end
+  r.seen = now
+  return v, now - r.since
+end
+
+-- рефлекс «стычка»: на фарме, пуше, обороне, сборе и «за» руки сами вступают в бой рядом, когда повод виден сейчас:
+-- добить раненого врага (≤ KILL_HP) в досягаемости + 300; ответить врагу, который бьёт героя дольше HIT_SUSTAIN;
+-- выручить союзника (< HELP_HP), которого враг бьёт дольше HIT_SUSTAIN; поддержать удар союзника по раненому врагу
+-- (≤ HELP_HP). Керри на фарме — только добить и ответить (гайды: керри на линии не дерётся). Не у вражеской вышки, не
+-- против перевеса (врагов у цели больше, чем своих рядом; раненого — на одного больше) и не дальше SKIRMISH_LEASH от
+-- места начала. Цель держится, пока у неё есть повод (новую берём, только если она раненая, а прежняя — нет), и ещё
+-- SKIRMISH_HOLD с после. → { target, why, origin } или nil
 local function skirmish(st, ag, world, now)
   local plan = st.plan and st.plan.kind or ""
   if not X.SKIRMISH_PLANS[plan] then
@@ -423,28 +472,38 @@ local function skirmish(st, ag, world, now)
   local my = world.pos(hero)
   local hp = world.hp_pct(hero)
   local mates = world.allies_near(team, my, X.NUMBERS_R)
+  local carry_farm = ag.pos == 1 and plan == "farm"
+  local reach = world.attack_range(hero) + 300
+  local sk = st.skirmish
+  if sk and world.alive(sk.target) and world.dist(sk.origin, world.pos(sk.target)) > X.SKIRMISH_LEASH then
+    st.skirmish_ban = { target = sk.target, until_t = now + X.SKIRMISH_BAN }   -- дальше поводка — бросить и не брать
+    sk = nil
+  end
+  local ban = st.skirmish_ban
+  if ban and now >= ban.until_t then ban, st.skirmish_ban = nil, nil end
   local function safe(e)
     local ep = world.pos(e)
-    return not world.near_enemy_tower(team, ep, X.TOWER_KEEP)
+    return not (ban and ban.target == e) and not world.near_enemy_tower(team, ep, X.TOWER_KEEP)
         and #world.enemies_near(team, ep, X.NUMBERS_R) <= mates + (world.hp_pct(e) <= X.KILL_HP and 1 or 0)
   end
   local why_of, best, best_hp = {}, nil, 1e9
   for _, e in ipairs(world.enemies_near(team, my, X.SKIRMISH_R)) do
     local ehp = world.hp_pct(e)
+    local victim, for_s = hits(st, world, e, now)
     local why = nil
     if safe(e) then
-      local victim = world.attack_target(e)
-      if ehp <= X.KILL_HP and hp >= 30 then
+      if ehp <= X.KILL_HP and hp >= 30 and world.dist(my, world.pos(e)) <= reach then
         why = "добиваю"
       elseif hp >= X.SKIRMISH_HP then
-        if victim == hero and ehp <= hp + 15 then why = "отвечаю" end
+        if victim == hero and for_s >= X.HIT_SUSTAIN and ehp <= hp + 15 then why = "отвечаю" end
         for pos = 1, 5 do
-          if why then break end
+          if why or carry_farm then break end
           local a = world.ally_hero(team, pos)
           if a and a ~= hero then
-            if victim == a and world.hp_pct(a) < X.HELP_HP and world.dist(world.pos(a), world.pos(e)) <= X.HELP_R then
+            if victim == a and for_s >= X.HIT_SUSTAIN and world.hp_pct(a) < X.HELP_HP
+                and world.dist(world.pos(a), world.pos(e)) <= X.HELP_R then
               why = "выручаю " .. pos
-            elseif world.attack_target(a) == e and world.dist(world.pos(a), my) <= X.SKIRMISH_R then
+            elseif ehp <= X.HELP_HP and world.attack_target(a) == e and world.dist(world.pos(a), my) <= X.SKIRMISH_R then
               why = "вместе с " .. pos
             end
           end
@@ -456,11 +515,13 @@ local function skirmish(st, ag, world, now)
       if ehp < best_hp then best, best_hp = e, ehp end
     end
   end
-  local sk = st.skirmish
+  for id, r in pairs(st.att or {}) do                       -- врагов, которых давно не видно, — забыть
+    if now - r.seen > 3 then st.att[id] = nil end
+  end
   if sk and why_of[sk.target] and not (world.hp_pct(best) <= X.KILL_HP and world.hp_pct(sk.target) > X.KILL_HP) then
     sk.why, sk.until_t = why_of[sk.target], now + X.SKIRMISH_HOLD          -- прежняя цель — пока есть повод
   elseif best then
-    sk = { target = best, why = why_of[best], until_t = now + X.SKIRMISH_HOLD }
+    sk = { target = best, why = why_of[best], until_t = now + X.SKIRMISH_HOLD, origin = my }
   elseif sk then                                    -- повода нет: держим недолго, если цель рядом и по-прежнему можно
     local still = false
     if now <= sk.until_t and hp >= 30 then
@@ -527,53 +588,66 @@ end
 
 -- --- план → приказ движения/атаки ---
 
--- скорость, с которой крип теряет здоровье (по замерам раз в шаг)
+-- скорость, с которой крип теряет здоровье: по замеру окно назад (шаг 0.25 с — ровно LH_WINDOW)
 local function creep_rate(st, c, world, now)
   st.creeps = st.creeps or {}
   local id, hp = world.id(c), world.hp(c)
   local r = st.creeps[id]
-  if r == nil or now - r.t > X.LH_KEEP then
-    st.creeps[id] = { hp = hp, t = now, rate = 0 }
-    return 0
+  if r == nil or now - r.seen > X.LH_KEEP or hp > r.pts[#r.pts].hp then   -- новый крип (или номер занял другой)
+    r = { pts = {} }
+    st.creeps[id] = r
   end
-  if now > r.t then
-    r.rate = r.rate * (1 - X.LH_ALPHA) + math.max(0, (r.hp - hp) / (now - r.t)) * X.LH_ALPHA
-    r.hp, r.t = hp, now
-  end
-  return r.rate
+  r.seen = now
+  local pts = r.pts
+  if #pts == 0 or now > pts[#pts].t then pts[#pts + 1] = { t = now, hp = hp } end
+  while #pts > 1 and now - pts[2].t >= X.LH_WINDOW - 1e-6 do table.remove(pts, 1) end   -- первый — окно назад
+  local span = now - pts[1].t
+  if span < X.LH_WINDOW - 1e-6 then return 0 end
+  return math.max(0, (pts[1].hp - hp) / span)
 end
 
--- через сколько секунд удар героя попадёт в крипа: дойти до дальности атаки, замах, полёт снаряда
+-- замеры крипов, которых давно не видели, — убрать (номер сущности может занять новый крип)
+local function forget_creeps(st, now)
+  for id, r in pairs(st.creeps or {}) do
+    if now - r.seen > X.LH_KEEP then st.creeps[id] = nil end
+  end
+end
+
+-- удар героя по крипу: → через сколько попадёт (дойти, замах, полёт снаряда) и сколько длится до выстрела (дойти, замах)
 local function hit_time(hero, c, world)
   local d = world.dist(world.pos(hero), world.pos(c))
   local range = world.attack_range(hero)
   local walk = math.max(0, d - range) / math.max(100, world.speed(hero))
+  local windup = walk + world.attack_point(hero)
   local fly = world.is_ranged(hero) and math.min(d, range) / math.max(300, world.projectile_speed(hero)) or 0
-  return walk + world.attack_point(hero) + fly
+  return windup + fly, windup
 end
 
--- бить ли сейчас: к попаданию у крипа будет не больше урона (и он ещё не умрёт от других). → да/нет, здоровье к удару, время
+-- бить ли сейчас: к попаданию у крипа будет не больше LH_MARGIN урона, и он ещё жив. Ближний бой (попадание через
+-- ~0.3 с: за это время удара крипа может и не быть) — только когда хватает удара уже сейчас (модель рецензии 11:
+-- иначе 9 ранних ударов из 60). → да/нет, здоровье к удару, замах
 local function lasthit_now(st, hero, c, world, now)
   local rate = creep_rate(st, c, world, now)
-  local t = hit_time(hero, c, world)
-  local pred = world.hp(c) - rate * t
+  local t, windup = hit_time(hero, c, world)
+  local hp = world.hp(c)
+  local pred = hp - rate * t
   local dmg = world.damage(hero, c) * world.armor_factor(c)
-  return pred <= dmg and pred > -dmg * X.LH_LATE, pred, t
+  return pred <= dmg * X.LH_MARGIN and pred > 0 and (world.is_ranged(hero) or hp <= dmg), pred, windup
 end
 
--- лучший крип для удара сейчас среди creeps (только в досягаемости + 300); остальных — замерять
+-- лучший крип для удара сейчас среди creeps (только в досягаемости + 300); остальных — замерять. → крип, замах
 local function pick_lasthit(st, hero, creeps, world, now, filter)
   local my, range = world.pos(hero), world.attack_range(hero)
-  local best, best_pred, best_t = nil, 1e18, 0
+  local best, best_pred, best_w = nil, 1e18, 0
   for _, c in ipairs(creeps) do
     if (filter == nil or filter(c)) and world.dist(my, world.pos(c)) <= range + 300 then
-      local ok, pred, t = lasthit_now(st, hero, c, world, now)
-      if ok and pred < best_pred then best, best_pred, best_t = c, pred, t end
+      local ok, pred, windup = lasthit_now(st, hero, c, world, now)
+      if ok and pred < best_pred then best, best_pred, best_w = c, pred, windup end
     else
       creep_rate(st, c, world, now)
     end
   end
-  return best, best_t
+  return best, best_w
 end
 
 -- кор своей линии рядом с саппортом — добивания ему. Только кор, чья линия — эта (рецензия 10: на старте у фонтана
@@ -608,17 +682,20 @@ local function harass_order(st, ag, world, now, creeps, tag)
       or #world.enemies_near(team, world.pos(e), X.NUMBERS_R) > world.allies_near(team, my, X.NUMBERS_R) then
     return nil
   end
-  for _, c in ipairs(creeps) do
-    if world.dist(my, world.pos(c)) <= range + 300 and world.hp(c) <= 2 * world.damage(hero, c) * world.armor_factor(c) then
-      return nil
-    end
-  end
+  if lasthit_soon(hero, world, creeps) then return nil end
   local ranged = world.is_ranged(hero)
   if not ranged and #world.lane_creeps(hero, 500, true) > 2 then return nil end
   st.harass_next = now + (ranged and X.HARASS_GAP.ranged or X.HARASS_GAP.melee)
   local walk = math.max(0, world.dist(my, world.pos(e)) - range) / math.max(100, world.speed(hero))
-  return { kind = "attack", target = e, busy = math.min(1.5, walk + world.attack_point(hero) + 0.15),
+  return { kind = "attack", target = e, busy = math.min(1.5, walk + world.attack_point(hero) + 0.1),
            why = tag .. ": бью " .. world.short(world.name(e)) }
+end
+
+-- свои крипы для денаев: ниже половины здоровья и не у вражеской вышки (рецензия 11: ближний бой шёл под выстрел)
+local function deny_ok(team, world)
+  return function(c)
+    return world.hp_pct(c) < X.DENY_PCT and not world.near_enemy_tower(team, world.pos(c), X.TOWER_KEEP)
+  end
 end
 
 local function farm_order(st, ag, world, lane, now)
@@ -630,7 +707,7 @@ local function farm_order(st, ag, world, lane, now)
     tag = "линия с " .. core_pos                 -- безопасно; вражеских крипов не добивать: опыт идёт и так
     local range = world.attack_range(hero)
     local own = world.lane_creeps(hero, range + 300, false)
-    local deny, dt = pick_lasthit(st, hero, own, world, now, function(c) return world.hp_pct(c) < X.DENY_PCT end)
+    local deny, dt = pick_lasthit(st, hero, own, world, now, deny_ok(team, world))
     if deny then return { kind = "attack", target = deny, busy = math.min(1.5, dt + 0.1), why = tag .. ": добиваю своего" } end
     local h = harass_order(st, ag, world, now, own, tag)          -- бить врага, когда безопасно: ударом — и назад
     if h then return h end
@@ -661,16 +738,24 @@ local function farm_order(st, ag, world, lane, now)
   local range = world.attack_range(hero)
   local best, bt = pick_lasthit(st, hero, enemies, world, now)
   if best then return { kind = "attack", target = best, busy = math.min(1.5, bt + 0.1), why = tag .. ": добиваю" } end
-  local deny, dt = pick_lasthit(st, hero, world.lane_creeps(hero, range + 300, false), world, now,
-    function(c) return world.hp_pct(c) < X.DENY_PCT end)
+  local deny, dt = pick_lasthit(st, hero, world.lane_creeps(hero, range + 300, false), world, now, deny_ok(team, world))
   if deny then return { kind = "attack", target = deny, busy = math.min(1.5, dt + 0.1), why = tag .. ": добиваю своего" } end
   local h = harass_order(st, ag, world, now, enemies, tag)       -- добивание не на подходе — размен ударом с героем
   if h then return h end
-  local weakest, whp = enemies[1], 1e18                      -- ждать у крипа, которого добивать скоро: самого слабого
-  for _, c in ipairs(enemies) do
-    if world.hp(c) < whp then weakest, whp = c, world.hp(c) end
+  -- где ждать: у крипа, которого скоро добивать (меньше всех здоровья через секунду по замеру), среди ближних к герою —
+  -- не дальше ближайшего + 200 (рецензия 11: ближний бой уходил за спины вражеских ближних к их дальнему крипу)
+  local near = world.dist(my, world.pos(enemies[1]))           -- enemies — от ближнего к дальнему (FIND_CLOSEST)
+  if not world.is_ranged(hero) and near <= range + 250 then      -- ближний бой у волны — стоять, как раньше
+    return { kind = "hold", why = tag .. ": жду добивание" }
   end
-  local np = world.pos(weakest)
+  local soon, shp = enemies[1], 1e18
+  for _, c in ipairs(enemies) do
+    if world.dist(my, world.pos(c)) <= near + 200 then
+      local h1 = world.hp(c) - creep_rate(st, c, world, now) * 1.0
+      if h1 < shp then soon, shp = c, h1 end
+    end
+  end
+  local np = world.pos(soon)
   if world.dist(my, np) > range + 50 then
     return { kind = "move", point = toward(np, my, range - 50), why = tag .. ": к крипам" }
   end
@@ -759,6 +844,8 @@ end
 function X.step(st, ag, world, now)
   local hero = ag.hero
   local acts = {}
+  local dt = math.max(0, math.min(1, now - (st.step_t or now)))
+  st.step_t = now
   if not world.alive(hero) then
     if st.buyback and world.can_buyback(hero) then
       acts[#acts + 1] = { kind = "buyback" }
@@ -770,6 +857,8 @@ function X.step(st, ag, world, now)
     st.status = string.format("мёртв, %d с", math.floor((tonumber(world.respawn(hero)) or 0) + 0.5))
     return acts
   end
+  if st.last and st.last.kind == "hold" then st.idle = (st.idle or 0) + dt end   -- простой рук (Д20: число для учёбы)
+  forget_creeps(st, now)
   local lv = level_step(st, hero, world, now)
   if lv then acts[#acts + 1] = lv end
   local b = buy_step(st, hero, world, now, false)
@@ -781,9 +870,15 @@ function X.step(st, ag, world, now)
       st.busy_until, st.active = now, nil              -- применено: пошёл откат или предмет израсходован
     end
   end
-  local last = st.last                                     -- цель удара умерла раньше попадания — замах ждать незачем
-  if last and last.kind == "attack" and last.target and now < st.busy_until and not world.alive(last.target) then
-    st.busy_until = now
+  local hp = world.hp_pct(hero)
+  local last = st.last
+  if last and last.kind == "attack" and last.target and now < st.busy_until and st.active == nil then
+    -- замах удара не ждать: цель умерла раньше попадания; здоровье ниже порога отхода; бьёт вражеская вышка
+    -- (рецензия 11: замах до 1.5 с откладывал отход). Применение способности так не прерывается
+    if not world.alive(last.target) or (st.retreat_hp > 0 and hp < st.retreat_hp)
+        or world.tower_hitting(ag.team, hero, X.TOWER_KEEP) then
+      st.busy_until = now
+    end
   end
   if world.is_channeling(hero) or now < st.busy_until then return acts end
 
@@ -801,7 +896,6 @@ function X.step(st, ag, world, now)
     return acts
   end
 
-  local hp = world.hp_pct(hero)
   if st.retreat_hp > 0 and hp < st.retreat_hp then st.retreating = true end
   if st.retreating and hp >= math.min(95, st.retreat_hp + X.RETREAT_HYST) then st.retreating = false end
   if st.retreating then
@@ -816,6 +910,16 @@ function X.step(st, ag, world, now)
                              why = string.format("отхожу, здоровья %d%%", math.floor(hp + 0.5)) }, now, world)
   end
 
+  local function cast(c)
+    acts[#acts + 1] = c
+    st.busy_until = now + (c.busy or X.AFTER_CAST)
+    st.last = nil                                            -- после применения приказ движения выдать заново
+    st.status = (c.auto and "бью способностью " or "применяю ") .. c.name
+    return acts
+  end
+  local c = cast_step(st, ag, world, now)                    -- применения агента — раньше рефлексов (рецензия 11)
+  if c then return cast(c) end
+
   -- рефлекс «из-под вышки»: вражеская вышка бьёт героя — отойти за её досягаемость, если это не драка с запасом
   -- здоровья (на фарме, пуше, при отходе и прочем — всегда; в драке и спасении — когда здоровья меньше половины)
   local tw = world.tower_hitting(ag.team, hero, X.TOWER_KEEP)
@@ -825,14 +929,8 @@ function X.step(st, ag, world, now)
   end
 
   local sk = skirmish(st, ag, world, now)
-  local c = cast_step(st, ag, world, now) or auto_cast(st, ag, world, now, sk and "skirmish" or nil)
-  if c then
-    acts[#acts + 1] = c
-    st.busy_until = now + (c.busy or X.AFTER_CAST)
-    st.last = nil                                            -- после применения приказ движения выдать заново
-    st.status = (c.auto and "бью способностью " or "применяю ") .. c.name
-    return acts
-  end
+  c = auto_cast(st, ag, world, now, sk and "skirmish" or nil)
+  if c then return cast(c) end
   if sk then
     return issue(st, acts, { kind = "attack", target = sk.target,
                              why = "стычка: " .. sk.why .. ", бью " .. world.short(world.name(sk.target)) }, now, world)
