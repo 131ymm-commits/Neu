@@ -207,7 +207,8 @@ class GameEvents(unittest.TestCase):
     def test_listened_events_and_fields(self):
         code = (CVS / "coach_game.lua").read_text(encoding="utf-8")       # с литералами: имена событий — строки
         pairs = re.findall(r'ListenToGameEvent\("(\w+)",\s*Dynamic_Wrap\(G,\s*"(\w+)"\)', code)
-        self.assertEqual({e for e, _ in pairs}, {"game_rules_state_change", "npc_spawned", "player_chat", "entity_killed"})
+        self.assertEqual({e for e, _ in pairs}, {"game_rules_state_change", "npc_spawned", "player_chat", "entity_killed",
+                                                 "dota_match_done"})
         for event, handler in pairs:
             with self.subTest(event=event):
                 self.assertIn(event, self.EVENTS)

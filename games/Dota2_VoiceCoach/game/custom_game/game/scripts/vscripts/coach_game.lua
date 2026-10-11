@@ -82,6 +82,7 @@ function G:Init()
   ListenToGameEvent("npc_spawned", Dynamic_Wrap(G, "OnSpawn"), G)
   ListenToGameEvent("player_chat", Dynamic_Wrap(G, "OnChat"), G)
   ListenToGameEvent("entity_killed", Dynamic_Wrap(G, "OnKilled"), G)
+  ListenToGameEvent("dota_match_done", Dynamic_Wrap(G, "OnMatchDone"), G)   -- Д20: конец матча — разбор агентов
   CustomGameEventManager:RegisterListener("vc_command", function(_, ev) G:OnHudCommand(ev) end)
   CustomGameEventManager:RegisterListener("vc_ready", function(_, ev) G:OnReady(ev) end)
   LinkLuaModifier("modifier_voicecoach_commander", "modifiers/modifier_voicecoach_commander", LUA_MODIFIER_MOTION_NONE)
@@ -409,7 +410,7 @@ function G:SetupAgents()
     #listed > 0 and (" — " .. table.concat(listed, ", ")) or "")
   for _, team in ipairs({ DOTA_TEAM_GOODGUYS, DOTA_TEAM_BADGUYS }) do
     local T = { name = Obs.team_name(team), agents = {}, exec = {}, status = {}, seq = 0, commanders = {}, coach = {},
-                events = {}, dec_seq = {}, dec_t = {}, said = {}, thinking = {} }
+                events = {}, dec_seq = {}, dec_t = {}, said = {}, thinking = {}, seen = {} }
     for _, x in ipairs(found[team]) do
       if #T.agents < 5 then T.agents[#T.agents + 1] = x.hero end
     end
@@ -608,7 +609,8 @@ end
 function G:CoachFor(T, pos, now)
   local out = {}
   for _, c in ipairs(T.coach[pos] or {}) do
-    out[#out + 1] = { seq = c.seq, ago = math.floor(now - c.t + 0.5), text = c.text, urgent = c.urgent }
+    out[#out + 1] = { seq = c.seq, ago = math.floor(now - c.t + 0.5), text = c.text, urgent = c.urgent,
+                      remember = c.remember }
   end
   return out
 end
@@ -623,7 +625,7 @@ function G:TickPayload(now)
       if hero then
         local ok, o = pcall(Obs.build, { team = team, pos = pos, hero = hero }, World,
           { clock = clock, now = now, st = T.exec[pos], coach = G:CoachFor(T, pos, now), events = T.events[pos],
-            statuses = T.status })
+            statuses = T.status, seen = T.seen and T.seen[pos] or 0 })
         if ok then
           heroes[#heroes + 1] = o
         elseif not T.obs_err then
@@ -643,7 +645,7 @@ function G:TickPayload(now)
   -- часы с точностью 0.1 с — для замера задержки решений (в наблюдениях героев — целые секунды)
   return { clock = math.floor(clock * 10 + 0.5) / 10, heroes = heroes, coached = coached, applied = applied,
            replies = replies, map = okm and map or nil, cmd_ack = G.remote_seq or 0, cmd_run = G.agents_run,
-           game_id = G.game_id }
+           game_id = G.game_id, ended = G.ended }
 end
 
 -- схема карты для пульта тренера (Д13): вышки (где стоят и живы ли — это видят обе команды), фонтаны, границы, счёт
@@ -775,10 +777,25 @@ local function push_event(T, pos, text)
   while #list > G.EVENTS_KEEP do table.remove(list, 1) end
 end
 
+G.SEEN_R = 900                -- крип, умерший ближе к герою, — «умер рядом» (Д20: добил ли его герой)
+
 function G:OnKilled(ev)
   if not G.ready then return end
   local killed = EntIndexToHScript(ev.entindex_killed)
   if killed == nil then return end
+  local okc, creep = pcall(function() return killed:IsCreep() and not killed:IsNeutralUnitType() end)
+  if okc and creep then
+    local kp = killed:GetAbsOrigin()
+    for team, T in pairs(G.teams) do
+      if killed:GetTeamNumber() ~= team then
+        T.seen = T.seen or {}
+        for pos, hero in pairs(T.agents) do
+          if World.alive(hero) and World.dist(World.pos(hero), kp) <= G.SEEN_R then T.seen[pos] = (T.seen[pos] or 0) + 1 end
+        end
+      end
+    end
+    return                                           -- крип: других событий для агентов нет
+  end
   local killer = ev.entindex_attacker and EntIndexToHScript(ev.entindex_attacker) or nil
   local stamp = clock_text(GameRules:GetDOTATime(false, true))
   local kname = World.short(killed:GetUnitName())
@@ -856,6 +873,8 @@ end
 function G:TeamCommand(team, text)
   local T = G.teams[team]
   if not T then return false end
+  local who, lesson = G.remember_parse(text)
+  if lesson then return G:Remember(team, who, lesson) end
   local r = Text.parse(text, G:TextCtx(team))
   if #r.errors > 0 then
     G:Reply(T, 0, "error", "Не понял: " .. r.errors[1])
@@ -902,7 +921,69 @@ function G:OnChat(ev)
   if pid < 0 or PlayerResource:IsFakeClient(pid) then return end
   local team = PlayerResource:GetTeam(pid)
   local text = tostring(ev.text or "")
-  if Text.looks_like_command(text, G:TextCtx(team)) then G:Command(pid, text) end
+  if G.remember_parse(text) or Text.looks_like_command(text, G:TextCtx(team)) then G:Command(pid, text) end
+end
+
+-- конец матча (Д20): победитель — серверу агентов, там герои записывают матч в память и разбирают его
+function G:OnMatchDone(ev)
+  local team = tonumber(ev and ev.winningteam)
+  G.ended = { winner = team and Obs.team_name(team) or "" }
+  log("матч окончен: победила %s", G.ended.winner ~= "" and G.ended.winner or "?")
+end
+
+-- обрезать строку по символам UTF-8, а не по байтам
+local function utf8_cut(s, n)
+  local out, k = {}, 0
+  for ch in s:gmatch("[%z\1-\127\194-\244][\128-\191]*") do
+    k = k + 1
+    if k > n then break end
+    out[#out + 1] = ch
+  end
+  return table.concat(out)
+end
+
+-- «запомни …» (Д20): урок агентам — дословно в их память на ПК хоста, а не приказ рукам. Кому: номера позиций
+-- («1», «23», «1,2»), «все», «все-1» или никто (= все). → { позиции }, урок | nil
+function G.remember_parse(text)
+  local s = tostring(text or "")
+  local low = Text.lower(s)                      -- кириллица: та же длина в байтах, позиции совпадают
+  local a, b = low:find("запомни", 1, true)
+  if not a then return nil end
+  local head = low:sub(1, a - 1):gsub("^%s+", ""):gsub("%s+$", "")
+  local lesson = s:sub(b + 1):gsub("^[%s:,%-]+", ""):gsub("%s+$", "")
+  if lesson == "" then return nil end
+  local who = {}
+  if head == "" or head == "все" then
+    who = { 1, 2, 3, 4, 5 }
+  elseif head:match("^[1-5][1-5,]*$") then
+    for d in head:gmatch("%d") do who[#who + 1] = tonumber(d) end
+  else
+    local ex = head:match("^все%-([1-5,]+)$")
+    if not ex then return nil end                -- «кто-то запомни» — не наш формат: пусть разбирает парсер
+    local skip = {}
+    for d in ex:gmatch("%d") do skip[tonumber(d)] = true end
+    for p = 1, 5 do if not skip[p] then who[#who + 1] = p end end
+  end
+  return who, utf8_cut(lesson, 200)
+end
+
+function G:Remember(team, who, lesson)
+  local T = G.teams[team]
+  if not T then return false end
+  local now = GameRules:GetGameTime()
+  T.seq = T.seq + 1
+  local names = {}
+  for _, pos in ipairs(who) do
+    if T.agents[pos] then
+      names[#names + 1] = tostring(pos)
+      local list = T.coach[pos]
+      list[#list + 1] = { seq = T.seq, t = now, text = "запомни: " .. lesson, urgent = false, remember = lesson }
+      while #list > G.COACH_KEEP do table.remove(list, 1) end
+    end
+  end
+  if #names > 0 then G:Reply(T, 0, "order", "→ " .. table.concat(names, "") .. ": запомнить «" .. lesson .. "»") end
+  G:SendAgents(team)
+  return #names > 0
 end
 
 -- состояние героев для HUD тренера (раз в секунду и после приказа)

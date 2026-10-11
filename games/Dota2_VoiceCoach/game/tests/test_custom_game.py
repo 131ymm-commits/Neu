@@ -1713,6 +1713,59 @@ class Executor(Game):
         self.assertEqual(plan(), "hold")                                     # новый запуск сервера — номера с 1
 
 
+class Learning(Game):
+    """Д20: игра даёт агентам то, на чём они учатся: «запомни …» тренера дословно, вражеских крипов, умерших рядом с
+    героем (пропущенные добивания), простой рук и конец матча с победителем."""
+    decide = Executor.decide
+    lua = Executor.lua
+
+    def test_remember_parse(self):
+        rp = self.G["CoachGame"]["remember_parse"]
+        who, lesson = rp("1 запомни: стой дальше от вышки")
+        self.assertEqual((list(who.values()), lesson), ([1], "стой дальше от вышки"))
+        who, lesson = rp("Запомни Не ходи под вышку без союзников")
+        self.assertEqual((list(who.values()), lesson), ([1, 2, 3, 4, 5], "Не ходи под вышку без союзников"))
+        who, _ = rp("все-1 запомни — денай дальнего крипа")
+        self.assertEqual(list(who.values()), [2, 3, 4, 5])
+        who, _ = rp("23 запомни бей керри врага")
+        self.assertEqual(list(who.values()), [2, 3])
+        self.assertIsNone(rp("1 фарм бот"))
+        self.assertIsNone(rp("запомни"))
+        self.assertIsNone(rp("снайпер, пожалуйста, запомни это"))             # не наш формат — дальше парсер
+
+    def test_remember_from_chat_reaches_agents(self):
+        self.start_match()
+        self.G["CoachGame"]["OnChat"](self.G["CoachGame"], self.L.table_from(
+            {"playerid": 0, "text": "1 запомни: стой у своей волны"}))
+        self.step(1.5)
+        sent = self.payloads()[-1]
+        mine = next(h for h in sent["heroes"] if h["team"] == "radiant" and h["pos"] == 1)
+        self.assertEqual(mine["coach"][-1]["remember"], "стой у своей волны")
+        other = next(h for h in sent["heroes"] if h["team"] == "radiant" and h["pos"] == 2)
+        self.assertFalse([c for c in other["coach"] if c.get("remember")])
+
+    def test_seen_idle_and_match_end(self):
+        self.start_match()
+        sniper = self.hero(1)
+        sniper["pos"] = self.L.eval("Vector(2000, -5000, 0)")
+        self.decide(2, 1, {"plan": "hold"})                                   # стоит — простой рук
+        near = self.L.eval("__creep(3, 2300, -5000, 0)")
+        far = self.L.eval("__creep(3, 4000, -5000, 0)")
+        mine = self.L.eval("__creep(2, 2100, -5000, 0)")
+        for c in (near, far, mine):
+            c["alive"] = False
+            self.L.execute(f"__fire('entity_killed', {{ entindex_killed = {c['idx']} }})")
+        self.step(3)
+        sent = self.payloads()[-1]
+        me = next(h for h in sent["heroes"] if h["team"] == "radiant" and h["pos"] == 1)
+        self.assertEqual(me["stats"]["seen"], 1)                              # только вражеский и рядом
+        self.assertGreaterEqual(me["stats"]["idle"], 2)
+        self.L.execute("__fire('dota_match_done', { winningteam = 3 })")
+        G = self.G["CoachGame"]
+        payload = G["TickPayload"](G, self.G["__now"])
+        self.assertEqual(payload["ended"]["winner"], "dire")
+
+
 class Fallback(Game):
     """Нет сервера агентов: запасной исполнитель выполняет приказы тренера сам, HUD пишет об этом."""
 

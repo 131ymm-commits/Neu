@@ -77,6 +77,8 @@ function O.build(ag, world, ctx)
     o.respawn = int(world.respawn(hero))
   end
   o.stats = world.stats(hero)
+  o.stats.seen = int(ctx.seen or 0)                       -- вражеских крипов умерло рядом (Д20: пропущенные добивания)
+  o.stats.idle = int(st.idle or 0)                        -- сколько секунд руки стояли без дела (приказ «стоять»)
 
   o.abilities = {}
   for _, ab in ipairs(world.abilities(hero)) do o.abilities[#o.abilities + 1] = ability_row(ab, hero, world) end
