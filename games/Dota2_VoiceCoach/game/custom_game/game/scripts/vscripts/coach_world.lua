@@ -317,6 +317,21 @@ function W.enemies_near(team, point, radius)
   return out
 end
 
+-- живые герои агентов команды (с самим собой) не дальше radius от точки — сколько своих рядом
+function W.allies_near(team, point, radius)
+  local n = 0
+  for _, hero in pairs(W.agents[team] or {}) do
+    if W.alive(hero) and W.dist(hero:GetAbsOrigin(), point) <= radius then n = n + 1 end
+  end
+  return n
+end
+
+-- кого юнит бьёт сейчас (герой, крип, вышка) или nil
+function W.attack_target(unit)
+  local ok, t = pcall(function() return unit:GetAttackTarget() end)
+  return ok and t or nil
+end
+
 function W.team_center(team)
   local sx, sy, n = 0, 0, 0
   for _, hero in pairs(W.agents[team] or {}) do
