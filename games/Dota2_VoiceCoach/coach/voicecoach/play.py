@@ -404,6 +404,14 @@ def claude_login(exe: str, run=subprocess.run) -> bool:
         return False
 
 
+def claude_update(exe: str, run=subprocess.run) -> bool:
+    """`claude update` — обновить Claude Code (старая версия не знает ключей, с которыми игра его зовёт)."""
+    try:
+        return run([exe, "update"], timeout=600, env=no_key_env()).returncode == 0
+    except Exception:                                   # noqa: BLE001
+        return False
+
+
 def claude_check(exe: str, run=subprocess.run) -> tuple[bool, str]:
     """Пробный вызов `claude -p` быстрой моделью: отвечает ли Claude Code (5–15 с, капля лимита подписки)."""
     try:
@@ -422,18 +430,18 @@ def claude_check(exe: str, run=subprocess.run) -> tuple[bool, str]:
 
 
 def setup_subscription(find=find_claude, install=install_claude, auth=claude_auth, login=claude_login,
-                       check=claude_check) -> str | None:
+                       check=claude_check, update=claude_update) -> str | None:
     """Claude Code со входом подпиской: найти или поставить, войти (браузер), проверить пробным вызовом.
     → путь к claude или None (в этот раз — правила). Ctrl+C на любом шаге — пропустить: в этот раз правила."""
     try:
-        return _setup_subscription(find, install, auth, login, check)
+        return _setup_subscription(find, install, auth, login, check, update)
     except KeyboardInterrupt:
         say("")
         say("  Пропускаю Claude Code — в этот раз героев ведут правила; поставлю при следующем запуске.")
         return None
 
 
-def _setup_subscription(find, install, auth, login, check) -> str | None:
+def _setup_subscription(find, install, auth, login, check, update=lambda exe: False) -> str | None:
     exe = find()
     if exe is None:
         say("  Игре нужен Claude Code для командной строки — отдельная маленькая программа Anthropic, входит в")
@@ -462,6 +470,10 @@ def _setup_subscription(find, install, auth, login, check) -> str | None:
         say(f"  Claude Code не запускается ({why}) — ставлю заново…")
         install()
         exe = find() or exe
+        ok, why = check(exe)
+    if not ok and "unknown option" in why.lower():     # старая версия не знает ключей игры — обновить один раз
+        say(f"  Claude Code старый ({why[:120]}) — обновляю (claude update)…")
+        update(exe)
         ok, why = check(exe)
     if ok:
         return exe

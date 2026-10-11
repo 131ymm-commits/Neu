@@ -338,6 +338,18 @@ class Launcher(unittest.TestCase):
         self.assertIsNone(P.setup_subscription(find=lambda: None, install=interrupt))
         self.assertIsNone(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {"loggedIn": False},
                                                login=interrupt))
+        # старая версия не знает ключей игры («unknown option») — обновить один раз и проверить снова
+        answers = iter([(False, "error: unknown option '--safe-mode'"), (True, "")])
+        update = mock.Mock(return_value=True)
+        self.assertEqual(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {"loggedIn": True},
+                                              check=lambda e: next(answers), update=update), "/x/claude")
+        update.assert_called_once_with("/x/claude")
+        self.assertTrue(any("claude update" in line for line in self.out))
+        update.reset_mock()
+        self.assertIsNone(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {"loggedIn": True},
+                                               check=lambda e: (False, "error: unknown option '--tools'"),
+                                               update=update))
+        update.assert_called_once()                                          # не помогло — правила, без петли
         # старая версия без `auth status` ({}): вход не навязываем, судит пробный вызов
         login.reset_mock()
         self.assertEqual(P.setup_subscription(find=lambda: "/x/claude", auth=lambda e: {}, login=login,
