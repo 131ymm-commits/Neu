@@ -7,6 +7,7 @@ games/Dota2_VoiceCoach/digitizer/profiles/
 games/Dota2_VoiceCoach/digitizer/agents/
 games/Dota2_VoiceCoach/game/prototype_oha/run_server.cmd
 games/Dota2_VoiceCoach/coach/logs/
+games/Dota2_VoiceCoach/coach/memory/
 # игра вдвоём (Д14): переносной Python и cloudflared, файл друга с секретом ящика
 games/Dota2_VoiceCoach/.runtime/
 games/Dota2_VoiceCoach/ДЛЯ_ДРУГА.html
