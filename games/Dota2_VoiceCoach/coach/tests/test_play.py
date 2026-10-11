@@ -375,6 +375,8 @@ class Launcher(unittest.TestCase):
             self.assertNotIn("ANTHROPIC_AUTH_TOKEN", kw["env"])
         self.assertNotIn("ANTHROPIC_API_KEY", b.env)
         self.assertEqual(seen[0][0][seen[0][0].index("--model") + 1], P.CLAUDE_FAST)   # пробный вызов — быстрой моделью
+        for flag in ("--system-prompt-file", "--json-schema", "--disallowedTools", "--safe-mode", "--tools"):
+            self.assertIn(flag, seen[0][0])                                    # рецензия 11б: ключи — как у агентов
         self.assertEqual(seen[2][0][1:], ["auth", "login", "--claudeai"])
         ok, why = P.claude_check("c", run=lambda a, **kw: SimpleNamespace(
             stdout='{"is_error": true, "result": "Invalid API key · Please run /login"}', stderr="", returncode=1))
@@ -937,11 +939,20 @@ class Launcher(unittest.TestCase):
         self.assertIn("  ● Агенты Claude Тьмы ведут героев: первые решения пришли.", self.out)
         self.assertIn("  Агенты: Света — ПРАВИЛА, не Claude (решений 40); Тьмы — решений 7, вызовов Claude 7, ошибок 0.",
                       self.out)
+        self.assertIn("Claude Code не включился", text)
+        self.out.clear()                                                      # рецензия 11б: правила по --rules —
+        room.rules_why = "так просили (--rules)"                              # не «Claude не включился»
+        P.report_agents(room, {}, now[0])
+        self.assertIn("  ! Героями Света правят ПРАВИЛА, а не агенты Claude: так просили (--rules).", self.out)
 
     def test_rules_warning_asks_before_playing(self):
-        """ERRORS №103: Claude не включился — крупное предупреждение и вопрос; Ctrl+C — выйти, Enter — играть."""
+        """ERRORS №103: Claude не включился — крупное предупреждение и вопрос; Ctrl+C — выйти, Enter — играть. Нажатое
+        во время установки — не ответ (рецензия 11б)."""
         asked = []
-        self.assertTrue(P.rules_ok(lambda q: asked.append(q) or ""))
+        with mock.patch.object(P, "flush_input", lambda: asked.append("сброс")):
+            self.assertTrue(P.rules_ok(lambda q: asked.append(q) or ""))
+        self.assertEqual(asked[0], "сброс")
+        asked.pop(0)
         self.assertIn("Claude не включился", "\n".join(self.out))
         self.assertIn("Enter — всё равно играть на правилах", asked[0])
 
@@ -1234,6 +1245,37 @@ class WindowLog(unittest.TestCase):
                     if P._LOG is not None:
                         P._LOG.close()
                     P._LOG = None
+
+
+    def test_window_log_masks_friend_key_and_main_closes_it(self):
+        """Рецензия 11б: ссылка с ключом пульта друга шла в файл окна (его присылают в чат); main без --rules и без
+        Claude — предупреждение в файле окна, Ctrl+C — выход; файл после main закрыт (на Windows — иначе не удалить)."""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "logs" / "launcher_x.log"
+            link = "http://127.0.0.1:8790/c/AbCdEfGhIjKlMnOpQrStUv/"
+            try:
+                with mock.patch.object(P.sys, "stdout", io.StringIO()) as out:
+                    P.open_window_log(path)
+                    P.say(f"  Работает. Пульт друга на этом ПК: {link}")
+                self.assertIn(link, out.getvalue())                            # в окне — ссылка целиком
+                self.assertIn("/c/<ключ>/", path.read_text(encoding="utf-8"))
+                self.assertNotIn("AbCdEfGh", path.read_text(encoding="utf-8"))
+            finally:
+                P.close_window_log()
+
+            def interrupt(q):
+                raise KeyboardInterrupt
+            with mock.patch.object(P.sys, "stdout", io.StringIO()), \
+                    mock.patch.object(P, "LOGS", Path(tmp) / "logs2"), \
+                    mock.patch.object(P, "CONFIG", Path(tmp) / "play.json"), \
+                    mock.patch.object(P, "already_running", lambda: False), \
+                    mock.patch.object(P, "setup_agents", lambda cfg, args, ask_secret=None: ("off", None)):
+                self.assertEqual(P.main([], ask=interrupt), 1)
+            self.assertIsNone(P._LOG)
+            text = next((Path(tmp) / "logs2").glob("launcher_*.log")).read_text(encoding="utf-8")
+            self.assertIn("[1/6] Агенты героев", text)
+            self.assertIn("!!! ВНИМАНИЕ: Claude не включился", text)
+            self.assertIn("Выхожу", text)
 
 
 class Updater(unittest.TestCase):

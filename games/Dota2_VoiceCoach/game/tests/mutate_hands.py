@@ -1,7 +1,8 @@
 """Подмены в копии кода рук (рецензия 11, ERRORS №104): каждое правило рук должно ловиться тестами.
 
 Запуск: скопировать game/ и coach/ во временную папку (рядом, как в репозитории), поправить пути HERE/SRC/PY ниже и
-запустить: python mutate_hands.py [M1 M2 …]. Итог 11.10.2026: поймано 51 из 51 (после правки теста M41).
+запустить: python mutate_hands.py [M1 M2 …]. Итог 11.10.2026: поймано 51 из 51 (после правки теста M41); после правок
+рецензии 11б — см. ERRORS №104.
 Не тест: unittest его не собирает (имя не test_*)."""
 import shutil, subprocess, sys
 from pathlib import Path
@@ -16,11 +17,15 @@ M = [
  ("M2 добивание кора без busy", E, [("if best then return { kind = \"attack\", target = best, busy = math.min(1.5, bt + 0.1), why", "if best then return { kind = \"attack\", target = best, why")]),
  ("M3 issue не ставит busy", E, [("if order.busy then st.busy_until = math.max(st.busy_until or 0, now + order.busy) end", "")]),
  ("M4 скорость 0", E, [("  return math.max(0, (pts[1].hp - hp) / span)\nend", "  return 0\nend")]),
+ ("M4b прогноз без повторов", E, [("if d > 0 and tau > now - X.LH_PERIOD and tau + X.LH_PERIOD <= now + t then before = before + d end", "")]),
+ ("M4c повтор без фазы (все удары окна)", E, [("tau + X.LH_PERIOD <= now + t then", "true then")]),
  ("M5 без полёта снаряда", E, [("local fly = world.is_ranged(hero) and math.min(d, range) / math.max(300, world.projectile_speed(hero)) or 0", "local fly = 0")]),
  ("M6 без pred > 0", E, [("pred <= dmg * X.LH_MARGIN and pred > 0 and", "pred <= dmg * X.LH_MARGIN and")]),
  ("M6b запас 1.0", E, [("X.LH_MARGIN = 0.85 ", "X.LH_MARGIN = 1.0 ")]),
  ("M6c ближний бой с упреждением", E, [("(world.is_ranged(hero) or hp <= dmg)", "true")]),
  ("M6d окно 2 с", E, [("X.LH_WINDOW = 1.0 ", "X.LH_WINDOW = 2.0 ")]),
+ ("M6e период 2 с", E, [("X.LH_PERIOD = 1.0 ", "X.LH_PERIOD = 2.0 ")]),
+ ("M6f окно короче периода", E, [("X.LH_WINDOW = 1.0 ", "X.LH_WINDOW = 0.5 ")]),
  ("M7 смерть цели не снимает замах", E, [("if not world.alive(last.target) or (st.retreat_hp > 0 and hp < st.retreat_hp)", "if (st.retreat_hp > 0 and hp < st.retreat_hp)")]),
  ("M7b отход не прерывает замах", E, [("if not world.alive(last.target) or (st.retreat_hp > 0 and hp < st.retreat_hp)", "if not world.alive(last.target) or false")]),
  ("M7c вышка не прерывает замах", E, [("        or world.tower_hitting(ag.team, hero, X.TOWER_KEEP) then\n      st.busy_until = now", "        then\n      st.busy_until = now")]),
@@ -30,7 +35,7 @@ M = [
  ("M10 ближний без проверки крипов", E, [("if not ranged and #world.lane_creeps(hero, 500, true) > 2 then return nil end", "")]),
  ("M11 размен у их вышки (своя позиция)", E, [("if world.near_enemy_tower(team, world.pos(e), X.TOWER_KEEP) or world.near_enemy_tower(team, my, X.TOWER_KEEP)", "if world.near_enemy_tower(team, world.pos(e), X.TOWER_KEEP)")]),
  ("M12 размен без перевеса", E, [("      or #world.enemies_near(team, world.pos(e), X.NUMBERS_R) > world.allies_near(team, my, X.NUMBERS_R) then", "      then")]),
- ("M13 стычка у их вышки", E, [("return not (ban and ban.target == e) and not world.near_enemy_tower(team, ep, X.TOWER_KEEP)", "return not (ban and ban.target == e)")]),
+ ("M13 стычка у их вышки", E, [("return not bans[e] and not world.near_enemy_tower(team, ep, X.TOWER_KEEP)", "return not bans[e]")]),
  ("M14 стычка без удержания", E, [("X.SKIRMISH_HOLD = 3 ", "X.SKIRMISH_HOLD = 0 ")]),
  ("M15 стычка без липкости", E, [("if sk and why_of[sk.target] and not", "if false and sk and why_of[sk.target] and not")]),
  ("M16 ульта в стычке без порога", E, [("ult_ok = world.hp_pct(target) <= 50", "ult_ok = world.hp_pct(target) <= 100")]),
@@ -49,22 +54,31 @@ M = [
  ("M26 саппорт не разменивается", E, [("    local h = harass_order(st, ag, world, now, own, tag)", "    local h = nil")]),
  ("M27 размен без паузы", E, [("  st.harass_next = now + (ranged and X.HARASS_GAP.ranged or X.HARASS_GAP.melee)\n", "")]),
  ("M28 размен при добивании на подходе", E, [("  if lasthit_soon(hero, world, creeps) then return nil end\n", "")]),
- ("M29 выручать здорового", E, [("if victim == a and for_s >= X.HIT_SUSTAIN and world.hp_pct(a) < X.HELP_HP", "if victim == a and for_s >= X.HIT_SUSTAIN")]),
- ("M29b выручать без «дольше секунды»", E, [("if victim == a and for_s >= X.HIT_SUSTAIN and world.hp_pct(a) < X.HELP_HP", "if victim == a and world.hp_pct(a) < X.HELP_HP")]),
+ ("M29 выручать здорового", E, [("if victim == a.unit and for_s >= X.HIT_SUSTAIN and world.hp_pct(a.unit) < X.HELP_HP", "if victim == a.unit and for_s >= X.HIT_SUSTAIN")]),
+ ("M29b выручать без «дольше 1.75 с»", E, [("if victim == a.unit and for_s >= X.HIT_SUSTAIN and world.hp_pct(a.unit) < X.HELP_HP", "if victim == a.unit and world.hp_pct(a.unit) < X.HELP_HP")]),
  ("M30 стычка без SKIRMISH_HP", E, [("elseif hp >= X.SKIRMISH_HP then", "elseif true then")]),
  ("M31 рефлекс вышки выкл.", E, [("  local tw = world.tower_hitting(ag.team, hero, X.TOWER_KEEP)\n  if tw and", "  local tw = nil\n  if tw and")]),
  ("M32 броня выкл.", W, [("  return 1 - 0.06 * a / (1 + 0.06 * math.abs(a))", "  return 1")]),
  ("M33 замах без SPA/BAT", W, [("if bat and bat > 0 and spa and spa > 0 then return point * spa / bat end", "")]),
- ("M34 вместе — и по здоровому", E, [("elseif ehp <= X.HELP_HP and world.attack_target(a) == e", "elseif world.attack_target(a) == e")]),
+ ("M34 вместе — и по здоровому", E, [("elseif ehp <= X.HELP_HP and a.victim == e", "elseif a.victim == e")]),
+ ("M34b вместе без «дольше 1.75 с»", E, [("a.victim == e and a.for_s >= X.HIT_SUSTAIN and not a.join", "a.victim == e and not a.join")]),
+ ("M34c вместе с тем, кто сам лишь поддерживает", E, [("a.victim == e and a.for_s >= X.HIT_SUSTAIN and not a.join", "a.victim == e and a.for_s >= X.HIT_SUSTAIN")]),
  ("M35 керри вступает на фарме", E, [("local carry_farm = ag.pos == 1 and plan == \"farm\"", "local carry_farm = false")]),
  ("M36 без поводка", E, [("X.SKIRMISH_LEASH = 1500 ", "X.SKIRMISH_LEASH = 1e9 ")]),
- ("M37 без запрета после поводка", E, [("return not (ban and ban.target == e) and not world.near_enemy_tower", "return not world.near_enemy_tower")]),
+ ("M37 без запрета после поводка", E, [("return not bans[e] and not world.near_enemy_tower", "return not world.near_enemy_tower")]),
+ ("M37b запрет один на всех", E, [("    bans[sk.target] = now + X.SKIRMISH_BAN ", "    for k in pairs(bans) do bans[k] = nil end\n    bans[sk.target] = now + X.SKIRMISH_BAN ")]),
+ ("M37c место начала — заново при смене цели", E, [("origin = (st.skirmish and st.skirmish.origin) or my }", "origin = my }")]),
  ("M38 размен любой способностью", E, [("          and (not harass or X.HARASS_SPELLS[i.name])\n", "")]),
  ("M39 размен способностью при добивании на подходе", E, [("          and not lasthit_soon(hero, world)\n", "")]),
  ("M40 вышка раньше применений агента", E, [
      ("  local c = cast_step(st, ag, world, now)                    -- применения агента — раньше рефлексов (рецензия 11)\n  if c then return cast(c) end\n", "  local c\n"),
      ("  c = auto_cast(st, ag, world, now, sk and \"skirmish\" or nil)", "  c = cast_step(st, ag, world, now) or auto_cast(st, ag, world, now, sk and \"skirmish\" or nil)")]),
  ("M41 денай у их вышки", E, [("return world.hp_pct(c) < X.DENY_PCT and not world.near_enemy_tower(team, world.pos(c), X.TOWER_KEEP)", "return world.hp_pct(c) < X.DENY_PCT")]),
+ ("M42 отход без применений агента", E, [("    local c0 = cast_step(st, ag, world, now, true)", "    local c0 = nil")]),
+ ("M42b при отходе — и с подходом", E, [("    local c0 = cast_step(st, ag, world, now, true)", "    local c0 = cast_step(st, ag, world, now, false)")]),
+ ("M43 замер не сбрасывается при росте здоровья", E, [("if r == nil or now - r.seen > X.LH_KEEP or hp > r.pts[#r.pts].hp then", "if r == nil or now - r.seen > X.LH_KEEP then")]),
+ ("M44 «бьёт» — дольше секунды", E, [("X.HIT_SUSTAIN = 1.75 ", "X.HIT_SUSTAIN = 1.0 ")]),
+ ("M45 размен Goo и Lucent Beam", E, [("viper_nethertoxin = true, sniper_shrapnel = true }", "viper_nethertoxin = true, sniper_shrapnel = true, luna_lucent_beam = true, bristleback_viscous_nasal_goo = true }")]),
 ]
 def run():
     r = subprocess.run([PY, "-m", "unittest", "tests.test_custom_game"], cwd=MUT, capture_output=True, text=True, timeout=900)

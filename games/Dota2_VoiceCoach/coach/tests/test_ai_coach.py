@@ -113,6 +113,7 @@ class Coach(unittest.TestCase):
         got = coach.step()
         self.assertEqual([g["text"] for g in got], ["все-1 пуш мид т1"])         # правила вместо Claude
         self.assertIn("session limit", self.records()[-1]["error"])
+        self.assertEqual((coach.claude_calls, coach.claude_errors), (1, 1))     # рецензия 11б: ошибка — отдельно
         coach.step()
         self.assertEqual(len(calls), 1)                                         # пауза: Claude не дёргаем
         now[0] += AI.LIMIT_PAUSE + 1

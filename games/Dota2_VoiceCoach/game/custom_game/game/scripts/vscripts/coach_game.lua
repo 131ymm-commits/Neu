@@ -574,7 +574,7 @@ function G:ThinkHero(team, T, pos, hero, now, linked)
   else
     G:Fallback(team, T, pos, now)
   end
-  local acts = Exec.step(st, { team = team, pos = pos, hero = hero }, World, now)
+  local acts = Exec.step(st, { team = team, pos = pos, hero = hero, mates = T.exec }, World, now)
   for _, a in ipairs(acts) do G:Apply(hero, a) end
   T.status[pos] = st.status
 end

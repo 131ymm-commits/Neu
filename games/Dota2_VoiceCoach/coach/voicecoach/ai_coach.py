@@ -163,7 +163,8 @@ class AICoach:
         self.fallback = fallback or RulesCoach()
         self.log_path, self.clock = log_path, clock
         self.max_calls = max_calls                   # вызовов Claude за запуск: дальше правила (лимит подписки)
-        self.claude_calls = 0
+        self.claude_calls = 0                        # попыток Claude (и неудачных: предел — по попыткам)
+        self.claude_errors = 0                       # из них неудачных (рецензия 11б: окно показывает отдельно)
         self.pause_until = 0.0
         self.stop = threading.Event()
         self.sent = 0
@@ -187,6 +188,8 @@ class AICoach:
             orders, why = backend.orders(view)
         except Exception as e:                       # noqa: BLE001 — сбой мотора: в этот раз правила
             err = f"{type(e).__name__}: {e}"
+            if not isinstance(backend, RulesCoach):
+                self.claude_errors += 1
             if LIMIT_RE.search(err):
                 self.pause_until = self.clock() + LIMIT_PAUSE
             backend = self.fallback

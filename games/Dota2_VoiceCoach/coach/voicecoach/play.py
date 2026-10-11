@@ -82,9 +82,9 @@ def say(text: str = "") -> None:
     под замком, чтобы строки не склеивались (рецензия 7)."""
     out = sys.stdout
     with _SAY:
-        if _LOG is not None:
-            try:
-                _LOG.write(f"{text}\n")
+        if _LOG is not None:                           # копия окна — без ключа пульта друга, имени пользователя
+            try:                                       # и адреса туннеля: её присылают (рецензия 11б)
+                _LOG.write(f"{RPT.scrub(text)}\n")
             except (OSError, ValueError):
                 pass
         if out is None:                                # без консоли (pythonw) писать некуда — как print()
@@ -110,6 +110,18 @@ def open_window_log(path: Path) -> Path | None:
         except OSError:
             return None
     return path
+
+
+def close_window_log() -> None:
+    """Файл окна закрыть (конец main: иначе на Windows папку с ним не удалить, пока жив процесс)."""
+    global _LOG
+    with _SAY:
+        if _LOG is not None:
+            try:
+                _LOG.close()
+            except OSError:
+                pass
+            _LOG = None
 
 
 def _ask(ask, prompt: str) -> str | None:
@@ -414,12 +426,19 @@ def claude_update(exe: str, run=subprocess.run) -> bool:
         return False
 
 
+PROBE_SCHEMA = {"type": "object", "properties": {"ready": {"type": "boolean"}}, "required": ["ready"],
+                "additionalProperties": False}
+
+
 def claude_check(exe: str, run=subprocess.run) -> tuple[bool, str]:
-    """Пробный вызов `claude -p` быстрой моделью: отвечает ли Claude Code (5–15 с, капля лимита подписки)."""
+    """Пробный вызов `claude -p` быстрой моделью теми же ключами, что у агентов (файл системного промпта, схема ответа,
+    запрет MCP): старая версия, не знающая одного из них, пробу не пройдёт, и лаунчер её обновит (рецензия 11б).
+    5–15 с, капля лимита подписки."""
+    cli = CliBackend(model=CLAUDE_FAST, claude=exe, timeout=120, subscription=True, which=lambda n: None)
     try:
-        p = run([exe, "-p", "--model", CLAUDE_FAST, "--output-format", "json", "--safe-mode", "--tools", "",
-                 "--no-session-persistence", "Ответь одним словом: готов"], capture_output=True, text=True,
-                encoding="utf-8", errors="replace", timeout=120, cwd=tempfile.gettempdir(), env=no_key_env())
+        p = run(cli.argv("Проверка связи игры: ответь по схеме, ready = true.", PROBE_SCHEMA, "Готов?"), input="",
+                capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120, cwd=cli.cwd,
+                env=no_key_env())
     except Exception as e:                              # noqa: BLE001 — не запустился, завис
         return False, f"не запустился ({e})"
     try:
@@ -1150,6 +1169,11 @@ def report_info(reports: dict, final: bool = False, learned=None) -> dict:
                 info["Итоги агентов"] = hub.summary()
         except Exception as e:                                   # noqa: BLE001 — отчёт вспомогательный
             info["Агенты сейчас"] = f"не прочитал: {e}"
+    ai = reports.get("ai")
+    if ai is not None:
+        info["ИИ-тренер соперника"] = {"вызовов Claude": getattr(ai, "claude_calls", 0),
+                                       "из них ошибок": getattr(ai, "claude_errors", 0),
+                                       "приказов отправлено": getattr(ai, "sent", 0)}
     if learned:
         info["Обучение (Д20)"] = [{k: r.get(k) for k in ("team", "pos", "hero", "match", "row", "verdicts", "added", "say")}
                                   for r in learned]
@@ -1158,6 +1182,9 @@ def report_info(reports: dict, final: bool = False, learned=None) -> dict:
     if final:
         text, counts = RPT.agent_samples(reports.get("log"))
         info["Журнал агентов"] = f"{counts}\n{text}"
+        errs = [x for x in RPT.read_text(reports.get("coach_log")).splitlines() if '"error": "' in x]
+        if errs:
+            info["Ошибки ИИ-тренера (первые 5)"] = "\n".join(errs[:5])
         builds = sorted(LOGS.glob("panorama_build_*.log"))
         if builds and time.time() - builds[-1].stat().st_mtime < 6 * 3600:
             info["Сборка интерфейса (последняя неудачная)"] = RPT.read_text(builds[-1])
@@ -1246,6 +1273,7 @@ def rules_ok(ask) -> bool:
     say("")
     say("  !!! ВНИМАНИЕ: Claude не включился — героями будут править простые правила, а не агенты Claude.")
     say("  !!! Почему — строками выше. Исправьте и запустите ИГРАТЬ.bat снова; снимок этих строк поможет найти причину.")
+    flush_input()                                      # Enter, нажатый во время установки, — не ответ (рецензия 11б)
     try:
         ask("  Enter — всё равно играть на правилах, Ctrl+C — выйти: ")
     except EOFError:                                   # без консоли спросить нельзя — играть
@@ -1258,6 +1286,13 @@ def rules_ok(ask) -> bool:
 
 
 def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
+    try:
+        return _main(argv, ask, ask_secret, enter)
+    finally:
+        close_window_log()
+
+
+def _main(argv, ask, ask_secret, enter) -> int:
     args = parse(argv)
     wlog = open_window_log(LOGS / f"launcher_{time.strftime('%Y%m%d_%H%M%S')}.log")
     say("=== Тренер Доты: игра вдвоём ===")
@@ -1328,6 +1363,7 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
         return 1
     threading.Thread(target=srv.serve_forever, daemon=True, name="game").start()
     room = srv.hub.room("local")
+    room.rules_why = "так просили (--rules)" if args.rules else RULES_WHY   # почему правят правила — для окна
     keys = load_keys((REMOTE,), new=args.new_friend)
     console = bind(lambda: serve_console(srv.hub, "127.0.0.1", CONSOLE_PORT, "local", keys, rv_origin=args.rv),
                    CONSOLE_PORT, "пульту друга")
@@ -1423,7 +1459,7 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
 
     drive = RPT.drive_folder()
     live_stop = threading.Event()
-    reports = {"wlog": wlog, "dlog": dlog, "room": room, "log": log, "drive": drive}
+    reports = {"wlog": wlog, "dlog": dlog, "room": room, "log": log, "drive": drive, "ai": ai, "coach_log": coach_log}
     if drive is not None:
         say(f"  Отчёты для Claude: на Google Диск ({drive}) — раз в минуту и в конце; Claude прочитает их сам.")
     else:
@@ -1457,11 +1493,12 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     pub.close()
     if room.agents is not None:
         s = room.agents.summary()
-        say(f"Вызовов Claude: {s.get('paid_calls', 0)} (герои) + {ai.claude_calls} (ИИ-тренер), ошибок: "
-            f"{s.get('errors', 0)}, задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
+        say(f"Вызовов Claude: {s.get('paid_calls', 0)} (герои, ошибок {s.get('errors', 0)}) + {ai.claude_calls} "
+            f"(ИИ-тренер, ошибок {ai.claude_errors}), задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
         if getattr(backend, "free", False):
-            say("Героями в этой игре правили правила, а не агенты Claude (Claude Code не включился — см. начало окна "
-                "или coach\\logs\\launcher_*.log).")
+            say("Героями в этой игре правили правила, а не агенты Claude (" +
+                ("так просили: --rules)." if args.rules else
+                 "Claude Code не включился — см. начало окна или coach\\logs\\launcher_*.log)."))
     if dlog is not None and dlog.copy is not None and dlog.copy.exists():
         say(f"Журнал Доты за эту игру: {dlog.copy}")
     final_report(reports, learned)
@@ -1473,6 +1510,7 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
 
 
 SIDE_OF = {"radiant": "Света", "dire": "Тьмы"}
+RULES_WHY = "Claude Code не включился (см. шаг 1/6)"
 ERRORS_SHOWN = 3                                   # ошибок агентов стороны в окне хоста — дальше они только в журнале
 
 
@@ -1500,7 +1538,8 @@ def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
             told[("first", team)] = True
             model = p.get("model") or ""                              # имя модели — как его назвал Claude Code
             if p.get("claude") is False:                              # ERRORS №103: правила — сказать прямо
-                say(f"  ! Героями {side} правят ПРАВИЛА, а не агенты Claude: Claude Code не включился (см. шаг 1/6).")
+                why = getattr(room, "rules_why", None) or RULES_WHY
+                say(f"  ! Героями {side} правят ПРАВИЛА, а не агенты Claude: {why}.")
             else:
                 say(f"  ● Агенты Claude {side} ведут героев: первые решения пришли" +
                     (f" (модель: {model})." if model else "."))
