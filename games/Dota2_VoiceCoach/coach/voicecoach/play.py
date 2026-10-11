@@ -37,6 +37,7 @@ from pathlib import Path
 
 from . import rendezvous as RV
 from . import learning as LRN
+from . import report as RPT
 from .agents import AgentHub, ApiBackend, CliBackend, make_backend
 from .ai_coach import AICoach, ClaudeCoach, RulesCoach
 from .console import console_url, load_keys, serve_console, start_tunnel
@@ -1137,6 +1138,61 @@ def parse(argv=None):
     return ap.parse_args(argv)
 
 
+def report_info(reports: dict, final: bool = False, learned=None) -> dict:
+    """Части отчёта для Claude (просьба автора 11.10.2026: «зделай общюю систему»): окно, агенты, консоль Доты."""
+    room, dlog = reports.get("room"), reports.get("dlog")
+    hub = getattr(room, "agents", None)
+    info = {"Окно лаунчера": RPT.read_text(reports.get("wlog"))}
+    if hub is not None:
+        try:
+            info["Агенты сейчас"] = hub.progress()
+            if final:
+                info["Итоги агентов"] = hub.summary()
+        except Exception as e:                                   # noqa: BLE001 — отчёт вспомогательный
+            info["Агенты сейчас"] = f"не прочитал: {e}"
+    if learned:
+        info["Обучение (Д20)"] = [{k: r.get(k) for k in ("team", "pos", "hero", "match", "row", "verdicts", "added", "say")}
+                                  for r in learned]
+    if dlog is not None and getattr(dlog, "copy", None) is not None:
+        info["Консоль Доты: строки кастомки и ошибки"] = RPT.dota_lines(RPT.read_text(dlog.copy))
+    if final:
+        text, counts = RPT.agent_samples(reports.get("log"))
+        info["Журнал агентов"] = f"{counts}\n{text}"
+        builds = sorted(LOGS.glob("panorama_build_*.log"))
+        if builds and time.time() - builds[-1].stat().st_mtime < 6 * 3600:
+            info["Сборка интерфейса (последняя неудачная)"] = RPT.read_text(builds[-1])
+    return info
+
+
+def live_reports(reports: dict, stop, every: float = 60.0) -> None:
+    """Раз в every секунд — «DotaCoach_сейчас.txt» (в coach\\logs и на Google Диск): Claude видит игру без снимков."""
+    while not stop.wait(every):
+        try:
+            RPT.write(RPT.build(report_info(reports)), LOGS, RPT.LIVE_NAME, reports.get("drive"))
+        except Exception:                                        # noqa: BLE001 — отчёт не роняет игру
+            pass
+
+
+def final_report(reports: dict, learned=None, reveal_file=None) -> list:
+    """Итоговый отчёт игры: файл с датой и «сейчас»; без Google Диска — открыть папку с файлом."""
+    try:
+        text = RPT.build(report_info(reports, final=True, learned=learned))
+        drive = reports.get("drive")
+        done = RPT.write(text, LOGS, RPT.final_name(), drive)
+        RPT.write(text, LOGS, RPT.LIVE_NAME, drive)
+    except Exception as e:                                       # noqa: BLE001
+        say(f"Отчёт для Claude не записан: {type(e).__name__}: {e}")
+        return []
+    if not done:
+        return []
+    if drive is not None and any(drive in p.parents for p in done):
+        say("Отчёт для Claude — на Google Диске (папка DotaCoach): напишите Claude «посмотри отчёт».")
+    else:
+        say(f"Отчёт для Claude: {done[0]} — перетащите этот файл в чат Claude.")
+        (reveal_file or reveal)(done[0])
+    return done
+
+
 def learning_report(hub, backend, timeout: float = 90.0) -> list[dict]:
     """Конец игры (Д20): незаписанные матчи героев — в память и на разбор агентами; в окно — итоги своей стороны
     (Света): числа к 10:00, новые уроки, что код решил об уроках; соперника (Д16) — только сколько уроков; всё — в
@@ -1203,7 +1259,7 @@ def rules_ok(ask) -> bool:
 
 def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     args = parse(argv)
-    open_window_log(LOGS / f"launcher_{time.strftime('%Y%m%d_%H%M%S')}.log")
+    wlog = open_window_log(LOGS / f"launcher_{time.strftime('%Y%m%d_%H%M%S')}.log")
     say("=== Тренер Доты: игра вдвоём ===")
     if already_running():
         say("Игра уже запущена в другом окне ИГРАТЬ.bat — переключитесь на него (второе окно не нужно).")
@@ -1365,6 +1421,16 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     say("  Соперник: Тьмой командует ИИ-тренер (" + ("Claude" if mode == "sub" else "правила, не Claude") +
         ") — пока друг не откроет пульт; откроет — ИИ-тренер замолчит. Его приказы в окно не пишутся.")
 
+    drive = RPT.drive_folder()
+    live_stop = threading.Event()
+    reports = {"wlog": wlog, "dlog": dlog, "room": room, "log": log, "drive": drive}
+    if drive is not None:
+        say(f"  Отчёты для Claude: на Google Диск ({drive}) — раз в минуту и в конце; Claude прочитает их сам.")
+    else:
+        say("  Отчёты для Claude: coach\\logs (Google Диска для компьютера нет — в конце откроется папка с отчётом:"
+            " перетащите файл в чат Claude).")
+    threading.Thread(target=live_reports, args=(reports, live_stop), daemon=True, name="report").start()
+
     say("")
     say("Окно не закрывайте, пока играете. Закончить игру — Enter два раза.")
     flush_input()                                                 # Enter, нажатый раньше, игру не закончит
@@ -1383,8 +1449,10 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
     for server in (console, srv):                                 # тогда новый тик не придёт к закрытым агентам
         server.shutdown()
         server.server_close()
+    live_stop.set()
+    learned = []
     if room.agents is not None:
-        learning_report(room.agents, backend)                     # Д20: матч героев — в память, разбор, итог
+        learned = learning_report(room.agents, backend)           # Д20: матч героев — в память, разбор, итог
         room.agents.close()                                       # вызовы из очереди не ждём и не оплачиваем
     pub.close()
     if room.agents is not None:
@@ -1396,6 +1464,7 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
                 "или coach\\logs\\launcher_*.log).")
     if dlog is not None and dlog.copy is not None and dlog.copy.exists():
         say(f"Журнал Доты за эту игру: {dlog.copy}")
+    final_report(reports, learned)
     if room.agents is not None:
         time.sleep(0.2)
         if any(t.name.startswith("agent") and t.is_alive() for t in threading.enumerate()):
