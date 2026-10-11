@@ -730,3 +730,115 @@ class Route(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Learning(unittest.TestCase):
+    """Д20: агенты учатся между матчами — «запомни» тренера, урок после смерти и на учебной паузе (только когда
+    просили, с мерой и опорой), запись матча в память и разбор агентом; правила (не Claude) разбор не делают."""
+
+    def hub(self, backend=None, dire=None, memory=None):
+        from voicecoach import learning as L
+        self.L = L
+        self.mem = memory or L.Memory(None, rng=__import__("random").Random(3))
+        self.fake = backend or FakeBackend()
+        return A.AgentHub({"radiant": self.fake, "dire": dire or A.RulesBackend()}, sync=True, min_gap=0.0,
+                          memory=self.mem)
+
+    def test_schema_and_parse(self):
+        self.assertIn("lesson", A.DECISION_SCHEMA["required"])
+        d, _ = A.parse_decision({"plan": "farm", "lesson": "  Стой у своей волны ", "lesson_metric": "deaths",
+                                 "lesson_ref": "смерть 5:11"}, obs())
+        self.assertEqual((d["lesson"], d["lesson_metric"], d["lesson_ref"]), ("Стой у своей волны", "deaths", "смерть 5:11"))
+        d, _ = A.parse_decision({"plan": "farm", "lesson": "x", "lesson_metric": "мана"}, obs())
+        self.assertEqual(d["lesson_metric"], "")
+
+    def test_coach_remember_goes_to_memory(self):
+        h = self.hub()
+        h.tick({"heroes": [obs(clock=10, coach=[{"seq": 4, "ago": 0, "text": "запомни: не ходи под вышку",
+                                                 "urgent": False, "remember": "не ходи под вышку"}])]})
+        rows = self.mem.lessons("sniper")
+        self.assertEqual([(r["status"], r["text"]) for r in rows], [(self.L.COACH, "не ходи под вышку")])
+        h.tick({"heroes": [obs(clock=20, coach=[{"seq": 4, "remember": "не ходи под вышку"}])]})
+        self.assertEqual(len(self.mem.lessons("sniper")), 1)                # тот же приказ — один раз
+        self.assertIn("тренер: не ходи под вышку", h.agents[("radiant", 1)].work)
+
+    def test_death_lesson_only_when_asked_and_with_support(self):
+        lesson = {"plan": "farm", "where": "bot", "target": "", "ally": 0, "cast": [], "buy": [], "level": [],
+                  "retreat_hp": 30, "buyback": False, "say": "", "to": [], "lesson": "Не стой у их Т1 без союзников",
+                  "lesson_metric": "deaths", "lesson_ref": "смерть 5:11"}
+        h = self.hub(FakeBackend(reply=lesson))
+        h.tick({"heroes": [obs(clock=300)]})                                 # урока не просили — не берём
+        self.assertEqual(self.mem.lessons("sniper"), [])
+        self.assertNotIn("lesson", h.agents[("radiant", 1)].decision)       # рукам урок не нужен
+        h.tick({"heroes": [obs(clock=310, where="бот, их Т1, 600", enemies=[{"hero": "luna", "d": 300}])]})
+        h.tick({"heroes": [obs(clock=311, alive=False, events=["5:11 тебя убил luna"])]})
+        user = self.fake.calls[-1]["user"]
+        self.assertIn("РАЗБОР СМЕРТИ", user)
+        self.assertIn("убил luna", user)
+        rows = self.mem.lessons("sniper")
+        self.assertEqual([(r["text"], r["src"], r["status"]) for r in rows],
+                         [("Не стой у их Т1 без союзников", self.L.DEATH, self.L.TRIAL)])
+        self.assertIn("смерть: Не стой у их Т1 без союзников", h.agents[("radiant", 1)].work)
+
+    def test_training_pause_in_first_matches(self):
+        h = self.hub()
+        h.tick({"heroes": [obs(clock=0, stats={"lh": 0, "dn": 0, "seen": 0, "idle": 0})]})
+        h.tick({"heroes": [obs(clock=130, stats={"lh": 2, "dn": 1, "seen": 9, "idle": 40})]})
+        user = self.fake.calls[-1]["user"]
+        self.assertIn("УЧЕБНАЯ ПАУЗА", user)
+        self.assertIn("добил 2 из 9", user)
+
+    def test_new_lessons_per_match_capped(self):
+        h = self.hub()
+        ag = h._agent(obs(clock=0))
+        for i in range(self.L.NEW_PER_MATCH + 2):
+            self.fake.reply = {"plan": "farm", "lesson": f"урок {i}: держись в {i * 100 + 300} от вышки",
+                               "lesson_metric": "deaths", "lesson_ref": f"смерть {i}:00"}
+            h._run_once(ag, obs(clock=60 * i), "ты погиб", [], [], 0, 60 * i, ([], self.L.DEATH))
+        self.assertEqual(len(self.mem.lessons("sniper")), self.L.NEW_PER_MATCH)
+        self.assertEqual(len(ag.work), self.L.NEW_PER_MATCH + 2)            # в рабочей памяти — все
+
+    def test_match_end_records_and_reviews(self):
+        review = {"add": [{"text": "Иди к своей волне сразу после возрождения", "metric": "lvl", "ref": "к 10:00"}],
+                  "say": "понял: терял опыт"}
+
+        class Back(FakeBackend):
+            def decide(self, system, user, obs, extra=None):
+                if (extra or {}).get("schema") is A.REVIEW_SCHEMA:
+                    self.calls.append({"review": user})
+                    return {"data": review}
+                return super().decide(system, user, obs, extra)
+        h = self.hub(Back())
+        for c in (0, 300, 610, 700):
+            h.tick({"heroes": [obs(clock=c, stats={"lh": c // 30, "dn": 0, "seen": c // 20, "idle": 0, "d": 0}),
+                               obs(clock=c, team="dire", hero="luna")]})
+        h.tick({"heroes": [obs(clock=710)], "ended": {"winner": "dire"}})
+        self.assertEqual(self.mem.matches("sniper"), 1)
+        self.assertEqual(self.mem.history("sniper")[-1]["result"], "поражение")
+        self.assertEqual([r["text"] for r in self.mem.lessons("sniper")], ["Иди к своей волне сразу после возрождения"])
+        res = [r for r in h.finished if r["team"] == "radiant"][0]
+        self.assertEqual((res["added"], res["say"]), (["Иди к своей волне сразу после возрождения"], "понял: терял опыт"))
+        self.assertIn("Числа матча", next(c["review"] for c in self.fake.calls if "review" in c))
+        dire = [r for r in h.finished if r["team"] == "dire"]
+        self.assertEqual((len(dire), dire[0]["added"]), (1, []))           # правила записаны, но не разбирают
+        self.assertEqual(h.finish_match(), [])                              # уже записано — второй раз нет
+
+    def test_new_match_records_previous_and_short_match_is_skipped(self):
+        h = self.hub()
+        h.tick({"heroes": [obs(clock=0)]})
+        h.tick({"heroes": [obs(clock=200)]})
+        h.tick({"heroes": [obs(clock=0)]})                                   # новый матч, прежний — 3:20
+        self.assertEqual(self.mem.matches("sniper"), 0)                      # короче 5 минут — не учёба
+        h.tick({"heroes": [obs(clock=400)]})
+        h.tick({"heroes": [obs(clock=0)]})
+        self.assertEqual(self.mem.matches("sniper"), 1)
+
+    def test_system_prompt_has_memory_and_rules(self):
+        from voicecoach import learning as L
+        mem = L.Memory(None, rng=__import__("random").Random(0))
+        mem.add("sniper", "Не дерись до 6 уровня", L.COACH)
+        h = self.hub(memory=mem)
+        h.tick({"heroes": [obs(clock=0)]})
+        system = self.fake.calls[0]["system"]
+        self.assertIn("[тренер] Не дерись до 6 уровня", system)
+        self.assertIn("КАК ТЫ УЧИШЬСЯ", system)

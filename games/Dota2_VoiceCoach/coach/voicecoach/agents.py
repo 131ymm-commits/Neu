@@ -33,6 +33,7 @@ from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from . import learning as LRN
 from .lexicon import load_heroes
 from .parser import Agent, MatchContext
 from .protocol import ACTIONS
@@ -61,8 +62,27 @@ DECISION_SCHEMA = {
         "buyback": {"type": "boolean"},
         "say": {"type": "string"},
         "to": {"type": "array", "items": {"type": "integer"}},
+        "lesson": {"type": "string"},
+        "lesson_metric": {"type": "string", "enum": ["", *LRN.METRICS]},
+        "lesson_ref": {"type": "string"},
     },
-    "required": ["plan", "where", "target", "ally", "cast", "buy", "level", "retreat_hp", "buyback", "say", "to"],
+    "required": ["plan", "where", "target", "ally", "cast", "buy", "level", "retreat_hp", "buyback", "say", "to",
+                 "lesson", "lesson_metric", "lesson_ref"],
+    "additionalProperties": False,
+}
+
+# разбор матча агентом (Д20): до двух новых уроков с мерой и опорой; судит уроки не он, а код по числам
+REVIEW_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "add": {"type": "array", "items": {
+            "type": "object",
+            "properties": {"text": {"type": "string"}, "metric": {"type": "string", "enum": list(LRN.METRICS)},
+                           "ref": {"type": "string"}},
+            "required": ["text", "metric", "ref"], "additionalProperties": False}},
+        "say": {"type": "string"},
+    },
+    "required": ["add", "say"],
     "additionalProperties": False,
 }
 
@@ -246,6 +266,10 @@ def parse_decision(raw, obs: dict | None = None) -> tuple[dict | None, list[str]
         if 1 <= n <= 5 and n != me and n not in to:
             to.append(n)
     out["to"] = to if out["say"] else []
+    out["lesson"] = LRN.clean(d.get("lesson"))
+    metric = str(d.get("lesson_metric") or "").strip().lower()
+    out["lesson_metric"] = metric if metric in LRN.METRICS else ""
+    out["lesson_ref"] = LRN.clean(d.get("lesson_ref"))[:80]
     return out, notes
 
 
@@ -311,8 +335,22 @@ def roster_text(roster: dict | None) -> str:
     return "\n".join(out) + "\nВ речи называй героев по-русски (как в скобках), союзников — по герою или номеру."
 
 
+# как агент учится (Д20; research/06): уроки — гипотезы с мерой и опорой, судит их код по числам следующих матчей
+LEARN_RULES = """КАК ТЫ УЧИШЬСЯ (от матча к матчу)
+Твоя память — уроки выше: слова тренера, уроки, проверенные матчами, и уроки на испытании. Новые уроки пишешь ты — в поле lesson, и только когда в сообщении есть «РАЗБОР СМЕРТИ» или «УЧЕБНАЯ ПАУЗА»; в остальных решениях lesson, lesson_metric и lesson_ref — пустые строки. Урок — одно короткое конкретное правило про то, что решаешь ты: план и место, когда отходить (retreat_hp), кого бить, когда уходить с линии, что купить и качать; не про то, как руки бьют. lesson_metric — какую цифру урок должен улучшить: lh — добивания к 10:00, deaths — смерти к 10:00, idle — простой рук к 10:00, lvl — уровень к 10:00. lesson_ref — на какое событие урок опирается, например «смерть 5:11» или «пауза 4:00»; урок без опоры не примут. Уроки проверяет код по числам следующих матчей: урок, с которым стало хуже, уйдёт. Тренер учит тебя словом «запомни …» — это уже в твоей памяти: ответь в say коротко («Запомнил») и следуй ему."""
+
+
+def role_goal(pos: int) -> str:
+    """Цель стадии линий по роли — для учебной паузы (research/05)."""
+    if pos in (1, 2):
+        return "добивать как можно больше вражеских крипов из умерших рядом и не умирать"
+    if pos == 3:
+        return "выжить и набрать опыт; денаить и добивать, когда можно"
+    return "денаить, бить врага, когда безопасно, беречь своего кора и не умирать (добивания — кору)"
+
+
 def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, obedience: float = 0.85,
-                  roster: dict | None = None) -> str:
+                  roster: dict | None = None, memory: str = "") -> str:
     who = (persona or {}).get("name") or f"игрок позиции {pos}"
     team_ru = "Свет (Radiant)" if team == "radiant" else "Тьму (Dire)"
     return f"""Ты — {who}: играешь в Dota 2 героем {short_hero(hero)} за {team_ru}, роль — {ROLE_RU.get(pos, f"позиция {pos}")}.
@@ -324,6 +362,10 @@ def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, o
 {GAME_PHASES}
 
 {ROLE_PLAYBOOK.get(pos, "")}
+
+{memory or LRN.Memory(None).prompt_block(hero)}
+
+{LEARN_RULES}
 
 КАК ТЫ УПРАВЛЯЕШЬ ГЕРОЕМ
 Раз в несколько секунд и сразу при событии (приказ тренера, смерть, враг рядом, резкая потеря здоровья) ты получаешь наблюдение — JSON с тем, что видит твой герой, — и отвечаешь одним решением, тоже JSON. Решение выполняют твои «руки» — исполнитель в игре. Руки сами: добивают крипов при фарме линии; бьют цель; применяют способности из cast, когда цель видна (до далёкой цели сначала подходят); отходят к фонтану, когда здоровья меньше retreat_hp процентов; покупают предметы из buy по очереди, когда герой у фонтана или мёртв и хватает золота; вкладывают очки способностей по level. До следующего решения руки продолжают выполнять это. Ты решаешь, ЧТО делать и ГДЕ; руки — КАК.
@@ -341,6 +383,7 @@ def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, o
 - buyback: true — выкупиться сейчас (только когда мёртв). После выкупа или возрождения выбери план — куда идти.
 - say: твоя реплика в голосовой чат команды (до 100 знаков, по-русски). Сказать нечего — "".
 - to: кому реплика — номера союзников, например [2] или [2,3]; [] — всем (и тренеру).
+- lesson, lesson_metric, lesson_ref: урок себе (см. «КАК ТЫ УЧИШЬСЯ»); обычно — пустые строки.
 
 ПРИКАЗЫ ТРЕНЕРА
 Они в поле coach: seq, ago (сколько секунд назад), text, urgent (срочно). Новый приказ отмечен в сообщении. Формат: «[кому] действие [где/цель] [!]»; кому — номера позиций («23» — второй и третий) или «все». Слова: {_glossary()}; «не X» — не делать X; «!» — срочно.
@@ -353,7 +396,7 @@ def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, o
 clock — игровые часы, с; hp, mp — [сейчас, максимум]; where — где ты (линия и ближайшая вышка); attack — урон и дальность атаки; abilities — способности (use: target/point/none/passive; ready; cd — откат, с; mana; range); items — предметы (backpack — в рюкзаке: там предмет не действует и не применяется; tp_slot — ячейка телепорта); slots_free и backpack_free — свободные ячейки инвентаря и рюкзака: при полном инвентаре купленное ложится в рюкзак; points и can_level — очки способностей и что можно качать; gold; buyback — цена и можно ли; in_shop — у фонтана; doing — что сейчас делают руки; queue — очереди рук; notes — что руки не смогли сделать; near — крипы и вражеская вышка рядом (weak_enemy_creeps — можно добить сразу); allies — союзники; enemies — видимые враги (d — расстояние до тебя); missing — невидимые враги (seen — где, ago — сколько секунд назад видели); towers — уровень внешней живой вышки на линиях (0 — вышек нет); roshan — жив ли Рошан; events — недавние события.
 
 Отвечай ТОЛЬКО JSON-объектом решения, без пояснений и без markdown.
-Пример: {{"plan":"farm","where":"{default_lane(team, pos)}","target":"","ally":0,"cast":[],"buy":["item_tango","item_branches"],"level":[],"retreat_hp":30,"buyback":false,"say":"","to":[]}}"""
+Пример: {{"plan":"farm","where":"{default_lane(team, pos)}","target":"","ally":0,"cast":[],"buy":["item_tango","item_branches"],"level":[],"retreat_hp":30,"buyback":false,"say":"","to":[],"lesson":"","lesson_metric":"","lesson_ref":""}}"""
 
 
 SHOP_HINT_GOLD = 600         # с таким золотом у фонтана или мёртвым — напомнить о покупках (пилот: агент забывал)
@@ -389,11 +432,13 @@ def chat_line(e: dict, me: int, clock) -> str:
 
 
 def user_prompt(obs: dict, memory: list[str], new_coach: list[dict], trigger: str,
-                chat: list[dict] | None = None, me: int | None = None, seen_chat: int = 0) -> str:
+                chat: list[dict] | None = None, me: int | None = None, seen_chat: int = 0,
+                learn: list[str] | None = None) -> str:
     lines = [f"Часы {mmss(obs.get('clock'))}. Повод: {trigger}."]
     if new_coach:
         lines.append("НОВЫЙ ПРИКАЗ ТРЕНЕРА: " + "; ".join(
             f"«{c.get('text', '')}»" + (" (срочно)" if c.get("urgent") else "") for c in new_coach))
+    lines.extend(learn or [])                           # учёба (Д20): разбор смерти, учебная пауза, уроки матча
     if chat:
         me = int(me if me is not None else obs.get("pos") or 0)
         rows = [("НОВОЕ " if e["seq"] > seen_chat and e["from"] != me else "") + chat_line(e, me, obs.get("clock"))
@@ -517,6 +562,8 @@ class RulesBackend:
     free = True                                             # не тратит предел вызовов и не входит в цену
 
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
+        if (extra or {}).get("schema") is REVIEW_SCHEMA:          # правила не учатся: разбор пустой
+            return {"data": {"add": [], "say": ""}, "usage": {}}
         return {"data": rules_decision(obs, (extra or {}).get("new_coach"), extra), "usage": {}}
 
 
@@ -553,13 +600,13 @@ class ApiBackend:
         self.label = f"Claude API ({model})"
         self.dropped: list[str] = []                       # что модель не приняла — в журнал и сводку
 
-    def body(self, system: str, user: str) -> dict:
+    def body(self, system: str, user: str, schema: dict | None = None) -> dict:
         b = {"model": self.model, "max_tokens": self.max_tokens,
              "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
              "messages": [{"role": "user", "content": user}]}
         cfg = {}
         if self.structured:
-            cfg["format"] = {"type": "json_schema", "schema": DECISION_SCHEMA}
+            cfg["format"] = {"type": "json_schema", "schema": schema or DECISION_SCHEMA}
         if self.effort:
             cfg["effort"] = self.effort
         if cfg:
@@ -588,7 +635,8 @@ class ApiBackend:
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
         for _ in range(4):
             req = urllib.request.Request(
-                self.URL, data=json.dumps(self.body(system, user)).encode("utf-8"), method="POST",
+                self.URL, data=json.dumps(self.body(system, user, (extra or {}).get("schema"))).encode("utf-8"),
+                method="POST",
                 headers={"x-api-key": self.api_key, "anthropic-version": self.VERSION,
                          "content-type": "application/json"})
             try:
@@ -650,11 +698,11 @@ class CliBackend:
             CLI_SYSTEM_PROMPTS[key] = path
         return path
 
-    def argv(self, system: str) -> list[str]:
+    def argv(self, system: str, schema: dict | None = None, ask: str | None = None) -> list[str]:
         a = [self.claude, "-p", "--output-format", "json", "--safe-mode", "--system-prompt-file",
              self.prompt_file(system), "--tools", "", "--disallowedTools", "mcp__*", "--no-session-persistence",
-             "--json-schema", json.dumps(DECISION_SCHEMA, separators=(",", ":")),
-             "Реши, что делать герою сейчас. Наблюдение и приказы — во входных данных."]
+             "--json-schema", json.dumps(schema or DECISION_SCHEMA, separators=(",", ":")),
+             ask or "Реши, что делать герою сейчас. Наблюдение и приказы — во входных данных."]
         if self.effort:
             a[1:1] = ["--effort", self.effort]
         if self.model:
@@ -663,7 +711,8 @@ class CliBackend:
 
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
         try:
-            p = self.runner(self.argv(system), input=user, capture_output=True, text=True, encoding="utf-8",
+            p = self.runner(self.argv(system, (extra or {}).get("schema"), (extra or {}).get("ask")), input=user,
+                            capture_output=True, text=True, encoding="utf-8",
                             errors="replace", timeout=self.timeout, cwd=self.cwd, env=self.env)
         except FileNotFoundError:
             raise BackendError(f"не нашёл {self.claude}: установите Claude Code или укажите --claude") from None
@@ -718,6 +767,12 @@ class HeroAgent:
     errors: int = 0
     decided: dict = field(default_factory=dict)   # seq → (часы наблюдения, время готовности) — для замера задержки
     last_coach_clock: float = -1e9      # когда приказ тренера будил агента в последний раз
+    tracker: LRN.Tracker = field(default_factory=LRN.Tracker)   # числа матча героя (Д20)
+    enabled: set = field(default_factory=set)       # уроки, включённые в этот матч
+    work: list = field(default_factory=list)        # рабочая память матча: уроки после смертей, пауз, «запомни»
+    learned_coach: int = 0                          # последний «запомни», уже записанный в память
+    new_lessons: int = 0                            # новых уроков на испытание за этот матч
+    recorded: bool = False                          # матч героя записан в память
 
 
 ASKED = "к тебе обратился союзник"
@@ -759,8 +814,12 @@ class AgentHub:
     def __init__(self, backends: dict, period: float = 4.0, dead_period: float = 12.0, min_gap: float = 1.0,
                  error_gap: float = 3.0, max_inflight: int = 10, max_calls: int | None = None,
                  log_path: str | Path | None = None, personas: dict | None = None, obedience: float = 0.85,
-                 prices: dict | None = None, sync: bool = False, coach_gap: float = 3.0):
+                 prices: dict | None = None, sync: bool = False, coach_gap: float = 3.0,
+                 memory: LRN.Memory | None = None):
         self.backends = backends                  # {"radiant": мотор, "dire": мотор}
+        self.memory = memory if memory is not None else LRN.Memory(None)    # память героев между матчами (Д20)
+        self.finished: list[dict] = []            # итоги матчей героев (для окна хоста)
+        self.ended = False                        # игра сообщила о конце матча
         self.period, self.dead_period, self.min_gap, self.error_gap = period, dead_period, min_gap, error_gap
         # сколько игре держать решение агента, прежде чем героем возьмётся править запасной исполнитель:
         # период плюс запас на думание (по подписке решения реже — игра узнаёт это из ответа на обмен)
@@ -785,6 +844,7 @@ class AgentHub:
         self.chat_seq = 0
         self.on_say = None                                    # on_say(team, реплика) — сервер шлёт её тренеру
         self.stats = {t: _new_stats() for t in backends}      # по сторонам: у сторон могут быть разные моторы
+        self._pending_finish: list[HeroAgent] = []            # агенты прошлого матча — записать в память
         self.model_seen = {t: "" for t in backends}           # какая модель ответила последней (её имя дал мотор)
 
     def _paid(self, team: str) -> bool:
@@ -803,13 +863,53 @@ class AgentHub:
         if ag is None or ag.hero != hero or clock < ag.last_clock - 60:     # новый матч или другой герой
             if ag is not None and clock < ag.last_clock - 60:
                 self.chat[team].clear()
+                self.ended = False
+            if ag is not None and not ag.recorded:
+                self._pending_finish.append(ag)             # прежний матч героя — записать в память (в фоне)
             persona = self._persona(team, pos)
             roster = {"allies": [(a.get("pos"), a.get("hero")) for a in obs.get("allies") or []],
                       "enemies": list(obs.get("enemy_team") or [])}
+            enabled = self.memory.plan_match(hero)
             ag = HeroAgent(team=team, pos=pos, hero=hero,
-                           system=system_prompt(team, pos, hero, persona, self.obedience, roster))
+                           system=system_prompt(team, pos, hero, persona, self.obedience, roster,
+                                                self.memory.prompt_block(hero, enabled)))
+            ag.enabled = enabled
             self.agents[key] = ag
         return ag
+
+    def _observe(self, ag: HeroAgent, obs: dict) -> None:
+        """Каждое наблюдение (под замком): числа матча; «запомни …» тренера — в память героя дословно (Д20)."""
+        ag.tracker.update(obs)
+        for c in obs.get("coach") or []:
+            seq = int(c.get("seq") or 0)
+            text = LRN.clean(c.get("remember"))
+            if text and seq > ag.learned_coach:
+                ag.learned_coach = seq
+                self.memory.add(ag.hero, text, LRN.COACH)
+                ag.work.append(f"тренер: {text}")
+
+    def _learn_lines(self, ag: HeroAgent, obs: dict, trig: str) -> tuple[list[str], str | None]:
+        """Учёба в сообщении агенту (под замком): разбор смерти, учебная пауза, рабочая память матча.
+        → (строки, откуда урок, если его просят)."""
+        lines, src = [], None
+        clock = _clock(obs)
+        if trig == "ты погиб" and ag.tracker.deaths:
+            d = ag.tracker.deaths[-1]
+            lines.append(f"РАЗБОР СМЕРТИ: {ag.tracker.death_text()}. Напиши урок (lesson): что ты решишь иначе, чтобы "
+                         f"так не погибнуть; lesson_metric — deaths; lesson_ref — «смерть {mmss(d['clock'])}».")
+            src = LRN.DEATH
+        elif obs.get("alive"):
+            why = ag.tracker.alarm(clock)
+            if why or ag.tracker.train_due(clock, self.memory.train_every(ag.hero)):
+                w = ag.tracker.window()
+                if w is not None:
+                    lines.append(f"УЧЕБНАЯ ПАУЗА ({why or 'плановая, первые матчи'}): {LRN.window_text(w)}. Цель стадии "
+                                 f"линий: {role_goal(ag.pos)}. Видишь, что решить иначе, — урок (lesson), lesson_ref — "
+                                 f"«пауза {mmss(clock)}»; всё хорошо — lesson пустой.")
+                    src = LRN.TRAIN
+        if ag.work:
+            lines.append("Уроки этого матча (рабочая память): " + " | ".join(ag.work[-5:]))
+        return lines, src
 
     def _chat_for(self, ag: HeroAgent, clock: float) -> list[dict]:
         """Последние реплики своей команды за CHAT_WINDOW с игры — что агент «слышит»."""
@@ -888,7 +988,8 @@ class AgentHub:
             t_obs = float(t_obs)
         except (TypeError, ValueError):
             t_obs = _clock(obs)
-        return (ag, obs, trig, self._chat_for(ag, _clock(obs)), self._asked(ag), self.chat_seq, t_obs)
+        learn = self._learn_lines(ag, obs, trig)
+        return (ag, obs, trig, self._chat_for(ag, _clock(obs)), self._asked(ag), self.chat_seq, t_obs, learn)
 
     def _applied(self, payload: dict) -> list[dict]:
         """Игра сообщила, какие решения дошли до рук. Возраст решения — секунды игры от наблюдения, по которому
@@ -917,11 +1018,21 @@ class AgentHub:
             wants = []
             for obs in payload.get("heroes") or []:
                 try:
+                    if isinstance(obs, dict) and obs.get("team") in self.backends:
+                        self._observe(self._agent(obs), obs)
                     w = self._want(obs, now)
                 except (TypeError, ValueError, KeyError, AttributeError):
                     continue                              # битое наблюдение одного героя не мешает остальным
                 if w is not None:
                     wants.append((w, obs))
+            finish = list(self._pending_finish)
+            self._pending_finish.clear()
+            ended = payload.get("ended") if isinstance(payload.get("ended"), dict) else None
+            if ended is not None and not self.ended:      # игра сказала: матч окончен — записать и разобрать
+                self.ended = True
+                finish += [a for a in self.agents.values() if not a.recorded]
+            for a in finish:
+                a.recorded = True
             # места в пуле — сначала приказам тренера и обращениям союзников, дальше тем, кто дольше всех без
             # решения: при узком пуле (по подписке — 4 вызова сразу) ни одна сторона и ни один герой не голодает
             wants.sort(key=lambda x: (x[0][1] not in (COACH, ASKED), x[0][0].last_clock))
@@ -941,6 +1052,12 @@ class AgentHub:
                 self._run(*job)
             else:
                 self.pool.submit(self._run, *job)
+        if finish:
+            winner = str((ended or {}).get("winner") or "")
+            if self.sync:
+                self._finish(finish, winner)
+            else:
+                self.pool.submit(self._finish, finish, winner)
         with self.lock:
             return {
                 "decisions": [{"team": a.team, "pos": a.pos, "seq": a.seq, "decision": a.decision}
@@ -952,10 +1069,11 @@ class AgentHub:
             }
 
     def _run(self, ag: HeroAgent, obs: dict, trig: str, chat: list | None = None, asked: list | None = None,
-             heard: int = 0, t_obs: float | None = None) -> None:
+             heard: int = 0, t_obs: float | None = None, learn: tuple | None = None) -> None:
         """Один вызов модели в фоне. Что бы ни случилось, агент освобождается — иначе он замолчит до конца матча."""
         try:
-            self._run_once(ag, obs, trig, chat, asked, heard, _clock(obs) if t_obs is None else t_obs)
+            self._run_once(ag, obs, trig, chat, asked, heard, _clock(obs) if t_obs is None else t_obs,
+                           learn or ([], None))
         except Exception as e:                                     # noqa: BLE001 — сбой учёта, не модели
             with self.lock:
                 ag.state = "сбой сервера: " + f"{type(e).__name__}: {e}"[:80]
@@ -967,14 +1085,14 @@ class AgentHub:
                 self.inflight -= 1
 
     def _run_once(self, ag: HeroAgent, obs: dict, trig: str, chat: list | None, asked: list | None,
-                  heard: int, t_obs: float) -> None:
+                  heard: int, t_obs: float, learn: tuple = ([], None)) -> None:
         t0 = time.monotonic()
         backend = self.backends[ag.team]
         reply, decision, notes, err, new_coach = {}, None, [], None, []
         said = None
         try:
             new_coach = [c for c in obs.get("coach") or [] if (c.get("seq") or 0) > ag.seen_coach]
-            user = user_prompt(obs, list(ag.memory), new_coach, trig, chat or [], ag.pos, ag.seen_chat)
+            user = user_prompt(obs, list(ag.memory), new_coach, trig, chat or [], ag.pos, ag.seen_chat, learn[0])
             reply = backend.decide(ag.system, user, obs, {"new_coach": new_coach, "trigger": trig,
                                                           "chat_to_me": asked or []}) or {}
             raw = reply.get("data") if reply.get("data") is not None else (reply.get("text") or "")
@@ -996,7 +1114,20 @@ class AgentHub:
         latency = time.monotonic() - t0
         usage = reply.get("usage") or {}
         clock = _clock(obs)
+        lesson = None
+        if decision is not None:                                   # урок — в память, а не рукам (Д20)
+            text = decision.pop("lesson", "")
+            metric, ref = decision.pop("lesson_metric", ""), decision.pop("lesson_ref", "")
+            if text and learn[1]:                                  # урок принимаем, только когда его просили
+                lesson = {"text": text, "metric": metric, "ref": ref, "src": learn[1]}
         with self.lock:
+            if lesson is not None:
+                ag.work.append(f"{lesson['src']}: {lesson['text']}")
+                if ag.new_lessons < LRN.NEW_PER_MATCH:
+                    got = self.memory.add(ag.hero, lesson["text"], lesson["src"], lesson["metric"], lesson["ref"])
+                    lesson["memory"] = got or "не принят (нет меры или опоры)"
+                    if got == "новый":
+                        ag.new_lessons += 1
             st = self.stats[ag.team]
             ag.calls += 1
             ag.last_clock = clock
@@ -1041,9 +1172,88 @@ class AgentHub:
                "model": reply.get("model"), "stop_reason": reply.get("stop_reason"),
                "latency_s": round(latency, 3), "usage": usage, "cost_usd": reply.get("cost_usd"),
                "seq": ag.seq if decision is not None else None, "decision": decision, "notes": notes, "error": err}
+        if lesson is not None:
+            rec["lesson"] = lesson
         if err or notes:
             rec["raw"] = (reply.get("text") or json.dumps(reply.get("data"), ensure_ascii=False))[:RAW_KEEP]
         self._log(rec)
+
+    # --- конец матча: память и разбор (Д20) ---
+
+    def finish_match(self, winner: str = "", timeout: float = 90.0) -> list[dict]:
+        """Записать матч героев, которые ещё не записаны (окно хоста закрывают): числа — в память, суд над уроками,
+        разбор агентом. → итоги этих героев (их же — в self.finished)."""
+        with self.lock:
+            todo = [a for a in self.agents.values() if not a.recorded]
+            for a in todo:
+                a.recorded = True
+        return self._finish(todo, winner, timeout)
+
+    def _finish(self, agents: list, winner: str = "", timeout: float = 90.0) -> list[dict]:
+        out, threads = [], []
+        for a in agents:
+            if a.tracker.max_clock < 300:                          # меньше 5 минут игры — не матч для учёбы
+                continue
+            row = a.tracker.match_row()
+            if winner in ("radiant", "dire"):
+                row["result"] = "победа" if winner == a.team else "поражение"
+            n, verdicts = self.memory.record(a.hero, row, a.enabled)
+            res = {"team": a.team, "pos": a.pos, "hero": a.hero, "match": n, "row": row, "verdicts": verdicts,
+                   "added": [], "say": ""}
+            out.append(res)
+            if self._paid(a.team):                                 # разбор — только у Claude (правила не учатся)
+                t = threading.Thread(target=self._review, args=(a, res), daemon=True, name="review")
+                t.start()
+                threads.append(t)
+        deadline = time.monotonic() + timeout
+        for t in threads:
+            t.join(max(0.0, deadline - time.monotonic()))
+        with self.lock:
+            self.finished.extend(out)
+        for res in out:
+            self._log({"t": round(time.time(), 3), "event": "match_learned", **{k: res[k] for k in
+                       ("team", "pos", "hero", "match", "row", "verdicts", "added", "say")}})
+        return out
+
+    def _review(self, ag: HeroAgent, res: dict) -> None:
+        """Разбор матча агентом: до двух новых уроков с мерой и опорой (на испытание) и фраза тренеру."""
+        lessons = self.memory.lessons(ag.hero)
+        names = {LRN.COACH: "тренер", LRN.PROVEN: "проверен", LRN.TRIAL: "на испытании"}
+        have = "; ".join(f"[{names.get(x.get('status'), '?')}] {x['text']}" for x in lessons) or "нет"
+        past = " | ".join(LRN.row_text(r) for r in self.memory.history(ag.hero)[-4:-1]) or "нет"
+        row = res["row"]
+        user = (f"Матч героя №{res['match']}. Числа матча (их считала игра): {LRN.row_text(row)}. "
+                f"Смерти: {', '.join(row.get('deaths') or []) or 'нет'}. "
+                f"Уроки этого матча (рабочая память): {' | '.join(ag.work[-8:]) or 'нет'}. "
+                f"Твоя память сейчас: {have}. Прошлые матчи: {past}.")
+        system = (f"Ты — ИИ-игрок: только что сыграл в Dota 2 героем {short_hero(ag.hero)} "
+                  f"({ROLE_RU.get(ag.pos, f'позиция {ag.pos}')}). Разбор матча: учись на нём.\n"
+                  "Предложи до двух новых уроков (add) — каждый одно короткое конкретное правило про то, что решаешь ты "
+                  "(план и место, когда отходить, кого бить, когда уходить с линии, покупки, прокачка), не про то, как "
+                  "руки бьют. У каждого урока metric — какую цифру он улучшит (lh — добивания к 10:00, deaths — смерти "
+                  "к 10:00, idle — простой рук к 10:00, lvl — уровень к 10:00) и ref — событие или число матча, на "
+                  "которое он опирается. Не повторяй уроки из памяти; нечему учиться — add пустой. Уроки проверит код "
+                  "по числам следующих матчей. say — одна фраза тренеру о главном (до 100 знаков, по-русски).\n"
+                  "Отвечай ТОЛЬКО JSON-объектом.")
+        try:
+            reply = self.backends[ag.team].decide(system, user, None, {"schema": REVIEW_SCHEMA,
+                                                                       "ask": "Разбери матч героя. Числа — во входных данных."}) or {}
+        except Exception as e:                                     # noqa: BLE001 — разбор не удался: числа записаны
+            res["say"] = f"разбор не удался: {e}"[:120]
+            return
+        data = reply.get("data")
+        if data is None:
+            data = extract_json(reply.get("text") or "") or {}
+        added = []
+        for item in (data.get("add") or [])[:2] if isinstance(data, dict) else []:
+            if not isinstance(item, dict):
+                continue
+            got = self.memory.add(ag.hero, item.get("text"), LRN.REVIEW, str(item.get("metric") or ""),
+                                  str(item.get("ref") or ""))
+            if got == "новый":
+                added.append(LRN.clean(item.get("text")))
+        res["added"] = added
+        res["say"] = str(data.get("say") or "")[:MAX_SAY] if isinstance(data, dict) else ""
 
     def _log(self, rec: dict) -> None:
         if not self.log_path:
