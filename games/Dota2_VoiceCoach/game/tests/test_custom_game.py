@@ -1034,6 +1034,7 @@ class Executor(Game):
         sniper = self.hero(1)
         sniper["pos"] = self.L.eval("Vector(6200, -2600, 0)")                  # 1000 от их Т1 бот (6200, -1600)
         self.decide(2, 1, {"plan": "farm", "where": "bot"})
+        self.L.eval("__creep(3, 5900, -2800, 550)")                           # вражеская волна рядом (не у вышки)
         mine = self.L.eval("__creep(2, 6200, -2200, 40)")                     # в 600 от вышки
         n0 = self.n_orders()
         self.step(1)
