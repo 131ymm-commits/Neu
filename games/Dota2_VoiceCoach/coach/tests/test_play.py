@@ -375,7 +375,7 @@ class Launcher(unittest.TestCase):
             self.assertNotIn("ANTHROPIC_AUTH_TOKEN", kw["env"])
         self.assertNotIn("ANTHROPIC_API_KEY", b.env)
         self.assertEqual(seen[0][0][seen[0][0].index("--model") + 1], P.CLAUDE_FAST)   # пробный вызов — быстрой моделью
-        for flag in ("--system-prompt-file", "--json-schema", "--disallowedTools", "--safe-mode", "--tools"):
+        for flag in ("--system-prompt-file", "--json-schema", "--disallowedTools", "--safe-mode", "--tools", "--effort"):
             self.assertIn(flag, seen[0][0])                                    # рецензия 11б: ключи — как у агентов
         self.assertEqual(seen[2][0][1:], ["auth", "login", "--claudeai"])
         ok, why = P.claude_check("c", run=lambda a, **kw: SimpleNamespace(

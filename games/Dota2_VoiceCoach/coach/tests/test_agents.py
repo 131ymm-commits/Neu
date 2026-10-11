@@ -732,6 +732,27 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class Speed(unittest.TestCase):
+    """Д22, слова автора: «один раз в 15 с? 1 действие???? нет 3 раза в секунду как минимум» и «нет давай максимально
+    быстро без апи»: по подписке каждый герой спрашивает Claude, как только пришёл прошлый ответ."""
+
+    def test_no_pause_between_decisions(self):
+        from voicecoach import play as P
+        fake = FakeBackend()
+        h = A.AgentHub({"radiant": fake, "dire": A.RulesBackend()}, sync=True, period=P.SUB_PACE["period"],
+                       dead_period=P.SUB_PACE["dead_period"], min_gap=P.SUB_PACE["min_gap"])
+        for c in (10, 11, 12, 13):                                           # обмен игры раз в секунду
+            h.tick({"heroes": [obs(clock=c)]})
+        self.assertEqual(len(fake.calls), 4)                                 # решение на каждом обмене
+        self.assertGreaterEqual(P.SUB_PACE["max_inflight"], 10)             # все 10 героев думают одновременно
+        self.assertEqual(P.SUB_EFFORT, "low")
+
+    def test_speed_rule_in_prompt_and_quotes_in_target(self):
+        self.assertIn("СКОРОСТЬ", A.system_prompt("radiant", 1, "sniper"))
+        d, notes = A.parse_decision({"plan": "farm", "target": '""'}, obs())   # модель пишет и «""» вместо пустой
+        self.assertEqual((d["target"], notes), ("", []))
+
+
 class Learning(unittest.TestCase):
     """Д20: агенты учатся между матчами — «запомни» тренера, урок после смерти и на учебной паузе (только когда
     просили, с мерой и опорой), запись матча в память и разбор агентом; правила (не Claude) разбор не делают."""

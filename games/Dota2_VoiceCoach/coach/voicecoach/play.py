@@ -54,12 +54,14 @@ GAME_PORT, CONSOLE_PORT = 8787, 8788          # 8787 — адрес, котор�
 HEALTH = f"http://127.0.0.1:{GAME_PORT}/api/health"
 REMOTE = "dire"                                # хост в Доте — тренер Света, друг — Тьмы
 MAX_CALLS = 3000                               # платных вызовов на сторону (ключ API): ≈ 30–40 минут игры
-SUB_MAX_CALLS = 300                            # по подписке: вызовов на сторону за запуск (≈ 15–20 минут Claude): игра не
-                                               # должна съесть недельный лимит автора (лимиты подписки не опубликованы)
-# по подписке герои думают реже: каждый вызов — процесс Claude Code на ПК хоста, и всё идёт из лимитов подписки
-# (замер на модели игры: при 6–11 с на вызов 6 вызовов сразу дают каждому из 10 героев решение раз в 15–22 с;
-# игра держит решение period + 15 = 30 с — запасной исполнитель не перехватывает героев между решениями)
-SUB_PACE = {"period": 15.0, "dead_period": 30.0, "min_gap": 4.0, "error_gap": 10.0, "max_inflight": 6}
+SUB_MAX_CALLS = 3000                           # по подписке: вызовов на сторону за запуск (≈ час непрерывной игры); дальше
+                                               # руки и правила — лимиты подписки общие с чатом автора (Д22)
+# максимально быстро по подписке (Д22, слова автора: «нет давай максимально быстро без апи»): каждый герой спрашивает
+# Claude, как только пришёл прошлый ответ, все 10 сразу; руки выполняют решение 4 раза в секунду. Замер 11.10.2026
+# (Claude Code 2.1.296, быстрая модель, промпт «СКОРОСТЬ» и --effort low): ответ — медиана 4.9 с (2.8–15.4 с);
+# игра держит решение 20 с — запасной исполнитель не перехватывает героев между решениями
+SUB_PACE = {"period": 0.0, "dead_period": 10.0, "min_gap": 0.5, "error_gap": 10.0, "max_inflight": 10}
+SUB_EFFORT = "low"                             # меньше думания у быстрой модели: ответ быстрее (замер Д22)
 CLAUDE_FAST = "haiku"                          # имя линии быстрых моделей для `claude --model`
 COACH_MAX_CALLS = 60                           # ИИ-тренер соперника: вызовов Claude за запуск (≈ раз в минуту), дальше правила
 KEY_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")   # по подписке их нельзя отдавать claude: -p платит ключом
@@ -434,7 +436,8 @@ def claude_check(exe: str, run=subprocess.run) -> tuple[bool, str]:
     """Пробный вызов `claude -p` быстрой моделью теми же ключами, что у агентов (файл системного промпта, схема ответа,
     запрет MCP): старая версия, не знающая одного из них, пробу не пройдёт, и лаунчер её обновит (рецензия 11б).
     5–15 с, капля лимита подписки."""
-    cli = CliBackend(model=CLAUDE_FAST, claude=exe, timeout=120, subscription=True, which=lambda n: None)
+    cli = CliBackend(model=CLAUDE_FAST, claude=exe, timeout=120, subscription=True, which=lambda n: None,
+                     effort=SUB_EFFORT)
     try:
         p = run(cli.argv("Проверка связи игры: ответь по схеме, ready = true.", PROBE_SCHEMA, "Готов?"), input="",
                 capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120, cwd=cli.cwd,
@@ -1314,12 +1317,12 @@ def _main(argv, ask, ask_secret, enter) -> int:
         mode, info = "off", None
     pace = {}
     if mode == "sub":
-        backend = CliBackend(model=CLAUDE_FAST, claude=info, subscription=True)
+        backend = CliBackend(model=CLAUDE_FAST, claude=info, subscription=True, effort=SUB_EFFORT)
         pace = SUB_PACE
         max_calls = args.max_calls or SUB_MAX_CALLS
         say("  Героев ведёт Claude через вход подпиской (Claude Code, быстрая модель): из общих лимитов подписки.")
-        say(f"  Думают реже, чем по ключу API (раз в {SUB_PACE['period']:.0f}–20 с и по событию), предел {max_calls} вызовов"
-            " на сторону.")
+        say("  Каждый герой спрашивает Claude, как только пришёл прошлый ответ (≈ раз в 5 с), все 10 сразу; руки выполняют"
+            f" решение 4 раза в секунду. Предел — {max_calls} вызовов на сторону за запуск.")
         say("  Кончится лимит подписки — герои доиграют на правилах. Остаток лимитов — в приложении Claude: Settings → Usage.")
     elif mode == "key":
         key, model = info

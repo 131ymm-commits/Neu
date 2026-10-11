@@ -574,7 +574,7 @@ class WithAgents(Game):
         self.assertTrue(game)
         self.L.execute('CoachGame:Reply(CoachGame.teams[DOTA_TEAM_BADGUYS], 0, "order", "проверка связи", "")')
         self.http_fail = 1
-        self.step(1.25)
+        self.step(0.25)                                                     # обмен раз в 0.5 с (Д22): ещё не повторён
         self.assertFalse(any(e["text"] == "проверка связи" for e in room.events_after("dire", 0, 0)))
         self.step(12)                                                       # повтор после паузы связи
         got = [e for e in room.events_after("dire", 0, 0) if e["text"] == "проверка связи"]

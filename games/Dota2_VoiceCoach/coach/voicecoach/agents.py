@@ -130,7 +130,7 @@ def mmss(clock) -> str:
 
 
 def short_hero(name) -> str:
-    s = str(name or "").strip().lower().replace(" ", "_")
+    s = str(name or "").strip().strip("\"'«»").strip().lower().replace(" ", "_")   # модель пишет и «""» вместо пустой
     return s[len("npc_dota_hero_"):] if s.startswith("npc_dota_hero_") else s
 
 
@@ -395,6 +395,8 @@ def system_prompt(team: str, pos: int, hero: str, persona: dict | None = None, o
 
 ЧТО В НАБЛЮДЕНИИ
 clock — игровые часы, с; hp, mp — [сейчас, максимум]; where — где ты (линия и ближайшая вышка); attack — урон и дальность атаки; abilities — способности (use: target/point/none/passive; ready; cd — откат, с; mana; range); items — предметы (backpack — в рюкзаке: там предмет не действует и не применяется; tp_slot — ячейка телепорта); slots_free и backpack_free — свободные ячейки инвентаря и рюкзака: при полном инвентаре купленное ложится в рюкзак; points и can_level — очки способностей и что можно качать; gold; buyback — цена и можно ли; in_shop — у фонтана; doing — что сейчас делают руки; queue — очереди рук; notes — что руки не смогли сделать; near — крипы и вражеская вышка рядом (weak_enemy_creeps — можно добить сразу); allies — союзники; enemies — видимые враги (d — расстояние до тебя); missing — невидимые враги (seen — где, ago — сколько секунд назад видели); towers — уровень внешней живой вышки на линиях (0 — вышек нет); roshan — жив ли Рошан; events — недавние события.
+
+СКОРОСТЬ: игра идёт в реальном времени, решение нужно за секунду: ты решаешь снова, как только пришёл твой прошлый ответ, а руки выполняют решение 4 раза в секунду. Не размышляй и не рассуждай — сразу отвечай JSON по наблюдению: первое разумное решение лучше позднего идеального.
 
 Отвечай ТОЛЬКО JSON-объектом решения, без пояснений и без markdown.
 Пример: {{"plan":"farm","where":"{default_lane(team, pos)}","target":"","ally":0,"cast":[],"buy":["item_tango","item_branches"],"level":[],"retreat_hp":30,"buyback":false,"say":"","to":[],"lesson":"","lesson_metric":"","lesson_ref":""}}"""
