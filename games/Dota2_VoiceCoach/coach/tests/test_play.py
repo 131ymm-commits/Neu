@@ -536,6 +536,18 @@ class Launcher(unittest.TestCase):
         self.assertFalse(ok)
         self.assertIn("custom_ui_manifest.vxml_c", note)
         self.assertIn("ERROR: x", note)
+        # живой матч 11.10.2026: окно показало только итог «2 failed» — теперь строки с ошибками и весь вывод в файл
+        def noisy(argv, **kw):
+            lines = ["start"] + ["ok line"] * 40 + ["Error: coach_hud.xml(12): bad attribute", "more"] * 1 + \
+                    ["--------", "| ERROR: 2 compiled, 2 failed", "| Leaked KeyValues blocks: 162", "end"]
+            kw["stdout"].write("\n".join(lines).encode())
+            return SimpleNamespace(returncode=1)
+        logs = Path(self.tmp.name) / "logs"
+        ok, note = P.compile_panorama(dota, run=noisy, log_dir=logs)
+        self.assertIn("coach_hud.xml(12): bad attribute", note)
+        self.assertIn("весь вывод сборщика", note)
+        saved = next(logs.glob("panorama_build_*.log")).read_text(encoding="utf-8")
+        self.assertIn("ok line", saved)
         boom = mock.Mock(side_effect=OSError("не тот файл"))
         self.assertIn("не запустился", P.compile_panorama(dota, run=boom)[1])
         slow = mock.Mock(side_effect=P.subprocess.TimeoutExpired("rc", 180))

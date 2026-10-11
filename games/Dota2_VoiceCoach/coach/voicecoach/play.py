@@ -620,7 +620,7 @@ PANORAMA_OUT = ("layout/custom_game/custom_ui_manifest.vxml_c", "layout/custom_g
 NO_WINDOW = 0x08000000                         # CREATE_NO_WINDOW: сборщик без своего окна
 
 
-def compile_panorama(dota: Path, run=subprocess.run, timeout: float = 180.0) -> tuple[bool, str]:
+def compile_panorama(dota: Path, run=subprocess.run, timeout: float = 180.0, log_dir: Path | None = None) -> tuple[bool, str]:
     """Собрать интерфейс тренера (Panorama) до запуска Доты. → (собран ли, что сказать).
 
     Первый живой матч (10.10.2026): вместо нашей панели — обычная панель героя. В pak01 самой Доты есть свой
@@ -662,9 +662,21 @@ def compile_panorama(dota: Path, run=subprocess.run, timeout: float = 180.0) -> 
         missing = [x for x in PANORAMA_OUT if not (out / x).exists()]
         if missing:
             log.seek(0)
-            said = [line.strip() for line in log.read().decode("utf-8", "replace").splitlines() if line.strip()]
-            tail = " | ".join(said[-4:])[-400:]
-            return False, f"нет {', '.join(missing)} (код {p.returncode}){': ' + tail if tail else ''}"
+            text = log.read().decode("utf-8", "replace")
+            said = [line.strip() for line in text.splitlines() if line.strip()]
+            # строки с ошибками — до итоговой (живой матч 11.10.2026: окно показало только «2 failed», без причины)
+            errs = [x for x in said if re.search(r"error|fail|ошибк", x, re.I) and not x.startswith(("|", "-"))][:4]
+            tail = " | ".join(errs or said[-4:])[-500:]
+            saved = ""
+            if log_dir is not None:
+                try:
+                    path = log_dir / f"panorama_build_{time.strftime('%Y%m%d_%H%M%S')}.log"
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(text, encoding="utf-8")
+                    saved = f"; весь вывод сборщика — {path}"
+                except OSError:
+                    pass
+            return False, f"нет {', '.join(missing)} (код {p.returncode}){': ' + tail if tail else ''}{saved}"
     return True, "собран"
 
 
@@ -716,7 +728,7 @@ def launch_dota(dota: Path, popen=subprocess.Popen, running=_running, wait=time.
             wait(1)
         wait(10)
     say("  Собираю интерфейс тренера для Доты (до пары минут)…")
-    ok, note = build(dota)
+    ok, note = build(dota, log_dir=LOGS) if build is compile_panorama else build(dota)
     if ok:
         say("  Интерфейс тренера собран.")
     else:
