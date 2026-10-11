@@ -15,7 +15,13 @@
 local X = {}
 X.CAST_TTL = 8          -- с: сколько способность из решения ждёт цели
 X.RETREAT_HYST = 40     -- отход длится, пока здоровье не поднимется на 40 пунктов выше порога
-X.LASTHIT = 0.9         -- добиваем, когда у крипа здоровья ≤ 0.9 урона (запас на броню и разброс)
+X.LASTHIT = 0.9         -- (прежний порог; добивание теперь с упреждением — X.LH_*)
+-- добивание с упреждением (слова автора 11.10.2026: «нужен ласт хит удар по крипу со слабым здоровьем»): удар начинается,
+-- когда к моменту попадания — дойти, замах, полёт снаряда — у крипа останется не больше урона героя; скорость, с которой
+-- крип теряет здоровье, руки замеряют сами раз в шаг. Пока идёт замах, удар ничем не сбивается.
+X.LH_ALPHA = 0.5        -- сглаживание замера скорости потери здоровья
+X.LH_KEEP = 3           -- с: замер крипа, которого столько не видели, — забыть
+X.LH_LATE = 0.25        -- крип умрёт раньше удара больше чем на эту долю урона — не успеть, не бить
 X.DENY_PCT = 50         -- своего крипа добиваем ниже этой доли здоровья
 X.FARM_NEAR = 1500      -- крипы ближе — фармим их, дальше — идём к середине линии
 X.CAST_SLACK = 150
@@ -428,6 +434,55 @@ end
 
 -- --- план → приказ движения/атаки ---
 
+-- скорость, с которой крип теряет здоровье (по замерам раз в шаг)
+local function creep_rate(st, c, world, now)
+  st.creeps = st.creeps or {}
+  local id, hp = world.id(c), world.hp(c)
+  local r = st.creeps[id]
+  if r == nil or now - r.t > X.LH_KEEP then
+    st.creeps[id] = { hp = hp, t = now, rate = 0 }
+    return 0
+  end
+  if now > r.t then
+    r.rate = r.rate * (1 - X.LH_ALPHA) + math.max(0, (r.hp - hp) / (now - r.t)) * X.LH_ALPHA
+    r.hp, r.t = hp, now
+  end
+  return r.rate
+end
+
+-- через сколько секунд удар героя попадёт в крипа: дойти до дальности атаки, замах, полёт снаряда
+local function hit_time(hero, c, world)
+  local d = world.dist(world.pos(hero), world.pos(c))
+  local range = world.attack_range(hero)
+  local walk = math.max(0, d - range) / math.max(100, world.speed(hero))
+  local fly = world.is_ranged(hero) and math.min(d, range) / math.max(300, world.projectile_speed(hero)) or 0
+  return walk + world.attack_point(hero) + fly
+end
+
+-- бить ли сейчас: к попаданию у крипа будет не больше урона (и он ещё не умрёт от других). → да/нет, здоровье к удару, время
+local function lasthit_now(st, hero, c, world, now)
+  local rate = creep_rate(st, c, world, now)
+  local t = hit_time(hero, c, world)
+  local pred = world.hp(c) - rate * t
+  local dmg = world.damage(hero, c) * world.armor_factor(c)
+  return pred <= dmg and pred > -dmg * X.LH_LATE, pred, t
+end
+
+-- лучший крип для удара сейчас среди creeps (только в досягаемости + 300); остальных — замерять
+local function pick_lasthit(st, hero, creeps, world, now, filter)
+  local my, range = world.pos(hero), world.attack_range(hero)
+  local best, best_pred, best_t = nil, 1e18, 0
+  for _, c in ipairs(creeps) do
+    if (filter == nil or filter(c)) and world.dist(my, world.pos(c)) <= range + 300 then
+      local ok, pred, t = lasthit_now(st, hero, c, world, now)
+      if ok and pred < best_pred then best, best_pred, best_t = c, pred, t end
+    else
+      creep_rate(st, c, world, now)
+    end
+  end
+  return best, best_t
+end
+
 -- кор своей линии рядом с саппортом — добивания ему. Только кор, чья линия — эта (рецензия 10: на старте у фонтана
 -- Lion шёл за Sniper на бот), и только когда кор у линии (не провожать его на базу)
 local function core_near(ag, world, lane)
@@ -443,7 +498,7 @@ local function core_near(ag, world, lane)
   return nil
 end
 
-local function farm_order(st, ag, world, lane)
+local function farm_order(st, ag, world, lane, now)
   local hero, team = ag.hero, ag.team
   local my = world.pos(hero)
   local tag = "фарм " .. LANE_RU[lane]
@@ -451,11 +506,9 @@ local function farm_order(st, ag, world, lane)
   if core then                                  -- саппорт на линии с кором: свои крипы — добить, враг — бить, если
     tag = "линия с " .. core_pos                 -- безопасно; вражеских крипов не добивать: опыт идёт и так
     local range = world.attack_range(hero)
-    for _, c in ipairs(world.lane_creeps(hero, range + 300, false)) do
-      if world.hp_pct(c) < X.DENY_PCT and world.hp(c) <= world.damage(hero, c) * X.LASTHIT then
-        return { kind = "attack", target = c, why = tag .. ": добиваю своего" }
-      end
-    end
+    local deny, dt = pick_lasthit(st, hero, world.lane_creeps(hero, range + 300, false), world, now,
+      function(c) return world.hp_pct(c) < X.DENY_PCT end)
+    if deny then return { kind = "attack", target = deny, busy = math.min(1.5, dt + 0.1), why = tag .. ": добиваю своего" } end
     local e = world.nearest_enemy(team, my, range + 100)
     if e and world.hp_pct(hero) >= 60 and world.hp_pct(e) <= world.hp_pct(hero)
         and not world.near_enemy_tower(team, world.pos(e), X.TOWER_KEEP) then
@@ -484,23 +537,18 @@ local function farm_order(st, ag, world, lane)
     return { kind = "hold", why = tag .. ": жду волну" }
   end
   local range = world.attack_range(hero)
-  local best, best_hp = nil, 1e18
+  local best, bt = pick_lasthit(st, hero, enemies, world, now)
+  if best then return { kind = "attack", target = best, busy = math.min(1.5, bt + 0.1), why = tag .. ": добиваю" } end
+  local deny, dt = pick_lasthit(st, hero, world.lane_creeps(hero, range + 300, false), world, now,
+    function(c) return world.hp_pct(c) < X.DENY_PCT end)
+  if deny then return { kind = "attack", target = deny, busy = math.min(1.5, dt + 0.1), why = tag .. ": добиваю своего" } end
+  local weakest, whp = enemies[1], 1e18                      -- ждать у крипа, которого добивать скоро: самого слабого
   for _, c in ipairs(enemies) do
-    local hp = world.hp(c)
-    if hp <= world.damage(hero, c) * X.LASTHIT and world.dist(my, world.pos(c)) <= range + 300 and hp < best_hp then
-      best, best_hp = c, hp
-    end
+    if world.hp(c) < whp then weakest, whp = c, world.hp(c) end
   end
-  if best then return { kind = "attack", target = best, why = tag .. ": добиваю" } end
-  for _, c in ipairs(world.lane_creeps(hero, range + 300, false)) do
-    if world.hp_pct(c) < X.DENY_PCT and world.hp(c) <= world.damage(hero, c) * X.LASTHIT then
-      return { kind = "attack", target = c, why = tag .. ": добиваю своего" }
-    end
-  end
-  local near = enemies[1]                                    -- ближайший (FIND_CLOSEST)
-  local np = world.pos(near)
-  if world.dist(my, np) > range + 250 then
-    return { kind = "move", point = toward(np, my, range), why = tag .. ": к крипам" }
+  local np = world.pos(weakest)
+  if world.dist(my, np) > range + 50 then
+    return { kind = "move", point = toward(np, my, range - 50), why = tag .. ": к крипам" }
   end
   return { kind = "hold", why = tag .. ": жду добивание" }
 end
@@ -516,7 +564,7 @@ local function plan_order(st, ag, world, now)
   local hero, team = ag.hero, ag.team
   local k = plan.kind
   if k == "farm" then
-    return farm_order(st, ag, world, lane_of(plan, ag) or X.default_lane(team, ag.pos))
+    return farm_order(st, ag, world, lane_of(plan, ag) or X.default_lane(team, ag.pos), now)
   elseif k == "push" then
     local lane = lane_of(plan, ag) or "mid"
     return { kind = "attack_move", point = world.lane_enemy_front(team, lane), why = "пуш " .. LANE_RU[lane] }
@@ -574,6 +622,7 @@ local function issue(st, acts, order, now, world)
     order.t = now
     st.last = order
     acts[#acts + 1] = { kind = "order", order = order }
+    if order.busy then st.busy_until = math.max(st.busy_until or 0, now + order.busy) end   -- замах не сбивать
   end
   st.status = order.why
   return acts
@@ -608,6 +657,10 @@ function X.step(st, ag, world, now)
       st.busy_until, st.active = now, nil              -- применено: пошёл откат или предмет израсходован
     end
   end
+  local last = st.last                                     -- цель удара умерла раньше попадания — замах ждать незачем
+  if last and last.kind == "attack" and last.target and now < st.busy_until and not world.alive(last.target) then
+    st.busy_until = now
+  end
   if world.is_channeling(hero) or now < st.busy_until then return acts end
 
   local want_acquire = not (st.plan and st.plan.kind == "farm")
@@ -637,6 +690,14 @@ function X.step(st, ag, world, now)
     end
     return issue(st, acts, { kind = "move", point = world.fountain(ag.team),
                              why = string.format("отхожу, здоровья %d%%", math.floor(hp + 0.5)) }, now, world)
+  end
+
+  -- рефлекс «из-под вышки»: вражеская вышка бьёт героя — отойти за её досягаемость, если это не драка с запасом
+  -- здоровья (на фарме, пуше, при отходе и прочем — всегда; в драке и спасении — когда здоровья меньше половины)
+  local tw = world.tower_hitting(ag.team, hero, X.TOWER_KEEP)
+  if tw and (not (st.plan and (st.plan.kind == "fight" or st.plan.kind == "save")) or hp < 50) then
+    return issue(st, acts, { kind = "move", point = toward(tw.pos, world.pos(hero), X.TOWER_KEEP + 150),
+                             why = "отхожу из-под вышки" }, now, world)
   end
 
   local c = cast_step(st, ag, world, now) or auto_cast(st, ag, world, now)

@@ -213,6 +213,11 @@ local function make_hero(name, team, pid)
   function h:GetAverageTrueAttackDamage(target) return 60 end
   function h:Script_GetAttackRange() return self.range end
   function h:GetIdealSpeed() return 300 end
+  function h:GetAttackAnimationPoint() return self.attack_point or 0.3 end
+  function h:GetSecondsPerAttack() return 1.7 end
+  function h:GetBaseAttackTime() return 1.7 end
+  function h:IsRangedAttacker() return self.range > 300 end
+  function h:GetProjectileSpeed() return 900 end
   function h:IsChanneling() return false end
   function h:HasModifier(n) return self.mods[n] == true end
   function h:IsMagicImmune() return self.immune == true end
@@ -669,6 +674,49 @@ class Executor(Game):
         n2 = self.n_orders()
         self.step(0.5)
         self.assertEqual(self.unit_orders(sniper, n2)[-1]["OrderType"], ORDER["hold"])  # рядом крип с полным здоровьем
+
+    def test_last_hit_with_lead_and_no_cancel(self):
+        """Слова автора: «нужен ласт хит удар по крипу со слабым здоровьем». Крип теряет здоровье от своих крипов —
+        удар начинается заранее (к попаданию у крипа будет меньше урона), и пока идёт замах, удар не сбивается."""
+        self.start_match()
+        sniper = self.hero(1)
+        sniper["pos"] = self.L.eval("Vector(5000, -4500, 0)")
+        self.decide(2, 1, {"plan": "farm", "where": "bot"})
+        c = self.L.eval("__creep(3, 5300, -4300, 140)")                     # в досягаемости (≈360)
+        self.L.eval("__creep(3, 5600, -4000, 550)")
+        attack_hp, n0 = None, self.n_orders()
+        for _ in range(16):                                                  # теряет 40 здоровья в секунду
+            c["health"] = max(1, c["health"] - 10)
+            self.L.execute("__step(0.25)")
+            got = [o for o in self.unit_orders(sniper, n0) if o["OrderType"] == ORDER["attack"]
+                   and o["TargetIndex"] == c["idx"]]
+            if got and attack_hp is None:
+                attack_hp = c["health"]
+                n_after = self.n_orders()
+        self.assertIsNotNone(attack_hp)
+        self.assertGreater(attack_hp, 60 * 0.9)                              # раньше прежнего порога «≤ 0.9 урона»
+        self.assertLessEqual(attack_hp, 100)                                 # но не по здоровому — линию не толкаем
+        self.assertGreater(c["health"], 0)
+
+    def test_leaves_tower_aggro(self):
+        """Вражеская вышка бьёт героя на пуше — отходит за её досягаемость; в драке с запасом здоровья — нет."""
+        self.start_match()
+        sniper = self.hero(1)
+        t1 = next(t for t in self.G["__towers"].values() if t["name"] == "npc_dota_badguys_tower1_bot")   # (6200,-1600)
+        sniper["pos"] = self.L.eval("Vector(6200, -2100, 0)")
+        self.L.execute(f"__ents[{t1['idx']}].GetAttackTarget = function() return __players[1].hero end")
+        self.decide(2, 1, {"plan": "push", "where": "bot"})
+        n0 = self.n_orders()
+        self.step(0.5)
+        o = self.unit_orders(sniper, n0)[-1]
+        x, y = self.xy(o)
+        self.assertEqual(o["OrderType"], ORDER["move"])
+        self.assertGreater(((x - 6200) ** 2 + (y + 1600) ** 2) ** 0.5, 900)
+        self.decide(2, 1, {"plan": "fight", "target": "luna"})                # драка, здоровье полное — не бежит
+        n1 = self.n_orders()
+        self.step(0.5)
+        self.assertFalse([o for o in self.unit_orders(sniper, n1) if o["OrderType"] == ORDER["move"]
+                          and ((self.xy(o)[0] - 6200) ** 2 + (self.xy(o)[1] + 1600) ** 2) ** 0.5 > 1000])
 
     def test_retreat_reflex_and_resume(self):
         self.start_match()

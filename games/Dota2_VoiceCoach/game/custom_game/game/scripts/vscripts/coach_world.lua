@@ -161,6 +161,18 @@ function W.near_enemy_tower(team, p, r)
   return false
 end
 
+-- живая вражеская вышка, которая бьёт этого героя (ближе radius) → вышка или nil
+function W.tower_hitting(team, hero, radius)
+  local p = hero:GetAbsOrigin()
+  for _, t in ipairs(W.towers) do
+    if t.team ~= team and tower_alive(t) and W.dist(t.pos, p) <= radius then
+      local ok, target = pcall(function() return t.unit:GetAttackTarget() end)
+      if ok and target == hero then return t end
+    end
+  end
+  return nil
+end
+
 -- точку на линии не ближе keep к вражеской внешней вышке (по пути линии): ближе — отвести назад по линии
 function W.keep_from_tower(team, lane, p, keep)
   local pts = W.lane_path(team, lane)
@@ -356,6 +368,27 @@ end
 
 function W.attack_range(hero)
   return hero:Script_GetAttackRange()
+end
+
+function W.id(unit) return unit:entindex() end
+function W.is_ranged(hero) return hero:IsRangedAttacker() end
+function W.projectile_speed(hero) return hero:GetProjectileSpeed() end
+
+-- замах удара с учётом скорости атаки (точка удара масштабируется так же, как время между ударами); нет ответа — 0.4 с
+function W.attack_point(hero)
+  local ok, p = pcall(function()
+    local point, spa, bat = hero:GetAttackAnimationPoint(), hero:GetSecondsPerAttack(false), hero:GetBaseAttackTime()
+    if bat and bat > 0 and spa and spa > 0 then return point * spa / bat end
+    return point
+  end)
+  return (ok and tonumber(p) and p > 0) and p or 0.4
+end
+
+-- доля физического урона после брони (формула Доты, по памяти): 1 − 0.06·a / (1 + 0.06·|a|)
+function W.armor_factor(unit)
+  local ok, a = pcall(function() return unit:GetPhysicalArmorValue(false) end)
+  a = ok and tonumber(a) or 0
+  return 1 - 0.06 * a / (1 + 0.06 * math.abs(a))
 end
 
 function W.speed(hero)
