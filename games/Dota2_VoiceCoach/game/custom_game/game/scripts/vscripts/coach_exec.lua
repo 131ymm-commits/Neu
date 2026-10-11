@@ -984,5 +984,6 @@ end
 
 X.PLAN_RU = PLAN_RU
 X.LANE_RU = LANE_RU
+X._creep_rate = creep_rate              -- для тестов: замер скорости потери здоровья
 
 return X
