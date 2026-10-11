@@ -941,6 +941,29 @@ class Launcher(unittest.TestCase):
             raise EOFError
         self.assertTrue(P.rules_ok(no_console))
 
+    def test_learning_report_own_side_and_file(self):
+        """Д20: в конце игры — матч героев в память и на разбор; в окно — своя сторона подробно, соперник (Д16) — числом;
+        отчёт — в coach\\logs\\match_*.md."""
+        tmp = Path(self.tmp.name)
+        row = {"lh10": 20, "seen10": 35, "dn10": 3, "d10": 1, "lvl10": 6, "idle10": 40, "end_clock": 1800, "k": 2,
+               "d": 3, "a": 4, "lh": 90, "lvl": 15, "result": "поражение"}
+        res = [{"team": "radiant", "pos": 1, "hero": "sniper", "match": 2, "row": row, "verdicts": ["проверен: «x»"],
+                "added": ["Стой у своей волны"], "say": "понял"},
+               {"team": "dire", "pos": 1, "hero": "luna", "match": 2, "row": row, "verdicts": [],
+                "added": ["тайный урок"], "say": "секрет"}]
+        calls = []
+        hub = SimpleNamespace(agents={}, finished=[], finish_match=lambda timeout=90: (calls.append(1), hub.finished.extend(res)))
+        with mock.patch.object(P, "LOGS", tmp / "logs"):
+            got = P.learning_report(hub, SimpleNamespace(free=False))
+        self.assertEqual((len(got), calls), (2, [1]))
+        text = "\n".join(self.out)
+        self.assertIn("Свет 1 sniper (матч героя №2): к 10:00: добивания 20 (из 35 умерших рядом)", text)
+        self.assertIn("новый урок: Стой у своей волны", text)
+        self.assertIn("Тьма: героев 1, новых уроков 1", text)
+        self.assertNotIn("тайный урок", text)                                 # уроки соперника — не в окно хоста
+        report = next((tmp / "logs").glob("match_*.md")).read_text(encoding="utf-8")
+        self.assertIn("тайный урок", report)
+
     def test_watch_new_match_and_model(self):
         """Второй матч в том же окне: снова «первые решения» (рецензия 7); имя модели — как его дал Claude Code."""
         prog = {"radiant": {"heroes": 5, "decisions": 2, "calls": 2, "errors": 0, "error": "", "pause": "",

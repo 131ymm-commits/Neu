@@ -36,6 +36,7 @@ import webbrowser
 from pathlib import Path
 
 from . import rendezvous as RV
+from . import learning as LRN
 from .agents import AgentHub, ApiBackend, CliBackend, make_backend
 from .ai_coach import AICoach, ClaudeCoach, RulesCoach
 from .console import console_url, load_keys, serve_console, start_tunnel
@@ -1124,6 +1125,53 @@ def parse(argv=None):
     return ap.parse_args(argv)
 
 
+def learning_report(hub, backend, timeout: float = 90.0) -> list[dict]:
+    """Конец игры (Д20): незаписанные матчи героев — в память и на разбор агентами; в окно — итоги своей стороны
+    (Света): числа к 10:00, новые уроки, что код решил об уроках; соперника (Д16) — только сколько уроков; всё — в
+    coach\\logs\\match_*.md."""
+    try:
+        if not getattr(backend, "free", False) and any(not a.recorded for a in hub.agents.values()):
+            say("Разбор матча агентами (до полутора минут)…")
+        hub.finish_match(timeout=timeout)
+        results = list(hub.finished)
+    except Exception as e:                                      # noqa: BLE001 — разбор не роняет выход
+        say(f"Разбор матча не получился: {type(e).__name__}: {e}")
+        return []
+    if not results:
+        return []
+    say("Обучение агентов (Д20):")
+    lines = ["# Матч: обучение агентов", ""]
+    for r in sorted(results, key=lambda x: (x["team"], x["pos"])):
+        side = {"radiant": "Свет", "dire": "Тьма"}.get(r["team"], r["team"])
+        row = f"{side} {r['pos']} {r['hero']} (матч героя №{r['match']}): {LRN.row_text(r['row'])}"
+        lines.append(f"- {row}")
+        for x in r["added"]:
+            lines.append(f"  - новый урок: {x}")
+        for v in r["verdicts"]:
+            lines.append(f"  - {v}")
+        if r["say"]:
+            lines.append(f"  - сказал: {r['say']}")
+        if r["team"] == "radiant":
+            say("  " + row)
+            for x in r["added"]:
+                say(f"    новый урок: {x}")
+            for v in r["verdicts"]:
+                say(f"    {v}")
+            if r["say"]:
+                say(f"    {r['hero']}: «{r['say']}»")
+    dire = [r for r in results if r["team"] != "radiant"]
+    if dire:
+        say(f"  Тьма: героев {len(dire)}, новых уроков {sum(len(r['added']) for r in dire)} (подробно — в отчёте).")
+    path = LOGS / f"match_{time.strftime('%Y%m%d_%H%M%S')}.md"
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        say(f"  Отчёт: {path}. Память героев: {LOGS.parent / 'memory'}.")
+    except OSError:
+        pass
+    return results
+
+
 def rules_ok(ask) -> bool:
     """Claude не включился: сказать крупно и спросить, играть ли на правилах (матч автора 11.10.2026 прошёл на
     правилах, а окно писало «агенты ведут героев» — ERRORS №103). → играть ли дальше."""
@@ -1204,8 +1252,9 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
 
     say("[3/6] Сервер тренера")
     log = LOGS / f"agents_local_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
+    memory = LRN.Memory(LOGS.parent / "memory")                   # память героев между матчами (Д20)
     srv = bind(lambda: serve("127.0.0.1", GAME_PORT, lambda room: AgentHub(
-        {"radiant": backend, "dire": backend}, max_calls=max_calls, log_path=log, **pace)), GAME_PORT,
+        {"radiant": backend, "dire": backend}, max_calls=max_calls, log_path=log, memory=memory, **pace)), GAME_PORT,
         "серверу тренера", ours=already_running)
     if srv is None:
         return 1
@@ -1323,6 +1372,7 @@ def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
         server.shutdown()
         server.server_close()
     if room.agents is not None:
+        learning_report(room.agents, backend)                     # Д20: матч героев — в память, разбор, итог
         room.agents.close()                                       # вызовы из очереди не ждём и не оплачиваем
     pub.close()
     if room.agents is not None:
