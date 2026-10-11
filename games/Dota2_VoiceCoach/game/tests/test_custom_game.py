@@ -1549,6 +1549,21 @@ class Executor(Game):
         self.step(0.5)
         cast = [o for o in self.unit_orders(sniper, n2) if o["OrderType"] == ORDER["cast_target"]]
         self.assertEqual((cast[0]["AbilityIndex"], cast[0]["TargetIndex"]), (w["idx"], luna["idx"]))
+        # рецензия 12: канальная (Mana Drain) и с долгим замахом (Assassinate, 2 с) при отходе держали бы на месте
+        drain = self.L.eval("__make_ability")("lion_mana_drain", False, 8 + 128, 1)       # по цели + канал
+        slow = self.L.eval("__make_ability")("sniper_assassinate", False, 8, 1)
+        self.L.execute(f"__ents[{slow['idx']}].GetCastPoint = function() return 2.0 end")
+        sniper["abilities"][5], sniper["abilities"][6] = drain, slow
+        self.decide(2, 1, {"plan": "farm", "where": "bot", "cast": [{"ability": "lion_mana_drain", "target": "luna"},
+                                                                    {"ability": "sniper_assassinate", "target": "luna"}]})
+        n3 = self.n_orders()
+        self.step(1.5)
+        self.assertFalse([o for o in self.unit_orders(sniper, n3) if o["AbilityIndex"] in (drain["idx"], slow["idx"])])
+        self.assertTrue(self.status(2, 1).startswith("отхожу"), self.status(2, 1))
+        sniper["health"] = 600                                                # отход кончился — применить можно
+        n4 = self.n_orders()
+        self.step(1)
+        self.assertIn(drain["idx"], [o["AbilityIndex"] for o in self.unit_orders(sniper, n4)])
 
     def test_cast_level_buy(self):
         self.start_match()
@@ -1972,6 +1987,19 @@ class Learning(Game):
         other = next(h for h in sent["heroes"] if h["team"] == "radiant" and h["pos"] == 2)
         self.assertFalse([c for c in other["coach"] if c.get("remember")])
 
+    def test_roshan_is_not_a_lane_creep(self):
+        """Рецензия 12: у Рошана IsNeutralUnitType в KV не задан — если IsCreep у него истинно, его смерть ушла бы в
+        «крип рядом», а события «убит Рошан» агенты бы не получили."""
+        self.start_match()
+        self.L.execute("function __roshan:IsCreep() return true end; function __roshan:IsNeutralUnitType() return false end")
+        sniper = self.hero(1)
+        sniper["pos"] = self.L.eval("Vector(-2700, 2300, 0)")
+        self.G["__roshan"]["alive"] = False
+        self.L.execute(f"__fire('entity_killed', {{ entindex_killed = __roshan.idx, entindex_attacker = {sniper['idx']} }})")
+        self.step(1.5)
+        me = next(h for h in self.payloads()[-1]["heroes"] if h["team"] == "radiant" and h["pos"] == 1)
+        self.assertEqual(me["stats"]["seen"], 0)
+
     def test_seen_idle_and_match_end(self):
         self.start_match()
         sniper = self.hero(1)
@@ -1988,6 +2016,12 @@ class Learning(Game):
         me = next(h for h in sent["heroes"] if h["team"] == "radiant" and h["pos"] == 1)
         self.assertEqual(me["stats"]["seen"], 1)                              # только вражеский и рядом
         self.assertGreaterEqual(me["stats"]["idle"], 2)
+        idle = self.G["CoachGame"]["teams"][2]["exec"][1]["idle"]
+        self.decide(2, 1, {"plan": "farm", "where": "bot"})                   # рецензия 12: ждать добивание у волны —
+        self.L.eval("__creep(3, 2400, -5000, 550)")                           # работа, а не простой
+        self.step(3)
+        self.assertTrue(self.G["CoachGame"]["teams"][2]["exec"][1]["status"].endswith("жду добивание"))
+        self.assertAlmostEqual(self.G["CoachGame"]["teams"][2]["exec"][1]["idle"], idle, delta=0.3)
         self.L.execute("__fire('dota_match_done', { winningteam = 3 })")
         G = self.G["CoachGame"]
         payload = G["TickPayload"](G, self.G["__now"])

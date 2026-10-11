@@ -66,21 +66,28 @@ def _int(v, default: int = 0) -> int:
         return default
 
 
+KEYS_VERSION = 2   # 2 — разовая смена ключей: ключ пульта друга попал в публичный репозиторий (ERRORS №106)
+
+
 def load_keys(teams, path: Path = KEYS_FILE, new: bool = False) -> dict:
     """Ключи пультов: {команда: ключ}. Хранятся в logs/console_keys.json, чтобы ссылка жила после перезапуска
-    сервера; new=True — выдать новые (старые ссылки перестанут работать)."""
+    сервера; new=True — выдать новые (старые ссылки перестанут работать). Файл старой версии (без "v" или с меньшей) —
+    тоже новые ключи; файл друга при этом не меняется: свежую ссылку он найдёт в ящике."""
     data = {}
     if not new and path.exists():
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
             data = {}
+    if not isinstance(data, dict) or data.get("v") != KEYS_VERSION:
+        data = {}
     keys = {}
     for t in teams:
         k = data.get(t)
         keys[t] = k if isinstance(k, str) and len(k) >= 20 else secrets.token_urlsafe(16)
     data = {t: k for t, k in data.items() if t in TEAMS and isinstance(k, str)}
     data.update(keys)
+    data["v"] = KEYS_VERSION
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data), encoding="utf-8")
     try:

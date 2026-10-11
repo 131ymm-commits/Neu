@@ -51,7 +51,9 @@ class MemoryTest(unittest.TestCase):
         self.assertEqual((row["status"], row["repeats"]), (L.TRIAL, 1))
 
     def test_random_control_and_judgement_by_numbers(self):
-        """Урок на испытании включается в половине матчей; после 2 матчей с ним и 2 без код сравнивает меру."""
+        """Урок на испытании включается в половине матчей; после 3 матчей с ним и 3 без код сравнивает меру: разница
+        больше двух её ошибок — решение, иначе испытание идёт дальше (рецензия 12: суд «лучше хоть на сколько» —
+        монетка)."""
         self.m.add("axe", "Тренер: стой у своей вышки до 6 уровня", L.COACH)
         self.m.add("axe", "Отходи к своей вышке, когда двое врагов рядом", L.DEATH, metric="deaths", ref="смерть 4:12")
         self.m.add("axe", "Прыгай на керри врага первым", L.TRAIN, metric="deaths", ref="пауза 3:00")
@@ -66,10 +68,14 @@ class MemoryTest(unittest.TestCase):
                 on_counts[k] += k in on
         for k, c in on_counts.items():
             self.assertTrue(70 <= c <= 130, (k, c))                          # примерно в половине
-        # с хорошим уроком смертей меньше, с плохим — больше
+        # с хорошим уроком смертей меньше, с плохим — больше; разница мала — решения нет
         plan = [({good}, 1), (set(), 3), ({good, bad}, 4), ({bad}, 5), (set(), 3), ({good}, 1)]
         verdicts = []
         for on, deaths in plan:
+            _, v = self.m.record("axe", {"lh10": 20, "d10": deaths, "idle10": 30, "lvl10": 5}, on | {coach})
+            verdicts += v
+        self.assertEqual(verdicts, [])                                       # по 2–3 матча — рано
+        for on, deaths in [({bad}, 5), (set(), 2), ({good}, 0)]:
             _, v = self.m.record("axe", {"lh10": 20, "d10": deaths, "idle10": 30, "lvl10": 5}, on | {coach})
             verdicts += v
         rows = {r["text"]: r for r in self.m.lessons("axe")}
@@ -77,8 +83,19 @@ class MemoryTest(unittest.TestCase):
         self.assertNotIn("Прыгай на керри врага первым", rows)
         self.assertTrue(any(v.startswith("проверен") for v in verdicts))
         self.assertTrue(any("с ним хуже" in v for v in verdicts))
-        self.assertEqual(self.m.matches("axe"), 6)
+        self.assertEqual(self.m.matches("axe"), 9)
         self.assertEqual(self.m.history("axe")[0]["on"], sorted({good, coach}))
+
+    def test_trial_only_for_lessons_known_at_match_start(self):
+        """Рецензия 12: урок, написанный в матче, уже в рабочей памяти — этот матч ему не контроль; испытания — с матча,
+        в начале которого урок был в памяти."""
+        self.m.add("cm", "Ставь вард у Т1 на 1:30", L.REVIEW, metric="lvl", ref="разбор")
+        known = {r["id"] for r in self.m.lessons("cm")}
+        self.m.add("cm", "Не стой впереди керри", L.DEATH, metric="deaths", ref="смерть 3:00")   # написан в матче
+        self.m.record("cm", {"lvl10": 5, "d10": 1, "lh10": 3}, set(), known)
+        trials = {r["text"]: r["trials"] for r in self.m.lessons("cm")}
+        self.assertEqual(len(trials["Ставь вард у Т1 на 1:30"]), 1)
+        self.assertEqual(trials["Не стой впереди керри"], [])
 
     def test_undecided_lesson_leaves_after_max_trials(self):
         self.m.add("cm", "Ставь вард у Т1 на 1:30", L.REVIEW, metric="lvl", ref="разбор")
@@ -92,12 +109,17 @@ class MemoryTest(unittest.TestCase):
         self.assertEqual(short.lessons("cm")[0]["trials"], [])
 
     def test_caps(self):
+        """Несудимые уроки не вытесняются (рецензия 12: вытеснение за 3 матча не давало суду ни одного урока): память
+        полна — новый не принят. Уроки тренера сверх предела — самые старые уходят."""
+        got = []
         for i in range(L.MAX_TRIAL + 3):
             self.t[0] += 1
-            self.m.add("viper", f"урок {i}: держись в {i * 100 + 300} от вышки", L.TRAIN, metric="deaths", ref=f"{i}:00")
+            got.append(self.m.add("viper", f"урок {i}: держись в {i * 100 + 300} от вышки", L.TRAIN, metric="deaths",
+                                  ref=f"{i}:00"))
         rows = self.m.lessons("viper")
         self.assertEqual(len(rows), L.MAX_TRIAL)
-        self.assertNotIn("урок 0: держись в 300 от вышки", [r["text"] for r in rows])     # самые старые — вон
+        self.assertIn("урок 0: держись в 300 от вышки", [r["text"] for r in rows])        # старые остаются
+        self.assertEqual(got[-3:], [L.FULL] * 3)
         for i in range(L.MAX_COACH + 2):
             self.m.add("viper", f"приказ {i}: отходи при {i * 5 + 20}% здоровья", L.COACH)
         self.assertEqual(len([r for r in self.m.lessons("viper") if r["status"] == L.COACH]), L.MAX_COACH)

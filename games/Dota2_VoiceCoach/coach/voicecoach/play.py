@@ -819,7 +819,7 @@ CONSOLE_LOG = Path("game") / "dota" / "console.log"
 OURS_TAG = "[ТРЕНЕР]"
 # ходы игры — реплики агентов и тренеров, приказы с пульта, в том числе ИИ-тренера соперника (Д16: «его приказы в
 # окно не пишутся»), покупки: окну хоста не нужны (рецензия 7)
-GAME_MOVE = re.compile(r"\[ТРЕНЕР\] (ход |\d \S*: |: |приказ с пульта)")
+GAME_MOVE = RPT.MOVE
 GAME_ERROR = re.compile(r"script runtime error|stack traceback|error running script|script not found", re.I)
 OUR_FILES = re.compile(r"coach_|vc_\w+\.lua|voicecoach|custom_ui_manifest|addon_game_mode|custom_game", re.I)
 NOTABLE = re.compile(r"error|fail|not found|unable|cannot|exception|ошибк|recompil", re.I)
@@ -1177,8 +1177,8 @@ def report_info(reports: dict, final: bool = False, learned=None) -> dict:
     if learned:
         info["Обучение (Д20)"] = [{k: r.get(k) for k in ("team", "pos", "hero", "match", "row", "verdicts", "added", "say")}
                                   for r in learned]
-    if dlog is not None and getattr(dlog, "copy", None) is not None:
-        info["Консоль Доты: строки кастомки и ошибки"] = RPT.dota_lines(RPT.read_text(dlog.copy))
+    if dlog is not None and getattr(dlog, "copy", None) is not None:   # ходы соперника — только после игры (Д16)
+        info["Консоль Доты: строки кастомки и ошибки"] = RPT.dota_lines(RPT.read_text(dlog.copy), moves=final)
     if final:
         text, counts = RPT.agent_samples(reports.get("log"))
         info["Журнал агентов"] = f"{counts}\n{text}"

@@ -9,7 +9,9 @@
 оттуда Claude читает отчёт сам (Google Drive подключён к сессии Claude), человеку ничего делать не нужно. Без
 Google Диска — в конце окно Проводника с файлом: перетащить его в чат.
 
-Что скрыто: имя пользователя Windows в путях, ключ пульта друга в ссылках, ключи API, адрес туннеля.
+Что скрыто: имя пользователя Windows в путях (и с удвоенными «\\», и с «/»), ключ пульта друга в ссылках, ключи API,
+адрес туннеля. В живом отчёте нет ходов игры из консоли Доты — приказов соперника и реплик его агентов (Д16: хост их не
+видит, рецензия 12); в итоговом, после игры, они есть.
 """
 from __future__ import annotations
 
@@ -25,8 +27,22 @@ MAX_SECTION = 60_000          # знаков в одном разделе (ок�
 MAX_SAMPLES = 24              # решений агентов в примерах
 
 _KEY_IN_URL = re.compile(r"(/c/)[A-Za-z0-9_\-]{12,}")
+_KEY_IN_QUERY = re.compile(r"([?&](?:key|k)=)[A-Za-z0-9_\-]{12,}")
 _API_KEY = re.compile(r"sk-ant-[A-Za-z0-9_\-]{8,}")
-_TUNNEL = re.compile(r"https?://[a-z0-9\-]+\.trycloudflare\.com\S*", re.I)
+_TUNNEL = re.compile(r"(?:\b(?:https?|wss?)://)?[a-z0-9\-]+\.trycloudflare\.com[^\s\"'<>]*", re.I)
+_USERS_SP = re.compile(r"([A-Za-z]:(?:\\\\|\\|/)+Users(?:\\\\|\\|/)+)[^\\/\"'\r\n<>]{1,64}?(?=[\\/])", re.I)
+_USERS = re.compile(r"([A-Za-z]:(?:\\\\|\\|/)+Users(?:\\\\|\\|/)+)[^\\/\s\"'<>]+", re.I)
+# ходы игры в консоли Доты (как GAME_MOVE лаунчера): реплики агентов и тренеров, приказы с пульта — в том числе
+# соперника; окну хоста и живому отчёту не нужны
+MOVE = re.compile(r"\[ТРЕНЕР\] (ход |\d \S*: |: |приказ с пульта)")
+
+
+def _path_variants(path: str) -> list[str]:
+    """Путь Windows с разделителями «\», удвоенными «\\» (repr, JSON) и «/» — длинные первыми; другой путь — как есть."""
+    if not re.match(r"^[A-Za-z]:[\\/]", path):
+        return [path]
+    parts = [x for x in re.split(r"[\\/]+", path) if x]
+    return sorted({sep.join(parts) for sep in ("\\", "\\\\", "/")}, key=len, reverse=True)
 
 
 def scrub(text: str, home: str | None = None) -> str:
@@ -34,17 +50,21 @@ def scrub(text: str, home: str | None = None) -> str:
     s = str(text or "")
     home = home if home is not None else os.environ.get("USERPROFILE") or str(Path.home())
     if home and len(home) > 3:
-        s = re.sub(re.escape(home), "%USERPROFILE%", s, flags=re.I)
-    s = re.sub(r"([A-Za-z]:\\Users\\)[^\\\s]+", r"\1<пользователь>", s)
+        for v in _path_variants(home):
+            s = re.sub(re.escape(v), "%USERPROFILE%", s, flags=re.I)
+    s = _USERS_SP.sub(r"\1<пользователь>", s)                 # имя с пробелом — до следующего разделителя
+    s = _USERS.sub(r"\1<пользователь>", s)
+    s = _TUNNEL.sub("<туннель>.trycloudflare.com", s)          # адрес туннеля — со всем путём (и ключом в нём)
     s = _KEY_IN_URL.sub(r"\1<ключ>", s)
+    s = _KEY_IN_QUERY.sub(r"\1<ключ>", s)
     s = _API_KEY.sub("sk-ant-<скрыт>", s)
-    s = _TUNNEL.sub("https://<туннель>.trycloudflare.com", s)
     return s
 
 
 def drive_folder(home: str | None = None, exists=os.path.isdir) -> Path | None:
     """Папка «Google Диска для компьютера» на этом ПК (виртуальный диск с «My Drive»/«Мой диск» или зеркало в папке
-    пользователя) → <она>/DotaCoach; не стоит — None."""
+    пользователя) → <она>/DotaCoach; не стоит — None. В корень «Google Drive» писать нельзя — только в «Мой диск»
+    (рецензия 12)."""
     home = home if home is not None else os.environ.get("USERPROFILE") or str(Path.home())
     names = ("My Drive", "Мой диск")
     cands = []
@@ -52,7 +72,10 @@ def drive_folder(home: str | None = None, exists=os.path.isdir) -> Path | None:
         for letter in "GHIJKLMNOPQRSTUVWXYZDEF":
             for n in names:
                 cands.append(Path(f"{letter}:\\") / n)
-    for n in (*names, "Google Drive", "Google Диск"):
+    for root in ("Google Drive", "Google Диск"):
+        for n in names:
+            cands.append(Path(home) / root / n)
+    for n in names:
         cands.append(Path(home) / n)
     for c in cands:
         try:
@@ -74,10 +97,12 @@ def read_text(path) -> str:
         return ""
 
 
-def dota_lines(text: str) -> str:
-    """Из консоли Доты — строки кастомки и ошибки скриптов и интерфейса (остальное — шум движка)."""
+def dota_lines(text: str, moves: bool = True) -> str:
+    """Из консоли Доты — строки кастомки и ошибки скриптов и интерфейса (остальное — шум движка); moves=False — без ходов
+    игры (живой отчёт во время игры: ходы соперника хосту не показываем)."""
     keep = [x for x in text.splitlines()
-            if "[ТРЕНЕР]" in x or re.search(r"script error|error|ошибка|traceback|\.lua:\d+|\.js:\d+", x, re.I)]
+            if ("[ТРЕНЕР]" in x or re.search(r"script error|error|ошибка|traceback|\.lua:\d+|\.js:\d+", x, re.I))
+            and (moves or not MOVE.search(x))]
     return "\n".join(keep)
 
 
@@ -141,15 +166,18 @@ def write(text: str, logs: Path, name: str, drive: Path | None = None) -> list[P
     for folder in (logs, drive):
         if folder is None:
             continue
-        try:
-            folder.mkdir(parents=True, exist_ok=True)
-            p = folder / name
-            tmp = p.with_name(p.name + ".part")
-            tmp.write_text(text, encoding="utf-8")
-            os.replace(tmp, p)
-            done.append(p)
-        except OSError:
-            continue
+        for attempt in range(3):                      # файл занят синхронизацией или антивирусом — ещё раз
+            try:
+                folder.mkdir(parents=True, exist_ok=True)
+                p = folder / name
+                tmp = p.with_name(p.name + ".part")
+                tmp.write_text(text, encoding="utf-8")
+                os.replace(tmp, p)
+                done.append(p)
+                break
+            except OSError:
+                if attempt < 2:
+                    time.sleep(0.3)
     return done
 
 

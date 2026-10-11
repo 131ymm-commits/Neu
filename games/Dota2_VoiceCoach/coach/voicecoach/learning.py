@@ -13,9 +13,13 @@ ExpeL и ACE — сведение уроков со счётом, Voyager — у
 
 Урок агента — гипотеза: у него есть мера (добивания, смерти, простой рук, уровень к 10:00) и опора (событие матча).
 Проверяет его код, а не агент (без внешней правды самооценка закрепляет ошибки, research/06): каждый матч урок на
-испытании включается в промпт случайно, в половине матчей; после MIN_ON матчей с уроком и MIN_OFF без него код
-сравнивает меру. Лучше, и смерти с добиваниями не хуже, — «проверен», хуже — уходит; не решилось за MAX_TRIALS матчей —
-уходит. Числа считает игра (правда от кода).
+испытании включается в промпт случайно, в половине матчей; испытание — только матч, в начале которого урок уже был
+(иначе контроль заражён: урок этого матча уже в рабочей памяти — рецензия 12). После MIN_ON матчей с уроком и MIN_OFF
+без него код сравнивает меру: разница средних больше JUDGE_Z своих ошибок (разброс — по самим матчам, не меньше
+SD_FLOOR), и смерти с добиваниями не хуже, — «проверен»; столько же в худшую сторону — уходит; не решилось за
+MAX_TRIALS матчей — уходит. Несудимый урок не вытесняется: память полна — новый урок не принимается (рецензия 12: при
+вытеснении суд не доходил ни до одного урока). Числа считает игра (правда от кода); суд по нескольким матчам — грубый:
+уверенно он заметит только большой эффект.
 """
 from __future__ import annotations
 
@@ -27,15 +31,17 @@ import threading
 import time
 from pathlib import Path
 
-MAX_TRIAL = 6             # уроков на испытании у героя
+MAX_TRIAL = 8             # уроков на испытании у героя (несудимые не вытесняются: полна — новый не принят)
 MAX_PROVEN = 8            # проверенных уроков у героя
 MAX_COACH = 8             # уроков тренера у героя
 MAX_TEXT = 160            # знаков в уроке
 HISTORY_KEEP = 40         # матчей в истории героя
-NEW_PER_MATCH = 2         # новых уроков на испытание за матч у героя (остальные — только в рабочей памяти матча)
 P_ON = 0.5                # с этой вероятностью урок на испытании включается в матч
-MIN_ON, MIN_OFF = 2, 2    # матчей с уроком и без него, чтобы судить
-MAX_TRIALS = 8            # не решилось за столько матчей — урок уходит
+MIN_ON, MIN_OFF = 3, 3    # матчей с уроком и без него, чтобы судить
+MAX_TRIALS = 12           # не решилось за столько матчей — урок уходит
+JUDGE_Z = 2.0             # суд: разница средних меры — не меньше стольких её ошибок (рецензия 12: при «лучше на сколько
+                          # угодно» урок без эффекта получал «проверен» в 26–37 % случаев)
+SD_FLOOR = {"lh": 3.0, "deaths": 0.7, "idle": 15.0, "lvl": 0.5}   # разброс меры не меньше (по 3 матча — оценка шаткая)
 EARLY_MATCHES = 5         # первые матчи героя — учебных пауз больше (слова автора: «в начале … обучения очень много»)
 TRAIN_EVERY_EARLY = 120   # с игры между плановыми паузами в первые матчи
 TRAIN_UNTIL = 600         # учебные паузы — на стадии линий, до 10:00
@@ -46,6 +52,10 @@ ALARM_GAP = 60            # пауз по порогу — не чаще раз�
 
 COACH, DEATH, TRAIN, REVIEW = "тренер", "смерть", "учёба", "разбор"
 SOURCES = (COACH, DEATH, TRAIN, REVIEW)
+# новых уроков агента на испытание за матч — по источникам: урок смерти не вытесняют уроки учебных пауз (рецензия 12);
+# остальные уроки матча — только в рабочей памяти матча
+NEW_PER_SOURCE = {DEATH: 1, TRAIN: 1, REVIEW: 1}
+FULL = "полна"
 TRIAL, PROVEN = "испытание", "проверен"
 # мера урока: имя в строке матча и направление (больше лучше / меньше лучше); всё — к 10:00 (стадия линий)
 METRICS = {"lh": ("добивания к 10:00", +1), "deaths": ("смерти к 10:00", -1), "idle": ("простой рук к 10:00, с", -1),
@@ -148,13 +158,16 @@ class Memory:
         p = self.path(hero)
         if p is None:
             return
-        try:
-            p.parent.mkdir(parents=True, exist_ok=True)
-            tmp = p.with_name(p.name + ".part")
-            tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
-            os.replace(tmp, p)
-        except OSError:
-            pass                                  # память не записалась — игра идёт; в следующий раз запишется
+        for attempt in range(3):                  # файл занят антивирусом или синхронизацией — ещё раз (рецензия 12)
+            try:
+                p.parent.mkdir(parents=True, exist_ok=True)
+                tmp = p.with_name(p.name + ".part")
+                tmp.write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
+                os.replace(tmp, p)
+                return
+            except OSError:
+                if attempt < 2:
+                    time.sleep(0.2)               # не вышло — игра идёт; в следующий раз запишется
 
     # --- чтение ---
 
@@ -201,7 +214,7 @@ class Memory:
 
     def add(self, hero, text, src: str, metric: str = "", ref: str = "", match: int | None = None) -> str | None:
         """Новый урок. Тренера — дословно, всегда; агента — только с мерой и опорой (урок без опоры не принимаем,
-        research/06), на испытание. → «новый», «повтор» или None (не принят)."""
+        research/06), на испытание, если на испытании меньше MAX_TRIAL. → «новый», «повтор», FULL или None."""
         s = clean(text)
         if not s or src not in SOURCES:
             return None
@@ -217,6 +230,8 @@ class Memory:
                     x["t"] = self.now()
                     self._save(hero, data)
                     return "повтор"
+            if not coach and sum(1 for x in items if x.get("status") == TRIAL) >= MAX_TRIAL:
+                return FULL                               # несудимые не вытесняем (рецензия 12)
             item = {"id": data["next_id"], "text": s, "src": src, "status": COACH if coach else TRIAL,
                     "match": data["matches"] + 1 if match is None else match, "t": self.now()}
             if not coach:
@@ -231,17 +246,17 @@ class Memory:
         groups = {COACH: [], PROVEN: [], TRIAL: []}
         for x in data["lessons"]:
             groups.setdefault(x.get("status"), []).append(x)
-        for status, cap in ((COACH, MAX_COACH), (PROVEN, MAX_PROVEN), (TRIAL, MAX_TRIAL)):
+        for status, cap in ((COACH, MAX_COACH), (PROVEN, MAX_PROVEN)):   # на испытании — не вытесняются
             g = sorted(groups.get(status, []), key=lambda x: int(x.get("id") or 0))
             for x in g[:-cap] if len(g) > cap else []:
                 data["removed"].append({**x, "why": "вытеснен новыми", "t_removed": self.now()})
             groups[status] = g[-cap:]
-        data["lessons"] = groups[COACH] + groups[PROVEN] + groups[TRIAL]
+        data["lessons"] = groups[COACH] + groups[PROVEN] + groups.get(TRIAL, [])
         data["removed"] = data["removed"][-20:]
 
-    def record(self, hero, row: dict, enabled=None) -> tuple[int, list[str]]:
-        """Матч сыгран: строка матча — в историю; испытания уроков — по мере урока; суд по числам.
-        → (номер матча героя, что решено словами)."""
+    def record(self, hero, row: dict, enabled=None, known=None) -> tuple[int, list[str]]:
+        """Матч сыгран: строка матча — в историю; испытания уроков — по мере урока; суд по числам. known — уроки,
+        которые были в памяти в начале матча (испытание — только им; None — всем). → (номер матча героя, что решено)."""
         verdicts = []
         with self.lock:
             data = self._load(hero)
@@ -256,7 +271,7 @@ class Memory:
                     keep.append(x)
                     continue
                 v = metric_value(row, x.get("metric"))
-                if v is not None:
+                if v is not None and (known is None or int(x["id"]) in known):
                     x.setdefault("trials", []).append({"match": n, "on": int(x["id"]) in on, "v": v,
                                                        "d": row.get("d10"), "lh": row.get("lh10")})
                 verdict = self._judge(x)
@@ -282,16 +297,21 @@ class Memory:
         off = [t for t in trials if not t.get("on")]
         if len(on) < MIN_ON or len(off) < MIN_OFF:
             return "не решилось за " + str(MAX_TRIALS) + " матчей" if len(trials) >= MAX_TRIALS else None
-        sign = METRICS.get(x.get("metric"), ("", +1))[1]
-        better = sign * (_mean([t["v"] for t in on]) - _mean([t["v"] for t in off]))
+        metric = x.get("metric")
+        sign = METRICS.get(metric, ("", +1))[1]
+        von, voff = [t["v"] for t in on], [t["v"] for t in off]
+        diff = sign * (_mean(von) - _mean(voff))
+        ss = sum((v - _mean(von)) ** 2 for v in von) + sum((v - _mean(voff)) ** 2 for v in voff)
+        sd = max((ss / max(1, len(von) + len(voff) - 2)) ** 0.5, SD_FLOOR.get(metric, 1.0))
+        z = diff / (sd * (1 / len(von) + 1 / len(voff)) ** 0.5)
         d_on, d_off = _mean([t["d"] for t in on if t.get("d") is not None]), _mean([t["d"] for t in off if t.get("d") is not None])
         lh_on, lh_off = (_mean([t["lh"] for t in on if t.get("lh") is not None]),
                          _mean([t["lh"] for t in off if t.get("lh") is not None]))
         no_worse = ((d_on is None or d_off is None or d_on <= d_off + 0.5)
                     and (lh_on is None or lh_off is None or lh_on >= lh_off - 2))
-        if better > 0 and no_worse:
+        if z >= JUDGE_Z and no_worse:
             return PROVEN
-        if better < 0:
+        if z <= -JUDGE_Z:
             return "с ним хуже"
         if len(trials) >= MAX_TRIALS:
             return "не решилось за " + str(MAX_TRIALS) + " матчей"
@@ -399,9 +419,10 @@ class Tracker:
         return (every is not None and clock < TRAIN_UNTIL and self.win_clock is not None
                 and clock - self.win_clock >= every and self.last is not None)
 
-    def alarm(self, clock: float) -> str:
-        """Пауза по порогу на стадии линий: за последнюю минуту пропущено ≥ ALARM_MISSED добиваний или руки стояли
-        ≥ ALARM_IDLE с; не чаще ALARM_GAP. → почему или ""."""
+    def alarm(self, clock: float, missed_counts: bool = True) -> str:
+        """Пауза по порогу на стадии линий: за последнюю минуту пропущено ≥ ALARM_MISSED добиваний (missed_counts=False —
+        у саппорта: добивания он отдаёт кору, рецензия 12) или руки стояли без дела ≥ ALARM_IDLE с; не чаще ALARM_GAP.
+        → почему или ""."""
         if clock >= TRAIN_UNTIL or clock - self.alarm_clock < ALARM_GAP or len(self.minute) < 2:
             return ""
         a, b = self.minute[0], self.minute[-1]
@@ -410,7 +431,7 @@ class Tracker:
         missed = max(0, (b["seen"] - a["seen"]) - (b["lh"] - a["lh"]))
         idle = b["idle"] - a["idle"]
         why = ""
-        if missed >= ALARM_MISSED:
+        if missed_counts and missed >= ALARM_MISSED:
             why = f"за минуту пропущено {missed} добиваний"
         elif idle >= ALARM_IDLE:
             why = f"за минуту руки стояли без дела {idle} с"

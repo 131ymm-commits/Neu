@@ -71,7 +71,8 @@ DECISION_SCHEMA = {
     "additionalProperties": False,
 }
 
-# разбор матча агентом (Д20): до двух новых уроков с мерой и опорой; судит уроки не он, а код по числам
+# разбор матча агентом (Д20): новый урок с мерой и опорой (берём один — общий предел уроков за матч); судит уроки
+# не он, а код по числам
 REVIEW_SCHEMA = {
     "type": "object",
     "properties": {
@@ -769,9 +770,12 @@ class HeroAgent:
     last_coach_clock: float = -1e9      # когда приказ тренера будил агента в последний раз
     tracker: LRN.Tracker = field(default_factory=LRN.Tracker)   # числа матча героя (Д20)
     enabled: set = field(default_factory=set)       # уроки, включённые в этот матч
-    work: list = field(default_factory=list)        # рабочая память матча: уроки после смертей, пауз, «запомни»
+    known: set = field(default_factory=set)         # уроки, которые были в памяти в начале матча (их испытание)
+    work: list = field(default_factory=list)        # рабочая память матча: уроки агента после смертей и пауз
+    coach_now: list = field(default_factory=list)   # «запомни» тренера в этом матче — в каждом сообщении до конца
     learned_coach: int = 0                          # последний «запомни», уже записанный в память
-    new_lessons: int = 0                            # новых уроков на испытание за этот матч
+    new_by_src: dict = field(default_factory=dict)  # новых уроков на испытание за этот матч — по источникам
+    deaths_asked: int = 0                           # смертей, разбор которых агент уже получил
     recorded: bool = False                          # матч героя записан в память
 
 
@@ -874,6 +878,7 @@ class AgentHub:
                            system=system_prompt(team, pos, hero, persona, self.obedience, roster,
                                                 self.memory.prompt_block(hero, enabled)))
             ag.enabled = enabled
+            ag.known = {int(x["id"]) for x in self.memory.lessons(hero)}
             self.agents[key] = ag
         return ag
 
@@ -886,20 +891,22 @@ class AgentHub:
             if text and seq > ag.learned_coach:
                 ag.learned_coach = seq
                 self.memory.add(ag.hero, text, LRN.COACH)
-                ag.work.append(f"тренер: {text}")
+                if text not in ag.coach_now:
+                    ag.coach_now.append(text)
 
     def _learn_lines(self, ag: HeroAgent, obs: dict, trig: str) -> tuple[list[str], str | None]:
         """Учёба в сообщении агенту (под замком): разбор смерти, учебная пауза, рабочая память матча.
         → (строки, откуда урок, если его просят)."""
         lines, src = [], None
         clock = _clock(obs)
-        if trig == "ты погиб" and ag.tracker.deaths:
+        if len(ag.tracker.deaths) > ag.deaths_asked:              # и смерть, пока шёл прежний вызов (рецензия 12)
+            ag.deaths_asked = len(ag.tracker.deaths)
             d = ag.tracker.deaths[-1]
             lines.append(f"РАЗБОР СМЕРТИ: {ag.tracker.death_text()}. Напиши урок (lesson): что ты решишь иначе, чтобы "
                          f"так не погибнуть; lesson_metric — deaths; lesson_ref — «смерть {mmss(d['clock'])}».")
             src = LRN.DEATH
         elif obs.get("alive"):
-            why = ag.tracker.alarm(clock)
+            why = ag.tracker.alarm(clock, missed_counts=ag.pos <= 3)   # саппорт отдаёт добивания кору
             if why or ag.tracker.train_due(clock, self.memory.train_every(ag.hero)):
                 w = ag.tracker.window()
                 if w is not None:
@@ -907,6 +914,8 @@ class AgentHub:
                                  f"линий: {role_goal(ag.pos)}. Видишь, что решить иначе, — урок (lesson), lesson_ref — "
                                  f"«пауза {mmss(clock)}»; всё хорошо — lesson пустой.")
                     src = LRN.TRAIN
+        if ag.coach_now:                                           # слова тренера — дословно и до конца матча
+            lines.append("Тренер велел запомнить (в этом матче): " + " | ".join(ag.coach_now[-8:]))
         if ag.work:
             lines.append("Уроки этого матча (рабочая память): " + " | ".join(ag.work[-5:]))
         return lines, src
@@ -1123,11 +1132,15 @@ class AgentHub:
         with self.lock:
             if lesson is not None:
                 ag.work.append(f"{lesson['src']}: {lesson['text']}")
-                if ag.new_lessons < LRN.NEW_PER_MATCH:
-                    got = self.memory.add(ag.hero, lesson["text"], lesson["src"], lesson["metric"], lesson["ref"])
-                    lesson["memory"] = got or "не принят (нет меры или опоры)"
+                src = lesson["src"]
+                if ag.new_by_src.get(src, 0) < LRN.NEW_PER_SOURCE.get(src, 0):
+                    got = self.memory.add(ag.hero, lesson["text"], src, lesson["metric"], lesson["ref"])
+                    lesson["memory"] = ("не принят: память героя полна, прежние уроки ещё на испытании"
+                                        if got == LRN.FULL else got or "не принят (нет меры или опоры)")
                     if got == "новый":
-                        ag.new_lessons += 1
+                        ag.new_by_src[src] = ag.new_by_src.get(src, 0) + 1
+                else:
+                    lesson["memory"] = "только в рабочей памяти матча (урок этого рода за матч уже есть)"
             st = self.stats[ag.team]
             ag.calls += 1
             ag.last_clock = clock
@@ -1194,17 +1207,18 @@ class AgentHub:
         for a in agents:
             if a.tracker.max_clock < 300:                          # меньше 5 минут игры — не матч для учёбы
                 continue
+            if not self._paid(a.team):                             # правила промпт не читают: матч на правилах — не
+                continue                                           # испытание уроков и не «первый матч» (рецензия 12)
             row = a.tracker.match_row()
             if winner in ("radiant", "dire"):
                 row["result"] = "победа" if winner == a.team else "поражение"
-            n, verdicts = self.memory.record(a.hero, row, a.enabled)
+            n, verdicts = self.memory.record(a.hero, row, a.enabled, a.known)
             res = {"team": a.team, "pos": a.pos, "hero": a.hero, "match": n, "row": row, "verdicts": verdicts,
                    "added": [], "say": ""}
             out.append(res)
-            if self._paid(a.team):                                 # разбор — только у Claude (правила не учатся)
-                t = threading.Thread(target=self._review, args=(a, res), daemon=True, name="review")
-                t.start()
-                threads.append(t)
+            t = threading.Thread(target=self._review, args=(a, res), daemon=True, name="review")
+            t.start()
+            threads.append(t)
         deadline = time.monotonic() + timeout
         for t in threads:
             t.join(max(0.0, deadline - time.monotonic()))
@@ -1216,7 +1230,7 @@ class AgentHub:
         return out
 
     def _review(self, ag: HeroAgent, res: dict) -> None:
-        """Разбор матча агентом: до двух новых уроков с мерой и опорой (на испытание) и фраза тренеру."""
+        """Разбор матча агентом: новый урок с мерой и опорой (на испытание, один за матч) и фраза тренеру."""
         lessons = self.memory.lessons(ag.hero)
         names = {LRN.COACH: "тренер", LRN.PROVEN: "проверен", LRN.TRIAL: "на испытании"}
         have = "; ".join(f"[{names.get(x.get('status'), '?')}] {x['text']}" for x in lessons) or "нет"
@@ -1228,7 +1242,7 @@ class AgentHub:
                 f"Твоя память сейчас: {have}. Прошлые матчи: {past}.")
         system = (f"Ты — ИИ-игрок: только что сыграл в Dota 2 героем {short_hero(ag.hero)} "
                   f"({ROLE_RU.get(ag.pos, f'позиция {ag.pos}')}). Разбор матча: учись на нём.\n"
-                  "Предложи до двух новых уроков (add) — каждый одно короткое конкретное правило про то, что решаешь ты "
+                  "Предложи один новый урок (add — самый важный) — одно короткое конкретное правило про то, что решаешь ты "
                   "(план и место, когда отходить, кого бить, когда уходить с линии, покупки, прокачка), не про то, как "
                   "руки бьют. У каждого урока metric — какую цифру он улучшит (lh — добивания к 10:00, deaths — смерти "
                   "к 10:00, idle — простой рук к 10:00, lvl — уровень к 10:00) и ref — событие или число матча, на "
@@ -1246,8 +1260,8 @@ class AgentHub:
             data = extract_json(reply.get("text") or "") or {}
         added = []
         for item in (data.get("add") or [])[:2] if isinstance(data, dict) else []:
-            if not isinstance(item, dict):
-                continue
+            if not isinstance(item, dict) or len(added) >= LRN.NEW_PER_SOURCE[LRN.REVIEW]:
+                continue                                           # уроки разбора — в общем пределе (рецензия 12)
             got = self.memory.add(ag.hero, item.get("text"), LRN.REVIEW, str(item.get("metric") or ""),
                                   str(item.get("ref") or ""))
             if got == "новый":

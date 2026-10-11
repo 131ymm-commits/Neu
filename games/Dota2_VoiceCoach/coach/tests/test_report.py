@@ -12,16 +12,35 @@ from voicecoach import report as R
 
 class ReportTest(unittest.TestCase):
     def test_scrub_hides_personal(self):
-        text = ("Журнал: C:\\Users\\M4800\\Desktop\\Дима\\DotaCoach\\coach\\logs\\a.jsonl; пульт "
-                "http://127.0.0.1:8788/c/ISY4azvlopco8TvlAORA9w/ и https://abc-def.trycloudflare.com/c/x; "
+        """Имя пользователя, ключ пульта, ключи API, туннель — скрыты; имя и ключ здесь выдуманные (ERRORS №106)."""
+        text = ("Журнал: C:\\Users\\Иван Петров\\Desktop\\Папка\\DotaCoach\\coach\\logs\\a.jsonl; пульт "
+                "http://127.0.0.1:8788/c/AbCdEfGhIjKlMnOpQrStUv/ и https://abc-def.trycloudflare.com/c/x; "
                 "ключ sk-ant-api03-SECRETSECRET; D:\\Users\\Other\\x")
-        s = R.scrub(text, home="C:\\Users\\M4800")
-        self.assertNotIn("M4800", s)
-        self.assertNotIn("ISY4azvlopco8TvlAORA9w", s)
+        s = R.scrub(text, home="C:\\Users\\Иван Петров")
+        self.assertNotIn("Иван", s)
+        self.assertNotIn("AbCdEfGhIjKlMnOpQrStUv", s)
         self.assertNotIn("SECRETSECRET", s)
         self.assertNotIn("abc-def", s)
         self.assertNotIn("Other", s)
         self.assertIn("%USERPROFILE%\\Desktop", s)
+        # рецензия 12: удвоенные «\\» (словари отчёта, repr), «/», чужое имя с пробелом, туннель без схемы и wss
+        for t in (json.dumps({"e": "не нашёл C:\\Users\\Иван Петров\\claude.exe"}, ensure_ascii=False),
+                  "C:/Users/Иван Петров/AppData/x", "c:\\users\\иван петров\\x", "E:\\Users\\Анна Мария\\x",
+                  "туннель quiet-sun.trycloudflare.com/c/AbCdEfGhIjKlMnOpQrStUv", "wss://quiet-sun.trycloudflare.com/ws"):
+            out = R.scrub(t, home="C:\\Users\\Иван Петров")
+            for leak in ("Иван", "иван", "Мария", "Анна", "quiet-sun", "AbCdEfGh"):
+                self.assertNotIn(leak, out, (t, out))
+
+    def test_live_report_hides_game_moves(self):
+        """Рецензия 12: в живом отчёте (во время игры) нет ходов игры — приказов соперника и реплик его агентов (Д16)."""
+        text = ("10/11 12:00:01 [VScript] [ТРЕНЕР] ход dire 0 : → 23 ганг мид\n"
+                "10/11 12:00:02 [VScript] [ТРЕНЕР] пульс: связь с сервером есть\n"
+                "10/11 12:00:03 [VScript] script error: coach_exec.lua:10: attempt to index nil")
+        live = R.dota_lines(text, moves=False)
+        self.assertNotIn("ганг мид", live)
+        self.assertIn("пульс", live)
+        self.assertIn("coach_exec.lua:10", live)
+        self.assertIn("ганг мид", R.dota_lines(text))                       # после игры — можно
 
     def test_drive_folder_detection(self):
         seen = []
@@ -33,11 +52,15 @@ class ReportTest(unittest.TestCase):
         self.assertEqual(got.name, "DotaCoach")
         self.assertEqual(got.parent.name, "Мой диск")
         self.assertIsNone(R.drive_folder(home="/home/u", exists=lambda p: False))
+        # рецензия 12: корень «Google Drive» (туда писать нельзя) — не папка отчёта; «Мой диск» внутри — да
+        self.assertIsNone(R.drive_folder(home="/home/u", exists=lambda p: p.endswith("Google Drive")))
+        got = R.drive_folder(home="/home/u", exists=lambda p: p.endswith(("Google Drive", "My Drive")))
+        self.assertEqual((got.parent.name, got.parent.parent.name), ("My Drive", "Google Drive"))
 
     def test_build_and_write_both_places(self):
         with tempfile.TemporaryDirectory() as tmp:
             logs, drive = Path(tmp) / "logs", Path(tmp) / "drive" / "DotaCoach"
-            text = R.build({"Окно": "строка 1\nC:\\Users\\M4800\\x", "Пусто": "", "Агенты": {"radiant": {"calls": 3}}})
+            text = R.build({"Окно": "строка 1\nC:\\Users\\Иван Петров\\x", "Пусто": "", "Агенты": {"radiant": {"calls": 3}}})
             self.assertIn("===== Окно =====", text)
             self.assertNotIn("Пусто", text)
             self.assertIn('"calls": 3', text)

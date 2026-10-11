@@ -783,7 +783,12 @@ function G:OnKilled(ev)
   if not G.ready then return end
   local killed = EntIndexToHScript(ev.entindex_killed)
   if killed == nil then return end
-  local okc, creep = pcall(function() return killed:IsCreep() and not killed:IsNeutralUnitType() end)
+  -- крип линии — только Света или Тьмы (рецензия 12: у Рошана IsNeutralUnitType в KV не задан — его смерть не должна
+  -- уйти в «крип рядом» мимо события «убит Рошан»)
+  local okc, creep = pcall(function()
+    local t = killed:GetTeamNumber()
+    return (t == DOTA_TEAM_GOODGUYS or t == DOTA_TEAM_BADGUYS) and killed:IsCreep() and not killed:IsNeutralUnitType()
+  end)
   if okc and creep then
     local kp = killed:GetAbsOrigin()
     for team, T in pairs(G.teams) do

@@ -11,7 +11,7 @@ MUT = HERE / "game"
 SRC = Path("/home/user/Neu/games/Dota2_VoiceCoach/game/custom_game/game/scripts/vscripts")
 VS = MUT / "custom_game" / "game" / "scripts" / "vscripts"
 PY = "/tmp/claude-0/-home-user-Neu/c2746a83-5006-51b9-9f59-346f06e713bc/scratchpad/venv/bin/python"
-E, W = "coach_exec.lua", "coach_world.lua"
+E, W, G = "coach_exec.lua", "coach_world.lua", "coach_game.lua"
 M = [
  ("M1 размен без busy", E, [("return { kind = \"attack\", target = e, busy = math.min(1.5, walk + world.attack_point(hero) + 0.1),", "return { kind = \"attack\", target = e,")]),
  ("M2 добивание кора без busy", E, [("if best then return { kind = \"attack\", target = best, busy = math.min(1.5, bt + 0.1), why", "if best then return { kind = \"attack\", target = best, why")]),
@@ -78,6 +78,9 @@ M = [
  ("M42b при отходе — и с подходом", E, [("    local c0 = cast_step(st, ag, world, now, true)", "    local c0 = cast_step(st, ag, world, now, false)")]),
  ("M43 замер не сбрасывается при росте здоровья", E, [("if r == nil or now - r.seen > X.LH_KEEP or hp > r.pts[#r.pts].hp then", "if r == nil or now - r.seen > X.LH_KEEP then")]),
  ("M44 «бьёт» — дольше секунды", E, [("X.HIT_SUSTAIN = 1.75 ", "X.HIT_SUSTAIN = 1.0 ")]),
+ ("M46 при отходе — и канальные с долгим замахом", E, [("        elseif still and not TELEPORTS[c.ability] and (info.channel or (info.cast_point or 0) > X.STILL_CAST) then\n          keep[#keep + 1] = c                                  -- при отходе не стоять на канале и долгом замахе\n", "")]),
+ ("M47 ожидание на фарме — простой", E, [("if st.last and st.last.kind == \"hold\" and not st.last.wait then", "if st.last and st.last.kind == \"hold\" then")]),
+ ("M48 Рошан — крип линии", "coach_game.lua", [("return (t == DOTA_TEAM_GOODGUYS or t == DOTA_TEAM_BADGUYS) and killed:IsCreep()", "return killed:IsCreep()")]),
  ("M45 размен Goo и Lucent Beam", E, [("viper_nethertoxin = true, sniper_shrapnel = true }", "viper_nethertoxin = true, sniper_shrapnel = true, luna_lucent_beam = true, bristleback_viscous_nasal_goo = true }")]),
 ]
 def run():
@@ -91,7 +94,7 @@ only = sys.argv[1:]
 for name, f, reps in M:
     if only and not any(name.startswith(o + " ") for o in only):
         continue
-    for fn in (E, W):
+    for fn in (E, W, G):
         shutil.copy(SRC / fn, VS / fn)
     text = (SRC / f).read_text(encoding="utf-8")
     bad = [o for o, _ in reps if text.count(o) != 1]
@@ -103,5 +106,5 @@ for name, f, reps in M:
     (VS / f).write_text(text, encoding="utf-8")
     ok, fails = run()
     print(f"{name}: {'ВЫЖИЛА' if ok else 'поймана'}{'' if ok else ' — ' + ', '.join(fails[:3])}", flush=True)
-for fn in (E, W):
+for fn in (E, W, G):
     shutil.copy(SRC / fn, VS / fn)

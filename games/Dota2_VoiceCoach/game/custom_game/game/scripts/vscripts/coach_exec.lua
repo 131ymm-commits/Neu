@@ -32,6 +32,8 @@ X.DENY_PCT = 50         -- своего крипа добиваем ниже э�
 X.FARM_NEAR = 1500      -- крипы ближе — фармим их, дальше — идём к середине линии
 X.CAST_SLACK = 150
 X.AFTER_CAST = 0.3      -- с к замаху: не сбивать применение приказом движения
+X.STILL_CAST = 0.3      -- с: при отходе по порогу — применения агента с замахом не дольше этого и не канальные
+                        -- (рецензия 12: Mana Drain и Freezing Field держали бы героя на месте), телепорт — всегда
 X.REFRESH = { move = 1.0, attack_move = 2.0, attack = 3.0 }   -- частый повтор атаки сбивает замах (research/01)
 X.WALK_CAST = 20        -- с: дольше не идём к месту применения (вард у дальней вышки); к герою — не дольше 4 с
 X.LEVEL_CHECK = 1.0     -- с: через столько проверяем, выросла ли способность после прокачки
@@ -295,9 +297,9 @@ local function resolve(target, info, st, ag, world)
   return e and { unit = e } or nil
 end
 
--- применения из решения агента (и приказа тренера): одно за шаг. still — без подхода (отход по порогу здоровья:
--- телепорт, на себя, без цели, цель уже в досягаемости; остальные ждут конца отхода или своего срока — рецензия 11б:
--- телепорт на базу ниже порога отхода не применялся)
+-- применения из решения агента (и приказа тренера): одно за шаг. still — отход по порогу здоровья: только без подхода
+-- (цель уже в досягаемости), не канальные и с коротким замахом, телепорт — всегда; остальные ждут конца отхода или
+-- своего срока (рецензия 11б: телепорт на базу ниже порога отхода не применялся; рецензия 12: без канальных)
 local function cast_step(st, ag, world, now, still)
   local hero, team = ag.hero, ag.team
   local my = world.pos(hero)
@@ -320,6 +322,8 @@ local function cast_step(st, ag, world, now, still)
           note(st, c.ability .. " — пассивная")
         elseif not info.ready then
           keep[#keep + 1] = c                                  -- откат или нет маны: ждём до срока
+        elseif still and not TELEPORTS[c.ability] and (info.channel or (info.cast_point or 0) > X.STILL_CAST) then
+          keep[#keep + 1] = c                                  -- при отходе не стоять на канале и долгом замахе
         else
           local tg = resolve(c.target, info, st, ag, world)
           local range = (info.range and info.range > 0) and info.range or 600
@@ -759,7 +763,7 @@ local function farm_order(st, ag, world, lane, now)
     if world.dist(my, spot) > 300 then
       return { kind = "move", point = spot, why = tag .. ": встаю впереди своего" }
     end
-    return { kind = "hold", why = tag .. ": стою впереди своего" }
+    return { kind = "hold", wait = true, why = tag .. ": стою впереди своего" }
   end
   local enemies = {}
   for _, c in ipairs(world.lane_creeps(hero, X.FARM_NEAR, true)) do   -- под вражеской вышкой не добивать
@@ -775,7 +779,7 @@ local function farm_order(st, ag, world, lane, now)
     if world.dist(my, p) > 300 then
       return { kind = "move", point = p, why = tag .. (front and ": иду к своей волне" or ": иду к линии") }
     end
-    return { kind = "hold", why = tag .. ": жду волну" }
+    return { kind = "hold", wait = true, why = tag .. ": жду волну" }
   end
   local range = world.attack_range(hero)
   local best, bt = pick_lasthit(st, hero, enemies, world, now)
@@ -788,7 +792,7 @@ local function farm_order(st, ag, world, lane, now)
   -- не дальше ближайшего + 200 (рецензия 11: ближний бой уходил за спины вражеских ближних к их дальнему крипу)
   local near = world.dist(my, world.pos(enemies[1]))           -- enemies — от ближнего к дальнему (FIND_CLOSEST)
   if not world.is_ranged(hero) and near <= range + 250 then      -- ближний бой у волны — стоять, как раньше
-    return { kind = "hold", why = tag .. ": жду добивание" }
+    return { kind = "hold", wait = true, why = tag .. ": жду добивание" }
   end
   local soon, shp = enemies[1], 1e18
   for _, c in ipairs(enemies) do
@@ -801,7 +805,7 @@ local function farm_order(st, ag, world, lane, now)
   if world.dist(my, np) > range + 50 then
     return { kind = "move", point = toward(np, my, range - 50), why = tag .. ": к крипам" }
   end
-  return { kind = "hold", why = tag .. ": жду добивание" }
+  return { kind = "hold", wait = true, why = tag .. ": жду добивание" }
 end
 
 local function lane_of(plan, ag)
@@ -874,6 +878,8 @@ local function issue(st, acts, order, now, world)
     st.last = order
     acts[#acts + 1] = { kind = "order", order = order }
     if order.busy then st.busy_until = math.max(st.busy_until or 0, now + order.busy) end   -- замах не сбивать
+  elseif st.last then
+    st.last.wait = order.wait                  -- приказ не повторяем, но простой это или ожидание — по новому
   end
   st.status = order.why
   return acts
@@ -899,7 +905,9 @@ function X.step(st, ag, world, now)
     st.status = string.format("мёртв, %d с", math.floor((tonumber(world.respawn(hero)) or 0) + 0.5))
     return acts
   end
-  if st.last and st.last.kind == "hold" then st.idle = (st.idle or 0) + dt end   -- простой рук (Д20: число для учёбы)
+  -- простой рук (Д20: число для учёбы) — стоят не по делу; ожидание добивания, волны и место у своего кора на линии —
+  -- работа, а не простой (рецензия 12: у керри, добившего 43 из 44, «простоя» было 81 с из 120)
+  if st.last and st.last.kind == "hold" and not st.last.wait then st.idle = (st.idle or 0) + dt end
   forget_creeps(st, now)
   local lv = level_step(st, hero, world, now)
   if lv then acts[#acts + 1] = lv end

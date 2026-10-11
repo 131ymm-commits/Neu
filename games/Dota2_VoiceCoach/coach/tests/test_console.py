@@ -114,6 +114,13 @@ class Keys(unittest.TestCase):
             self.assertEqual(b["dire"], a["dire"])
             self.assertNotEqual(b["radiant"], b["dire"])
             self.assertNotEqual(C.load_keys(("dire",), path=path, new=True)["dire"], a["dire"])
+            # ERRORS №106: ключ пульта попал в публичный репозиторий — файл ключей старой версии даёт новые ключи раз
+            old = "AbCdEfGhIjKlMnOpQrStUv"
+            path.write_text(json.dumps({"dire": old}), encoding="utf-8")
+            c = C.load_keys(("dire",), path=path)
+            self.assertNotEqual(c["dire"], old)
+            self.assertEqual(json.loads(path.read_text(encoding="utf-8"))["v"], C.KEYS_VERSION)
+            self.assertEqual(C.load_keys(("dire",), path=path), c)              # дальше — тот же ключ
         if shutil.which("git"):                                                    # файл ключей — вне git
             r = subprocess.run(["git", "check-ignore", "-q", str(C.KEYS_FILE)], cwd=C.KEYS_FILE.parent.parent)
             self.assertEqual(r.returncode, 0)

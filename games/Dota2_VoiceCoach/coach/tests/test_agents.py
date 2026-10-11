@@ -760,7 +760,10 @@ class Learning(unittest.TestCase):
         self.assertEqual([(r["status"], r["text"]) for r in rows], [(self.L.COACH, "не ходи под вышку")])
         h.tick({"heroes": [obs(clock=20, coach=[{"seq": 4, "remember": "не ходи под вышку"}])]})
         self.assertEqual(len(self.mem.lessons("sniper")), 1)                # тот же приказ — один раз
-        self.assertIn("тренер: не ходи под вышку", h.agents[("radiant", 1)].work)
+        self.assertEqual(h.agents[("radiant", 1)].coach_now, ["не ходи под вышку"])
+        for c in (500, 900):                                                 # рецензия 12: список приказов игры
+            h.tick({"heroes": [obs(clock=c, coach=[])]})                     # давно сменился — урок тренера всё равно
+        self.assertIn("Тренер велел запомнить (в этом матче): не ходи под вышку", self.fake.calls[-1]["user"])
 
     def test_death_lesson_only_when_asked_and_with_support(self):
         lesson = {"plan": "farm", "where": "bot", "target": "", "ally": 0, "cast": [], "buy": [], "level": [],
@@ -789,14 +792,31 @@ class Learning(unittest.TestCase):
         self.assertIn("добил 2 из 9", user)
 
     def test_new_lessons_per_match_capped(self):
+        """Новых уроков на испытание за матч — по одному каждого рода (смерть, пауза, разбор): урок смерти не вытесняют
+        уроки пауз (рецензия 12); остальные — только в рабочей памяти матча."""
         h = self.hub()
         ag = h._agent(obs(clock=0))
-        for i in range(self.L.NEW_PER_MATCH + 2):
+        for i, src in enumerate([self.L.TRAIN, self.L.TRAIN, self.L.TRAIN, self.L.DEATH, self.L.DEATH]):
             self.fake.reply = {"plan": "farm", "lesson": f"урок {i}: держись в {i * 100 + 300} от вышки",
                                "lesson_metric": "deaths", "lesson_ref": f"смерть {i}:00"}
-            h._run_once(ag, obs(clock=60 * i), "ты погиб", [], [], 0, 60 * i, ([], self.L.DEATH))
-        self.assertEqual(len(self.mem.lessons("sniper")), self.L.NEW_PER_MATCH)
-        self.assertEqual(len(ag.work), self.L.NEW_PER_MATCH + 2)            # в рабочей памяти — все
+            h._run_once(ag, obs(clock=60 * i), "ты погиб", [], [], 0, 60 * i, ([], src))
+        rows = self.mem.lessons("sniper")
+        self.assertEqual(sorted(r["src"] for r in rows), sorted([self.L.TRAIN, self.L.DEATH]))
+        self.assertEqual(len(ag.work), 5)                                    # в рабочей памяти — все
+
+    def test_death_review_not_lost_and_support_not_alarmed_for_core_last_hits(self):
+        """Рецензия 12: смерть и возрождение уложились в один вызов агента — разбор в следующем вызове; саппорт рядом с
+        кором (добивания — кору) не получает паузу «пропущено добиваний»."""
+        h = self.hub()
+        h.tick({"heroes": [obs(clock=100)]})
+        ag = h.agents[("radiant", 1)]
+        ag.tracker.update(obs(clock=101, alive=False, events=["1:41 тебя убил luna"]))   # пока агент думал
+        h.tick({"heroes": [obs(clock=130)]})
+        self.assertIn("РАЗБОР СМЕРТИ", self.fake.calls[-1]["user"])
+        h2 = self.hub()
+        for c in range(0, 121, 10):
+            h2.tick({"heroes": [obs(clock=c, pos=4, hero="lion", stats={"lh": 0, "dn": 0, "seen": c // 10, "idle": 0})]})
+        self.assertFalse([x for x in self.fake.calls if "пропущено" in x["user"]])
 
     def test_match_end_records_and_reviews(self):
         review = {"add": [{"text": "Иди к своей волне сразу после возрождения", "metric": "lvl", "ref": "к 10:00"}],
@@ -819,8 +839,8 @@ class Learning(unittest.TestCase):
         res = [r for r in h.finished if r["team"] == "radiant"][0]
         self.assertEqual((res["added"], res["say"]), (["Иди к своей волне сразу после возрождения"], "понял: терял опыт"))
         self.assertIn("Числа матча", next(c["review"] for c in self.fake.calls if "review" in c))
-        dire = [r for r in h.finished if r["team"] == "dire"]
-        self.assertEqual((len(dire), dire[0]["added"]), (1, []))           # правила записаны, но не разбирают
+        self.assertEqual([r for r in h.finished if r["team"] == "dire"], [])   # рецензия 12: матч на правилах — не
+        self.assertEqual(self.mem.matches("luna"), 0)                       # испытание уроков, в память не идёт
         self.assertEqual(h.finish_match(), [])                              # уже записано — второй раз нет
 
     def test_new_match_records_previous_and_short_match_is_skipped(self):
