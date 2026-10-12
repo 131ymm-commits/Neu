@@ -5,7 +5,8 @@
 import collections, glob, json, os, re, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.expanduser('~/.claude/projects')
-FORBID = re.compile(r'rcon|/saves?/|runs/|neu-play|neu_play|script-output|password|state\.json|\.zip|/opt/factorio|tourney|game\.py', re.I)
+FORBID = re.compile(r'\brcon\b|/saves?/|\bruns/|\bneu-play\b|\bneu_play\b|script-output|\bpassword\b|state\.json|\.zip\b|/opt/factorio|\btourney\b|\bgame\.py\b', re.I)
+SKIP_KEYS = ('signature', 'data')   # base64-подписи блоков рассуждений и зашифрованные блоки — не текст головы (ложные «rcon», 12.10.2026)
 RELAY = 'the user request that triggered this workflow run'
 CLAUDE_MD = 'Правила для Claude в репозитории Neu'
 LABEL = re.compile(r'^(A2|A|H|B[1-4]|C[1-3]|Ccc|D[1-3]|Dcc)_r(\d+)_s(\d+)$')
@@ -14,7 +15,9 @@ LABEL = re.compile(r'^(A2|A|H|B[1-4]|C[1-3]|Ccc|D[1-3]|Dcc)_r(\d+)_s(\d+)$')
 def texts(x):
     if isinstance(x, str): yield x
     elif isinstance(x, dict):
-        for v in x.values(): yield from texts(v)
+        if x.get('type') == 'redacted_thinking': return
+        for k, v in x.items():
+            if k not in SKIP_KEYS: yield from texts(v)
     elif isinstance(x, list):
         for v in x: yield from texts(v)
 

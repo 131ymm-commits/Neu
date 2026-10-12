@@ -12,7 +12,11 @@ HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 import game, bots, prompts as P
 
 HEADS = ('A', 'A2', 'B', 'C', 'H', 'D')     # A2 — повтор A (пилот: разброс двух повторов одной конфигурации)
-D_MODELS = ('sonnet', 'opus', 'haiku')       # роли D: логистика, добыча и энергия, исследования; тело — opus
+# Модели закреплены полными идентификаторами (12.10.2026: псевдоним haiku стал вести к claude-haiku-5-5, а в раундах 1–4
+# пилота это был claude-haiku-4-5-20251001; смена модели внутри серии запрещена — скептик совета 24)
+OPUS, SONNET, HAIKU = 'claude-opus-5-5', 'claude-sonnet-5-5', 'claude-haiku-4-5-20251001'
+D_MODELS = (SONNET, OPUS, HAIKU)             # роли D: логистика, добыча и энергия, исследования; тело — opus
+HEAD_TYPE = 'play-head'                      # тип агента без инструментов, кроме StructuredOutput (с раунда 5 пилота)
 WORKERS = 4
 GROUPS = (('B', 'A', 'A2'), ('C', 'H'), ('D',))   # головы зерна делятся на workflow: пул агентов — 2 на workflow (4 ядра)
 
@@ -98,8 +102,7 @@ const prev = (r) => '## Решение с прошлого шага\\n' + JSON.s
 const props = (rs) => rs.map((r, i) => '### Предложение головы «' + ROLES[i] + '»\\n' + (r ? JSON.stringify(r) : '(голова не ответила)')).join('\\n\\n')
 let retries = 0
 async function call(p, label, model) {{
-  const o = {{label: label + '_' + tag, phase: 'Головы', schema: S}}
-  if (model) o.model = model
+  const o = {{label: label + '_' + tag, phase: 'Головы', schema: S, agentType: {_js_str(HEAD_TYPE)}, model: model || {_js_str(OPUS)}}}
   let r = await agent(p, o)
   if (!r) {{ retries++; r = await agent(p, o) }}
   return r
@@ -107,7 +110,7 @@ async function call(p, label, model) {{
 const RUN = {{
   A: async () => ({{final: await call(mk(SOLO, CTX.A), 'A')}}),
   A2: async () => ({{final: await call(mk(SOLO, CTX.A2), 'A2')}}),
-  H: async () => ({{final: await call(mk(SOLO, CTX.H), 'H', 'haiku')}}),
+  H: async () => ({{final: await call(mk(SOLO, CTX.H), 'H', {_js_str(HAIKU)})}}),
   B: async () => {{
     const s1 = await call(mk(B_STEPS[0], CTX.B), 'B1')
     const s2 = await call(mk(B_STEPS[1].replace('{{k}}', '2'), CTX.B, prev(s1)), 'B2')
@@ -121,7 +124,7 @@ const RUN = {{
   }},
   D: async () => {{
     const rs = await parallel(ROLES.map((a, i) => () => call(mk(ROLE_TXT.replace('{{area}}', a), CTX.D), 'D' + (i + 1), D_MODELS[i])))
-    return {{roles: rs, final: await call(mk(CALLOSUM, CTX.D, props(rs)), 'Dcc', 'opus')}}
+    return {{roles: rs, final: await call(mk(CALLOSUM, CTX.D, props(rs)), 'Dcc', {_js_str(OPUS)})}}
   }},
 }}
 phase('Головы')
