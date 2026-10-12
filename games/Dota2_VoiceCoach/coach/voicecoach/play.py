@@ -53,7 +53,15 @@ ADDON = "voicecoach"
 GAME_PORT, CONSOLE_PORT = 8787, 8788          # 8787 — адрес, который знает кастомка (coach_game.lua)
 HEALTH = f"http://127.0.0.1:{GAME_PORT}/api/health"
 REMOTE = "dire"                                # хост в Доте — тренер Света, друг — Тьмы
-MAX_CALLS = 3000                               # платных вызовов на сторону (ключ API): ≈ 30–40 минут игры
+MAX_CALLS = 15000                              # по ключу API: вызовов на сторону за запуск (≈ 75 минут без пауз)
+# по ключу API — быстро (Д23, слова автора: «в общем если мы не можем сделать по апи смысла нет слишком большое время на
+# принятие решения»): думание модели выключено (по подписке Claude Code его не выключает), решение — сразу после
+# прошлого ответа, все 10 сразу
+API_PACE = {"period": 0.0, "dead_period": 5.0, "min_gap": 0.5, "error_gap": 5.0, "max_inflight": 10}
+API_THINKING = "disabled"                      # у быстрой модели принимается при effort не выше high
+API_EFFORT = "low"
+# $ за 1M токенов быстрой модели (Haiku 5.5, справка claude-api от 06.10.2026): для оценки расхода в окне
+API_PRICES = {"in": 0.10, "out": 0.50, "cache_read": 0.01, "cache_write": 0.125}
 SUB_MAX_CALLS = 3000                           # по подписке: вызовов на сторону за запуск (≈ час непрерывной игры); дальше
                                                # руки и правила — лимиты подписки общие с чатом автора (Д22)
 # максимально быстро по подписке (Д22, слова автора: «нет давай максимально быстро без апи»): каждый герой спрашивает
@@ -233,12 +241,11 @@ def probe_key(key: str, model: str, opener=urllib.request.urlopen) -> tuple[bool
 
 
 def no_credit_help(saved: bool = True) -> None:
-    say("  У организации Console, где создан этот ключ, нет кредита на API. Кредит Max приходит в одну организацию:")
-    say("  claude.ai → Settings → Billing → «API credits» показывает, в какую. Ещё не привязан — привяжите к этой")
-    say("  (новым подписчикам — через 7 дней после оформления Max). Уже привязан к другой — создайте ключ там:")
-    say("  platform.claude.com, вверху переключите организацию → API Keys → Create Key.")
+    say("  На балансе организации Console, где создан этот ключ, нет денег на API: platform.claude.com → Billing —")
+    say("  пополнить. Если у вашей подписки Max есть кредит API (claude.ai → Settings → Billing → «API credits»), он")
+    say("  приходит в одну организацию — ключ нужен из неё (platform.claude.com, вверху переключить организацию).")
     if saved:
-        say("  Этот ключ сохранил: как только у его организации появится кредит, герои заработают на Claude.")
+        say("  Этот ключ сохранил: как только на балансе появятся деньги, герои заработают по ключу.")
 
 
 def looks_like_key(key: str) -> bool:
@@ -253,32 +260,21 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
     прежний им не затирается; Ctrl+C — ничего не менять."""
     flush_input()                                        # Enter, нажатый во время закачки, — не ответ
     if not cfg.get("api_key"):
-        say("  Ключ API из кредита подписки Max — один раз:")
-        say("    1. В браузере откроется claude.ai → Settings → Billing. В разделе «API credits» привяжите организацию")
-        say("       Console (если её нет — создадите там же) и примите условия. Новым подписчикам — через 7 дней.")
-        say("    2. Потом откроется platform.claude.com → API Keys: в ТОЙ ЖЕ организации — Create Key, скопируйте.")
-        today = time.strftime("%Y-%m-%d")
-        if cfg.get("pages_opened") != today:             # страницы — раз в день, а не на каждом запуске
-            for url in (CREDITS_PAGE, KEYS_PAGE):
-                try:
-                    open_page(url)
-                except Exception:                        # noqa: BLE001 — нет браузера: адреса уже на экране
-                    pass
-            cfg["pages_opened"] = today
-            save_config(cfg)
-        say(f"    Адреса: {CREDITS_PAGE} и {KEYS_PAGE}")
+        say("  Быстрые агенты — по ключу API: Claude отвечает за 1–2 с (по подписке — 5–8 с), герой решает раз в 1,5–2 с.")
+        say("  Цена — около $3–4 за 40-минутный матч (оценка). Ключ: platform.claude.com → Billing — пополнить баланс,")
+        say(f"  потом API Keys → Create Key, скопировать ({KEYS_PAGE}).")
     say("  Вставьте ключ (Ctrl+V или правый щелчок мыши) и нажмите Enter. На экране ключ не появится — так задумано.")
     if keep:
-        say("  Оставить как было — просто Enter. Выключить Claude (агенты на правилах, бесплатно) — 0 и Enter.")
+        say("  Оставить как было — просто Enter. Больше не играть по ключу — 0 и Enter.")
     else:
-        say("  Ключа пока нет — просто Enter: в этот раз сыграют правила.")
-        say("  Без Claude по ключу — 0 и Enter.")
+        say("  Ключа нет — просто Enter: сыграют агенты по подписке (медленнее), ключ спрошу при следующем запуске.")
+        say("  Больше не спрашивать ключ — 0 и Enter.")
     for _ in range(3):
         key = _ask(ask, "  ключ> ")
         if key is None or (not key and keep):
             return None if keep else (None, None)        # Ctrl+C или «оставить как было»
         if not key:
-            say("  Хорошо, в этот раз правила. Ключ спрошу при следующем запуске.")
+            say("  Хорошо, в этот раз без ключа. Ключ спрошу при следующем запуске.")
             return None, None
         if key == "0":
             cfg["api_key"] = ""                          # «без Claude»: при запуске можно будет сменить
@@ -295,10 +291,10 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
             ok, why = probe(key, model, opener)
             if why == "nocredit":
                 no_credit_help()
-                say("  Вставьте ключ из организации с кредитом — или Enter: в этот раз правила.")
+                say("  Вставьте ключ из организации с деньгами на балансе — или Enter: в этот раз без ключа.")
                 continue
             if not ok:
-                say(f"  Ключ {mask(key)} сохранил, но пробный запрос не прошёл: {why}. В этот раз — правила.")
+                say(f"  Ключ {mask(key)} сохранил, но пробный запрос не прошёл: {why}. В этот раз — без ключа.")
                 return None, None
             say(f"  Ключ {mask(key)} принят.")
             return key, model
@@ -309,14 +305,14 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
             cfg["api_key"] = key
             save_config(cfg)
             say(f"  Ключ {mask(key)} сохранил, но проверить не смог: {why}.")
-            say("  В этот раз агенты сыграют на правилах, Claude — со следующего запуска.")
+            say("  В этот раз — без ключа, по ключу — со следующего запуска.")
             return None, None
         say(f"  Ключ {mask(key)} не подошёл: {why}. Вставьте другой" + (" или Enter — оставить как было."
                                                                        if keep else " или Enter — не сейчас."))
     if keep:
         say("  Ключи не подошли — оставляю прежний.")
         return None
-    say("  Ключи не подошли — в этот раз правила. Ключ спрошу при следующем запуске.")
+    say("  Ключи не подошли — в этот раз без ключа. Ключ спрошу при следующем запуске.")
     return None, None
 
 
@@ -508,16 +504,22 @@ def _setup_subscription(find, install, auth, login, check, update=lambda exe: Fa
 
 def setup_agents(cfg: dict, args, ask_secret=None, opener=urllib.request.urlopen, subscription=setup_subscription,
                  probe=probe_key):
-    """Мотор героев. Слова автора, 10.10.2026: «Не нужно меню с выбиранием системы использования, всегда будет 2».
-    Поэтому всегда — Claude через вход подпиской в Claude Code; --rules — правила; --api — ключ API (на будущее:
-    если у подписки появится кредит на API). → ("sub", путь к claude) | ("key", (ключ, модель)) | ("off", None)."""
+    """Мотор героев. Слова автора, 10.10.2026: «Не нужно меню с выбиранием системы использования, всегда будет 2»; 12.10.2026
+    (Д23): «в общем если мы не можем сделать по апи смысла нет слишком большое время на принятие решения». Поэтому: есть
+    ключ API — по ключу (быстро); ключа нет — один вопрос (вставить ключ; Enter — подписка, спрошу снова; 0 — больше не
+    спрашивать), дальше — Claude через вход подпиской в Claude Code; --rules — правила; --api — только ключ.
+    → ("sub", путь к claude) | ("key", (ключ, модель)) | ("off", None)."""
     if args.rules:
         return "off", None
-    if args.api or args.ask_key:
-        if cfg.get("api_key") == "":                       # прежнее «без Claude» — раз просят ключ, спросить
-            cfg.pop("api_key")
+    if (args.api or args.ask_key) and cfg.get("api_key") == "":   # «больше не спрашивать» — но ключ просят
+        cfg.pop("api_key")
+    if args.api or args.ask_key or os.environ.get("ANTHROPIC_API_KEY") or cfg.get("api_key") or "api_key" not in cfg:
         key, model = setup_claude(cfg, args, ask_secret or getpass.getpass, opener, probe=probe)
-        return ("key", (key, model)) if key else ("off", None)
+        if key:
+            return "key", (key, model)
+        if args.api:
+            return "off", None
+        say("  Дальше — по подписке (Claude Code).")
     exe = subscription()
     return ("sub", exe) if exe else ("off", None)
 
@@ -1326,10 +1328,12 @@ def _main(argv, ask, ask_secret, enter) -> int:
         say("  Кончится лимит подписки — герои доиграют на правилах. Остаток лимитов — в приложении Claude: Settings → Usage.")
     elif mode == "key":
         key, model = info
-        backend = ApiBackend(model, api_key=key)        # ключ — только агентам, не в окружение Доты и cloudflared
+        backend = ApiBackend(model, api_key=key, thinking=API_THINKING, effort=API_EFFORT, timeout=20.0)
+        pace = API_PACE                                 # ключ — только агентам, не в окружение Доты и cloudflared
         max_calls = args.max_calls or MAX_CALLS
-        say(f"  Героев ведёт Claude по ключу API (быстрая модель), предел {max_calls} вызовов на сторону.")
-        say("  Расход — из кредита API (у подписки Max он входит в тариф); виден на platform.claude.com → Billing.")
+        say(f"  Героев ведёт Claude по ключу API (быстрая модель, без думания): каждый герой решает сразу после прошлого")
+        say(f"  ответа, все 10 одновременно; руки выполняют решение 4 раза в секунду. Предел — {max_calls} вызовов на сторону.")
+        say("  Расход (оценка) — в сводке раз в 5 минут и в конце; точный — platform.claude.com → Billing.")
     else:
         backend = make_backend("rules")
         max_calls = args.max_calls or MAX_CALLS
@@ -1359,8 +1363,10 @@ def _main(argv, ask, ask_secret, enter) -> int:
     say("[3/6] Сервер тренера")
     log = LOGS / f"agents_local_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
     memory = LRN.Memory(LOGS.parent / "memory")                   # память героев между матчами (Д20)
+    prices = API_PRICES if mode == "key" else None
     srv = bind(lambda: serve("127.0.0.1", GAME_PORT, lambda room: AgentHub(
-        {"radiant": backend, "dire": backend}, max_calls=max_calls, log_path=log, memory=memory, **pace)), GAME_PORT,
+        {"radiant": backend, "dire": backend}, max_calls=max_calls, log_path=log, memory=memory, prices=prices,
+        **pace)), GAME_PORT,
         "серверу тренера", ours=already_running)
     if srv is None:
         return 1
@@ -1498,6 +1504,9 @@ def _main(argv, ask, ask_secret, enter) -> int:
         s = room.agents.summary()
         say(f"Вызовов Claude: {s.get('paid_calls', 0)} (герои, ошибок {s.get('errors', 0)}) + {ai.claude_calls} "
             f"(ИИ-тренер, ошибок {ai.claude_errors}), задержка (медиана): {s.get('latency_p50_s')} с. Журнал: {log}")
+        if s.get("cost_usd_est"):
+            say(f"Потрачено по ключу API ≈ ${s['cost_usd_est']:.2f} (оценка по ценам быстрой модели; точно — "
+                "platform.claude.com → Billing).")
         if getattr(backend, "free", False):
             say("Героями в этой игре правили правила, а не агенты Claude (" +
                 ("так просили: --rules)." if args.rules else
@@ -1570,7 +1579,13 @@ def report_agents(room, told: dict, now: float, every: float = 300.0) -> None:
                 return f"{side} — ПРАВИЛА, не Claude (решений {p['decisions']})"
             calls = f", вызовов Claude {p['paid_calls']}" if "paid_calls" in p else ""
             return f"{side} — решений {p['decisions']}{calls}, ошибок {p['errors']}"
-        say("  Агенты: " + "; ".join(part(t, p) for t, p in prog.items()) + ".")
+        cost = ""
+        try:                                                    # по ключу — оценка расхода по ценам быстрой модели
+            est = hub.summary().get("cost_usd_est") if hasattr(hub, "summary") else None
+            cost = f" Потрачено по ключу ≈ ${est:.2f}." if est else ""
+        except Exception:                                       # noqa: BLE001 — сводка вспомогательная
+            pass
+        say("  Агенты: " + "; ".join(part(t, p) for t, p in prog.items()) + "." + cost)
         told["summary_t"] = now
     told.setdefault("summary_t", now)
 

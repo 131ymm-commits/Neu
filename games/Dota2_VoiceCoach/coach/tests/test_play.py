@@ -18,6 +18,7 @@ from types import SimpleNamespace
 from urllib.parse import quote
 from unittest import mock
 
+from voicecoach import agents as A
 from voicecoach import play as P
 from voicecoach import rendezvous as RV
 from voicecoach import update as U
@@ -260,15 +261,15 @@ class Launcher(unittest.TestCase):
         answers = iter(["sk-no-credit-0123456789", ""])                      # ключ без кредита, потом «не сейчас»
         self.assertEqual(P.setup_claude({}, P.parse([]), ask=lambda p: next(answers), opener=ok, probe=nocredit), (None, None))
         self.assertEqual(P.load_config(self.cfg_path)["api_key"], "sk-no-credit-0123456789")   # ключ сохранён
-        self.assertTrue(any("нет кредита" in line for line in self.out))
-        self.assertTrue(any("переключите организацию" in line for line in self.out))   # совет и при чужой привязке
+        self.assertTrue(any("нет денег на API" in line for line in self.out))
+        self.assertTrue(any("переключить организацию" in line for line in self.out))   # совет и при чужой привязке
         # при следующем запуске — сказать и сразу дать вставить ключ из организации с кредитом
         self.out.clear()
         credit = lambda key, model, opener: (key != "sk-no-credit-0123456789", "" if key != "sk-no-credit-0123456789" else "nocredit")   # noqa: E731
         self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]), ask=lambda p: "sk-with-credit-0123456",
                                         opener=ok, probe=credit),
                          ("sk-with-credit-0123456", self.NEW))
-        self.assertTrue(any("нет кредита" in line for line in self.out))
+        self.assertTrue(any("нет денег на API" in line for line in self.out))
         # проба кредита по-настоящему: 400 «credit balance» → nocredit; 429 — ключ рабочий
         body = b'{"type":"error","error":{"message":"Your credit balance is too low to access the Anthropic API."}}'
         low = urllib.error.HTTPError("u", 400, "x", {}, io.BytesIO(body))
@@ -295,21 +296,49 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse(["--ask-key"]), ask=lambda p: "",
                                         opener=ok), (None, None))
 
-    def test_always_subscription_no_menu(self):
-        """Слова автора 10.10.2026: «Не нужно меню с выбиранием системы использования, всегда будет 2»."""
+    def test_key_first_then_subscription_no_menu(self):
+        """Слова автора 10.10.2026: «Не нужно меню с выбиранием системы использования, всегда будет 2»; 12.10.2026 (Д23):
+        «в общем если мы не можем сделать по апи смысла нет слишком большое время на принятие решения». Ключ есть — по
+        ключу; нет — один вопрос (Enter — подписка, спросит снова; 0 — больше не спрашивать); без меню."""
         sub = mock.Mock(return_value="C:/Users/u/.local/bin/claude.exe")
-        self.assertEqual(P.setup_agents({}, P.parse([]), subscription=sub), ("sub", "C:/Users/u/.local/bin/claude.exe"))
-        sub.assert_called_once()
-        self.assertEqual(self.pages, [])                                        # никаких страниц и вопросов
-        self.assertEqual(P.setup_agents({"mode": "key", "api_key": "sk-old-key-0123456789"}, P.parse([]),
-                                        subscription=sub)[0], "sub")            # прежний выбор ключа — тоже подписка
-        self.assertEqual(P.setup_agents({}, P.parse([]), subscription=lambda: None), ("off", None))   # не готов
-        self.assertEqual(P.setup_agents({}, P.parse(["--rules"]), subscription=sub), ("off", None))
-        # --api — ключ API (на будущее); прежнее «без Claude» ключ не блокирует
         ok = opener_for({P.MODELS_API: self.MODELS})
+        good = lambda key, model, opener: (True, "")                         # noqa: E731
+        asked = []
+        cfg = {}
+        self.assertEqual(P.setup_agents(cfg, P.parse([]), ask_secret=lambda p: asked.append(p) or "", opener=ok,
+                                        subscription=sub, probe=good), ("sub", "C:/Users/u/.local/bin/claude.exe"))
+        self.assertEqual(len(asked), 1)                                         # один вопрос, Enter — подписка
+        self.assertIn("около $3–4 за 40-минутный матч", "\n".join(self.out))
+        self.assertEqual(self.pages, [])                                        # страниц сам не открывает
+        self.assertEqual(P.setup_agents({"api_key": "sk-old-key-0123456789"}, P.parse([]), opener=ok, subscription=sub,
+                                        probe=good), ("key", ("sk-old-key-0123456789", self.NEW)))   # ключ — по ключу
+        declined = {}
+        P.setup_agents(declined, P.parse([]), ask_secret=lambda p: "0", opener=ok, subscription=sub, probe=good)
+        self.assertEqual(declined["api_key"], "")
+        asked.clear()
+        self.assertEqual(P.setup_agents(declined, P.parse([]), ask_secret=lambda p: asked.append(p) or "", opener=ok,
+                                        subscription=sub, probe=good)[0], "sub")
+        self.assertEqual(asked, [])                                             # «0» — больше не спрашивает
+        self.assertEqual(P.setup_agents({"api_key": ""}, P.parse([]), subscription=lambda: None), ("off", None))
+        self.assertEqual(P.setup_agents({}, P.parse(["--rules"]), subscription=sub), ("off", None))
+        # --api — только ключ; прежнее «больше не спрашивать» ключ не блокирует
         self.assertEqual(P.setup_agents({"api_key": ""}, P.parse(["--api"]),
-                                        ask_secret=lambda p: "sk-api-key-0123456789", opener=ok, subscription=sub),
+                                        ask_secret=lambda p: "sk-api-key-0123456789", opener=ok, subscription=sub,
+                                        probe=good),
                          ("key", ("sk-api-key-0123456789", self.NEW)))
+
+    def test_key_mode_is_fast_and_priced(self):
+        """Д23: по ключу думание модели выключено, решение — сразу после прошлого ответа, все 10 сразу; расход в окне."""
+        self.assertEqual(P.API_THINKING, "disabled")
+        self.assertEqual((P.API_PACE["period"], P.API_PACE["max_inflight"]), (0.0, 10))
+        b = A.ApiBackend("claude-haiku-5-5", api_key="sk-test-key-0123456789", thinking=P.API_THINKING,
+                         effort=P.API_EFFORT)
+        body = b.body("система", "наблюдение")
+        self.assertEqual((body["thinking"], body["output_config"]["effort"]), ({"type": "disabled"}, "low"))
+        self.assertEqual(body["system"][0]["cache_control"], {"type": "ephemeral"})   # промпт — из кэша
+        hub = A.AgentHub({"radiant": A.RulesBackend(), "dire": A.RulesBackend()}, prices=P.API_PRICES, sync=True)
+        hub.stats["radiant"].update({"in": 1_000_000, "out": 200_000, "cache_read": 8_000_000})
+        self.assertAlmostEqual(hub.summary()["cost_usd_est"], 0.10 + 0.10 + 0.08, places=4)
 
     def test_subscription_setup_installs_and_logs_in(self):
         found = iter([None, "/x/claude"])
