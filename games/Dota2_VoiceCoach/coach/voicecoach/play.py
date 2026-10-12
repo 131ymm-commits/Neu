@@ -21,6 +21,7 @@ from __future__ import annotations
 import argparse
 import atexit
 import getpass
+import hashlib
 import json
 import os
 import re
@@ -282,6 +283,7 @@ def clipboard_text() -> str:
     вышло — пустая строка."""
     if os.name != "nt":
         return ""
+    opened = False
     try:
         import ctypes                                    # noqa: PLC0415
         from ctypes import wintypes                      # noqa: PLC0415
@@ -294,6 +296,7 @@ def clipboard_text() -> str:
         kernel32.GlobalLock.restype = wintypes.LPVOID
         kernel32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
         if user32.OpenClipboard(None):
+            opened = True
             try:
                 handle = user32.GetClipboardData(13)      # CF_UNICODETEXT
                 ptr = kernel32.GlobalLock(handle) if handle else None
@@ -305,17 +308,20 @@ def clipboard_text() -> str:
             finally:
                 user32.CloseClipboard()
     except Exception:                                    # noqa: BLE001 — нет буфера, не текст, другая ОС
-        pass
+        opened = False
+    if opened:                                           # буфер открылся, текста в нём нет
+        return ""
     try:                                                 # запасной путь: PowerShell (есть в Windows 10 и 11)
         r = subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command",
                             "[Console]::OutputEncoding=[Text.Encoding]::UTF8; Get-Clipboard -Raw"],
-                           capture_output=True, timeout=10, creationflags=0x08000000)   # CREATE_NO_WINDOW
+                           capture_output=True, stdin=subprocess.DEVNULL, timeout=10,
+                           creationflags=0x08000000)     # CREATE_NO_WINDOW
         return r.stdout.decode("utf-8", "replace") if r.returncode == 0 else ""
     except Exception:                                    # noqa: BLE001
         return ""
 
 
-def read_secret(prompt: str, getch=None, putch=None, clipboard=clipboard_text) -> str:
+def read_secret(prompt: str, getch=None, putch=None, clipboard=None) -> str:
     """Скрытый ввод ключа. Windows: вместо знаков — звёздочки (видно, что вставка сработала); Ctrl+V вставляет из буфера
     обмена сам лаунчер — в классической консоли Windows Ctrl+V приходит символом 0x16, а не текстом (ERRORS №114).
     Пробелы и переводы строк не берутся; стрелки и F-клавиши не пишутся; Ctrl+C — KeyboardInterrupt.
@@ -345,7 +351,7 @@ def read_secret(prompt: str, getch=None, putch=None, clipboard=clipboard_text) -
             continue
         text = c
         if c == "\x16":                                  # Ctrl+V в классической консоли: буфер обмена — сами
-            text = (clipboard() or "")[:1000]
+            text = ((clipboard or clipboard_text)() or "")[:1000]
             if not text.strip():
                 for x in " (в буфере обмена нет текста) ":
                     putch(x)
@@ -365,6 +371,19 @@ def user_dirs() -> list[Path]:
     return [r / n for r in roots for n in names]
 
 
+def key_mark(key: str) -> str:
+    """Отпечаток ключа (не сам ключ): запомнить в настройках ключ, который не подошёл, — чтобы не предлагать его снова."""
+    return hashlib.sha256(key.encode("utf-8", "replace")).hexdigest()[:16]
+
+
+def forget_bad(cfg: dict, key: str) -> None:
+    cfg["bad_key"] = key_mark(key)
+    try:
+        save_config(cfg)
+    except OSError:
+        pass
+
+
 def key_files(dirs=None) -> list[Path]:
     """Файлы с ключом, какие есть: ключ.txt (key.txt) в папке игры, потом над ней — там лежит ИГРАТЬ.bat, если он скачан
     один (игра — в папке DotaCoach рядом с ним); потом «ключ.txt» в Документах, на рабочем столе и в Загрузках (Блокнот
@@ -375,8 +394,11 @@ def key_files(dirs=None) -> list[Path]:
     found = []
     for d, names in places:
         for name in names:
-            if (d / name).is_file() and d / name not in found:
-                found.append(d / name)
+            try:
+                if (d / name).is_file() and d / name not in found:
+                    found.append(d / name)
+            except OSError:                              # нет доступа к папке — дальше
+                continue
     return found
 
 
@@ -394,22 +416,26 @@ def take_key_file(cfg: dict, opener=urllib.request.urlopen, probe=probe_key, dir
     → None — файла с ключом нет; (ключ, модель) — играть по ключу; (None, None) — файл есть, по ключу не вышло."""
     path = key = None
     only = False
+    near = [Path(d) for d in (dirs or (PROJECT, PROJECT.parent))]
+    empty = None                                         # «ключ.txt» у игры без ключа: сказать, если ключа нет нигде
     for p in key_files(dirs):
         try:
             text = read_key_text(p)
-        except OSError as e:
-            say(f"  Файл «{p.name}» не прочитался: {e}.")
-            return None, None
+        except OSError:
+            continue
         m = _KEY_RE.search(text)
         if m and looks_like_key(m.group(0)):
             path, key, only = p, m.group(0), text.strip() == m.group(0)
             break
-        if p.name.startswith("ключ"):
-            say(f"  В файле «{p.name}» не ключ: ключ — длинная строка латиницей, начинается с sk-ant-. Откройте файл")
-            say("  Блокнотом, вставьте ключ (Ctrl+V), сохраните и запустите ИГРАТЬ.bat снова.")
-            return None, None
+        if p.name.startswith("ключ") and p.parent in near and empty is None:
+            empty = p                                    # в Документах и прочих — чужой файл: молча мимо
     if path is None:
-        return None
+        if empty is None:
+            return None
+        say(f"  В файле «{empty.name}» в папке «{empty.parent.name}» не ключ: ключ — длинная строка латиницей, начинается")
+        say("  с sk-ant-. Откройте файл Блокнотом, вставьте ключ (Ctrl+V), сохраните и запустите ИГРАТЬ.bat снова.")
+        return None, None
+    where = f"«{path.name}» в папке «{path.parent.name}»"
     if key == cfg.get("api_key") and cfg.get("model"):  # этот ключ уже в настройках: файл не нужен
         if only:
             try:
@@ -420,10 +446,10 @@ def take_key_file(cfg: dict, opener=urllib.request.urlopen, probe=probe_key, dir
     model, why, kind = pick_model(key, opener)
     if not model:
         if kind == "net":                                # прежний рабочий ключ непроверенным не затирать
-            say(f"  Ключ {mask(key)} из файла «{path.name}» проверить не смог: {why}. Файл оставил — проверю при")
+            say(f"  Ключ {mask(key)} из файла {where} проверить не смог: {why}. Файл оставил — проверю при")
             say("  следующем запуске.")
         else:
-            say(f"  Ключ {mask(key)} из файла «{path.name}» не подошёл: {why}.")
+            say(f"  Ключ {mask(key)} из файла {where} не подошёл: {why}.")
             say("  Создайте новый ключ (platform.claude.com → API Keys, Scope — Default workspace), вставьте его в файл вместо")
             say("  старого и запустите ИГРАТЬ.bat снова.")
         return None, None
@@ -437,7 +463,7 @@ def take_key_file(cfg: dict, opener=urllib.request.urlopen, probe=probe_key, dir
             note = "файл удалил"
         except OSError:
             note = "файл удалить не смог — удалите его сами"
-    say(f"  Ключ {mask(key)} из файла «{path.name}» сохранён в настройках игры; {note}.")
+    say(f"  Ключ {mask(key)} из файла {where} сохранён в настройках игры; {note}.")
     ok, why = probe(key, model, opener)
     if why == "nocredit":
         no_credit_help()
@@ -449,8 +475,8 @@ def take_key_file(cfg: dict, opener=urllib.request.urlopen, probe=probe_key, dir
     return key, model
 
 
-def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key,
-            clipboard=clipboard_text) -> tuple[str | None, str | None] | None:
+def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key, clipboard=None,
+            rejected: str | None = None) -> tuple[str | None, str | None] | None:
     """Спросить ключ; он проверяется списком моделей и крошечным запросом (есть ли кредит).
     Пустой Enter — «не сейчас» (ничего не запоминается; при смене ключа, keep=True, — оставить как было → None);
     «0» — без Claude (запоминается). Нет связи — новый ключ сохраняется (проверится в следующий раз), но рабочий
@@ -462,18 +488,22 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key,
         say("  Цена — около $3–4 за 40-минутный матч (оценка). В подписку Max входит кредит на API ($100 в месяц у Max 5x):")
         say("  claude.ai в браузере → Settings → Billing → «API credits»; без него — пополнить: platform.claude.com → Billing.")
         say(f"  Ключ: {KEYS_PAGE} → Create Key (Scope — Default workspace), скопировать.")
-    found = _KEY_RE.search(clipboard() or "")           # ключ скопирован — вставлять не нужно (ERRORS №114)
+    found = _KEY_RE.search((clipboard or clipboard_text)() or "")   # ключ скопирован — вставлять не нужно (№114)
     clip_key = found.group(0) if found and looks_like_key(found.group(0)) else None
-    if clip_key == cfg.get("api_key"):                  # тот же, что уже не подошёл, — не предлагать
-        clip_key = None
+    if clip_key and (clip_key in (cfg.get("api_key"), rejected) or key_mark(clip_key) == cfg.get("bad_key")):
+        clip_key = None                                  # тот, что уже не подошёл, — не предлагать
+    flush_input()                                        # Enter, нажатый, пока читался буфер, — не ответ
     if clip_key:
         say(f"  В буфере обмена есть ключ {mask(clip_key)}. Взять его — просто Enter; не брать — н и Enter.")
         a = _ask(ask, "  > ")
         if a is None:
             return None if keep else (None, None)        # Ctrl+C
-        if a:
+        if looks_like_key(a):                            # вставили ключ сами — его и взять
+            clip_key = a
+        elif a and a.lower() not in ("д", "да", "y", "yes"):   # Enter, «д», «да» — взять
             clip_key = None
-    if not clip_key:
+
+    def howto():
         say("  Скопируйте ключ (Ctrl+C) и запустите ИГРАТЬ.bat снова — лаунчер возьмёт его из буфера обмена сам. Или вставьте")
         say("  ключ сюда (правый щелчок мыши или Ctrl+V) и нажмите Enter — вместо ключа на экране будут звёздочки.")
         say(f"  Не вставляется — закройте это окно, сохраните ключ Блокнотом в файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat и")
@@ -483,8 +513,10 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key,
         else:
             say("  Ключа нет — просто Enter: сыграют агенты по подписке (медленнее), ключ спрошу при следующем запуске.")
             say("  Больше не спрашивать ключ — 0 и Enter.")
+    if not clip_key:
+        howto()
     for _ in range(3):
-        key, clip_key = clip_key or _ask(ask, "  ключ> "), None
+        key, from_clip, clip_key = clip_key or _ask(ask, "  ключ> "), bool(clip_key), None
         if key is None or (not key and keep):
             return None if keep else (None, None)        # Ctrl+C или «оставить как было»
         if not key:
@@ -522,8 +554,12 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key,
             say(f"  Ключ {mask(key)} сохранил, но проверить не смог: {why}.")
             say("  В этот раз — без ключа, по ключу — со следующего запуска.")
             return None, None
+        if kind == "key":
+            forget_bad(cfg, key)                         # из буфера его больше не предлагать
         say(f"  Ключ {mask(key)} не подошёл: {why}. Вставьте другой" + (" или Enter — оставить как было."
                                                                        if keep else " или Enter — не сейчас."))
+        if from_clip:
+            howto()
     if keep:
         say("  Ключи не подошли — оставляю прежний.")
         return None
@@ -572,7 +608,8 @@ def setup_claude(cfg: dict, args, ask=None, opener=urllib.request.urlopen,
     if kind == "key" and not os.environ.get("ANTHROPIC_API_KEY"):
         say(f"  Сохранённый ключ {mask(key)} не подошёл: {why}.")
         cfg.pop("api_key", None)
-        return ask_key(cfg, ask, opener, probe=probe)
+        forget_bad(cfg, key)
+        return ask_key(cfg, ask, opener, probe=probe, rejected=key)
     if kind == "net" and cfg.get("model"):
         say(f"  Список моделей недоступен ({why}) — беру прошлую модель.")
         return key, cfg["model"]

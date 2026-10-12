@@ -184,7 +184,8 @@ class Launcher(unittest.TestCase):
         self.cfg_path = Path(self.tmp.name) / "play.json"
         self.out = []
         self.pages = []
-        for name, value in (("CONFIG", self.cfg_path), ("say", self.out.append), ("open_page", self.pages.append)):
+        for name, value in (("CONFIG", self.cfg_path), ("say", self.out.append), ("open_page", self.pages.append),
+                            ("clipboard_text", lambda: ""), ("user_dirs", lambda: [])):   # не настоящие буфер и папки
             patcher = mock.patch.object(P, name, value)
             patcher.start()
             self.addCleanup(patcher.stop)
@@ -419,6 +420,57 @@ class Launcher(unittest.TestCase):
                 self.assertIsNone(P.take_key_file({"api_key": K, "model": self.NEW}, opener_for({}), good))
                 self.assertFalse((docs / "ключ.txt").exists())
                 self.assertEqual(self.out, [])
+
+    def test_key_review16(self):
+        """Рецензия 16: пустой «ключ.txt» у игры не закрывает настоящий в Документах, чужой без ключа в Документах — молча;
+        отвергнутый ключ из буфера не предлагается ни сразу, ни в следующий раз; буфер читается до сброса нажатого;
+        на предложение можно вставить ключ или ответить «да»."""
+        K = "sk-ant-usr-Test_Key-0123456789abcdef0123"
+        ok = opener_for({P.MODELS_API: self.MODELS})
+        good = lambda key, model, opener: (True, "")                         # noqa: E731
+        with tempfile.TemporaryDirectory() as tmp:
+            bat, docs = Path(tmp) / "bat", Path(tmp) / "Documents"
+            game = bat / "DotaCoach"
+            game.mkdir(parents=True)
+            docs.mkdir()
+            (bat / "ключ.txt").write_text("", encoding="utf-8")              # пустой у bat
+            (docs / "ключ.txt").write_text(K, encoding="utf-8")              # настоящий в Документах
+            with mock.patch.object(P, "PROJECT", game), mock.patch.object(P, "user_dirs", lambda: [docs]):
+                self.assertEqual(P.take_key_file({}, ok, good), (K, self.NEW))
+                self.assertIn("в папке «Documents»", "\n".join(self.out))
+                (bat / "ключ.txt").unlink()
+                (docs / "ключ.txt").write_text("список покупок", encoding="utf-8")   # чужой — молча мимо
+                self.out.clear()
+                self.assertIsNone(P.take_key_file({}, ok, good))
+                self.assertEqual(self.out, [])
+                (bat / "ключ.txt").write_text("не ключ", encoding="utf-8")    # у игры без ключа — сказать
+                self.assertEqual(P.take_key_file({}, ok, good), (None, None))
+                self.assertIn("в папке «bat» не ключ", "\n".join(self.out))
+        # сохранённый ключ не подошёл, в буфере он же — не предлагать ни сейчас, ни при следующем запуске
+        bad = opener_for({P.MODELS_API: self.http_error(401, "invalid x-api-key")})
+        P.save_config({"api_key": K, "model": self.NEW})
+        asked = []
+        with mock.patch.object(P, "clipboard_text", lambda: K):
+            self.assertEqual(P.setup_claude(P.load_config(self.cfg_path), P.parse([]),
+                                            ask=lambda q: asked.append(q) or "", opener=bad, probe=good), (None, None))
+            self.assertEqual(asked, ["  ключ> "])
+            cfg = P.load_config(self.cfg_path)
+            self.assertNotIn("api_key", cfg)
+            self.assertNotIn(K, json.dumps(cfg))                             # в настройках — только отпечаток
+            asked.clear()
+            P.ask_key(cfg, lambda q: asked.append(q) or "", ok, probe=good)
+            self.assertEqual(asked, ["  ключ> "])
+        # порядок: буфер читается, потом сбрасывается нажатое (Enter во время чтения — не «взять»)
+        order = []
+        with mock.patch.object(P, "flush_input", lambda: order.append("flush")):
+            P.ask_key({}, lambda q: "", ok, probe=good, clipboard=lambda: order.append("clip") or "")
+        self.assertEqual(order[-2:], ["clip", "flush"])
+        # на предложение: вставили другой ключ — взять его; «да» — взять из буфера
+        K2 = "sk-ant-usr-Other_Key-0123456789abcdef0123"
+        asked = []
+        self.assertEqual(P.ask_key({}, lambda q: asked.append(q) or K2, ok, probe=good, clipboard=lambda: K), (K2, self.NEW))
+        self.assertEqual(asked, ["  > "])                                     # второй раз не спрашивал
+        self.assertEqual(P.ask_key({}, lambda q: "да", ok, probe=good, clipboard=lambda: K), (K, self.NEW))
 
     def test_changing_key_keeps_it_on_empty_enter(self):
         """Рецензия 2: случайная клавиша за 3 с и Enter на вопросе стирали сохранённый ключ."""
