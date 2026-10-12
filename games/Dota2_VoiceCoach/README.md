@@ -14,7 +14,7 @@
 ## Играть вдвоём — два файла (Д14)
 
 1. **Вы (хост, Windows, Dota 2 с бесплатным дополнением Workshop Tools):** скачайте и запустите `ИГРАТЬ.bat`
-   (https://github.com/131ymm-commits/Neu/blob/94dc686d643b63cc4d4c4b0cc1ebf321b484eb1c/games/Dota2_VoiceCoach/ИГРАТЬ.bat → «Download raw
+   (https://github.com/131ymm-commits/Neu/blob/3c3825c7f4c48266d7ebff72671679e08f4cd0db/games/Dota2_VoiceCoach/ИГРАТЬ.bat → «Download raw
    file»). Он сам поставит всё нужное и запустит Доту с кастомкой — вы тренер Света. Героями управляет Claude:
    быстро — по ключу API (Д23: лаунчер один раз спросит ключ; около $3–4 за матч, оценка), без ключа — по вашей
    подписке через Claude Code для командной строки (Д15, Д22: ответ ≈ раз в 5 с). Дополнение Workshop Tools нужно
