@@ -82,8 +82,9 @@ KEY_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")   # по подписк
 CREDITS_PAGE = "https://claude.ai/settings/billing"        # подписка Max → «API credits»: привязать организацию Console
 KEYS_PAGE = "https://platform.claude.com/settings/keys"    # Console → API Keys → Create Key
 KEY_ASK = 23                                   # с Д23 "api_key": "" — «0, больше не спрашивать ключ»; до Д23 это было
-                                               # «без Claude» меню Д15 (выпуск b6988a1 писал его и на Enter): такой
-                                               # play.json — спросить ключ ещё один раз
+                                               # «без Claude»: выпуски 4351ded и b6988a1 писали его на Enter, меню Д15 и
+                                               # выпуски c1e0689…fd2c348 (--api, --ask-key) — на «0»; такой play.json —
+                                               # спросить ключ ещё один раз
 open_page = webbrowser.open
 MODELS_API = "https://api.anthropic.com/v1/models"
 FAST_LINE = "haiku"                            # линия самых быстрых моделей: ищется в имени (id) модели из списка
@@ -547,7 +548,10 @@ def setup_agents(cfg: dict, args, ask_secret=None, opener=urllib.request.urlopen
         cfg["key_ask"] = KEY_ASK
         if cfg.get("api_key") == "":                              # прежнее «без Claude» — не «больше не спрашивать»
             cfg.pop("api_key")
-            save_config(cfg)
+            try:
+                save_config(cfg)
+            except OSError:                                       # файл занят: спросить и в этот раз, и в следующий
+                pass
     if (args.api or args.ask_key) and cfg.get("api_key") == "":   # «больше не спрашивать» — но ключ просят
         cfg.pop("api_key")
     if args.api or args.ask_key or os.environ.get("ANTHROPIC_API_KEY") or cfg.get("api_key") or "api_key" not in cfg:
