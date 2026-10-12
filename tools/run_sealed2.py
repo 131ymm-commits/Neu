@@ -13,6 +13,8 @@
   python3 tools/run_sealed2.py run --jobs JOBS.jsonl --seed ЗЕРНО --journal ЖУРНАЛ --streams ПОТОКИ
           [--config CFG.json] [--parallel 1] [--max-calls N]
       Прогон голов. JOBS.jsonl: строка на вызов {"task", "id", "arm"(необязательно), "prompt", "schema"}.
+      --max-calls — потолок на журнал: считаются все начатые вызовы по run_log.jsonl, с прошлыми запусками.
+      Серия «потерян» подряд (max_consecutive_lost) считается в пределах одного запуска.
       Продолжение с места: итоговые вызовы из журнала не запрашиваются заново. Конфигурация и jobs сверяются
       с ЖУРНАЛ/run_config.json; при расхождении драйвер останавливается.
       --task-from-id: задания в формате run_sealed v1 ({id, prompt, schema}), задача и рука берутся из id «задача|рука|i».
@@ -868,6 +870,10 @@ class Driver:
                             encoding='utf-8')
         self.run_cfg = run_cfg
         self.config_sha = sha256_bytes(canonical(run_cfg).encode('utf-8'))
+        log = self.journal_dir / 'run_log.jsonl'          # потолок вызовов — сквозной по журналу, не на один запуск
+        if log.exists():
+            self.calls = sum(1 for line in log.read_text(encoding='utf-8').splitlines()
+                             if line.strip() and json.loads(line).get('event') == 'вызов')
         self.bin_sha = self.pre_call_check() or self.bin_sha
         self._log_run('старт', {'config_sha256': self.config_sha, 'binary_sha256': self.bin_sha})
 
@@ -899,7 +905,7 @@ class Driver:
     def _one_call(self, job, attempt, role):
         with self.lock:
             if self.max_calls is not None and self.calls >= self.max_calls:
-                raise RunStop(f'потолок вызовов {self.max_calls} исчерпан')
+                raise RunStop(f'потолок вызовов {self.max_calls} исчерпан (счёт по run_log.jsonl этого журнала)')
             self.calls += 1
         self.bin_sha = self.pre_call_check() or self.bin_sha
         tag = 'osn' if role == 'основной' else 'vtor'

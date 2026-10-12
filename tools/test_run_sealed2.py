@@ -468,6 +468,20 @@ class DriverTests(unittest.TestCase):
         self.assertIn('потолок', str(cm.exception))
         self.assertEqual(len(script.calls), 1)
 
+    def test_call_budget_is_cumulative_across_restarts(self):
+        drv = self.driver(make_cfg(), Script([call(events=good_stream())]), max_calls=2)
+        drv.start()
+        drv.run([self.job('j1')])
+        drv2 = self.driver(make_cfg(), Script([call(events=good_stream())]), max_calls=2)
+        drv2.start()
+        self.assertEqual(drv2.calls, 1)
+        drv2.run([self.job('j1'), self.job('j2')])           # j1 уже с итогом; j2 — второй вызов журнала
+        drv3 = self.driver(make_cfg(), Script([]), max_calls=2)
+        drv3.start()
+        with self.assertRaises(rs.RunStop) as cm:
+            drv3.run([self.job('j1'), self.job('j2'), self.job('j3')])
+        self.assertIn('потолок', str(cm.exception))
+
     def test_config_change_on_resume_stops(self):
         drv = self.driver(make_cfg(), Script([]))
         drv.start()

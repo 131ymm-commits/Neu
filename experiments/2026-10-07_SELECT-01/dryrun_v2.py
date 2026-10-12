@@ -4,7 +4,8 @@
 # запись, оборванная лимитом, → сначала итог лимита (rate_limit_event со статусом rejected), затем годный поток с выбором 0.
 # Проверки: (1) годные записи пилота 2 дают в evals тот же choice, inp, out; (2) 38 записей лимита дают по одному
 # ожиданию сброса и не дают «потерян»; (3) порядок вызовов — задача за задачей, руки вперемешку; (4) этап исполнителя:
-# collect_exec по выгрузке v2 даёт те же sha256 пулов, что записаны в run/p2_exec_pools.sha256.
+# collect_exec по выгрузке v2 даёт те же sha256 пулов, что записаны в run/p2_exec_pools.sha256; (5) complete.py,
+# losses.py (обе ветки, на синтетических потерях) и pool.py исполняются и дают ожидаемое (совет 31).
 import json, os, shutil, subprocess, sys
 from datetime import datetime, timedelta, timezone
 here = os.path.dirname(os.path.abspath(__file__)); repo = os.path.abspath(os.path.join(here, '..', '..'))
@@ -98,4 +99,45 @@ want = json.load(open(os.path.join(here, 'run', 'p2_exec_pools.sha256')))
 got = json.load(open(os.path.join(box, 'run', 'p2v2_exec_pools.sha256')))
 print(f'пулов пилота 2: {len(want)}; совпали по sha256: {sum(got.get(t) == h for t, h in want.items())}')
 assert got == want
+
+# полнота (complete.py): 12 полных задач; затем у WH_7305 убираются две записи → задача неполная и исключается
+def run_json(args):
+    r = subprocess.run([sys.executable] + args, env=env, capture_output=True, text=True, check=True)
+    return json.loads(r.stdout)
+c = run_json([os.path.join(here, 'complete.py'), 'p2v2_eval', 'seeds_pilot2.json', 'WH'])
+assert c['complete'] == 12 and not c['incomplete'] and not c['no_pool'], c
+ev = os.path.join(box, 'evals', 'p2v2_eval.jsonl'); keep = open(ev).read().splitlines(True)
+cut = [l for l in keep if json.loads(l)['task'] == 'WH_7305'][:2]
+open(ev, 'w').writelines([l for l in keep if l not in cut])
+c = run_json([os.path.join(here, 'complete.py'), 'p2v2_eval', 'seeds_pilot2.json', 'WH'])
+assert c['complete'] == 11 and c['incomplete'] == {'WH_7305': 25}, c
+open(ev, 'w').writelines(keep)
+print(f"полнота: 12 полных задач; без двух записей WH_7305 — 11 полных, неполная {c['incomplete']}")
+
+# правило потерь (losses.py) на синтетике: у C_N два «потерян», у B_blind один, у D_N три попытки «нет ответа» до начала
+jl = os.path.join(box, 'journal_losses'); shutil.copytree(os.path.join(box, 'journal'), jl)
+for f in sorted(os.listdir(jl)):
+    if not f.startswith('WH_'):
+        continue
+    out = []
+    for line in open(os.path.join(jl, f)):
+        r = json.loads(line)
+        if r.get('final') == 'годный' and (r['job'] in ('WH_7302|C_N|1', 'WH_7303|C_N|1', 'WH_7303|B_blind|2')):
+            r.update(final='потерян', outcome=rs.FAIL, reason='нет structured_output (синтетика)')
+        out.append(json.dumps(r, ensure_ascii=False))
+        if r['job'] in ('WH_7304|D_N|0', 'WH_7304|D_N|1', 'WH_7306|D_N|2') and r.get('final'):
+            na = dict(r, outcome=rs.NA, final=None, reason='таймаут или гибель до message_start (синтетика)')
+            out.insert(len(out) - 1, json.dumps(na, ensure_ascii=False))
+    open(os.path.join(jl, f), 'w').write('\n'.join(out) + '\n')
+L = run_json([os.path.join(here, 'losses.py'), jl, ev])
+assert L['rule']['C_N']['not_measured'] is True and L['rule']['D_N']['not_measured'] is True, L['rule']
+assert L['by_arm']['C_N']['потерян'] == 2 and L['by_arm']['D_N']['нет_ответа_до_начала'] == 3, L['by_arm']
+assert L['secondary']['C_N']['excluded_tasks'] == ['WH_7302', 'WH_7303'] and L['secondary']['C_N']['n_tasks'] == 10, L['secondary']
+assert L['secondary']['D_N']['excluded_tasks'] == ['WH_7303'] and L['secondary']['D_N']['n_tasks'] == 11, L['secondary']
+print('правило потерь: C_N — «не измерено» по доле «потерян», D_N — по доле «нет ответа» до начала; вторичный анализ без задач с потерями прошёл')
+
+# объединённая оценка (pool.py): пилот 1 и пилот 2 — непересекающиеся задачи
+P = run_json([os.path.join(here, 'pool.py'), os.path.join(here, 'pilot_an_wh.json'), os.path.join(here, 'p2_an_wh.json')])
+assert P['n_tasks'] == [12, 12] and P['pooled']['D_N − B_blind']['n'] == 24, P
+print('объединение:', {k: (v['mean'], v['ci95']) for k, v in P['pooled'].items()})
 print('сухой прогон: всё сошлось')
