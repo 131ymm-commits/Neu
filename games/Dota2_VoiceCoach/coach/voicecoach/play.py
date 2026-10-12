@@ -278,7 +278,8 @@ def looks_like_key(key: str) -> bool:
 
 
 def clipboard_text() -> str:
-    """Текст из буфера обмена Windows (WinAPI через ctypes); не Windows или не вышло — пустая строка."""
+    """Текст из буфера обмена Windows: WinAPI через ctypes, запасной путь — PowerShell Get-Clipboard; не Windows или не
+    вышло — пустая строка."""
     if os.name != "nt":
         return ""
     try:
@@ -292,20 +293,25 @@ def clipboard_text() -> str:
         kernel32.GlobalLock.argtypes = [wintypes.HGLOBAL]
         kernel32.GlobalLock.restype = wintypes.LPVOID
         kernel32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
-        if not user32.OpenClipboard(None):
-            return ""
-        try:
-            handle = user32.GetClipboardData(13)          # CF_UNICODETEXT
-            ptr = kernel32.GlobalLock(handle) if handle else None
-            if not ptr:
-                return ""
+        if user32.OpenClipboard(None):
             try:
-                return ctypes.wstring_at(ptr)
+                handle = user32.GetClipboardData(13)      # CF_UNICODETEXT
+                ptr = kernel32.GlobalLock(handle) if handle else None
+                if ptr:
+                    try:
+                        return ctypes.wstring_at(ptr)
+                    finally:
+                        kernel32.GlobalUnlock(handle)
             finally:
-                kernel32.GlobalUnlock(handle)
-        finally:
-            user32.CloseClipboard()
+                user32.CloseClipboard()
     except Exception:                                    # noqa: BLE001 — нет буфера, не текст, другая ОС
+        pass
+    try:                                                 # запасной путь: PowerShell (есть в Windows 10 и 11)
+        r = subprocess.run(["powershell", "-NoProfile", "-NonInteractive", "-Command",
+                            "[Console]::OutputEncoding=[Text.Encoding]::UTF8; Get-Clipboard -Raw"],
+                           capture_output=True, timeout=10, creationflags=0x08000000)   # CREATE_NO_WINDOW
+        return r.stdout.decode("utf-8", "replace") if r.returncode == 0 else ""
+    except Exception:                                    # noqa: BLE001
         return ""
 
 
@@ -352,14 +358,25 @@ def read_secret(prompt: str, getch=None, putch=None, clipboard=clipboard_text) -
     return "".join(chars)
 
 
+def user_dirs() -> list[Path]:
+    """Куда Блокнот сохраняет сам: Документы, Рабочий стол, Загрузки — и они же в OneDrive."""
+    roots = [Path.home()] + [Path(os.environ[v]) for v in ("OneDrive", "OneDriveConsumer") if os.environ.get(v)]
+    names = ("Documents", "Desktop", "Downloads", "Документы", "Рабочий стол", "Загрузки")
+    return [r / n for r in roots for n in names]
+
+
 def key_files(dirs=None) -> list[Path]:
     """Файлы с ключом, какие есть: ключ.txt (key.txt) в папке игры, потом над ней — там лежит ИГРАТЬ.bat, если он скачан
-    один (игра — в папке DotaCoach рядом с ним)."""
+    один (игра — в папке DotaCoach рядом с ним); потом «ключ.txt» в Документах, на рабочем столе и в Загрузках (Блокнот
+    сохраняет туда, если папку не выбрать; key.txt там — чужой)."""
+    places = [(Path(d), KEY_FILES) for d in (dirs or (PROJECT, PROJECT.parent))]
+    if dirs is None:
+        places += [(d, KEY_FILES[0::2]) for d in user_dirs()]
     found = []
-    for d in dirs or (PROJECT, PROJECT.parent):
-        for name in KEY_FILES:
-            if (Path(d) / name).is_file():
-                found.append(Path(d) / name)
+    for d, names in places:
+        for name in names:
+            if (d / name).is_file() and d / name not in found:
+                found.append(d / name)
     return found
 
 
@@ -393,6 +410,13 @@ def take_key_file(cfg: dict, opener=urllib.request.urlopen, probe=probe_key, dir
             return None, None
     if path is None:
         return None
+    if key == cfg.get("api_key") and cfg.get("model"):  # этот ключ уже в настройках: файл не нужен
+        if only:
+            try:
+                path.unlink()
+            except OSError:
+                pass
+        return None
     model, why, kind = pick_model(key, opener)
     if not model:
         if kind == "net":                                # прежний рабочий ключ непроверенным не затирать
@@ -425,7 +449,8 @@ def take_key_file(cfg: dict, opener=urllib.request.urlopen, probe=probe_key, dir
     return key, model
 
 
-def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tuple[str | None, str | None] | None:
+def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key,
+            clipboard=clipboard_text) -> tuple[str | None, str | None] | None:
     """Спросить ключ; он проверяется списком моделей и крошечным запросом (есть ли кредит).
     Пустой Enter — «не сейчас» (ничего не запоминается; при смене ключа, keep=True, — оставить как было → None);
     «0» — без Claude (запоминается). Нет связи — новый ключ сохраняется (проверится в следующий раз), но рабочий
@@ -437,16 +462,29 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
         say("  Цена — около $3–4 за 40-минутный матч (оценка). В подписку Max входит кредит на API ($100 в месяц у Max 5x):")
         say("  claude.ai в браузере → Settings → Billing → «API credits»; без него — пополнить: platform.claude.com → Billing.")
         say(f"  Ключ: {KEYS_PAGE} → Create Key (Scope — Default workspace), скопировать.")
-    say("  Вставьте ключ (правый щелчок мыши или Ctrl+V) и нажмите Enter — вместо ключа на экране будут звёздочки.")
-    say(f"  Не вставляется — закройте это окно, сохраните ключ Блокнотом в файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat и")
-    say("  запустите ИГРАТЬ.bat снова.")
-    if keep:
-        say("  Оставить как было — просто Enter. Больше не играть по ключу — 0 и Enter.")
-    else:
-        say("  Ключа нет — просто Enter: сыграют агенты по подписке (медленнее), ключ спрошу при следующем запуске.")
-        say("  Больше не спрашивать ключ — 0 и Enter.")
+    found = _KEY_RE.search(clipboard() or "")           # ключ скопирован — вставлять не нужно (ERRORS №114)
+    clip_key = found.group(0) if found and looks_like_key(found.group(0)) else None
+    if clip_key == cfg.get("api_key"):                  # тот же, что уже не подошёл, — не предлагать
+        clip_key = None
+    if clip_key:
+        say(f"  В буфере обмена есть ключ {mask(clip_key)}. Взять его — просто Enter; не брать — н и Enter.")
+        a = _ask(ask, "  > ")
+        if a is None:
+            return None if keep else (None, None)        # Ctrl+C
+        if a:
+            clip_key = None
+    if not clip_key:
+        say("  Скопируйте ключ (Ctrl+C) и запустите ИГРАТЬ.bat снова — лаунчер возьмёт его из буфера обмена сам. Или вставьте")
+        say("  ключ сюда (правый щелчок мыши или Ctrl+V) и нажмите Enter — вместо ключа на экране будут звёздочки.")
+        say(f"  Не вставляется — закройте это окно, сохраните ключ Блокнотом в файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat и")
+        say("  запустите ИГРАТЬ.bat снова.")
+        if keep:
+            say("  Оставить как было — просто Enter. Больше не играть по ключу — 0 и Enter.")
+        else:
+            say("  Ключа нет — просто Enter: сыграют агенты по подписке (медленнее), ключ спрошу при следующем запуске.")
+            say("  Больше не спрашивать ключ — 0 и Enter.")
     for _ in range(3):
-        key = _ask(ask, "  ключ> ")
+        key, clip_key = clip_key or _ask(ask, "  ключ> "), None
         if key is None or (not key and keep):
             return None if keep else (None, None)        # Ctrl+C или «оставить как было»
         if not key:

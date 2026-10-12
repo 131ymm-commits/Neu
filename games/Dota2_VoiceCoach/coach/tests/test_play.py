@@ -375,6 +375,51 @@ class Launcher(unittest.TestCase):
         for need_text in ("звёздочки", "ключ.txt", "закройте это окно", "Default workspace", "API credits"):
             self.assertIn(need_text, text)
 
+    def test_key_from_clipboard_and_user_folders(self):
+        """Автор 12.10.2026: ни Ctrl+V, ни правый щелчок, ни файл (лежал не там) не помогли. Ключ скопирован — лаунчер
+        видит его в буфере обмена и берёт по Enter; «ключ.txt» ищется и в Документах, на рабочем столе, в Загрузках."""
+        K = "sk-ant-usr-Test_Key-0123456789abcdef0123"
+        ok = opener_for({P.MODELS_API: self.MODELS})
+        good = lambda key, model, opener: (True, "")                         # noqa: E731
+        asked = []
+        cfg = {}
+        got = P.ask_key(cfg, lambda q: asked.append(q) or "", ok, probe=good, clipboard=lambda: "  " + K + "\r\n")
+        self.assertEqual(got, (K, self.NEW))
+        self.assertEqual(asked, ["  > "])                                     # один Enter — и всё
+        text = "\n".join(self.out)
+        self.assertIn(f"В буфере обмена есть ключ {P.mask(K)}", text)
+        self.assertNotIn("Вставьте ключ", text)
+        self.assertNotIn(K, text)
+        self.assertEqual(P.load_config(self.cfg_path)["api_key"], K)
+        # «н» — не брать: обычный вопрос; Enter на нём — без ключа
+        self.out.clear()
+        answers = iter(["н", ""])
+        self.assertEqual(P.ask_key({}, lambda q: next(answers), ok, probe=good, clipboard=lambda: K), (None, None))
+        self.assertIn("Скопируйте ключ (Ctrl+C)", "\n".join(self.out))
+        # в буфере не ключ или тот же, что уже не подошёл, — не предлагать
+        for clip, saved in (("просто текст", {}), (K, {"api_key": K})):
+            asked.clear()
+            P.ask_key(saved, lambda q: asked.append(q) or "", ok, keep=bool(saved), probe=good, clipboard=lambda: clip)
+            self.assertEqual(asked, ["  ключ> "])
+        # «ключ.txt» в Документах (туда сохраняет Блокнот); key.txt там — чужой, не трогать
+        with tempfile.TemporaryDirectory() as tmp:
+            game, docs = Path(tmp) / "bat" / "DotaCoach", Path(tmp) / "Documents"
+            game.mkdir(parents=True)
+            docs.mkdir()
+            (docs / "key.txt").write_text(K, encoding="utf-8")
+            with mock.patch.object(P, "PROJECT", game), mock.patch.object(P, "user_dirs", lambda: [docs]):
+                self.assertEqual(P.key_files(), [])
+                (docs / "ключ.txt").write_text(K, encoding="utf-8")
+                self.assertEqual(P.key_files(), [docs / "ключ.txt"])
+                self.assertEqual(P.take_key_file({}, ok, good), (K, self.NEW))
+                self.assertFalse((docs / "ключ.txt").exists())
+                self.assertTrue((docs / "key.txt").exists())
+                (docs / "ключ.txt").write_text(K, encoding="utf-8")         # тот же ключ уже в настройках — молча
+                self.out.clear()
+                self.assertIsNone(P.take_key_file({"api_key": K, "model": self.NEW}, opener_for({}), good))
+                self.assertFalse((docs / "ключ.txt").exists())
+                self.assertEqual(self.out, [])
+
     def test_changing_key_keeps_it_on_empty_enter(self):
         """Рецензия 2: случайная клавиша за 3 с и Enter на вопросе стирали сохранённый ключ."""
         ok = opener_for({P.MODELS_API: self.MODELS})

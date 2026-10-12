@@ -60,5 +60,7 @@ for line in open(src):
                 out.append(f'- _действие: {x.get("name")} — {str(d)[:160]}_\n')
 # идентификаторы моделей (claude-<линия>-<версия>) в журнал не выгружаются — правило среды для файлов репозитория
 text = re.sub(r'claude-(?:haiku|opus|sonnet|fable|mythos)-\d[\w.-]*', '<модель>', ''.join(out))
+# ключи API (sk-ant-…) в журнал не выгружаются никогда — автор может прислать ключ в чат (12.10.2026)
+text = re.sub(r'sk-ant-[A-Za-z0-9_\-]{8,}', 'sk-ant-<скрыт>', text)
 open(dst, 'w').write(text)
 print(len(out), 'blocks')
