@@ -5,7 +5,12 @@ set -uo pipefail
 S=${1:?нужно main или rep}
 cd "$(dirname "$0")/../.."
 E=experiments/2026-10-07_SELECT-01
-if pgrep -f "run_select01.sh $S" > /dev/null; then echo "процесс: идёт"; else echo "процесс: НЕ идёт"; fi
+L=.cache/select01_live
+if pgrep -f "^bash experiments/2026-10-07_SELECT-01/run_select01.sh $S" > /dev/null; then echo "процесс: идёт"; else echo "процесс: НЕ идёт"; fi
+for j in ${S}_exec_journal ${S}_eval_journal; do       # снимок живого журнала в run/ (журнал только дописывается)
+  [ -d $L/$j ] && mkdir -p $E/run/$j && cp -a $L/$j/. $E/run/$j/
+done
+[ -f $L/${S}_run.log ] && cp -a $L/${S}_run.log $E/run/${S}_run.log
 python3 - "$E" "$S" <<'EOF'
 import json, sys, os, glob
 E, S = sys.argv[1], sys.argv[2]

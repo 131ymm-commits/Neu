@@ -4,3 +4,6 @@
 {"arm": "exec", "at": "2026-10-12T17:08:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8003|exec", "role": "основной", "task": "WH_8003", "поток": "WH_8003_exec-bc8bdeb9.a001.osn.jsonl.gz"}
 {"arm": "exec", "at": "2026-10-12T17:08:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8002|exec", "role": "основной", "task": "WH_8002", "поток": "WH_8002_exec-f1357d53.a001.osn.jsonl.gz"}
 {"arm": "exec", "at": "2026-10-12T17:09:59+00:00", "attempt": 1, "event": "вызов", "job": "WH_8004|exec", "role": "основной", "task": "WH_8004", "поток": "WH_8004_exec-7e44aedc.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-10-12T17:10:27+00:00", "attempt": 1, "event": "вызов", "job": "WH_8005|exec", "role": "основной", "task": "WH_8005", "поток": "WH_8005_exec-b4b35a2b.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-10-12T17:10:50+00:00", "attempt": 1, "event": "вызов", "job": "WH_8006|exec", "role": "основной", "task": "WH_8006", "поток": "WH_8006_exec-2c915eac.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-10-12T17:10:59+00:00", "attempt": 1, "event": "вызов", "job": "WH_8007|exec", "role": "основной", "task": "WH_8007", "поток": "WH_8007_exec-b2e3ae1d.a001.osn.jsonl.gz"}
