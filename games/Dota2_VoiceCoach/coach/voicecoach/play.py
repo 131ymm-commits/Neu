@@ -1473,6 +1473,11 @@ def report_info(reports: dict, final: bool = False, learned=None) -> dict:
     if learned:
         info["Обучение (Д20)"] = [{k: r.get(k) for k in ("team", "pos", "hero", "match", "row", "verdicts", "added", "say")}
                                   for r in learned]
+    track = RPT.read_track(reports.get("track"))                  # Д24: движение героев по карте
+    if track:
+        info["Движение героев: сводка"] = RPT.track_summary(track)
+        if final:
+            info[f"Движение героев: путь (точка раз в {RPT.TRACK_PATH_EVERY} с)"] = RPT.track_path_lines(track)
     if dlog is not None and getattr(dlog, "copy", None) is not None:   # ходы соперника — только после игры (Д16)
         info["Консоль Доты: строки кастомки и ошибки"] = RPT.dota_lines(RPT.read_text(dlog.copy), moves=final)
     if final:
@@ -1670,11 +1675,12 @@ def _main(argv, ask, ask_secret, enter) -> int:
 
     say("[3/6] Сервер тренера")
     log = LOGS / f"agents_local_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"
+    track = LOGS / f"track_local_{time.strftime('%Y%m%d_%H%M%S')}.jsonl"   # Д24: движение героев
     memory = LRN.Memory(LOGS.parent / "memory")                   # память героев между матчами (Д20)
     prices = API_PRICES if mode == "key" else None
     srv = bind(lambda: serve("127.0.0.1", GAME_PORT, lambda room: AgentHub(
         {"radiant": backend, "dire": backend}, max_calls=max_calls, log_path=log, memory=memory, prices=prices,
-        **pace)), GAME_PORT,
+        track_path=track, **pace)), GAME_PORT,
         "серверу тренера", ours=already_running)
     if srv is None:
         return 1
@@ -1776,7 +1782,8 @@ def _main(argv, ask, ask_secret, enter) -> int:
 
     drive = RPT.drive_folder()
     live_stop = threading.Event()
-    reports = {"wlog": wlog, "dlog": dlog, "room": room, "log": log, "drive": drive, "ai": ai, "coach_log": coach_log}
+    reports = {"wlog": wlog, "dlog": dlog, "room": room, "log": log, "drive": drive, "ai": ai, "coach_log": coach_log,
+               "track": track}
     if drive is not None:
         say(f"  Отчёты для Claude: на Google Диск ({drive}) — раз в минуту и в конце; Claude прочитает их сам.")
     else:

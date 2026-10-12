@@ -764,6 +764,9 @@ def make_backend(kind: str, model: str | None = None, claude: str = "claude", ef
 
 # --- агенты и их расписание ---
 
+TRACK_EVERY = 2.0                       # с игры между точками трека героя (Д24): 40 минут × 10 героев ≈ 12 000 строк
+
+
 @dataclass
 class HeroAgent:
     team: str
@@ -835,7 +838,7 @@ class AgentHub:
                  error_gap: float = 3.0, max_inflight: int = 10, max_calls: int | None = None,
                  log_path: str | Path | None = None, personas: dict | None = None, obedience: float = 0.85,
                  prices: dict | None = None, sync: bool = False, coach_gap: float = 3.0,
-                 memory: LRN.Memory | None = None):
+                 memory: LRN.Memory | None = None, track_path: str | Path | None = None):
         self.backends = backends                  # {"radiant": мотор, "dire": мотор}
         self.memory = memory if memory is not None else LRN.Memory(None)    # память героев между матчами (Д20)
         self.finished: list[dict] = []            # итоги матчей героев (для окна хоста)
@@ -859,6 +862,9 @@ class AgentHub:
         self.pause_until = {t: 0.0 for t in backends}         # пауза по retry-after — у стороны, которой ответили 429
         self.pause_why = {t: "лимит API" for t in backends}
         self.log_path = Path(log_path) if log_path else None
+        # трек героев (Д24, слова автора: «можно просто посмотреть движения героя на карте»): точка раз в TRACK_EVERY с
+        self.track_path = Path(track_path) if track_path else None
+        self._track_at: dict[tuple, float] = {}
         self.run = f"{time.time():.0f}-{id(self) % 10000}"   # новый запуск сервера — номера решений с 1, игра их сбрасывает
         self.chat = {t: deque(maxlen=40) for t in backends}   # голосовой чат каждой команды (слышит только своя)
         self.chat_seq = 0
@@ -1050,6 +1056,7 @@ class AgentHub:
                     continue                              # битое наблюдение одного героя не мешает остальным
                 if w is not None:
                     wants.append((w, obs))
+            track = self._track_rows(payload) if self.track_path else []
             finish = list(self._pending_finish)
             self._pending_finish.clear()
             ended = payload.get("ended") if isinstance(payload.get("ended"), dict) else None
@@ -1072,6 +1079,13 @@ class AgentHub:
                     jobs.append(job)
         for rec in applied:
             self._log(rec)
+        if track:
+            try:
+                self.track_path.parent.mkdir(parents=True, exist_ok=True)
+                with self.track_path.open("a", encoding="utf-8") as f:
+                    f.write("".join(line + "\n" for line in track))
+            except OSError:                               # трек вспомогательный: игра идёт и без него
+                pass
         for job in jobs:
             if self.sync:
                 self._run(*job)
@@ -1284,6 +1298,41 @@ class AgentHub:
                 added.append(LRN.clean(item.get("text")))
         res["added"] = added
         res["say"] = str(data.get("say") or "")[:MAX_SAY] if isinstance(data, dict) else ""
+
+    def _track_rows(self, payload: dict) -> list[str]:
+        """Точки трека героев из обмена с игрой (под self.lock): где герой, здоровье, цифры, что делают руки и какой план
+        дал агент. Каждый герой — не чаще раза в TRACK_EVERY с по часам игры; часы пошли назад (новый матч) — сразу."""
+        rows = []
+        for obs in payload.get("heroes") or []:
+            if not isinstance(obs, dict):
+                continue
+            try:
+                key = (str(obs.get("team")), int(obs.get("pos")))
+                t = float(payload.get("clock", obs.get("clock")))
+            except (TypeError, ValueError):
+                continue
+            last = self._track_at.get(key)
+            if last is not None and last <= t < last + TRACK_EVERY:
+                continue
+            self._track_at[key] = t
+            ag = self.agents.get(key)
+            dec = (ag.decision if ag is not None else None) or {}
+            xy = obs.get("xy") if isinstance(obs.get("xy"), list) and len(obs.get("xy")) == 2 else [None, None]
+            hp = obs.get("hp") if isinstance(obs.get("hp"), list) and len(obs.get("hp")) == 2 else [0, 0]
+            st = obs.get("stats") if isinstance(obs.get("stats"), dict) else {}
+            near = obs.get("near") if isinstance(obs.get("near"), dict) else {}
+            try:
+                hp_pct = round(100 * float(hp[0]) / float(hp[1])) if hp[1] else 0
+            except (TypeError, ValueError, ZeroDivisionError):
+                hp_pct = 0
+            rows.append(json.dumps({
+                "t": round(t, 1), "team": key[0], "pos": key[1], "hero": obs.get("hero"), "x": xy[0], "y": xy[1],
+                "hp": hp_pct, "alive": bool(obs.get("alive")), "lvl": obs.get("lvl"), "gold": obs.get("gold"),
+                "lh": st.get("lh"), "dn": st.get("dn"), "k": st.get("k"), "d": st.get("d"), "where": obs.get("where"),
+                "doing": str(obs.get("doing") or "")[:80], "plan": dec.get("plan"),
+                "to": dec.get("where") or dec.get("target") or dec.get("ally"),
+                "ec": near.get("enemy_creeps"), "wc": near.get("weak_enemy_creeps")}, ensure_ascii=False))
+        return rows
 
     def _log(self, rec: dict) -> None:
         if not self.log_path:

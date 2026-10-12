@@ -917,3 +917,38 @@ class Learning(unittest.TestCase):
         system = self.fake.calls[0]["system"]
         self.assertIn("[тренер] Не дерись до 6 уровня", system)
         self.assertIn("КАК ТЫ УЧИШЬСЯ", system)
+
+
+class Track(unittest.TestCase):
+    """Д24 (слова автора 12.10.2026: «можно просто посмотреть движения героя на карте и будет понятно как он себя
+    ведет»): сервер пишет трек — точку героя раз в 2 с по часам игры: где, здоровье, цифры, что делают руки, план."""
+
+    def test_track_every_two_seconds_with_plan(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "logs" / "track.jsonl"
+            hub = A.AgentHub({"radiant": A.RulesBackend(), "dire": A.RulesBackend()}, sync=True, track_path=path)
+            more = {"xy": [-6000, -5800], "where": "бот, своя половина", "doing": "фарм бот: жду добивание",
+                    "stats": {"lh": 3, "dn": 1, "k": 0, "d": 0}, "near": {"enemy_creeps": 4, "weak_enemy_creeps": 1}}
+            for t in (0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.9, 4.0):
+                hub.tick({"clock": t, "heroes": [obs(clock=int(t), hp=(250, 500), **more),
+                                                 obs(clock=int(t), pos=2, team="dire", **more)]})
+            rows = [json.loads(x) for x in path.read_text(encoding="utf-8").splitlines()]
+            self.assertEqual([(r["team"], r["t"]) for r in rows if r["pos"] == 1],
+                             [("radiant", 0.0), ("radiant", 2.0), ("radiant", 4.0)])
+            self.assertEqual(len([r for r in rows if r["team"] == "dire"]), 3)
+            r = rows[0]
+            self.assertEqual((r["x"], r["y"], r["hp"], r["alive"], r["lh"], r["dn"], r["ec"], r["wc"]),
+                             (-6000, -5800, 50, True, 3, 1, 4, 1))
+            self.assertEqual((r["where"], r["doing"]), ("бот, своя половина", "фарм бот: жду добивание"))
+            self.assertIsNotNone(rows[-1]["plan"])                             # план — из решения агента (правила)
+            hub.tick({"clock": 0.5, "heroes": [obs(clock=0, **more)]})         # часы назад — новый матч: сразу точка
+            last = json.loads(path.read_text(encoding="utf-8").splitlines()[-1])
+            self.assertEqual((last["team"], last["t"]), ("radiant", 0.5))
+            hub.tick({"clock": 9.0, "heroes": [obs(clock=9, alive=False), "битое", {"team": "radiant"}]})
+            dead = json.loads(path.read_text(encoding="utf-8").splitlines()[-1])
+            self.assertEqual((dead["alive"], dead["x"], dead["hp"]), (False, None, 0))
+
+    def test_no_track_without_path(self):
+        hub = A.AgentHub({"radiant": A.RulesBackend(), "dire": A.RulesBackend()}, sync=True)
+        hub.tick({"clock": 1.0, "heroes": [obs(clock=1)]})
+        self.assertEqual(hub._track_at, {})

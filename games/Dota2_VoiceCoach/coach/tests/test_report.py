@@ -114,5 +114,60 @@ class LauncherReport(unittest.TestCase):
                 self.assertTrue(any("перетащите этот файл в чат" in x for x in out))
 
 
+class TrackReport(unittest.TestCase):
+    """Д24: в отчёте — движение героев: сводка (где был, сколько стоял, что делали руки, план, цифры, смерти) и путь."""
+
+    @staticmethod
+    def rows():
+        out = []
+        for i in range(0, 331):                                     # 0:00–11:00, точка раз в 2 с
+            t = i * 2.0
+            still = 60 <= t < 360                                   # с 1:00 до 6:00 стоит у волны
+            x = int(-6000 + 150 * min(t, 60) + 150 * max(0.0, t - 360))   # идёт 150 в секунду
+            alive = not (400 <= t < 440)                            # 6:40–7:20 мёртв
+            out.append({"t": t, "team": "radiant", "pos": 1, "hero": "sniper", "x": x if alive else None,
+                        "y": -5800 if alive else None, "hp": 30 if 390 <= t < 400 else 90, "alive": alive,
+                        "lvl": 1 + int(t // 120), "gold": 600 + int(t), "lh": int(t // 60), "dn": 0, "k": 0,
+                        "d": 1 if t >= 400 else 0, "where": "бот, своя половина" if alive else None,
+                        "doing": ("фарм бот: жду добивание" if still else "фарм бот: иду к своей волне") if alive else "",
+                        "plan": "farm", "to": "bot", "ec": 4, "wc": 0})
+        return out
+
+    def test_summary_and_path(self):
+        rows = self.rows()
+        text = R.track_summary(rows)
+        self.assertIn("radiant 1 sniper: 0:00–11:00", text)
+        self.assertIn("стоял на месте 49% времени живым", text)     # 150 из 309 соседних пар живым
+        self.assertIn("где был: бот, своя половина 100%", text)
+        self.assertIn("фарм бот: жду добивание 48%", text)              # 150 из 311 живых точек
+        self.assertIn("план агента: farm bot 100%", text)
+        self.assertIn("5:00 доб 5/0 уб 0 см 0 ур 3 зол 900", text)
+        self.assertIn("10:00 доб 10/0", text)
+        self.assertIn("смерти: 6:40 (бот, своя половина, 8700,-5800, было 30%, руки: фарм бот: иду к своей волне)", text)
+        path = R.track_path_lines(rows)
+        head, line = path.splitlines()
+        self.assertIn("раз в 10 с", head)
+        pts = line.split(": ", 1)[1].split()
+        self.assertTrue(line.startswith("radiant 1 sniper с 0:00: -60,-58 -45,-58 "))
+        self.assertEqual(len(pts), 67)                               # раз в 10 с за 11 минут
+        self.assertEqual(pts[40:44], ["м", "м", "м", "м"])            # 6:40–7:10 мёртв
+        self.assertEqual(pts[10], "30,-58")                          # стоит у волны
+        self.assertEqual(R.read_track(None), [])
+
+    def test_report_info_has_track(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            track = Path(tmp) / "track.jsonl"
+            track.write_text("\n".join(json.dumps(r, ensure_ascii=False) for r in self.rows()) + "\nне json\n",
+                             encoding="utf-8")
+            reports = {"wlog": None, "dlog": None, "room": None, "log": None, "track": track}
+            live = P.report_info(reports)
+            self.assertIn("Движение героев: сводка", live)
+            self.assertFalse(any(k.startswith("Движение героев: путь") for k in live))   # путь — только в итоговом
+            final = P.report_info(reports, final=True)
+            self.assertIn(f"Движение героев: путь (точка раз в {R.TRACK_PATH_EVERY} с)", final)
+            text = R.build(final)
+            self.assertLess(len(text), 200_000)
+
+
 if __name__ == "__main__":
     unittest.main()

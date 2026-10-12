@@ -148,6 +148,107 @@ def agent_samples(path, limit: int = MAX_SAMPLES) -> tuple[str, dict]:
     return "\n".join(out), counts
 
 
+TRACK_PATH_EVERY = 10         # с между точками пути героя в итоговом отчёте (в треке — раз в 2 с)
+STILL_DIST = 60               # единиц карты за 2 с — «стоит на месте» (скорость героя ~300 в секунду)
+
+
+def read_track(path) -> list[dict]:
+    """Трек героев (Д24): JSONL, точка героя раз в 2 с по часам игры."""
+    rows = []
+    for line in read_text(path).splitlines():
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        if isinstance(r, dict) and r.get("team") and r.get("pos") is not None and r.get("t") is not None:
+            rows.append(r)
+    return rows
+
+
+def _clock(t) -> str:
+    t = int(round(float(t or 0)))
+    return ("-" if t < 0 else "") + f"{abs(t) // 60}:{abs(t) % 60:02d}"
+
+
+def _share(counter, total: int, top: int) -> str:
+    return ", ".join(f"{k} {round(100 * n / max(1, total))}%" for k, n in counter.most_common(top))
+
+
+def track_summary(rows: list[dict]) -> str:
+    """По каждому герою: где был, сколько стоял, что делали руки, какие планы давал агент, цифры поминутно, смерти."""
+    from collections import Counter, defaultdict              # noqa: PLC0415
+    by = defaultdict(list)
+    for r in rows:
+        by[(str(r["team"]), int(r["pos"]))].append(r)
+    out = [f"Трек: точка героя раз в 2 с по часам игры; «стоит» — сдвинулся меньше чем на {STILL_DIST} за 2 с."]
+    for (team, pos), rs in sorted(by.items()):
+        rs.sort(key=lambda r: float(r["t"]))
+        alive = [r for r in rs if r.get("alive")]
+        still = moving = 0
+        for a, b in zip(rs, rs[1:]):
+            if a.get("alive") and b.get("alive") and None not in (a.get("x"), a.get("y"), b.get("x"), b.get("y")) \
+                    and 0 < float(b["t"]) - float(a["t"]) <= 5:
+                if ((b["x"] - a["x"]) ** 2 + (b["y"] - a["y"]) ** 2) ** 0.5 < STILL_DIST:
+                    still += 1
+                else:
+                    moving += 1
+        zones = Counter(r["where"] for r in alive if r.get("where"))
+        doing = Counter(r["doing"] for r in alive if r.get("doing"))
+        plans = Counter(f"{r['plan']} {r.get('to') or ''}".strip() for r in rs if r.get("plan"))
+        out.append(f"\n{team} {pos} {rs[-1].get('hero') or '?'}: {_clock(rs[0]['t'])}–{_clock(rs[-1]['t'])}, живой "
+                   f"{round(100 * len(alive) / max(1, len(rs)))}% точек; стоял на месте "
+                   f"{round(100 * still / max(1, still + moving))}% времени живым")
+        if zones:
+            out.append(f"  где был: {_share(zones, len(alive), 5)}")
+        if doing:
+            out.append(f"  руки: {_share(doing, len(alive), 8)}")
+        if plans:
+            out.append(f"  план агента: {_share(plans, len(rs), 6)}")
+        marks = []
+        for m in range(5, int(float(rs[-1]['t']) // 60) + 1, 5):
+            done = [r for r in rs if float(r["t"]) <= m * 60]
+            if done:
+                r = done[-1]
+                marks.append(f"{m}:00 доб {r.get('lh')}/{r.get('dn')} уб {r.get('k')} см {r.get('d')} ур {r.get('lvl')} "
+                             f"зол {r.get('gold')}")
+        last = rs[-1]
+        marks.append(f"конец доб {last.get('lh')}/{last.get('dn')} уб {last.get('k')} см {last.get('d')} "
+                     f"ур {last.get('lvl')} зол {last.get('gold')}")
+        out.append("  цифры: " + "; ".join(marks))
+        deaths = []
+        for a, b in zip(rs, rs[1:]):
+            if a.get("alive") and not b.get("alive"):
+                deaths.append(f"{_clock(b['t'])} ({a.get('where') or '?'}, {a.get('x')},{a.get('y')}, было {a.get('hp')}%, "
+                              f"руки: {a.get('doing') or '—'})")
+        if deaths:
+            out.append("  смерти: " + "; ".join(deaths))
+    return "\n".join(out)
+
+
+def track_path_lines(rows: list[dict], every: float = TRACK_PATH_EVERY) -> str:
+    """Путь героев для карты: по строке на героя — точки раз в every с, «x,y» в сотнях единиц карты (центр карты — 0,0;
+    углы — около ±75), «м» — мёртв. 40 минут — около 2 КБ на героя."""
+    from collections import defaultdict                      # noqa: PLC0415
+    by = defaultdict(list)
+    for r in rows:
+        by[(str(r["team"]), int(r["pos"]))].append(r)
+    out = [f"Путь: точка раз в {every:g} с, x,y — в сотнях единиц карты, м — мёртв."]
+    for (team, pos), rs in sorted(by.items()):
+        rs.sort(key=lambda r: float(r["t"]))
+        pts, last = [], None
+        for r in rs:
+            t = float(r["t"])
+            if last is not None and t - last < every:
+                continue
+            last = t
+            if not r.get("alive") or r.get("x") is None or r.get("y") is None:
+                pts.append("м")
+            else:
+                pts.append(f"{round(r['x'] / 100)},{round(r['y'] / 100)}")
+        out.append(f"{team} {pos} {rs[-1].get('hero') or '?'} с {_clock(rs[0]['t'])}: {' '.join(pts)}")
+    return "\n".join(out)
+
+
 def build(info: dict) -> str:
     """Текст отчёта из частей: info — {заголовок раздела: текст или словарь}; порядок — как в info."""
     parts = [f"DotaCoach — отчёт для Claude, {time.strftime('%Y-%m-%d %H:%M:%S')}"]
