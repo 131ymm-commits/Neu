@@ -482,6 +482,28 @@ class DriverTests(unittest.TestCase):
             drv3.run([self.job('j1'), self.job('j2'), self.job('j3')])
         self.assertIn('потолок', str(cm.exception))
 
+    def test_stop_after_finishes_started_calls_and_pauses(self):
+        started = []
+
+        def slow(cfg, job, gz):
+            started.append(job['id'])
+            import time as _t
+            _t.sleep(0.3)                                    # вызов идёт дольше, чем срок паузы
+            return call(events=good_stream())
+        drv = rs.Driver(make_cfg(), seed='S', jobs_sha256='jobs', journal_dir=self.journal, streams_dir=self.streams,
+                        call_fn=slow, pre_call_check=lambda: 'bin-sha', log=lambda m: None, stop_after=0.1)
+        drv.start()
+        with self.assertRaises(rs.RunStop) as cm:
+            drv.run([self.job(f'j{i}') for i in range(5)])
+        self.assertIn('пауза по времени', str(cm.exception))
+        recs = read_journal(self.journal, 'T1')
+        self.assertEqual(len(started), 1)                    # parallel=1: начат один вызов
+        self.assertEqual([r['final'] for r in recs], ['годный'])   # и он записан, а не потерян
+        drv2 = self.driver(make_cfg(), Script([call(events=good_stream()) for _ in range(4)]))
+        drv2.start()
+        drv2.run([self.job(f'j{i}') for i in range(5)])      # продолжение той же командой: остальные 4
+        self.assertEqual(len(read_journal(self.journal, 'T1')), 5)
+
     def test_config_change_on_resume_stops(self):
         drv = self.driver(make_cfg(), Script([]))
         drv.start()

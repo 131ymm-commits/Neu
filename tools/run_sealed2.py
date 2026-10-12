@@ -15,6 +15,8 @@
       Прогон голов. JOBS.jsonl: строка на вызов {"task", "id", "arm"(необязательно), "prompt", "schema"}.
       --max-calls — потолок на журнал: считаются все начатые вызовы по run_log.jsonl, с прошлыми запусками.
       Серия «потерян» подряд (max_consecutive_lost) считается в пределах одного запуска.
+      --stop-after С: мягкая пауза — через С секунд новые вызовы не начинаются, начатые дописываются в журнал, выход с
+      кодом 3; продолжение той же командой (нужно, чтобы прогон укладывался в срок жизни фоновой задачи).
       Продолжение с места: итоговые вызовы из журнала не запрашиваются заново. Конфигурация и jobs сверяются
       с ЖУРНАЛ/run_config.json; при расхождении драйвер останавливается.
       --task-from-id: задания в формате run_sealed v1 ({id, prompt, schema}), задача и рука берутся из id «задача|рука|i».
@@ -778,7 +780,7 @@ def states_from_records(recs):
 
 class Driver:
     def __init__(self, cfg, *, seed, jobs_sha256, journal_dir, streams_dir, parallel=1, max_calls=None,
-                 call_fn=None, pre_call_check=None, now_fn=None, sleep_fn=None, log=None):
+                 call_fn=None, pre_call_check=None, now_fn=None, sleep_fn=None, log=None, stop_after=None):
         self.cfg = cfg
         self.seed = seed
         self.jobs_sha256 = jobs_sha256
@@ -797,6 +799,8 @@ class Driver:
         self.lock = threading.Lock()
         self.file_locks = {}
         self.stop = threading.Event()
+        self.stop_after = stop_after      # мягкая пауза: через столько секунд новые вызовы не начинаются
+        self.time_up = False
         self.pause_until = None
         self.calls = 0
         self.lost_streak = 0
@@ -1069,15 +1073,28 @@ class Driver:
                 pending.append((j, st))
         self._log_run('план', {'заданий_в_плане': len(pending), 'задач': len(order)})
         errors = []
+        timer = None
+        if self.stop_after:
+            def time_up():                     # начатые вызовы дописываются; ожидания и новые вызовы прерываются
+                self.time_up = True
+                self.stop.set()
+            timer = threading.Timer(self.stop_after, time_up)
+            timer.daemon = True
+            timer.start()
         with ThreadPoolExecutor(max_workers=self.parallel) as ex:
             futs = [ex.submit(self._run_job_safe, j, st) for j, st in pending]
             for f in as_completed(futs):
                 exc = f.exception()
                 if exc is not None:
                     errors.append(exc)
+        if timer is not None:
+            timer.cancel()
         if errors:
             first = next((e for e in errors if isinstance(e, RunStop)), errors[0])
             raise first
+        if self.time_up:
+            self._log_run('пауза', {'причина': f'--stop-after {self.stop_after} с'})
+            raise RunStop(f'пауза по времени (--stop-after {self.stop_after} с): начатые вызовы записаны, продолжить той же командой')
         self._log_run('готово', {'заданий_в_плане': len(pending)})
 
 
@@ -1202,7 +1219,8 @@ def cmd_run(args):
     cfg = load_config(args.config)
     jobs = load_jobs(args.jobs, task_from_id=args.task_from_id)
     drv = Driver(cfg, seed=args.seed, jobs_sha256=sha256_file(args.jobs), journal_dir=args.journal,
-                 streams_dir=args.streams, parallel=args.parallel, max_calls=args.max_calls)
+                 streams_dir=args.streams, parallel=args.parallel, max_calls=args.max_calls,
+                 stop_after=args.stop_after)
     drv.start()
     drv.run(jobs)
     print(f'прогон завершён: заданий {len(jobs)}, журнал {args.journal}')
@@ -1320,6 +1338,8 @@ def main(argv=None):
     p.add_argument('--parallel', type=int, default=1)
     p.add_argument('--max-calls', type=int, default=None)
     p.add_argument('--task-from-id', action='store_true', help='задания в формате v1: задача и рука из id «задача|рука|i»')
+    p.add_argument('--stop-after', type=float, default=None,
+                   help='мягкая пауза через столько секунд: начатые вызовы дописываются, новые не начинаются, выход с кодом 3')
     p.set_defaults(func=cmd_run)
     p = sub.add_parser('summary', help='сводка журнала по рукам')
     p.add_argument('--journal', required=True)

@@ -12,6 +12,9 @@ E=experiments/2026-10-07_SELECT-01
 L=.cache/select01_live      # живой журнал — вне git (иначе хук требует коммита на каждом ходу); снимок — в $E/run/
 mkdir -p $L
 snap () { mkdir -p $E/run/$1 && cp -a $L/$1/. $E/run/$1/; }   # журнал только дописывается: копии достаточно
+STOP_AFTER=${STOP_AFTER:-6000}   # мягкая пауза запуска, с: фоновая задача живёт не дольше 2 ч (DEVIATIONS.md, 12.10, 18:2x)
+T0=$(date +%s)
+left () { echo $(( STOP_AFTER - ($(date +%s) - T0) )); }
 case $S in
   main) export SELECT_SECRET=/root/select_secret; SEEDS=seeds_main.json ;;
   rep)  export SELECT_SECRET=/root/select_secret_rep; SEEDS=seeds_rep.json ;;
@@ -20,14 +23,15 @@ esac
 (cd $E && python3 harness.py tasks $SEEDS WH && python3 harness.py exec_jobs ${S}_exec $SEEDS WH)
 python3 tools/run_sealed2.py run --jobs $E/run/${S}_exec_jobs.jsonl --task-from-id --seed SELECT-01-${S}-exec \
     --journal $L/${S}_exec_journal --streams .cache/select01_streams/${S}_exec \
-    --config $E/run/select01_config.json --parallel 3 --max-calls 150
+    --config $E/run/select01_config.json --parallel 3 --max-calls 150 --stop-after $(left) || { snap ${S}_exec_journal; exit 3; }
 snap ${S}_exec_journal
 python3 tools/run_sealed2.py export --journal $E/run/${S}_exec_journal --out $E/run/${S}_exec_out.jsonl
 (cd $E && python3 harness.py collect_exec ${S}_exec && \
     python3 harness.py eval_jobs ${S}_eval B_zayavka:5,B_blind:12,C_N:5,D_N:5 $SEEDS WH)
+[ "$(left)" -gt 300 ] || { echo "пауза: до срока запуска меньше 5 минут, этап оценщиков — при продолжении"; exit 3; }
 python3 tools/run_sealed2.py run --jobs $E/run/${S}_eval_jobs.jsonl --task-from-id --seed SELECT-01-${S}-eval \
     --journal $L/${S}_eval_journal --streams .cache/select01_streams/${S}_eval \
-    --config $E/run/select01_config.json --parallel 3 --max-calls 3300
+    --config $E/run/select01_config.json --parallel 3 --max-calls 3300 --stop-after $(left) || { snap ${S}_eval_journal; exit 3; }
 snap ${S}_eval_journal
 python3 tools/run_sealed2.py export --journal $E/run/${S}_eval_journal --out $E/run/${S}_eval_out.jsonl
 (cd $E && python3 harness.py collect_eval ${S}_eval)
