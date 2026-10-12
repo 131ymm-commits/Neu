@@ -1,0 +1,7 @@
+{"at": "2026-10-12T16:55:13+00:00", "binary_sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262", "config_sha256": "581de6e775589691c8cd68701bcc66df64e0df7460533f39165db64d6ce535d5", "event": "старт"}
+{"at": "2026-10-12T16:55:13+00:00", "event": "план", "заданий_в_плане": 5, "задач": 1}
+{"arm": "B_zayavka", "at": "2026-10-12T16:55:13+00:00", "attempt": 1, "event": "вызов", "job": "WH_7301|B_zayavka|0", "role": "основной", "task": "WH_7301", "поток": "WH_7301_B_zayavka_0-c8cee01c.a001.osn.jsonl.gz"}
+{"arm": "C_N", "at": "2026-10-12T16:55:32+00:00", "attempt": 1, "event": "вызов", "job": "WH_7301|C_N|0", "role": "основной", "task": "WH_7301", "поток": "WH_7301_C_N_0-f64bbdd1.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-10-12T16:56:01+00:00", "attempt": 1, "event": "вызов", "job": "WH_7301|exec", "role": "основной", "task": "WH_7301", "поток": "WH_7301_exec-96ae5d31.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-12T16:56:58+00:00", "attempt": 1, "event": "вызов", "job": "WH_7301|B_blind|0", "role": "основной", "task": "WH_7301", "поток": "WH_7301_B_blind_0-07ea89c9.a001.osn.jsonl.gz"}
+{"arm": "D_N", "at": "2026-10-12T16:57:29+00:00", "attempt": 1, "event": "вызов", "job": "WH_7301|D_N|0", "role": "основной", "task": "WH_7301", "поток": "WH_7301_D_N_0-697b460b.a001.osn.jsonl.gz"}
