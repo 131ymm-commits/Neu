@@ -813,8 +813,8 @@ class Driver:
     def _append(self, task, rec):
         path = self._journal_path(task)
         with self._file_lock(path):
-            with open(path, 'a', encoding='utf-8') as fh:
-                fh.write(json.dumps(rec, ensure_ascii=False, sort_keys=True) + '\n')
+            with open(path, 'a', encoding='utf-8') as fh:     # без sort_keys: ответ головы хранится в порядке ключей потока
+                fh.write(json.dumps(rec, ensure_ascii=False) + '\n')
                 fh.flush()
                 os.fsync(fh.fileno())
 

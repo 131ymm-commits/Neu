@@ -3,7 +3,8 @@
 # Заглушка вызова отдаёт поток, собранный из записи пилота 2: годная запись → годный поток с тем же ответом и токенами;
 # запись, оборванная лимитом, → сначала итог лимита (rate_limit_event со статусом rejected), затем годный поток с выбором 0.
 # Проверки: (1) годные записи пилота 2 дают в evals тот же choice, inp, out; (2) 38 записей лимита дают по одному
-# ожиданию сброса и не дают «потерян»; (3) порядок вызовов — задача за задачей, руки вперемешку; (4) analyze.py проходит.
+# ожиданию сброса и не дают «потерян»; (3) порядок вызовов — задача за задачей, руки вперемешку; (4) этап исполнителя:
+# collect_exec по выгрузке v2 даёт те же sha256 пулов, что записаны в run/p2_exec_pools.sha256.
 import json, os, shutil, subprocess, sys
 from datetime import datetime, timedelta, timezone
 here = os.path.dirname(os.path.abspath(__file__)); repo = os.path.abspath(os.path.join(here, '..', '..'))
@@ -81,4 +82,20 @@ print(f'годных записей пилота 2: {ok_old}; совпали в 
 print(f'ожиданий сброса: {waits}; «потерян»: {lost}; вызовов: {len(calls)}; блоков задач подряд: {len(blocks)}')
 print('руки первых 27 вызовов:', ' '.join(arms_first))
 assert same == ok_old == 286 and waits == 38 and lost == 0 and len(calls) == 324 + 38 and len(blocks) == 12
+
+# этап исполнителя: те же записи пилота 2 → журнал v2 → export → collect_exec → те же хеши пулов
+v1x = {r['id']: r for r in map(json.loads, open(os.path.join(here, 'run', 'p2_exec_out.jsonl')))}
+xjobs = rs.load_jobs(os.path.join(here, 'run', 'p2_exec_jobs.jsonl'), task_from_id=True)
+v1.update(v1x)
+drv = rs.Driver(rs.default_config(), seed='dryrun-v2-exec', jobs_sha256='dryrun', journal_dir=os.path.join(box, 'journal_exec'),
+                streams_dir=os.path.join(box, 'streams'), call_fn=fake_call, pre_call_check=lambda: rs.PINNED_BIN_SHA256,
+                now_fn=lambda: T[0], sleep_fn=sleep, log=lambda m: None)
+drv.start(); drv.run(xjobs)
+rs.cmd_export(type('A', (), dict(journal=os.path.join(box, 'journal_exec'), out=os.path.join(box, 'run', 'p2v2_exec_out.jsonl'))))
+shutil.rmtree(os.path.join(box, 'pools')); os.makedirs(os.path.join(box, 'pools'))
+subprocess.run([sys.executable, os.path.join(here, 'harness.py'), 'collect_exec', 'p2v2_exec'], env=env, check=True)
+want = json.load(open(os.path.join(here, 'run', 'p2_exec_pools.sha256')))
+got = json.load(open(os.path.join(box, 'run', 'p2v2_exec_pools.sha256')))
+print(f'пулов пилота 2: {len(want)}; совпали по sha256: {sum(got.get(t) == h for t, h in want.items())}')
+assert got == want
 print('сухой прогон: всё сошлось')

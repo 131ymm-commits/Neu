@@ -827,6 +827,14 @@ class OpusReviewTests(unittest.TestCase):
             self.assertIsInstance(r['inp'], int)
             self.assertIsInstance(r['out'], int)
 
+    def test_answer_key_order_is_preserved(self):
+        ans = {'plan': 1, 'claim': 2, 'doubt': 3}
+        drv = self.driver(make_cfg(), Script([call(events=[ev_init(), ev_start(), ev_stop(), ev_result(structured=ans)])]))
+        drv.start()
+        drv.run([self.job()])
+        r = read_journal(self.journal, 'T1')[0]
+        self.assertEqual(list(r['answer']), ['plan', 'claim', 'doubt'])
+
     def test_summary_counts_started_call_without_record(self):
         drv = self.driver(make_cfg(), Script([call(events=good_stream())]))
         drv.start()
