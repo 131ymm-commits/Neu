@@ -3,10 +3,10 @@
 файл все остальное делаеш ты».
 
 Хост запускает ИГРАТЬ.bat — он находит или скачивает Python, обновляет файлы игры и запускает этот лаунчер:
-  1. Claude для героев — через вход подпиской в Claude Code (решение Д15 с дополнением автора 10.10.2026: «всегда
-     будет 2», без меню): лаунчер ставит Claude Code и запускает вход по подписке; из общих лимитов подписки, герои
-     думают реже, чем по ключу; не вышло — в этот раз правила. --rules — правила (бесплатно, не Claude);
-     --api — ключ API (если у подписки появится кредит на API; модель — самая новая из линии быстрых);
+  1. Claude для героев (Д23): есть ключ API — по ключу (быстро: модель без думания, ответ за секунды, платно); ключа
+     нет — один вопрос (вставить ключ; Enter — по подписке, спросит снова; 0 — больше не спрашивать), дальше — вход
+     подпиской в Claude Code (Д15: лаунчер ставит Claude Code и запускает вход; из общих лимитов подписки, ответ
+     5–8 с); не вышло — правила. --rules — правила (бесплатно, не Claude); --api — только ключ; --ask-key — сменить ключ;
   2. ставит кастомку в Доту (папку Доты ищет сам, не нашёл — спрашивает);
   3. скачивает cloudflared (туннель Cloudflare) в .runtime/ — один раз;
   4. запускает сервер тренера, пульт Тьмы и туннель; ссылку на пульт кладёт в ящик (rendezvous.py) и копирует;
@@ -62,6 +62,12 @@ API_THINKING = "disabled"                      # у быстрой модели 
 API_EFFORT = "low"
 # $ за 1M токенов быстрой модели (Haiku 5.5, справка claude-api от 06.10.2026): для оценки расхода в окне
 API_PRICES = {"in": 0.10, "out": 0.50, "cache_read": 0.01, "cache_write": 0.125}
+API_CALL_USD = 0.00026                         # оценка одного решения: ~8000 токенов промпта из кэша, ~1000 входа, ~150 выхода
+TRIAL_OBS = {"team": "radiant", "pos": 1, "hero": "npc_dota_hero_sniper", "clock": 60, "alive": True, "lvl": 1,
+             "hp": [560, 560], "mp": [255, 255], "gold": 300, "where": "бот, своя половина", "doing": "фарм бот",
+             "stats": {"lh": 0, "dn": 0, "k": 0, "d": 0, "a": 0, "seen": 0, "idle": 0}, "enemies": [], "allies": [],
+             "abilities": [], "items": [], "events": [], "coach": [],
+             "enemy_team": ["luna", "lina", "bristleback", "witch_doctor", "jakiro"]}
 SUB_MAX_CALLS = 3000                           # по подписке: вызовов на сторону за запуск (≈ час непрерывной игры); дальше
                                                # руки и правила — лимиты подписки общие с чатом автора (Д22)
 # максимально быстро по подписке (Д22, слова автора: «нет давай максимально быстро без апи»): каждый герой спрашивает
@@ -260,7 +266,8 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
     прежний им не затирается; Ctrl+C — ничего не менять."""
     flush_input()                                        # Enter, нажатый во время закачки, — не ответ
     if not cfg.get("api_key"):
-        say("  Быстрые агенты — по ключу API: Claude отвечает за 1–2 с (по подписке — 5–8 с), герой решает раз в 1,5–2 с.")
+        say("  Быстрые агенты — по ключу API: Claude отвечает за 1–2 с (оценка; по подписке — 5–8 с), герой решает раз в")
+        say("  1,5–2 с. Настоящее время ответа лаунчер покажет пробой сразу после ключа.")
         say("  Цена — около $3–4 за 40-минутный матч (оценка). Ключ: platform.claude.com → Billing — пополнить баланс,")
         say(f"  потом API Keys → Create Key, скопировать ({KEYS_PAGE}).")
     say("  Вставьте ключ (Ctrl+V или правый щелчок мыши) и нажмите Enter. На экране ключ не появится — так задумано.")
@@ -348,10 +355,10 @@ def setup_claude(cfg: dict, args, ask=None, opener=urllib.request.urlopen,
                 got = ask_key(cfg, ask, opener, keep=True, probe=probe)
                 if got is not None:
                     return got
-            say("  В этот раз героев ведут правила.")
+            say("  В этот раз — без ключа.")
             return None, None
         if not ok:
-            say(f"  Пробный запрос к Claude не прошёл: {why}. В этот раз героев ведут правила.")
+            say(f"  Пробный запрос к Claude не прошёл: {why}. В этот раз — без ключа.")
             return None, None
         return key, model
     if kind == "key" and not os.environ.get("ANTHROPIC_API_KEY"):
@@ -361,7 +368,7 @@ def setup_claude(cfg: dict, args, ask=None, opener=urllib.request.urlopen,
     if kind == "net" and cfg.get("model"):
         say(f"  Список моделей недоступен ({why}) — беру прошлую модель.")
         return key, cfg["model"]
-    say(f"  Claude: {why} — в этот раз агенты сыграют на правилах.")
+    say(f"  Claude по ключу: {why} — в этот раз без ключа.")
     return None, None
 
 
@@ -500,6 +507,22 @@ def _setup_subscription(find, install, auth, login, check, update=lambda exe: Fa
     say(f"  Claude Code не ответил: {why}")
     say("  В этот раз героев ведут правила.")
     return None
+
+
+def api_trial(backend) -> tuple[bool, str, float]:
+    """Одно решение героя боевым запросом (тот же промпт, схема, effort, без думания): → (прошло, почему нет, секунд)."""
+    t0 = time.monotonic()
+    try:
+        from .agents import system_prompt, user_prompt, parse_decision    # noqa: PLC0415
+        reply = backend.decide(system_prompt("radiant", 1, TRIAL_OBS["hero"]), user_prompt(TRIAL_OBS, [], [], "проба"),
+                               TRIAL_OBS)
+        data = reply.get("data") if reply.get("data") is not None else reply.get("text") or ""
+        decision, _ = parse_decision(data, TRIAL_OBS)
+        if decision is None:
+            return False, "ответ не разобрался как решение", time.monotonic() - t0
+        return True, "", time.monotonic() - t0
+    except Exception as e:                                # noqa: BLE001 — сеть, 4xx, нет денег
+        return False, f"{type(e).__name__}: {e}"[:200], time.monotonic() - t0
 
 
 def setup_agents(cfg: dict, args, ask_secret=None, opener=urllib.request.urlopen, subscription=setup_subscription,
@@ -1149,8 +1172,8 @@ def parse(argv=None):
     ap = argparse.ArgumentParser(description="Тренер Доты: игра вдвоём одним файлом (ИГРАТЬ.bat)")
     ap.add_argument("--rules", action="store_true", help="агенты на правилах (без Claude, бесплатно)")
     ap.add_argument("--api", action="store_true",
-                    help="Claude по ключу API вместо входа подпиской (если у подписки есть кредит на API)")
-    ap.add_argument("--ask-key", action="store_true", help="с --api: спросить ключ заново")
+                    help="только Claude по ключу API (без ключа — правила, а не подписка)")
+    ap.add_argument("--ask-key", action="store_true", help="спросить ключ API заново (сменить или убрать)")
     ap.add_argument("--max-calls", type=int, default=None,
                     help=f"предел вызовов Claude на сторону (по ключу API — {MAX_CALLS}, по подписке — {SUB_MAX_CALLS})")
     ap.add_argument("--dota", help="папка «dota 2 beta», если не нашлась сама")
@@ -1318,6 +1341,18 @@ def _main(argv, ask, ask_secret, enter) -> int:
         say("")
         mode, info = "off", None
     pace = {}
+    key_backend = None
+    if mode == "key":                                             # проба боевым запросом (рецензия 13): 400 — здесь,
+        key, model = info                                         # а не в матче; заодно — настоящее время ответа
+        key_backend = ApiBackend(model, api_key=key, thinking=API_THINKING, effort=API_EFFORT, timeout=20.0)
+        ok, why, dt = api_trial(key_backend)
+        if ok:
+            say(f"  Проба по ключу: ответ Claude за {dt:.1f} с" +
+                (f" (модель не приняла: {', '.join(key_backend.dropped)})." if key_backend.dropped else "."))
+        else:
+            say(f"  Проба по ключу не прошла: {why}. Дальше — по подписке (Claude Code).")
+            exe = setup_subscription()
+            mode, info = ("sub", exe) if exe else ("off", None)
     if mode == "sub":
         backend = CliBackend(model=CLAUDE_FAST, claude=info, subscription=True, effort=SUB_EFFORT)
         pace = SUB_PACE
@@ -1327,13 +1362,14 @@ def _main(argv, ask, ask_secret, enter) -> int:
             f" решение 4 раза в секунду. Предел — {max_calls} вызовов на сторону за запуск.")
         say("  Кончится лимит подписки — герои доиграют на правилах. Остаток лимитов — в приложении Claude: Settings → Usage.")
     elif mode == "key":
-        key, model = info
-        backend = ApiBackend(model, api_key=key, thinking=API_THINKING, effort=API_EFFORT, timeout=20.0)
-        pace = API_PACE                                 # ключ — только агентам, не в окружение Доты и cloudflared
+        backend = key_backend                           # ключ — только агентам, не в окружение Доты и cloudflared
+        pace = API_PACE
         max_calls = args.max_calls or MAX_CALLS
-        say(f"  Героев ведёт Claude по ключу API (быстрая модель, без думания): каждый герой решает сразу после прошлого")
-        say(f"  ответа, все 10 одновременно; руки выполняют решение 4 раза в секунду. Предел — {max_calls} вызовов на сторону.")
-        say("  Расход (оценка) — в сводке раз в 5 минут и в конце; точный — platform.claude.com → Billing.")
+        say("  Героев ведёт Claude по ключу API (быстрая модель, без думания): каждый герой решает сразу после прошлого")
+        say("  ответа, все 10 одновременно; руки выполняют решение 4 раза в секунду.")
+        say(f"  Расход — около $3–4 за 40-минутный матч, за запуск — не больше ≈ ${2 * max_calls * API_CALL_USD:.0f} "
+            f"(предел {max_calls} вызовов на сторону; оценка). В сводке раз в 5 минут и в конце — сколько потрачено;")
+        say("  точно — platform.claude.com → Billing.")
     else:
         backend = make_backend("rules")
         max_calls = args.max_calls or MAX_CALLS

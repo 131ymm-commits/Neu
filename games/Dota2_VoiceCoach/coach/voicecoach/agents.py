@@ -602,43 +602,55 @@ class ApiBackend:
         self.opener = opener or urllib.request.urlopen
         self.label = f"Claude API ({model})"
         self.dropped: list[str] = []                       # что модель не приняла — в журнал и сводку
+        self.lock = threading.Lock()                       # 10 героев зовут сразу: отключать параметр — под замком
 
     def body(self, system: str, user: str, schema: dict | None = None) -> dict:
+        with self.lock:
+            structured, effort, thinking = self.structured, self.effort, self.thinking
         b = {"model": self.model, "max_tokens": self.max_tokens,
              "system": [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}],
              "messages": [{"role": "user", "content": user}]}
         cfg = {}
-        if self.structured:
+        if structured:
             cfg["format"] = {"type": "json_schema", "schema": schema or DECISION_SCHEMA}
-        if self.effort:
-            cfg["effort"] = self.effort
+        if effort:
+            cfg["effort"] = effort
         if cfg:
             b["output_config"] = cfg
-        if self.thinking:
-            b["thinking"] = {"type": self.thinking}
+        if thinking:
+            b["thinking"] = {"type": thinking}
         return b
 
-    def _drop(self, text: str) -> bool:
-        """400 из-за параметра, которого модель не знает, — отключить его и повторить."""
+    def _drop(self, text: str, sent: dict | None = None) -> bool:
+        """400 из-за параметра, которого модель не знает, — отключить его и повторить. Смотрим только на параметры,
+        которые были в упавшем запросе (sent — его тело): сосед мог уже отключить его, тогда просто повторить, а не
+        отключать следующий (рецензия 13: 10 одновременных вызовов отключали и effort, и схему ответа)."""
         low = text.lower()
-        if self.effort and "effort" in low:
-            self.effort = None
-            self.dropped.append("effort")
-            return True
-        if self.thinking and "thinking" in low:
-            self.thinking = None
-            self.dropped.append("thinking")
-            return True
-        if self.structured and ("output_config" in low or "json_schema" in low or "format" in low):
-            self.structured = False                         # дальше просим JSON словами
-            self.dropped.append("structured")
-            return True
+        sent = sent if sent is not None else self.body("", "")
+        cfg = sent.get("output_config") or {}
+        with self.lock:
+            if "effort" in cfg and "effort" in low:
+                if self.effort:
+                    self.effort = None
+                    self.dropped.append("effort")
+                return True
+            if "thinking" in sent and "thinking" in low:
+                if self.thinking:
+                    self.thinking = None
+                    self.dropped.append("thinking")
+                return True
+            if "format" in cfg and ("output_config" in low or "json_schema" in low or "format" in low):
+                if self.structured:
+                    self.structured = False                 # дальше просим JSON словами
+                    self.dropped.append("structured")
+                return True
         return False
 
     def decide(self, system: str, user: str, obs: dict, extra: dict | None = None) -> dict:
         for _ in range(4):
+            sent = self.body(system, user, (extra or {}).get("schema"))
             req = urllib.request.Request(
-                self.URL, data=json.dumps(self.body(system, user, (extra or {}).get("schema"))).encode("utf-8"),
+                self.URL, data=json.dumps(sent).encode("utf-8"),
                 method="POST",
                 headers={"x-api-key": self.api_key, "anthropic-version": self.VERSION,
                          "content-type": "application/json"})
@@ -648,11 +660,11 @@ class ApiBackend:
                 break
             except urllib.error.HTTPError as e:
                 text = e.read().decode("utf-8", "replace")[:400] if hasattr(e, "read") else ""
-                if e.code == 400 and self._drop(text):
+                if e.code == 400 and self._drop(text, sent):
                     continue
-                if "credit balance" in text.lower():          # кредит организации кончился: до пополнения не стучаться
-                    raise BackendError("кредит API кончился (запросы стоят до нового месяца или пополнения)",
-                                       3600.0) from None
+                if "credit balance" in text.lower():          # деньги на балансе кончились: стучаться реже — неудачный
+                    raise BackendError("на балансе API кончились деньги: пополните — platform.claude.com → Billing; "
+                                       "герои вернутся к Claude через минуту после пополнения", 60.0) from None
                 retry = e.headers.get("retry-after") if getattr(e, "headers", None) else None
                 raise BackendError(f"HTTP {e.code}: {text}", _retry_after(retry)) from None
             except (urllib.error.URLError, TimeoutError, OSError) as e:
@@ -1118,7 +1130,7 @@ class AgentHub:
                     until = time.monotonic() + e.retry_after
                     if until > self.pause_until.get(ag.team, 0.0):     # причину пишет самая долгая пауза
                         self.pause_until[ag.team] = until
-                        self.pause_why[ag.team] = ("кредит API кончился" if "кредит" in err else "лимит подписки"
+                        self.pause_why[ag.team] = ("на балансе API кончились деньги" if "баланс" in err else "лимит подписки"
                                                    if getattr(backend, "self_cost", False) else "лимит API")
         except Exception as e:                                     # noqa: BLE001 — агент не должен ронять сервер
             err = f"{type(e).__name__}: {e}"

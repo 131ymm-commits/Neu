@@ -331,14 +331,24 @@ class Launcher(unittest.TestCase):
         """Д23: по ключу думание модели выключено, решение — сразу после прошлого ответа, все 10 сразу; расход в окне."""
         self.assertEqual(P.API_THINKING, "disabled")
         self.assertEqual((P.API_PACE["period"], P.API_PACE["max_inflight"]), (0.0, 10))
-        b = A.ApiBackend("claude-haiku-5-5", api_key="sk-test-key-0123456789", thinking=P.API_THINKING,
-                         effort=P.API_EFFORT)
+        b = A.ApiBackend(self.NEW, api_key="sk-test-key-0123456789", thinking=P.API_THINKING, effort=P.API_EFFORT)
         body = b.body("система", "наблюдение")
         self.assertEqual((body["thinking"], body["output_config"]["effort"]), ({"type": "disabled"}, "low"))
         self.assertEqual(body["system"][0]["cache_control"], {"type": "ephemeral"})   # промпт — из кэша
         hub = A.AgentHub({"radiant": A.RulesBackend(), "dire": A.RulesBackend()}, prices=P.API_PRICES, sync=True)
         hub.stats["radiant"].update({"in": 1_000_000, "out": 200_000, "cache_read": 8_000_000})
         self.assertAlmostEqual(hub.summary()["cost_usd_est"], 0.10 + 0.10 + 0.08, places=4)
+        # проба ключа боевым запросом (рецензия 13): ответ разобрался — прошла и сколько секунд; ошибка — нет
+        good = SimpleNamespace(decide=lambda s, u, o, e=None: {"text": json.dumps({"plan": "farm", "where": "bot"})})
+        ok, why, dt = P.api_trial(good)
+        self.assertEqual((ok, why), (True, ""))
+        self.assertGreaterEqual(dt, 0)
+
+        def broken(s, u, o, e=None):
+            raise A.BackendError("HTTP 400: output_config: bad")
+        ok, why, _ = P.api_trial(SimpleNamespace(decide=broken))
+        self.assertEqual(ok, False)
+        self.assertIn("HTTP 400", why)
 
     def test_subscription_setup_installs_and_logs_in(self):
         found = iter([None, "/x/claude"])

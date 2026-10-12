@@ -3,6 +3,7 @@
 Сервер тренера и пульт поднимаются по-настоящему (порты 0); игра подменена запросами /tick с наблюдениями обеих
 команд. Туннель Cloudflare здесь не запускается: проверяется разбор адреса из журнала cloudflared."""
 import io
+import http.client
 import json
 import shutil
 import socket
@@ -309,8 +310,14 @@ class SlowClients(unittest.TestCase):
             self.assertIn(idle[0].recv(100), (b"",))                              # через 0.5 с сервер закрыл сам
             for c in idle:
                 c.close()
-            time.sleep(0.3)
-            r = urllib.request.urlopen(f"http://127.0.0.1:{port}/c/{'k' * 22}/api/view", timeout=5)
+            r, deadline = None, time.monotonic() + 5                              # места освобождаются потоками
+            while r is None:                                                      # сервера — ждать до 5 с, а не
+                try:                                                              # 0.3 с вслепую (рецензия 13:
+                    r = urllib.request.urlopen(f"http://127.0.0.1:{port}/c/{'k' * 22}/api/view", timeout=5)
+                except (http.client.RemoteDisconnected, ConnectionError, urllib.error.URLError):
+                    if time.monotonic() > deadline:                               # падал при нехватке CPU)
+                        raise
+                    time.sleep(0.1)
             self.assertEqual(r.status, 200)                                       # места освободились
         finally:
             con.shutdown()

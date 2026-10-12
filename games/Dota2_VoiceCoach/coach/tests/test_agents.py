@@ -608,7 +608,8 @@ class Cli(unittest.TestCase):
         with self.assertRaises(A.BackendError) as cm:
             A.CliBackend(runner=run).decide("s", "u", obs())
         self.assertEqual(cm.exception.retry_after, 600.0)                     # лимит подписки — сторона ждёт
-        # кредит API кончился (текст ответа API из документации) — пауза на час, а не стук каждые 3 с
+        # деньги на балансе кончились (текст ответа API из документации) — пауза на минуту (Д23: баланс пополняют
+        # картой, после пополнения герои возвращаются к Claude сами), а не стук каждые 3 с
         body = b'{"type":"error","error":{"type":"invalid_request_error","message":"Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits."}}'
         err = urllib.error.HTTPError(A.ApiBackend.URL, 400, "Bad Request", {}, io.BytesIO(body))
 
@@ -616,8 +617,8 @@ class Cli(unittest.TestCase):
             raise err
         with self.assertRaises(A.BackendError) as cm:
             A.ApiBackend("m", api_key="k", opener=broke).decide("s", "u", obs())
-        self.assertEqual(cm.exception.retry_after, 3600.0)
-        self.assertIn("кредит API кончился", str(cm.exception))
+        self.assertEqual(cm.exception.retry_after, 60.0)
+        self.assertIn("на балансе API кончились деньги", str(cm.exception))
 
         def garbage(argv, **kw):
             class P:
@@ -629,6 +630,39 @@ class Cli(unittest.TestCase):
         with self.assertRaises(A.BackendError) as cm:
             A.CliBackend(runner=garbage).decide("s", "u", obs())
         self.assertIn("unknown option", str(cm.exception))                    # старая версия Claude Code — видно, почему
+
+    def test_drop_is_thread_safe(self):
+        """Рецензия 13: 10 героев зовут сразу; модель не знает effort — отключить только его (не схему ответа), и все
+        10 вызовов проходят."""
+        body = b'{"type":"error","error":{"type":"invalid_request_error","message":"output_config.effort: Extra inputs are not permitted"}}'
+        ok = json.dumps({"content": [{"type": "text", "text": "{}"}], "usage": {}, "stop_reason": "end_turn"}).encode()
+        gate = threading.Barrier(10)
+
+        def opener(req, timeout=None):
+            sent = json.loads(req.data.decode("utf-8"))
+            if "effort" in (sent.get("output_config") or {}):
+                try:
+                    gate.wait(timeout=2)                                     # все 10 упираются в 400 одновременно
+                except threading.BrokenBarrierError:
+                    pass
+                raise urllib.error.HTTPError(A.ApiBackend.URL, 400, "Bad Request", {}, io.BytesIO(body))
+            return io.BytesIO(ok)
+        b = A.ApiBackend("m", api_key="k", opener=opener, thinking="disabled")
+        errors, threads = [], []
+
+        def call():
+            try:
+                b.decide("s", "u", obs())
+            except Exception as e:                                           # noqa: BLE001
+                errors.append(e)
+        for _ in range(10):
+            threads.append(threading.Thread(target=call))
+            threads[-1].start()
+        for t in threads:
+            t.join(10)
+        self.assertEqual(errors, [])
+        self.assertEqual(b.dropped, ["effort"])
+        self.assertTrue(b.structured)
 
     def test_cli_cost_not_counted_twice(self):
         run, _ = self.runner()
