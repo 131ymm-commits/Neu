@@ -349,6 +349,49 @@ class Launcher(unittest.TestCase):
         ok, why, _ = P.api_trial(SimpleNamespace(decide=broken))
         self.assertEqual(ok, False)
         self.assertIn("HTTP 400", why)
+        # рецензия 13б: Ctrl+C в пробе — проба не прошла (не трассировка); нет денег — без «вернутся через минуту»
+
+        def ctrl_c(s, u, o, e=None):
+            raise KeyboardInterrupt
+        self.assertEqual(P.api_trial(SimpleNamespace(decide=ctrl_c))[:2], (False, "прервано (Ctrl+C)"))
+
+        def no_money(s, u, o, e=None):
+            raise A.BackendError("на балансе API кончились деньги: пополните — platform.claude.com → Billing; "
+                                 "герои вернутся к Claude через минуту после пополнения", 60.0)
+        ok, why, _ = P.api_trial(SimpleNamespace(decide=no_money))
+        self.assertEqual((ok, why), (False, "на балансе API нет денег (platform.claude.com → Billing)"))
+
+    def test_failed_key_trial_falls_back(self):
+        """Рецензия 13б: проба по ключу не прошла — дальше подписка; с --api (только ключ) — правила, подписку не трогать.
+        Удачная проба — дважды: время ответа по второму (первый холодный, кэш промпта пишется)."""
+        def run(argv, trial):
+            sub = mock.Mock(return_value=None)
+            self.out.clear()
+
+            def interrupt(q):
+                raise KeyboardInterrupt
+            with tempfile.TemporaryDirectory() as tmp, mock.patch.object(P, "LOGS", Path(tmp) / "logs"), \
+                    mock.patch.object(P, "already_running", lambda: False), \
+                    mock.patch.object(P, "setup_agents",
+                                      lambda cfg, args, ask_secret=None: ("key", ("sk-test-key-0123456789", self.NEW))), \
+                    mock.patch.object(P, "api_trial", trial), mock.patch.object(P, "setup_subscription", sub), \
+                    mock.patch.object(P, "find_dota", mock.Mock(side_effect=KeyboardInterrupt)):  # дальше шага 1 — нет
+                code = P.main(argv, ask=interrupt)                       # без Claude — «ВНИМАНИЕ», Ctrl+C — выход
+            return code, sub.call_count, "\n".join(self.out)
+
+        code, subs, text = run(["--api"], lambda b: (False, "HTTP 500: x", 0.1))
+        self.assertEqual((code, subs), (1, 0))
+        self.assertIn("ключ API не готов", text)
+        code, subs, text = run([], lambda b: (False, "HTTP 500: x", 0.1))
+        self.assertEqual((code, subs), (1, 1))
+        self.assertIn("Дальше — по подписке", text)
+        times = iter([(True, "", 2.5), (True, "", 0.9)])
+        with self.assertRaises(KeyboardInterrupt):                       # проба прошла — до поиска Доты (там Ctrl+C)
+            run([], lambda b: next(times))
+        text = "\n".join(self.out)
+        self.assertIn("Проба по ключу: ответ Claude за 0.9 с (первый, холодный — 2.5 с).", text)
+        self.assertIn("около $8 при работающем кэше промпта", text)
+        self.assertNotIn("sk-test-key-0123456789", text)
 
     def test_subscription_setup_installs_and_logs_in(self):
         found = iter([None, "/x/claude"])

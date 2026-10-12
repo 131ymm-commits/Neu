@@ -510,7 +510,8 @@ def _setup_subscription(find, install, auth, login, check, update=lambda exe: Fa
 
 
 def api_trial(backend) -> tuple[bool, str, float]:
-    """Одно решение героя боевым запросом (тот же промпт, схема, effort, без думания): → (прошло, почему нет, секунд)."""
+    """Одно решение героя боевым запросом (тот же промпт, схема, effort, без думания): → (прошло, почему нет, секунд).
+    Ctrl+C — проба не прошла (игра идёт дальше)."""
     t0 = time.monotonic()
     try:
         from .agents import system_prompt, user_prompt, parse_decision    # noqa: PLC0415
@@ -521,8 +522,13 @@ def api_trial(backend) -> tuple[bool, str, float]:
         if decision is None:
             return False, "ответ не разобрался как решение", time.monotonic() - t0
         return True, "", time.monotonic() - t0
+    except KeyboardInterrupt:
+        return False, "прервано (Ctrl+C)", time.monotonic() - t0
     except Exception as e:                                # noqa: BLE001 — сеть, 4xx, нет денег
-        return False, f"{type(e).__name__}: {e}"[:200], time.monotonic() - t0
+        text = str(e)
+        if "на балансе" in text:                          # без «вернутся через минуту»: дальше — без ключа
+            return False, "на балансе API нет денег (platform.claude.com → Billing)", time.monotonic() - t0
+        return False, f"{type(e).__name__}: {text}"[:200], time.monotonic() - t0
 
 
 def setup_agents(cfg: dict, args, ask_secret=None, opener=urllib.request.urlopen, subscription=setup_subscription,
@@ -1345,10 +1351,14 @@ def _main(argv, ask, ask_secret, enter) -> int:
     if mode == "key":                                             # проба боевым запросом (рецензия 13): 400 — здесь,
         key, model = info                                         # а не в матче; заодно — настоящее время ответа
         key_backend = ApiBackend(model, api_key=key, thinking=API_THINKING, effort=API_EFFORT, timeout=20.0)
-        ok, why, dt = api_trial(key_backend)
-        if ok:
-            say(f"  Проба по ключу: ответ Claude за {dt:.1f} с" +
-                (f" (модель не приняла: {', '.join(key_backend.dropped)})." if key_backend.dropped else "."))
+        ok, why, cold = api_trial(key_backend)
+        if ok:                                                    # первый ответ холодный (кэш промпта пишется) —
+            ok2, _, warm = api_trial(key_backend)                 # штатное время — по второму (рецензия 13)
+            say(f"  Проба по ключу: ответ Claude за {warm if ok2 else cold:.1f} с (первый, холодный — {cold:.1f} с)" +
+                (f"; модель не приняла: {', '.join(key_backend.dropped)}." if key_backend.dropped else "."))
+        elif args.api:                                            # --api — только ключ: без него правила
+            say(f"  Проба по ключу не прошла: {why}.")
+            mode, info = "off", None
         else:
             say(f"  Проба по ключу не прошла: {why}. Дальше — по подписке (Claude Code).")
             exe = setup_subscription()
@@ -1367,8 +1377,8 @@ def _main(argv, ask, ask_secret, enter) -> int:
         max_calls = args.max_calls or MAX_CALLS
         say("  Героев ведёт Claude по ключу API (быстрая модель, без думания): каждый герой решает сразу после прошлого")
         say("  ответа, все 10 одновременно; руки выполняют решение 4 раза в секунду.")
-        say(f"  Расход — около $3–4 за 40-минутный матч, за запуск — не больше ≈ ${2 * max_calls * API_CALL_USD:.0f} "
-            f"(предел {max_calls} вызовов на сторону; оценка). В сводке раз в 5 минут и в конце — сколько потрачено;")
+        say(f"  Расход — около $3–4 за 40-минутный матч, за запуск — около ${2 * max_calls * API_CALL_USD:.0f} при работающем "
+            f"кэше промпта (предел {max_calls} вызовов на сторону; оценка). В сводке раз в 5 минут и в конце — сколько потрачено;")
         say("  точно — platform.claude.com → Billing.")
     else:
         backend = make_backend("rules")
