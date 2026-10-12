@@ -319,7 +319,23 @@ class Launcher(unittest.TestCase):
         self.assertEqual(P.setup_agents(declined, P.parse([]), ask_secret=lambda p: asked.append(p) or "", opener=ok,
                                         subscription=sub, probe=good)[0], "sub")
         self.assertEqual(asked, [])                                             # «0» — больше не спрашивает
-        self.assertEqual(P.setup_agents({"api_key": ""}, P.parse([]), subscription=lambda: None), ("off", None))
+        self.assertEqual(P.load_config(self.cfg_path), {"api_key": "", "key_ask": P.KEY_ASK})   # и после перезапуска
+        self.assertEqual(P.setup_agents({"api_key": "", "key_ask": P.KEY_ASK}, P.parse([]), subscription=lambda: None),
+                         ("off", None))
+        # play.json из выпуска до Д23: "" там — «без Claude» меню Д15 (или Enter в b6988a1), а не «больше не спрашивать»:
+        # ключ спросить ещё один раз; Enter — подписка и спросит снова, «0» — уже не спрашивает
+        old = {"api_key": "", "mode": "off", "secret": "s"}
+        asked.clear()
+        self.assertEqual(P.setup_agents(old, P.parse([]), ask_secret=lambda p: asked.append(p) or "", opener=ok,
+                                        subscription=sub, probe=good)[0], "sub")
+        self.assertEqual((len(asked), P.load_config(self.cfg_path)), (1, {"mode": "off", "secret": "s",
+                                                                           "key_ask": P.KEY_ASK}))
+        P.setup_agents(old, P.parse([]), ask_secret=lambda p: asked.append(p) or "0", opener=ok, subscription=sub,
+                       probe=good)
+        self.assertEqual(len(asked), 2)
+        P.setup_agents(old, P.parse([]), ask_secret=lambda p: asked.append(p) or "", opener=ok, subscription=sub,
+                       probe=good)
+        self.assertEqual((len(asked), old["api_key"]), (2, ""))
         self.assertEqual(P.setup_agents({}, P.parse(["--rules"]), subscription=sub), ("off", None))
         # --api — только ключ; прежнее «больше не спрашивать» ключ не блокирует
         self.assertEqual(P.setup_agents({"api_key": ""}, P.parse(["--api"]),
