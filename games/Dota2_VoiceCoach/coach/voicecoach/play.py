@@ -337,7 +337,13 @@ def read_secret(prompt: str, getch=None, putch=None, clipboard=clipboard_text) -
                 for x in "\b \b":
                     putch(x)
             continue
-        for x in (clipboard() if c == "\x16" else c):
+        text = c
+        if c == "\x16":                                  # Ctrl+V в классической консоли: буфер обмена — сами
+            text = (clipboard() or "")[:1000]
+            if not text.strip():
+                for x in " (в буфере обмена нет текста) ":
+                    putch(x)
+        for x in text:
             if x.isprintable() and not x.isspace():
                 chars.append(x)
                 putch("*")
@@ -346,66 +352,76 @@ def read_secret(prompt: str, getch=None, putch=None, clipboard=clipboard_text) -
     return "".join(chars)
 
 
-def find_key_file(dirs=None) -> Path | None:
-    """Файл с ключом: ключ.txt (или key.txt) рядом с ИГРАТЬ.bat или в папке игры."""
-    for d in dirs or (PROJECT.parent, PROJECT):
+def key_files(dirs=None) -> list[Path]:
+    """Файлы с ключом, какие есть: ключ.txt (key.txt) в папке игры, потом над ней — там лежит ИГРАТЬ.bat, если он скачан
+    один (игра — в папке DotaCoach рядом с ним)."""
+    found = []
+    for d in dirs or (PROJECT, PROJECT.parent):
         for name in KEY_FILES:
             if (Path(d) / name).is_file():
-                return Path(d) / name
-    return None
+                found.append(Path(d) / name)
+    return found
 
 
-def read_key_file(path: Path) -> str:
-    """Ключ из текстового файла Блокнота (UTF-8 с BOM и без, ANSI, «Юникод» UTF-16): строка вида sk-ant-…, иначе весь
-    текст без пробелов по краям."""
+def read_key_text(path: Path) -> str:
+    """Текст файла Блокнота: UTF-8 с BOM и без, ANSI, «Юникод» (UTF-16)."""
     raw = path.read_bytes()[:20000]
-    text = (raw.decode("utf-16", "replace") if raw[:2] in (b"\xff\xfe", b"\xfe\xff")
+    return (raw.decode("utf-16", "replace") if raw[:2] in (b"\xff\xfe", b"\xfe\xff")
             else raw.decode("utf-8-sig", "replace"))
-    m = _KEY_RE.search(text)
-    return m.group(0) if m else text.strip()
 
 
 def take_key_file(cfg: dict, opener=urllib.request.urlopen, probe=probe_key, dirs=None):
     """Ключ из файла «ключ.txt» — для окна, где вставка в скрытый ввод не работает (ERRORS №114); новый файл заменяет и
-    сохранённый ключ. Подошёл — ключ в настройках игры, файл удаляется (ключ не лежит открыто рядом с игрой).
-    → None — файла нет; (ключ, модель) — играть по ключу; (None, None) — файл есть, по ключу не вышло (сказано почему)."""
-    path = find_key_file(dirs)
+    сохранённый ключ. Берётся только строка вида sk-ant-… (key.txt без неё — чужой файл: не трогать, никуда не слать).
+    Подошёл — ключ в настройках игры; файл удаляется, если в нём только ключ (ключ не лежит открыто рядом с игрой).
+    → None — файла с ключом нет; (ключ, модель) — играть по ключу; (None, None) — файл есть, по ключу не вышло."""
+    path = key = None
+    only = False
+    for p in key_files(dirs):
+        try:
+            text = read_key_text(p)
+        except OSError as e:
+            say(f"  Файл «{p.name}» не прочитался: {e}.")
+            return None, None
+        m = _KEY_RE.search(text)
+        if m and looks_like_key(m.group(0)):
+            path, key, only = p, m.group(0), text.strip() == m.group(0)
+            break
+        if p.name.startswith("ключ"):
+            say(f"  В файле «{p.name}» не ключ: ключ — длинная строка латиницей, начинается с sk-ant-. Откройте файл")
+            say("  Блокнотом, вставьте ключ (Ctrl+V), сохраните и запустите ИГРАТЬ.bat снова.")
+            return None, None
     if path is None:
         return None
-    try:
-        key = read_key_file(path)
-    except OSError as e:
-        say(f"  Файл «{path.name}» не прочитался: {e}.")
-        return None, None
-    if not looks_like_key(key):
-        say(f"  В файле «{path.name}» не ключ: ключ — длинная строка латиницей, начинается с sk-ant-. Откройте файл")
-        say("  Блокнотом, вставьте ключ (Ctrl+V), сохраните и запустите ИГРАТЬ.bat снова.")
-        return None, None
     model, why, kind = pick_model(key, opener)
-    if not model and kind != "net":
-        say(f"  Ключ {mask(key)} из файла «{path.name}» не подошёл: {why}.")
-        say("  Создайте новый ключ (platform.claude.com → API Keys, Scope — Default workspace), вставьте его в файл вместо")
-        say("  старого и запустите ИГРАТЬ.bat снова.")
-        return None, None
-    cfg["api_key"] = key
-    if model:
-        cfg["model"] = model
-    save_config(cfg)
-    try:
-        path.unlink()
-    except OSError:
-        say(f"  Файл «{path.name}» удалить не смог — удалите его сами: ключ уже в настройках игры.")
     if not model:
-        say(f"  Ключ {mask(key)} из файла сохранил, но проверить не смог: {why}. По ключу — со следующего запуска.")
+        if kind == "net":                                # прежний рабочий ключ непроверенным не затирать
+            say(f"  Ключ {mask(key)} из файла «{path.name}» проверить не смог: {why}. Файл оставил — проверю при")
+            say("  следующем запуске.")
+        else:
+            say(f"  Ключ {mask(key)} из файла «{path.name}» не подошёл: {why}.")
+            say("  Создайте новый ключ (platform.claude.com → API Keys, Scope — Default workspace), вставьте его в файл вместо")
+            say("  старого и запустите ИГРАТЬ.bat снова.")
         return None, None
+    cfg["api_key"], cfg["model"] = key, model
+    save_config(cfg)
+    if not only:
+        note = "в файле есть и другой текст — файл не трогал, уберите из него ключ сами"
+    else:
+        try:
+            path.unlink()
+            note = "файл удалил"
+        except OSError:
+            note = "файл удалить не смог — удалите его сами"
+    say(f"  Ключ {mask(key)} из файла «{path.name}» сохранён в настройках игры; {note}.")
     ok, why = probe(key, model, opener)
     if why == "nocredit":
         no_credit_help()
         return None, None
     if not ok:
-        say(f"  Ключ {mask(key)} из файла сохранил, но пробный запрос не прошёл: {why}. В этот раз — без ключа.")
+        say(f"  Пробный запрос по ключу не прошёл: {why}. В этот раз — без ключа.")
         return None, None
-    say(f"  Ключ {mask(key)} из файла «{path.name}» принят и сохранён в настройках игры; файл удалил.")
+    say("  Ключ принят.")
     return key, model
 
 
@@ -422,7 +438,8 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
         say("  claude.ai в браузере → Settings → Billing → «API credits»; без него — пополнить: platform.claude.com → Billing.")
         say(f"  Ключ: {KEYS_PAGE} → Create Key (Scope — Default workspace), скопировать.")
     say("  Вставьте ключ (правый щелчок мыши или Ctrl+V) и нажмите Enter — вместо ключа на экране будут звёздочки.")
-    say(f"  Не вставляется — сохраните ключ Блокнотом в файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat и запустите ИГРАТЬ.bat снова.")
+    say(f"  Не вставляется — закройте это окно, сохраните ключ Блокнотом в файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat и")
+    say("  запустите ИГРАТЬ.bat снова.")
     if keep:
         say("  Оставить как было — просто Enter. Больше не играть по ключу — 0 и Enter.")
     else:
@@ -440,9 +457,9 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
             save_config(cfg)
             return None, None
         if not looks_like_key(key):
-            say("  Это не похоже на ключ: ключ — длинная строка латиницей, начинается с sk-ant-. Скопируйте его ещё раз")
-            say("  на platform.claude.com → API Keys (при создании он показывается один раз) и вставьте сюда; не вставляется —")
-            say(f"  файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat (см. выше).")
+            say(f"  Это не похоже на ключ (пришло знаков: {len(key)}): ключ — длинная строка латиницей, начинается с sk-ant-.")
+            say("  Скопируйте его ещё раз на platform.claude.com → API Keys (при создании он показывается один раз) и вставьте")
+            say(f"  сюда; не вставляется — файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat (см. выше).")
             continue
         model, why, kind = pick_model(key, opener)
         if model:

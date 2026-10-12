@@ -11,3 +11,12 @@ games/Dota2_VoiceCoach/coach/memory/
 # игра вдвоём (Д14): переносной Python и cloudflared, файл друга с секретом ящика
 games/Dota2_VoiceCoach/.runtime/
 games/Dota2_VoiceCoach/ДЛЯ_ДРУГА.html
+# ключ API в файле для лаунчера (ERRORS №114) — никогда не в репозиторий
+games/Dota2_VoiceCoach/ключ.txt
+games/Dota2_VoiceCoach/ключ.txt.txt
+games/Dota2_VoiceCoach/key.txt
+games/Dota2_VoiceCoach/key.txt.txt
+games/ключ.txt
+games/ключ.txt.txt
+games/key.txt
+games/key.txt.txt

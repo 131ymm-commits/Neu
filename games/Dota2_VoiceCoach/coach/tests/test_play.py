@@ -282,7 +282,7 @@ class Launcher(unittest.TestCase):
     def test_key_input_without_console_paste(self):
         """ERRORS №114 (снимок автора 12.10.2026): Ctrl+V в классической консоли Windows не вставлял ключ в скрытый ввод.
         Теперь: звёздочки вместо знаков, Ctrl+V (символ 0x16) — вставка из буфера обмена самим лаунчером; а если и так
-        нельзя — файл «ключ.txt» рядом с ИГРАТЬ.bat: подошёл — ключ в настройках, файл удалён."""
+        нельзя — файл «ключ.txt» рядом с ИГРАТЬ.bat: подошёл — ключ в настройках, файл удалён (рецензия 15)."""
         K = "sk-ant-api03-Test_Key-0123456789abcdef"
 
         def typed(keys, clip=""):
@@ -292,37 +292,69 @@ class Launcher(unittest.TestCase):
         got, screen = typed(["\x16", "\r"], clip=" " + K + "\r\n")          # Ctrl+V: буфер, без пробелов и строк
         self.assertEqual(got, K)
         self.assertEqual(screen, "ключ> " + "*" * len(K) + "\r\n")              # ключ не виден, звёздочки видны
+        got, screen = typed(["\x16", "\r"], clip="")                           # буфер пуст — сказать
+        self.assertEqual(got, "")
+        self.assertIn("в буфере обмена нет текста", screen)
+        self.assertEqual(len(typed(["\x16", "\r"], clip="x" * 5000)[0]), 1000)  # не вставлять мегабайты
         got, screen = typed(list("sk-ab") + ["\b", "\b", "\xe0", "K", "x", "\n"])   # Backspace; стрелка (0xE0 + код)
         self.assertEqual(got, "sk-x")
         self.assertNotIn("x", screen.replace("ключ> ", ""))
         with self.assertRaises(KeyboardInterrupt):
             typed(["s", "\x03"])
         self.assertIsNone(P._ask(lambda q: typed(["\x03"])[0], "ключ> "))    # Ctrl+C — «ничего не выбрали»
-        # файл с ключом: Блокнот пишет UTF-8 с BOM, ANSI или «Юникод» (UTF-16); вокруг ключа — что угодно
+        # файл: Блокнот пишет UTF-8 с BOM, ANSI или «Юникод» (UTF-16)
         ok = opener_for({P.MODELS_API: self.MODELS})
         good = lambda key, model, opener: (True, "")                         # noqa: E731
+        bad = opener_for({P.MODELS_API: self.http_error(401, "invalid x-api-key")})
+        down = opener_for({})                                                 # нет связи
         with tempfile.TemporaryDirectory() as tmp:
             here = Path(tmp)
+            f = here / "ключ.txt"
             for raw in (("\ufeff" + K + "\r\n").encode("utf-8"), ("ключ: " + K).encode("utf-16"), K.encode("ascii")):
-                (here / "ключ.txt").write_bytes(raw)
-                self.assertEqual(P.read_key_file(here / "ключ.txt"), K)
+                f.write_bytes(raw)
+                self.assertEqual(P._KEY_RE.search(P.read_key_text(f)).group(0), K)
             self.assertIsNone(P.take_key_file({}, ok, good, dirs=[here / "нет"]))   # файла нет — как раньше
             cfg = {"api_key": "", "key_ask": P.KEY_ASK}                       # даже после «0 — больше не спрашивать»
             self.assertEqual(P.take_key_file(cfg, ok, good, dirs=[here]), (K, self.NEW))
-            self.assertFalse((here / "ключ.txt").exists())                    # ключ не лежит открыто рядом с игрой
+            self.assertFalse(f.exists())                                      # ключ не лежит открыто рядом с игрой
             self.assertEqual(P.load_config(self.cfg_path)["api_key"], K)
-            self.assertIn("принят и сохранён", "\n".join(self.out))
+            text = "\n".join(self.out)
+            self.assertIn("сохранён в настройках игры; файл удалил.", text)
+            self.assertIn("Ключ принят.", text)
             self.assertFalse(any(K in line for line in self.out))             # на экран — только маска
-            (here / "key.txt").write_text("нет ключа", encoding="utf-8")       # не ключ — сказать, файл оставить
+            # в файле и другой текст — ключ взят, файл не трогать (рецензия 15)
+            f.write_text("пароль почты: abc\n" + K + "\n", encoding="utf-8")
+            self.assertEqual(P.take_key_file({}, ok, good, dirs=[here]), (K, self.NEW))
+            self.assertTrue(f.exists())
+            self.assertIn("файл не трогал", self.out[-2])
+            f.unlink()
+            # «ключ.txt» без ключа — сказать; чужой key.txt без sk-ant- — не трогать и никуда не слать
+            f.write_text("нет ключа", encoding="utf-8")
             self.assertEqual(P.take_key_file({}, ok, good, dirs=[here]), (None, None))
-            self.assertTrue((here / "key.txt").exists())
-            (here / "key.txt").write_text(K, encoding="utf-8")                 # ключ не принят — файл оставить
-            bad = opener_for({P.MODELS_API: self.http_error(401, "invalid x-api-key")})
+            self.assertIn("не ключ", "\n".join(self.out[-2:]))
+            f.unlink()
+            (here / "key.txt").write_text("some-other-long-secret-0123456789", encoding="utf-8")
+            calls = opener_for({P.MODELS_API: self.MODELS})
+            self.assertIsNone(P.take_key_file({}, calls, good, dirs=[here]))
+            self.assertEqual(calls.calls, [])
+            # ключ не принят — файл оставить; нет связи — файл оставить и прежний ключ не затирать
+            f.write_text(K, encoding="utf-8")
             self.assertEqual(P.take_key_file({}, bad, good, dirs=[here]), (None, None))
-            self.assertTrue((here / "key.txt").exists())
+            self.assertTrue(f.exists())
+            saved = {"api_key": "sk-ant-api03-old-working-key-000000"}
+            self.assertEqual(P.take_key_file(saved, down, good, dirs=[here]), (None, None))
+            self.assertEqual((saved["api_key"], f.exists()), ("sk-ant-api03-old-working-key-000000", True))
+            self.assertIn("проверить не смог", "\n".join(self.out[-2:]))
+            # пути по умолчанию: bat скачан один (игра — в DotaCoach рядом с ним) и bat внутри папки игры
+            for game, bat in ((here / "A" / "DotaCoach", here / "A"), (here / "B", here / "B")):
+                game.mkdir(parents=True)
+                (bat / "ключ.txt").write_text(K, encoding="utf-8")
+                with mock.patch.object(P, "PROJECT", game):
+                    self.assertEqual(P.take_key_file({}, ok, good), (K, self.NEW))
+                self.assertFalse((bat / "ключ.txt").exists())
             # setup_agents: файл — раньше вопроса и раньше «больше не спрашивать»; не вышло — подписка, с --api — правила
             sub = mock.Mock(return_value="claude.exe")
-            with mock.patch.object(P, "find_key_file", lambda dirs=None: here / "key.txt"):
+            with mock.patch.object(P, "PROJECT", here):
                 self.assertEqual(P.setup_agents({"api_key": "", "key_ask": P.KEY_ASK}, P.parse([]), opener=bad,
                                                 subscription=sub, probe=good), ("sub", "claude.exe"))
                 self.assertEqual(P.setup_agents({}, P.parse(["--api"]), opener=bad, subscription=sub, probe=good),
@@ -331,17 +363,16 @@ class Launcher(unittest.TestCase):
                                                 subscription=sub, probe=good), ("key", (K, self.NEW)))
             self.assertEqual(sub.call_count, 1)
         # ключ на всю организацию (Scope: Organization): лаунчер не шлёт рабочую область — сказать, какой ключ нужен
-        need = self.http_error(400, "anthropic-workspace-id is required when authenticating with an identity-linked "
-                                    "API key; send the id of the workspace this request acts in.")
-        self.assertEqual(P.pick_model(K, opener_for({P.MODELS_API: need})), (None, P.WORKSPACE_HINT, "key"))
-        need = self.http_error(400, "anthropic-workspace-id is required when authenticating with an identity-linked "
-                                    "API key; send the id of the workspace this request acts in.")    # тело читается раз
-        self.assertEqual(P.probe_key(K, "m", opener_for({"https://api.anthropic.com/v1/messages": need})),
+        msg = ("anthropic-workspace-id is required when authenticating with an identity-linked API key; send the id of the "
+               "workspace this request acts in.")
+        self.assertEqual(P.pick_model(K, opener_for({P.MODELS_API: self.http_error(400, msg)})),
+                         (None, P.WORKSPACE_HINT, "key"))
+        self.assertEqual(P.probe_key(K, "m", opener_for({"https://api.anthropic.com/v1/messages": self.http_error(400, msg)})),
                          (False, P.WORKSPACE_HINT))
         self.out.clear()
         P.ask_key({}, lambda q: "", ok)
         text = "\n".join(self.out)
-        for need_text in ("звёздочки", "ключ.txt", "Default workspace", "API credits"):
+        for need_text in ("звёздочки", "ключ.txt", "закройте это окно", "Default workspace", "API credits"):
             self.assertIn(need_text, text)
 
     def test_changing_key_keeps_it_on_empty_enter(self):
