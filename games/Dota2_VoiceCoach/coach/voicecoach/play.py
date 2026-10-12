@@ -81,6 +81,15 @@ COACH_MAX_CALLS = 60                           # ИИ-тренер соперн�
 KEY_VARS = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN")   # по подписке их нельзя отдавать claude: -p платит ключом
 CREDITS_PAGE = "https://claude.ai/settings/billing"        # подписка Max → «API credits»: привязать организацию Console
 KEYS_PAGE = "https://platform.claude.com/settings/keys"    # Console → API Keys → Create Key
+# ключ со Scope «Organization» (без рабочей области) требует заголовок anthropic-workspace-id в каждом запросе, иначе 400
+# (справка Authentication, 12.10.2026); лаунчер его не шлёт — нужен ключ со Scope «Default workspace» (ERRORS №113)
+WORKSPACE_ERR = "anthropic-workspace-id"
+WORKSPACE_HINT = ("ключ создан на всю организацию (Scope: Organization) — создайте ключ со Scope: Default workspace "
+                  "(platform.claude.com → API Keys → Create Key)")
+# ключ в файле рядом с ИГРАТЬ.bat — когда вставка в окно лаунчера не работает (ERRORS №114): папка bat — над папкой игры,
+# если bat скачан один (DotaCoach рядом с ним), или сама папка игры
+KEY_FILES = ("ключ.txt", "key.txt", "ключ.txt.txt", "key.txt.txt")
+_KEY_RE = re.compile(r"sk-ant-[A-Za-z0-9_\-]{10,}")
 KEY_ASK = 23                                   # с Д23 "api_key": "" — «0, больше не спрашивать ключ»; до Д23 это было
                                                # «без Claude»: выпуски 4351ded и b6988a1 писали его на Enter, меню Д15 и
                                                # выпуски c1e0689…fd2c348 (--api, --ask-key) — на «0»; такой play.json —
@@ -215,7 +224,10 @@ def pick_model(api_key: str, opener=urllib.request.urlopen) -> tuple[str | None,
         with opener(req, timeout=20) as r:
             data = json.loads(r.read().decode("utf-8"))
     except urllib.error.HTTPError as e:
-        return None, api_error(e), "key" if e.code in (401, 403) else "net"
+        why = api_error(e)
+        if WORKSPACE_ERR in why:                        # ключ на всю организацию: лаунчер не шлёт рабочую область
+            return None, WORKSPACE_HINT, "key"
+        return None, why, "key" if e.code in (401, 403) else "net"
     except UnicodeError:                                # кириллица или пробелы в «ключе» — заголовок не собрать
         return None, "это не ключ API (в нём русские буквы или пробелы)", "key"
     except (OSError, ValueError) as e:
@@ -243,6 +255,8 @@ def probe_key(key: str, model: str, opener=urllib.request.urlopen) -> tuple[bool
         why = api_error(e)
         if "credit balance" in why.lower():
             return False, "nocredit"
+        if WORKSPACE_ERR in why:
+            return False, WORKSPACE_HINT
         return e.code not in (400, 401, 403), why        # 429, 5xx — ключ рабочий, просто занято
     except UnicodeError:
         return False, "это не ключ API"
@@ -251,9 +265,9 @@ def probe_key(key: str, model: str, opener=urllib.request.urlopen) -> tuple[bool
 
 
 def no_credit_help(saved: bool = True) -> None:
-    say("  На балансе организации Console, где создан этот ключ, нет денег на API: platform.claude.com → Billing —")
-    say("  пополнить. Если у вашей подписки Max есть кредит API (claude.ai → Settings → Billing → «API credits»), он")
-    say("  приходит в одну организацию — ключ нужен из неё (platform.claude.com, вверху переключить организацию).")
+    say("  На балансе организации Console, где создан этот ключ, нет денег на API. В подписку Max входит кредит на API")
+    say("  (claude.ai в браузере → Settings → Billing → «API credits»); он приходит в одну организацию — ключ нужен из неё")
+    say("  (platform.claude.com, вверху переключить организацию). Без кредита — пополнить: platform.claude.com → Billing.")
     if saved:
         say("  Этот ключ сохранил: как только на балансе появятся деньги, герои заработают по ключу.")
 
@@ -261,6 +275,138 @@ def no_credit_help(saved: bool = True) -> None:
 def looks_like_key(key: str) -> bool:
     """Похоже ли на ключ API: латиница, цифры и знаки, без пробелов, не короче 20 знаков."""
     return len(key) >= 20 and key.isascii() and key.isprintable() and not any(c.isspace() for c in key)
+
+
+def clipboard_text() -> str:
+    """Текст из буфера обмена Windows (WinAPI через ctypes); не Windows или не вышло — пустая строка."""
+    if os.name != "nt":
+        return ""
+    try:
+        import ctypes                                    # noqa: PLC0415
+        from ctypes import wintypes                      # noqa: PLC0415
+        user32, kernel32 = ctypes.WinDLL("user32"), ctypes.WinDLL("kernel32")
+        user32.OpenClipboard.argtypes = [wintypes.HWND]
+        user32.OpenClipboard.restype = wintypes.BOOL
+        user32.GetClipboardData.argtypes = [wintypes.UINT]
+        user32.GetClipboardData.restype = wintypes.HANDLE
+        kernel32.GlobalLock.argtypes = [wintypes.HGLOBAL]
+        kernel32.GlobalLock.restype = wintypes.LPVOID
+        kernel32.GlobalUnlock.argtypes = [wintypes.HGLOBAL]
+        if not user32.OpenClipboard(None):
+            return ""
+        try:
+            handle = user32.GetClipboardData(13)          # CF_UNICODETEXT
+            ptr = kernel32.GlobalLock(handle) if handle else None
+            if not ptr:
+                return ""
+            try:
+                return ctypes.wstring_at(ptr)
+            finally:
+                kernel32.GlobalUnlock(handle)
+        finally:
+            user32.CloseClipboard()
+    except Exception:                                    # noqa: BLE001 — нет буфера, не текст, другая ОС
+        return ""
+
+
+def read_secret(prompt: str, getch=None, putch=None, clipboard=clipboard_text) -> str:
+    """Скрытый ввод ключа. Windows: вместо знаков — звёздочки (видно, что вставка сработала); Ctrl+V вставляет из буфера
+    обмена сам лаунчер — в классической консоли Windows Ctrl+V приходит символом 0x16, а не текстом (ERRORS №114).
+    Пробелы и переводы строк не берутся; стрелки и F-клавиши не пишутся; Ctrl+C — KeyboardInterrupt.
+    Не Windows или не консоль — getpass."""
+    if getch is None:
+        if os.name != "nt" or not sys.stdin.isatty():
+            return getpass.getpass(prompt)
+        import msvcrt                                    # noqa: PLC0415
+        getch, putch = msvcrt.getwch, msvcrt.putwch
+    for c in prompt:
+        putch(c)
+    chars: list[str] = []
+    while True:
+        c = getch()
+        if c in ("\r", "\n"):
+            break
+        if c == "\x03":
+            raise KeyboardInterrupt
+        if c in ("\x00", "\xe0"):                         # стрелки, F1…: следом — код клавиши
+            getch()
+            continue
+        if c == "\b":
+            if chars:
+                chars.pop()
+                for x in "\b \b":
+                    putch(x)
+            continue
+        for x in (clipboard() if c == "\x16" else c):
+            if x.isprintable() and not x.isspace():
+                chars.append(x)
+                putch("*")
+    putch("\r")
+    putch("\n")
+    return "".join(chars)
+
+
+def find_key_file(dirs=None) -> Path | None:
+    """Файл с ключом: ключ.txt (или key.txt) рядом с ИГРАТЬ.bat или в папке игры."""
+    for d in dirs or (PROJECT.parent, PROJECT):
+        for name in KEY_FILES:
+            if (Path(d) / name).is_file():
+                return Path(d) / name
+    return None
+
+
+def read_key_file(path: Path) -> str:
+    """Ключ из текстового файла Блокнота (UTF-8 с BOM и без, ANSI, «Юникод» UTF-16): строка вида sk-ant-…, иначе весь
+    текст без пробелов по краям."""
+    raw = path.read_bytes()[:20000]
+    text = (raw.decode("utf-16", "replace") if raw[:2] in (b"\xff\xfe", b"\xfe\xff")
+            else raw.decode("utf-8-sig", "replace"))
+    m = _KEY_RE.search(text)
+    return m.group(0) if m else text.strip()
+
+
+def take_key_file(cfg: dict, opener=urllib.request.urlopen, probe=probe_key, dirs=None):
+    """Ключ из файла «ключ.txt» — для окна, где вставка в скрытый ввод не работает (ERRORS №114); новый файл заменяет и
+    сохранённый ключ. Подошёл — ключ в настройках игры, файл удаляется (ключ не лежит открыто рядом с игрой).
+    → None — файла нет; (ключ, модель) — играть по ключу; (None, None) — файл есть, по ключу не вышло (сказано почему)."""
+    path = find_key_file(dirs)
+    if path is None:
+        return None
+    try:
+        key = read_key_file(path)
+    except OSError as e:
+        say(f"  Файл «{path.name}» не прочитался: {e}.")
+        return None, None
+    if not looks_like_key(key):
+        say(f"  В файле «{path.name}» не ключ: ключ — длинная строка латиницей, начинается с sk-ant-. Откройте файл")
+        say("  Блокнотом, вставьте ключ (Ctrl+V), сохраните и запустите ИГРАТЬ.bat снова.")
+        return None, None
+    model, why, kind = pick_model(key, opener)
+    if not model and kind != "net":
+        say(f"  Ключ {mask(key)} из файла «{path.name}» не подошёл: {why}.")
+        say("  Создайте новый ключ (platform.claude.com → API Keys, Scope — Default workspace), вставьте его в файл вместо")
+        say("  старого и запустите ИГРАТЬ.bat снова.")
+        return None, None
+    cfg["api_key"] = key
+    if model:
+        cfg["model"] = model
+    save_config(cfg)
+    try:
+        path.unlink()
+    except OSError:
+        say(f"  Файл «{path.name}» удалить не смог — удалите его сами: ключ уже в настройках игры.")
+    if not model:
+        say(f"  Ключ {mask(key)} из файла сохранил, но проверить не смог: {why}. По ключу — со следующего запуска.")
+        return None, None
+    ok, why = probe(key, model, opener)
+    if why == "nocredit":
+        no_credit_help()
+        return None, None
+    if not ok:
+        say(f"  Ключ {mask(key)} из файла сохранил, но пробный запрос не прошёл: {why}. В этот раз — без ключа.")
+        return None, None
+    say(f"  Ключ {mask(key)} из файла «{path.name}» принят и сохранён в настройках игры; файл удалил.")
+    return key, model
 
 
 def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tuple[str | None, str | None] | None:
@@ -272,9 +418,11 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
     if not cfg.get("api_key"):
         say("  Быстрые агенты — по ключу API: Claude отвечает за 1–2 с (оценка; по подписке — 5–8 с), герой решает раз в")
         say("  1,5–2 с. Настоящее время ответа лаунчер покажет пробой сразу после ключа.")
-        say("  Цена — около $3–4 за 40-минутный матч (оценка). Ключ: platform.claude.com → Billing — пополнить баланс,")
-        say(f"  потом API Keys → Create Key, скопировать ({KEYS_PAGE}).")
-    say("  Вставьте ключ (Ctrl+V или правый щелчок мыши) и нажмите Enter. На экране ключ не появится — так задумано.")
+        say("  Цена — около $3–4 за 40-минутный матч (оценка). В подписку Max входит кредит на API ($100 в месяц у Max 5x):")
+        say("  claude.ai в браузере → Settings → Billing → «API credits»; без него — пополнить: platform.claude.com → Billing.")
+        say(f"  Ключ: {KEYS_PAGE} → Create Key (Scope — Default workspace), скопировать.")
+    say("  Вставьте ключ (правый щелчок мыши или Ctrl+V) и нажмите Enter — вместо ключа на экране будут звёздочки.")
+    say(f"  Не вставляется — сохраните ключ Блокнотом в файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat и запустите ИГРАТЬ.bat снова.")
     if keep:
         say("  Оставить как было — просто Enter. Больше не играть по ключу — 0 и Enter.")
     else:
@@ -293,7 +441,8 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
             return None, None
         if not looks_like_key(key):
             say("  Это не похоже на ключ: ключ — длинная строка латиницей, начинается с sk-ant-. Скопируйте его ещё раз")
-            say("  на platform.claude.com → API Keys (при создании он показывается один раз) и вставьте сюда.")
+            say("  на platform.claude.com → API Keys (при создании он показывается один раз) и вставьте сюда; не вставляется —")
+            say(f"  файл «{KEY_FILES[0]}» рядом с ИГРАТЬ.bat (см. выше).")
             continue
         model, why, kind = pick_model(key, opener)
         if model:
@@ -330,7 +479,7 @@ def ask_key(cfg: dict, ask, opener, keep: bool = False, probe=probe_key) -> tupl
 def setup_claude(cfg: dict, args, ask=None, opener=urllib.request.urlopen,
                  probe=probe_key) -> tuple[str | None, str | None]:
     """Ключ и модель для агентов. → (ключ, модель) или (None, None) — играть на правилах."""
-    ask = ask or getpass.getpass
+    ask = ask or read_secret
     if args.rules:
         return None, None
     key = os.environ.get("ANTHROPIC_API_KEY")
@@ -552,10 +701,19 @@ def setup_agents(cfg: dict, args, ask_secret=None, opener=urllib.request.urlopen
                 save_config(cfg)
             except OSError:                                       # файл занят: спросить и в этот раз, и в следующий
                 pass
+    filed = take_key_file(cfg, opener, probe)                     # файл «ключ.txt» — явная просьба играть по ключу
+    if filed is not None:
+        if filed[0]:
+            return "key", filed
+        if args.api:
+            return "off", None
+        say("  Дальше — по подписке (Claude Code).")
+        exe = subscription()
+        return ("sub", exe) if exe else ("off", None)
     if (args.api or args.ask_key) and cfg.get("api_key") == "":   # «больше не спрашивать» — но ключ просят
         cfg.pop("api_key")
     if args.api or args.ask_key or os.environ.get("ANTHROPIC_API_KEY") or cfg.get("api_key") or "api_key" not in cfg:
-        key, model = setup_claude(cfg, args, ask_secret or getpass.getpass, opener, probe=probe)
+        key, model = setup_claude(cfg, args, ask_secret or read_secret, opener, probe=probe)
         if key:
             return "key", (key, model)
         if args.api:
@@ -1331,7 +1489,7 @@ def rules_ok(ask) -> bool:
     return True
 
 
-def main(argv=None, ask=input, ask_secret=getpass.getpass, enter=input) -> int:
+def main(argv=None, ask=input, ask_secret=read_secret, enter=input) -> int:
     try:
         return _main(argv, ask, ask_secret, enter)
     finally:

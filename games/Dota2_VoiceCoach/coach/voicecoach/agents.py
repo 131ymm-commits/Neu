@@ -663,8 +663,9 @@ class ApiBackend:
                 if e.code == 400 and self._drop(text, sent):
                     continue
                 if "credit balance" in text.lower():          # деньги на балансе кончились: стучаться реже — неудачный
-                    raise BackendError("на балансе API кончились деньги: пополните — platform.claude.com → Billing; "
-                                       "герои вернутся к Claude через минуту после пополнения", 60.0) from None
+                    raise BackendError("на балансе API кончились деньги: кредит подписки Max придёт сам в следующем "
+                                       "расчётном месяце, пополнить сразу — platform.claude.com → Billing; герои "
+                                       "вернутся к Claude через минуту после того, как деньги появятся", 60.0) from None
                 retry = e.headers.get("retry-after") if getattr(e, "headers", None) else None
                 raise BackendError(f"HTTP {e.code}: {text}", _retry_after(retry)) from None
             except (urllib.error.URLError, TimeoutError, OSError) as e:
