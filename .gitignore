@@ -4,3 +4,5 @@ games/*.zip
 
 # Закреплённый бинарь CLI для run_sealed2 (колесо claude-agent-sdk с PyPI); в git не класть
 .cache/
+experiments/2026-10-07_SELECT-01/run/main_eval_jobs.jsonl
+experiments/2026-10-07_SELECT-01/run/rep_eval_jobs.jsonl

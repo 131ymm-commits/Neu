@@ -57,6 +57,7 @@ if __name__ == '__main__':
     elif cmd == 'eval_jobs':
         stage, spec = sys.argv[2], dict(x.split(':') for x in sys.argv[3].split(',')); jobs = []
         for t in tids(sys.argv[4], sys.argv[5]):
+            if not os.path.exists(f'{D}/pools/{t}.json'): print('нет пула — задача исключена до оценщиков (PREREG §6):', t); continue
             tk = task(t); pool = json.load(open(f'{D}/pools/{t}.json')); pm = perm(t); shown = [pool[j] for j in pm]; rules = sim.RULES[tk['type']](tk)
             for a, n in spec.items():
                 for i in range(int(n)):
