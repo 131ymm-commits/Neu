@@ -18,6 +18,7 @@ import gzip
 import io
 import json
 import os
+import re
 import sys
 import tempfile
 import unittest
@@ -599,6 +600,245 @@ class SanitizeTests(unittest.TestCase):
         self.assertTrue(rs.leak_scan('sk-ant-XXXXXXXXXXXX'))
         self.assertTrue(rs.leak_scan('see /home/user/neu/x'))
         self.assertEqual(rs.leak_scan('{"type":"result"}'), [])
+
+
+# ---------- правки проверки Opus (12.10.2026) ----------
+
+def ev_rate(status='rejected', resets_at=1791821400, kind='five_hour'):
+    return {'type': 'rate_limit_event', 'rate_limit_info': {'status': status, 'resetsAt': resets_at,
+                                                            'rateLimitType': kind}}
+
+
+class OpusReviewTests(unittest.TestCase):
+    """Время сброса из события, остановки, журнал для git, выгрузка в формат v1."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name)
+        self.journal = self.root / 'journal'
+        self.streams = self.root / 'streams'
+        self.clock = Clock()
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def driver(self, cfg, call_fn, **kw):
+        return rs.Driver(cfg, seed='S', jobs_sha256='jobs', journal_dir=self.journal, streams_dir=self.streams,
+                         call_fn=call_fn, pre_call_check=lambda: 'bin-sha', now_fn=self.clock.now,
+                         sleep_fn=self.clock.sleep, log=lambda m: None, **kw)
+
+    def job(self, jid='j1', task='T1', arm='A'):
+        return {'task': task, 'id': jid, 'arm': arm, 'prompt': 'п', 'schema': {'type': 'object'}}
+
+    def lost(self):
+        return call(events=[ev_init(), ev_start(), ev_stop(), ev_result(default_structured=False)])
+
+    # время сброса
+    def test_reset_from_rejected_event(self):
+        self.assertEqual(rs.reset_from_events([ev_init(), ev_rate()]),
+                         datetime.fromtimestamp(1791821400, timezone.utc))
+
+    def test_reset_from_event_ignores_allowed_and_reads_ms(self):
+        self.assertIsNone(rs.reset_from_events([ev_rate('allowed'), ev_rate('allowed_warning')]))
+        self.assertEqual(rs.reset_from_events([ev_rate(resets_at=1791821400000)]),
+                         datetime.fromtimestamp(1791821400, timezone.utc))
+        self.assertIsNone(rs.reset_from_events([ev_rate(resets_at=None)]))
+
+    def test_probe_resets_at_is_unix_seconds(self):
+        events = [json.loads(x) for x in FIXTURE.read_text(encoding='utf-8').splitlines() if x.strip()]
+        info = next(e for e in events if e.get('type') == 'rate_limit_event')['rate_limit_info']
+        t = datetime.fromtimestamp(info['resetsAt'], timezone.utc)
+        self.assertEqual((t.year, t.month, t.day), (2026, 10, 12))   # день пробного вызова
+        self.assertIsNone(rs.reset_from_events(events))               # статус allowed — не лимит
+
+    def test_reset_text_with_date(self):
+        now = datetime(2026, 10, 12, 18, 0, tzinfo=timezone.utc)
+        self.assertEqual(rs.next_reset('resets Oct 14, 7pm (UTC)', now), datetime(2026, 10, 14, 19, 0, tzinfo=timezone.utc))
+        self.assertEqual(rs.next_reset('resets Oct 14 at 7:30pm (UTC)', now),
+                         datetime(2026, 10, 14, 19, 30, tzinfo=timezone.utc))
+        self.assertEqual(rs.next_reset('resets Jan 2, 1am (UTC)', now), datetime(2027, 1, 2, 1, 0, tzinfo=timezone.utc))
+        self.assertEqual(rs.next_reset('resets 7:30pm (UTC)', now), datetime(2026, 10, 12, 19, 30, tzinfo=timezone.utc))
+
+    def test_weekly_limit_without_parsable_text_waits_by_event(self):
+        reset = T0 + timedelta(hours=20)
+        lim = call(events=[ev_init(), ev_rate(kind='seven_day', resets_at=reset.timestamp()),
+                           ev_limit("You've hit your weekly limit · resets Mon 7pm")])
+        script = Script([lim, call(events=good_stream())])
+        drv = self.driver(make_cfg(), script)
+        drv.start()
+        drv.run([self.job()])
+        recs = read_journal(self.journal, 'T1')
+        self.assertEqual([r['outcome'] for r in recs], [rs.NA, rs.OK])
+        self.assertEqual(recs[0]['reset_source'], 'rate_limit_event')
+        self.assertGreaterEqual(self.clock.t, reset + timedelta(seconds=120))
+
+    def test_too_long_wait_stops(self):
+        lim = call(events=[ev_init(), ev_rate(kind='seven_day', resets_at=(T0 + timedelta(days=5)).timestamp()),
+                           ev_limit('weekly')])
+        drv = self.driver(make_cfg(), Script([lim]))
+        drv.start()
+        with self.assertRaises(rs.RunStop) as cm:
+            drv.run([self.job()])
+        self.assertIn('слишком долгое', str(cm.exception))
+
+    def test_start_timeout_with_rejected_event_waits_not_retries(self):
+        reset = T0 + timedelta(hours=1)
+        dead = call(events=[ev_init(), ev_rate(resets_at=reset.timestamp())], returncode=1)
+        script = Script([dead, call(events=good_stream())])
+        drv = self.driver(make_cfg(), script)
+        drv.start()
+        drv.run([self.job()])
+        recs = read_journal(self.journal, 'T1')
+        self.assertEqual((recs[0]['outcome'], recs[0]['waits'], recs[0]['retries']), (rs.NA, 1, 0))
+
+    def test_zero_usage_with_allowed_event_and_no_text_is_bounded_retry(self):
+        z = call(events=[ev_init(), ev_rate('allowed'), ev_result(structured=None, inp=0, out=0, cost=0, model=None,
+                                                                  is_error=True, text='overloaded',
+                                                                  default_structured=False)])
+        drv = self.driver(make_cfg(), Script([z, call(events=good_stream())]))
+        drv.start()
+        drv.run([self.job()])
+        recs = read_journal(self.journal, 'T1')
+        self.assertEqual((recs[0]['waits'], recs[0]['retries']), (0, 1))
+        self.assertNotIn('wait_s', recs[0])
+
+    # остановки
+    def test_spawn_error_stops_without_record(self):
+        drv = self.driver(make_cfg(), Script([call(spawn_error='OSError: x')]))
+        drv.start()
+        with self.assertRaises(rs.RunStop) as cm:
+            drv.run([self.job()])
+        self.assertIn('не запустился', str(cm.exception))
+        self.assertEqual(read_journal(self.journal, 'T1'), [])
+
+    def test_empty_stream_failure_is_recorded_then_stops(self):
+        drv = self.driver(make_cfg(), Script([call(events=[], returncode=1), call(events=good_stream())]))
+        drv.start()
+        with self.assertRaises(rs.RunStop) as cm:
+            drv.run([self.job('j1'), self.job('j2')])
+        self.assertIn('поток пуст', str(cm.exception))
+        recs = read_journal(self.journal, 'T1')
+        self.assertEqual([(r['outcome'], r['final']) for r in recs], [(rs.FAIL, 'потерян')])
+
+    def test_consecutive_lost_stop(self):
+        jobs = [self.job(f'j{i}') for i in range(5)]
+        drv = self.driver(make_cfg(max_consecutive_lost=3), Script([self.lost() for _ in range(5)]))
+        drv.start()
+        with self.assertRaises(rs.RunStop) as cm:
+            drv.run(jobs)
+        self.assertIn('подряд', str(cm.exception))
+        self.assertEqual(len(read_journal(self.journal, 'T1')), 3)
+
+    def test_lost_streak_resets_on_good(self):
+        jobs = [self.job(f'j{i}') for i in range(5)]
+        seq = [self.lost(), self.lost(), call(events=good_stream()), self.lost(), self.lost()]
+        drv = self.driver(make_cfg(max_consecutive_lost=3), Script(seq))
+        drv.start()
+        drv.run(jobs)
+        self.assertEqual(len(read_journal(self.journal, 'T1')), 5)
+
+    def test_existing_stream_file_is_not_overwritten(self):
+        seen = []
+
+        def fn(cfg, job, gz):
+            seen.append(Path(gz).name)
+            Path(gz).parent.mkdir(parents=True, exist_ok=True)
+            Path(gz).write_bytes(b'x')
+            return call(events=[ev_init(), ev_limit()]) if len(seen) == 1 else call(events=good_stream())
+        drv = self.driver(make_cfg(), fn)
+        drv.start()
+        job = self.job()
+        drv._one_call(job, 1, 'основной')
+        drv._one_call(job, 1, 'основной')               # тот же номер попытки, как после гибели драйвера
+        self.assertEqual(len(set(seen)), 2)
+        self.assertIn('.r2.', seen[1])
+
+    # журнал для git
+    def test_journal_slims_signature_thinking_and_init(self):
+        sig = 'S' * 5000
+        ev = [dict(ev_init(), skills=['a'] * 50, session_id='x', cwd='/home/u'),
+              {'type': 'system', 'subtype': 'thinking_tokens', 'estimated_tokens': 50},
+              {'type': 'system', 'subtype': 'thinking_tokens', 'estimated_tokens': 900},
+              {'type': 'assistant', 'message': {'content': [{'type': 'thinking', 'thinking': '', 'signature': sig}]}},
+              ev_result()]
+        out = rs.journal_events(ev)
+        text = json.dumps(out, ensure_ascii=False)
+        self.assertNotIn(sig, text)
+        self.assertNotIn('skills', out[0])
+        self.assertEqual(out[0]['init_sha256'], rs.init_sha(ev[0]))
+        blk = out[1]['message']['content'][0]['signature']
+        self.assertEqual(blk['длина'], 5000)
+        self.assertEqual(out[-1]['событий'], 2)
+        self.assertEqual(out[-1]['последняя_оценка'], 900)
+
+    def test_init_sha_ignores_session_and_paths(self):
+        a = dict(ev_init(), session_id='1', uuid='u1', cwd='/tmp/a', skills=['x'])
+        b = dict(ev_init(), session_id='2', uuid='u2', cwd='/tmp/b', skills=['x'])
+        c = dict(ev_init(), session_id='2', uuid='u2', cwd='/tmp/b', skills=['y'])
+        self.assertEqual(rs.init_sha(a), rs.init_sha(b))
+        self.assertNotEqual(rs.init_sha(a), rs.init_sha(c))
+
+    def test_record_has_init_file_and_raw_stream_fields(self):
+        drv = self.driver(make_cfg(), Script([call(events=good_stream(), stream_sha256='ab', stream_bytes=7)]))
+        drv.start()
+        drv.run([self.job()])
+        r = read_journal(self.journal, 'T1')[0]
+        self.assertTrue((self.journal / f"init_{r['init_sha256'][:12]}.json").exists())
+        self.assertEqual((r['stream']['sha256'], r['stream']['bytes']), ('ab', 7))
+        self.assertEqual(r['model_usage_out'], {TARGET: 50})
+
+    def test_probe_fixture_journal_is_small(self):
+        events = [json.loads(x) for x in FIXTURE.read_text(encoding='utf-8').splitlines() if x.strip()]
+        raw = sum(len(json.dumps(e, ensure_ascii=False)) for e in events if not rs.is_delta(e))
+        slim = len(json.dumps(rs.journal_events(events), ensure_ascii=False))
+        self.assertLess(slim, raw)
+        text = json.dumps(rs.journal_events(events), ensure_ascii=False)
+        self.assertIsNone(re.search(r'"signature": "[^"]', text))     # непустых подписей в журнале нет
+        self.assertNotIn('"uuid"', text)
+        print(f'\n  образец пробного вызова: поток без дельт {raw} байт, журнал {slim} байт', end=' ')
+
+    # формат v1
+    def test_load_jobs_task_from_id(self):
+        p = self.root / 'jobs.jsonl'
+        p.write_text(json.dumps({'id': 'WH_1|B_blind|3', 'prompt': 'п', 'schema': {}}) + '\n' +
+                     json.dumps({'id': 'WH_1|exec', 'prompt': 'п', 'schema': {}}) + '\n', encoding='utf-8')
+        jobs = rs.load_jobs(p, task_from_id=True)
+        self.assertEqual([(j['task'], j['arm']) for j in jobs], [('WH_1', 'B_blind'), ('WH_1', 'exec')])
+        with self.assertRaises(SystemExit):
+            rs.load_jobs(p)
+
+    def test_export_v1_format(self):
+        seq = [call(events=good_stream()), self.lost(), call(events=[ev_init(), ev_limit()]), call(events=good_stream())]
+        drv = self.driver(make_cfg(max_consecutive_lost=9), Script(seq))
+        drv.start()
+        jobs = [self.job('WH_1|A|0', task='WH_1'), self.job('WH_1|A|1', task='WH_1'), self.job('WH_1|A|2', task='WH_1')]
+        drv.run(jobs)
+        out = self.root / 'out.jsonl'
+        rs.cmd_export(type('A', (), {'journal': str(self.journal), 'out': str(out)}))
+        recs = {r['id']: r for r in map(json.loads, out.read_text(encoding='utf-8').splitlines())}
+        self.assertEqual(len(recs), 3)
+        good = [r for r in recs.values() if not r.get('error')]
+        bad = [r for r in recs.values() if r.get('error')]
+        self.assertEqual((len(good), len(bad)), (2, 1))
+        self.assertEqual(good[0]['result'], {'answer': 'да'})
+        self.assertIsNone(bad[0]['result'])
+        self.assertTrue(bad[0]['error'].startswith('потерян: '))
+        for r in recs.values():
+            self.assertIsInstance(r['inp'], int)
+            self.assertIsInstance(r['out'], int)
+
+    def test_summary_counts_started_call_without_record(self):
+        drv = self.driver(make_cfg(), Script([call(events=good_stream())]))
+        drv.start()
+        drv.run([self.job()])
+        drv._log_run('вызов', {'task': 'T1', 'job': 'j9', 'arm': 'A', 'attempt': 1, 'role': 'основной', 'поток': 'x'})
+        buf = io.StringIO()
+        with mock.patch('sys.stdout', buf):
+            rs.cmd_summary(type('A', (), {'journal': str(self.journal)}))
+        head, row = buf.getvalue().strip().splitlines()[:2]
+        cols = head.split('\t')
+        vals = dict(zip(cols, row.split('\t')))
+        self.assertEqual((vals['годных'], vals['без_записи'], vals['init']), ('1', '1', '1'))
 
 
 class ProbeFixtureTests(unittest.TestCase):

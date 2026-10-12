@@ -15,8 +15,12 @@
       Прогон голов. JOBS.jsonl: строка на вызов {"task", "id", "arm"(необязательно), "prompt", "schema"}.
       Продолжение с места: итоговые вызовы из журнала не запрашиваются заново. Конфигурация и jobs сверяются
       с ЖУРНАЛ/run_config.json; при расхождении драйвер останавливается.
+      --task-from-id: задания в формате run_sealed v1 ({id, prompt, schema}), задача и рука берутся из id «задача|рука|i».
   python3 tools/run_sealed2.py summary --journal ЖУРНАЛ
-      Сводка по рукам: годные, потерянные, попытки «нет ответа», ожидания, повторы, api_retry, подмены модели.
+      Сводка по рукам: годные, потерянные, попытки «нет ответа», ожидания, повторы, api_retry, подмены модели,
+      многоходовые ответы, вызовы без записи (по run_log.jsonl), число вариантов init.
+  python3 tools/run_sealed2.py export --journal ЖУРНАЛ --out run/<этап>_out.jsonl
+      Итоги в формате run_sealed v1 для harness.py SELECT-01 (годный → result; потерян → error).
 
 ЧТО ПИШЕТСЯ:
   ЖУРНАЛ/<задача>.jsonl (в git): по записи на каждый вызов. Поля: outcome (годный / нет ответа / сбой ответа),
@@ -24,9 +28,10 @@
     ход), cli_init_version (claude_code_version из события init), binary_sha256, model_target, model_usage_keys
     (модели по modelUsage), effort, thinking_budget, thinking_tokens, env_config (значения переменных из списка
     конфигурации), env_access_names (только имена переменных доступа), usage (inp, out, cost_usd), answer,
-    waits (число ожиданий сброса лимита), retries (число повторов), stream (sha256 полного потока и поток без
-    content_block_delta), config_sha256.
-  ЖУРНАЛ/run_config.json: конфигурация прогона; ЖУРНАЛ/run_log.jsonl: старты и остановки.
+    waits (число ожиданий сброса лимита), retries (число повторов), stream (sha256 сырого потока и поток без
+    content_block_delta), config_sha256, init_sha256. В потоке журнала подписи размышлений заменены длиной и
+    sha256, события thinking_tokens сведены в одно, init — короткая форма (полная — ЖУРНАЛ/init_<sha12>.json).
+  ЖУРНАЛ/run_config.json: конфигурация прогона; ЖУРНАЛ/run_log.jsonl: старты, начало каждого вызова, остановки.
   ПОТОКИ/<задача>/*.jsonl.gz: полный поток stream-json (gzip, вне git), *.err.gz: stderr.
 
 КЛАССЫ ИСХОДА:
@@ -38,6 +43,11 @@
   сбой ответа: всё остальное (отказ, неразборный вывод, нет structured_output, таймаут после начала ответа,
     api_retry после начала, оборванный ход, ответ не целевой модели, запись без usage). Повтора нет, вызов
     записывается как «потерян». Повтор для вторичного анализа (параметр secondary_retry) пишется только в журнал.
+
+ОСТАНОВКИ (записи не меняются, продолжение — тем же запуском): процесс головы не запустился (записи нет);
+  «потерян» при пустом потоке (запись есть); max_consecutive_lost «потерян» подряд; исчерпаны повторы «нет ответа»;
+  ожидание сброса дольше max_single_wait_s; смена конфигурации, бинаря или версии CLI; claude_code_version_too_old.
+ВРЕМЯ СБРОСА ЛИМИТА: из rate_limit_event со статусом отказа (поле resetsAt), иначе из текста итога «resets …».
 
 Стандартная библиотека, Python 3.11. Версии и sha256 закреплены ниже; при расхождении бинарь перекачивается с PyPI.
 """
@@ -119,6 +129,7 @@ def default_config():
         'limit_margin_s': 120,               # запас после времени сброса
         'max_single_wait_s': 26 * 3600,      # дольше ждать одним ожиданием нельзя
         'max_limit_waits_per_job': 30,
+        'max_consecutive_lost': 3,           # столько «потерян» подряд (по времени записи) — остановка для разбора
         'secondary_retry': False,            # повтор после «сбоя ответа» только в журнал (вторичный анализ)
     }
 
@@ -333,7 +344,8 @@ class CallResult:
     timed_out: bool = False
     returncode: int | None = None
     stream_path: Path | None = None
-    stream_sha256: str | None = None
+    stream_sha256: str | None = None                # sha256 сырого потока stdout (байты как пришли, до gzip)
+    stream_bytes: int = 0
     stderr_bytes: int = 0
     stderr_sha256: str | None = None
     started: datetime | None = None
@@ -394,9 +406,65 @@ def redact(obj, paths=False):
     return obj
 
 
+INIT_KEEP = ('type', 'subtype', 'model', 'tools', 'mcp_servers', 'permissionMode', 'claude_code_version',
+             'output_style')
+INIT_VOLATILE = ('session_id', 'uuid', 'cwd', 'memory_paths', 'messaging_socket_path')
+
+
+def find_init(events):
+    return next((e for e in events or [] if e.get('type') == 'system' and e.get('subtype') == 'init'), None)
+
+
+def init_full(e):
+    """Событие init без изменчивых полей (id сессии, пути) и без секретов — то, что сверяется между вызовами."""
+    return redact({k: v for k, v in e.items() if k not in INIT_VOLATILE}, paths=True)
+
+
+def init_sha(e):
+    return sha256_bytes(canonical(init_full(e)).encode('utf-8'))
+
+
+EVENT_DROP = ('uuid', 'session_id')    # повторяются в каждом событии; session_id пишется в запись один раз
+
+
+def _slim(obj, top=True):
+    """Подпись размышлений (signature) — непрозрачный блок, растёт с длиной размышлений: в журнал — длина и sha256.
+    У событий верхнего уровня убираются uuid и session_id."""
+    if isinstance(obj, dict):
+        return {k: ({'длина': len(v), 'sha256': sha256_bytes(v.encode('utf-8'))}
+                    if k == 'signature' and isinstance(v, str) and v else _slim(v, False))
+                for k, v in obj.items() if not (top and k in EVENT_DROP)}
+    if isinstance(obj, list):
+        return [_slim(v, False) for v in obj]
+    return obj
+
+
 def journal_events(events):
-    """Поток для журнала (git): без content_block_delta, с вычищенными секретами и адресами e-mail."""
-    return [redact(e) for e in events if not is_delta(e)]
+    """Поток для журнала (git): без content_block_delta, с вычищенными секретами и адресами e-mail.
+
+    Чтобы журнал тысяч вызовов помещался в git: подпись размышлений → длина и sha256; события
+    system/thinking_tokens → одно сводное в конце (число событий, последняя оценка); init → короткая форма и
+    sha256 полной (полная пишется один раз в ЖУРНАЛ/init_<sha12>.json). Полный поток — gzip вне git.
+    """
+    out, think_n, think_last = [], 0, None
+    for e in events:
+        if is_delta(e):
+            continue
+        if e.get('type') == 'system' and e.get('subtype') == 'thinking_tokens':
+            think_n += 1
+            think_last = e.get('estimated_tokens', think_last)
+            continue
+        if e.get('type') == 'system' and e.get('subtype') == 'init':
+            full = init_full(e)
+            slim = {k: full[k] for k in INIT_KEEP if k in full}
+            slim['init_sha256'] = init_sha(e)
+            out.append(slim)
+            continue
+        out.append(_slim(redact(e)))
+    if think_n:
+        out.append({'type': 'system', 'subtype': 'thinking_tokens_сводка', 'событий': think_n,
+                    'последняя_оценка': think_last})
+    return out
 
 
 def summarize(events):
@@ -530,21 +598,58 @@ def verdict_for(res, cfg):
                     results_count=res.results_count)
 
 
-RESET_RE = re.compile(r'resets\s+(\d{1,2})(?::(\d{2}))?\s*([ap]m)\s*\(UTC\)', re.IGNORECASE)
+MONTHS = ('jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec')
+RESET_RE = re.compile(r'resets\s+(?:(' + '|'.join(MONTHS) + r')[a-z]*\.?\s+(\d{1,2}),?\s+(?:at\s+)?)?'
+                      r'(\d{1,2})(?::(\d{2}))?\s*([ap]m)\s*\(UTC\)', re.IGNORECASE)
 
 
 def next_reset(text, now):
-    """Время сброса из текста вида «resets 7:30pm (UTC)». Если время уже прошло недавно — сразу, иначе завтра."""
+    """Время сброса из текста вида «resets 7:30pm (UTC)» или «resets Oct 14, 7pm (UTC)».
+
+    Без даты: если время уже прошло недавно (до 10 минут) — сразу, иначе завтра. С датой: этот год, а если дата
+    прошла больше чем на 10 минут — следующий. Запасной путь: основной — reset_from_events.
+    """
     m = RESET_RE.search(text or '')
     if not m:
         return None
-    hour = int(m.group(1)) % 12 + (12 if m.group(3).lower() == 'pm' else 0)
-    minute = int(m.group(2) or 0)
+    hour = int(m.group(3)) % 12 + (12 if m.group(5).lower() == 'pm' else 0)
+    minute = int(m.group(4) or 0)
     now = now.astimezone(timezone.utc)
+    if m.group(1):
+        month, day = MONTHS.index(m.group(1)[:3].lower()) + 1, int(m.group(2))
+        try:
+            cand = datetime(now.year, month, day, hour, minute, tzinfo=timezone.utc)
+            if now - cand > timedelta(minutes=10):
+                cand = cand.replace(year=now.year + 1)
+        except ValueError:
+            return None
+        return max(cand, now)
     cand = now.replace(hour=hour, minute=minute, second=0, microsecond=0)
     if cand <= now:
         cand = now if (now - cand) <= timedelta(minutes=10) else cand + timedelta(days=1)
     return cand
+
+
+LIMIT_OK_STATUSES = ('allowed', 'allowed_warning')
+
+
+def reset_from_events(events):
+    """Время сброса из последнего rate_limit_event со статусом отказа (не allowed / allowed_warning).
+
+    Поле rate_limit_info.resetsAt — секунды unix (в образце пробного вызова: 1791821400); число больше 1e12
+    считается миллисекундами. Нет такого события — None (тогда время ищется в тексте итога).
+    """
+    best = None
+    for e in events or []:
+        if e.get('type') != 'rate_limit_event':
+            continue
+        info = e.get('rate_limit_info') or {}
+        if info.get('status') in LIMIT_OK_STATUSES:
+            continue
+        ts = info.get('resetsAt')
+        if isinstance(ts, (int, float)) and not isinstance(ts, bool) and ts > 0:
+            best = datetime.fromtimestamp(ts / 1000 if ts > 1e12 else ts, timezone.utc)
+    return best
 
 
 def legacy_final(rec):
@@ -574,6 +679,7 @@ def real_call(cfg, job, gz_path):
     res = CallResult(events=[], stream_path=gz_path, started=utcnow())
     err_chunks = []
     counters = {'unparsable': 0}
+    raw_hash = hashlib.sha256()
     try:
         with open(gz_path, 'wb') as raw_fh, gzip.GzipFile(filename='', mode='wb', fileobj=raw_fh, mtime=0) as gz:
             proc = None
@@ -587,6 +693,8 @@ def real_call(cfg, job, gz_path):
                 def read_out():
                     for line in proc.stdout:
                         gz.write(line)
+                        raw_hash.update(line)
+                        res.stream_bytes += len(line)
                         res.lines.append(line)
                         s = line.strip()
                         if not s:
@@ -622,7 +730,7 @@ def real_call(cfg, job, gz_path):
                 t_err.join(120)
     finally:
         shutil.rmtree(work, ignore_errors=True)
-    res.stream_sha256 = sha256_file(gz_path)
+    res.stream_sha256 = raw_hash.hexdigest()
     err_bytes = b''.join(err_chunks)
     with open(err_path, 'wb') as err_fh, gzip.GzipFile(filename='', mode='wb', fileobj=err_fh, mtime=0) as eg:
         eg.write(err_bytes)
@@ -689,6 +797,7 @@ class Driver:
         self.stop = threading.Event()
         self.pause_until = None
         self.calls = 0
+        self.lost_streak = 0
         self.config_sha = None
         self.run_cfg = None
         self.bin_sha = None
@@ -722,6 +831,19 @@ class Driver:
                     except ValueError as e:
                         raise RunStop(f'журнал повреждён: {path.name}, строка {n}: {e}')
         return recs
+
+    def _save_init(self, events):
+        """Полное событие init (без изменчивых полей) — один раз на вариант в ЖУРНАЛ/init_<sha12>.json; вернуть sha256."""
+        e = find_init(events)
+        if e is None:
+            return None
+        sha = init_sha(e)
+        path = self.journal_dir / f'init_{sha[:12]}.json'
+        with self._file_lock(path):
+            if not path.exists():
+                path.write_text(json.dumps(init_full(e), ensure_ascii=False, indent=1, sort_keys=True) + '\n',
+                                encoding='utf-8')
+        return sha
 
     def _log_run(self, event, data):
         self.journal_dir.mkdir(parents=True, exist_ok=True)
@@ -782,7 +904,17 @@ class Driver:
         self.bin_sha = self.pre_call_check() or self.bin_sha
         tag = 'osn' if role == 'основной' else 'vtor'
         base = self.streams_dir / safe(job['task']) / f"{safe(job['id'])}-{sha8(job['id'])}.a{attempt:03d}.{tag}"
-        res = self.call_fn(self.cfg, job, base.with_name(base.name + '.jsonl.gz'))
+        gz = base.with_name(base.name + '.jsonl.gz')
+        n = 1
+        while gz.exists():                     # вызов, оборванный гибелью драйвера: его поток не перезаписывается
+            n += 1
+            gz = base.with_name(f'{base.name}.r{n}.jsonl.gz')
+        self._log_run('вызов', {'task': job['task'], 'job': job['id'], 'arm': job.get('arm'), 'attempt': attempt,
+                                'role': role, 'поток': gz.name})
+        res = self.call_fn(self.cfg, job, gz)
+        if res.spawn_error:
+            raise RunStop(f'процесс головы не запустился ({res.spawn_error}): модель вход не видела, '
+                          'запись не делается')
         if res.too_old:
             raise RunStop('отказ API: claude_code_version_too_old. Стоп без повтора и без записи «потерян»; '
                           'затем запасное правило версий из PREREG (с записанным отклонением)')
@@ -802,6 +934,10 @@ class Driver:
             'cli_init_version': res.init_version, 'cli_pinned_version': PINNED_VERSION,
             'model_target': cfg['model'],
             'model_usage_keys': sorted(final.model_usage) if final and final.model_usage else [],
+            'model_usage_out': ({k: (v or {}).get('outputTokens') for k, v in sorted(final.model_usage.items())}
+                                if final and final.model_usage else {}),
+            'init_sha256': self._save_init(res.events),
+            'session_id': (find_init(res.events) or {}).get('session_id'),
             'effort': cfg['effort'], 'thinking_budget': cfg['env_explicit']['MAX_THINKING_TOKENS'],
             'thinking_tokens': final.thinking if final else None,
             'env_config': {k: cfg['env_explicit'][k] for k in sorted(cfg['env_explicit'])},
@@ -813,7 +949,7 @@ class Driver:
                      'stderr_bytes': res.stderr_bytes, 'stderr_sha256': res.stderr_sha256,
                      'spawn_error': res.spawn_error},
             'stream': {'file': res.stream_path.name if res.stream_path else None,
-                       'sha256': res.stream_sha256, 'lines': len(res.lines),
+                       'sha256': res.stream_sha256, 'bytes': res.stream_bytes, 'lines': len(res.lines),
                        'events_no_deltas': journal_events(res.events)},
         }
 
@@ -826,14 +962,18 @@ class Driver:
             v = verdict_for(res, self.cfg)
             now = self.now_fn()
             if v.outcome == NA:
-                reset = next_reset(v.limit_text, now) if v.limit_text else None
+                reset, source = reset_from_events(res.events), 'rate_limit_event'
+                if reset is None and v.limit_text:
+                    reset, source = next_reset(v.limit_text, now), 'текст итога'
                 if reset is not None:                       # лимит аккаунта со временем сброса: ждём и повторяем
+                    reset = max(reset, now)
                     st.waits += 1
                     st.streak = 0
                     until = reset + timedelta(seconds=self.cfg['limit_margin_s'])
                     wait_s = (until - now).total_seconds()
                     rec = self._record(job, st.attempts, 'основной', res, v, st)
                     rec['limit_reset_at'] = iso(until)
+                    rec['reset_source'] = source
                     rec['wait_s'] = round(wait_s)
                     self._append(task, rec)
                     if st.waits > self.cfg['max_limit_waits_per_job']:
@@ -856,6 +996,8 @@ class Driver:
             if v.outcome == OK:
                 st.final = 'годный'
                 st.streak = 0
+                with self.lock:
+                    self.lost_streak = 0
                 rec = self._record(job, st.attempts, 'основной', res, v, st)
                 rec['final'] = 'годный'
                 self._append(task, rec)
@@ -866,6 +1008,15 @@ class Driver:
             rec = self._record(job, st.attempts, 'основной', res, v, st)
             rec['final'] = 'потерян'
             self._append(task, rec)
+            with self.lock:
+                self.lost_streak += 1
+                streak = self.lost_streak
+            if not res.events:
+                raise RunStop(f'задача {job["id"]}: поток пуст ({v.reason}) — CLI не дошёл до init; '
+                              'запись «потерян» сделана, прогон остановлен для разбора')
+            if streak >= self.cfg['max_consecutive_lost']:
+                raise RunStop(f'«потерян» {streak} раз подряд (последний: {job["id"]}, {v.reason}) — '
+                              'остановка для разбора; записи не меняются')
             if self.cfg['secondary_retry']:
                 st.attempts += 1
                 res2 = self._one_call(job, st.attempts, 'вторичный повтор')
@@ -1020,12 +1171,17 @@ def cmd_probe(args):
     return 0 if v.outcome == OK else 2
 
 
-def load_jobs(path):
+def load_jobs(path, task_from_id=False):
+    """Задания. task_from_id: формат run_sealed v1 ({id, prompt, schema}, id = «задача|рука|i»): задача и рука из id."""
     jobs, seen = [], set()
     for n, line in enumerate(Path(path).read_text(encoding='utf-8').splitlines(), 1):
         if not line.strip():
             continue
         j = json.loads(line)
+        if task_from_id and 'task' not in j and 'id' in j:
+            parts = str(j['id']).split('|')
+            j['task'] = parts[0]
+            j.setdefault('arm', parts[1] if len(parts) > 1 else None)
         for k in ('task', 'id', 'prompt', 'schema'):
             if k not in j:
                 raise SystemExit(f'{path}:{n}: нет поля {k}')
@@ -1038,7 +1194,7 @@ def load_jobs(path):
 
 def cmd_run(args):
     cfg = load_config(args.config)
-    jobs = load_jobs(args.jobs)
+    jobs = load_jobs(args.jobs, task_from_id=args.task_from_id)
     drv = Driver(cfg, seed=args.seed, jobs_sha256=sha256_file(args.jobs), journal_dir=args.journal,
                  streams_dir=args.streams, parallel=args.parallel, max_calls=args.max_calls)
     drv.start()
@@ -1047,44 +1203,97 @@ def cmd_run(args):
     return 0
 
 
-def cmd_summary(args):
-    """Сводка по рукам. Голосом считаются только итоговые записи (final = годный / потерян)."""
-    rows = {}
-    for path in sorted(Path(args.journal).glob('*.jsonl')):
+def journal_records(journal):
+    """Все записи вызовов журнала (кроме run_log.jsonl), по файлам задач."""
+    for path in sorted(Path(journal).glob('*.jsonl')):
         if path.name == 'run_log.jsonl':
             continue
         for line in path.read_text(encoding='utf-8').splitlines():
-            if not line.strip():
-                continue
-            r = json.loads(line)
-            c = rows.setdefault((r['task'], r.get('arm') or '-'), dict(
-                годных=0, потеряно=0, попыток_нет_ответа=0, сбоев=0, ожиданий=0, повторов=0,
-                api_retry_до=0, api_retry_после=0, подмен=0, вторичных=0))
-            if r.get('role') != 'основной':
-                c['вторичных'] += 1
-                continue
-            if r.get('final') == 'годный':
-                c['годных'] += 1
-            elif r.get('final') == 'потерян':
-                c['потеряно'] += 1
-            if r['outcome'] == NA:
-                c['попыток_нет_ответа'] += 1
-                if 'wait_s' in r:
-                    c['ожиданий'] += 1
-                else:
-                    c['повторов'] += 1
-            if r['outcome'] == FAIL:
-                c['сбоев'] += 1
-            flags = r.get('flags') or {}
-            c['api_retry_до'] += flags.get('api_retry_до_начала', 0)
-            c['api_retry_после'] += flags.get('api_retry_после_начала', 0)
-            if 'ответ не целевой модели' in r.get('reason', ''):
-                c['подмен'] += 1
-    cols = ['годных', 'потеряно', 'попыток_нет_ответа', 'сбоев', 'ожиданий', 'повторов',
-            'api_retry_до', 'api_retry_после', 'подмен', 'вторичных']
-    print('задача\trука\t' + '\t'.join(cols))
+            if line.strip():
+                yield json.loads(line)
+
+
+def cmd_summary(args):
+    """Сводка по рукам. Голосом считаются только итоговые записи (final = годный / потерян).
+
+    без_записи — вызовы, начатые по run_log.jsonl, но без записи в журнале (гибель драйвера, остановка после
+    вызова); многоходовых — годные и потерянные с больше чем одним message_start; init — число вариантов init.
+    """
+    rows, inits, recorded = {}, {}, set()
+    new = lambda: dict(годных=0, потеряно=0, попыток_нет_ответа=0, сбоев=0, ожиданий=0, повторов=0,
+                       api_retry_до=0, api_retry_после=0, подмен=0, вторичных=0, многоходовых=0, без_usage=0,
+                       без_записи=0)
+    for r in journal_records(args.journal):
+        c = rows.setdefault((r['task'], r.get('arm') or '-'), new())
+        recorded.add((r['task'], r['job'], r['attempt'], r.get('role')))
+        inits.setdefault((r['task'], r.get('arm') or '-'), set()).add(r.get('init_sha256'))
+        if r.get('role') != 'основной':
+            c['вторичных'] += 1
+            continue
+        if r.get('final') == 'годный':
+            c['годных'] += 1
+        elif r.get('final') == 'потерян':
+            c['потеряно'] += 1
+        if r['outcome'] == NA:
+            c['попыток_нет_ответа'] += 1
+            if 'wait_s' in r:
+                c['ожиданий'] += 1
+            else:
+                c['повторов'] += 1
+        if r['outcome'] == FAIL:
+            c['сбоев'] += 1
+        flags = r.get('flags') or {}
+        c['api_retry_до'] += flags.get('api_retry_до_начала', 0)
+        c['api_retry_после'] += flags.get('api_retry_после_начала', 0)
+        if 'ответ не целевой модели' in r.get('reason', ''):
+            c['подмен'] += 1
+        if r.get('final') and (flags.get('message_start') or 0) > 1:
+            c['многоходовых'] += 1
+        if r.get('final') and (r.get('usage') or {}).get('out') is None:
+            c['без_usage'] += 1
+    log = Path(args.journal) / 'run_log.jsonl'
+    if log.exists():
+        for line in log.read_text(encoding='utf-8').splitlines():
+            e = json.loads(line) if line.strip() else {}
+            if e.get('event') == 'вызов' and (e['task'], e['job'], e['attempt'], e.get('role')) not in recorded:
+                rows.setdefault((e['task'], e.get('arm') or '-'), new())['без_записи'] += 1
+    cols = list(new())
+    print('задача\tрука\t' + '\t'.join(cols) + '\tinit')
     for (task, arm), c in sorted(rows.items()):
-        print(task + '\t' + arm + '\t' + '\t'.join(str(c[k]) for k in cols))
+        print(task + '\t' + arm + '\t' + '\t'.join(str(c[k]) for k in cols) + '\t' +
+              str(len(inits.get((task, arm), set()) - {None})))
+    return 0
+
+
+def cmd_export(args):
+    """Итоговые записи журнала → формат run_sealed v1 (run/<этап>_out.jsonl в SELECT-01, читает harness.py).
+
+    годный — result = ответ, токены из usage; потерян — result = None, error = «потерян: причина». Задания без итога
+    (только «нет ответа») не выгружаются. Токены, которых нет в записи (сбой без итога), пишутся 0 с пометкой
+    usage_unknown = true: harness складывает их числами.
+    """
+    out = []
+    for r in journal_records(args.journal):
+        if r.get('role') != 'основной' or r.get('final') not in ('годный', 'потерян'):
+            continue
+        u = r.get('usage') or {}
+        rec = {'id': r['job'], 'result': r.get('answer') if r['final'] == 'годный' else None,
+               'inp': u.get('inp') or 0, 'out': u.get('out') or 0, 'thinking': r.get('thinking_tokens'),
+               'models': r.get('model_usage_out') or {}, 'permission_denials': 0, 'cost_usd': u.get('cost_usd'),
+               'attempt': r['attempt'], 'waits': r.get('waits', 0), 'retries': r.get('retries', 0)}
+        if u.get('inp') is None or u.get('out') is None:
+            rec['usage_unknown'] = True
+        if r['final'] == 'потерян':
+            rec['error'] = 'потерян: ' + r.get('reason', '')
+        out.append(rec)
+    ids = [x['id'] for x in out]
+    if len(ids) != len(set(ids)):
+        raise SystemExit('в журнале два итога у одного задания: выгрузка остановлена')
+    Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+    with open(args.out, 'w', encoding='utf-8') as fh:
+        for x in sorted(out, key=lambda x: x['id']):
+            fh.write(json.dumps(x, ensure_ascii=False) + '\n')
+    print(f'выгружено {len(out)} итоговых записей в {args.out}')
     return 0
 
 
@@ -1104,10 +1313,15 @@ def main(argv=None):
     p.add_argument('--config', help='JSON с отличиями от конфигурации по умолчанию')
     p.add_argument('--parallel', type=int, default=1)
     p.add_argument('--max-calls', type=int, default=None)
+    p.add_argument('--task-from-id', action='store_true', help='задания в формате v1: задача и рука из id «задача|рука|i»')
     p.set_defaults(func=cmd_run)
     p = sub.add_parser('summary', help='сводка журнала по рукам')
     p.add_argument('--journal', required=True)
     p.set_defaults(func=cmd_summary)
+    p = sub.add_parser('export', help='итоги журнала в формат run_sealed v1 (для harness.py SELECT-01)')
+    p.add_argument('--journal', required=True)
+    p.add_argument('--out', required=True)
+    p.set_defaults(func=cmd_export)
     args = ap.parse_args(argv)
     try:
         return args.func(args)
