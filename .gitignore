@@ -1,3 +1,6 @@
 __pycache__/
 experiments/2026-09-27_EVO-06/runs_nohup*.log
 games/*.zip
+
+# Закреплённый бинарь CLI для run_sealed2 (колесо claude-agent-sdk с PyPI); в git не класть
+.cache/
