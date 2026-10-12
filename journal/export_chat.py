@@ -58,5 +58,7 @@ for line in open(src):
                 inp = x.get('input', {})
                 d = inp.get('description') or inp.get('subject') or inp.get('query') or inp.get('file_path') or inp.get('name') or ''
                 out.append(f'- _действие: {x.get("name")} — {str(d)[:160]}_\n')
-open(dst, 'w').write(''.join(out))
+# идентификаторы моделей (claude-<линия>-<версия>) в журнал не выгружаются — правило среды для файлов репозитория
+text = re.sub(r'claude-(?:haiku|opus|sonnet|fable|mythos)-\d[\w.-]*', '<модель>', ''.join(out))
+open(dst, 'w').write(text)
 print(len(out), 'blocks')
