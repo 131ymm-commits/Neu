@@ -3,3 +3,4 @@
 {"arm": "exec", "at": "2026-10-12T17:08:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8001|exec", "role": "основной", "task": "WH_8001", "поток": "WH_8001_exec-51af9b41.a001.osn.jsonl.gz"}
 {"arm": "exec", "at": "2026-10-12T17:08:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8003|exec", "role": "основной", "task": "WH_8003", "поток": "WH_8003_exec-bc8bdeb9.a001.osn.jsonl.gz"}
 {"arm": "exec", "at": "2026-10-12T17:08:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8002|exec", "role": "основной", "task": "WH_8002", "поток": "WH_8002_exec-f1357d53.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-10-12T17:09:59+00:00", "attempt": 1, "event": "вызов", "job": "WH_8004|exec", "role": "основной", "task": "WH_8004", "поток": "WH_8004_exec-7e44aedc.a001.osn.jsonl.gz"}
