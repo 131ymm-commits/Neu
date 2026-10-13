@@ -17,3 +17,9 @@ WH_8013|B_blind|8: лимит аккаунта, жду сброса до 2026-10
 пулов: 100
 /home/user/neu/experiments/2026-10-07_SELECT-01/run/main_eval_jobs.jsonl 2700 голов
 ОСТАНОВКА: пауза по времени (--stop-after 5985.0 с): начатые вызовы записаны, продолжить той же командой
+задач 100
+/home/user/neu/experiments/2026-10-07_SELECT-01/run/main_exec_jobs.jsonl 100 голов
+прогон завершён: заданий 100, журнал .cache/select01_live/main_exec_journal
+выгружено 100 итоговых записей в experiments/2026-10-07_SELECT-01/run/main_exec_out.jsonl
+пулов: 100
+/home/user/neu/experiments/2026-10-07_SELECT-01/run/main_eval_jobs.jsonl 2700 голов
