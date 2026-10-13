@@ -1249,3 +1249,22 @@
 {"arm": "D_N", "at": "2026-10-13T11:49:07+00:00", "attempt": 1, "event": "вызов", "job": "WH_8046|D_N|3", "role": "основной", "task": "WH_8046", "поток": "WH_8046_D_N_3-cedeac7d.a001.osn.jsonl.gz"}
 {"arm": "B_zayavka", "at": "2026-10-13T11:49:49+00:00", "attempt": 1, "event": "вызов", "job": "WH_8046|B_zayavka|3", "role": "основной", "task": "WH_8046", "поток": "WH_8046_B_zayavka_3-48878616.a001.osn.jsonl.gz"}
 {"arm": "B_blind", "at": "2026-10-13T11:49:51+00:00", "attempt": 1, "event": "вызов", "job": "WH_8046|B_blind|4", "role": "основной", "task": "WH_8046", "поток": "WH_8046_B_blind_4-872f9486.a001.osn.jsonl.gz"}
+{"arm": "C_N", "at": "2026-10-13T11:50:32+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|C_N|2", "role": "основной", "task": "WH_8047", "поток": "WH_8047_C_N_2-f287ed1d.a001.osn.jsonl.gz"}
+{"arm": "D_N", "at": "2026-10-13T11:50:37+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|D_N|3", "role": "основной", "task": "WH_8047", "поток": "WH_8047_D_N_3-8890c6dd.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-13T11:50:54+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_blind|2", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_blind_2-a00bd6fa.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-13T11:50:59+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_blind|4", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_blind_4-0fc90f9d.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-13T11:51:13+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_blind|6", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_blind_6-d3b9408b.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-13T11:51:30+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_blind|7", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_blind_7-88ccdaab.a001.osn.jsonl.gz"}
+{"arm": "D_N", "at": "2026-10-13T11:51:31+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|D_N|2", "role": "основной", "task": "WH_8047", "поток": "WH_8047_D_N_2-f0622339.a001.osn.jsonl.gz"}
+{"arm": "C_N", "at": "2026-10-13T11:51:59+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|C_N|3", "role": "основной", "task": "WH_8047", "поток": "WH_8047_C_N_3-06b8ecbd.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-13T11:52:03+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_blind|0", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_blind_0-1e9b8b54.a001.osn.jsonl.gz"}
+{"arm": "B_zayavka", "at": "2026-10-13T11:52:24+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_zayavka|0", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_zayavka_0-875954d3.a001.osn.jsonl.gz"}
+{"arm": "B_zayavka", "at": "2026-10-13T11:52:28+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_zayavka|4", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_zayavka_4-7880d747.a001.osn.jsonl.gz"}
+{"arm": "B_zayavka", "at": "2026-10-13T11:52:32+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_zayavka|2", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_zayavka_2-5338cce0.a001.osn.jsonl.gz"}
+{"arm": "C_N", "at": "2026-10-13T11:52:37+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|C_N|4", "role": "основной", "task": "WH_8047", "поток": "WH_8047_C_N_4-315ce631.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-13T11:52:41+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_blind|11", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_blind_11-4c3e2fb3.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-13T11:52:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_blind|5", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_blind_5-b1a75d3a.a001.osn.jsonl.gz"}
+{"arm": "B_blind", "at": "2026-10-13T11:53:04+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|B_blind|1", "role": "основной", "task": "WH_8047", "поток": "WH_8047_B_blind_1-ab5abb96.a001.osn.jsonl.gz"}
+{"arm": "D_N", "at": "2026-10-13T11:53:04+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|D_N|4", "role": "основной", "task": "WH_8047", "поток": "WH_8047_D_N_4-e0844eec.a001.osn.jsonl.gz"}
+{"arm": "C_N", "at": "2026-10-13T11:53:04+00:00", "attempt": 1, "event": "вызов", "job": "WH_8047|C_N|1", "role": "основной", "task": "WH_8047", "поток": "WH_8047_C_N_1-239a7b5d.a001.osn.jsonl.gz"}
+{"at": "2026-10-13T12:07:24+00:00", "event": "пауза", "причина": "--stop-after 5999.0 с"}
