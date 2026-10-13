@@ -42,3 +42,9 @@ WH_8047|C_N|1: лимит аккаунта, жду сброса до 2026-10-13T
 /home/user/neu/experiments/2026-10-07_SELECT-01/run/main_eval_jobs.jsonl 2700 голов
 WH_8069|C_N|4: лимит аккаунта, жду сброса до 2026-10-13T18:42:00+00:00
 ОСТАНОВКА: пауза по времени (--stop-after 5997.0 с): начатые вызовы записаны, продолжить той же командой
+задач 100
+/home/user/neu/experiments/2026-10-07_SELECT-01/run/main_exec_jobs.jsonl 100 голов
+прогон завершён: заданий 100, журнал .cache/select01_live/main_exec_journal
+выгружено 100 итоговых записей в experiments/2026-10-07_SELECT-01/run/main_exec_out.jsonl
+пулов: 100
+/home/user/neu/experiments/2026-10-07_SELECT-01/run/main_eval_jobs.jsonl 2700 голов
