@@ -1,0 +1,47 @@
+{
+ "first_call": "2026-10-14T00:33:05+00:00",
+ "last_final": "2026-10-14T17:23:16+00:00",
+ "finals": 2773,
+ "finals_exec": 100,
+ "finals_eval": 2673,
+ "lost": 1,
+ "calls_without_record": {
+  "exec": 0,
+  "eval": 0
+ },
+ "limit_waits": 4,
+ "na_retries_without_reset": 0,
+ "out_tokens": 9328430,
+ "inp_tokens": 17004003,
+ "list_cost_usd": 212.78,
+ "call_seconds_median": 32,
+ "call_seconds_max": 174,
+ "versions": [
+  "2.1.294"
+ ],
+ "models": [
+  "claude-opus-5-5"
+ ],
+ "efforts": [
+  "medium"
+ ],
+ "init_variants": [
+  "19a6ffcf"
+ ],
+ "per_task_diff_vs_B_blind": {
+  "C_N": {
+   "neg": 28,
+   "zero": 62,
+   "pos": 9,
+   "sd": 0.77
+  },
+  "D_N": {
+   "neg": 39,
+   "zero": 50,
+   "pos": 10,
+   "sd": 0.704
+  }
+ },
+ "D_N_equal_A0_tasks": 30,
+ "D_N_over_C_N_out_pct": 38
+}

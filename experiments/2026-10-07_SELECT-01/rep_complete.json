@@ -1,0 +1,13 @@
+{
+ "stage": "rep_eval",
+ "tasks_in_seeds": 100,
+ "with_pool": 99,
+ "no_pool": [
+  "WH_8136"
+ ],
+ "complete": 99,
+ "incomplete": {},
+ "stray_tasks_in_evals": [],
+ "no_valid_votes": {},
+ "complete_evals": "evals/rep_eval.complete.jsonl"
+}

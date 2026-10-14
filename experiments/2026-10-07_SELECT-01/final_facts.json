@@ -1,0 +1,363 @@
+{
+ "main": {
+  "type": "WH",
+  "eps": 150.0,
+  "n_tasks": 100,
+  "excluded": [],
+  "invalid_votes": {
+   "A": 0,
+   "B_blind": 0,
+   "B_zayavka": 0,
+   "C": 0,
+   "C_N": 0,
+   "D": 0,
+   "D_N": 0
+  },
+  "mean_regret": {
+   "E": {
+    "mean": 1.0,
+    "median": 1.0,
+    "n": 100
+   },
+   "A0": {
+    "mean": 0.78,
+    "median": 0.646,
+    "n": 100
+   },
+   "A": {
+    "mean": 0.721,
+    "median": 0.565,
+    "n": 100
+   },
+   "B_blind": {
+    "mean": 0.676,
+    "median": 0.556,
+    "n": 100
+   },
+   "B_zayavka": {
+    "mean": 0.688,
+    "median": 0.602,
+    "n": 100
+   },
+   "C": {
+    "mean": 0.631,
+    "median": 0.506,
+    "n": 100
+   },
+   "C_N": {
+    "mean": 0.643,
+    "median": 0.508,
+    "n": 100
+   },
+   "D": {
+    "mean": 0.534,
+    "median": 0.464,
+    "n": 100
+   },
+   "D_N": {
+    "mean": 0.491,
+    "median": 0.39,
+    "n": 100
+   }
+  },
+  "tokens": {
+   "A": {
+    "inp": 6602,
+    "out": 2539,
+    "calls": 1
+   },
+   "B_blind": {
+    "inp": 71573,
+    "out": 30827,
+    "calls": 12
+   },
+   "B_zayavka": {
+    "inp": 33022,
+    "out": 12122,
+    "calls": 5
+   },
+   "C": {
+    "inp": 6212,
+    "out": 3800,
+    "calls": 1
+   },
+   "C_N": {
+    "inp": 30918,
+    "out": 18743,
+    "calls": 5
+   },
+   "D": {
+    "inp": 6236,
+    "out": 5536,
+    "calls": 1
+   },
+   "D_N": {
+    "inp": 31131,
+    "out": 27571,
+    "calls": 5
+   }
+  },
+  "budget": {
+   "C_N": {
+    "total_ok": true,
+    "out_ok": true
+   },
+   "D_N": {
+    "total_ok": true,
+    "out_ok": true
+   },
+   "equal": true
+  },
+  "tests": {
+   "C_N": {
+    "vs_B_blind": {
+     "mean_diff": -0.033,
+     "ci95": [
+      -0.125,
+      0.06
+     ],
+     "p": 0.24663376683116583,
+     "method": "Монте-Карло 200000"
+    },
+    "vs_A0": {
+     "mean_diff": -0.137,
+     "ci95": [
+      -0.282,
+      0.008
+     ],
+     "p": 0.03263483682581587
+    },
+    "holm_reject": false,
+    "counts": false
+   },
+   "D_N": {
+    "vs_B_blind": {
+     "mean_diff": -0.185,
+     "ci95": [
+      -0.291,
+      -0.08
+     ],
+     "p": 0.0002599987000065,
+     "method": "Монте-Карло 200000"
+    },
+    "vs_A0": {
+     "mean_diff": -0.289,
+     "ci95": [
+      -0.446,
+      -0.133
+     ],
+     "p": 0.00020999895000524998
+    },
+    "holm_reject": true,
+    "counts": true
+   },
+   "A_vs_B_zayavka": {
+    "mean_diff": 0.034,
+    "p": 0.7155414222928885
+   },
+   "A_vs_A0_TOST": {
+    "mean_diff": -0.059,
+    "margin": 0.1,
+    "p_upper": 0.009279953600231998,
+    "p_lower": 0.2727736361318193,
+    "agree_share": 0.57,
+    "equivalent": false
+   }
+  },
+  "secondary": {
+   "spearman_claim_truth": 0.09,
+   "doubt_auroc": 0.603,
+   "goodhart_gap_by_k": {
+    "1": 384.154,
+    "2": 409.381,
+    "4": 421.682,
+    "8": 464.399
+   },
+   "refusals": {
+    "D": 11,
+    "D_N": 25
+   }
+  }
+ },
+ "rep": {
+  "type": "WH",
+  "eps": 150.0,
+  "n_tasks": 99,
+  "excluded": [],
+  "invalid_votes": {
+   "A": 0,
+   "B_blind": 0,
+   "B_zayavka": 0,
+   "C": 0,
+   "C_N": 0,
+   "D": 0,
+   "D_N": 0
+  },
+  "mean_regret": {
+   "E": {
+    "mean": 1.0,
+    "median": 1.0,
+    "n": 99
+   },
+   "A0": {
+    "mean": 0.777,
+    "median": 0.651,
+    "n": 99
+   },
+   "A": {
+    "mean": 0.765,
+    "median": 0.609,
+    "n": 99
+   },
+   "B_blind": {
+    "mean": 0.852,
+    "median": 0.642,
+    "n": 99
+   },
+   "B_zayavka": {
+    "mean": 0.727,
+    "median": 0.626,
+    "n": 99
+   },
+   "C": {
+    "mean": 0.66,
+    "median": 0.536,
+    "n": 99
+   },
+   "C_N": {
+    "mean": 0.668,
+    "median": 0.551,
+    "n": 99
+   },
+   "D": {
+    "mean": 0.65,
+    "median": 0.465,
+    "n": 99
+   },
+   "D_N": {
+    "mean": 0.566,
+    "median": 0.482,
+    "n": 99
+   }
+  },
+  "tokens": {
+   "A": {
+    "inp": 6574,
+    "out": 2423,
+    "calls": 1
+   },
+   "B_blind": {
+    "inp": 71336,
+    "out": 30376,
+    "calls": 12
+   },
+   "B_zayavka": {
+    "inp": 32933,
+    "out": 11972,
+    "calls": 5
+   },
+   "C": {
+    "inp": 6142,
+    "out": 3936,
+    "calls": 1
+   },
+   "C_N": {
+    "inp": 30687,
+    "out": 18710,
+    "calls": 5
+   },
+   "D": {
+    "inp": 6202,
+    "out": 5313,
+    "calls": 1
+   },
+   "D_N": {
+    "inp": 31056,
+    "out": 25822,
+    "calls": 5
+   }
+  },
+  "budget": {
+   "C_N": {
+    "total_ok": true,
+    "out_ok": true
+   },
+   "D_N": {
+    "total_ok": true,
+    "out_ok": true
+   },
+   "equal": true
+  },
+  "tests": {
+   "C_N": {
+    "vs_B_blind": {
+     "mean_diff": -0.184,
+     "ci95": [
+      -0.338,
+      -0.035
+     ],
+     "p": 0.00836995815020925,
+     "method": "Монте-Карло 200000"
+    },
+    "vs_A0": {
+     "mean_diff": -0.109,
+     "ci95": [
+      -0.249,
+      0.037
+     ],
+     "p": 0.06941965290173549
+    },
+    "holm_reject": true,
+    "counts": false
+   },
+   "D_N": {
+    "vs_B_blind": {
+     "mean_diff": -0.286,
+     "ci95": [
+      -0.431,
+      -0.154
+     ],
+     "p": 9.999950000249999e-06,
+     "method": "Монте-Карло 200000"
+    },
+    "vs_A0": {
+     "mean_diff": -0.211,
+     "ci95": [
+      -0.344,
+      -0.077
+     ],
+     "p": 0.0012649936750316248
+    },
+    "holm_reject": true,
+    "counts": true
+   },
+   "A_vs_B_zayavka": {
+    "mean_diff": 0.038,
+    "p": 0.7419462902685486
+   },
+   "A_vs_A0_TOST": {
+    "mean_diff": -0.011,
+    "margin": 0.1,
+    "p_upper": 0.06719966400168,
+    "p_lower": 0.11753441232793836,
+    "agree_share": 0.505,
+    "equivalent": false
+   }
+  },
+  "secondary": {
+   "spearman_claim_truth": 0.025,
+   "doubt_auroc": 0.549,
+   "goodhart_gap_by_k": {
+    "1": 235.502,
+    "2": 335.04,
+    "4": 314.164,
+    "8": 264.347
+   },
+   "refusals": {
+    "D": 6,
+    "D_N": 32
+   }
+  }
+ },
+ "pilot2_D_N_minus_B_blind": -0.031
+}
