@@ -1,0 +1,117 @@
+{
+ "computed_at": "14.10 08:26 UTC",
+ "note": "до правды повтора; данные повтора — только счёт вызовов",
+ "S": 2000,
+ "M": 4000,
+ "sd_DN_minus_Bblind_main": 0.545,
+ "eval_finals_done": 1346,
+ "tasks_with_pool": 99,
+ "rows": [
+  {
+   "n": 99,
+   "calls_left": 1327,
+   "ci95_halfwidth": 0.107,
+   "power_x1": 0.897,
+   "power_x05": 0.422,
+   "false_pass_x0": 0.034,
+   "eta_utc": {
+    "min": "14.10 21:36",
+    "median": "14.10 17:27",
+    "max": "14.10 16:45"
+   }
+  },
+  {
+   "n": 90,
+   "calls_left": 1084,
+   "ci95_halfwidth": 0.113,
+   "power_x1": 0.859,
+   "power_x05": 0.369,
+   "false_pass_x0": 0.036,
+   "eta_utc": {
+    "min": "14.10 20:47",
+    "median": "14.10 16:38",
+    "max": "14.10 15:55"
+   }
+  },
+  {
+   "n": 80,
+   "calls_left": 814,
+   "ci95_halfwidth": 0.119,
+   "power_x1": 0.82,
+   "power_x05": 0.352,
+   "false_pass_x0": 0.029,
+   "eta_utc": {
+    "min": "14.10 16:33",
+    "median": "14.10 15:43",
+    "max": "14.10 13:13"
+   }
+  },
+  {
+   "n": 70,
+   "calls_left": 544,
+   "ci95_halfwidth": 0.128,
+   "power_x1": 0.765,
+   "power_x05": 0.301,
+   "false_pass_x0": 0.028,
+   "eta_utc": {
+    "min": "14.10 15:38",
+    "median": "14.10 12:19",
+    "max": "14.10 12:18"
+   }
+  },
+  {
+   "n": 60,
+   "calls_left": 274,
+   "ci95_halfwidth": 0.138,
+   "power_x1": 0.71,
+   "power_x05": 0.269,
+   "false_pass_x0": 0.026,
+   "eta_utc": {
+    "min": "14.10 11:24",
+    "median": "14.10 11:24",
+    "max": "14.10 11:23"
+   }
+  },
+  {
+   "n": 50,
+   "calls_left": 4,
+   "ci95_halfwidth": 0.151,
+   "power_x1": 0.624,
+   "power_x05": 0.26,
+   "false_pass_x0": 0.024,
+   "eta_utc": {
+    "min": "14.10 08:28",
+    "median": "14.10 08:28",
+    "max": "14.10 08:28"
+   }
+  },
+  {
+   "n": 40,
+   "calls_left": 0,
+   "ci95_halfwidth": 0.169,
+   "power_x1": 0.534,
+   "power_x05": 0.176,
+   "false_pass_x0": 0.026,
+   "eta_utc": {
+    "min": "14.10 08:27",
+    "median": "14.10 08:27",
+    "max": "14.10 08:27"
+   }
+  }
+ ],
+ "calls_per_window_by_reset": {
+  "1791839400": 497,
+  "1791898800": 948,
+  "1791916800": 628,
+  "1791934800": 722,
+  "1791952800": 760,
+  "1791973800": 876
+ },
+ "calls_per_window": {
+  "min": 497,
+  "median": 741.0,
+  "max": 948
+ },
+ "call_seconds_mean": 36.7,
+ "calls_per_hour_parallel3": 294
+}
