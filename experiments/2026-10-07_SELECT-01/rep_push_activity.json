@@ -1,0 +1,12 @@
+{
+ "note": "серверное событие GitHub (repos/131ymm-commits/Neu/activity): пуш выборов повтора; получено 14.10 после совета 33",
+ "event": {
+  "id": 46498789835,
+  "activity_type": "push",
+  "ref": "refs/heads/main",
+  "before": "91948f8e71088b3c74f7830bd7dc6d99630f0994",
+  "after": "16a4b065ed0a7944f7ba4083b82145d8d80f0ded",
+  "timestamp": "2026-10-14T17:24:00Z",
+  "actor": "131ymm-commits"
+ }
+}

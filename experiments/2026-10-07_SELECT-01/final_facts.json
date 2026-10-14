@@ -177,7 +177,31 @@
     "D": 11,
     "D_N": 25
    }
-  }
+  },
+  "signs_better_equal_worse": {
+   "D_N − B_blind": [
+    37,
+    58,
+    5
+   ],
+   "D_N − A0": [
+    54,
+    32,
+    14
+   ],
+   "D_N − C_N": [
+    31,
+    61,
+    8
+   ],
+   "D − C": [
+    32,
+    54,
+    14
+   ]
+  },
+  "D_N_all_refused_tasks": 0,
+  "D_N_worse_than_A0_pct": 14
  },
  "rep": {
   "type": "WH",
@@ -357,7 +381,31 @@
     "D": 6,
     "D_N": 32
    }
-  }
+  },
+  "signs_better_equal_worse": {
+   "D_N − B_blind": [
+    39,
+    50,
+    10
+   ],
+   "D_N − A0": [
+    47,
+    30,
+    22
+   ],
+   "D_N − C_N": [
+    28,
+    60,
+    11
+   ],
+   "D − C": [
+    30,
+    53,
+    16
+   ]
+  },
+  "D_N_all_refused_tasks": 0,
+  "D_N_worse_than_A0_pct": 22
  },
  "pilot2_D_N_minus_B_blind": -0.031
 }

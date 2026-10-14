@@ -58,6 +58,13 @@ need += [f"меньше нуля на {d['D_N']['neg']} задачах, ноль
          ', '.join(str(v) for v in rs['truth_best_shown_position'].values()) + ' раз',
          f"B_blind — {rs['choice_shown_position']['B_blind']['1']} из {sum(rs['choice_shown_position']['B_blind'].values())} голосов",
          f"на {rf['D_N_over_C_N_out_pct']} % в повторе и на {mf['D_N_over_C_N_out_pct']} % в основной"]
+ff, act = J('final_facts.json'), J('rep_push_activity.json')['event']   # после совета 33
+sg = lambda s_, k: ' / '.join(map(str, ff[s_]['signs_better_equal_worse'][k]))
+need += [f"| {k} | {sg('main', k)} | {sg('rep', k)} |" for k in ('D_N − A0', 'D_N − B_blind', 'D_N − C_N', 'D − C')]
+need += [f"На {ff['main']['D_N_worse_than_A0_pct']} % задач основной выборки и на {ff['rep']['D_N_worse_than_A0_pct']} % повтора D_N хуже A0",
+         f"ни на одной задаче ({ff['main']['D_N_all_refused_tasks']} в обеих выборках)" if ff['main']['D_N_all_refused_tasks'] == ff['rep']['D_N_all_refused_tasks'] == 0 else 'ОШИБКА: полные отказы не 0',
+         f"Пуш выборов 16a4b06 — {act['timestamp'][11:]}" if act['after'].startswith('16a4b06') else 'ОШИБКА: событие пуша не 16a4b06',
+         f"p = ({round(r['tests']['D_N']['vs_B_blind']['p'] * 200001) - 1} + 1)/(200 000 + 1)"]
 miss = [s for s in need if s not in R]
 print(f'проверено фраз: {len(need)}; не найдено: {len(miss)}')
 for s in miss:
