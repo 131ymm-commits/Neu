@@ -1,0 +1,11 @@
+{
+ "stage": "main_eval",
+ "tasks_in_seeds": 100,
+ "with_pool": 100,
+ "no_pool": [],
+ "complete": 100,
+ "incomplete": {},
+ "stray_tasks_in_evals": [],
+ "no_valid_votes": {},
+ "complete_evals": "evals/main_eval.complete.jsonl"
+}
