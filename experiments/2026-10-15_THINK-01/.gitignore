@@ -1,0 +1,2 @@
+# файлы заданий детерминированно восстанавливаются: python3 pilot.py jobs (как в SELECT-01)
+run/*_jobs.jsonl
