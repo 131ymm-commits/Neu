@@ -1,0 +1,109 @@
+{
+ "note": "пилот THINK-01: 6 задач SELECT-01 main; голоса @medium без пометки пилота — из SELECT-01",
+ "arms": {
+  "B_blind@medium": {
+   "votes": 72,
+   "answered": 72,
+   "refusals": 0,
+   "mean_vote_regret": 0.743,
+   "mean_out": 2422,
+   "median_out": 2278,
+   "sum_out_per_task": 29064
+  },
+  "C_N@high": {
+   "votes": 30,
+   "answered": 30,
+   "refusals": 0,
+   "mean_vote_regret": 0.114,
+   "mean_out": 13117,
+   "median_out": 12106,
+   "sum_out_per_task": 65586
+  },
+  "C_N@medium": {
+   "votes": 30,
+   "answered": 30,
+   "refusals": 0,
+   "mean_vote_regret": 0.587,
+   "mean_out": 3802,
+   "median_out": 3354,
+   "sum_out_per_task": 19010
+  },
+  "D_N@medium": {
+   "votes": 30,
+   "answered": 25,
+   "refusals": 5,
+   "mean_vote_regret": 0.403,
+   "mean_out": 6241,
+   "median_out": 5608,
+   "sum_out_per_task": 26004
+  },
+  "P_N@medium": {
+   "votes": 30,
+   "answered": 30,
+   "refusals": 0,
+   "mean_vote_regret": 0.505,
+   "mean_out": 4344,
+   "median_out": 4266,
+   "sum_out_per_task": 21719
+  },
+  "U_N@medium": {
+   "votes": 30,
+   "answered": 30,
+   "refusals": 0,
+   "mean_vote_regret": 0.819,
+   "mean_out": 3558,
+   "median_out": 3322,
+   "sum_out_per_task": 17788
+  }
+ },
+ "per_task_mean_vote_regret": {
+  "WH_8001": {
+   "B_blind@medium": 0.566,
+   "C_N@high": 0.123,
+   "C_N@medium": 0.548,
+   "D_N@medium": 0.369,
+   "P_N@medium": 0.581,
+   "U_N@medium": 0.606
+  },
+  "WH_8002": {
+   "B_blind@medium": 0.602,
+   "C_N@high": 0.11,
+   "C_N@medium": 0.569,
+   "D_N@medium": 0.349,
+   "P_N@medium": 0.606,
+   "U_N@medium": 0.55
+  },
+  "WH_8003": {
+   "B_blind@medium": 0.325,
+   "C_N@high": 0.093,
+   "C_N@medium": 0.651,
+   "D_N@medium": 0.092,
+   "P_N@medium": 0.091,
+   "U_N@medium": 1.211
+  },
+  "WH_8004": {
+   "B_blind@medium": 0.751,
+   "C_N@high": 0.0,
+   "C_N@medium": 0.716,
+   "D_N@medium": 0.572,
+   "P_N@medium": 0.976,
+   "U_N@medium": 0.781
+  },
+  "WH_8005": {
+   "B_blind@medium": 0.564,
+   "C_N@high": 0.132,
+   "C_N@medium": 0.666,
+   "D_N@medium": 0.132,
+   "P_N@medium": 0.0,
+   "U_N@medium": 0.154
+  },
+  "WH_8006": {
+   "B_blind@medium": 1.649,
+   "C_N@high": 0.228,
+   "C_N@medium": 0.371,
+   "D_N@medium": 0.859,
+   "P_N@medium": 0.773,
+   "U_N@medium": 1.614
+  }
+ }
+}

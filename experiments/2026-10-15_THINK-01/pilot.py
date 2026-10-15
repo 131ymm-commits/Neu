@@ -41,17 +41,18 @@ def analyze():
         for e in map(json.loads, open(f)):
             if e['task'] in TASKS and (tag == '' or e['arm'] in ('C_N', 'D_N', 'B_blind')):
                 V[e['arm'] + tag].append(e)
-    out = {}
+    out = {}; per_task = collections.defaultdict(dict)
     for arm, es in sorted(V.items()):
-        reg, ln, ref = [], [], 0
+        reg, ln, ref = [], [], 0; by_t = collections.defaultdict(list)
         for e in es:
             tr = json.load(open(f'{sec}/truth/{e["task"]}.json')); orc, mean = max(tr), st.mean(tr)
             if e['choice'] == -1: ref += 1; continue
             if isinstance(e['choice'], int) and 0 <= e['choice'] < len(tr):
-                reg.append((orc - tr[e['choice']]) / (orc - mean)); ln.append(e['out'])
+                reg.append((orc - tr[e['choice']]) / (orc - mean)); ln.append(e['out']); by_t[e['task']].append(reg[-1])
         out[arm] = dict(votes=len(es), answered=len(reg), refusals=ref, mean_vote_regret=round(st.mean(reg), 3),
-                        mean_out=round(st.mean(ln)), median_out=round(st.median(ln)))
-    print(json.dumps(dict(note='пилот THINK-01: 6 задач SELECT-01 main; голоса @medium без пометки пилота — из SELECT-01', arms=out), ensure_ascii=False, indent=1))
+                        mean_out=round(st.mean(ln)), median_out=round(st.median(ln)), sum_out_per_task=round(sum(ln) / len(TASKS)))
+        for t, v in by_t.items(): per_task[t][arm] = round(st.mean(v), 3)
+    print(json.dumps(dict(note='пилот THINK-01: 6 задач SELECT-01 main; голоса @medium без пометки пилота — из SELECT-01', arms=out, per_task_mean_vote_regret=dict(sorted(per_task.items()))), ensure_ascii=False, indent=1))
 
 if __name__ == '__main__':
     dict(jobs=jobs, collect=collect, analyze=analyze)[sys.argv[1]]()
