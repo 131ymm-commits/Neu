@@ -1,0 +1,207 @@
+{
+ "note": "пост-хок, описательно; отказы D_N (−1) — не голос",
+ "main": {
+  "pairs": {
+   "B_blind – B_blind": {
+    "pairs": 6600,
+    "same_choice": 0.513,
+    "same_error": 0.495
+   },
+   "B_blind – B_zayavka": {
+    "pairs": 6000,
+    "same_choice": 0.483,
+    "same_error": 0.47
+   },
+   "B_blind – C_N": {
+    "pairs": 6000,
+    "same_choice": 0.497,
+    "same_error": 0.475
+   },
+   "B_blind – D_N": {
+    "pairs": 5700,
+    "same_choice": 0.459,
+    "same_error": 0.428
+   },
+   "B_zayavka – B_zayavka": {
+    "pairs": 1000,
+    "same_choice": 0.625,
+    "same_error": 0.614
+   },
+   "B_zayavka – C_N": {
+    "pairs": 2500,
+    "same_choice": 0.477,
+    "same_error": 0.465
+   },
+   "B_zayavka – D_N": {
+    "pairs": 2375,
+    "same_choice": 0.443,
+    "same_error": 0.424
+   },
+   "C_N – C_N": {
+    "pairs": 1000,
+    "same_choice": 0.488,
+    "same_error": 0.462
+   },
+   "C_N – D_N": {
+    "pairs": 2375,
+    "same_choice": 0.486,
+    "same_error": 0.441
+   },
+   "D_N – D_N": {
+    "pairs": 904,
+    "same_choice": 0.514,
+    "same_error": 0.43
+   },
+   "внутри руки": {
+    "pairs": 9504,
+    "same_choice": 0.523,
+    "same_error": 0.498
+   },
+   "между руками": {
+    "pairs": 24950,
+    "same_choice": 0.477,
+    "same_error": 0.454
+   }
+  },
+  "folds": {
+   "5: C_N×5": {
+    "fold_regret": 0.643,
+    "mean_vote_regret": 0.656,
+    "share_removed": 0.019,
+    "tasks": 100
+   },
+   "5: D_N×5": {
+    "fold_regret": 0.491,
+    "mean_vote_regret": 0.507,
+    "share_removed": 0.031,
+    "tasks": 100
+   },
+   "5: C_N2+D_N2+B_blind1": {
+    "fold_regret": 0.546,
+    "mean_vote_regret": 0.608,
+    "share_removed": 0.102,
+    "tasks": 100
+   },
+   "12: B_blind×12": {
+    "fold_regret": 0.676,
+    "mean_vote_regret": 0.775,
+    "share_removed": 0.127,
+    "tasks": 100
+   },
+   "12: B_blind4+C_N4+D_N4": {
+    "fold_regret": 0.549,
+    "mean_vote_regret": 0.633,
+    "share_removed": 0.133,
+    "tasks": 100
+   },
+   "27: все руки": {
+    "fold_regret": 0.602,
+    "mean_vote_regret": 0.691,
+    "share_removed": 0.128,
+    "tasks": 100
+   }
+  }
+ },
+ "rep": {
+  "pairs": {
+   "B_blind – B_blind": {
+    "pairs": 6534,
+    "same_choice": 0.479,
+    "same_error": 0.468
+   },
+   "B_blind – B_zayavka": {
+    "pairs": 5940,
+    "same_choice": 0.473,
+    "same_error": 0.463
+   },
+   "B_blind – C_N": {
+    "pairs": 5940,
+    "same_choice": 0.45,
+    "same_error": 0.432
+   },
+   "B_blind – D_N": {
+    "pairs": 5556,
+    "same_choice": 0.42,
+    "same_error": 0.398
+   },
+   "B_zayavka – B_zayavka": {
+    "pairs": 990,
+    "same_choice": 0.552,
+    "same_error": 0.535
+   },
+   "B_zayavka – C_N": {
+    "pairs": 2475,
+    "same_choice": 0.472,
+    "same_error": 0.455
+   },
+   "B_zayavka – D_N": {
+    "pairs": 2315,
+    "same_choice": 0.451,
+    "same_error": 0.425
+   },
+   "C_N – C_N": {
+    "pairs": 990,
+    "same_choice": 0.469,
+    "same_error": 0.438
+   },
+   "C_N – D_N": {
+    "pairs": 2315,
+    "same_choice": 0.468,
+    "same_error": 0.427
+   },
+   "D_N – D_N": {
+    "pairs": 872,
+    "same_choice": 0.524,
+    "same_error": 0.458
+   },
+   "внутри руки": {
+    "pairs": 9386,
+    "same_choice": 0.49,
+    "same_error": 0.471
+   },
+   "между руками": {
+    "pairs": 24541,
+    "same_choice": 0.453,
+    "same_error": 0.433
+   }
+  },
+  "folds": {
+   "5: C_N×5": {
+    "fold_regret": 0.668,
+    "mean_vote_regret": 0.732,
+    "share_removed": 0.087,
+    "tasks": 99
+   },
+   "5: D_N×5": {
+    "fold_regret": 0.566,
+    "mean_vote_regret": 0.604,
+    "share_removed": 0.064,
+    "tasks": 99
+   },
+   "5: C_N2+D_N2+B_blind1": {
+    "fold_regret": 0.659,
+    "mean_vote_regret": 0.707,
+    "share_removed": 0.069,
+    "tasks": 99
+   },
+   "12: B_blind×12": {
+    "fold_regret": 0.852,
+    "mean_vote_regret": 0.878,
+    "share_removed": 0.029,
+    "tasks": 99
+   },
+   "12: B_blind4+C_N4+D_N4": {
+    "fold_regret": 0.681,
+    "mean_vote_regret": 0.736,
+    "share_removed": 0.075,
+    "tasks": 99
+   },
+   "27: все руки": {
+    "fold_regret": 0.735,
+    "mean_vote_regret": 0.778,
+    "share_removed": 0.055,
+    "tasks": 99
+   }
+  }
+ }
+}
