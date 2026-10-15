@@ -1,0 +1,71 @@
+{
+ "note": "модель: H_1 — голоса C_N@high пилота (6 задач — грубо); B_blind, D_N — per_task SELECT-01",
+ "pilot_H_mean": 0.114,
+ "B_blind_mean": 0.764,
+ "D_N_mean": 0.528,
+ "rows": [
+  {
+   "n": 40,
+   "effect_share": 1.0,
+   "power_vs_B_blind": 1.0,
+   "power_vs_D_N": 1.0,
+   "power_both": 1.0
+  },
+  {
+   "n": 40,
+   "effect_share": 0.5,
+   "power_vs_B_blind": 0.966,
+   "power_vs_D_N": 0.792,
+   "power_both": 0.786
+  },
+  {
+   "n": 40,
+   "effect_share": 0.25,
+   "power_vs_B_blind": 0.348,
+   "power_vs_D_N": 0.186,
+   "power_both": 0.144
+  },
+  {
+   "n": 50,
+   "effect_share": 1.0,
+   "power_vs_B_blind": 1.0,
+   "power_vs_D_N": 1.0,
+   "power_both": 1.0
+  },
+  {
+   "n": 50,
+   "effect_share": 0.5,
+   "power_vs_B_blind": 0.996,
+   "power_vs_D_N": 0.884,
+   "power_both": 0.882
+  },
+  {
+   "n": 50,
+   "effect_share": 0.25,
+   "power_vs_B_blind": 0.45,
+   "power_vs_D_N": 0.272,
+   "power_both": 0.214
+  },
+  {
+   "n": 60,
+   "effect_share": 1.0,
+   "power_vs_B_blind": 1.0,
+   "power_vs_D_N": 1.0,
+   "power_both": 1.0
+  },
+  {
+   "n": 60,
+   "effect_share": 0.5,
+   "power_vs_B_blind": 0.997,
+   "power_vs_D_N": 0.927,
+   "power_both": 0.926
+  },
+  {
+   "n": 60,
+   "effect_share": 0.25,
+   "power_vs_B_blind": 0.52,
+   "power_vs_D_N": 0.32,
+   "power_both": 0.269
+  }
+ ]
+}

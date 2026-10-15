@@ -14,11 +14,19 @@ ADD = dict(
 )
 ROLE_UNSURE = P.ROLE.replace(LAST, ADD['UNSURE'] + LAST[len('Верни'):])
 ROLE_PLACEBO = P.ROLE.replace(LAST, ADD['PLACEBO'] + LAST[len('Верни'):])
-TPL = dict(ROLE=P.ROLE, ROLE_REFUSE=P.ROLE_REFUSE, ROLE_UNSURE=ROLE_UNSURE, ROLE_PLACEBO=ROLE_PLACEBO)
-ARMS = dict(C_N='ROLE', D_N='ROLE_REFUSE', U_N='ROLE_UNSURE', P_N='ROLE_PLACEBO')   # рука → шаблон; effort задаёт конфиг прогона
+# ROLE_CONF — ROLE с самооценкой: кроме номера — вероятность, что выбранный кандидат действительно лучший (оценка оценки).
+ROLE_CONF = P.ROLE.replace(LAST, LAST + '\nВерни также p_best — твою вероятность от 0 до 1, что выбранный кандидат действительно лучший по фактическому итогу.')
+CONF_SCHEMA = {"type": "object", "properties": {"choice": {"type": "integer"}, "p_best": {"type": "number"}}, "required": ["choice", "p_best"]}
+TPL = dict(BASE=P.BASE, ROLE=P.ROLE, ROLE_REFUSE=P.ROLE_REFUSE, ROLE_UNSURE=ROLE_UNSURE, ROLE_PLACEBO=ROLE_PLACEBO, ROLE_CONF=ROLE_CONF)
+# рука → (шаблон, effort, схема). B_blind, C_N, D_N — промпты SELECT-01 байт в байт; H — один и тот же ROLE на effort high
+# (H_1 = вызов i = 0, H_3 = большинство трёх); H_c — ROLE_CONF на high, один вызов.
+ARMS = dict(B_blind=('BASE', 'medium', P.EVAL_SCHEMA), C_N=('ROLE', 'medium', P.EVAL_SCHEMA), D_N=('ROLE_REFUSE', 'medium', P.EVAL_SCHEMA),
+            U_N=('ROLE_UNSURE', 'medium', P.EVAL_SCHEMA), P_N=('ROLE_PLACEBO', 'medium', P.EVAL_SCHEMA),
+            H=('ROLE', 'high', P.EVAL_SCHEMA), H_c=('ROLE_CONF', 'high', CONF_SCHEMA))
+SPEC = dict(B_blind=12, C_N=5, D_N=5, U_N=5, P_N=5, H=3, H_c=1)   # вызовов на задачу
 
 def eval_prompt(arm, rules, pool):
-    return TPL[ARMS[arm]].format(k=len(pool), rules=rules, cands=P.cands_text(pool, False))
+    return TPL[ARMS[arm][0]].format(k=len(pool), rules=rules, cands=P.cands_text(pool, False))
 
 if __name__ == '__main__':
     assert P.ROLE_REFUSE == P.ROLE.replace(LAST, ADD['REFUSE'] + LAST[len('Верни'):]), 'добавка REFUSE не совпала с SELECT-01'
@@ -27,3 +35,4 @@ if __name__ == '__main__':
         n = len(v) - len(v.split('\n')[-1]) - 1
         print(k, n, f'{100 * (n / base - 1):+.0f} %')
     print(json.dumps({k: hashlib.sha256(v.encode()).hexdigest() for k, v in TPL.items()}, indent=1))
+    print('ROLE_CONF, последние строки:', ROLE_CONF.split('{rules}')[0].strip().splitlines()[-2:])
