@@ -1,0 +1,83 @@
+{
+ "note": "пост-хок после итогового отчёта и совета 33; описательно, вердикт не меняет",
+ "main": {
+  "B_blind": {
+   "tasks": 100,
+   "long_minus_short_regret": -0.166,
+   "within_task_spearman_out_regret": -0.254,
+   "mean_out": 2569
+  },
+  "B_zayavka": {
+   "tasks": 100,
+   "long_minus_short_regret": -0.257,
+   "within_task_spearman_out_regret": -0.4,
+   "mean_out": 2424
+  },
+  "C_N": {
+   "tasks": 100,
+   "long_minus_short_regret": -0.29,
+   "within_task_spearman_out_regret": -0.264,
+   "mean_out": 3749
+  },
+  "D_N": {
+   "tasks": 100,
+   "long_minus_short_regret": -0.252,
+   "within_task_spearman_out_regret": -0.362,
+   "mean_out": 5389
+  },
+  "D_N_vs_C_N_at_equal_length": {
+   "tasks": 100,
+   "coef_D_N": 0.034,
+   "ci95_D_N": [
+    -0.033,
+    0.097
+   ],
+   "coef_ln_out": -0.518,
+   "ci95_ln_out": [
+    -0.662,
+    -0.385
+   ],
+   "note": "регрет ~ голос D_N + ln(out), отклонения от средних задачи; отрицательное — меньше регрет"
+  }
+ },
+ "rep": {
+  "B_blind": {
+   "tasks": 99,
+   "long_minus_short_regret": -0.214,
+   "within_task_spearman_out_regret": -0.186,
+   "mean_out": 2531
+  },
+  "B_zayavka": {
+   "tasks": 99,
+   "long_minus_short_regret": -0.278,
+   "within_task_spearman_out_regret": -0.337,
+   "mean_out": 2394
+  },
+  "C_N": {
+   "tasks": 99,
+   "long_minus_short_regret": -0.376,
+   "within_task_spearman_out_regret": -0.395,
+   "mean_out": 3742
+  },
+  "D_N": {
+   "tasks": 98,
+   "long_minus_short_regret": -0.382,
+   "within_task_spearman_out_regret": -0.534,
+   "mean_out": 5069
+  },
+  "D_N_vs_C_N_at_equal_length": {
+   "tasks": 99,
+   "coef_D_N": 0.091,
+   "ci95_D_N": [
+    0.011,
+    0.185
+   ],
+   "coef_ln_out": -0.696,
+   "ci95_ln_out": [
+    -0.841,
+    -0.56
+   ],
+   "note": "регрет ~ голос D_N + ln(out), отклонения от средних задачи; отрицательное — меньше регрет"
+  }
+ }
+}

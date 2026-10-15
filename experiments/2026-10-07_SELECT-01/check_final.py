@@ -70,6 +70,14 @@ need += [f"AUROC {f(sa['main']['difficulty_C_N_votes']['auroc_refusal_vs_difficu
          f"{f(sa['main']['difficulty_B_blind_votes']['auroc_refusal_vs_difficulty'])} и {f(sa['rep']['difficulty_B_blind_votes']['auroc_refusal_vs_difficulty'])} по голосам B_blind",
          f"основная выборка: {f(sa['main']['D_N_answers_minus_C_N_votes']['refusal_tasks']['mean'])} и {f(sa['main']['D_N_answers_minus_C_N_votes']['other_tasks']['mean'])}",
          f"повтор: {f(sa['rep']['D_N_answers_minus_C_N_votes']['refusal_tasks']['mean'])} и {f(sa['rep']['D_N_answers_minus_C_N_votes']['other_tasks']['mean'])}"]
+tp = J('thinking_posthoc.json')   # пост-хок 2, 15.10
+lm = [tp[s_][a]['long_minus_short_regret'] for s_ in ('main', 'rep') for a in ('B_blind', 'B_zayavka', 'C_N', 'D_N')]
+sp = [tp[s_][a]['within_task_spearman_out_regret'] for s_ in ('main', 'rep') for a in ('B_blind', 'B_zayavka', 'C_N', 'D_N')]
+eq = lambda s_: tp[s_]['D_N_vs_C_N_at_equal_length']
+need += [f"от {f(max(lm))} до {f(min(lm))}, Спирмен «длина ↔ регрет» внутри задачи — от {f(max(sp))} до {f(min(sp))}",
+         f"Коэффициент D_N: +{f(eq('main')['coef_D_N'])} (ДИ {ci(eq('main')['ci95_D_N'])}) в основной выборке, +{f(eq('rep')['coef_D_N'])} (ДИ {ci(eq('rep')['ci95_D_N'])}) в повторе",
+         f"Коэффициент ln(выход): {f(eq('main')['coef_ln_out'])} и {f(eq('rep')['coef_ln_out'])}",
+         f"(средний выход голоса {tp['main']['D_N']['mean_out']} и {tp['rep']['D_N']['mean_out']} токенов против {tp['main']['C_N']['mean_out']} и {tp['rep']['C_N']['mean_out']} у C_N)"]
 miss = [s for s in need if s not in R]
 print(f'проверено фраз: {len(need)}; не найдено: {len(miss)}')
 for s in miss:
