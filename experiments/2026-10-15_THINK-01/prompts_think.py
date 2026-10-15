@@ -16,7 +16,7 @@ ROLE_UNSURE = P.ROLE.replace(LAST, ADD['UNSURE'] + LAST[len('Верни'):])
 ROLE_PLACEBO = P.ROLE.replace(LAST, ADD['PLACEBO'] + LAST[len('Верни'):])
 # ROLE_CONF — ROLE с самооценкой: кроме номера — вероятность, что выбранный кандидат действительно лучший (оценка оценки).
 ROLE_CONF = P.ROLE.replace(LAST, LAST + '\nВерни также p_best — твою вероятность от 0 до 1, что выбранный кандидат действительно лучший по фактическому итогу.')
-CONF_SCHEMA = {"type": "object", "properties": {"choice": {"type": "integer"}, "p_best": {"type": "number"}}, "required": ["choice", "p_best"]}
+CONF_SCHEMA = {"type": "object", "properties": {"choice": {"type": "integer"}, "p_best": {"type": "number", "minimum": 0, "maximum": 1}}, "required": ["choice", "p_best"]}
 TPL = dict(BASE=P.BASE, ROLE=P.ROLE, ROLE_REFUSE=P.ROLE_REFUSE, ROLE_UNSURE=ROLE_UNSURE, ROLE_PLACEBO=ROLE_PLACEBO, ROLE_CONF=ROLE_CONF)
 # рука → (шаблон, effort, схема). B_blind, C_N, D_N — промпты SELECT-01 байт в байт; H — один и тот же ROLE на effort high
 # (H_1 = вызов i = 0, H_3 = большинство трёх); H_c — ROLE_CONF на high, один вызов.

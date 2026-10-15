@@ -13,7 +13,7 @@ def check(cond, msg):
     global ok_all
     print(('ОК  ' if cond else 'ОШИБКА  ') + msg); ok_all &= bool(cond)
 
-def scenario(name, p_hit):
+def scenario(name, p_hit, drop_h0=False, dup=False):
     root = tempfile.mkdtemp(prefix=f'think_dry_{name}_'); sec = os.path.join(root, 'secret'); os.makedirs(f'{sec}/truth'); os.makedirs(f'{root}/pools')
     env = dict(os.environ, THINK_ROOT=root, THINK_SECRET=sec)
     json.dump({'WH': SEEDS}, open(f'{root}/seeds.json', 'w'))
@@ -42,25 +42,50 @@ def scenario(name, p_hit):
                 if arm == 'D_N' and rng.random() < 0.1: c = -1
                 elif rng.random() < p_hit[arm]: c = pm.index(best)
                 else: c = rng.randrange(8)
+                if drop_h0 and j['id'] == f'WH_{SEEDS[0]}|H|0': continue          # пропущенный вызов → «потерян» (Н6)
                 if arm == 'H': hits.append(pm[c] == best)
                 res = dict(choice=c) | (dict(p_best=0.7) if arm == 'H_c' else {})
-                fh.write(json.dumps(dict(id=j['id'], result=res, error=None, inp=7000, out=13000 if eff == 'high' else 3000, models={'stub': 1})) + '\n')
+                good = json.dumps(dict(id=j['id'], result=res, error=None, inp=7000, out=13000 if eff == 'high' else 3000, models={'stub': 1}))
+                bad = json.dumps(dict(id=j['id'], result=None, error='сбой (заглушка)', inp=0, out=0, models=None))
+                if dup and j['id'].endswith('|C_N|0'): fh.write(bad + '\n' + good + '\n')      # сначала сбой, потом удача (Н5)
+                elif dup and j['id'].endswith('|C_N|1'): fh.write(good + '\n' + bad + '\n')    # удача, потом поздний сбой (Н5)
+                else: fh.write(good + '\n')
     H('collect_eval', 'dry')
     ev = [json.loads(l) for l in open(f'{root}/evals/dry.jsonl')]
     hit_back = sum(1 for e in ev if e['arm'] == 'H' and e['choice'] == json.load(open(f'{sec}/truth/{e["task"]}.json')).index(max(json.load(open(f'{sec}/truth/{e["task"]}.json'))))) / max(1, sum(e['arm'] == 'H' for e in ev))
     check(abs(hit_back - sum(hits) / len(hits)) < 1e-9, f'{name}: обратная перестановка верна (попаданий H {hit_back:.3f})')
-    r = subprocess.run([sys.executable, f'{HERE}/analyze_think.py', f'{root}/evals/dry.jsonl', '--out', f'{root}/an.json'], env=env, capture_output=True, text=True)
+    if dup:
+        ev2 = [e for e in ev if e['arm'] == 'C_N' and e['i'] in (0, 1)]
+        check(len(ev2) == 2 * N and not any(e['error'] for e in ev2), f'{name}: по id взята первая несбойная запись (Н5)')
+    r = subprocess.run([sys.executable, f'{HERE}/analyze_think.py', f'{root}/evals/dry.jsonl', '--key', 'dry', '--seeds', 'seeds.json', '--out', f'{root}/an.json'],
+                       env=env, capture_output=True, text=True)
     check(r.returncode == 0, f'{name}: analyze_think отработал' + ('' if r.returncode == 0 else ': ' + r.stderr[-500:]))
     an = json.load(open(f'{root}/an.json')) if r.returncode == 0 else None
     shutil.rmtree(root)
     return an
 
-eff = scenario('effect', dict(B_blind=0.25, C_N=0.25, D_N=0.3, U_N=0.25, P_N=0.25, H=0.8, H_c=0.8))
+eff = scenario('effect', dict(B_blind=0.25, C_N=0.25, D_N=0.3, U_N=0.25, P_N=0.25, H=0.8, H_c=0.8), dup=True)
+miss = scenario('missing', dict(B_blind=0.25, C_N=0.25, D_N=0.3, U_N=0.25, P_N=0.25, H=0.8, H_c=0.8), drop_h0=True)
+if miss:
+    q = miss['primary']
+    check(miss['n_complete'] == N - 1 and miss['lost_share']['H_1'] > 0.02 and not any(v['counts'] for v in q.values()) and all(v['not_measured'] for v in q.values()),
+          f'пропуск H i=0: задача неполная, доля потерь H_1 {miss["lost_share"]["H_1"]} > 0,02 → «не измерено» (Н6)')
+os.environ.pop('THINK_SECRET', None); import harness_think as HT2
+try:
+    os.environ['THINK_SECRET'] = '/root/think_secret'; HT2.sec_for('seeds_rep.json'); check(False, 'соль не той выборки должна валить запуск (Н8)')
+except AssertionError:
+    check(True, 'соль не той выборки валит запуск (Н8)')
+finally:
+    os.environ.pop('THINK_SECRET', None)
 null = scenario('null', {a: 0.3 for a in PT.SPEC})
 if eff:
     q = eff['primary']
     check(all(v['counts'] for v in q.values()), 'эффект: обе первичные разности засчитаны: ' + str({k: (v['mean'], round(v['p'], 5), v['budget_ok']) for k, v in q.items()}))
     check('S3_self_assessment' in eff['secondary'] and eff['secondary']['S3_self_assessment']['n'] == N, 'эффект: калибровка H_c посчитана на всех задачах')
+    sb = eff['secondary']['S1b_equal_budget_system']
+    check(all(k_ in sb for k_ in ('B_blind[:5]', 'C_N[:3]', 'U_N[:3]', 'P_N[:3]', 'D_N[:2]')) and 'curve_m_1_5' in sb,
+          'эффект: S1b посчитана: ' + str({k_: (v['outcome'], v['out_subset'], v['out_H_1']) for k_, v in sb.items() if k_ != 'curve_m_1_5'}))
+    check(eff['program_hypothesis'].startswith('опровергнута') or eff['program_hypothesis'] == 'S1b в пользу системы', 'эффект: вывод о гипотезе программы: ' + eff['program_hypothesis'])
 if null:
     check(not any(v['counts'] for v in null['primary'].values()), 'ноль: ничего не засчитано: ' + str({k: (v['mean'], round(v['p'], 3)) for k, v in null['primary'].items()}))
 print('СУХОЙ ПРОГОН:', 'ПРОЙДЕН' if ok_all else 'ЕСТЬ ОШИБКИ')

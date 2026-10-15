@@ -1,21 +1,32 @@
 # THINK-01: обвязка — по образцу SELECT-01 (harness.py, редакция 2); симулятор, промпт исполнителя и схемы — из SELECT-01 без изменений.
-#   python3 harness_think.py salt                                   — секретная соль (один раз), печатает её SHA-256
+#   python3 harness_think.py salt <seeds.json>                      — секретная соль выборки (один раз), печатает её SHA-256
 #   python3 harness_think.py tasks <seeds.json> <ключ>              — задачи по списку сидов
 #   python3 harness_think.py exec_jobs <stage> <seeds.json> <ключ>  — run/<stage>_jobs.jsonl: исполнитель строит пул k = 8
 #   python3 harness_think.py collect_exec <stage>                   — pools/<task>.json + run/<stage>_pools.sha256 (правда НЕ считается)
 #   python3 harness_think.py eval_jobs <stage> <seeds.json> <ключ>  — run/<stage>_{medium,high}_jobs.jsonl: руки prompts_think.SPEC;
 #       effort задаётся конфигом прогона (run/think01_medium.json, run/think01_high.json), поэтому задания разделены по effort
 #   python3 harness_think.py collect_eval <stage>                   — evals/<stage>.jsonl из run/<stage>_{medium,high}_out.jsonl
-#   python3 harness_think.py truth <seeds.json> <ключ>              — правда кандидатов в секрет; ТОЛЬКО после коммита выборов
+#   python3 harness_think.py truth <seeds.json> <ключ>              — правда в секрет выборки (по ключу, совет 34 Н8); ТОЛЬКО после коммита выборов
 # Порядок кандидатов у оценщиков — одна перестановка на задачу по sha256(сид|perm), общая для всех рук (как в SELECT-01).
-import hashlib, json, os, random, secrets, sys
+import collections, hashlib, json, os, random, secrets, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); SEL = os.path.join(HERE, '..', '2026-10-07_SELECT-01')
 sys.path.insert(0, SEL); sys.path.insert(0, HERE)
 import sim, prompts as P, prompts_think as PT  # noqa: E402
-D = os.environ.get('THINK_ROOT', HERE); SEC = os.environ.get('THINK_SECRET', '/root/think_secret')
+D = os.environ.get('THINK_ROOT', HERE)
+SECRETS = {'seeds_main.json': '/root/think_secret', 'seeds_rep.json': '/root/think_secret_rep'}   # совет 34, Н8: соль — по ключу выборки
 
-def salt():
-    return open(f'{SEC}/salt.txt').read().strip()
+def sec_for(seeds_file):
+    env = os.environ.get('THINK_SECRET')
+    if seeds_file in SECRETS:
+        assert env in (None, SECRETS[seeds_file]), f'THINK_SECRET={env} не совпадает с выборкой {seeds_file} → {SECRETS[seeds_file]}'
+        return SECRETS[seeds_file]
+    assert env, f'для {seeds_file} нужен явный THINK_SECRET (сухой прогон)'
+    return env
+
+def salt(sec):
+    return open(f'{sec}/salt.txt').read().strip()
+
+ATT = collections.Counter()
 
 def tids(seeds_file, key):
     return [f'{key}_{s}' for s in json.load(open(f'{D}/{seeds_file}'))[key]]
@@ -33,15 +44,20 @@ def write_jobs(name, jobs):
     print(p, len(jobs), 'голов')
 
 def results(name):
-    p = f'{D}/run/{name}_out.jsonl'
-    return {r['id']: r for r in map(json.loads, open(p))} if os.path.exists(p) else {}   # последняя запись по id
+    # совет 34, Н5: по id берётся первая несбойная запись; если все сбойные — первая сбойная. Число попыток — в ATT.
+    p = f'{D}/run/{name}_out.jsonl'; out = {}
+    if not os.path.exists(p): return out
+    for r in map(json.loads, open(p)):
+        ATT[r['id'].split('|')[1] if r['id'].count('|') == 2 else 'exec'] += 1
+        if r['id'] not in out or (out[r['id']].get('error') and not r.get('error')): out[r['id']] = r
+    return out
 
 if __name__ == '__main__':
     cmd = sys.argv[1]
-    if cmd == 'salt':
-        os.makedirs(SEC, exist_ok=True); p = f'{SEC}/salt.txt'
+    if cmd == 'salt':                                      # python3 harness_think.py salt <seeds.json>
+        sec = sec_for(sys.argv[2]); os.makedirs(sec, exist_ok=True); p = f'{sec}/salt.txt'
         if not os.path.exists(p): open(p, 'w').write(secrets.token_hex(32))
-        print('sha256(salt) =', hashlib.sha256(salt().encode()).hexdigest())
+        print(sec, 'sha256(salt) =', hashlib.sha256(salt(sec).encode()).hexdigest())
     elif cmd == 'tasks':
         os.makedirs(f'{D}/tasks', exist_ok=True)
         for t in tids(sys.argv[2], sys.argv[3]):
@@ -77,11 +93,11 @@ if __name__ == '__main__':
                              models=r.get('models'), retried=r.get('retried', False), effort=eff)
                     if 'p_best' in res: e['p_best'] = res['p_best']
                     fh.write(json.dumps(e, ensure_ascii=False) + '\n'); n += 1
-        print(n, 'выборов')
+        print(n, 'выборов; попыток по рукам:', dict(ATT))
     elif cmd == 'truth':
-        os.makedirs(f'{SEC}/truth', exist_ok=True); slt = salt(); n = 0
+        sec = sec_for(sys.argv[2]); os.makedirs(f'{sec}/truth', exist_ok=True); slt = salt(sec); n = 0
         for t in tids(sys.argv[2], sys.argv[3]):
             p = f'{D}/pools/{t}.json'
             if os.path.exists(p):
-                json.dump([sim.truth(task(t), c['plan'], slt) for c in json.load(open(p))], open(f'{SEC}/truth/{t}.json', 'w')); n += 1
+                json.dump([sim.truth(task(t), c['plan'], slt) for c in json.load(open(p))], open(f'{sec}/truth/{t}.json', 'w')); n += 1
         print('правда посчитана для', n, 'задач')
