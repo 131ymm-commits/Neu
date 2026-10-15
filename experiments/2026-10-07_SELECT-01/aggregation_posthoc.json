@@ -1,0 +1,55 @@
+{
+ "note": "пост-хок, описательно",
+ "main": {
+  "B_blind": {
+   "vote_regret": 0.775,
+   "plurality_regret": 0.676,
+   "share_removed": 0.127,
+   "votes": 1200
+  },
+  "B_zayavka": {
+   "vote_regret": 0.702,
+   "plurality_regret": 0.688,
+   "share_removed": 0.021,
+   "votes": 500
+  },
+  "C_N": {
+   "vote_regret": 0.656,
+   "plurality_regret": 0.643,
+   "share_removed": 0.019,
+   "votes": 500
+  },
+  "D_N": {
+   "vote_regret": 0.504,
+   "plurality_regret": 0.491,
+   "share_removed": 0.026,
+   "votes": 475
+  }
+ },
+ "rep": {
+  "B_blind": {
+   "vote_regret": 0.878,
+   "plurality_regret": 0.852,
+   "share_removed": 0.029,
+   "votes": 1188
+  },
+  "B_zayavka": {
+   "vote_regret": 0.746,
+   "plurality_regret": 0.727,
+   "share_removed": 0.026,
+   "votes": 495
+  },
+  "C_N": {
+   "vote_regret": 0.732,
+   "plurality_regret": 0.668,
+   "share_removed": 0.087,
+   "votes": 495
+  },
+  "D_N": {
+   "vote_regret": 0.609,
+   "plurality_regret": 0.566,
+   "share_removed": 0.071,
+   "votes": 463
+  }
+ }
+}
