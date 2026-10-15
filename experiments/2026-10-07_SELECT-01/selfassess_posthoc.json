@@ -1,0 +1,65 @@
+{
+ "note": "пост-хок после итогового отчёта и совета 33; описательно, вердикт не меняет",
+ "main": {
+  "tasks": 100,
+  "tasks_with_D_N_refusal": 21,
+  "difficulty_C_N_votes": {
+   "refusal_tasks": 0.602,
+   "other_tasks": 0.67,
+   "auroc_refusal_vs_difficulty": 0.443
+  },
+  "difficulty_B_blind_votes": {
+   "refusal_tasks": 0.762,
+   "other_tasks": 0.778,
+   "auroc_refusal_vs_difficulty": 0.477
+  },
+  "spearman_refusals_vs_C_N_difficulty": -0.065,
+  "D_N_answers_minus_C_N_votes": {
+   "refusal_tasks": {
+    "mean": -0.062,
+    "ci95": [
+     -0.189,
+     0.067
+    ]
+   },
+   "other_tasks": {
+    "mean": -0.172,
+    "ci95": [
+     -0.244,
+     -0.1
+    ]
+   }
+  }
+ },
+ "rep": {
+  "tasks": 99,
+  "tasks_with_D_N_refusal": 23,
+  "difficulty_C_N_votes": {
+   "refusal_tasks": 0.744,
+   "other_tasks": 0.728,
+   "auroc_refusal_vs_difficulty": 0.511
+  },
+  "difficulty_B_blind_votes": {
+   "refusal_tasks": 0.862,
+   "other_tasks": 0.882,
+   "auroc_refusal_vs_difficulty": 0.433
+  },
+  "spearman_refusals_vs_C_N_difficulty": 0.015,
+  "D_N_answers_minus_C_N_votes": {
+   "refusal_tasks": {
+    "mean": -0.194,
+    "ci95": [
+     -0.381,
+     0.019
+    ]
+   },
+   "other_tasks": {
+    "mean": -0.107,
+    "ci95": [
+     -0.213,
+     -0.003
+    ]
+   }
+  }
+ }
+}

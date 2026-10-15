@@ -65,6 +65,11 @@ need += [f"На {ff['main']['D_N_worse_than_A0_pct']} % задач основн�
          f"ни на одной задаче ({ff['main']['D_N_all_refused_tasks']} в обеих выборках)" if ff['main']['D_N_all_refused_tasks'] == ff['rep']['D_N_all_refused_tasks'] == 0 else 'ОШИБКА: полные отказы не 0',
          f"Пуш выборов 16a4b06 — {act['timestamp'][11:]}" if act['after'].startswith('16a4b06') else 'ОШИБКА: событие пуша не 16a4b06',
          f"p = ({round(r['tests']['D_N']['vs_B_blind']['p'] * 200001) - 1} + 1)/(200 000 + 1)"]
+sa = J('selfassess_posthoc.json')   # пост-хок 15.10
+need += [f"AUROC {f(sa['main']['difficulty_C_N_votes']['auroc_refusal_vs_difficulty'])} и {f(sa['rep']['difficulty_C_N_votes']['auroc_refusal_vs_difficulty'])} по голосам C_N, "
+         f"{f(sa['main']['difficulty_B_blind_votes']['auroc_refusal_vs_difficulty'])} и {f(sa['rep']['difficulty_B_blind_votes']['auroc_refusal_vs_difficulty'])} по голосам B_blind",
+         f"основная выборка: {f(sa['main']['D_N_answers_minus_C_N_votes']['refusal_tasks']['mean'])} и {f(sa['main']['D_N_answers_minus_C_N_votes']['other_tasks']['mean'])}",
+         f"повтор: {f(sa['rep']['D_N_answers_minus_C_N_votes']['refusal_tasks']['mean'])} и {f(sa['rep']['D_N_answers_minus_C_N_votes']['other_tasks']['mean'])}"]
 miss = [s for s in need if s not in R]
 print(f'проверено фраз: {len(need)}; не найдено: {len(miss)}')
 for s in miss:
