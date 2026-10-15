@@ -58,7 +58,32 @@ def analyze():
         for name, comp in MIX.items():
             cs = [V[(t, m)][i] for m, n in comp for i in range(n) if valid(V[(t, m)].get(i))]
             if cs: fold[name].append(reg(plurality(cs, t))); single[name].append(st.mean(reg(c) for c in cs))
+    # Произведение экспертов для голосов «только номер»: вес модели w = ln(p·(k−1)/(1−p)), p — её доля попаданий в лучшего,
+    # оценённая БЕЗ текущей задачи (по остальным пяти; сглаживание (h+1)/(n+2)); w ≤ 0 → 0. Взвешенное большинство всех голосов.
+    hits = collections.defaultdict(lambda: collections.Counter()); tot = collections.defaultdict(lambda: collections.Counter())
+    for t in TASKS:
+        tr = json.load(open(f'{sec}/truth/{t}.json')); orc = max(tr)
+        for m in ms:
+            for c in V[(t, m)].values():
+                if isinstance(c, int) and 0 <= c < len(tr): tot[t][m] += 1; hits[t][m] += tr[c] == orc
+    wfold, weights = [], {}
+    for t in TASKS:
+        tr = json.load(open(f'{sec}/truth/{t}.json')); orc, mean = max(tr), st.mean(tr); k = len(tr)
+        w = {}
+        for m in ms:
+            h = sum(hits[u][m] for u in TASKS if u != t); n = sum(tot[u][m] for u in TASKS if u != t); pm = (h + 1) / (n + 2)
+            w[m] = max(0.0, __import__('math').log(pm * (k - 1) / (1 - pm)))
+        weights[t] = {m: round(v, 2) for m, v in w.items()}
+        score = collections.Counter()
+        for m in ms:
+            for c in V[(t, m)].values():
+                if isinstance(c, int) and 0 <= c < k: score[c] += w[m]
+        if score:
+            top = max(score.values()); cand = sorted([c for c in score if score[c] == top], key=lambda c: __import__('hashlib').sha256(f'{t}|{c}'.encode()).hexdigest())
+            wfold.append((orc - tr[cand[0]]) / (orc - mean))
     out = dict(note='пилот DIVERSE-01: 6 задач SELECT-01 main; opus — голоса C_N SELECT-01 (medium)',
+               weighted_all_votes=dict(fold_regret=round(st.mean(wfold), 3), weights_leave_one_task_out=weights,
+                                       note='произведение экспертов: вес ln(p(k−1)/(1−p)), p — по остальным задачам'),
                per_model={m: dict(votes=len(vote[m]), mean_vote_regret=round(st.mean(vote[m]), 3), mean_out=round(st.mean(outs[m])) if outs[m] else None) for m in ms if vote[m]},
                pairs={k: dict(pairs=v[0], same_choice=round(v[1] / v[0], 3), same_error=round(v[2] / v[0], 3)) for k, v in sorted(pairs.items())},
                folds={k: dict(fold_regret=round(st.mean(fold[k]), 3), mean_vote_regret=round(st.mean(single[k]), 3),
