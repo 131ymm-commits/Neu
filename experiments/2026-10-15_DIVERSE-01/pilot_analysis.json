@@ -1,31 +1,31 @@
 {
  "note": "пилот DIVERSE-01: 6 задач SELECT-01 main; opus — голоса C_N SELECT-01 (medium)",
  "weighted_all_votes": {
-  "fold_regret": 0.56,
+  "fold_regret": 0.122,
   "weights_leave_one_task_out": {
    "WH_8001": {
     "opus": 0.0,
     "sonnet": 0.0,
     "haiku": 0.46,
-    "fable": 1.66
+    "fable": 1.79
    },
    "WH_8002": {
     "opus": 0.0,
     "sonnet": 0.46,
     "haiku": 0.46,
-    "fable": 1.85
+    "fable": 1.95
    },
    "WH_8003": {
     "opus": 0.0,
     "sonnet": 0.46,
     "haiku": 0.69,
-    "fable": 2.43
+    "fable": 2.42
    },
    "WH_8004": {
     "opus": 0.0,
     "sonnet": 0.46,
     "haiku": 0.2,
-    "fable": 1.85
+    "fable": 1.95
    },
    "WH_8005": {
     "opus": 0.0,
@@ -37,7 +37,7 @@
     "opus": 0.0,
     "sonnet": 0.46,
     "haiku": 0.46,
-    "fable": 1.95
+    "fable": 2.02
    }
   },
   "note": "произведение экспертов: вес ln(p(k−1)/(1−p)), p — по остальным задачам"
@@ -59,31 +59,31 @@
    "mean_out": 18248
   },
   "fable": {
-   "votes": 24,
-   "mean_vote_regret": 0.18,
-   "mean_out": 18202
+   "votes": 29,
+   "mean_vote_regret": 0.178,
+   "mean_out": 20048
   }
  },
  "pairs": {
   "fable – fable": {
-   "pairs": 46,
-   "same_choice": 0.435,
-   "same_error": 0.152
-  },
-  "fable – haiku": {
-   "pairs": 120,
-   "same_choice": 0.233,
+   "pairs": 56,
+   "same_choice": 0.411,
    "same_error": 0.125
   },
+  "fable – haiku": {
+   "pairs": 145,
+   "same_choice": 0.214,
+   "same_error": 0.11
+  },
   "fable – opus": {
-   "pairs": 120,
-   "same_choice": 0.267,
-   "same_error": 0.25
+   "pairs": 145,
+   "same_choice": 0.234,
+   "same_error": 0.214
   },
   "fable – sonnet": {
-   "pairs": 120,
-   "same_choice": 0.317,
-   "same_error": 0.183
+   "pairs": 145,
+   "same_choice": 0.262,
+   "same_error": 0.152
   },
   "haiku – haiku": {
    "pairs": 60,
@@ -116,14 +116,14 @@
    "same_error": 0.417
   },
   "внутри модели": {
-   "pairs": 226,
-   "same_choice": 0.412,
-   "same_error": 0.323
+   "pairs": 236,
+   "same_choice": 0.407,
+   "same_error": 0.309
   },
   "между моделями": {
-   "pairs": 810,
-   "same_choice": 0.243,
-   "same_error": 0.2
+   "pairs": 885,
+   "same_choice": 0.228,
+   "same_error": 0.185
   }
  },
  "folds": {
@@ -143,9 +143,9 @@
    "share_removed": 0.221
   },
   "5: fable×5": {
-   "fold_regret": 0.084,
-   "mean_vote_regret": 0.18,
-   "share_removed": 0.532
+   "fold_regret": 0.015,
+   "mean_vote_regret": 0.179,
+   "share_removed": 0.916
   },
   "5: opus2+sonnet1+haiku1+fable1": {
    "fold_regret": 0.715,
@@ -154,13 +154,13 @@
   },
   "20: все четыре ×5": {
    "fold_regret": 0.715,
-   "mean_vote_regret": 0.744,
-   "share_removed": 0.039
+   "mean_vote_regret": 0.706,
+   "share_removed": -0.013
   },
   "15: opus+sonnet+fable ×5": {
    "fold_regret": 0.715,
-   "mean_vote_regret": 0.696,
-   "share_removed": -0.028
+   "mean_vote_regret": 0.64,
+   "share_removed": -0.117
   }
  },
  "per_task_vote_regret": {
@@ -192,12 +192,13 @@
    "opus": 0.666,
    "sonnet": 2.112,
    "haiku": 2.112,
-   "fable": 0.165
+   "fable": 0.132
   },
   "WH_8006": {
    "opus": 0.371,
    "sonnet": 1.894,
-   "haiku": 0.657
+   "haiku": 0.657,
+   "fable": 0.212
   }
  }
 }

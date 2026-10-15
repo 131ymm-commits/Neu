@@ -26,3 +26,12 @@
 {"arm": "C_N@fable", "at": "2026-10-15T15:30:32+00:00", "attempt": 1, "event": "вызов", "job": "WH_8005|C_N@fable|4", "role": "основной", "task": "WH_8005", "поток": "WH_8005_C_N_fable_4-4835881c.a001.osn.jsonl.gz"}
 {"arm": "C_N@fable", "at": "2026-10-15T15:30:35+00:00", "attempt": 1, "event": "вызов", "job": "WH_8005|C_N@fable|3", "role": "основной", "task": "WH_8005", "поток": "WH_8005_C_N_fable_3-a7bd303f.a001.osn.jsonl.gz"}
 {"at": "2026-10-15T16:23:31+00:00", "event": "пауза", "причина": "--stop-after 6000.0 с"}
+{"at": "2026-10-15T19:34:28+00:00", "binary_sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262", "config_sha256": "7d7180d6c629d56faef534d1a5bff94f655f3ee0890233a9884215a780745e54", "event": "старт"}
+{"at": "2026-10-15T19:34:28+00:00", "event": "план", "заданий_в_плане": 6, "задач": 6}
+{"arm": "C_N@fable", "at": "2026-10-15T19:34:28+00:00", "attempt": 2, "event": "вызов", "job": "WH_8005|C_N@fable|3", "role": "основной", "task": "WH_8005", "поток": "WH_8005_C_N_fable_3-a7bd303f.a002.osn.jsonl.gz"}
+{"arm": "C_N@fable", "at": "2026-10-15T19:34:28+00:00", "attempt": 1, "event": "вызов", "job": "WH_8006|C_N@fable|1", "role": "основной", "task": "WH_8006", "поток": "WH_8006_C_N_fable_1-d7a1764d.a001.osn.jsonl.gz"}
+{"arm": "C_N@fable", "at": "2026-10-15T19:34:28+00:00", "attempt": 1, "event": "вызов", "job": "WH_8006|C_N@fable|4", "role": "основной", "task": "WH_8006", "поток": "WH_8006_C_N_fable_4-729da11f.a001.osn.jsonl.gz"}
+{"arm": "C_N@fable", "at": "2026-10-15T19:37:24+00:00", "attempt": 1, "event": "вызов", "job": "WH_8006|C_N@fable|3", "role": "основной", "task": "WH_8006", "поток": "WH_8006_C_N_fable_3-9af9c50c.a001.osn.jsonl.gz"}
+{"arm": "C_N@fable", "at": "2026-10-15T19:38:16+00:00", "attempt": 1, "event": "вызов", "job": "WH_8006|C_N@fable|2", "role": "основной", "task": "WH_8006", "поток": "WH_8006_C_N_fable_2-d7520994.a001.osn.jsonl.gz"}
+{"arm": "C_N@fable", "at": "2026-10-15T19:39:41+00:00", "attempt": 1, "event": "вызов", "job": "WH_8006|C_N@fable|0", "role": "основной", "task": "WH_8006", "поток": "WH_8006_C_N_fable_0-66a618f3.a001.osn.jsonl.gz"}
+{"at": "2026-10-15T19:55:28+00:00", "event": "готово", "заданий_в_плане": 6}

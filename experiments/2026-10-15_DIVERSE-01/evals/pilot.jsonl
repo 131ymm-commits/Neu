@@ -81,4 +81,10 @@
 {"task": "WH_8005", "arm": "C_N@fable", "i": 0, "choice": 0, "error": null, "out": 18243, "models": {"claude-fable-5-1": 18243}}
 {"task": "WH_8005", "arm": "C_N@fable", "i": 1, "choice": 6, "error": null, "out": 8101, "models": {"claude-fable-5-1": 8101}}
 {"task": "WH_8005", "arm": "C_N@fable", "i": 2, "choice": 0, "error": null, "out": 16019, "models": {"claude-fable-5-1": 16019}}
+{"task": "WH_8005", "arm": "C_N@fable", "i": 3, "choice": 0, "error": null, "out": 23372, "models": {"claude-fable-5-1": 23372}}
 {"task": "WH_8005", "arm": "C_N@fable", "i": 4, "choice": 6, "error": null, "out": 10806, "models": {"claude-fable-5-1": 10806}}
+{"task": "WH_8006", "arm": "C_N@fable", "i": 0, "choice": null, "error": "потерян: ответ обрезан по max_tokens", "out": 78362, "models": {"claude-fable-5-1": 78362}}
+{"task": "WH_8006", "arm": "C_N@fable", "i": 1, "choice": 1, "error": null, "out": 19919, "models": {"claude-fable-5-1": 19919}}
+{"task": "WH_8006", "arm": "C_N@fable", "i": 2, "choice": 6, "error": null, "out": 7000, "models": {"claude-fable-5-1": 7000}}
+{"task": "WH_8006", "arm": "C_N@fable", "i": 3, "choice": 3, "error": null, "out": 22674, "models": {"claude-fable-5-1": 22674}}
+{"task": "WH_8006", "arm": "C_N@fable", "i": 4, "choice": 1, "error": null, "out": 13261, "models": {"claude-fable-5-1": 13261}}
