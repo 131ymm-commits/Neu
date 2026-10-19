@@ -1,5 +1,44 @@
 # Neu
 
+**Весы, которые можно купить, — не весы.** ИИ всё больше делает работу сам, и дорогим становится не сделать, а оценить. Neu — открытая лаборатория оценщиков, которых не обманывает давление отбора. Правда здесь считается кодом, выборы записываются до того, как посчитана правда, а каждый вывод проверяется повтором.
+
+**Один проверенный результат — SELECT-01.**
+- **Постановка.** Исполнитель (Claude) предлагает 8 планов для склада и к каждому пишет заявку «сколько он даст». Настоящую ценность считает симулятор; оценщики её не видят.
+- **Кто выбирает лучше.** Пять голов с ролью независимого оценщика и правом ответить «не могу выбрать», большинством голосов. Они выбирают лучше, чем 12 голов вслепую, и лучше, чем выбор по заявке исполнителя. Так вышло в основной выборке (100 задач) и в повторе на 99 новых задачах, всё по предрегистрации и при меньшем числе токенов.
+- **Цифры.** Регрет (0 — выбран лучший план, 1 — как наугад): 0,491 и 0,566 против 0,676 и 0,852 у двенадцати голов вслепую.
+- **Что не установлено:** чем именно работает право отказа. Возможно, такие головы просто дольше думают; это проверяет опыт THINK-01. Подробно — `experiments/2026-10-07_SELECT-01/REPORT_final.md`.
+
+**Проверьте нас за секунду:**
+```
+python3 experiments/2026-10-07_SELECT-01/check_final.py
+```
+Скрипт строит из данных 65 чисел и фраз отчёта и ищет их в тексте: `проверено фраз: 65; не найдено: 0`.
+
+**Как присоединиться.**
+- План «открытых весов» и первые задачи — `docs/2026-10-19_community_linux.md`. Лицензия MIT.
+- Вопросы и возражения — в Issues, по-русски или по-английски. Рабочий язык репозитория — русский.
+- Связанные проекты автора: Основание (Foundation-1.3) — сеть без центра, где судья — жизнь выпускников; Баланс (balance-github) — рекомендатель, которого нельзя купить.
+
+---
+
+**A scale you can buy is not a scale.** As AI does more of the work itself, the scarce thing is no longer doing but judging. Neu is an open lab for evaluators that selection pressure cannot fool. Truth is computed by code, choices are committed before the truth is computed, and every claim is replicated.
+
+**One verified result — SELECT-01.**
+- **Setup.** An executor model proposes 8 warehouse plans, each with a self-reported claim. A simulator computes the true value; the evaluators never see it.
+- **Who picks better.** Five evaluator heads with an independent-judge role and the right to answer "cannot choose", by majority vote. They pick better plans than 12 blind heads and than picking by the executor's claim. This held in a main sample (100 tasks) and in a pre-registered replication (99 new tasks), at a lower token budget.
+- **Numbers.** Normalized regret (0 = best plan, 1 = random): 0.491 and 0.566 vs 0.676 and 0.852 for the 12 blind heads.
+- **Not established:** what exactly makes it work. It may simply be longer reasoning; the THINK-01 experiment is testing that.
+
+**Check us in one second:** `python3 experiments/2026-10-07_SELECT-01/check_final.py` rebuilds 65 numbers and phrases of the report from the data.
+
+**Join:**
+- The "open scales" plan — `docs/2026-10-19_community_linux.md` (Russian for now). MIT license.
+- Issues welcome in English or Russian.
+
+---
+
+## О программе подробно
+
 Программа о том, как появляются и удерживаются уровни организации: в обучаемых моделях, в сообществах и в мире, который модели предсказывают. Здесь собраны в одном месте документы, предрегистрации, код, результаты и аудиты, которые раньше были разбросаны по чатам, архивам и десяткам репозиториев.
 
 ## Что где лежит
