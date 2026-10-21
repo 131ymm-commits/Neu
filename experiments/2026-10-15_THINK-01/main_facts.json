@@ -1,0 +1,16 @@
+{
+ "perm_le": {
+  "H_1 − B_blind": 0.0,
+  "H_1 − D_N": 0.0
+ },
+ "p_floor": 5e-06,
+ "out_ratio_B_blind": 2.29,
+ "out_ratio_D_N": 2.01,
+ "out_ratio_H_c": 1.15,
+ "regret_ratio_B_blind": 2.99,
+ "first_start": "2026-10-19T01:29:42+00:00",
+ "last_start": "2026-10-21T10:26:50+00:00",
+ "push_time": "2026-10-21T10:29:49Z",
+ "push_after": "4e99c5e",
+ "s3_overconfidence": -0.317
+}
