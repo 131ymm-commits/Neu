@@ -38,3 +38,11 @@
 пауза или остановка драйвера (см. .cache/think01_live/main_eval_*.log)
 ОСТАНОВКА: пауза по времени (--stop-after 5999.0 с): начатые вызовы записаны, продолжить той же командой
 ОСТАНОВКА: пауза по времени (--stop-after 5999.0 с): начатые вызовы записаны, продолжить той же командой
+=== возобновление по слову автора 2026-10-21T07:59:04Z ===
+задач 50
+/home/user/neu/experiments/2026-10-15_THINK-01/run/main_exec_jobs.jsonl 50 голов
+прогон завершён: заданий 50, журнал .cache/think01_live/main_exec_journal
+выгружено 50 итоговых записей в experiments/2026-10-15_THINK-01/run/main_exec_out.jsonl
+пулов: 50
+/home/user/neu/experiments/2026-10-15_THINK-01/run/main_eval_medium_jobs.jsonl 1600 голов
+/home/user/neu/experiments/2026-10-15_THINK-01/run/main_eval_high_jobs.jsonl 200 голов
