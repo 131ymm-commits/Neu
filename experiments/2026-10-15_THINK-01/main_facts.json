@@ -12,5 +12,70 @@
  "last_start": "2026-10-21T10:26:50+00:00",
  "push_time": "2026-10-21T10:29:49Z",
  "push_after": "4e99c5e",
- "s3_overconfidence": -0.317
+ "s3_overconfidence": -0.317,
+ "s3_gap_strict": 0.197,
+ "zero_and_bad": {
+  "H_1": [
+   26,
+   9
+  ],
+  "H_c": [
+   33,
+   5
+  ],
+  "D_N": [
+   8,
+   19
+  ],
+  "B_blind": [
+   3,
+   31
+  ]
+ },
+ "s1b_margin": {
+  "B_blind[:5]": {
+   "extra_out": 0.059,
+   "slope_correction": 0.028
+  },
+  "C_N[:3]": {
+   "extra_out": 0.203,
+   "slope_correction": 0.089
+  },
+  "U_N[:3]": {
+   "extra_out": 0.271,
+   "slope_correction": 0.115
+  },
+  "P_N[:3]": {
+   "extra_out": 0.11,
+   "slope_correction": 0.05
+  },
+  "D_N[:2]": {
+   "extra_out": 0.207,
+   "slope_correction": 0.09
+  }
+ },
+ "pause": {
+  "high": {
+   "from_at": "2026-10-19T09:55:39+00:00",
+   "from_event": "пауза",
+   "from_reason": "--stop-after 5999.0 с",
+   "to_at": "2026-10-21T07:59:20+00:00",
+   "to_event": "старт"
+  },
+  "medium": {
+   "from_at": "2026-10-19T09:55:39+00:00",
+   "from_event": "пауза",
+   "from_reason": "--stop-after 5999.0 с",
+   "to_at": "2026-10-21T07:59:20+00:00",
+   "to_event": "старт"
+  }
+ },
+ "last_done": {
+  "high": "2026-10-21T09:40:52+00:00",
+  "medium": "2026-10-21T10:29:00+00:00"
+ },
+ "eval_sha_in_commit": "f3afc97cd4bf983e455092c0680caa15ed145b8a1effd17f33b0039ac7ef70f1",
+ "eval_sha_on_disk": "f3afc97cd4bf983e455092c0680caa15ed145b8a1effd17f33b0039ac7ef70f1",
+ "commit_at": "2026-10-21T10:29:45+00:00",
+ "commit_before_push_s": 4
 }
