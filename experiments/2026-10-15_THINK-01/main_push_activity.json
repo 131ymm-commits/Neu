@@ -1,0 +1,34 @@
+{
+ "note": "Серверное событие GitHub о пуше выборов основной выборки THINK-01 (до расчёта правды).",
+ "commit": "4e99c5e",
+ "event": {
+  "id": 47245892198,
+  "node_id": "PSH_kwLOUpi23s8AAAALABMaZg",
+  "before": "5a34c37adea7eb234bee6d03249d0778029de005",
+  "after": "4e99c5e17c11cfcc8a482a5402a5269cd6518bec",
+  "ref": "refs/heads/main",
+  "timestamp": "2026-10-21T10:29:49Z",
+  "activity_type": "push",
+  "actor": {
+   "login": "131ymm-commits",
+   "id": 276661975,
+   "node_id": "U_kgDOEH2G1w",
+   "avatar_url": "https://avatars.githubusercontent.com/u/276661975?v=4",
+   "gravatar_id": "",
+   "url": "https://api.github.com/users/131ymm-commits",
+   "html_url": "https://github.com/131ymm-commits",
+   "followers_url": "https://api.github.com/users/131ymm-commits/followers",
+   "following_url": "https://api.github.com/users/131ymm-commits/following{/other_user}",
+   "gists_url": "https://api.github.com/users/131ymm-commits/gists{/gist_id}",
+   "starred_url": "https://api.github.com/users/131ymm-commits/starred{/owner}{/repo}",
+   "subscriptions_url": "https://api.github.com/users/131ymm-commits/subscriptions",
+   "organizations_url": "https://api.github.com/users/131ymm-commits/orgs",
+   "repos_url": "https://api.github.com/users/131ymm-commits/repos",
+   "events_url": "https://api.github.com/users/131ymm-commits/events{/privacy}",
+   "received_events_url": "https://api.github.com/users/131ymm-commits/received_events",
+   "type": "User",
+   "user_view_type": "public",
+   "site_admin": false
+  }
+ }
+}
