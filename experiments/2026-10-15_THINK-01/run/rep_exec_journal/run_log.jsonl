@@ -1,0 +1,6 @@
+{"at": "2026-10-21T11:10:24+00:00", "binary_sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262", "config_sha256": "d8c2e3b0f745304a81293f48a3f5d95e835b23fa8cfcab7f856d21aaa38a168e", "event": "старт"}
+{"at": "2026-10-21T11:10:24+00:00", "event": "план", "заданий_в_плане": 50, "задач": 50}
+{"arm": "exec", "at": "2026-10-21T11:10:24+00:00", "attempt": 1, "event": "вызов", "job": "WH_8251|exec", "role": "основной", "task": "WH_8251", "поток": "WH_8251_exec-fd650bb9.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-10-21T11:10:24+00:00", "attempt": 1, "event": "вызов", "job": "WH_8252|exec", "role": "основной", "task": "WH_8252", "поток": "WH_8252_exec-c883e9be.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-10-21T11:10:24+00:00", "attempt": 1, "event": "вызов", "job": "WH_8253|exec", "role": "основной", "task": "WH_8253", "поток": "WH_8253_exec-f27b2ee1.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-10-21T11:11:17+00:00", "attempt": 1, "event": "вызов", "job": "WH_8254|exec", "role": "основной", "task": "WH_8254", "поток": "WH_8254_exec-a93c0ef2.a001.osn.jsonl.gz"}
