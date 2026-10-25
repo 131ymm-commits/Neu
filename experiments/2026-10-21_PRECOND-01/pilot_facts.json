@@ -1,0 +1,60 @@
+{
+ "se_main_effect": 0.104,
+ "z": {
+  "REFUSE": -3.1,
+  "UNSURE": -0.9,
+  "ROLE": -2.3,
+  "PROCEDURE": -1.7,
+  "CHECK": 1.2,
+  "CONF": 1.2,
+  "CLAIMS": -1.4,
+  "PADDING": 0.6
+ },
+ "n_for_se": {
+  "0.05": 413,
+  "0.03": 1147
+ },
+ "anchors": {
+  "C_N": {
+   "votes": 30,
+   "mean_regret": 0.587
+  },
+  "D_N": {
+   "votes": 30,
+   "mean_regret": 0.46
+  }
+ },
+ "tasks": [
+  "WH_8001",
+  "WH_8002",
+  "WH_8003",
+  "WH_8004",
+  "WH_8005",
+  "WH_8006"
+ ],
+ "best": {
+  "pre": "P14",
+  "on": [
+   "REFUSE",
+   "UNSURE",
+   "ROLE",
+   "CLAIMS"
+  ],
+  "regret": 0.154
+ },
+ "worst": {
+  "pre": "P01",
+  "on": [
+   "PROCEDURE",
+   "CHECK",
+   "CONF",
+   "PADDING"
+  ],
+  "regret": 1.081
+ },
+ "conf_overconfidence": 0.18,
+ "truth_check": {
+  "tasks": 100,
+  "mismatches_A0": 0
+ }
+}

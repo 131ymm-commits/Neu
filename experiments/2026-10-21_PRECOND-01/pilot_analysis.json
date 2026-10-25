@@ -1,0 +1,235 @@
+{
+ "n": 96,
+ "lost": 0,
+ "refused": 2,
+ "mean_regret": 0.536,
+ "sd_vote": 0.574,
+ "sd_resid": 0.508,
+ "sd_between_pre": 0.267,
+ "out_per_call": 4868,
+ "effects": {
+  "REFUSE": {
+   "regret": -0.319,
+   "out": 1973,
+   "refusal": 0.042
+  },
+  "UNSURE": {
+   "regret": -0.091,
+   "out": 898,
+   "refusal": 0.042
+  },
+  "ROLE": {
+   "regret": -0.238,
+   "out": 957,
+   "refusal": 0.021
+  },
+  "PROCEDURE": {
+   "regret": -0.179,
+   "out": 1141,
+   "refusal": 0.021
+  },
+  "CHECK": {
+   "regret": 0.126,
+   "out": -1248,
+   "refusal": 0.0
+  },
+  "CONF": {
+   "regret": 0.126,
+   "out": -165,
+   "refusal": 0.0
+  },
+  "CLAIMS": {
+   "regret": -0.141,
+   "out": -488,
+   "refusal": 0.021
+  },
+  "PADDING": {
+   "regret": 0.064,
+   "out": 778,
+   "refusal": 0.021
+  }
+ },
+ "per_pre": {
+  "P00": {
+   "on": [],
+   "regret": 0.924,
+   "out": 2460,
+   "refused": 0
+  },
+  "P01": {
+   "on": [
+    "PROCEDURE",
+    "CHECK",
+    "CONF",
+    "PADDING"
+   ],
+   "regret": 1.081,
+   "out": 4374,
+   "refused": 0
+  },
+  "P02": {
+   "on": [
+    "ROLE",
+    "CHECK",
+    "CONF",
+    "CLAIMS"
+   ],
+   "regret": 0.727,
+   "out": 2792,
+   "refused": 0
+  },
+  "P03": {
+   "on": [
+    "ROLE",
+    "PROCEDURE",
+    "CLAIMS",
+    "PADDING"
+   ],
+   "regret": 0.273,
+   "out": 4643,
+   "refused": 0
+  },
+  "P04": {
+   "on": [
+    "UNSURE",
+    "CHECK",
+    "CLAIMS",
+    "PADDING"
+   ],
+   "regret": 0.951,
+   "out": 3855,
+   "refused": 0
+  },
+  "P05": {
+   "on": [
+    "UNSURE",
+    "PROCEDURE",
+    "CONF",
+    "CLAIMS"
+   ],
+   "regret": 0.463,
+   "out": 4214,
+   "refused": 0
+  },
+  "P06": {
+   "on": [
+    "UNSURE",
+    "ROLE",
+    "CONF",
+    "PADDING"
+   ],
+   "regret": 0.766,
+   "out": 4937,
+   "refused": 0
+  },
+  "P07": {
+   "on": [
+    "UNSURE",
+    "ROLE",
+    "PROCEDURE",
+    "CHECK"
+   ],
+   "regret": 0.376,
+   "out": 3780,
+   "refused": 0
+  },
+  "P08": {
+   "on": [
+    "REFUSE",
+    "CONF",
+    "CLAIMS",
+    "PADDING"
+   ],
+   "regret": 0.487,
+   "out": 4129,
+   "refused": 0
+  },
+  "P09": {
+   "on": [
+    "REFUSE",
+    "PROCEDURE",
+    "CHECK",
+    "CLAIMS"
+   ],
+   "regret": 0.392,
+   "out": 3849,
+   "refused": 0
+  },
+  "P10": {
+   "on": [
+    "REFUSE",
+    "ROLE",
+    "CHECK",
+    "PADDING"
+   ],
+   "regret": 0.383,
+   "out": 5288,
+   "refused": 0
+  },
+  "P11": {
+   "on": [
+    "REFUSE",
+    "ROLE",
+    "PROCEDURE",
+    "CONF"
+   ],
+   "regret": 0.383,
+   "out": 7819,
+   "refused": 0
+  },
+  "P12": {
+   "on": [
+    "REFUSE",
+    "UNSURE",
+    "CHECK",
+    "CONF"
+   ],
+   "regret": 0.609,
+   "out": 3714,
+   "refused": 0
+  },
+  "P13": {
+   "on": [
+    "REFUSE",
+    "UNSURE",
+    "PROCEDURE",
+    "PADDING"
+   ],
+   "regret": 0.329,
+   "out": 8526,
+   "refused": 1
+  },
+  "P14": {
+   "on": [
+    "REFUSE",
+    "UNSURE",
+    "ROLE",
+    "CLAIMS"
+   ],
+   "regret": 0.154,
+   "out": 7210,
+   "refused": 1
+  },
+  "P15": {
+   "on": [
+    "REFUSE",
+    "UNSURE",
+    "ROLE",
+    "PROCEDURE",
+    "CHECK",
+    "CONF",
+    "CLAIMS",
+    "PADDING"
+   ],
+   "regret": 0.273,
+   "out": 6306,
+   "refused": 0
+  }
+ },
+ "conf": {
+  "n": 48,
+  "mean_p": 0.347,
+  "hit": 0.167,
+  "brier": 0.167
+ }
+}
