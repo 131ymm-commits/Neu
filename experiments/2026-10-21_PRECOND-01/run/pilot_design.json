@@ -1,0 +1,97 @@
+{
+ "P00": [],
+ "P01": [
+  "PROCEDURE",
+  "CHECK",
+  "CONF",
+  "PADDING"
+ ],
+ "P02": [
+  "ROLE",
+  "CHECK",
+  "CONF",
+  "CLAIMS"
+ ],
+ "P03": [
+  "ROLE",
+  "PROCEDURE",
+  "CLAIMS",
+  "PADDING"
+ ],
+ "P04": [
+  "UNSURE",
+  "CHECK",
+  "CLAIMS",
+  "PADDING"
+ ],
+ "P05": [
+  "UNSURE",
+  "PROCEDURE",
+  "CONF",
+  "CLAIMS"
+ ],
+ "P06": [
+  "UNSURE",
+  "ROLE",
+  "CONF",
+  "PADDING"
+ ],
+ "P07": [
+  "UNSURE",
+  "ROLE",
+  "PROCEDURE",
+  "CHECK"
+ ],
+ "P08": [
+  "REFUSE",
+  "CONF",
+  "CLAIMS",
+  "PADDING"
+ ],
+ "P09": [
+  "REFUSE",
+  "PROCEDURE",
+  "CHECK",
+  "CLAIMS"
+ ],
+ "P10": [
+  "REFUSE",
+  "ROLE",
+  "CHECK",
+  "PADDING"
+ ],
+ "P11": [
+  "REFUSE",
+  "ROLE",
+  "PROCEDURE",
+  "CONF"
+ ],
+ "P12": [
+  "REFUSE",
+  "UNSURE",
+  "CHECK",
+  "CONF"
+ ],
+ "P13": [
+  "REFUSE",
+  "UNSURE",
+  "PROCEDURE",
+  "PADDING"
+ ],
+ "P14": [
+  "REFUSE",
+  "UNSURE",
+  "ROLE",
+  "CLAIMS"
+ ],
+ "P15": [
+  "REFUSE",
+  "UNSURE",
+  "ROLE",
+  "PROCEDURE",
+  "CHECK",
+  "CONF",
+  "CLAIMS",
+  "PADDING"
+ ]
+}
