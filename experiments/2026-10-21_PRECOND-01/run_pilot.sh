@@ -4,7 +4,8 @@
 set -uo pipefail
 cd "$(dirname "$0")/../.."
 E=experiments/2026-10-21_PRECOND-01; L=.cache/precond01_live; mkdir -p $L $E/run
-if pgrep -f "^bash experiments/2026-10-15_THINK-01/run_think01.sh" > /dev/null; then
+# PRECOND_WITH_THINK=1 — параллельно с повтором THINK-01, по слову автора 25.10: «запускай недоделанные прогоны» (DECISIONS 25.10)
+if [ "${PRECOND_WITH_THINK:-0}" != 1 ] && pgrep -f "^bash experiments/2026-10-15_THINK-01/run_think01.sh" > /dev/null; then
   echo "идёт прогон THINK-01 — пилот не запускаю: пока идёт выборка, других голов не запускать"; exit 4
 fi
 (cd $E && python3 pilot_precond.py jobs) || exit 2
