@@ -36,3 +36,8 @@
 ОСТАНОВКА: пауза по времени (--stop-after 5983.0 с): начатые вызовы записаны, продолжить той же командой
 задач 50
 /home/user/neu/experiments/2026-10-15_THINK-01/run/rep_exec_jobs.jsonl 50 голов
+прогон завершён: заданий 50, журнал .cache/think01_live/rep_exec_journal
+выгружено 50 итоговых записей в experiments/2026-10-15_THINK-01/run/rep_exec_out.jsonl
+пулов: 50
+/home/user/neu/experiments/2026-10-15_THINK-01/run/rep_eval_medium_jobs.jsonl 1600 голов
+/home/user/neu/experiments/2026-10-15_THINK-01/run/rep_eval_high_jobs.jsonl 200 голов
