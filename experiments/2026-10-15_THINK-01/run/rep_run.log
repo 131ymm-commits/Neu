@@ -64,3 +64,14 @@
 пауза или остановка драйвера (см. .cache/think01_live/rep_eval_*.log)
 ОСТАНОВКА: пауза по времени (--stop-after 5998.0 с): начатые вызовы записаны, продолжить той же командой
 прогон завершён: заданий 200, журнал .cache/think01_live/rep_eval_high_journal
+задач 50
+/home/user/neu/experiments/2026-10-15_THINK-01/run/rep_exec_jobs.jsonl 50 голов
+прогон завершён: заданий 50, журнал .cache/think01_live/rep_exec_journal
+выгружено 50 итоговых записей в experiments/2026-10-15_THINK-01/run/rep_exec_out.jsonl
+пулов: 50
+/home/user/neu/experiments/2026-10-15_THINK-01/run/rep_eval_medium_jobs.jsonl 1600 голов
+/home/user/neu/experiments/2026-10-15_THINK-01/run/rep_eval_high_jobs.jsonl 200 голов
+выгружено 1600 итоговых записей в experiments/2026-10-15_THINK-01/run/rep_eval_medium_out.jsonl
+выгружено 200 итоговых записей в experiments/2026-10-15_THINK-01/run/rep_eval_high_out.jsonl
+1800 выборов; попыток по рукам: {'B_blind': 600, 'C_N': 250, 'D_N': 250, 'P_N': 250, 'U_N': 250, 'H_c': 50, 'H': 150}
+выборка rep: выборы собраны. Дальше — коммит и пуш, затем truth, analyze (PREREG §9).
