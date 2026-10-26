@@ -1,0 +1,81 @@
+{
+ "perm_le": {
+  "H_1 − B_blind": 0.0,
+  "H_1 − D_N": 0.0
+ },
+ "p_floor": 5e-06,
+ "out_ratio_B_blind": 2.6,
+ "out_ratio_D_N": 2.29,
+ "out_ratio_H_c": 1.22,
+ "regret_ratio_B_blind": 4.56,
+ "first_start": "2026-10-25T18:49:50+00:00",
+ "last_start": "2026-10-26T18:30:35+00:00",
+ "push_time": "2026-10-26T18:31:54Z",
+ "push_after": "57c1f60",
+ "s3_overconfidence": -0.287,
+ "s3_gap_strict": 0.147,
+ "zero_and_bad": {
+  "H_1": [
+   29,
+   7
+  ],
+  "H_c": [
+   30,
+   3
+  ],
+  "D_N": [
+   10,
+   18
+  ],
+  "B_blind": [
+   1,
+   31
+  ]
+ },
+ "s1b_margin": {
+  "B_blind[:5]": {
+   "extra_out": -0.081,
+   "slope_correction": -0.055
+  },
+  "C_N[:3]": {
+   "extra_out": -0.03,
+   "slope_correction": -0.02
+  },
+  "U_N[:3]": {
+   "extra_out": 0.093,
+   "slope_correction": 0.058
+  },
+  "P_N[:3]": {
+   "extra_out": -0.059,
+   "slope_correction": -0.04
+  },
+  "D_N[:2]": {
+   "extra_out": 0.145,
+   "slope_correction": 0.089
+  }
+ },
+ "pause": {
+  "high": {
+   "from_at": "2026-10-26T01:00:24+00:00",
+   "from_event": "пауза",
+   "from_reason": "--stop-after 2680.0 с",
+   "to_at": "2026-10-26T08:12:30+00:00",
+   "to_event": "старт"
+  },
+  "medium": {
+   "from_at": "2026-10-26T00:58:39+00:00",
+   "from_event": "пауза",
+   "from_reason": "--stop-after 2680.0 с",
+   "to_at": "2026-10-26T08:12:31+00:00",
+   "to_event": "старт"
+  }
+ },
+ "last_done": {
+  "high": "2026-10-26T18:22:28+00:00",
+  "medium": "2026-10-26T18:31:12+00:00"
+ },
+ "eval_sha_in_commit": "97ccd4fbdc7dec6006623cb0dda930e488279b3cd47a30ee176e77d4787ab609",
+ "eval_sha_on_disk": "97ccd4fbdc7dec6006623cb0dda930e488279b3cd47a30ee176e77d4787ab609",
+ "commit_at": "2026-10-26T18:31:51+00:00",
+ "commit_before_push_s": 3
+}
