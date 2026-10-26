@@ -1,0 +1,13 @@
+{
+ "numpy_a": "2.4.6",
+ "numpy_b": "1.26.4",
+ "differences": 0,
+ "first": [],
+ "rederive": {
+  "evals_sha256_rederived": "97ccd4fbdc7dec6006623cb0dda930e488279b3cd47a30ee176e77d4787ab609",
+  "equals_commit_57c1f60": true,
+  "streams_match": 1803,
+  "streams_mismatch": 0,
+  "streams_missing": 0
+ }
+}

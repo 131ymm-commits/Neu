@@ -46,9 +46,16 @@ need += [f'коммит {f["push_after"]} — {f["commit_at"][:19]}, за {f["co
 assert f['eval_sha_in_commit'] == f['eval_sha_on_disk']
 assert F['rep_finals'] == {'годный': 1800} and F['rep_no_answer_attempts'] == 3 and F['rep_models'] == ['claude-opus-5-5'] and F['rep_cli'] == ['2.1.294']
 need += [f'все {F["rep_finals"]["годный"]} итогов «годные»', f'{F["rep_no_answer_attempts"]} попытки «нет ответа»', F['rep_models'][0], f'CLI {F["rep_cli"][0]}', F['rep_binary_sha256'][0][:8]]
+# совет 36: проверки повтора (rep_checks.json), хеш зафиксированного main_an.json, ворота S1b в «Итоге»
+import hashlib
+C = json.load(open('rep_checks.json')); assert C['differences'] == 0 and C['rederive']['equals_commit_57c1f60'] and C['rederive']['streams_mismatch'] == 0
+need += [f'numpy {C["numpy_b"]}', f'numpy {C["numpy_a"]}', f'расхождений {C["differences"]}', f'у всех {C["rederive"]["streams_match"]} вызовов', C['rederive']['evals_sha256_rederived'][:8],
+         hashlib.sha256(open('main_an.json', 'rb').read()).hexdigest()[:16]]
+gate = [k for k, v in s1b.items() if v['budget_matched'] and not v['descriptive']]
+need += [f'одна рука из четырёх ({gate[0]})', f'{r(a["mean_regret"]["P_N"]["mean"])} против C_N {r(a["mean_regret"]["C_N"]["mean"])}'] if len(gate) == 1 else ['ворота: не одна рука']
 miss = [n for n in need if n not in T]
 bad = [b for b in ('нижняя граница', 'Механизм выигрыша', 'механизм — длина', 'недоуверенна', 'Раз главное', 'При равном бюджете все системы',
-                   'объясняется длиной') if b in T]
+                   'объясняется длиной', 'При равной длине ответа') if b in T]
 print(f'проверено фраз: {len(need)}; не найдено: {len(miss)}; запрещённых найдено: {len(bad)}')
 [print('  НЕТ:', x) for x in miss]; [print('  ЗАПРЕЩЕНО:', b) for b in bad]
 sys.exit(1 if miss or bad else 0)
