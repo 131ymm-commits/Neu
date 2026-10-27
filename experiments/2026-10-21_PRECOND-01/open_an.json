@@ -1,0 +1,417 @@
+{
+ "n_tasks": 9,
+ "excluded_eps": [],
+ "tasks": [
+  "WH_8301",
+  "WH_8302",
+  "WH_8303",
+  "WH_8304",
+  "WH_8305",
+  "WH_8306",
+  "WH_8307",
+  "WH_8308",
+  "WH_8309"
+ ],
+ "seed": 27102026,
+ "permutations": 20000,
+ "Q1": {
+  "stat": 1.115,
+  "p": 0.222489
+ },
+ "main_effects": {
+  "REFUSE": {
+   "effect": -0.089,
+   "effect_raw": -0.08932868323866945,
+   "p_fl": 0.0035,
+   "t": {
+    "mean": -0.089,
+    "ci95": [
+     -0.156,
+     -0.023
+    ],
+    "df": 8,
+    "p_two": 0.015,
+    "p_greater": 0.992605,
+    "n": 9
+   },
+   "out": 810.788,
+   "refusal_on": 0.042,
+   "holm_reject": true
+  },
+  "UNSURE": {
+   "effect": -0.042,
+   "effect_raw": -0.04217618598794121,
+   "p_fl": 0.174441,
+   "t": {
+    "mean": -0.042,
+    "ci95": [
+     -0.098,
+     0.014
+    ],
+    "df": 8,
+    "p_two": 0.122,
+    "p_greater": 0.938995,
+    "n": 9
+   },
+   "out": 496.615,
+   "refusal_on": 0.035,
+   "holm_reject": false
+  },
+  "ROLE": {
+   "effect": -0.005,
+   "effect_raw": -0.005212890739690103,
+   "p_fl": 0.864357,
+   "t": {
+    "mean": -0.005,
+    "ci95": [
+     -0.082,
+     0.071
+    ],
+    "df": 8,
+    "p_two": 0.879,
+    "p_greater": 0.560326,
+    "n": 9
+   },
+   "out": 483.198,
+   "refusal_on": 0.028,
+   "holm_reject": false
+  },
+  "PROCEDURE": {
+   "effect": -0.068,
+   "effect_raw": -0.06839782515480869,
+   "p_fl": 0.029699,
+   "t": {
+    "mean": -0.068,
+    "ci95": [
+     -0.138,
+     0.001
+    ],
+    "df": 8,
+    "p_two": 0.053,
+    "p_greater": 0.97338,
+    "n": 9
+   },
+   "out": 709.448,
+   "refusal_on": 0.014,
+   "holm_reject": false
+  },
+  "CHECK": {
+   "effect": 0.04,
+   "effect_raw": 0.040273704599143034,
+   "p_fl": 0.19624,
+   "t": {
+    "mean": 0.04,
+    "ci95": [
+     -0.024,
+     0.104
+    ],
+    "df": 8,
+    "p_two": 0.185,
+    "p_greater": 0.092667,
+    "n": 9
+   },
+   "out": -536.316,
+   "refusal_on": 0.014,
+   "holm_reject": false
+  },
+  "CONF": {
+   "effect": 0.046,
+   "effect_raw": 0.04560394168289639,
+   "p_fl": 0.140593,
+   "t": {
+    "mean": 0.046,
+    "ci95": [
+     -0.02,
+     0.111
+    ],
+    "df": 8,
+    "p_two": 0.145,
+    "p_greater": 0.072485,
+    "n": 9
+   },
+   "out": -360.58,
+   "refusal_on": 0.0,
+   "holm_reject": false
+  },
+  "CLAIMS": {
+   "effect": -0.011,
+   "effect_raw": -0.011211372030801268,
+   "p_fl": 0.723064,
+   "t": {
+    "mean": -0.011,
+    "ci95": [
+     -0.166,
+     0.143
+    ],
+    "df": 8,
+    "p_two": 0.871,
+    "p_greater": 0.564335,
+    "n": 9
+   },
+   "out": -328.635,
+   "refusal_on": 0.035,
+   "holm_reject": false
+  },
+  "PADDING": {
+   "effect": 0.011,
+   "effect_raw": 0.011254269309915648,
+   "p_fl": 0.713564,
+   "t": {
+    "mean": 0.011,
+    "ci95": [
+     -0.04,
+     0.063
+    ],
+    "df": 8,
+    "p_two": 0.629,
+    "p_greater": 0.314463,
+    "n": 9
+   },
+   "out": 420.184,
+   "refusal_on": 0.028,
+   "holm_reject": false
+  }
+ },
+ "REFUSE_x_CLAIMS": {
+  "effect": 0.041,
+  "p_fl": 0.19374,
+  "t": {
+   "mean": 0.041,
+   "ci95": [
+    -0.036,
+    0.117
+   ],
+   "df": 8,
+   "p_two": 0.257,
+   "p_greater": 0.128361,
+   "n": 9
+  }
+ },
+ "pairs_descriptive": {
+  "REFUSE×UNSURE": -0.013,
+  "REFUSE×ROLE": 0.042,
+  "REFUSE×PROCEDURE": -0.037,
+  "REFUSE×CHECK": -0.03,
+  "REFUSE×CONF": 0.017,
+  "REFUSE×CLAIMS": 0.041,
+  "REFUSE×PADDING": -0.041,
+  "UNSURE×ROLE": 0.019,
+  "UNSURE×PROCEDURE": 0.04,
+  "UNSURE×CHECK": 0.027,
+  "UNSURE×CONF": -0.007,
+  "UNSURE×CLAIMS": 0.007,
+  "UNSURE×PADDING": -0.003,
+  "ROLE×PROCEDURE": -0.027,
+  "ROLE×CHECK": -0.038,
+  "ROLE×CONF": 0.045,
+  "ROLE×CLAIMS": -0.001,
+  "ROLE×PADDING": -0.018,
+  "PROCEDURE×CHECK": 0.023,
+  "PROCEDURE×CONF": 0.054,
+  "PROCEDURE×CLAIMS": 0.019,
+  "PROCEDURE×PADDING": -0.015,
+  "CHECK×CONF": 0.008,
+  "CHECK×CLAIMS": 0.023,
+  "CHECK×PADDING": 0.005,
+  "CONF×CLAIMS": 0.022,
+  "CONF×PADDING": -0.073,
+  "CLAIMS×PADDING": -0.03
+ },
+ "mediator_descriptive": {
+  "REFUSE": -0.013,
+  "UNSURE": 0.0,
+  "ROLE": 0.04,
+  "PROCEDURE": -0.002,
+  "CHECK": 0.002,
+  "CONF": 0.02,
+  "CLAIMS": -0.052,
+  "PADDING": 0.042,
+  "ln_out": -0.386
+ },
+ "saturation_descriptive": {
+  "k2": {
+   "mean": 0.002,
+   "ci95": [
+    -0.01,
+    0.014
+   ],
+   "df": 8,
+   "p_two": 0.697,
+   "p_greater": 0.348328,
+   "n": 9
+  },
+  "saturation": true
+ },
+ "ceiling": {
+  "D_m": {
+   "mean": 0.317,
+   "ci95": [
+    -0.124,
+    0.758
+   ],
+   "df": 8,
+   "p_two": 0.136,
+   "p_greater": 0.068193,
+   "n": 9
+  },
+  "D_h": {
+   "mean": 0.081,
+   "ci95": [
+    -0.058,
+    0.219
+   ],
+   "df": 8,
+   "p_two": 0.216,
+   "p_greater": 0.107922,
+   "n": 9
+  },
+  "d": {
+   "mean": -0.078,
+   "ci95": [
+    -0.256,
+    0.101
+   ],
+   "df": 8,
+   "p_two": 0.346,
+   "p_greater": 0.827152,
+   "n": 9
+  },
+  "H1_mean": 0.037,
+  "H0_mean": 0.118,
+  "M0_mean": 0.78,
+  "allon_medium_mean": 0.463,
+  "outcome": "гипотеза потолка не опровергнута",
+  "secondary": "не опровергнута по дополнительному критерию"
+ },
+ "winners": {
+  "arms": {
+   "OBS": [
+    "ROLE",
+    "PROCEDURE",
+    "CLAIMS",
+    "PADDING"
+   ],
+   "MODEL": [
+    "REFUSE",
+    "UNSURE",
+    "ROLE",
+    "PROCEDURE",
+    "CLAIMS"
+   ],
+   "ANCHOR": [
+    "REFUSE",
+    "ROLE",
+    "PROCEDURE"
+   ]
+  },
+  "obs_cell": "C12",
+  "model_cell": null,
+  "coincide": {
+   "model_eq_obs": false,
+   "obs_eq_anchor": false,
+   "model_eq_anchor": false
+  },
+  "gain_open": {
+   "OBS": 0.105,
+   "MODEL": 0.053
+  },
+  "gain_open_raw": {
+   "OBS": 0.10455004820585498,
+   "MODEL": 0.05338755801874248
+  },
+  "gain_open_model_from": "прогноз модели главных действий (только описательно)",
+  "selection_null_p": 0.897805,
+  "cell_means": {
+   "C00": 0.707,
+   "C01": 0.384,
+   "C02": 0.57,
+   "C03": 0.544,
+   "C04": 0.495,
+   "C05": 0.627,
+   "C06": 0.526,
+   "C07": 0.61,
+   "C08": 0.824,
+   "C09": 0.548,
+   "C10": 0.414,
+   "C11": 0.572,
+   "C12": 0.218,
+   "C13": 0.594,
+   "C14": 0.356,
+   "C15": 0.558,
+   "C16": 0.393,
+   "C17": 0.341,
+   "C18": 0.866,
+   "C19": 0.53,
+   "C20": 0.417,
+   "C21": 0.497,
+   "C22": 0.608,
+   "C23": 0.574,
+   "C24": 0.479,
+   "C25": 0.436,
+   "C26": 0.435,
+   "C27": 0.52,
+   "C28": 0.273,
+   "C29": 0.518,
+   "C30": 0.502,
+   "C31": 0.689,
+   "C32": 0.479,
+   "C33": 0.535,
+   "C34": 0.512,
+   "C35": 0.499,
+   "C36": 0.374,
+   "C37": 0.335,
+   "C38": 0.323,
+   "C39": 0.613,
+   "C40": 0.484,
+   "C41": 0.557,
+   "C42": 0.443,
+   "C43": 0.731,
+   "C44": 0.323,
+   "C45": 0.351,
+   "C46": 0.469,
+   "C47": 0.299,
+   "C48": 0.353,
+   "C49": 0.362,
+   "C50": 0.419,
+   "C51": 0.479,
+   "C52": 0.335,
+   "C53": 0.38,
+   "C54": 0.258,
+   "C55": 0.336,
+   "C56": 0.42,
+   "C57": 0.708,
+   "C58": 0.416,
+   "C59": 0.335,
+   "C60": 0.404,
+   "C61": 0.405,
+   "C62": 0.374,
+   "C63": 0.463
+  }
+ },
+ "conf_descriptive": {
+  "n": 288,
+  "mean_p": 0.353,
+  "hit": 0.212
+ },
+ "mean_regret": {
+  "all64": 0.475,
+  "anchor": 0.323,
+  "allon_medium": 0.463,
+  "A0_no_calls": 0.846
+ },
+ "vote_status_totals": {
+  "ok": 591,
+  "refused": 12
+ },
+ "vote_status_nonok": {},
+ "refusal_decomposition": {
+  "share": 0.042,
+  "A0_regret_refused": 0.544,
+  "answered_regret": 0.425,
+  "contribution": 0.005
+ },
+ "out_per_call": {
+  "medium64": 4247.109,
+  "high": 13584.278
+ }
+}

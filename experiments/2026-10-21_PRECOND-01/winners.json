@@ -1,0 +1,23 @@
+{
+ "arms": {
+  "OBS": [
+   "ROLE",
+   "PROCEDURE",
+   "CLAIMS",
+   "PADDING"
+  ],
+  "MODEL": [
+   "REFUSE",
+   "UNSURE",
+   "ROLE",
+   "PROCEDURE",
+   "CLAIMS"
+  ],
+  "ANCHOR": [
+   "REFUSE",
+   "ROLE",
+   "PROCEDURE"
+  ]
+ },
+ "aliases": {}
+}
