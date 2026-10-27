@@ -1,12 +1,12 @@
 #!/bin/bash
 # PRECOND-01: проверка прогона по расписанию — короткая сводка, снимок живых журналов в run/, коммит и пуш (по образцу SELECT-01 checkin.sh).
-#   bash experiments/2026-10-15_PRECOND-01/checkin_think.sh main   (или rep)
+#   bash experiments/2026-10-21_PRECOND-01/checkin_precond.sh open   (или val)
 set -uo pipefail
 S=${1:?нужно open или val}
 cd "$(dirname "$0")/../.."
-E=experiments/2026-10-15_PRECOND-01
+E=experiments/2026-10-21_PRECOND-01
 L=.cache/precond01_live
-if pgrep -f "^bash experiments/2026-10-15_PRECOND-01/run_precond.sh $S" > /dev/null; then echo "процесс: идёт"; else echo "процесс: НЕ идёт"; fi
+if pgrep -f "^bash experiments/2026-10-21_PRECOND-01/run_precond.sh" > /dev/null; then echo "процесс: идёт"; else echo "процесс: НЕ идёт"; fi
 for j in open_exec_journal val_exec_journal ${S}_eval_medium_journal ${S}_eval_high_journal; do
   [ -d $L/$j ] && mkdir -p $E/run/$j && cp -a $L/$j/. $E/run/$j/
 done
