@@ -70,15 +70,20 @@
   "H1": "a04c60b3f449b63d13936ee2ecb1331e824317306f4c00a991051233e1526cfd"
  },
  "files": {
-  "harness_precond.py": "cd1d7926f42e5af7547c7afb8cf6314fca5c099a1b5b42715707b373f1e5afa4",
-  "analyze_precond.py": "853088e74b3b17c5af1ade5a8f2979014d0db927a4f9a9ee3328420397b263f2",
+  "harness_precond.py": "9791129fbccaa07f62315bbf39ff939277c13bf2834c4762c7271a710db9f5bc",
+  "analyze_precond.py": "f0bc1e5f78a6ec520827f82ff1a6f00a25d4ec03b5290d813e3f7cba134d6eae",
   "prompts_precond.py": "2bf4d0893088323bcd3a14e23804f822d62b4f6177eb07110ec23ed4fa9418a7",
-  "dryrun_precond_main.py": "5d8e369c31fab2eb3c8aee60ae0857ac512f199c4d96bad2378bc275950cab9e",
+  "dryrun_precond_main.py": "147f23aecfeaf463581a821b2f4ae5e402627d96a679cb18f6e8dbca693ff3ae",
   "run_precond.sh": "c3aa210b2fde07b56853e3fe8a5566d9456b4fe21c79781024613881f7241317",
+  "prereg_hashes.py": "75731d48deecd3880b1abb8674f66f867cb85c3c7a8cfb08020863b36c462649",
   "seeds_open.json": "c3799754c2a6bbc0982ea5d6ab294ced979bd62cc58f3741aae7a5856ef9a5f9",
   "seeds_val.json": "4e6190dfe9b48d70bad64c6b527201c4240a9d7fc2157e297cfdd7f7da2207a6",
   "requirements.txt": "7242524339a9388141e1383e79b66ac2fd4b82276448eae06b8fa428192ccd1f",
   "run/precond_medium.json": "c8da20771153ef8ae96f7ce1296f276a7e3ccb3dba19a1ca9a1f4ea868b9bae3",
-  "run/precond_high.json": "269054afeefe1822b7b70b715699220da28c1d5bc732f3dd1ce141de170f1a9a"
+  "run/precond_high.json": "269054afeefe1822b7b70b715699220da28c1d5bc732f3dd1ce141de170f1a9a",
+  "../2026-10-07_SELECT-01/sim.py": "8acc6606bed6e79970bc6ea8192bbf740eb4363a634917edd3590fba1255e33a",
+  "../2026-10-07_SELECT-01/prompts.py": "48ce93b0b4905c6ee2eee8d6dd37004936b50f565fbad1324368f842a1aeb92c",
+  "../2026-10-07_SELECT-01/analyze.py": "06f4f5f8cdba27ff39e3b4c0bfb79972d9f0b28ca69c4f4dff67f45358900f5e",
+  "../../tools/run_sealed2.py": "1dc321f47f2be32c30ad625c14b651a0e22307a48fd9e8f42b1c3f68e727b3e8"
  }
 }

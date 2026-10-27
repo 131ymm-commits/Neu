@@ -31,14 +31,19 @@ for _ in range(400):
     v = list(rng.normal(0.1, 0.5, 9)); c = A.t_ci(v)['ci95']; cov += c[0] <= 0.1 <= c[1]
 check(0.92 <= cov / 400 <= 0.98, f'покрытие t-ДИ (df 8): {cov / 400:.3f}')
 
-# ---------- 2. вся цепочка на заглушках ----------
+# ---------- 2. вся цепочка на заглушках; порядок этапов проверяет код (совет 38, К1) ----------
 for d in ('tasks', 'pools'): os.makedirs(f'{root}/{d}')
-dry = [f'WH_{s}' for s in range(8001, 8010)]
-for t in dry:
-    shutil.copy(f'{SEL}/tasks/{t}.json', f'{root}/tasks/'); shutil.copy(f'{SEL}/pools/{t}.json', f'{root}/pools/')
-json.dump({'WH': list(range(8001, 8010))}, open(f'{root}/seeds_dry.json', 'w')); json.dump({'WH': list(range(8001, 8010))}, open(f'{root}/seeds_dryval.json', 'w'))
+dry, dryval = range(8001, 8010), range(8010, 8019)                          # этапы не пересекаются, как open и val
+for s_ in list(dry) + list(dryval):
+    shutil.copy(f'{SEL}/tasks/WH_{s_}.json', f'{root}/tasks/'); shutil.copy(f'{SEL}/pools/WH_{s_}.json', f'{root}/pools/')
+json.dump({'WH': list(dry)}, open(f'{root}/seeds_dry.json', 'w')); json.dump({'WH': list(dryval)}, open(f'{root}/seeds_dryval.json', 'w'))
+G = lambda *a: subprocess.run(['git', '-C', root, *a], check=True, capture_output=True, text=True)
+G('init', '-q'); G('config', 'user.email', 'dry@example'); G('config', 'user.name', 'dry'); G('add', '-A'); G('commit', '-qm', 'сухой прогон: задачи и пулы')
 env = dict(os.environ, PRECOND_ROOT=root, PRECOND_SECRET=f'{root}/secret')
-H = lambda *a: subprocess.run([sys.executable, f'{HERE}/harness_precond.py', *a], env=env, check=True, capture_output=True, text=True).stdout
+def H(*a, fail=False):
+    r = subprocess.run([sys.executable, f'{HERE}/harness_precond.py', *a], env=env, capture_output=True, text=True)
+    if fail: return r.returncode != 0, (r.stderr.strip().splitlines() or [''])[-1]
+    assert r.returncode == 0, r.stderr[-600:]; return r.stdout
 def fake(name, seed):
     rr = random.Random(seed); n = 0
     with open(f'{root}/run/{name}_out.jsonl', 'w') as fh:
@@ -59,7 +64,14 @@ anchor = next(j for j in jobs if j['id'] == f'WH_8001|{A.ANCH}|0')['prompt']
 sys.path.insert(0, os.path.join(HERE, '..', '2026-10-15_THINK-01')); import prompts_think as PT, harness_precond as HP  # noqa: E402
 HP.D = root; tk = HP.task('WH_8001'); shown = [HP.pool('WH_8001')[i] for i in HP.perm('WH_8001')]
 check(anchor == PT.eval_prompt('D_N', __import__('sim').RULES[tk['type']](tk), shown), 'промпт опоры (C44) байт в байт равен D_N SELECT-01 / THINK-01')
-H('collect_eval', 'dry'); H('truth', 'dry')
+H('collect_eval', 'dry')
+f1, m1 = H('truth', 'dry', fail=True); check(f1 and 'не закоммичен' in m1, f'правда до коммита выборов запрещена: {m1}')
+G('add', 'evals', 'run'); G('commit', '-qm', 'выборы dry')
+f2, m2 = H('truth', 'dry', fail=True); check(f2, f'правда до события пуша запрещена: {m2}')
+H('push_event', 'dry', '--local'); G('add', 'dry_push_activity.json'); G('commit', '-qm', 'событие dry')
+open(f'{root}/evals/dry.jsonl', 'a').write('{}\n')
+f3, m3 = H('truth', 'dry', fail=True); check(f3, f'правда при выборах, изменённых после пуша, запрещена: {m3}')
+G('checkout', '--', 'evals/dry.jsonl'); H('truth', 'dry')
 r = subprocess.run([sys.executable, f'{HERE}/analyze_precond.py', 'open', f'{root}/evals/dry.jsonl', '--key', 'dry', '--out', f'{root}/open_an.json'],
                    env=env, capture_output=True, text=True)
 check(r.returncode == 0, 'анализ открытия на заглушках отработал' + ('' if r.returncode == 0 else ': ' + r.stderr[-400:]))
@@ -67,11 +79,15 @@ o = json.load(open(f'{root}/open_an.json')); w = json.load(open(f'{root}/winners
 check(set(o['main_effects']) == set(PP.F) and 'p_fl' in o['main_effects']['REFUSE'] and o['ceiling']['outcome'], 'в выводе есть главные действия, p и потолок')
 check(o['Q1']['p'] > 0.01, f'вопрос 1 на случайных выборах не срабатывает: p = {o["Q1"]["p"]}')
 check(set(w['arms']) | set(w['aliases']) == {'OBS', 'MODEL', 'ANCHOR'}, f'победители: {w}')
-H('eval_jobs', 'dryval'); nv = fake('dryval_eval_medium', 3)
+check(sum(o['vote_status_totals'].values()) == 9 * 67 and 'refusal_decomposition' in o, f'счёт голосов по статусам: {o["vote_status_totals"]}')
+f4, m4 = H('eval_jobs', 'dryval', fail=True); check(f4 and 'не закоммичен' in m4, f'задания проверки до коммита победителей запрещены: {m4}')
+G('add', 'winners.json', 'open_an.json'); G('commit', '-qm', 'победители dry')
+H('salt', 'dryval'); H('eval_jobs', 'dryval'); nv = fake('dryval_eval_medium', 3)
 check(nv == 9 * len(w['arms']) * 5, f'задания проверки: {nv} (= 9 × {len(w["arms"])} рук × 5)')
-H('collect_eval', 'dryval'); H('truth', 'dryval')
+H('collect_eval', 'dryval'); G('add', 'evals', 'run'); G('commit', '-qm', 'выборы dryval')
+H('push_event', 'dryval', '--local'); G('add', 'dryval_push_activity.json'); G('commit', '-qm', 'событие dryval'); H('truth', 'dryval')
 r = subprocess.run([sys.executable, f'{HERE}/analyze_precond.py', 'val', f'{root}/evals/dryval.jsonl', '--key', 'dryval', '--out', f'{root}/val_an.json',
                     '--open-an', f'{root}/open_an.json'], env=env, capture_output=True, text=True)
 check(r.returncode == 0, 'анализ проверки победителя на заглушках отработал' + ('' if r.returncode == 0 else ': ' + r.stderr[-400:]))
-v = json.load(open(f'{root}/val_an.json')); check('primary' in v and 'shrinkage' in v, f'первичный исход проверки: {v["primary"].get("outcome")}')
+v = json.load(open(f'{root}/val_an.json')); check('primary' in v and 'shrinkage' in v and 'degenerate_to_A0' in v, f'первичный исход проверки: {v["primary"].get("outcome")}')
 print('СУХОЙ ПРОГОН ПРОЙДЕН' if ok else 'СУХОЙ ПРОГОН НЕ ПРОЙДЕН'); sys.exit(0 if ok else 1)

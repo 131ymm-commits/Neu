@@ -8,7 +8,11 @@ def preamble(on):   # вступление (инструкции предусл�
     return PP.compose(set(on), '<ПРАВИЛА>', [dict(plan={}, claim=0, note='')] * 8)[0].split('\n\n')[0]
 out = dict(design64=sha(json.dumps([HP.CELLS[c] for c in HP.CELLS], ensure_ascii=False)),
            preambles={c: sha(preamble(on)) for c, on in HP.CELLS.items()} | {c: sha(preamble(on)) for c, (on, eff) in HP.EXTRA.items()},
-           files={f: sha(open(f'{HERE}/{f}', 'rb').read()) for f in ('harness_precond.py', 'analyze_precond.py', 'prompts_precond.py', 'dryrun_precond_main.py',
-                                                                     'run_precond.sh', 'seeds_open.json', 'seeds_val.json', 'requirements.txt',
-                                                                     'run/precond_medium.json', 'run/precond_high.json') if os.path.exists(f'{HERE}/{f}')})
+           files={})
+FILES = ['harness_precond.py', 'analyze_precond.py', 'prompts_precond.py', 'dryrun_precond_main.py', 'run_precond.sh', 'prereg_hashes.py',
+         'seeds_open.json', 'seeds_val.json', 'requirements.txt', 'run/precond_medium.json', 'run/precond_high.json',
+         '../2026-10-07_SELECT-01/sim.py', '../2026-10-07_SELECT-01/prompts.py', '../2026-10-07_SELECT-01/analyze.py', '../../tools/run_sealed2.py']
+for f in FILES:                                                    # совет 38, К3: нет файла — регистрировать нельзя
+    assert os.path.exists(f'{HERE}/{f}'), f'нет файла {f}'
+    out['files'][f] = sha(open(f'{HERE}/{f}', 'rb').read())
 json.dump(out, open(f'{HERE}/prereg_hashes.json', 'w'), ensure_ascii=False, indent=1); print(json.dumps(out['files'], ensure_ascii=False, indent=1)); print('design64', out['design64'][:16])

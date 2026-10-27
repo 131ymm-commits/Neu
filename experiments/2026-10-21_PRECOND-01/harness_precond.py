@@ -8,10 +8,12 @@
 #                                                       и run/open_eval_high_jobs.jsonl (H0 «всё выключено», H1 «всё включено»)
 #   python3 harness_precond.py eval_jobs val          — run/val_eval_medium_jobs.jsonl: OBS, MODEL, ANCHOR × 5 голосов по winners.json
 #   python3 harness_precond.py collect_eval <этап>    — evals/<этап>.jsonl из run/<этап>_eval_{medium,high}_out.jsonl
-#   python3 harness_precond.py truth <этап>           — правда в секрет этапа; ТОЛЬКО после пуша выборов этапа и события пуша
+#   python3 harness_precond.py push_event <этап> [--local] — <этап>_push_activity.json: серверное событие GitHub о пуше HEAD и sha256 выборов
+#                                                       в этом коммите (--local — только для сухого прогона: событие без GitHub)
+#   python3 harness_precond.py truth <этап>           — правда в секрет этапа; код сам проверяет порядок (совет 38, К1)
 # Соль этапа — по ключу (open → /root/precond_secret_open, val → /root/precond_secret_val); другой PRECOND_SECRET для этих этапов
 # не принимается (как совет 34, Н8). Для сухого прогона — этап dry и явный PRECOND_SECRET.
-import collections, hashlib, json, os, random, secrets, sys
+import collections, datetime, hashlib, json, os, random, secrets, subprocess, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); SEL = os.path.join(HERE, '..', '2026-10-07_SELECT-01')
 sys.path.insert(0, SEL); sys.path.insert(0, HERE)
 import sim, prompts as P, prompts_precond as PP  # noqa: E402
@@ -63,6 +65,28 @@ def results(name):
 def winners():
     return json.load(open(f'{D}/winners.json'))
 
+# ---------- совет 38, К1: порядок «выборы → пуш → событие → правда» и «победители → задания проверки» проверяет код ----------
+OPEN_OF = dict(val='open', dryval='dry')
+def git(*a): return subprocess.run(['git', '-C', D, *a], capture_output=True, text=True)
+def committed_clean(rel):
+    assert git('ls-files', '--error-unmatch', rel).returncode == 0, f'{rel} не закоммичен'
+    assert git('diff', '--quiet', 'HEAD', '--', rel).returncode == 0, f'{rel} изменён после коммита'
+def sha_file(p): return hashlib.sha256(open(p, 'rb').read()).hexdigest()
+def guard_truth(stage):
+    rel = f'evals/{stage}.jsonl'; committed_clean(rel); committed_clean(f'{stage}_push_activity.json')
+    for eff in ('medium', 'high'):
+        if os.path.exists(f'{D}/run/{stage}_eval_{eff}_prompts.sha256'): committed_clean(f'run/{stage}_eval_{eff}_prompts.sha256')
+    pa = json.load(open(f'{D}/{stage}_push_activity.json')); after = pa['event']['after']
+    assert git('merge-base', '--is-ancestor', after, 'HEAD').returncode == 0, f'коммит события {after[:7]} не предок HEAD'
+    pushed = subprocess.run(['git', '-C', D, 'show', f'{after}:./{rel}'], capture_output=True).stdout
+    assert hashlib.sha256(pushed).hexdigest() == sha_file(f'{D}/{rel}') == pa['evals_sha256'], 'выборы на диске не совпадают с запушенными'
+def guard_val_jobs(stage):
+    op = OPEN_OF[stage]; committed_clean('winners.json'); committed_clean('open_an.json')
+    assert not set(tids(stage)) & set(tids(op)), 'задачи проверки пересекаются с задачами открытия'
+    import analyze_precond as AN
+    _, w = AN.open_stage(f'{D}/evals/{op}.jsonl', op)
+    assert w == winners(), 'winners.json не совпадает с пересчётом open_stage'
+
 if __name__ == '__main__':
     cmd, stage = sys.argv[1], sys.argv[2]
     if cmd == 'salt':
@@ -84,7 +108,21 @@ if __name__ == '__main__':
             if not c or len(c) != 8: print('нет пула:', t, r.get('error')); continue
             s = json.dumps(c, ensure_ascii=False); open(f'{D}/pools/{t}.json', 'w').write(s); man[t] = hashlib.sha256(s.encode()).hexdigest()
         json.dump(man, open(f'{D}/run/{stage}_exec_pools.sha256', 'w'), indent=0); print('пулов:', len(man))
+    elif cmd == 'push_event':
+        head = git('rev-parse', 'HEAD').stdout.strip(); rel = f'evals/{stage}.jsonl'; committed_clean(rel)
+        evsha = hashlib.sha256(subprocess.run(['git', '-C', D, 'show', f'{head}:./{rel}'], capture_output=True).stdout).hexdigest()
+        if '--local' in sys.argv:
+            assert stage not in SECRETS, 'локальное событие — только для сухого прогона'
+            ev = dict(after=head, timestamp=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'), activity_type='local')
+        else:
+            act = json.loads(subprocess.run(['gh', 'api', 'repos/131ymm-commits/Neu/activity?per_page=50'], capture_output=True, text=True, check=True).stdout)
+            ev = next((e for e in act if e.get('after') == head and e.get('activity_type') == 'push'), None)
+            assert ev, f'нет серверного события о пуше {head[:7]} — сначала запушить'
+        json.dump(dict(note=f'Серверное событие о пуше выборов этапа {stage} PRECOND-01 (до расчёта правды).', commit=head[:7], evals_sha256=evsha, event=ev),
+                  open(f'{D}/{stage}_push_activity.json', 'w'), ensure_ascii=False, indent=1)
+        print('событие:', ev['timestamp'], head[:7], 'sha256 выборов', evsha[:16])
     elif cmd == 'eval_jobs':
+        if stage in OPEN_OF: guard_val_jobs(stage)
         jobs = dict(medium=[], high=[])
         arms = ({c: (on, 'medium', 1) for c, on in CELLS.items()} | {c: (on, eff, 1) for c, (on, eff) in EXTRA.items()} if stage in ('open', 'dry')
                 else {a: (on, 'medium', VOTES_VAL) for a, on in winners()['arms'].items()})
@@ -108,7 +146,7 @@ if __name__ == '__main__':
                     fh.write(json.dumps(e, ensure_ascii=False) + '\n'); n += 1
         print(n, 'выборов; попыток по рукам (первые 12):', dict(list(ATT.items())[:12]))
     elif cmd == 'truth':
-        sec = sec_for(stage); os.makedirs(f'{sec}/truth', exist_ok=True); slt = salt(sec); n = 0
+        guard_truth(stage); sec = sec_for(stage); os.makedirs(f'{sec}/truth', exist_ok=True); slt = salt(sec); n = 0
         for t in tids(stage):
             if os.path.exists(f'{D}/pools/{t}.json'):
                 json.dump([sim.truth(task(t), c['plan'], slt) for c in pool(t)], open(f'{sec}/truth/{t}.json', 'w')); n += 1
