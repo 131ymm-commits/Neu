@@ -1,0 +1,51 @@
+{
+ "high": {
+  "n": 20,
+  "lost": 0,
+  "refused": 0,
+  "mean_regret": 0.071,
+  "sd_vote": 0.153,
+  "sd_resid_df": 0.158,
+  "df": 12,
+  "out_per_call": 13450,
+  "zero": 14,
+  "per_pre": {
+   "P00": 0.228,
+   "P05": 0.018,
+   "P10": 0.019,
+   "P15": 0.018
+  },
+  "conf": {
+   "n": 10,
+   "mean_p": 0.563,
+   "hit": 0.8
+  }
+ },
+ "medium_same_cells": {
+  "n": 20,
+  "lost": 0,
+  "refused": 0,
+  "mean_regret": 0.52,
+  "sd_vote": 0.564,
+  "sd_resid_df": 0.632,
+  "df": 12,
+  "out_per_call": 4399,
+  "zero": 4,
+  "per_pre": {
+   "P00": 0.995,
+   "P05": 0.413,
+   "P10": 0.403,
+   "P15": 0.271
+  },
+  "conf": {
+   "n": 10,
+   "mean_p": 0.353,
+   "hit": 0.3
+  }
+ },
+ "n_per_level_for_se_interaction": {
+  "0.05": 680,
+  "0.071": 337
+ },
+ "ratio_sd_high_to_medium": 0.25
+}
