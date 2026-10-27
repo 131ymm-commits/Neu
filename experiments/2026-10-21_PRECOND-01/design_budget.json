@@ -1,0 +1,28 @@
+{
+ "sd_medium_df": 0.575,
+ "sd_high_df": 0.158,
+ "out_medium": 4868,
+ "out_high": 13450,
+ "A": {
+  "tasks": 9,
+  "calls_medium": 576,
+  "calls_high_reference": 18,
+  "exec": 9,
+  "se_main": 0.048,
+  "out_tokens_m": 3.0
+ },
+ "B": {
+  "tasks": 9,
+  "calls_per_level": 576,
+  "exec": 9,
+  "se_interaction": 0.05,
+  "out_tokens_m": 10.6,
+  "out_tokens_high_m": 7.75
+ },
+ "validation": {
+  "calls": 750,
+  "out_tokens_m": 3.7
+ },
+ "think01_sample_out_m": 8.48,
+ "A_plus_validation_out_m": 6.7
+}
