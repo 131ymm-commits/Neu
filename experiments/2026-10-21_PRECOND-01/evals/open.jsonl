@@ -1,0 +1,603 @@
+{"task": "WH_8301", "arm": "C00", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6638, "out": 1706, "models": {"claude-opus-5-5": 1706}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C01", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6832, "out": 1700, "models": {"claude-opus-5-5": 1700}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C02", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6599, "out": 1630, "models": {"claude-opus-5-5": 1630}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C03", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6752, "out": 2004, "models": {"claude-opus-5-5": 2004}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C04", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6180, "out": 5772, "models": {"claude-opus-5-5": 5772}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C05", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6200, "out": 3073, "models": {"claude-opus-5-5": 3073}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C06", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6146, "out": 3454, "models": {"claude-opus-5-5": 3454}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C07", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6295, "out": 2371, "models": {"claude-opus-5-5": 2371}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8301", "arm": "C08", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6040, "out": 4057, "models": {"claude-opus-5-5": 4057}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C09", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6051, "out": 3003, "models": {"claude-opus-5-5": 3003}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C10", "i": 0, "choice": 0, "shown_choice": 3, "error": null, "inp": 6005, "out": 2794, "models": {"claude-opus-5-5": 2794}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C11", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6151, "out": 1858, "models": {"claude-opus-5-5": 1858}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C12", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6815, "out": 15155, "models": {"claude-opus-5-5": 15155}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C13", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6832, "out": 2786, "models": {"claude-opus-5-5": 2786}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C14", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6779, "out": 14533, "models": {"claude-opus-5-5": 14533}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C15", "i": 0, "choice": 0, "shown_choice": 3, "error": null, "inp": 6925, "out": 4307, "models": {"claude-opus-5-5": 4307}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8301", "arm": "C16", "i": 0, "choice": 0, "shown_choice": 3, "error": null, "inp": 5998, "out": 5600, "models": {"claude-opus-5-5": 5600}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C17", "i": 0, "choice": 7, "shown_choice": 0, "error": null, "inp": 6147, "out": 9997, "models": {"claude-opus-5-5": 9997}, "retried": false, "effort": "medium", "p_best": 0.42}
+{"task": "WH_8301", "arm": "C18", "i": 0, "choice": 1, "shown_choice": 5, "error": null, "inp": 6096, "out": 3230, "models": {"claude-opus-5-5": 3230}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C19", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6117, "out": 9627, "models": {"claude-opus-5-5": 9627}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C20", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6779, "out": 4285, "models": {"claude-opus-5-5": 4285}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C21", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6924, "out": 2154, "models": {"claude-opus-5-5": 2154}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C22", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6874, "out": 2033, "models": {"claude-opus-5-5": 2033}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C23", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6889, "out": 2073, "models": {"claude-opus-5-5": 2073}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C24", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6634, "out": 1461, "models": {"claude-opus-5-5": 1461}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C25", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6778, "out": 1767, "models": {"claude-opus-5-5": 1767}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8301", "arm": "C26", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6727, "out": 3264, "models": {"claude-opus-5-5": 3264}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C27", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6747, "out": 2815, "models": {"claude-opus-5-5": 2815}, "retried": false, "effort": "medium", "p_best": 0.34}
+{"task": "WH_8301", "arm": "C28", "i": 0, "choice": 7, "shown_choice": 0, "error": null, "inp": 6179, "out": 13655, "models": {"claude-opus-5-5": 13655}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C29", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6322, "out": 2809, "models": {"claude-opus-5-5": 2809}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C30", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6270, "out": 4416, "models": {"claude-opus-5-5": 4416}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C31", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6290, "out": 2066, "models": {"claude-opus-5-5": 2066}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C32", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6027, "out": 3123, "models": {"claude-opus-5-5": 3123}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C33", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6176, "out": 3905, "models": {"claude-opus-5-5": 3905}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C34", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6119, "out": 2807, "models": {"claude-opus-5-5": 2807}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C35", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6141, "out": 3716, "models": {"claude-opus-5-5": 3716}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C36", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6811, "out": 4765, "models": {"claude-opus-5-5": 4765}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C37", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6953, "out": 1744, "models": {"claude-opus-5-5": 1744}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C38", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6898, "out": 2648, "models": {"claude-opus-5-5": 2648}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C39", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 7090, "out": 1959, "models": {"claude-opus-5-5": 1959}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C40", "i": 0, "choice": 0, "shown_choice": 3, "error": null, "inp": 6659, "out": 4262, "models": {"claude-opus-5-5": 4262}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C41", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6803, "out": 2164, "models": {"claude-opus-5-5": 2164}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C42", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6754, "out": 2214, "models": {"claude-opus-5-5": 2214}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C43", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6771, "out": 2520, "models": {"claude-opus-5-5": 2520}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C44", "i": 0, "choice": 7, "shown_choice": 0, "error": null, "inp": 6204, "out": 9114, "models": {"claude-opus-5-5": 9114}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C45", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6352, "out": 10925, "models": {"claude-opus-5-5": 10925}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8301", "arm": "C46", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6299, "out": 3400, "models": {"claude-opus-5-5": 3400}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C47", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6314, "out": 5162, "models": {"claude-opus-5-5": 5162}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8301", "arm": "C48", "i": 0, "choice": 0, "shown_choice": 3, "error": null, "inp": 6753, "out": 8740, "models": {"claude-opus-5-5": 8740}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C49", "i": 0, "choice": 0, "shown_choice": 3, "error": null, "inp": 6765, "out": 5830, "models": {"claude-opus-5-5": 5830}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8301", "arm": "C50", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6718, "out": 1666, "models": {"claude-opus-5-5": 1666}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C51", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6864, "out": 3003, "models": {"claude-opus-5-5": 3003}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C52", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6296, "out": 8398, "models": {"claude-opus-5-5": 8398}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C53", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6313, "out": 3143, "models": {"claude-opus-5-5": 3143}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C54", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6263, "out": 4933, "models": {"claude-opus-5-5": 4933}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C55", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6408, "out": 10509, "models": {"claude-opus-5-5": 10509}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8301", "arm": "C56", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6156, "out": 5654, "models": {"claude-opus-5-5": 5654}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C57", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6165, "out": 3035, "models": {"claude-opus-5-5": 3035}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "C58", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6118, "out": 9603, "models": {"claude-opus-5-5": 9603}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C59", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6264, "out": 7515, "models": {"claude-opus-5-5": 7515}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8301", "arm": "C60", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6931, "out": 2390, "models": {"claude-opus-5-5": 2390}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C61", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6950, "out": 2449, "models": {"claude-opus-5-5": 2449}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8301", "arm": "C62", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 6894, "out": 2301, "models": {"claude-opus-5-5": 2301}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "C63", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 7218, "out": 2220, "models": {"claude-opus-5-5": 2220}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8301", "arm": "M0", "i": 0, "choice": 5, "shown_choice": 1, "error": null, "inp": 5958, "out": 3032, "models": {"claude-opus-5-5": 3032}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C00", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6590, "out": 3915, "models": {"claude-opus-5-5": 3915}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C01", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6605, "out": 6442, "models": {"claude-opus-5-5": 6442}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8302", "arm": "C02", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6558, "out": 1228, "models": {"claude-opus-5-5": 1228}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C03", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6700, "out": 3115, "models": {"claude-opus-5-5": 3115}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8302", "arm": "C04", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6186, "out": 2635, "models": {"claude-opus-5-5": 2635}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C05", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 6200, "out": 3933, "models": {"claude-opus-5-5": 3933}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8302", "arm": "C06", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6148, "out": 5746, "models": {"claude-opus-5-5": 5746}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C07", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 6298, "out": 2796, "models": {"claude-opus-5-5": 2796}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8302", "arm": "C08", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6039, "out": 3334, "models": {"claude-opus-5-5": 3334}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C09", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6057, "out": 4262, "models": {"claude-opus-5-5": 4262}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C10", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6003, "out": 4746, "models": {"claude-opus-5-5": 4746}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C11", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6146, "out": 2859, "models": {"claude-opus-5-5": 2859}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8302", "arm": "C12", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6761, "out": 7423, "models": {"claude-opus-5-5": 7423}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C13", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6788, "out": 3060, "models": {"claude-opus-5-5": 3060}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C14", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6728, "out": 4077, "models": {"claude-opus-5-5": 4077}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C15", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6878, "out": 2705, "models": {"claude-opus-5-5": 2705}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8302", "arm": "C16", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6002, "out": 3504, "models": {"claude-opus-5-5": 3504}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C17", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6145, "out": 3539, "models": {"claude-opus-5-5": 3539}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8302", "arm": "C18", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6095, "out": 2440, "models": {"claude-opus-5-5": 2440}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C19", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6111, "out": 3114, "models": {"claude-opus-5-5": 3114}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C20", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6725, "out": 5634, "models": {"claude-opus-5-5": 5634}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C21", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 6875, "out": 2645, "models": {"claude-opus-5-5": 2645}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C22", "i": 0, "choice": 4, "shown_choice": 5, "error": null, "inp": 6822, "out": 8381, "models": {"claude-opus-5-5": 8381}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C23", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 6843, "out": 2578, "models": {"claude-opus-5-5": 2578}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C24", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6583, "out": 2530, "models": {"claude-opus-5-5": 2530}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C25", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6735, "out": 8459, "models": {"claude-opus-5-5": 8459}, "retried": false, "effort": "medium", "p_best": 0.5}
+{"task": "WH_8302", "arm": "C26", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6679, "out": 2157, "models": {"claude-opus-5-5": 2157}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C27", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6696, "out": 7991, "models": {"claude-opus-5-5": 7991}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8302", "arm": "C28", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6177, "out": 4590, "models": {"claude-opus-5-5": 4590}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C29", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6324, "out": 4111, "models": {"claude-opus-5-5": 4111}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C30", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 6271, "out": 2752, "models": {"claude-opus-5-5": 2752}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C31", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6289, "out": 5928, "models": {"claude-opus-5-5": 5928}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8302", "arm": "C32", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6029, "out": 4154, "models": {"claude-opus-5-5": 4154}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C33", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6176, "out": 3896, "models": {"claude-opus-5-5": 3896}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8302", "arm": "C34", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 6122, "out": 2676, "models": {"claude-opus-5-5": 2676}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C35", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6137, "out": 5557, "models": {"claude-opus-5-5": 5557}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8302", "arm": "C36", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6755, "out": 3783, "models": {"claude-opus-5-5": 3783}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C37", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6903, "out": 4672, "models": {"claude-opus-5-5": 4672}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8302", "arm": "C38", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6853, "out": 6894, "models": {"claude-opus-5-5": 6894}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C39", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 6870, "out": 4477, "models": {"claude-opus-5-5": 4477}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8302", "arm": "C40", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6614, "out": 4411, "models": {"claude-opus-5-5": 4411}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C41", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6759, "out": 8565, "models": {"claude-opus-5-5": 8565}, "retried": false, "effort": "medium", "p_best": 0.5}
+{"task": "WH_8302", "arm": "C42", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6704, "out": 4640, "models": {"claude-opus-5-5": 4640}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C43", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6725, "out": 3938, "models": {"claude-opus-5-5": 3938}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8302", "arm": "C44", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6204, "out": 2596, "models": {"claude-opus-5-5": 2596}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C45", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6349, "out": 5901, "models": {"claude-opus-5-5": 5901}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C46", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6296, "out": 4415, "models": {"claude-opus-5-5": 4415}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C47", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6316, "out": 9751, "models": {"claude-opus-5-5": 9751}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8302", "arm": "C48", "i": 0, "choice": 4, "shown_choice": 5, "error": null, "inp": 6702, "out": 7000, "models": {"claude-opus-5-5": 7000}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C49", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6722, "out": 1987, "models": {"claude-opus-5-5": 1987}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8302", "arm": "C50", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6666, "out": 4749, "models": {"claude-opus-5-5": 4749}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C51", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6814, "out": 6693, "models": {"claude-opus-5-5": 6693}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C52", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6302, "out": 2673, "models": {"claude-opus-5-5": 2673}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C53", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6313, "out": 5670, "models": {"claude-opus-5-5": 5670}, "retried": false, "effort": "medium", "p_best": 0.42}
+{"task": "WH_8302", "arm": "C54", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6259, "out": 1931, "models": {"claude-opus-5-5": 1931}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C55", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 6409, "out": 3085, "models": {"claude-opus-5-5": 3085}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8302", "arm": "C56", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6153, "out": 3857, "models": {"claude-opus-5-5": 3857}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C57", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6168, "out": 4558, "models": {"claude-opus-5-5": 4558}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8302", "arm": "C58", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6118, "out": 6633, "models": {"claude-opus-5-5": 6633}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C59", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6265, "out": 5475, "models": {"claude-opus-5-5": 5475}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8302", "arm": "C60", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6884, "out": 6590, "models": {"claude-opus-5-5": 6590}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C61", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6898, "out": 3538, "models": {"claude-opus-5-5": 3538}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8302", "arm": "C62", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6842, "out": 8930, "models": {"claude-opus-5-5": 8930}, "retried": false, "effort": "medium"}
+{"task": "WH_8302", "arm": "C63", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6991, "out": 6776, "models": {"claude-opus-5-5": 6776}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8302", "arm": "M0", "i": 0, "choice": 3, "shown_choice": 4, "error": null, "inp": 5955, "out": 2555, "models": {"claude-opus-5-5": 2555}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C00", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6726, "out": 2301, "models": {"claude-opus-5-5": 2301}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C01", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6745, "out": 2065, "models": {"claude-opus-5-5": 2065}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C02", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6691, "out": 2679, "models": {"claude-opus-5-5": 2679}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C03", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6807, "out": 2234, "models": {"claude-opus-5-5": 2234}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C04", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6183, "out": 3705, "models": {"claude-opus-5-5": 3705}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C05", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6202, "out": 2315, "models": {"claude-opus-5-5": 2315}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C06", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6147, "out": 3728, "models": {"claude-opus-5-5": 3728}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C07", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6292, "out": 2769, "models": {"claude-opus-5-5": 2769}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C08", "i": 0, "choice": 7, "shown_choice": 1, "error": null, "inp": 6040, "out": 1943, "models": {"claude-opus-5-5": 1943}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C09", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6058, "out": 4730, "models": {"claude-opus-5-5": 4730}, "retried": false, "effort": "medium", "p_best": 0.34}
+{"task": "WH_8303", "arm": "C10", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6001, "out": 1590, "models": {"claude-opus-5-5": 1590}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C11", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6149, "out": 4647, "models": {"claude-opus-5-5": 4647}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C12", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6899, "out": 3185, "models": {"claude-opus-5-5": 3185}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C13", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6920, "out": 3529, "models": {"claude-opus-5-5": 3529}, "retried": false, "effort": "medium", "p_best": 0.32}
+{"task": "WH_8303", "arm": "C14", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6869, "out": 3459, "models": {"claude-opus-5-5": 3459}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C15", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 7014, "out": 6030, "models": {"claude-opus-5-5": 6030}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C16", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 5965, "out": 1763, "models": {"claude-opus-5-5": 1763}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C17", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6120, "out": 2858, "models": {"claude-opus-5-5": 2858}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C18", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6094, "out": 1890, "models": {"claude-opus-5-5": 1890}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C19", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6082, "out": 1539, "models": {"claude-opus-5-5": 1539}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C20", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6868, "out": 2827, "models": {"claude-opus-5-5": 2827}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C21", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6981, "out": 5118, "models": {"claude-opus-5-5": 5118}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C22", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6963, "out": 2937, "models": {"claude-opus-5-5": 2937}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C23", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6974, "out": 2436, "models": {"claude-opus-5-5": 2436}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C24", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6719, "out": 5468, "models": {"claude-opus-5-5": 5468}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C25", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6870, "out": 2469, "models": {"claude-opus-5-5": 2469}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C26", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6815, "out": 3390, "models": {"claude-opus-5-5": 3390}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C27", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6831, "out": 2368, "models": {"claude-opus-5-5": 2368}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C28", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6178, "out": 4209, "models": {"claude-opus-5-5": 4209}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C29", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6330, "out": 3434, "models": {"claude-opus-5-5": 3434}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C30", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6274, "out": 4840, "models": {"claude-opus-5-5": 4840}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C31", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6290, "out": 4287, "models": {"claude-opus-5-5": 4287}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C32", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 5999, "out": 2830, "models": {"claude-opus-5-5": 2830}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C33", "i": 0, "choice": 7, "shown_choice": 1, "error": null, "inp": 6149, "out": 1927, "models": {"claude-opus-5-5": 1927}, "retried": false, "effort": "medium", "p_best": 0.5}
+{"task": "WH_8303", "arm": "C34", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6119, "out": 5576, "models": {"claude-opus-5-5": 5576}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C35", "i": 0, "choice": 7, "shown_choice": 1, "error": null, "inp": 6141, "out": 2064, "models": {"claude-opus-5-5": 2064}, "retried": false, "effort": "medium", "p_best": 0.6}
+{"task": "WH_8303", "arm": "C36", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6891, "out": 5161, "models": {"claude-opus-5-5": 5161}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C37", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 7042, "out": 3543, "models": {"claude-opus-5-5": 3543}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C38", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6986, "out": 2513, "models": {"claude-opus-5-5": 2513}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C39", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 7006, "out": 1980, "models": {"claude-opus-5-5": 1980}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C40", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6747, "out": 6959, "models": {"claude-opus-5-5": 6959}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C41", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6891, "out": 7265, "models": {"claude-opus-5-5": 7265}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8303", "arm": "C42", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6878, "out": 3269, "models": {"claude-opus-5-5": 3269}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C43", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6856, "out": 2405, "models": {"claude-opus-5-5": 2405}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C44", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6204, "out": 3610, "models": {"claude-opus-5-5": 3610}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C45", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 7416, "out": 2607, "models": {"claude-opus-5-5": 2607}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C46", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6298, "out": 5830, "models": {"claude-opus-5-5": 5830}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C47", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6316, "out": 2923, "models": {"claude-opus-5-5": 2923}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8303", "arm": "C48", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6841, "out": 6146, "models": {"claude-opus-5-5": 6146}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C49", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6859, "out": 4423, "models": {"claude-opus-5-5": 4423}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C50", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6803, "out": 4660, "models": {"claude-opus-5-5": 4660}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C51", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6953, "out": 2115, "models": {"claude-opus-5-5": 2115}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C52", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6260, "out": 3473, "models": {"claude-opus-5-5": 3473}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C53", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6312, "out": 3574, "models": {"claude-opus-5-5": 3574}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8303", "arm": "C54", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6261, "out": 3070, "models": {"claude-opus-5-5": 3070}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C55", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6377, "out": 4687, "models": {"claude-opus-5-5": 4687}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8303", "arm": "C56", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6151, "out": 4366, "models": {"claude-opus-5-5": 4366}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C57", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 6167, "out": 2800, "models": {"claude-opus-5-5": 2800}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8303", "arm": "C58", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6085, "out": 2192, "models": {"claude-opus-5-5": 2192}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C59", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6237, "out": 6094, "models": {"claude-opus-5-5": 6094}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8303", "arm": "C60", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 22529, "out": 8511, "models": {"claude-opus-5-5": 8511}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C61", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 7006, "out": 2699, "models": {"claude-opus-5-5": 2699}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "C62", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6945, "out": 3247, "models": {"claude-opus-5-5": 3247}, "retried": false, "effort": "medium"}
+{"task": "WH_8303", "arm": "C63", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 7098, "out": 4495, "models": {"claude-opus-5-5": 4495}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8303", "arm": "M0", "i": 0, "choice": 5, "shown_choice": 4, "error": null, "inp": 5958, "out": 2224, "models": {"claude-opus-5-5": 2224}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C00", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6677, "out": 2958, "models": {"claude-opus-5-5": 2958}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C01", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6698, "out": 7003, "models": {"claude-opus-5-5": 7003}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8304", "arm": "C02", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6640, "out": 2328, "models": {"claude-opus-5-5": 2328}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C03", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6786, "out": 7953, "models": {"claude-opus-5-5": 7953}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8304", "arm": "C04", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6154, "out": 2439, "models": {"claude-opus-5-5": 2439}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C05", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6168, "out": 3429, "models": {"claude-opus-5-5": 3429}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C06", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6116, "out": 3355, "models": {"claude-opus-5-5": 3355}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C07", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6264, "out": 3959, "models": {"claude-opus-5-5": 3959}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8304", "arm": "C08", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6006, "out": 3025, "models": {"claude-opus-5-5": 3025}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C09", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6026, "out": 2416, "models": {"claude-opus-5-5": 2416}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8304", "arm": "C10", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 5973, "out": 3313, "models": {"claude-opus-5-5": 3313}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C11", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6122, "out": 3645, "models": {"claude-opus-5-5": 3645}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8304", "arm": "C12", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6861, "out": 6310, "models": {"claude-opus-5-5": 6310}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C13", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6878, "out": 3506, "models": {"claude-opus-5-5": 3506}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C14", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6820, "out": 14216, "models": {"claude-opus-5-5": 14216}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C15", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6972, "out": 4071, "models": {"claude-opus-5-5": 4071}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C16", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 5975, "out": 2592, "models": {"claude-opus-5-5": 2592}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C17", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6120, "out": 2866, "models": {"claude-opus-5-5": 2866}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C18", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6065, "out": 3428, "models": {"claude-opus-5-5": 3428}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C19", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6083, "out": 3288, "models": {"claude-opus-5-5": 3288}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C20", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6823, "out": 7378, "models": {"claude-opus-5-5": 7378}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C21", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6965, "out": 7031, "models": {"claude-opus-5-5": 7031}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8304", "arm": "C22", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6913, "out": 7001, "models": {"claude-opus-5-5": 7001}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C23", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6933, "out": 2921, "models": {"claude-opus-5-5": 2921}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C24", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6678, "out": 2772, "models": {"claude-opus-5-5": 2772}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C25", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6819, "out": 5345, "models": {"claude-opus-5-5": 5345}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8304", "arm": "C26", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6770, "out": 3260, "models": {"claude-opus-5-5": 3260}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C27", "i": 0, "choice": 3, "shown_choice": 0, "error": null, "inp": 6785, "out": 6619, "models": {"claude-opus-5-5": 6619}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8304", "arm": "C28", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6150, "out": 11490, "models": {"claude-opus-5-5": 11490}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C29", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6296, "out": 3854, "models": {"claude-opus-5-5": 3854}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8304", "arm": "C30", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6242, "out": 5977, "models": {"claude-opus-5-5": 5977}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C31", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6264, "out": 3747, "models": {"claude-opus-5-5": 3747}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C32", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 5999, "out": 3815, "models": {"claude-opus-5-5": 3815}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C33", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6147, "out": 2720, "models": {"claude-opus-5-5": 2720}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C34", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6093, "out": 4466, "models": {"claude-opus-5-5": 4466}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C35", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6106, "out": 2408, "models": {"claude-opus-5-5": 2408}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8304", "arm": "C36", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6844, "out": 6656, "models": {"claude-opus-5-5": 6656}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C37", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6994, "out": 12071, "models": {"claude-opus-5-5": 12071}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8304", "arm": "C38", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6940, "out": 4569, "models": {"claude-opus-5-5": 4569}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C39", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6958, "out": 5734, "models": {"claude-opus-5-5": 5734}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C40", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6702, "out": 4046, "models": {"claude-opus-5-5": 4046}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C41", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6850, "out": 11495, "models": {"claude-opus-5-5": 11495}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C42", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6796, "out": 5919, "models": {"claude-opus-5-5": 5919}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C43", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6813, "out": 5160, "models": {"claude-opus-5-5": 5160}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8304", "arm": "C44", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6176, "out": 4486, "models": {"claude-opus-5-5": 4486}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C45", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6326, "out": 3567, "models": {"claude-opus-5-5": 3567}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C46", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6269, "out": 5396, "models": {"claude-opus-5-5": 5396}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C47", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6289, "out": 4854, "models": {"claude-opus-5-5": 4854}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C48", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6802, "out": 12653, "models": {"claude-opus-5-5": 12653}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C49", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6812, "out": 7449, "models": {"claude-opus-5-5": 7449}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8304", "arm": "C50", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 6761, "out": 3185, "models": {"claude-opus-5-5": 3185}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C51", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6908, "out": 3850, "models": {"claude-opus-5-5": 3850}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8304", "arm": "C52", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6270, "out": 11746, "models": {"claude-opus-5-5": 11746}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C53", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6287, "out": 8652, "models": {"claude-opus-5-5": 8652}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8304", "arm": "C54", "i": 0, "choice": 7, "shown_choice": 3, "error": null, "inp": 6234, "out": 2440, "models": {"claude-opus-5-5": 2440}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C55", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6383, "out": 4133, "models": {"claude-opus-5-5": 4133}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C56", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6122, "out": 4023, "models": {"claude-opus-5-5": 4023}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C57", "i": 0, "choice": 1, "shown_choice": 6, "error": null, "inp": 6145, "out": 5369, "models": {"claude-opus-5-5": 5369}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8304", "arm": "C58", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6088, "out": 6830, "models": {"claude-opus-5-5": 6830}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C59", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6237, "out": 3997, "models": {"claude-opus-5-5": 3997}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8304", "arm": "C60", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6973, "out": 3251, "models": {"claude-opus-5-5": 3251}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C61", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6990, "out": 10572, "models": {"claude-opus-5-5": 10572}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8304", "arm": "C62", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6941, "out": 5737, "models": {"claude-opus-5-5": 5737}, "retried": false, "effort": "medium"}
+{"task": "WH_8304", "arm": "C63", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 7078, "out": 7312, "models": {"claude-opus-5-5": 7312}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8304", "arm": "M0", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 5933, "out": 2716, "models": {"claude-opus-5-5": 2716}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C00", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6560, "out": 2567, "models": {"claude-opus-5-5": 2567}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C01", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6578, "out": 2101, "models": {"claude-opus-5-5": 2101}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8305", "arm": "C02", "i": 0, "choice": 2, "shown_choice": 0, "error": null, "inp": 6521, "out": 1855, "models": {"claude-opus-5-5": 1855}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C03", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6672, "out": 2272, "models": {"claude-opus-5-5": 2272}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8305", "arm": "C04", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6149, "out": 2745, "models": {"claude-opus-5-5": 2745}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C05", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6171, "out": 3015, "models": {"claude-opus-5-5": 3015}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8305", "arm": "C06", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6115, "out": 2384, "models": {"claude-opus-5-5": 2384}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C07", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6261, "out": 3849, "models": {"claude-opus-5-5": 3849}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C08", "i": 0, "choice": 2, "shown_choice": 0, "error": null, "inp": 6005, "out": 1919, "models": {"claude-opus-5-5": 1919}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C09", "i": 0, "choice": 7, "shown_choice": 3, "error": null, "inp": 6025, "out": 3245, "models": {"claude-opus-5-5": 3245}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8305", "arm": "C10", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 5975, "out": 2453, "models": {"claude-opus-5-5": 2453}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C11", "i": 0, "choice": 2, "shown_choice": 0, "error": null, "inp": 6116, "out": 2240, "models": {"claude-opus-5-5": 2240}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C12", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6734, "out": 4633, "models": {"claude-opus-5-5": 4633}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C13", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6752, "out": 7326, "models": {"claude-opus-5-5": 7326}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8305", "arm": "C14", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6700, "out": 2259, "models": {"claude-opus-5-5": 2259}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C15", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6846, "out": 3609, "models": {"claude-opus-5-5": 3609}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8305", "arm": "C16", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 5968, "out": 2848, "models": {"claude-opus-5-5": 2848}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C17", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6122, "out": 2925, "models": {"claude-opus-5-5": 2925}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8305", "arm": "C18", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6067, "out": 2678, "models": {"claude-opus-5-5": 2678}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C19", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6084, "out": 2599, "models": {"claude-opus-5-5": 2599}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8305", "arm": "C20", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6701, "out": 4438, "models": {"claude-opus-5-5": 4438}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C21", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6849, "out": 9291, "models": {"claude-opus-5-5": 9291}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8305", "arm": "C22", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6798, "out": 3360, "models": {"claude-opus-5-5": 3360}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C23", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6811, "out": 4495, "models": {"claude-opus-5-5": 4495}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8305", "arm": "C24", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6560, "out": 3381, "models": {"claude-opus-5-5": 3381}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C25", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6704, "out": 2657, "models": {"claude-opus-5-5": 2657}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C26", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6642, "out": 2995, "models": {"claude-opus-5-5": 2995}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C27", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6668, "out": 2590, "models": {"claude-opus-5-5": 2590}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C28", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6150, "out": 2923, "models": {"claude-opus-5-5": 2923}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C29", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6295, "out": 2961, "models": {"claude-opus-5-5": 2961}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8305", "arm": "C30", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6244, "out": 4753, "models": {"claude-opus-5-5": 4753}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C31", "i": 0, "choice": 7, "shown_choice": 3, "error": null, "inp": 6258, "out": 4778, "models": {"claude-opus-5-5": 4778}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C32", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 5999, "out": 3958, "models": {"claude-opus-5-5": 3958}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C33", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6143, "out": 2338, "models": {"claude-opus-5-5": 2338}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C34", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6091, "out": 4374, "models": {"claude-opus-5-5": 4374}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C35", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6111, "out": 2045, "models": {"claude-opus-5-5": 2045}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8305", "arm": "C36", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6725, "out": 5434, "models": {"claude-opus-5-5": 5434}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C37", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6872, "out": 8354, "models": {"claude-opus-5-5": 8354}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C38", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6823, "out": 4826, "models": {"claude-opus-5-5": 4826}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C39", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6839, "out": 3162, "models": {"claude-opus-5-5": 3162}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C40", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6583, "out": 3824, "models": {"claude-opus-5-5": 3824}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C41", "i": 0, "choice": 7, "shown_choice": 3, "error": null, "inp": 6727, "out": 2509, "models": {"claude-opus-5-5": 2509}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8305", "arm": "C42", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6673, "out": 2920, "models": {"claude-opus-5-5": 2920}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C43", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6691, "out": 3756, "models": {"claude-opus-5-5": 3756}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8305", "arm": "C44", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6178, "out": 3369, "models": {"claude-opus-5-5": 3369}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C45", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6324, "out": 3817, "models": {"claude-opus-5-5": 3817}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8305", "arm": "C46", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6267, "out": 3380, "models": {"claude-opus-5-5": 3380}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C47", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6285, "out": 3531, "models": {"claude-opus-5-5": 3531}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C48", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6675, "out": 7749, "models": {"claude-opus-5-5": 7749}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C49", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6694, "out": 2348, "models": {"claude-opus-5-5": 2348}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C50", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6636, "out": 1828, "models": {"claude-opus-5-5": 1828}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C51", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6786, "out": 3339, "models": {"claude-opus-5-5": 3339}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8305", "arm": "C52", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6266, "out": 3779, "models": {"claude-opus-5-5": 3779}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C53", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6284, "out": 5087, "models": {"claude-opus-5-5": 5087}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8305", "arm": "C54", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6228, "out": 6194, "models": {"claude-opus-5-5": 6194}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C55", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6378, "out": 3357, "models": {"claude-opus-5-5": 3357}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8305", "arm": "C56", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6127, "out": 9375, "models": {"claude-opus-5-5": 9375}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C57", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6141, "out": 3877, "models": {"claude-opus-5-5": 3877}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8305", "arm": "C58", "i": 0, "choice": 7, "shown_choice": 3, "error": null, "inp": 6086, "out": 3134, "models": {"claude-opus-5-5": 3134}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C59", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6236, "out": 2661, "models": {"claude-opus-5-5": 2661}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8305", "arm": "C60", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6851, "out": 7847, "models": {"claude-opus-5-5": 7847}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C61", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6864, "out": 8887, "models": {"claude-opus-5-5": 8887}, "retried": false, "effort": "medium", "p_best": 0.5}
+{"task": "WH_8305", "arm": "C62", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 6816, "out": 7184, "models": {"claude-opus-5-5": 7184}, "retried": false, "effort": "medium"}
+{"task": "WH_8305", "arm": "C63", "i": 0, "choice": 7, "shown_choice": 3, "error": null, "inp": 6962, "out": 3275, "models": {"claude-opus-5-5": 3275}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8305", "arm": "M0", "i": 0, "choice": 0, "shown_choice": 5, "error": null, "inp": 5927, "out": 2994, "models": {"claude-opus-5-5": 2994}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C00", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6598, "out": 1287, "models": {"claude-opus-5-5": 1287}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C01", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6612, "out": 1534, "models": {"claude-opus-5-5": 1534}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C02", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6557, "out": 1778, "models": {"claude-opus-5-5": 1778}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C03", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6707, "out": 1401, "models": {"claude-opus-5-5": 1401}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C04", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6141, "out": 3046, "models": {"claude-opus-5-5": 3046}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C05", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6170, "out": 5096, "models": {"claude-opus-5-5": 5096}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C06", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6121, "out": 3000, "models": {"claude-opus-5-5": 3000}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C07", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6266, "out": 4078, "models": {"claude-opus-5-5": 4078}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C08", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6010, "out": 2906, "models": {"claude-opus-5-5": 2906}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C09", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6021, "out": 3127, "models": {"claude-opus-5-5": 3127}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8306", "arm": "C10", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 5971, "out": 2790, "models": {"claude-opus-5-5": 2790}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C11", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6120, "out": 4544, "models": {"claude-opus-5-5": 4544}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C12", "i": 0, "choice": 4, "shown_choice": 7, "error": null, "inp": 6770, "out": 8836, "models": {"claude-opus-5-5": 8836}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C13", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6787, "out": 3026, "models": {"claude-opus-5-5": 3026}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8306", "arm": "C14", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6737, "out": 3503, "models": {"claude-opus-5-5": 3503}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C15", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6889, "out": 2174, "models": {"claude-opus-5-5": 2174}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8306", "arm": "C16", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 5969, "out": 3914, "models": {"claude-opus-5-5": 3914}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C17", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6124, "out": 4901, "models": {"claude-opus-5-5": 4901}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C18", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6064, "out": 3410, "models": {"claude-opus-5-5": 3410}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C19", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6084, "out": 2671, "models": {"claude-opus-5-5": 2671}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8306", "arm": "C20", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6733, "out": 3967, "models": {"claude-opus-5-5": 3967}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C21", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6881, "out": 1842, "models": {"claude-opus-5-5": 1842}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C22", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6830, "out": 1794, "models": {"claude-opus-5-5": 1794}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C23", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6848, "out": 4350, "models": {"claude-opus-5-5": 4350}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8306", "arm": "C24", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6593, "out": 1581, "models": {"claude-opus-5-5": 1581}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C25", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6730, "out": 3466, "models": {"claude-opus-5-5": 3466}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8306", "arm": "C26", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6681, "out": 3407, "models": {"claude-opus-5-5": 3407}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C27", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6691, "out": 1672, "models": {"claude-opus-5-5": 1672}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C28", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6149, "out": 4431, "models": {"claude-opus-5-5": 4431}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C29", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6294, "out": 2666, "models": {"claude-opus-5-5": 2666}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8306", "arm": "C30", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6245, "out": 3408, "models": {"claude-opus-5-5": 3408}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C31", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6251, "out": 2836, "models": {"claude-opus-5-5": 2836}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8306", "arm": "C32", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6000, "out": 2573, "models": {"claude-opus-5-5": 2573}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C33", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6147, "out": 2634, "models": {"claude-opus-5-5": 2634}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8306", "arm": "C34", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6093, "out": 3374, "models": {"claude-opus-5-5": 3374}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C35", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6109, "out": 3801, "models": {"claude-opus-5-5": 3801}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C36", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6760, "out": 3486, "models": {"claude-opus-5-5": 3486}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C37", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6897, "out": 6168, "models": {"claude-opus-5-5": 6168}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C38", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6860, "out": 4891, "models": {"claude-opus-5-5": 4891}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C39", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6877, "out": 2946, "models": {"claude-opus-5-5": 2946}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C40", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6619, "out": 4938, "models": {"claude-opus-5-5": 4938}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C41", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6763, "out": 2368, "models": {"claude-opus-5-5": 2368}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C42", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6702, "out": 9144, "models": {"claude-opus-5-5": 9144}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C43", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6730, "out": 2677, "models": {"claude-opus-5-5": 2677}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8306", "arm": "C44", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6172, "out": 2889, "models": {"claude-opus-5-5": 2889}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C45", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6321, "out": 2934, "models": {"claude-opus-5-5": 2934}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8306", "arm": "C46", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6268, "out": 5361, "models": {"claude-opus-5-5": 5361}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C47", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6275, "out": 5387, "models": {"claude-opus-5-5": 5387}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8306", "arm": "C48", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6699, "out": 12058, "models": {"claude-opus-5-5": 12058}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C49", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6726, "out": 4823, "models": {"claude-opus-5-5": 4823}, "retried": false, "effort": "medium", "p_best": 0.5}
+{"task": "WH_8306", "arm": "C50", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6674, "out": 1924, "models": {"claude-opus-5-5": 1924}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C51", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6812, "out": 4200, "models": {"claude-opus-5-5": 4200}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C52", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6267, "out": 4348, "models": {"claude-opus-5-5": 4348}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C53", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6284, "out": 3785, "models": {"claude-opus-5-5": 3785}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C54", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6229, "out": 2971, "models": {"claude-opus-5-5": 2971}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C55", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6384, "out": 4402, "models": {"claude-opus-5-5": 4402}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8306", "arm": "C56", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6120, "out": 3888, "models": {"claude-opus-5-5": 3888}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C57", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 6139, "out": 2789, "models": {"claude-opus-5-5": 2789}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "C58", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6085, "out": 3309, "models": {"claude-opus-5-5": 3309}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C59", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6235, "out": 3218, "models": {"claude-opus-5-5": 3218}, "retried": false, "effort": "medium", "p_best": 0.5}
+{"task": "WH_8306", "arm": "C60", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6887, "out": 6729, "models": {"claude-opus-5-5": 6729}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C61", "i": 0, "choice": 4, "shown_choice": 7, "error": null, "inp": 6895, "out": 5791, "models": {"claude-opus-5-5": 5791}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8306", "arm": "C62", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6844, "out": 3422, "models": {"claude-opus-5-5": 3422}, "retried": false, "effort": "medium"}
+{"task": "WH_8306", "arm": "C63", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6998, "out": 4460, "models": {"claude-opus-5-5": 4460}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8306", "arm": "M0", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 5934, "out": 2373, "models": {"claude-opus-5-5": 2373}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C00", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6696, "out": 1752, "models": {"claude-opus-5-5": 1752}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C01", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6710, "out": 1884, "models": {"claude-opus-5-5": 1884}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8307", "arm": "C02", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6656, "out": 2058, "models": {"claude-opus-5-5": 2058}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C03", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6803, "out": 2434, "models": {"claude-opus-5-5": 2434}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C04", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6140, "out": 2868, "models": {"claude-opus-5-5": 2868}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C05", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6162, "out": 3567, "models": {"claude-opus-5-5": 3567}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C06", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6106, "out": 4318, "models": {"claude-opus-5-5": 4318}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C07", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6254, "out": 2894, "models": {"claude-opus-5-5": 2894}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C08", "i": 0, "choice": 2, "shown_choice": 0, "error": null, "inp": 5994, "out": 1748, "models": {"claude-opus-5-5": 1748}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C09", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6014, "out": 3844, "models": {"claude-opus-5-5": 3844}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C10", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 5964, "out": 3624, "models": {"claude-opus-5-5": 3624}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C11", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6109, "out": 3557, "models": {"claude-opus-5-5": 3557}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C12", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6867, "out": 2440, "models": {"claude-opus-5-5": 2440}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C13", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6890, "out": 2140, "models": {"claude-opus-5-5": 2140}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C14", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6833, "out": 1493, "models": {"claude-opus-5-5": 1493}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C15", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6979, "out": 1895, "models": {"claude-opus-5-5": 1895}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C16", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 5962, "out": 2694, "models": {"claude-opus-5-5": 2694}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C17", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6107, "out": 3626, "models": {"claude-opus-5-5": 3626}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C18", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6057, "out": 2857, "models": {"claude-opus-5-5": 2857}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C19", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6076, "out": 2746, "models": {"claude-opus-5-5": 2746}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C20", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6836, "out": 1798, "models": {"claude-opus-5-5": 1798}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C21", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6976, "out": 1820, "models": {"claude-opus-5-5": 1820}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C22", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6926, "out": 3270, "models": {"claude-opus-5-5": 3270}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C23", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6944, "out": 2844, "models": {"claude-opus-5-5": 2844}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C24", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6690, "out": 2870, "models": {"claude-opus-5-5": 2870}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C25", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6835, "out": 2930, "models": {"claude-opus-5-5": 2930}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C26", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6784, "out": 2635, "models": {"claude-opus-5-5": 2635}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C27", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6797, "out": 1957, "models": {"claude-opus-5-5": 1957}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8307", "arm": "C28", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6135, "out": 4348, "models": {"claude-opus-5-5": 4348}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C29", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6284, "out": 2869, "models": {"claude-opus-5-5": 2869}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C30", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6228, "out": 3167, "models": {"claude-opus-5-5": 3167}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C31", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6250, "out": 3114, "models": {"claude-opus-5-5": 3114}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C32", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 5987, "out": 2768, "models": {"claude-opus-5-5": 2768}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C33", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6137, "out": 2588, "models": {"claude-opus-5-5": 2588}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8307", "arm": "C34", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6083, "out": 2543, "models": {"claude-opus-5-5": 2543}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C35", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6101, "out": 3078, "models": {"claude-opus-5-5": 3078}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C36", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6861, "out": 2226, "models": {"claude-opus-5-5": 2226}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C37", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 7006, "out": 3210, "models": {"claude-opus-5-5": 3210}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C38", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6955, "out": 2575, "models": {"claude-opus-5-5": 2575}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C39", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6972, "out": 2679, "models": {"claude-opus-5-5": 2679}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C40", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6715, "out": 2389, "models": {"claude-opus-5-5": 2389}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C41", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6859, "out": 2981, "models": {"claude-opus-5-5": 2981}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C42", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6811, "out": 1994, "models": {"claude-opus-5-5": 1994}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C43", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6827, "out": 2362, "models": {"claude-opus-5-5": 2362}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C44", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6164, "out": 4350, "models": {"claude-opus-5-5": 4350}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C45", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6311, "out": 3295, "models": {"claude-opus-5-5": 3295}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C46", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6256, "out": 4457, "models": {"claude-opus-5-5": 4457}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C47", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6277, "out": 3128, "models": {"claude-opus-5-5": 3128}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C48", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6804, "out": 2352, "models": {"claude-opus-5-5": 2352}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C49", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6829, "out": 2355, "models": {"claude-opus-5-5": 2355}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C50", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6771, "out": 4449, "models": {"claude-opus-5-5": 4449}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C51", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6922, "out": 2153, "models": {"claude-opus-5-5": 2153}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C52", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6259, "out": 3195, "models": {"claude-opus-5-5": 3195}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C53", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6275, "out": 3389, "models": {"claude-opus-5-5": 3389}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C54", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6224, "out": 3753, "models": {"claude-opus-5-5": 3753}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C55", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6369, "out": 4304, "models": {"claude-opus-5-5": 4304}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8307", "arm": "C56", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6110, "out": 3044, "models": {"claude-opus-5-5": 3044}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C57", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6132, "out": 2477, "models": {"claude-opus-5-5": 2477}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8307", "arm": "C58", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6078, "out": 3379, "models": {"claude-opus-5-5": 3379}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C59", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6224, "out": 3027, "models": {"claude-opus-5-5": 3027}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C60", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6986, "out": 3256, "models": {"claude-opus-5-5": 3256}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C61", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 7003, "out": 2261, "models": {"claude-opus-5-5": 2261}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "C62", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 6949, "out": 2505, "models": {"claude-opus-5-5": 2505}, "retried": false, "effort": "medium"}
+{"task": "WH_8307", "arm": "C63", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 7097, "out": 3087, "models": {"claude-opus-5-5": 3087}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8307", "arm": "M0", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 5917, "out": 2025, "models": {"claude-opus-5-5": 2025}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C00", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6535, "out": 3275, "models": {"claude-opus-5-5": 3275}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C01", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6553, "out": 2553, "models": {"claude-opus-5-5": 2553}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C02", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6503, "out": 1936, "models": {"claude-opus-5-5": 1936}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C03", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6648, "out": 1495, "models": {"claude-opus-5-5": 1495}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C04", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6140, "out": 14218, "models": {"claude-opus-5-5": 14218}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C05", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6161, "out": 4324, "models": {"claude-opus-5-5": 4324}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C06", "i": 0, "choice": 3, "shown_choice": 7, "error": null, "inp": 6104, "out": 3982, "models": {"claude-opus-5-5": 3982}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C07", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6253, "out": 6723, "models": {"claude-opus-5-5": 6723}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C08", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6001, "out": 12572, "models": {"claude-opus-5-5": 12572}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C09", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6018, "out": 4114, "models": {"claude-opus-5-5": 4114}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C10", "i": 0, "choice": 7, "shown_choice": 1, "error": null, "inp": 5961, "out": 3945, "models": {"claude-opus-5-5": 3945}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C11", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6108, "out": 4012, "models": {"claude-opus-5-5": 4012}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8308", "arm": "C12", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6711, "out": 3371, "models": {"claude-opus-5-5": 3371}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C13", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6728, "out": 3350, "models": {"claude-opus-5-5": 3350}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C14", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6679, "out": 3007, "models": {"claude-opus-5-5": 3007}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C15", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6825, "out": 5108, "models": {"claude-opus-5-5": 5108}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8308", "arm": "C16", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 5958, "out": 6940, "models": {"claude-opus-5-5": 6940}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C17", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6110, "out": 13504, "models": {"claude-opus-5-5": 13504}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8308", "arm": "C18", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6055, "out": 2498, "models": {"claude-opus-5-5": 2498}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C19", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 6075, "out": 3338, "models": {"claude-opus-5-5": 3338}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8308", "arm": "C20", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6676, "out": 2347, "models": {"claude-opus-5-5": 2347}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C21", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6826, "out": 7192, "models": {"claude-opus-5-5": 7192}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8308", "arm": "C22", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6769, "out": 3679, "models": {"claude-opus-5-5": 3679}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C23", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6787, "out": 2151, "models": {"claude-opus-5-5": 2151}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C24", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6532, "out": 5852, "models": {"claude-opus-5-5": 5852}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C25", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6678, "out": 7824, "models": {"claude-opus-5-5": 7824}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8308", "arm": "C26", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6630, "out": 2734, "models": {"claude-opus-5-5": 2734}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C27", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6642, "out": 2177, "models": {"claude-opus-5-5": 2177}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C28", "i": 0, "choice": 3, "shown_choice": 7, "error": null, "inp": 6134, "out": 4986, "models": {"claude-opus-5-5": 4986}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C29", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6283, "out": 8886, "models": {"claude-opus-5-5": 8886}, "retried": false, "effort": "medium", "p_best": 0.42}
+{"task": "WH_8308", "arm": "C30", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6231, "out": 5064, "models": {"claude-opus-5-5": 5064}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C31", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6250, "out": 7076, "models": {"claude-opus-5-5": 7076}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8308", "arm": "C32", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 5989, "out": 4037, "models": {"claude-opus-5-5": 4037}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C33", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6138, "out": 7588, "models": {"claude-opus-5-5": 7588}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8308", "arm": "C34", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6080, "out": 7552, "models": {"claude-opus-5-5": 7552}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C35", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6099, "out": 7024, "models": {"claude-opus-5-5": 7024}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C36", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6701, "out": 4448, "models": {"claude-opus-5-5": 4448}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C37", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6848, "out": 1758, "models": {"claude-opus-5-5": 1758}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8308", "arm": "C38", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6796, "out": 2508, "models": {"claude-opus-5-5": 2508}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C39", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6814, "out": 4888, "models": {"claude-opus-5-5": 4888}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C40", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6557, "out": 4637, "models": {"claude-opus-5-5": 4637}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C41", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6708, "out": 3058, "models": {"claude-opus-5-5": 3058}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C42", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6655, "out": 3928, "models": {"claude-opus-5-5": 3928}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C43", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6665, "out": 1602, "models": {"claude-opus-5-5": 1602}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C44", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6164, "out": 12630, "models": {"claude-opus-5-5": 12630}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C45", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6311, "out": 7006, "models": {"claude-opus-5-5": 7006}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C46", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6258, "out": 10898, "models": {"claude-opus-5-5": 10898}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C47", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6280, "out": 11503, "models": {"claude-opus-5-5": 11503}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C48", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6652, "out": 2765, "models": {"claude-opus-5-5": 2765}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C49", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6666, "out": 2947, "models": {"claude-opus-5-5": 2947}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C50", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6614, "out": 2304, "models": {"claude-opus-5-5": 2304}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C51", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6761, "out": 3956, "models": {"claude-opus-5-5": 3956}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C52", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6259, "out": 13692, "models": {"claude-opus-5-5": 13692}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C53", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6268, "out": 9206, "models": {"claude-opus-5-5": 9206}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C54", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6221, "out": 10726, "models": {"claude-opus-5-5": 10726}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C55", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6367, "out": 8366, "models": {"claude-opus-5-5": 8366}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C56", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6115, "out": 8601, "models": {"claude-opus-5-5": 8601}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C57", "i": 0, "choice": 3, "shown_choice": 7, "error": null, "inp": 6128, "out": 6453, "models": {"claude-opus-5-5": 6453}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C58", "i": 0, "choice": 3, "shown_choice": 7, "error": null, "inp": 6078, "out": 10769, "models": {"claude-opus-5-5": 10769}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C59", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6227, "out": 14524, "models": {"claude-opus-5-5": 14524}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "C60", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6828, "out": 7705, "models": {"claude-opus-5-5": 7705}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C61", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6848, "out": 4413, "models": {"claude-opus-5-5": 4413}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8308", "arm": "C62", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6791, "out": 4230, "models": {"claude-opus-5-5": 4230}, "retried": false, "effort": "medium"}
+{"task": "WH_8308", "arm": "C63", "i": 0, "choice": 2, "shown_choice": 2, "error": null, "inp": 6938, "out": 3391, "models": {"claude-opus-5-5": 3391}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8308", "arm": "M0", "i": 0, "choice": 5, "shown_choice": 5, "error": null, "inp": 5920, "out": 2043, "models": {"claude-opus-5-5": 2043}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C00", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6543, "out": 3081, "models": {"claude-opus-5-5": 3081}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C01", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6557, "out": 2212, "models": {"claude-opus-5-5": 2212}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C02", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6507, "out": 3789, "models": {"claude-opus-5-5": 3789}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C03", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6651, "out": 2539, "models": {"claude-opus-5-5": 2539}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C04", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6142, "out": 5631, "models": {"claude-opus-5-5": 5631}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C05", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6160, "out": 2943, "models": {"claude-opus-5-5": 2943}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C06", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6109, "out": 3553, "models": {"claude-opus-5-5": 3553}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C07", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6255, "out": 2988, "models": {"claude-opus-5-5": 2988}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C08", "i": 0, "choice": 5, "shown_choice": 2, "error": null, "inp": 5997, "out": 2363, "models": {"claude-opus-5-5": 2363}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C09", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6013, "out": 3366, "models": {"claude-opus-5-5": 3366}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C10", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 5962, "out": 3852, "models": {"claude-opus-5-5": 3852}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C11", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6109, "out": 4186, "models": {"claude-opus-5-5": 4186}, "retried": false, "effort": "medium", "p_best": 0.22}
+{"task": "WH_8309", "arm": "C12", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6720, "out": 3815, "models": {"claude-opus-5-5": 3815}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C13", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6730, "out": 2124, "models": {"claude-opus-5-5": 2124}, "retried": false, "effort": "medium", "p_best": 0.4}
+{"task": "WH_8309", "arm": "C14", "i": 0, "choice": 5, "shown_choice": 2, "error": null, "inp": 6684, "out": 3879, "models": {"claude-opus-5-5": 3879}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C15", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6826, "out": 2849, "models": {"claude-opus-5-5": 2849}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C16", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 5958, "out": 3806, "models": {"claude-opus-5-5": 3806}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C17", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 6110, "out": 3925, "models": {"claude-opus-5-5": 3925}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8309", "arm": "C18", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6057, "out": 3172, "models": {"claude-opus-5-5": 3172}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C19", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6069, "out": 2497, "models": {"claude-opus-5-5": 2497}, "retried": false, "effort": "medium", "p_best": 0.45}
+{"task": "WH_8309", "arm": "C20", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6683, "out": 2694, "models": {"claude-opus-5-5": 2694}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C21", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6823, "out": 3286, "models": {"claude-opus-5-5": 3286}, "retried": false, "effort": "medium", "p_best": 0.42}
+{"task": "WH_8309", "arm": "C22", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6778, "out": 2210, "models": {"claude-opus-5-5": 2210}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C23", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6793, "out": 3671, "models": {"claude-opus-5-5": 3671}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8309", "arm": "C24", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6539, "out": 2398, "models": {"claude-opus-5-5": 2398}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C25", "i": 0, "choice": 5, "shown_choice": 2, "error": null, "inp": 6684, "out": 3560, "models": {"claude-opus-5-5": 3560}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C26", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6629, "out": 7028, "models": {"claude-opus-5-5": 7028}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C27", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6648, "out": 4913, "models": {"claude-opus-5-5": 4913}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C28", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6138, "out": 5830, "models": {"claude-opus-5-5": 5830}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C29", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6283, "out": 2541, "models": {"claude-opus-5-5": 2541}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C30", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6232, "out": 3133, "models": {"claude-opus-5-5": 3133}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C31", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6249, "out": 5379, "models": {"claude-opus-5-5": 5379}, "retried": false, "effort": "medium", "p_best": 0.35}
+{"task": "WH_8309", "arm": "C32", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 5985, "out": 3053, "models": {"claude-opus-5-5": 3053}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C33", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6133, "out": 2611, "models": {"claude-opus-5-5": 2611}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C34", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6083, "out": 4188, "models": {"claude-opus-5-5": 4188}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C35", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6094, "out": 3144, "models": {"claude-opus-5-5": 3144}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C36", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6710, "out": 4039, "models": {"claude-opus-5-5": 4039}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C37", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6858, "out": 3049, "models": {"claude-opus-5-5": 3049}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C38", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6804, "out": 4730, "models": {"claude-opus-5-5": 4730}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C39", "i": 0, "choice": 5, "shown_choice": 2, "error": null, "inp": 6823, "out": 2843, "models": {"claude-opus-5-5": 2843}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8309", "arm": "C40", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6559, "out": 5079, "models": {"claude-opus-5-5": 5079}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C41", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6710, "out": 4640, "models": {"claude-opus-5-5": 4640}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C42", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6662, "out": 3676, "models": {"claude-opus-5-5": 3676}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C43", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6673, "out": 4063, "models": {"claude-opus-5-5": 4063}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8309", "arm": "C44", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6164, "out": 4071, "models": {"claude-opus-5-5": 4071}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C45", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6308, "out": 3550, "models": {"claude-opus-5-5": 3550}, "retried": false, "effort": "medium", "p_best": 0.33}
+{"task": "WH_8309", "arm": "C46", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6260, "out": 2651, "models": {"claude-opus-5-5": 2651}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C47", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6277, "out": 3251, "models": {"claude-opus-5-5": 3251}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C48", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6658, "out": 8459, "models": {"claude-opus-5-5": 8459}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C49", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6677, "out": 2581, "models": {"claude-opus-5-5": 2581}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8309", "arm": "C50", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6624, "out": 2489, "models": {"claude-opus-5-5": 2489}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C51", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6770, "out": 3617, "models": {"claude-opus-5-5": 3617}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C52", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6256, "out": 6061, "models": {"claude-opus-5-5": 6061}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C53", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6274, "out": 4760, "models": {"claude-opus-5-5": 4760}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C54", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6223, "out": 7580, "models": {"claude-opus-5-5": 7580}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C55", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6368, "out": 4850, "models": {"claude-opus-5-5": 4850}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8309", "arm": "C56", "i": 0, "choice": 2, "shown_choice": 5, "error": null, "inp": 6111, "out": 7988, "models": {"claude-opus-5-5": 7988}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C57", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6125, "out": 2714, "models": {"claude-opus-5-5": 2714}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C58", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6076, "out": 3415, "models": {"claude-opus-5-5": 3415}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C59", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6225, "out": 3552, "models": {"claude-opus-5-5": 3552}, "retried": false, "effort": "medium", "p_best": 0.25}
+{"task": "WH_8309", "arm": "C60", "i": 0, "choice": -1, "shown_choice": -1, "error": null, "inp": 6831, "out": 4393, "models": {"claude-opus-5-5": 4393}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C61", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6854, "out": 3548, "models": {"claude-opus-5-5": 3548}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "C62", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6799, "out": 5771, "models": {"claude-opus-5-5": 5771}, "retried": false, "effort": "medium"}
+{"task": "WH_8309", "arm": "C63", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 6944, "out": 3714, "models": {"claude-opus-5-5": 3714}, "retried": false, "effort": "medium", "p_best": 0.3}
+{"task": "WH_8309", "arm": "M0", "i": 0, "choice": 6, "shown_choice": 7, "error": null, "inp": 5916, "out": 2159, "models": {"claude-opus-5-5": 2159}, "retried": false, "effort": "medium"}
+{"task": "WH_8301", "arm": "H0", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 6130, "out": 9632, "models": {"claude-opus-5-5": 9632}, "retried": false, "effort": "high"}
+{"task": "WH_8301", "arm": "H1", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 7218, "out": 24945, "models": {"claude-opus-5-5": 24945}, "retried": false, "effort": "high", "p_best": 0.35}
+{"task": "WH_8302", "arm": "H0", "i": 0, "choice": 4, "shown_choice": 5, "error": null, "inp": 5957, "out": 32297, "models": {"claude-opus-5-5": 32297}, "retried": false, "effort": "high"}
+{"task": "WH_8302", "arm": "H1", "i": 0, "choice": 0, "shown_choice": 0, "error": null, "inp": 6993, "out": 17095, "models": {"claude-opus-5-5": 17095}, "retried": false, "effort": "high", "p_best": 0.55}
+{"task": "WH_8303", "arm": "H0", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 5959, "out": 6542, "models": {"claude-opus-5-5": 6542}, "retried": false, "effort": "high"}
+{"task": "WH_8303", "arm": "H1", "i": 0, "choice": 4, "shown_choice": 2, "error": null, "inp": 7128, "out": 8885, "models": {"claude-opus-5-5": 8885}, "retried": false, "effort": "high", "p_best": 0.33}
+{"task": "WH_8304", "arm": "H0", "i": 0, "choice": 4, "shown_choice": 1, "error": null, "inp": 5956, "out": 3656, "models": {"claude-opus-5-5": 3656}, "retried": false, "effort": "high"}
+{"task": "WH_8304", "arm": "H1", "i": 0, "choice": 0, "shown_choice": 2, "error": null, "inp": 7118, "out": 13511, "models": {"claude-opus-5-5": 13511}, "retried": false, "effort": "high", "p_best": 0.45}
+{"task": "WH_8305", "arm": "H0", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 5956, "out": 6142, "models": {"claude-opus-5-5": 6142}, "retried": false, "effort": "high"}
+{"task": "WH_8305", "arm": "H1", "i": 0, "choice": 3, "shown_choice": 6, "error": null, "inp": 6988, "out": 10051, "models": {"claude-opus-5-5": 10051}, "retried": false, "effort": "high", "p_best": 0.5}
+{"task": "WH_8306", "arm": "H0", "i": 0, "choice": 4, "shown_choice": 7, "error": null, "inp": 5958, "out": 15218, "models": {"claude-opus-5-5": 15218}, "retried": false, "effort": "high"}
+{"task": "WH_8306", "arm": "H1", "i": 0, "choice": 4, "shown_choice": 7, "error": null, "inp": 7028, "out": 15240, "models": {"claude-opus-5-5": 15240}, "retried": false, "effort": "high", "p_best": 0.42}
+{"task": "WH_8307", "arm": "H0", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 5954, "out": 2820, "models": {"claude-opus-5-5": 2820}, "retried": false, "effort": "high"}
+{"task": "WH_8307", "arm": "H1", "i": 0, "choice": 1, "shown_choice": 7, "error": null, "inp": 7138, "out": 7832, "models": {"claude-opus-5-5": 7832}, "retried": false, "effort": "high", "p_best": 0.45}
+{"task": "WH_8308", "arm": "H0", "i": 0, "choice": 0, "shown_choice": 6, "error": null, "inp": 5953, "out": 16648, "models": {"claude-opus-5-5": 16648}, "retried": false, "effort": "high"}
+{"task": "WH_8308", "arm": "H1", "i": 0, "choice": 1, "shown_choice": 4, "error": null, "inp": 6975, "out": 22453, "models": {"claude-opus-5-5": 22453}, "retried": false, "effort": "high", "p_best": 0.55}
+{"task": "WH_8309", "arm": "H0", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 5958, "out": 16502, "models": {"claude-opus-5-5": 16502}, "retried": false, "effort": "high"}
+{"task": "WH_8309", "arm": "H1", "i": 0, "choice": 1, "shown_choice": 3, "error": null, "inp": 6986, "out": 15048, "models": {"claude-opus-5-5": 15048}, "retried": false, "effort": "high", "p_best": 0.65}

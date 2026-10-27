@@ -7,3 +7,7 @@
 пауза или остановка драйвера (см. .cache/precond01_live/open_eval_*.log)
 /home/user/neu/experiments/2026-10-21_PRECOND-01/run/open_eval_medium_jobs.jsonl 585 голов
 /home/user/neu/experiments/2026-10-21_PRECOND-01/run/open_eval_high_jobs.jsonl 18 голов
+выгружено 585 итоговых записей в experiments/2026-10-21_PRECOND-01/run/open_eval_medium_out.jsonl
+выгружено 18 итоговых записей в experiments/2026-10-21_PRECOND-01/run/open_eval_high_out.jsonl
+603 выборов; попыток по рукам (первые 12): {'C00': 9, 'C01': 9, 'C02': 9, 'C03': 9, 'C04': 9, 'C05': 9, 'C06': 9, 'C07': 9, 'C08': 9, 'C09': 9, 'C10': 9, 'C11': 9}
+этап open: выборы собраны. Дальше — коммит и пуш, событие пуша, затем truth и analyze (PREREG §9).
