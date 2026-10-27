@@ -9,7 +9,7 @@ def preamble(on):   # вступление (инструкции предусл�
 out = dict(design64=sha(json.dumps([HP.CELLS[c] for c in HP.CELLS], ensure_ascii=False)),
            preambles={c: sha(preamble(on)) for c, on in HP.CELLS.items()} | {c: sha(preamble(on)) for c, (on, eff) in HP.EXTRA.items()},
            files={})
-FILES = ['harness_precond.py', 'analyze_precond.py', 'prompts_precond.py', 'dryrun_precond_main.py', 'run_precond.sh', 'prereg_hashes.py',
+FILES = ['harness_precond.py', 'analyze_precond.py', 'prompts_precond.py', 'dryrun_precond_main.py', 'run_precond.sh', 'checkin_precond.sh', 'prereg_hashes.py',
          'seeds_open.json', 'seeds_val.json', 'requirements.txt', 'run/precond_medium.json', 'run/precond_high.json',
          '../2026-10-07_SELECT-01/sim.py', '../2026-10-07_SELECT-01/prompts.py', '../2026-10-07_SELECT-01/analyze.py', '../../tools/run_sealed2.py']
 for f in FILES:                                                    # совет 38, К3: нет файла — регистрировать нельзя
