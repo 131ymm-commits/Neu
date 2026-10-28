@@ -195,8 +195,8 @@ def cmd_verify_plans(_=None):
         run_times = []
         for p in others:
             if not is_run(p): continue
-            r = git('log', '--diff-filter=A', '--format=%ct', '--', os.path.relpath(p, ROOT)).splitlines()
-            if r: run_times.append((int(r[-1]), os.path.relpath(p, ROOT)))
+            ta = _added(p)   # один git log на всю историю вместо вызова на каждый файл (28.10.2026: хук стал видеть прогоны и замедлился)
+            if ta: run_times.append((ta, os.path.relpath(p, ROOT)))
         t_run = min(run_times)[0] if run_times else None
         late = [p for tt, p in run_times if tt < t] if t_run is not None else []
         changed = [c for c in git('log', '--format=%h %ct', f'{h}..HEAD', '--', rel).splitlines() if t_run is not None and int(c.split()[1]) > t_run]

@@ -480,6 +480,33 @@
   "naive": 3.17
  },
  "discount_learned_kelly": 0.974,
+ "pair_bits_kelly": 1.78,
+ "sdF_late_median": {
+  "KELLY": 0.5,
+  "INDEP": 8.94,
+  "ACC": 0.5,
+  "CONTEST": 0.25,
+  "KLUCK": 3.16,
+  "KELLY6": 1.63
+ },
+ "spread_1499_mean": {
+  "KELLY": 0.178,
+  "INDEP": 0.256,
+  "ACC": 0.268,
+  "CONTEST": 0.09,
+  "KLUCK": 0.15,
+  "KELLY6": 0.097
+ },
+ "indep_acc_below_kelly": 7,
+ "exact_scaled_self_dec": {
+  "1": 0.0,
+  "2": 0.0292,
+  "3": 0.0375,
+  "6": 0.0452,
+  "12": 0.0485,
+  "100": 0.0514
+ },
+ "self_dec_ceiling": 0.0514,
  "exact_exact": {
   "acc": 0.9486,
   "conf": 0.9486,

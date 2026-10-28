@@ -27,8 +27,10 @@ for arm in ('lin2_small', 'tanh2_small', 'lin2_lazy', 'lin1'):
 for q, k in ((0.0, 2), (0.5, 2), (1.0, 2), (1.0, 4)):
     rs = sorted([r for r in d['A'] if r['q'] == q and r['k'] == k], key=lambda r: r['seed'])
     m = np.array([r['mlp'] for r in rs])
+    rr = np.array([r['rrr'] for r in rs])   # reduced-rank regression того же ранга (линейная теория горлышка)
     e = dict(n=len(rs), mean=np.round(m.mean(0), 2).tolist(), self_wins=int((m[:, S] > m[:, O]).sum()),
-             same_as_s1=all(r['same_as_s1'] for r in rs))
+             same_as_s1=all(r['same_as_s1'] for r in rs), mean_mlp3=np.round(m.mean(0), 3).tolist(),
+             mean_rrr3=np.round(rr.mean(0), 3).tolist(), max_abs_mean_mlp_minus_rrr=round(float(np.abs(m.mean(0) - rr.mean(0)).max()), 3))
     if q == 0.0:
         share = m[:, S] / (m[:, S] + m[:, O]); tot = m[:, S] + m[:, O]
         e.update(share_range=[round(float(share.min()), 3), round(float(share.max()), 3)], share_mean=round(float(share.mean()), 3),

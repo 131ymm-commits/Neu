@@ -17,7 +17,7 @@
    "flagged": false,
    "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 0b9b21d",
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен fcdb6b3",
     "  ⚠ X-01: PREREG-X-01.md без явного критерия провала",
     "проверка: всё в порядке"
    ]

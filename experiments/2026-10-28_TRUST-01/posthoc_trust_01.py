@@ -59,6 +59,16 @@ out['pair_bits'] = dict(exact=round(float((w_exact[3] + w_exact[6]) / np.log(2))
 a_pairs = [r['w_final'][3] + r['w_final'][6] for r in d['runs'] if r['arm'] == 'KELLY']
 naive_pair = 2 * d['theory']['w_naive'][3]; exact_pair = w_exact[3] + w_exact[6]
 out['discount_learned_kelly'] = round(float((naive_pair - np.mean(a_pairs)) / (naive_pair - exact_pair)), 3)   # доля скидки пересказу
+# Добавлено после проверки отчёта агентом Opus (28.10): величины к находкам 5, 6, 9, 11.
+out['pair_bits_kelly'] = round(float(np.mean(a_pairs) / np.log(2)), 2)            # опознаваемая сумма пары у KELLY, биты
+out['sdF_late_median'] = {a: round(float(np.median([r['sdF_late'] for r in d['runs'] if r['arm'] == a])), 2) for a in arms}
+out['spread_1499_mean'] = {a: round(float(np.mean([[t for t in r['traj'] if t['g'] == 1499][0]['spread']
+                                                   for r in d['runs'] if r['arm'] == a])), 3) for a in arms}
+acc_by = {a: {r['seed']: r['exact']['acc'] for r in d['runs'] if r['arm'] == a} for a in arms}
+out['indep_acc_below_kelly'] = int(sum(acc_by['INDEP'][s] < acc_by['KELLY'][s] for s in acc_by['KELLY']))
+# потолок самообмана: точные веса, растянутые в m раз (направление то же — точность та же)
+out['exact_scaled_self_dec'] = {str(m): round(E.exact_metrics(w_exact * m)['self_dec'], 4) for m in (1, 2, 3, 6, 12, 100)}
+out['self_dec_ceiling'] = round(1 - out['exact_exact']['acc'] if 'exact_exact' in out else 1 - d['theory']['exact_exact']['acc'], 4)
 for k in ('exact_exact', 'exact_naive', 'exact_shifted_exact'):
     out[k] = {f: round(float(v), 4) for f, v in d['theory'][k].items()}
 json.dump(out, open(os.path.join(HERE, 'posthoc_trust_01.json'), 'w'), ensure_ascii=False, indent=1)
@@ -72,6 +82,9 @@ for a in arms:
 print('биты: точные', out['bits_exact'], 'KELLY', out['bits_kelly'], 'пара', out['pair_bits'])
 print('доля скидки пересказу, выученная KELLY:', out['discount_learned_kelly'])
 print('точная формула', out['exact_exact']); print('наивная формула', out['exact_naive'])
+print('пара KELLY, биты:', out['pair_bits_kelly'], '| SD(log F) медиана:', out['sdF_late_median'])
+print('разброс весов в популяции, пок. 1499:', out['spread_1499_mean'], '| INDEP точнее KELLY? ниже в', out['indep_acc_below_kelly'], 'из 10')
+print('самообман точных весов ×m:', out['exact_scaled_self_dec'], '| потолок (1 − точность):', out['self_dec_ceiling'])
 print('\nтраектории (поколение: самообман / отношение масштабов):')
 for a in arms:
     print(f'{a:8s}', ' '.join(f"{g}:{out['traj'][a][g]['self_dec']:+.4f}/{out['traj'][a][g]['scale_ratio']:.2f}" for g in GS),
