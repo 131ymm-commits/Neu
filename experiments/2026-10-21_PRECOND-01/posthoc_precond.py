@@ -29,4 +29,7 @@ for _ in range(reps):
     j = PP.F.index('REFUSE'); hit_ref += A.fl_p(Ys, A.X[:, j], np.delete(A.X, j, axis=1), rng)[1] < 0.05
 out['power_posthoc'] = dict(note='пост-хок, описательно: мощность при наблюдённых действиях и шуме открытия', resid_sd=round(sd, 3), reps=reps, permutations=A.B,
                             Q1=round(hit_q1 / reps, 3), REFUSE_fl=round(hit_ref / reps, 3))
+# пост-хок 3: места клеток по неокруглённому среднему регрету (в open_an.json средние округлены, C44 и C38 там вровень — 0,323)
+means = {c: float(Yraw[:, ci].mean()) for ci, c in enumerate(A.CELLS)}; rank = sorted(A.CELLS, key=lambda c: (means[c], A.CELLS.index(c)))
+out['rank_unrounded'] = dict(ANCHOR_C44=rank.index('C44') + 1, ALLON_C63=rank.index('C63') + 1, OBS_C12=rank.index('C12') + 1, top6=rank[:6])
 json.dump(out, open('posthoc_an.json', 'w'), ensure_ascii=False, indent=1); print(json.dumps(out, ensure_ascii=False))

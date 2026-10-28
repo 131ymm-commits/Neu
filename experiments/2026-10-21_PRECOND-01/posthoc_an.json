@@ -32,5 +32,18 @@
   "permutations": 2000,
   "Q1": 0.415,
   "REFUSE_fl": 0.8
+ },
+ "rank_unrounded": {
+  "ANCHOR_C44": 5,
+  "ALLON_C63": 31,
+  "OBS_C12": 1,
+  "top6": [
+   "C12",
+   "C54",
+   "C28",
+   "C47",
+   "C44",
+   "C38"
+  ]
  }
 }

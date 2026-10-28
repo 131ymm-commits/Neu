@@ -1,7 +1,7 @@
 # PRECOND-01: производные числа итогового отчёта — для ledger.py audit и check_final_precond.py (по образцу final_facts_think.py).
 # Только арифметика над open_an.json, val_an.json, *_push_activity.json, опубликованными солями и журналами драйвера.
 #   python3 final_facts_precond.py  →  final_facts.json
-import collections, glob, hashlib, json, subprocess
+import collections, datetime, glob, hashlib, json, os, subprocess
 o, v = json.load(open('open_an.json')), json.load(open('val_an.json'))
 me, w, ce = o['main_effects'], o['winners'], o['ceiling']
 SALT = dict(open='664859e371541d83f19badb107231c4d71219a32070e4a8cf8be79c77fb673d3',            # PREREG §2
@@ -52,7 +52,9 @@ git = lambda *a: subprocess.run(['git', *a], capture_output=True, text=True, che
 order = {}
 for st_ in ('open', 'val'):
     pa = json.load(open(f'{st_}_push_activity.json'))
+    tm = min(os.path.getmtime(p) for p in glob.glob(f'/root/precond_secret_{st_}/truth/WH_*.json'))      # первая запись правды (mtime)
     order[st_] = dict(commit=pa['commit'], commit_at=git('show', '-s', '--format=%cI', pa['commit']), push_time=pa['event']['timestamp'],
+                      truth_first_mtime=datetime.datetime.fromtimestamp(tm, datetime.timezone.utc).isoformat()[:19],
                       evals_sha256=pa['evals_sha256'], evals_sha_on_disk=hashlib.sha256(open(f'evals/{st_}.jsonl', 'rb').read()).hexdigest(),
                       salt_sha_published=hashlib.sha256(open(f'salts/{st_}_salt.txt', 'rb').read()).hexdigest(), salt_sha_prereg=SALT[st_])
 facts = dict(defined=defined, expectations=expect, strongest=lo, calls=calls, out_total=out_total, order=order,
