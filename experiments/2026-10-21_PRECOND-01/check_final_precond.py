@@ -11,7 +11,7 @@ def pp(p): return f'{p:.4f}'.replace('.', ',') if p < 0.01 else r(round(p, 3))
 need = []
 # открытие: вопрос 1, главные действия, взаимодействие, посредник, насыщение, потолок, победители
 me = o['main_effects']
-need += [f'p {r(o["Q1"]["p"])}', f'{big(o["permutations"])} перестановок', f'вызовов {sum(o["vote_status_totals"].values())}',
+need += [f'p {r(o["Q1"]["p"])}', f'{big(o["permutations"])} перестановок', f'Вызовов {sum(o["vote_status_totals"].values())}', f'Вызовов {sum(v["vote_status_totals"].values())}',
          f'«ок» {o["vote_status_totals"]["ok"]}, отказов {o["vote_status_totals"]["refused"]}']
 assert not o['vote_status_nonok'] and o['n_tasks'] == 9 and not o['excluded_eps']
 for f in sorted(me, key=lambda f: me[f]['effect_raw']):
@@ -38,6 +38,43 @@ w = o['winners']; need += [f'Регрет {r(w["cell_means"][w["obs_cell"]])}, �
                            f'в {r(w["selection_null_p"])} перестановок', f'клеток — {r(o["mean_regret"]["all64"])}', f'A0 без вызовов — {r(o["mean_regret"]["A0_no_calls"])}']
 assert w['obs_cell'] == 'C12' and w['model_cell'] is None and ph['rank_unrounded']['ANCHOR_C44'] == 5
 need += [f'**{a}** — ' for a in ('OBS', 'MODEL', 'ANCHOR')] + [', '.join(w['arms']['OBS']), ', '.join(w['arms']['MODEL'])]
+# проверка победителя: таблица рук, первичный тест, сжатие, отказы
+assert v['n_tasks'] == 50 and not v['excluded_eps'] and not v['aliases'] and set(v['vote_status_totals']) == {'ok', 'refused'}
+need += [f'«ок» {v["vote_status_totals"]["ok"]}, отказов {v["vote_status_totals"]["refused"]}']
+for a in ('ANCHOR', 'MODEL', 'OBS'):
+    row = f'| {", ".join(w["arms"][a])} | {r(v["mean_regret"][a])} | '
+    row += '— | — | ' if a == 'ANCHOR' else f'{sg(v["vs_anchor"][a]["mean"])} | {ci(v["vs_anchor"][a]["ci95"])} | '
+    need.append(row + f'{big(v["out_per_call"][a])} | {v["refusals"][a]} |')
+need.append(f'| {r(v["A0_no_calls"])} |')
+pr = v['primary']; d_ = pr['diff_obs_minus_model']; assert pr['outcome'] == 'не показано' and not any(v['degenerate_to_A0'].values())
+need += [f'OBS − MODEL {sg(d_["mean"])}, ДИ {ci(d_["ci95"])}, df {d_["df"]}, односторонний p {r(round(d_["p_greater"], 3))}',
+         f'OBS − MODEL {sg(d_["mean"])} (ДИ {ci(d_["ci95"])}; односторонний p {r(round(d_["p_greater"], 3))})',
+         f'у OBS {r(v["gain_val"]["OBS"])}, у MODEL {r(v["gain_val"]["MODEL"])}', f'Сжатие OBS — {r(v["shrinkage"]["OBS"])}', f'Сжатие MODEL — {r(v["shrinkage"]["MODEL"])}',
+         f'хуже опоры ANCHOR на {r(-v["vs_anchor"]["OBS"]["mean"])} (ДИ разности ANCHOR − OBS {ci(v["vs_anchor"]["OBS"]["ci95"])})',
+         f'Нижняя граница ДИ ANCHOR − OBS — {r(v["vs_anchor"]["OBS"]["ci95"][0])}', f'от опоры не отличается: {r(v["vs_anchor"]["MODEL"]["mean"])} (ДИ {ci(v["vs_anchor"]["MODEL"]["ci95"])})',
+         f'регрет {r(v["mean_regret"]["ANCHOR"])}, у MODEL {r(v["mean_regret"]["MODEL"])}, у OBS {r(v["mean_regret"]["OBS"])}',
+         f'сбылось: {r(v["shrinkage"]["OBS"])}, выигрыш сменил знак', f'сбылось: {sg(d_["mean"])}, но p {r(round(d_["p_greater"], 3))}',
+         f'не сбылось: {r(v["vs_anchor"]["OBS"]["ci95"][0])} |']
+vr = ph['val_refusals']
+need += [f'MODEL отказывается в {r(vr["MODEL"]["share"])} голосов, ANCHOR — в {r(vr["ANCHOR"]["share"])}', f'{r(vr["MODEL"]["A0_regret_refused"])} у отказов MODEL и {r(vr["ANCHOR"]["A0_regret_refused"])} у отказов ANCHOR',
+         f'у MODEL {sg(vr["MODEL"]["contribution"])}, у ANCHOR {sg(vr["ANCHOR"]["contribution"])}', f'MODEL {r(vr["MODEL"]["answered_regret"])}, ANCHOR {r(vr["ANCHOR"]["answered_regret"])}, OBS {r(vr["OBS"]["answered_regret"])}',
+         f'отказы стоили MODEL {r(vr["MODEL"]["contribution"])}']
+assert vr['OBS']['refused'] == 0 and all(vr[a]['refused'] == v['refusals'][a] for a in vr)
+need += [f'(0,118) лучше лучшей из 64 клеток на medium (0,218)'] if (r(c['H0_mean']), r(w['cell_means'][w['obs_cell']])) == ('0,118', '0,218') else ['H0 и OBS: числа не те']
+# порядок этапов, вызовы, потоки — по final_facts.json
+od = F['order']
+for st_, name in (('open', 'открытие'), ('val', 'проверка')):
+    x = od[st_]; assert x['evals_sha256'] == x['evals_sha_on_disk'] and x['salt_sha_published'] == x['salt_sha_prereg'] and x['commit_at'][:19] < x['push_time'][:19] < x['truth_first_mtime']
+    need.append(f'| {name} | {x["commit"]}, {x["commit_at"][8:10]}.{x["commit_at"][5:7]} {x["commit_at"][11:19]} | {x["push_time"][11:]} | {x["truth_first_mtime"][11:19]} |')
+    need.append(x['evals_sha256'][:8])
+cm = F['commits']; need += [f'`winners.json`, {cm["winners.json"]["commit"]})'] + [f'({cm[k]["commit"]})' for k in ('run/val_eval_medium_jobs.jsonl', 'pools/WH_8359.json', 'final_facts_precond.py')]
+need += [f'| {cm[k]["commit"]} |' for k in ('salts/open_salt.txt', 'salts/val_salt.txt')] + [f'| {cm[k]["commit"]} | ' for k in ('open_an.json', 'val_an.json')]
+names = dict(open_exec='исполнитель, открытие', val_exec='исполнитель, проверка', open_eval_medium='оценщики, открытие', open_eval_high='оценщики, открытие', val_eval_medium='оценщики, проверка')
+for g, x in F['calls'].items():
+    assert list(x['finals']) == ['годный'] and x['models'] == ['claude-opus-5-5'] and x['cli'] == ['2.1.294'] and x['init_tools'] == [['StructuredOutput']] and x['mcp_servers'] == [[]] and x['started_unrecorded'] == 0
+    need.append(f'| {names[g]} | {x["effort"][0]} | {x["finals"]["годный"]} | {x["attempts"]} | {x["no_answer_attempts"]} | {big(x["out_all"])} |')
+need += [f'Выход всего — {big(F["out_total"])} токенов', F['calls']['val_exec']['binary_sha256'][0][:8], f'У всех {F["streams"]["совпал"]} записей']
+assert F['streams'] == {'совпал': sum(x['attempts'] for x in F['calls'].values())}
 # ожидания: строки таблицы и исходы — по final_facts.json (правила закоммичены до правды проверки)
 E = F['expectations']; word = {True: 'сбылось', False: 'не сбылось', None: 'не определено'}
 rows = {ln.split('|')[1].strip(): ln for ln in T.splitlines() if ln.startswith('| E')}

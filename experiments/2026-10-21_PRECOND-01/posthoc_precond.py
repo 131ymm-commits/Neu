@@ -1,4 +1,4 @@
-# PRECOND-01: дополнение к open_an.json — линейный член модели насыщения (PREREG §4.7, Т8; ERRORS № 94).
+# PRECOND-01: пост-хок к open_an.json и val_an.json (описательно, вердиктов не меняет). 1 — линейный член модели насыщения (PREREG §4.7, Т8; ERRORS № 94).
 # analyze_precond.py выводит только коэффициент при k² и флаг «k² > 0», а по PREREG насыщение (убывающая польза) засчитывается,
 # только если линейный член отрицателен. Модель та же: регрет ~ k + k² внутри задач, k — число включённых ингредиентов клетки.
 # Описательно, вердиктов не меняет. Правда открытия опубликована (salts/open_salt.txt); пересчёт — по README в salts/.
@@ -32,4 +32,14 @@ out['power_posthoc'] = dict(note='пост-хок, описательно: мо�
 # пост-хок 3: места клеток по неокруглённому среднему регрету (в open_an.json средние округлены, C44 и C38 там вровень — 0,323)
 means = {c: float(Yraw[:, ci].mean()) for ci, c in enumerate(A.CELLS)}; rank = sorted(A.CELLS, key=lambda c: (means[c], A.CELLS.index(c)))
 out['rank_unrounded'] = dict(ANCHOR_C44=rank.index('C44') + 1, ALLON_C63=rank.index('C63') + 1, OBS_C12=rank.index('C12') + 1, top6=rank[:6])
+# пост-хок 4 (проверка победителя, описательно): разложение отказов по рукам — как refusal_decomposition открытия (Т7).
+# Голос с отказом получает регрет A0 своей задачи; вклад отказов = доля × (регрет A0 у отказов − регрет ответивших).
+Rv, _, REFv, _, _ = A.load('val', 'evals/val.jsonl'); A0v = A.load.A0R; W = json.load(open('winners.json'))
+out['val_refusals'] = {}
+for arm in ('OBS', 'MODEL', 'ANCHOR'):
+    ks = [k for k in Rv if k[1] == arm]; rf = [k for k in ks if REFv[k]]; an = [k for k in ks if not REFv[k]]
+    a0r = st.mean(A0v[k[0]] for k in rf) if rf else None; ar = st.mean(Rv[k] for k in an)
+    out['val_refusals'][arm] = dict(votes=len(ks), refused=len(rf), share=round(len(rf) / len(ks), 3), answered_regret=round(ar, 3),
+                                    A0_regret_refused=None if a0r is None else round(a0r, 3),
+                                    contribution=0.0 if not rf else round(len(rf) / len(ks) * (a0r - ar), 3))
 json.dump(out, open('posthoc_an.json', 'w'), ensure_ascii=False, indent=1); print(json.dumps(out, ensure_ascii=False))

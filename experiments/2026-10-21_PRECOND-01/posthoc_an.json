@@ -45,5 +45,31 @@
    "C44",
    "C38"
   ]
+ },
+ "val_refusals": {
+  "OBS": {
+   "votes": 250,
+   "refused": 0,
+   "share": 0.0,
+   "answered_regret": 0.628,
+   "A0_regret_refused": null,
+   "contribution": 0.0
+  },
+  "MODEL": {
+   "votes": 250,
+   "refused": 64,
+   "share": 0.256,
+   "answered_regret": 0.476,
+   "A0_regret_refused": 0.8,
+   "contribution": 0.083
+  },
+  "ANCHOR": {
+   "votes": 250,
+   "refused": 16,
+   "share": 0.064,
+   "answered_regret": 0.522,
+   "A0_regret_refused": 0.776,
+   "contribution": 0.016
+  }
  }
 }

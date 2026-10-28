@@ -1,0 +1,328 @@
+{
+ "defined": {
+  "open": true,
+  "val": true
+ },
+ "expectations": {
+  "E1": {
+   "outcome": false,
+   "undefined": null
+  },
+  "E2": {
+   "outcome": true,
+   "undefined": null
+  },
+  "E3": {
+   "outcome": false,
+   "undefined": null
+  },
+  "E4": {
+   "outcome": false,
+   "undefined": null
+  },
+  "E5": {
+   "outcome": true,
+   "undefined": null
+  },
+  "E6": {
+   "outcome": true,
+   "undefined": null
+  },
+  "E7": {
+   "outcome": true,
+   "undefined": null
+  },
+  "E8": {
+   "outcome": false,
+   "undefined": null
+  }
+ },
+ "commits": {
+  "pools/WH_8359.json": {
+   "commit": "e0f9e9f",
+   "at": "2026-10-27T14:44:41+00:00"
+  },
+  "open_an.json": {
+   "commit": "c98b937",
+   "at": "2026-10-27T20:26:48+00:00"
+  },
+  "winners.json": {
+   "commit": "c98b937",
+   "at": "2026-10-27T20:26:48+00:00"
+  },
+  "run/val_eval_medium_jobs.jsonl": {
+   "commit": "2feec3d",
+   "at": "2026-10-27T20:27:37+00:00"
+  },
+  "val_an.json": {
+   "commit": "43ae6bd",
+   "at": "2026-10-28T03:21:17+00:00"
+  },
+  "salts/open_salt.txt": {
+   "commit": "9595332",
+   "at": "2026-10-27T20:27:06+00:00"
+  },
+  "salts/val_salt.txt": {
+   "commit": "e508e55",
+   "at": "2026-10-28T03:21:36+00:00"
+  },
+  "final_facts_precond.py": {
+   "commit": "b29e045",
+   "at": "2026-10-28T02:27:26+00:00"
+  }
+ },
+ "strongest": "REFUSE",
+ "calls": {
+  "open_exec": {
+   "finals": {
+    "годный": 9
+   },
+   "attempts": 9,
+   "no_answer_attempts": 0,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "cli": [
+    "2.1.294"
+   ],
+   "binary_sha256": [
+    "27122ca7b624f537"
+   ],
+   "effort": [
+    "medium"
+   ],
+   "init_tools": [
+    [
+     "StructuredOutput"
+    ]
+   ],
+   "mcp_servers": [
+    []
+   ],
+   "out_all": 61959,
+   "out_final": 61959,
+   "started": 9,
+   "started_unrecorded": 0,
+   "segments": [
+    [
+     "2026-10-27T14:19",
+     "2026-10-27T14:23",
+     "готово"
+    ]
+   ]
+  },
+  "val_exec": {
+   "finals": {
+    "годный": 50
+   },
+   "attempts": 50,
+   "no_answer_attempts": 0,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "cli": [
+    "2.1.294"
+   ],
+   "binary_sha256": [
+    "27122ca7b624f537"
+   ],
+   "effort": [
+    "medium"
+   ],
+   "init_tools": [
+    [
+     "StructuredOutput"
+    ]
+   ],
+   "mcp_servers": [
+    []
+   ],
+   "out_all": 380859,
+   "out_final": 380859,
+   "started": 50,
+   "started_unrecorded": 0,
+   "segments": [
+    [
+     "2026-10-27T14:23",
+     "2026-10-27T14:44",
+     "готово"
+    ]
+   ]
+  },
+  "open_eval_medium": {
+   "finals": {
+    "годный": 585
+   },
+   "attempts": 586,
+   "no_answer_attempts": 1,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "cli": [
+    "2.1.294"
+   ],
+   "binary_sha256": [
+    "27122ca7b624f537"
+   ],
+   "effort": [
+    "medium"
+   ],
+   "init_tools": [
+    [
+     "StructuredOutput"
+    ]
+   ],
+   "mcp_servers": [
+    []
+   ],
+   "out_all": 2468456,
+   "out_final": 2468456,
+   "started": 586,
+   "started_unrecorded": 0,
+   "segments": [
+    [
+     "2026-10-27T14:44",
+     "2026-10-27T16:25",
+     "пауза"
+    ],
+    [
+     "2026-10-27T16:27",
+     "2026-10-27T18:07",
+     "пауза"
+    ],
+    [
+     "2026-10-27T20:22",
+     "2026-10-27T20:24",
+     "готово"
+    ]
+   ]
+  },
+  "open_eval_high": {
+   "finals": {
+    "годный": 18
+   },
+   "attempts": 18,
+   "no_answer_attempts": 0,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "cli": [
+    "2.1.294"
+   ],
+   "binary_sha256": [
+    "27122ca7b624f537"
+   ],
+   "effort": [
+    "high"
+   ],
+   "init_tools": [
+    [
+     "StructuredOutput"
+    ]
+   ],
+   "mcp_servers": [
+    []
+   ],
+   "out_all": 244517,
+   "out_final": 244517,
+   "started": 18,
+   "started_unrecorded": 0,
+   "segments": [
+    [
+     "2026-10-27T14:44",
+     "2026-10-27T15:06",
+     "готово"
+    ],
+    [
+     "2026-10-27T16:27",
+     "2026-10-27T16:27",
+     "готово"
+    ],
+    [
+     "2026-10-27T20:22",
+     "2026-10-27T20:22",
+     "готово"
+    ]
+   ]
+  },
+  "val_eval_medium": {
+   "finals": {
+    "годный": 750
+   },
+   "attempts": 751,
+   "no_answer_attempts": 1,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "cli": [
+    "2.1.294"
+   ],
+   "binary_sha256": [
+    "27122ca7b624f537"
+   ],
+   "effort": [
+    "medium"
+   ],
+   "init_tools": [
+    [
+     "StructuredOutput"
+    ]
+   ],
+   "mcp_servers": [
+    []
+   ],
+   "out_all": 3767817,
+   "out_final": 3767817,
+   "started": 751,
+   "started_unrecorded": 0,
+   "segments": [
+    [
+     "2026-10-27T20:27",
+     "2026-10-27T22:08",
+     "пауза"
+    ],
+    [
+     "2026-10-27T22:09",
+     "—",
+     "оборван"
+    ],
+    [
+     "2026-10-28T02:22",
+     "2026-10-28T03:18",
+     "готово"
+    ]
+   ]
+  }
+ },
+ "out_total": 6923608,
+ "streams": {
+  "совпал": 1414
+ },
+ "order": {
+  "open": {
+   "commit": "dda6ae2",
+   "commit_at": "2026-10-27T20:25:05+00:00",
+   "push_time": "2026-10-27T20:25:07Z",
+   "truth_first_mtime": "2026-10-27T20:25:31",
+   "evals_sha256": "4f03254e97588fcde20f0ae6d05b5801eb512343f81ece1dc67a3821bc8d7fb7",
+   "evals_sha_on_disk": "4f03254e97588fcde20f0ae6d05b5801eb512343f81ece1dc67a3821bc8d7fb7",
+   "salt_sha_published": "664859e371541d83f19badb107231c4d71219a32070e4a8cf8be79c77fb673d3",
+   "salt_sha_prereg": "664859e371541d83f19badb107231c4d71219a32070e4a8cf8be79c77fb673d3"
+  },
+  "val": {
+   "commit": "5afabd2",
+   "commit_at": "2026-10-28T03:18:56+00:00",
+   "push_time": "2026-10-28T03:18:58Z",
+   "truth_first_mtime": "2026-10-28T03:19:16",
+   "evals_sha256": "4a006a2ed007e193537ceb13a30e113db291d52eb72f0d45114ffcc04ba95612",
+   "evals_sha_on_disk": "4a006a2ed007e193537ceb13a30e113db291d52eb72f0d45114ffcc04ba95612",
+   "salt_sha_published": "be1fb959e8f4af03fe6ca8e567aa6f7c49f11206f46e81bc0a0ec5f8dfebf13e",
+   "salt_sha_prereg": "be1fb959e8f4af03fe6ca8e567aa6f7c49f11206f46e81bc0a0ec5f8dfebf13e"
+  }
+ },
+ "selection_null_p": 0.897805,
+ "gain_open_raw": {
+  "OBS": 0.10455004820585498,
+  "MODEL": 0.05338755801874248
+ }
+}
