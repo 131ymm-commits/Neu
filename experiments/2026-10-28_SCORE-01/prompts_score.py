@@ -29,6 +29,31 @@ SCHEMA = {"type": "object", "properties": {"p": {"type": "array", "minItems": 8,
                                                   "items": {"type": "number", "minimum": 0}}}, "required": ["p"]}
 
 
+# --- формат «в лучшей половине» (после микропилота 0: формат «лучший из 8» не оставил оценщику навыка; PILOT0.md) ---
+ROLE_H = ROLE_P.split('Верни p — список')[0] + """Ровно четыре из {k} кандидатов — в лучшей половине: их ожидаемый итог (среднее по случайности) выше, чем у остальных четырёх.
+Верни p — список из {k} чисел от 0 до 1: p[i] — твоя вероятность того, что кандидат i в лучшей половине.
+{rule}
+
+{rules}
+
+{cands}"""
+
+RULES_HALF = dict(
+    LOG='Как тебя оценят: по каждому кандидату — натуральный логарифм вероятности, которую ты дал верному ответу '
+        '(p[i], если кандидат в лучшей половине, и 1 − p[i], если нет); счёт — сумма по восьми кандидатам. '
+        'Чем больше, тем лучше; вероятность 0 у верного ответа — худший возможный счёт.',
+    WIN='Как тебя оценят: по каждому кандидату — 1 очко, если твой ответ верен (p[i] > 0,5 у кандидата из лучшей половины '
+        'или p[i] < 0,5 у кандидата из худшей), 0 — если неверен, ½ — при p[i] = 0,5; счёт — сумма по восьми кандидатам.',
+)
+
+SCHEMA_H = {"type": "object", "properties": {"p": {"type": "array", "minItems": 8, "maxItems": 8,
+                                                    "items": {"type": "number", "minimum": 0, "maximum": 1}}}, "required": ["p"]}
+
+
+def prompt_half(arm, rules, shown):
+    return ROLE_H.format(k=len(shown), rule=RULES_HALF[arm], rules=rules, cands=cands_text(shown))
+
+
 def cands_text(pool):
     return '\n'.join(f'Кандидат {i}: план {json.dumps(c["plan"], ensure_ascii=False)}' for i, c in enumerate(pool))
 
@@ -39,7 +64,8 @@ def prompt(arm, rules, shown):
 
 def hashes():
     h = lambda s: hashlib.sha256(s.encode()).hexdigest()
-    return dict(ROLE_P=h(ROLE_P), LOG=h(RULES_PAY['LOG']), WIN=h(RULES_PAY['WIN']), schema=h(json.dumps(SCHEMA, sort_keys=True)))
+    return dict(ROLE_P=h(ROLE_P), LOG=h(RULES_PAY['LOG']), WIN=h(RULES_PAY['WIN']), schema=h(json.dumps(SCHEMA, sort_keys=True)),
+                ROLE_H=h(ROLE_H), LOG_H=h(RULES_HALF['LOG']), WIN_H=h(RULES_HALF['WIN']), schema_H=h(json.dumps(SCHEMA_H, sort_keys=True)))
 
 
 if __name__ == '__main__' and sys.argv[1:2] == ['hash']:

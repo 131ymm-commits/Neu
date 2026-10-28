@@ -1,0 +1,1305 @@
+{
+ "stage": "pilot0_opus",
+ "sample": "pilot",
+ "rows": {
+  "WH_7001|LOG|0": {
+   "task": "WH_7001",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6766,
+   "out": 2486,
+   "cost": 0.10384,
+   "models": {
+    "claude-opus-5-5": 2486
+   },
+   "p": [
+    0.05,
+    0.12,
+    0.02,
+    0.08,
+    0.3,
+    0.3,
+    0.03,
+    0.1
+   ],
+   "choice": 5,
+   "best": 6,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.03,
+   "logloss": 3.506557897319982,
+   "floored": false,
+   "brier": 1.1545999999999998,
+   "regret": 2515.1100000000006
+  },
+  "WH_7001|WIN|0": {
+   "task": "WH_7001",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6733,
+   "out": 4578,
+   "cost": 0.145416,
+   "models": {
+    "claude-opus-5-5": 4578
+   },
+   "p": [
+    0.2,
+    0.1,
+    0.04,
+    0.02,
+    0.22,
+    0.04,
+    0.13,
+    0.25
+   ],
+   "choice": 7,
+   "best": 6,
+   "acc": 0,
+   "conf": 0.25,
+   "p_best": 0.13,
+   "logloss": 2.0402208285265546,
+   "floored": false,
+   "brier": 0.9214,
+   "regret": 1044.9899999999998
+  },
+  "WH_7002|LOG|0": {
+   "task": "WH_7002",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6728,
+   "out": 3417,
+   "cost": 0.10417699999999999,
+   "models": {
+    "claude-opus-5-5": 3417
+   },
+   "p": [
+    0.09,
+    0.03,
+    0.08,
+    0.25,
+    0.12,
+    0.05,
+    0.37,
+    0.01
+   ],
+   "choice": 6,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.37,
+   "p_best": 0.03,
+   "logloss": 3.506557897319982,
+   "floored": false,
+   "brier": 1.1718,
+   "regret": 1869.4700000000012
+  },
+  "WH_7002|WIN|0": {
+   "task": "WH_7002",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6692,
+   "out": 2732,
+   "cost": 0.090189,
+   "models": {
+    "claude-opus-5-5": 2732
+   },
+   "p": [
+    0.04,
+    0.02,
+    0.02,
+    0.48,
+    0.17,
+    0.02,
+    0.24,
+    0.01
+   ],
+   "choice": 3,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.48,
+   "p_best": 0.02,
+   "logloss": 3.912023005428146,
+   "floored": false,
+   "brier": 1.2797999999999998,
+   "regret": 106.92000000000007
+  },
+  "WH_7003|LOG|0": {
+   "task": "WH_7003",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6687,
+   "out": 3739,
+   "cost": 0.110289,
+   "models": {
+    "claude-opus-5-5": 3739
+   },
+   "p": [
+    0.04,
+    0.2,
+    0.15,
+    0.03,
+    0.03,
+    0.3,
+    0.05,
+    0.2
+   ],
+   "choice": 5,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.2,
+   "logloss": 1.6094379124341003,
+   "floored": false,
+   "brier": 0.7984000000000001,
+   "regret": 933.1400000000003
+  },
+  "WH_7003|WIN|0": {
+   "task": "WH_7003",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6655,
+   "out": 2680,
+   "cost": 0.08885300000000002,
+   "models": {
+    "claude-opus-5-5": 2680
+   },
+   "p": [
+    0.04,
+    0.15,
+    0.07,
+    0.02,
+    0.04,
+    0.37,
+    0.04,
+    0.27
+   ],
+   "choice": 5,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.37,
+   "p_best": 0.15,
+   "logloss": 1.8971199848858813,
+   "floored": false,
+   "brier": 0.9423999999999999,
+   "regret": 933.1400000000003
+  },
+  "WH_7004|LOG|0": {
+   "task": "WH_7004",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6687,
+   "out": 2725,
+   "cost": 0.090009,
+   "models": {
+    "claude-opus-5-5": 2725
+   },
+   "p": [
+    0.3,
+    0.2,
+    0.13,
+    0.15,
+    0.07,
+    0.07,
+    0.04,
+    0.04
+   ],
+   "choice": 0,
+   "best": 2,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.13,
+   "logloss": 2.0402208285265546,
+   "floored": false,
+   "brier": 0.9224,
+   "regret": 671.1800000000003
+  },
+  "WH_7004|WIN|0": {
+   "task": "WH_7004",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6655,
+   "out": 3162,
+   "cost": 0.098493,
+   "models": {
+    "claude-opus-5-5": 3162
+   },
+   "p": [
+    0.3,
+    0.25,
+    0.17,
+    0.12,
+    0.04,
+    0.08,
+    0.03,
+    0.01
+   ],
+   "choice": 0,
+   "best": 2,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.17,
+   "logloss": 1.7719568419318752,
+   "floored": false,
+   "brier": 0.8647999999999999,
+   "regret": 671.1800000000003
+  },
+  "WH_7005|LOG|0": {
+   "task": "WH_7005",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6684,
+   "out": 3358,
+   "cost": 0.10264499999999999,
+   "models": {
+    "claude-opus-5-5": 3358
+   },
+   "p": [
+    0.3,
+    0.04,
+    0.06,
+    0.03,
+    0.02,
+    0.2,
+    0.16,
+    0.19
+   ],
+   "choice": 0,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.04,
+   "logloss": 3.2188758248682006,
+   "floored": false,
+   "brier": 1.1182,
+   "regret": 1047.0900000000001
+  },
+  "WH_7005|WIN|0": {
+   "task": "WH_7005",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6652,
+   "out": 3757,
+   "cost": 0.110369,
+   "models": {
+    "claude-opus-5-5": 3757
+   },
+   "p": [
+    0.22,
+    0.03,
+    0.1,
+    0.02,
+    0.03,
+    0.2,
+    0.28,
+    0.12
+   ],
+   "choice": 6,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.28,
+   "p_best": 0.03,
+   "logloss": 3.506557897319982,
+   "floored": false,
+   "brier": 1.1334,
+   "regret": 516.0200000000004
+  },
+  "WH_7006|LOG|0": {
+   "task": "WH_7006",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6688,
+   "out": 4374,
+   "cost": 0.122997,
+   "models": {
+    "claude-opus-5-5": 4374
+   },
+   "p": [
+    0.16,
+    0.31,
+    0.15,
+    0.1,
+    0.04,
+    0.04,
+    0.07,
+    0.13
+   ],
+   "choice": 1,
+   "best": 4,
+   "acc": 0,
+   "conf": 0.31,
+   "p_best": 0.04,
+   "logloss": 3.2188758248682006,
+   "floored": false,
+   "brier": 1.0992,
+   "regret": 129.67999999999847
+  },
+  "WH_7006|WIN|0": {
+   "task": "WH_7006",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6652,
+   "out": 2167,
+   "cost": 0.078569,
+   "models": {
+    "claude-opus-5-5": 2167
+   },
+   "p": [
+    0.04,
+    0.2,
+    0.2,
+    0.3,
+    0.02,
+    0.07,
+    0.12,
+    0.05
+   ],
+   "choice": 3,
+   "best": 4,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.02,
+   "logloss": 3.912023005428146,
+   "floored": false,
+   "brier": 1.1538,
+   "regret": 2399.539999999999
+  },
+  "WH_7007|LOG|0": {
+   "task": "WH_7007",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6690,
+   "out": 3612,
+   "cost": 0.107773,
+   "models": {
+    "claude-opus-5-5": 3612
+   },
+   "p": [
+    0.33,
+    0.3,
+    0.08,
+    0.1,
+    0.05,
+    0.1,
+    0.02,
+    0.02
+   ],
+   "choice": 0,
+   "best": 3,
+   "acc": 0,
+   "conf": 0.33,
+   "p_best": 0.1,
+   "logloss": 2.3025850929940455,
+   "floored": false,
+   "brier": 1.0286,
+   "regret": 585.2999999999993
+  },
+  "WH_7007|WIN|0": {
+   "task": "WH_7007",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6658,
+   "out": 4578,
+   "cost": 0.12683699999999998,
+   "models": {
+    "claude-opus-5-5": 4578
+   },
+   "p": [
+    0.4,
+    0.03,
+    0.09,
+    0.17,
+    0.08,
+    0.02,
+    0.2,
+    0.01
+   ],
+   "choice": 0,
+   "best": 3,
+   "acc": 0,
+   "conf": 0.4,
+   "p_best": 0.17,
+   "logloss": 1.7719568419318752,
+   "floored": false,
+   "brier": 0.9048,
+   "regret": 585.2999999999993
+  },
+  "WH_7008|LOG|0": {
+   "task": "WH_7008",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6687,
+   "out": 3054,
+   "cost": 0.09658900000000001,
+   "models": {
+    "claude-opus-5-5": 3054
+   },
+   "p": [
+    0.25,
+    0.08,
+    0.07,
+    0.1,
+    0.15,
+    0.02,
+    0.05,
+    0.28
+   ],
+   "choice": 7,
+   "best": 3,
+   "acc": 0,
+   "conf": 0.28,
+   "p_best": 0.1,
+   "logloss": 2.3025850929940455,
+   "floored": false,
+   "brier": 0.9876,
+   "regret": 353.02999999999975
+  },
+  "WH_7008|WIN|0": {
+   "task": "WH_7008",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6656,
+   "out": 3337,
+   "cost": 0.10200100000000001,
+   "models": {
+    "claude-opus-5-5": 3337
+   },
+   "p": [
+    0.36,
+    0.05,
+    0.02,
+    0.1,
+    0.16,
+    0.0,
+    0.04,
+    0.27
+   ],
+   "choice": 0,
+   "best": 3,
+   "acc": 0,
+   "conf": 0.36,
+   "p_best": 0.1,
+   "logloss": 2.3025850929940455,
+   "floored": false,
+   "brier": 1.0426,
+   "regret": 194.57999999999993
+  },
+  "WH_7009|LOG|0": {
+   "task": "WH_7009",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6687,
+   "out": 7929,
+   "cost": 0.194089,
+   "models": {
+    "claude-opus-5-5": 7929
+   },
+   "p": [
+    0.12,
+    0.38,
+    0.07,
+    0.03,
+    0.06,
+    0.1,
+    0.02,
+    0.22
+   ],
+   "choice": 1,
+   "best": 5,
+   "acc": 0,
+   "conf": 0.38,
+   "p_best": 0.1,
+   "logloss": 2.3025850929940455,
+   "floored": false,
+   "brier": 1.0270000000000001,
+   "regret": 75.88000000000011
+  },
+  "WH_7009|WIN|0": {
+   "task": "WH_7009",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6654,
+   "out": 7199,
+   "cost": 0.179225,
+   "models": {
+    "claude-opus-5-5": 7199
+   },
+   "p": [
+    0.05,
+    0.3,
+    0.01,
+    0.12,
+    0.08,
+    0.4,
+    0.01,
+    0.03
+   ],
+   "choice": 5,
+   "best": 5,
+   "acc": 1,
+   "conf": 0.4,
+   "p_best": 0.4,
+   "logloss": 0.916290731874155,
+   "floored": false,
+   "brier": 0.4744,
+   "regret": 0.0
+  },
+  "WH_7010|LOG|0": {
+   "task": "WH_7010",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6690,
+   "out": 8977,
+   "cost": 0.21507300000000001,
+   "models": {
+    "claude-opus-5-5": 8977
+   },
+   "p": [
+    0.17,
+    0.22,
+    0.03,
+    0.06,
+    0.1,
+    0.14,
+    0.2,
+    0.08
+   ],
+   "choice": 1,
+   "best": 6,
+   "acc": 0,
+   "conf": 0.22,
+   "p_best": 0.2,
+   "logloss": 1.6094379124341003,
+   "floored": false,
+   "brier": 0.7578000000000001,
+   "regret": 7.779999999999745
+  },
+  "WH_7010|WIN|0": {
+   "task": "WH_7010",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6658,
+   "out": 5754,
+   "cost": 0.150357,
+   "models": {
+    "claude-opus-5-5": 5754
+   },
+   "p": [
+    0.24,
+    0.22,
+    0.07,
+    0.07,
+    0.05,
+    0.18,
+    0.05,
+    0.12
+   ],
+   "choice": 0,
+   "best": 6,
+   "acc": 0,
+   "conf": 0.24,
+   "p_best": 0.05,
+   "logloss": 2.995732273553991,
+   "floored": false,
+   "brier": 1.0675999999999999,
+   "regret": 27.779999999999745
+  },
+  "WH_7011|LOG|0": {
+   "task": "WH_7011",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6684,
+   "out": 5627,
+   "cost": 0.148025,
+   "models": {
+    "claude-opus-5-5": 5627
+   },
+   "p": [
+    0.2,
+    0.04,
+    0.03,
+    0.08,
+    0.07,
+    0.25,
+    0.03,
+    0.3
+   ],
+   "choice": 7,
+   "best": 4,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.07,
+   "logloss": 2.659260036932778,
+   "floored": false,
+   "brier": 1.0672,
+   "regret": 1383.6900000000005
+  },
+  "WH_7011|WIN|0": {
+   "task": "WH_7011",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6658,
+   "out": 9104,
+   "cost": 0.217357,
+   "models": {
+    "claude-opus-5-5": 9104
+   },
+   "p": [
+    0.25,
+    0.02,
+    0.12,
+    0.02,
+    0.4,
+    0.1,
+    0.02,
+    0.07
+   ],
+   "choice": 4,
+   "best": 4,
+   "acc": 1,
+   "conf": 0.4,
+   "p_best": 0.4,
+   "logloss": 0.916290731874155,
+   "floored": false,
+   "brier": 0.453,
+   "regret": 0.0
+  },
+  "WH_7012|LOG|0": {
+   "task": "WH_7012",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6691,
+   "out": 4733,
+   "cost": 0.130201,
+   "models": {
+    "claude-opus-5-5": 4733
+   },
+   "p": [
+    0.22,
+    0.13,
+    0.04,
+    0.15,
+    0.04,
+    0.07,
+    0.1,
+    0.25
+   ],
+   "choice": 7,
+   "best": 7,
+   "acc": 1,
+   "conf": 0.25,
+   "p_best": 0.25,
+   "logloss": 1.3862943611198906,
+   "floored": false,
+   "brier": 0.6684,
+   "regret": 0.0
+  },
+  "WH_7012|WIN|0": {
+   "task": "WH_7012",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6654,
+   "out": 6256,
+   "cost": 0.160365,
+   "models": {
+    "claude-opus-5-5": 6256
+   },
+   "p": [
+    0.38,
+    0.06,
+    0.02,
+    0.22,
+    0.02,
+    0.04,
+    0.06,
+    0.2
+   ],
+   "choice": 0,
+   "best": 7,
+   "acc": 0,
+   "conf": 0.38,
+   "p_best": 0.2,
+   "logloss": 1.6094379124341003,
+   "floored": false,
+   "brier": 0.8424000000000001,
+   "regret": 393.1300000000001
+  },
+  "WH_7301|LOG|0": {
+   "task": "WH_7301",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6693,
+   "out": 1462,
+   "cost": 0.064797,
+   "models": {
+    "claude-opus-5-5": 1462
+   },
+   "p": [
+    0.05,
+    0.1,
+    0.01,
+    0.26,
+    0.35,
+    0.12,
+    0.06,
+    0.05
+   ],
+   "choice": 4,
+   "best": 6,
+   "acc": 0,
+   "conf": 0.35,
+   "p_best": 0.06,
+   "logloss": 2.8134107167600364,
+   "floored": false,
+   "brier": 1.1032,
+   "regret": 1731.0699999999997
+  },
+  "WH_7301|WIN|0": {
+   "task": "WH_7301",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6657,
+   "out": 2190,
+   "cost": 0.079069,
+   "models": {
+    "claude-opus-5-5": 2190
+   },
+   "p": [
+    0.07,
+    0.08,
+    0.02,
+    0.36,
+    0.24,
+    0.05,
+    0.13,
+    0.05
+   ],
+   "choice": 3,
+   "best": 6,
+   "acc": 0,
+   "conf": 0.36,
+   "p_best": 0.13,
+   "logloss": 2.0402208285265546,
+   "floored": false,
+   "brier": 0.9608,
+   "regret": 309.8599999999997
+  },
+  "WH_7302|LOG|0": {
+   "task": "WH_7302",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6690,
+   "out": 4342,
+   "cost": 0.122373,
+   "models": {
+    "claude-opus-5-5": 4342
+   },
+   "p": [
+    0.08,
+    0.5,
+    0.04,
+    0.03,
+    0.03,
+    0.15,
+    0.12,
+    0.05
+   ],
+   "choice": 1,
+   "best": 7,
+   "acc": 0,
+   "conf": 0.5,
+   "p_best": 0.05,
+   "logloss": 2.995732273553991,
+   "floored": false,
+   "brier": 1.1992,
+   "regret": 1042.0400000000009
+  },
+  "WH_7302|WIN|0": {
+   "task": "WH_7302",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6656,
+   "out": 4088,
+   "cost": 0.11702099999999999,
+   "models": {
+    "claude-opus-5-5": 4088
+   },
+   "p": [
+    0.2,
+    0.36,
+    0.04,
+    0.04,
+    0.02,
+    0.09,
+    0.17,
+    0.08
+   ],
+   "choice": 1,
+   "best": 7,
+   "acc": 0,
+   "conf": 0.36,
+   "p_best": 0.08,
+   "logloss": 2.5257286443082556,
+   "floored": false,
+   "brier": 1.0566,
+   "regret": 1042.0400000000009
+  },
+  "WH_7303|LOG|0": {
+   "task": "WH_7303",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6685,
+   "out": 3971,
+   "cost": 0.11491299999999999,
+   "models": {
+    "claude-opus-5-5": 3971
+   },
+   "p": [
+    0.15,
+    0.06,
+    0.12,
+    0.3,
+    0.03,
+    0.2,
+    0.1,
+    0.04
+   ],
+   "choice": 3,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.06,
+   "logloss": 2.8134107167600364,
+   "floored": false,
+   "brier": 1.063,
+   "regret": 703.3700000000008
+  },
+  "WH_7303|WIN|0": {
+   "task": "WH_7303",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6654,
+   "out": 2779,
+   "cost": 0.090825,
+   "models": {
+    "claude-opus-5-5": 2779
+   },
+   "p": [
+    0.18,
+    0.12,
+    0.2,
+    0.3,
+    0.04,
+    0.13,
+    0.02,
+    0.01
+   ],
+   "choice": 3,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.12,
+   "logloss": 2.120263536200091,
+   "floored": false,
+   "brier": 0.9558,
+   "regret": 703.3700000000008
+  },
+  "WH_7304|LOG|0": {
+   "task": "WH_7304",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6685,
+   "out": 3023,
+   "cost": 0.09595300000000001,
+   "models": {
+    "claude-opus-5-5": 3023
+   },
+   "p": [
+    0.24,
+    0.08,
+    0.15,
+    0.1,
+    0.14,
+    0.22,
+    0.05,
+    0.02
+   ],
+   "choice": 0,
+   "best": 3,
+   "acc": 0,
+   "conf": 0.24,
+   "p_best": 0.1,
+   "logloss": 2.3025850929940455,
+   "floored": false,
+   "brier": 0.9674,
+   "regret": 447.6899999999987
+  },
+  "WH_7304|WIN|0": {
+   "task": "WH_7304",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6653,
+   "out": 3213,
+   "cost": 0.099497,
+   "models": {
+    "claude-opus-5-5": 3213
+   },
+   "p": [
+    0.28,
+    0.12,
+    0.1,
+    0.06,
+    0.17,
+    0.2,
+    0.03,
+    0.04
+   ],
+   "choice": 0,
+   "best": 3,
+   "acc": 0,
+   "conf": 0.28,
+   "p_best": 0.06,
+   "logloss": 2.8134107167600364,
+   "floored": false,
+   "brier": 1.0578,
+   "regret": 447.6899999999987
+  },
+  "WH_7305|LOG|0": {
+   "task": "WH_7305",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6690,
+   "out": 3790,
+   "cost": 0.111333,
+   "models": {
+    "claude-opus-5-5": 3790
+   },
+   "p": [
+    0.22,
+    0.05,
+    0.17,
+    0.07,
+    0.06,
+    0.13,
+    0.02,
+    0.28
+   ],
+   "choice": 7,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.28,
+   "p_best": 0.05,
+   "logloss": 2.995732273553991,
+   "floored": false,
+   "brier": 1.084,
+   "regret": 1355.6599999999999
+  },
+  "WH_7305|WIN|0": {
+   "task": "WH_7305",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6655,
+   "out": 4005,
+   "cost": 0.11535300000000001,
+   "models": {
+    "claude-opus-5-5": 4005
+   },
+   "p": [
+    0.25,
+    0.04,
+    0.17,
+    0.05,
+    0.04,
+    0.1,
+    0.02,
+    0.33
+   ],
+   "choice": 7,
+   "best": 1,
+   "acc": 0,
+   "conf": 0.33,
+   "p_best": 0.04,
+   "logloss": 3.2188758248682006,
+   "floored": false,
+   "brier": 1.1364,
+   "regret": 1355.6599999999999
+  },
+  "WH_7306|LOG|0": {
+   "task": "WH_7306",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6688,
+   "out": 4503,
+   "cost": 0.125577,
+   "models": {
+    "claude-opus-5-5": 4503
+   },
+   "p": [
+    0.2,
+    0.04,
+    0.3,
+    0.12,
+    0.07,
+    0.03,
+    0.17,
+    0.07
+   ],
+   "choice": 2,
+   "best": 4,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.07,
+   "logloss": 2.659260036932778,
+   "floored": false,
+   "brier": 1.0455999999999999,
+   "regret": 2272.75
+  },
+  "WH_7306|WIN|0": {
+   "task": "WH_7306",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6657,
+   "out": 2351,
+   "cost": 0.082289,
+   "models": {
+    "claude-opus-5-5": 2351
+   },
+   "p": [
+    0.1,
+    0.03,
+    0.1,
+    0.42,
+    0.04,
+    0.02,
+    0.25,
+    0.04
+   ],
+   "choice": 3,
+   "best": 4,
+   "acc": 0,
+   "conf": 0.42,
+   "p_best": 0.04,
+   "logloss": 3.2188758248682006,
+   "floored": false,
+   "brier": 1.1834,
+   "regret": 4657.9800000000005
+  },
+  "WH_7307|LOG|0": {
+   "task": "WH_7307",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6690,
+   "out": 4052,
+   "cost": 0.116573,
+   "models": {
+    "claude-opus-5-5": 4052
+   },
+   "p": [
+    0.3,
+    0.03,
+    0.17,
+    0.1,
+    0.2,
+    0.13,
+    0.06,
+    0.01
+   ],
+   "choice": 0,
+   "best": 3,
+   "acc": 0,
+   "conf": 0.3,
+   "p_best": 0.1,
+   "logloss": 2.3025850929940455,
+   "floored": false,
+   "brier": 0.9904000000000001,
+   "regret": 176.55999999999995
+  },
+  "WH_7307|WIN|0": {
+   "task": "WH_7307",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6657,
+   "out": 3445,
+   "cost": 0.104169,
+   "models": {
+    "claude-opus-5-5": 3445
+   },
+   "p": [
+    0.4,
+    0.05,
+    0.1,
+    0.1,
+    0.12,
+    0.2,
+    0.03,
+    0.0
+   ],
+   "choice": 0,
+   "best": 3,
+   "acc": 0,
+   "conf": 0.4,
+   "p_best": 0.1,
+   "logloss": 2.3025850929940455,
+   "floored": false,
+   "brier": 1.0378,
+   "regret": 176.55999999999995
+  },
+  "WH_7308|LOG|0": {
+   "task": "WH_7308",
+   "arm": "LOG",
+   "valid": true,
+   "error": null,
+   "inp": 6691,
+   "out": 1971,
+   "cost": 0.074961,
+   "models": {
+    "claude-opus-5-5": 1971
+   },
+   "p": [
+    0.19,
+    0.06,
+    0.11,
+    0.22,
+    0.1,
+    0.08,
+    0.18,
+    0.06
+   ],
+   "choice": 3,
+   "best": 2,
+   "acc": 0,
+   "conf": 0.22,
+   "p_best": 0.11,
+   "logloss": 2.2072749131897207,
+   "floored": false,
+   "brier": 0.9326,
+   "regret": 547.8000000000002
+  },
+  "WH_7308|WIN|0": {
+   "task": "WH_7308",
+   "arm": "WIN",
+   "valid": true,
+   "error": null,
+   "inp": 6657,
+   "out": 2225,
+   "cost": 0.079769,
+   "models": {
+    "claude-opus-5-5": 2225
+   },
+   "p": [
+    0.17,
+    0.06,
+    0.08,
+    0.32,
+    0.1,
+    0.08,
+    0.15,
+    0.04
+   ],
+   "choice": 3,
+   "best": 2,
+   "acc": 0,
+   "conf": 0.32,
+   "p_best": 0.08,
+   "logloss": 2.5257286443082556,
+   "floored": false,
+   "brier": 1.0218,
+   "regret": 547.8000000000002
+  }
+ },
+ "summary": {
+  "LOG": {
+   "n": 20,
+   "invalid": 0,
+   "logloss": 2.5376632445772285,
+   "acc": 0.05,
+   "conf": 0.3065,
+   "self_dec": 0.2565,
+   "brier": 1.0093299999999998,
+   "ece": 0.2565,
+   "p_best": 0.0945,
+   "floored": 0,
+   "inp": 6694.05,
+   "out": 4057.25,
+   "cost": 0.11760934999999999
+  },
+  "WIN": {
+   "n": 20,
+   "invalid": 0,
+   "logloss": 2.4158942130508274,
+   "acc": 0.1,
+   "conf": 0.3465,
+   "self_dec": 0.24649999999999997,
+   "brier": 0.97454,
+   "ece": 0.24649999999999997,
+   "p_best": 0.12450000000000001,
+   "floored": 0,
+   "inp": 6661.15,
+   "out": 3980.0,
+   "cost": 0.11580114999999999
+  }
+ },
+ "paired_WIN_minus_LOG": {
+  "logloss": {
+   "n": 20,
+   "mean": -0.1217690315264011,
+   "sd": 0.7938366508878475
+  },
+  "acc": {
+   "n": 20,
+   "mean": 0.05,
+   "sd": 0.3940344628262062
+  },
+  "conf": {
+   "n": 20,
+   "mean": 0.04,
+   "sd": 0.0669642481202902
+  },
+  "brier": {
+   "n": 20,
+   "mean": -0.034790000000000015,
+   "sd": 0.22809643828410545
+  },
+  "self_dec": {
+   "n": 20,
+   "mean": -0.009999999999999998,
+   "sd": 0.40621487702420433
+  }
+ }
+}
