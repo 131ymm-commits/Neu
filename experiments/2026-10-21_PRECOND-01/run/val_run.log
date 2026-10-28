@@ -3,3 +3,6 @@
 пауза или остановка драйвера (см. .cache/precond01_live/val_eval_*.log)
 /home/user/neu/experiments/2026-10-21_PRECOND-01/run/val_eval_medium_jobs.jsonl 750 голов
 /home/user/neu/experiments/2026-10-21_PRECOND-01/run/val_eval_medium_jobs.jsonl 750 голов
+выгружено 750 итоговых записей в experiments/2026-10-21_PRECOND-01/run/val_eval_medium_out.jsonl
+750 выборов; попыток по рукам (первые 12): {'ANCHOR': 250, 'MODEL': 250, 'OBS': 250}
+этап val: выборы собраны. Дальше — коммит и пуш, событие пуша, затем truth и analyze (PREREG §9).
