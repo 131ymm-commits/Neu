@@ -1,0 +1,81 @@
+{
+ "honest_excess_logloss_b_star": 0.0221,
+ "honest_excess_logloss_own_world_b": 0.0544,
+ "honest_own_world_b": 0.6,
+ "farsighted": {
+  "wG": 0.6802,
+  "share_of_honest": 0.392,
+  "bits": 0.98,
+  "b": 0.2353,
+  "logloss": 0.1738,
+  "acc": 0.9367,
+  "self_dec": -0.0065
+ },
+ "myopic_fixed_point": {
+  "wG": 0.9873,
+  "b": 0.3415,
+  "logloss": 0.1784,
+  "acc": 0.934,
+  "inner_check_logloss": 0.1784
+ },
+ "myopia_cost_logloss": 0.0046,
+ "kelly_G_excess_logloss_mean": 0.0032,
+ "GFIX_G1_pass": 10,
+ "GFIX_G3_pass": 10,
+ "KELLY_G_weight_over_bayes_at_b_final": 1.02,
+ "KELLY_G_weight_over_honest": 0.576,
+ "B_pair_split_KELLY": {
+  "src_r07": 0.509,
+  "copy_r07": 0.666,
+  "exact_r07": 0.5578,
+  "src_r09": 1.427,
+  "copy_r09": 1.432,
+  "exact_r09": 1.3719
+ },
+ "ece_snap_vs_window": {
+  "KELLY_A": {
+   "window": 0.0027,
+   "snap": 0.0061
+  },
+  "CONTEST_A": {
+   "window": 0.0087,
+   "snap": 0.011
+  },
+  "CONTEST400_A": {
+   "window": 0.0014,
+   "snap": 0.0036
+  },
+  "KELLY_G": {
+   "window": 0.0042,
+   "snap": 0.0083
+  },
+  "KELLY_B": {
+   "window": 0.003,
+   "snap": 0.0051
+  },
+  "INDEP_B": {
+   "window": 0.028,
+   "snap": 0.0281
+  },
+  "KLUCK_B": {
+   "window": 0.003,
+   "snap": 0.0055
+  },
+  "KELLY6_A": {
+   "window": 0.0034,
+   "snap": 0.008
+  },
+  "KELLY_GFIX": {
+   "window": 0.0043,
+   "snap": 0.008
+  }
+ },
+ "contest_excess_logloss_snap": {
+  "CONTEST_A": 0.0049,
+  "CONTEST400_A": 0.0008
+ },
+ "contest_ratios": {
+  "self_dec": 0.149,
+  "excess_logloss": 0.163
+ }
+}
