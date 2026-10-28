@@ -116,7 +116,7 @@ equiv('A7', uw('POOLED'), uw('POOLED_FREE'))
 equiv('A8', uw('DEMES'), uw('DEMES_FREE'))
 interval('A9', uw('DEMES_NOSEL'), 2 / 3, 4 / 3, 9)
 interval('A10', uw('DEMES_NOSEL_FREE'), 2 / 3, 4 / 3, 9)
-interval('A11', uw('COUNCIL_SIGN'), -1 / 6, 1 / 6, 8)
+interval('A11', uw('COUNCIL_SIGN'), -1 / 3, 1 / 3, 8)
 equiv('A12', uw('COUNCIL'), uw('COUNCIL_SIGN'))
 interval('A13', uw('COUNCIL'), -1 / 6, 1 / 6, 9)
 interval('A14', uw('MYOPIC'), 2 / 3, 4 / 3, 9)
@@ -173,7 +173,8 @@ out = dict(verdicts=V, summary=summary, construction=K, descriptive_price=D1, in
 json.dump(out, open(os.path.join(DIR, 'analysis_trust_04.json'), 'w'), ensure_ascii=False, indent=1,
           default=lambda o: o.item() if hasattr(o, 'item') else str(o))
 for k, v in V.items():
-    show = {kk: (np.round(vv, 4).tolist() if isinstance(vv, list) else vv) for kk, vv in v.items() if kk not in ('outcome', 'kind')}
+    show = {kk: (np.round(vv, 4).tolist() if isinstance(vv, list) and all(isinstance(x, (int, float)) for x in vv) else vv)
+            for kk, vv in v.items() if kk not in ('outcome', 'kind')}
     print(k, v['outcome'], show)
 print('проверки построения:', {a: {k: (np.round(v, 4).tolist() if isinstance(v, list) else v) for k, v in d.items()} for a, d in K.items()})
 print('сводные исходы:', summary)
