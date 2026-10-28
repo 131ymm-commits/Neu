@@ -95,7 +95,7 @@ def describe(st):
         print('     ' + line('NONE − LOG (разные прогоны)', pairs(rows, tasks, 'NONE', 'LOG', m)))
         print('     ' + line('WIN − NONE (разные прогоны)', pairs(rows, tasks, 'WIN', 'NONE', m)))
     print('   выход, ток. (дрейф между прогонами пилота 1 и 2):')
-    for hi, lo in (('LOG_1', 'LOG'), ('WIN_1', 'WIN'), ('WIN', 'LOG'), ('WIN_1', 'LOG_1'), ('NONE', 'LOG_1')):
+    for hi, lo in (('LOG_1', 'LOG'), ('WIN_1', 'WIN'), ('WIN', 'LOG'), ('WIN_1', 'LOG_1'), ('NONE', 'LOG_1'), ('NONE', 'WIN_1')):
         print('     ' + line(f'{hi} − {lo}', pairs(rows, tasks, hi, lo, 'out')))
     print()
 

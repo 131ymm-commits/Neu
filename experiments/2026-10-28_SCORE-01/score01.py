@@ -110,9 +110,14 @@ def auc(scores, labels):
     return sum((a > b) + 0.5 * (a == b) for a in pos for b in neg) / (len(pos) * len(neg))
 
 
-def cmd_metrics_half(stage, sample, export):
-    """Формат «в лучшей половине»: метка кандидата — в четвёрке лучших по правде (ничьи — по sha256); меры по 8 ответам вызова."""
+def cmd_metrics_half(stage, sample, export, labels='r1000'):
+    """Формат «в лучшей половине»: метка кандидата — в четвёрке лучших по правде (ничьи — по sha256); меры по 8 ответам вызова.
+    labels: r1000 — правда sim.truth (R = 1000, округление до 0,01; truth/<выборка>.json);
+            r4000 — четвёрка по среднему 4000 реализаций (первые 1000 — те же; truth/check_<выборка>.json, truth_check.py)."""
     tru = json.load(open(os.path.join(HERE, 'truth', f'{sample}.json')))['tasks']
+    top4000 = None
+    if labels == 'r4000':
+        top4000 = {t: set(v['top4_4000']) for t, v in json.load(open(os.path.join(HERE, 'truth', f'check_{sample}.json')))['tasks'].items()}
     rec = {}
     for ex in export.split(','):                      # несколько выгрузок через запятую (руки из разных прогонов)
         for r in map(json.loads, open(ex, encoding='utf-8')):
@@ -121,7 +126,7 @@ def cmd_metrics_half(stage, sample, export):
     rows, pts = {}, {a: [] for a in ARMS_ALL}
     for jid, r in rec.items():
         t, arm, _ = jid.split('|'); pm = perm(t); tr = tru[t]['truth']
-        order = sorted(range(8), key=lambda i: (-tr[i], hkey(t, i))); top = set(order[:4])
+        order = sorted(range(8), key=lambda i: (-tr[i], hkey(t, i))); top = set(order[:4]) if top4000 is None else top4000[t]
         ps = valid_half(r.get('result'))
         row = dict(task=t, arm=arm, valid=ps is not None, error=r.get('error'), inp=r.get('inp', 0), out=r.get('out', 0), cost=r.get('cost_usd'))
         if ps is not None:
@@ -173,8 +178,9 @@ def cmd_metrics_half(stage, sample, export):
                 pd[k] = dict(n=len(d), mean=m, sd=sd)
         paired[f'{hi}_minus_{lo}'] = pd
     os.makedirs(os.path.join(HERE, 'evals'), exist_ok=True)
-    json.dump(dict(stage=stage, sample=sample, format='half', rows=rows, summary=summ, paired_WIN_minus_LOG=paired.get('WIN_minus_LOG', {}),
-                   paired=paired), open(os.path.join(HERE, 'evals', f'{stage}.json'), 'w'), ensure_ascii=False, indent=1)
+    json.dump(dict(stage=stage, sample=sample, format='half', labels=labels, rows=rows, summary=summ,
+                   paired_WIN_minus_LOG=paired.get('WIN_minus_LOG', {}), paired=paired),
+              open(os.path.join(HERE, 'evals', f'{stage}.json'), 'w'), ensure_ascii=False, indent=1)
     for arm, s_ in summ.items():
         print(arm, {k: (round(v, 4) if isinstance(v, float) else v) for k, v in s_.items()})
     for name, pd in paired.items():
@@ -242,6 +248,12 @@ if __name__ == '__main__':
     elif c == 'truth':
         cmd_truth(sys.argv[2])
     elif c == 'metrics':
-        (cmd_metrics_half if sys.argv[5:6] == ['half'] else cmd_metrics)(*sys.argv[2:5])
+        fmt = sys.argv[5] if len(sys.argv) > 5 else 'best'
+        if fmt == 'half':
+            cmd_metrics_half(*sys.argv[2:5])
+        elif fmt == 'half4':
+            cmd_metrics_half(*sys.argv[2:5], labels='r4000')
+        else:
+            cmd_metrics(*sys.argv[2:5])
     else:
         sys.exit(__doc__)

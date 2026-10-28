@@ -15,7 +15,7 @@ from scipy import stats
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from analyze_score01 import PRED, value  # noqa: E402
+from analyze_score01 import PRED, value, weights  # noqa: E402
 
 N_TEST = dict(main=100, rep=99)
 FLOOR = 0.001
@@ -27,26 +27,18 @@ def cells(model):
 
 
 def pilot_series(rows, tasks, p):
-    m, tg = p['measure'], p['target']
+    """Значения цели одного вызова на задачу в пилоте. Без NONE — по двум повторам (|0 из пилота 1, |1 из пилота 2);
+    с NONE — NONE|0 с повторами |1 остальных рук (тот же прогон пилота 2, вперемешку по задачам)."""
+    m = p['measure']
+    w = weights(p['target'])
     ok = lambda r: r and r['valid'] and not (m == 'auc' and math.isnan(r['auc']))
+    layouts = [{a: '1' if a != 'NONE' else '0' for a in w}] if 'NONE' in w else [{a: '0' for a in w}, {a: '1' for a in w}]
     out = []
-    if tg[0] == 'pair':
-        _, hi, lo = tg
-        reps = [('0', '0'), ('1', '1')]
-        if 'NONE' in (hi, lo):
-            reps = [('0', '1') if hi == 'NONE' else ('1', '0')]          # NONE|0 с повтором другой руки |1 (один прогон)
-        for t in tasks:
-            for rh, rl in reps:
-                a, b = rows.get(f'{t}|{lo}|{rl}'), rows.get(f'{t}|{hi}|{rh}')
-                if ok(a) and ok(b):
-                    out.append(value(b, m) - value(a, m))
-    else:
-        _, arm = tg
-        for t in tasks:
-            for rep in ('0', '1'):
-                r = rows.get(f'{t}|{arm}|{rep}')
-                if ok(r):
-                    out.append(value(r, m))
+    for t in tasks:
+        for lay in layouts:
+            rs = {a: rows.get(f'{t}|{a}|{lay[a]}') for a in w}
+            if all(ok(r) for r in rs.values()):
+                out.append(sum(wa * value(rs[a], m) for a, wa in w.items()))
     return out
 
 
@@ -81,7 +73,8 @@ def main():
         out[p['id']] = dict(model=p['model'], measure=p['measure'], target=p['target'], kind=p['kind'], margin=p.get('margin'),
                             pilot_mean=mu, pilot_sd=s, pilot_n=len(x), power=pw, power_sd15=pw15, power_rep=pw_rep, alpha=a, bits=bits)
         tg = p['target']
-        what = f'{tg[1]} − {tg[2]}' if tg[0] == 'pair' else f'рука {tg[1]}'
+        what = (f'{tg[1]} − {tg[2]}' if tg[0] == 'pair' else f'рука {tg[1]}' if tg[0] == 'arm' else
+                ' '.join(f"{'+' if w > 0 else '−'} {abs(w):g}·{a}" for a, w in tg[1].items()).lstrip('+ '))
         kind = {'lt0': '< 0', 'gt0': '> 0', 'equiv': f'|·| < {p.get("margin")}'}[p['kind']]
         f = lambda v, d=3: f'{v:.{d}f}'.replace('.', ',').replace('-', '−')
         if md:

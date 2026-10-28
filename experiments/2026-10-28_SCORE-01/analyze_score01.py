@@ -30,6 +30,8 @@ PRED = []
 def value(row, m):
     if m == 'self_dec':
         return row['conf'] - row['acc']
+    if m == 'out':
+        return float(row['out'])           # выходные токены вызова (мера хода работы, не правды)
     return row[m]
 
 
@@ -37,7 +39,7 @@ def t_ci(x, level):
     n = len(x)
     m = sum(x) / n
     s = math.sqrt(sum((v - m) ** 2 for v in x) / (n - 1)) if n > 1 else float('nan')
-    h = stats.t.ppf(0.5 + level / 2, n - 1) * s / math.sqrt(n)
+    h = float(stats.t.ppf(0.5 + level / 2, n - 1)) * s / math.sqrt(n)
     return m, m - h, m + h, s
 
 
@@ -49,23 +51,25 @@ def perm_p(x, name):
     return (hits + 1) / (N_PERM + 1)
 
 
-def series(E, target, m):
+def weights(target):
+    """Цель предсказания как веса рук: ('pair', A, B) — A − B; ('arm', A) — A; ('contrast', {A: w, …}) — Σ w·A."""
+    if target[0] == 'pair':
+        return {target[1]: 1.0, target[2]: -1.0}
+    if target[0] == 'arm':
+        return {target[1]: 1.0}
+    return dict(target[1])
+
+
+def series(E, target, m, rep='0'):
+    """Значение цели по задачам; задача входит, если годны все её клетки (рука|rep)."""
     rows = E['rows']
     tasks = sorted({r['task'] for r in rows.values()})
-    if target[0] == 'pair':
-        _, hi, lo = target
-        out = []
-        for t in tasks:
-            a, b = rows.get(f'{t}|{lo}|0'), rows.get(f'{t}|{hi}|0')
-            if a and b and a['valid'] and b['valid'] and not (m == 'auc' and (math.isnan(a['auc']) or math.isnan(b['auc']))):
-                out.append(value(b, m) - value(a, m))
-        return out, len(tasks)
-    _, arm = target
+    w = weights(target)
     out = []
     for t in tasks:
-        r = rows.get(f'{t}|{arm}|0')
-        if r and r['valid'] and not (m == 'auc' and math.isnan(r['auc'])):
-            out.append(value(r, m))
+        rs = {a: rows.get(f'{t}|{a}|{rep}') for a in w}
+        if all(r and r['valid'] and not (m == 'auc' and math.isnan(r['auc'])) for r in rs.values()):
+            out.append(sum(wa * value(rs[a], m) for a, wa in w.items()))
     return out, len(tasks)
 
 
@@ -87,7 +91,7 @@ def verdict(p, E):
     else:
         out = 'подтверждено' if lo > 0 else ('обратное' if hi < 0 else 'не показано')
     return dict(outcome=out, n=len(x), n_tasks=n_tasks, mean=m, ci95=[lo, hi], sd=s,
-                p_perm_two_sided=perm_p(x, name) if p['target'][0] == 'pair' else None)
+                p_perm_two_sided=perm_p(x, name) if p['target'][0] != 'arm' else None)
 
 
 def main():
