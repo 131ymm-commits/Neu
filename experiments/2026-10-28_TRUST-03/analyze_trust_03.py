@@ -24,11 +24,12 @@ src = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'results_trust_03
 d = json.load(open(src))
 th = d['theory']; seeds = d['params']['SEEDS']; NS = len(seeds); G, WIN = d['params']['G'], d['params']['WINDOW']
 assert abs(th['myopic']['wG'] - W_MY) < 1e-4 and abs(th['farsighted']['wG'] - W_FAR) < 1e-4, 'теория не та, что в PREREG'
-FULL = NS == 10
-if FULL:
+MAIN = os.path.dirname(os.path.abspath(src)) == HERE        # основной прогон — results_trust_03.json в папке опыта
+if MAIN:
     assert seeds == E.SEEDS, 'тестовые зёрна не те'
-else:
-    print(f'внимание: зёрен {NS}, пороги PREREG заданы для 10 — вердикты ниже не в зачёт, сводные исходы не считаются')
+FULL = seeds == E.SEEDS
+if not FULL:
+    print(f'внимание: зёрна {seeds[0]}–{seeds[-1]} ({NS}) — не тестовые; вердикты ниже не в зачёт, сводные исходы не считаются')
 R = {(r['seed'], r['arm']): r for r in d['runs']}
 assert all((s, a) in R for s in seeds for a in E.ARMS), 'неполные ячейки'
 n_snap_exp = len([g for g in range(G) if (g % 10 == 0 or g == G - 1) and g >= G - WIN])
