@@ -42,7 +42,6 @@ def interval(ok):
 WB, WG = E.WB, E.WG
 wB = np.array(th['B']['w_exact']); idB = WB.identifiable(wB); scB = WB.scale(wB)
 nvB = np.array(th['B']['identifiable_naive'])
-mid1, mid2 = (idB[3] + nvB[3]) / 2, (idB[4] + nvB[4]) / 2     # середины между точной и наивной суммами пар
 b_star = th['G']['b_star']; W_REF = th['G']['w_ref']
 rows = {}
 for s in seeds:
@@ -57,6 +56,12 @@ for s in seeds:
         sd_KLUCK_B=lb['exact']['self_dec'], neff_INDEP_B=ib['neff_late'], neff_KLUCK_B=lb['neff_late'],
         acc_KELLY_B=kb['exact']['acc'], acc_INDEP_B=ib['exact']['acc'], acc_KLUCK_B=lb['exact']['acc'],
         sd_KELLY_A=R[(s, 'KELLY_A')]['exact']['self_dec'], sd_CONTEST_A=R[(s, 'CONTEST_A')]['exact']['self_dec'],
+        sd_KELLY6_A=R[(s, 'KELLY6_A')]['exact']['self_dec'],
+        rho1=float((idf[3] / idB[3]) / (np.linalg.norm(idf[1:3]) / np.linalg.norm(idB[1:3]))),
+        rho2=float((idf[4] / idB[4]) / (np.linalg.norm(idf[1:3]) / np.linalg.norm(idB[1:3]))),
+        xll_G=kg['excess_logloss_snap_mean'], ece_G=kg['ece_snap_mean'], b_sd_G=kg['b_sd_window'],
+        xll_GFIX=R[(s, 'KELLY_GFIX')]['excess_logloss_snap_mean'], sd_snap_GFIX=R[(s, 'KELLY_GFIX')]['self_dec_snap_mean'],
+        wG_GFIX=R[(s, 'KELLY_GFIX')]['w_final'][1 + E.G_IDX],
         sd_CONTEST400_A=R[(s, 'CONTEST400_A')]['exact']['self_dec'],
         wG=float(wG), wG_bayes=float(wG_bayes), b_final=kg['b_final'], sd_snap_G=kg['self_dec_snap_mean'],
         sd_snap_A=R[(s, 'KELLY_A')]['self_dec_snap_mean'], acc_G=kg['exact']['acc'],
@@ -68,9 +73,12 @@ V = {}
 c_sc = sum(0.9 <= x <= 1.2 for x in col('scale_B')); c_cal = sum(abs(x) <= 0.015 for x in col('sd_B'))
 V['R1'] = dict(ok=bool(np.mean(col('mad_B')) <= 0.25 and c_sc >= 9 and c_cal >= 9), mad=boot_ci(col('mad_B')),
                scale_in=c_sc, calibrated=c_cal, scale=boot_ci(col('scale_B')), sd=boot_ci(col('sd_B')))
-c3 = sum(rows[s]['pair1'] <= mid1 and rows[s]['pair2'] <= mid2 for s in seeds)
-V['R3'] = dict(ok=c3 >= 9, n=c3, mid1=float(mid1), mid2=float(mid2), pair1=boot_ci(col('pair1')), pair2=boot_ci(col('pair2')),
-               exact=[float(idB[3]), float(idB[4])], naive=[float(nvB[3]), float(nvB[4])])
+# R3 (после проверки по трём линзам — относительная форма): ρ_p = (сумма пары / точная) / (масштаб одиночных / точный);
+# у точной формулы ρ = 1, у наивной при любом общем множителе — naive/exact; кромка — середина между ними
+rk1, rk2 = (1 + nvB[3] / idB[3]) / 2, (1 + nvB[4] / idB[4]) / 2
+c3 = sum(rows[s]['rho1'] <= rk1 and rows[s]['rho2'] <= rk2 for s in seeds)
+V['R3'] = dict(ok=c3 >= 9, n=c3, edge1=float(rk1), edge2=float(rk2), rho1=boot_ci(col('rho1')), rho2=boot_ci(col('rho2')),
+               naive_rho=[float(nvB[3] / idB[3]), float(nvB[4] / idB[4])], pair1=boot_ci(col('pair1')), pair2=boot_ci(col('pair2')))
 c4 = sum(x <= 0.4 for x in col('w0dev_B'))
 V['R4'] = dict(ok=c4 >= 9, n=c4, w0dev=boot_ci(col('w0dev_B')))
 c5 = sum(rows[s]['sd_INDEP_B'] >= 0.015 and rows[s]['scale_INDEP_B'] >= 1.5 for s in seeds)
@@ -81,9 +89,11 @@ V['R6'] = dict(ok=bool(c6 >= 9 and 0.5 <= nratio <= 2.0), calibrated=c6, neff_ra
 gap = {a: float(np.mean([abs(rows[s][f'acc_{a}'] - rows[s]['acc_KELLY_B']) for s in seeds])) for a in ('INDEP_B', 'KLUCK_B')}
 V['R7'] = dict(ok=all(v <= 0.005 for v in gap.values()), gap=gap)
 # --- часть M: турнир и малая выборка (мир A) ---
-c_m1 = sum(rows[s]['sd_CONTEST_A'] > rows[s]['sd_KELLY_A'] for s in seeds)
-V['M1'] = dict(ok=c_m1 >= 9, n=c_m1, outcome=sign_outcome(c_m1, 9),
-               diff=boot_ci([rows[s]['sd_CONTEST_A'] - rows[s]['sd_KELLY_A'] for s in seeds]))
+c_m1 = sum(rows[s]['sd_CONTEST_A'] > rows[s]['sd_KELLY6_A'] for s in seeds)     # как T9 TRUST-01: против KELLY6
+V['M1'] = dict(ok=c_m1 >= 8, n=c_m1, outcome=sign_outcome(c_m1, 8),     # ≥ 8 из 10 — по калибровке пилота на 5 зёрнах
+               diff=boot_ci([rows[s]['sd_CONTEST_A'] - rows[s]['sd_KELLY6_A'] for s in seeds]),
+               diff_vs_kelly=boot_ci([rows[s]['sd_CONTEST_A'] - rows[s]['sd_KELLY_A'] for s in seeds]),
+               diff_kelly6_kelly=boot_ci([rows[s]['sd_KELLY6_A'] - rows[s]['sd_KELLY_A'] for s in seeds]))
 c_m2 = sum(rows[s]['sd_CONTEST400_A'] < rows[s]['sd_CONTEST_A'] for s in seeds)
 m40, m400 = float(np.mean(col('sd_CONTEST_A'))), float(np.mean(col('sd_CONTEST400_A')))
 V['M2'] = dict(ok=bool(c_m2 >= 9 and m400 <= 0.5 * m40), n=c_m2, count_outcome=sign_outcome(c_m2, 9),
@@ -93,15 +103,21 @@ V['M2'] = dict(ok=bool(c_m2 >= 9 and m400 <= 0.5 * m40), n=c_m2, count_outcome=s
 c_g1 = sum(rows[s]['wG'] <= 0.75 * W_REF and abs(rows[s]['wG'] - rows[s]['wG_bayes']) <= 0.2 for s in seeds)
 V['G1'] = dict(ok=c_g1 >= 9, n=c_g1, wG=boot_ci(col('wG')), wG_bayes=boot_ci(col('wG_bayes')), w_ref=W_REF,
                wG_star=th['G']['wG_star'], share_of_honest=float(np.mean(col('wG')) / W_REF))
-c_g2 = sum(abs(x - b_star) <= 0.05 for x in col('b_final'))
-V['G2'] = dict(ok=c_g2 >= 9, n=c_g2, b_final=boot_ci(col('b_final')), b_star=b_star)
-c_g3 = sum(abs(x) <= 0.015 for x in col('sd_snap_G'))
-V['G3'] = dict(ok=c_g3 >= 9, n=c_g3, sd_snap=boot_ci(col('sd_snap_G')), acc=boot_ci(col('acc_G')),
-               acc_bayes=boot_ci(col('acc_G_bayes')), mad=boot_ci(col('mad_G')))
-c_g4 = sum(rows[s]['sd_snap_G'] > rows[s]['sd_snap_A'] for s in seeds)
+# G2 — описательно (после проверки по трём линзам: b_final линейно зависит от w̄_G, это та же проверка, что G1)
+DESC = dict(b_final=boot_ci(col('b_final')), b_star=b_star, b_sd_window=boot_ci(col('b_sd_G')),
+            n_b_within_005=int(sum(abs(x - b_star) <= 0.05 for x in col('b_final'))),
+            wG_GFIX=boot_ci(col('wG_GFIX')), sd_snap_G=boot_ci(col('sd_snap_G')), sd_snap_GFIX=boot_ci(col('sd_snap_GFIX')),
+            ece_G=boot_ci(col('ece_G')), acc_G=boot_ci(col('acc_G')), acc_G_bayes=boot_ci(col('acc_G_bayes')),
+            mad_G=boot_ci(col('mad_G')))
+# G3 — избыток лог-потери над байесовской формулой при своём b, среднее по снимкам окна
+c_g3 = sum(x <= 0.012 for x in col('xll_G'))
+V['G3'] = dict(ok=c_g3 >= 9, n=c_g3, excess_logloss=boot_ci(col('xll_G')))
+# G4 (разведка): отклик источника на репутацию даёт лёгкую самоуверенность — KELLY_G против KELLY_GFIX (тот же мир, b = b*)
+c_g4 = sum(rows[s]['sd_snap_G'] > rows[s]['sd_snap_GFIX'] for s in seeds)
 V['G4'] = dict(ok=c_g4 >= 7, n=c_g4, outcome=sign_outcome(c_g4, 7),
-               diff=boot_ci([rows[s]['sd_snap_G'] - rows[s]['sd_snap_A'] for s in seeds]))
-for k in ('R1', 'R3', 'R4', 'R6', 'R7', 'G1', 'G2', 'G3'):
+               diff=boot_ci([rows[s]['sd_snap_G'] - rows[s]['sd_snap_GFIX'] for s in seeds]),
+               diff_excess_logloss=boot_ci([rows[s]['xll_G'] - rows[s]['xll_GFIX'] for s in seeds]))
+for k in ('R1', 'R3', 'R4', 'R6', 'R7', 'G1', 'G3'):
     V[k]['outcome'] = interval(V[k]['ok'])
 V['M2']['outcome'] = interval(V['M2']['ok'])
 # --- сводные исходы (PREREG §4) ---
@@ -118,14 +134,14 @@ elif m400 >= 0.8 * m40 or c_m2 <= 5:
     tour = 'опровергнуто'
 else:
     tour = 'не подтверждено'
-if V['G1']['ok'] and V['G2']['ok'] and V['G3']['ok']:
+if V['G1']['ok'] and V['G3']['ok']:
     goodhart = 'подтверждено'
-elif sum(abs(x) > 0.02 for x in col('sd_snap_G')) >= 5 or sum(x > 0.9 * W_REF for x in col('wG')) >= 5:
+elif sum(x > 0.02 for x in col('xll_G')) >= 5 or sum(x > 0.9 * W_REF for x in col('wG')) >= 5:
     goodhart = 'опровергнуто'
 else:
     goodhart = 'не подтверждено'
 summary = dict(thesis_risk_structure_B=thesis, tournament_small_sample=tour, interested_source_withstood=goodhart)
-out = dict(verdicts=V, summary=summary, rows={str(s): rows[s] for s in seeds}, n_seeds=NS,
+out = dict(verdicts=V, summary=summary, descriptive_G=DESC, rows={str(s): rows[s] for s in seeds}, n_seeds=NS,
            dry=('dry' in os.path.dirname(os.path.abspath(src)) or 'pilot' in os.path.dirname(os.path.abspath(src))),
            theory={k: dict(max_abs_ml_minus_exact=th[k]['max_abs_ml_minus_exact'], exact_acc=th[k]['exact_exact']['acc'],
                            naive_self_dec=th[k]['exact_naive']['self_dec'], naive_acc=th[k]['exact_naive']['acc'])

@@ -14,7 +14,8 @@ metrics, _ece импортируются без изменений). Мир об
   G — мир A, но источник 0,85 — с интересом: врёт в пользу W = 1 с вероятностью b_t = B_MAX · clip(w̄_G / W_REF, 0, 1),
       где w̄_G — средний вес популяции на нём (репутация), W_REF = logit 0,85 — вес честного источника. Чем больше ему
       верят, тем больше он врёт. Ответ источника — на среднее популяции перед каждым поколением.
-Руки: KELLY_A, CONTEST_A, CONTEST400_A (усечение при 400 эпизодах за жизнь), KELLY_G, KELLY_B, INDEP_B, KLUCK_B.
+Руки: KELLY_A, CONTEST_A, CONTEST400_A (усечение при 400 эпизодах за жизнь), KELLY_G, KELLY_B, INDEP_B, KLUCK_B;
+после проверки по трём линзам — KELLY6_A (контроль силы отбора) и KELLY_GFIX (мир G с постоянной долей лжи b*).
 Оценка — точным перебором 2 × 64 состояний мира (основная) и на 200 000 эпизодах (второй способ).
 
 Запуск: python3 exp_trust_02.py [--check | --pilot | --dry]. Результаты: results_trust_02.json. PREREG: PREREG-TRUST-02.md.
@@ -35,7 +36,7 @@ N_POP, N_PAR, G, SIG, WINDOW = T1.N_POP, T1.N_PAR, T1.G, T1.SIG, T1.WINDOW   # 4
 SHIFT = 0.10
 B_MAX = 0.6
 SEEDS = list(range(400, 410))
-PILOT_SEED = 997
+PILOT_SEEDS = [993, 994, 995, 996, 997]    # после проверки по трём линзам: 5 зёрен вместо одного (997 — первый пилот)
 DRY_SEEDS = [980, 981]
 lg = lambda p: float(np.log(p / (1 - p)))
 
@@ -171,7 +172,11 @@ ARMS = {'KELLY_A': dict(world='A', payoff='KELLY', L=40, stream=0),
         'KELLY_G': dict(world='G', payoff='KELLY', L=40, stream=3),
         'KELLY_B': dict(world='B', payoff='KELLY', L=40, stream=4),
         'INDEP_B': dict(world='B', payoff='INDEP', L=40, stream=5),
-        'KLUCK_B': dict(world='B', payoff='KLUCK', L=40, stream=6)}
+        'KLUCK_B': dict(world='B', payoff='KLUCK', L=40, stream=6),
+        # добавлены после проверки по трём линзам (28.10): KELLY6_A — контроль силы отбора, как в T9 TRUST-01;
+        # KELLY_GFIX — мир G с постоянной долей лжи b* (источник на репутацию не отвечает): контроль к KELLY_G
+        'KELLY6_A': dict(world='A', payoff='KELLY6', L=40, stream=7),
+        'KELLY_GFIX': dict(world='G', payoff='KELLY', L=40, stream=8, b_fixed=True)}
 
 
 def b_of(wbar):
@@ -191,6 +196,9 @@ def fixed_point():
     return b, WG.with_b(b).exact_weights()
 
 
+B_STAR, _W_STAR = fixed_point()
+
+
 def evolve2(seed, arm, gens=G, track_every=10, rng=None):
     """Эволюция, как T1.evolve, в обобщённом мире. rng можно передать (проверка равенства с TRUST-01)."""
     spec = ARMS[arm] if isinstance(arm, str) else arm
@@ -198,9 +206,13 @@ def evolve2(seed, arm, gens=G, track_every=10, rng=None):
     rng = rng if rng is not None else np.random.default_rng(seed * 100 + spec['stream'])
     pop = rng.normal(0, 0.01, (N_POP, 7))
     adaptive = world.adaptive is not None
+    fixed = bool(spec.get('b_fixed'))
+    respond = (lambda wm: B_STAR) if fixed else (lambda wm: b_of(wm[1 + G_IDX]))
+    w_bayes0 = None if adaptive else world.exact_weights()
+    ll_bayes0 = None if adaptive else world.exact_metrics(w_bayes0)['logloss']
     traj, neff, sdF = [], [], []
     for g in range(gens):
-        b = b_of(pop.mean(0)[1 + G_IDX]) if adaptive else 0.0
+        b = respond(pop.mean(0)) if adaptive else 0.0
         wd = world.with_b(b)
         if payoff == 'INDEP':
             X, W = wd.episodes(rng, N_POP * L)
@@ -217,6 +229,8 @@ def evolve2(seed, arm, gens=G, track_every=10, rng=None):
                 Xi, Wi = wd.episodes(rng, N_POP * L)
                 zi = (Xi @ pop.mean(0)).reshape(N_POP, L)
                 logF = logF + T1.log_true(zi, Wi.reshape(N_POP, L)).sum(1)
+            if payoff == 'KELLY6':
+                logF = 6.0 * logF
         sdF.append(float(logF.std()))
         if payoff == 'CONTEST':
             order = np.lexsort((rng.random(N_POP), -logF))
@@ -230,10 +244,13 @@ def evolve2(seed, arm, gens=G, track_every=10, rng=None):
             pop = pop[idx] + rng.normal(0, SIG, (N_POP, 7))
         if g % track_every == 0 or g == gens - 1:
             wm = pop.mean(0)
-            bn = b_of(wm[1 + G_IDX]) if adaptive else 0.0      # мир, который встретит это поколение
-            m = world.with_b(bn).exact_metrics(wm)
+            bn = respond(wm) if adaptive else 0.0               # мир, который встретит это поколение
+            wb = world.with_b(bn)
+            m = wb.exact_metrics(wm)
+            llb = wb.exact_metrics(wb.exact_weights())['logloss'] if adaptive else ll_bayes0
             traj.append(dict(g=g, w=wm.round(4).tolist(), b=round(bn, 5), spread=float(pop.std(0).mean()),
-                             acc=m['acc'], conf=m['conf'], self_dec=m['self_dec'], logloss=m['logloss']))
+                             acc=m['acc'], conf=m['conf'], self_dec=m['self_dec'], logloss=m['logloss'],
+                             logloss_bayes=llb, ece=m['ece']))
     last = [t for t in traj if t['g'] >= gens - WINDOW]
     w_final = np.mean([t['w'] for t in last], 0)
     b_final = float(np.mean([t['b'] for t in last]))
@@ -245,6 +262,8 @@ def evolve2(seed, arm, gens=G, track_every=10, rng=None):
                 b_final=b_final, exact=wf.exact_metrics(w_final), test=T1.metrics(w_final, Xt, Wt),
                 exact_shifted=None if adaptive else world.exact_metrics(w_final, SHIFT),
                 self_dec_snap_mean=float(np.mean([t['self_dec'] for t in last])),
+                excess_logloss_snap_mean=float(np.mean([t['logloss'] - t['logloss_bayes'] for t in last])),
+                ece_snap_mean=float(np.mean([t['ece'] for t in last])), b_sd_window=float(np.std([t['b'] for t in last])),
                 neff_late=float(np.median(neff[late])), sdF_late=float(np.median(sdF[late])), traj=traj)
 
 
@@ -289,7 +308,7 @@ def check():
     for sh in (0.0, SHIFT):
         X1, W1 = WA.episodes(np.random.default_rng(7), 5000, sh); X2, W2 = T1.episodes(np.random.default_rng(7), 5000, sh)
         assert np.array_equal(X1, X2) and np.array_equal(W1, W2)
-    for payoff in ('KELLY', 'INDEP', 'KLUCK', 'CONTEST', 'ACC'):
+    for payoff in ('KELLY', 'INDEP', 'KLUCK', 'CONTEST', 'ACC', 'KELLY6'):
         r1 = T1.evolve(123, payoff, gens=60)
         r2 = evolve2(123, dict(world='A', payoff=payoff, L=T1.L_EP, stream=-1), gens=60,
                      rng=np.random.default_rng(123 * 10 + T1.ARMS.index(payoff)))
@@ -303,7 +322,7 @@ def check():
     X, W = WG.with_b(0.4).episodes(np.random.default_rng(3), 400_000)
     emp = float((X[W == 0, 1 + G_IDX] == 1).mean()); want = 0.15 + 0.85 * 0.4
     assert abs(emp - want) < 0.005, (emp, want)
-    print('проверка: мир A и evolve2 совпадают с TRUST-01 (вероятности, веса, метрики, эпизоды, траектории 5 выплат); '
+    print('проверка: мир A и evolve2 совпадают с TRUST-01 (вероятности, веса, метрики, эпизоды, траектории 6 выплат); '
           f'мир G линеен, частота лжи {emp:.4f} при ожидаемой {want:.4f}')
 
 
@@ -327,7 +346,7 @@ if __name__ == '__main__':
         check(); sys.exit(0)
     if '--pilot' in sys.argv:
         os.makedirs(os.path.join(HERE, 'pilot'), exist_ok=True)
-        th, runs, sec = run([PILOT_SEED], os.path.join(HERE, 'pilot'))
+        th, runs, sec = run(PILOT_SEEDS, os.path.join(HERE, 'pilot'))
         print(f'пилот: {sec:.0f} с')
         sys.exit(0)
     dry = '--dry' in sys.argv
