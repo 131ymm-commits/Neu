@@ -24,6 +24,8 @@ import sim  # noqa: E402  (симулятор WH SELECT-01)
 import prompts_score as P  # noqa: E402
 
 ARMS = ('LOG', 'WIN')
+ARMS_ALL = ('LOG', 'WIN', 'NONE')          # NONE — без строки о правиле оплаты (добавлена после микропилота 1, только формат half)
+PAIRS = (('WIN', 'LOG'), ('NONE', 'LOG'), ('WIN', 'NONE'))   # разность «первая − вторая» по задачам
 P_FLOOR = 1e-6
 
 
@@ -58,19 +60,22 @@ def argmax_tie(t, xs):
     return min((i for i, x in enumerate(xs) if x == m), key=lambda i: hkey(t, i))
 
 
-def cmd_jobs(stage, sample, n=None, fmt='best'):
+def cmd_jobs(stage, sample, n=None, fmt='best', arms=None, rep='0'):
+    """arms — через запятую (по умолчанию LOG,WIN); rep — номер повтора в id задания (по умолчанию 0)."""
     os.makedirs(os.path.join(HERE, 'run'), exist_ok=True)
-    ts = sample_tasks(sample)[:int(n) if n else None]
+    ts = sample_tasks(sample)[:int(n) if n and n != 'all' else None]
+    arms = tuple(arms.split(',')) if arms else ARMS
+    assert all(a in ARMS_ALL for a in arms) and (fmt == 'half' or 'NONE' not in arms), arms
     path = os.path.join(HERE, 'run', f'{stage}_jobs.jsonl')
     with open(path, 'w', encoding='utf-8') as fh:
         for t in ts:
             tk, pl, pm = task(t), pool(t), perm(t)
             shown = [pl[j] for j in pm]
-            for arm in ARMS:
+            for arm in arms:
                 pr = (P.prompt if fmt == 'best' else P.prompt_half)(arm, sim.RULES['WH'](tk), shown)
-                fh.write(json.dumps(dict(task=t, id=f'{t}|{arm}|0', arm=arm, prompt=pr, schema=P.SCHEMA if fmt == 'best' else P.SCHEMA_H),
+                fh.write(json.dumps(dict(task=t, id=f'{t}|{arm}|{rep}', arm=arm, prompt=pr, schema=P.SCHEMA if fmt == 'best' else P.SCHEMA_H),
                                     ensure_ascii=False) + '\n')
-    print(path, len(ts) * len(ARMS), 'заданий;', len(ts), 'задач;', 'хеши промпта:', P.hashes())
+    print(path, len(ts) * len(arms), 'заданий;', len(ts), 'задач;', 'руки', arms, 'хеши промпта:', P.hashes())
 
 
 def cmd_truth(sample):
@@ -108,8 +113,12 @@ def auc(scores, labels):
 def cmd_metrics_half(stage, sample, export):
     """Формат «в лучшей половине»: метка кандидата — в четвёрке лучших по правде (ничьи — по sha256); меры по 8 ответам вызова."""
     tru = json.load(open(os.path.join(HERE, 'truth', f'{sample}.json')))['tasks']
-    rec = {r['id']: r for r in map(json.loads, open(export, encoding='utf-8'))}
-    rows, pts = {}, {a: [] for a in ARMS}
+    rec = {}
+    for ex in export.split(','):                      # несколько выгрузок через запятую (руки из разных прогонов)
+        for r in map(json.loads, open(ex, encoding='utf-8')):
+            assert r['id'] not in rec, f'повтор id {r["id"]} в выгрузках'
+            rec[r['id']] = r
+    rows, pts = {}, {a: [] for a in ARMS_ALL}
     for jid, r in rec.items():
         t, arm, _ = jid.split('|'); pm = perm(t); tr = tru[t]['truth']
         order = sorted(range(8), key=lambda i: (-tr[i], hkey(t, i))); top = set(order[:4])
@@ -125,10 +134,13 @@ def cmd_metrics_half(stage, sample, export):
             conf = [max(x, 1 - x) for x in pp]
             row.update(p=pp, labels=lab, logloss=sum(ll) / 8, brier=sum((x - l) ** 2 for x, l in zip(pp, lab)) / 8, acc=sum(acc) / 8,
                        conf=sum(conf) / 8, sum_p=sum(pp), auc=auc(pp, lab))
+            # ИОИ вызова (experiments/truth.py): незнание 1 − T + самообман max(0, C − T), T — точность, C — уверенность
+            row.update(ignorance=1 - row['acc'], deception=max(0.0, row['conf'] - row['acc']))
+            row['ioi'] = row['ignorance'] + row['deception']
             pts[arm] += [(x, l, c, a) for x, l, c, a in zip(pp, lab, conf, acc)]
         rows[jid] = row
     summ = {}
-    for arm in ARMS:
+    for arm in ARMS_ALL:
         v = [x for x in rows.values() if x['arm'] == arm and x['valid']]
         if not v:
             continue
@@ -141,25 +153,32 @@ def cmd_metrics_half(stage, sample, export):
                          brier=mean('brier'), acc=mean('acc'), conf=mean('conf'), self_dec=mean('conf') - mean('acc'),
                          auc_pooled=auc([x for x, *_ in P_], [l for _, l, *_ in P_]), ece=ece, sum_p=mean('sum_p'),
                          n_half=sum(1 for x, *_ in P_ if x == 0.5), inp=mean('inp'), out=mean('out'),
+                         ioi=mean('ioi'), ignorance=mean('ignorance'), deception=mean('deception'),
                          cost=(sum(x['cost'] or 0 for x in v) / len(v)) if any(x['cost'] for x in v) else None)
-    pair = {}
-    for t in sorted({x['task'] for x in rows.values()}):
-        a, b = rows.get(f'{t}|LOG|0'), rows.get(f'{t}|WIN|0')
-        if a and b and a['valid'] and b['valid']:
-            pair[t] = {k: b[k] - a[k] for k in ('logloss', 'acc', 'conf', 'brier')}
-            pair[t]['self_dec'] = (b['conf'] - b['acc']) - (a['conf'] - a['acc'])
-    pd = {}
-    for k in ('logloss', 'acc', 'conf', 'brier', 'self_dec'):
-        d = [x[k] for x in pair.values()]
-        if len(d) > 1:
-            m = sum(d) / len(d); sd = math.sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
-            pd[k] = dict(n=len(d), mean=m, sd=sd)
+    paired = {}
+    for hi, lo in PAIRS:
+        if hi not in summ or lo not in summ:
+            continue
+        pair = {}
+        for t in sorted({x['task'] for x in rows.values()}):
+            a, b = rows.get(f'{t}|{lo}|0'), rows.get(f'{t}|{hi}|0')
+            if a and b and a['valid'] and b['valid']:
+                pair[t] = {k: b[k] - a[k] for k in ('logloss', 'acc', 'conf', 'brier', 'ioi')}
+                pair[t]['self_dec'] = (b['conf'] - b['acc']) - (a['conf'] - a['acc'])
+        pd = {}
+        for k in ('logloss', 'acc', 'conf', 'brier', 'self_dec', 'ioi'):
+            d = [x[k] for x in pair.values()]
+            if len(d) > 1:
+                m = sum(d) / len(d); sd = math.sqrt(sum((x - m) ** 2 for x in d) / (len(d) - 1))
+                pd[k] = dict(n=len(d), mean=m, sd=sd)
+        paired[f'{hi}_minus_{lo}'] = pd
     os.makedirs(os.path.join(HERE, 'evals'), exist_ok=True)
-    json.dump(dict(stage=stage, sample=sample, format='half', rows=rows, summary=summ, paired_WIN_minus_LOG=pd),
-              open(os.path.join(HERE, 'evals', f'{stage}.json'), 'w'), ensure_ascii=False, indent=1)
+    json.dump(dict(stage=stage, sample=sample, format='half', rows=rows, summary=summ, paired_WIN_minus_LOG=paired.get('WIN_minus_LOG', {}),
+                   paired=paired), open(os.path.join(HERE, 'evals', f'{stage}.json'), 'w'), ensure_ascii=False, indent=1)
     for arm, s_ in summ.items():
         print(arm, {k: (round(v, 4) if isinstance(v, float) else v) for k, v in s_.items()})
-    print('WIN − LOG по задачам:', {k: {kk: round(vv, 4) if isinstance(vv, float) else vv for kk, vv in v.items()} for k, v in pd.items()})
+    for name, pd in paired.items():
+        print(f'{name} по задачам:', {k: {kk: round(vv, 4) if isinstance(vv, float) else vv for kk, vv in v.items()} for k, v in pd.items()})
 
 
 def cmd_metrics(stage, sample, export):

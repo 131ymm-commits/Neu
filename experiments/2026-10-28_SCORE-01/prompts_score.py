@@ -50,7 +50,13 @@ SCHEMA_H = {"type": "object", "properties": {"p": {"type": "array", "minItems": 
                                                     "items": {"type": "number", "minimum": 0, "maximum": 1}}}, "required": ["p"]}
 
 
+# --- рука NONE (после микропилота 1): тот же промпт без строки о правиле оплаты — базовая линия «правило не объявлено» ---
+ROLE_H_NONE = ROLE_H.replace('\n{rule}', '')
+
+
 def prompt_half(arm, rules, shown):
+    if arm == 'NONE':
+        return ROLE_H_NONE.format(k=len(shown), rules=rules, cands=cands_text(shown))
     return ROLE_H.format(k=len(shown), rule=RULES_HALF[arm], rules=rules, cands=cands_text(shown))
 
 
@@ -65,7 +71,8 @@ def prompt(arm, rules, shown):
 def hashes():
     h = lambda s: hashlib.sha256(s.encode()).hexdigest()
     return dict(ROLE_P=h(ROLE_P), LOG=h(RULES_PAY['LOG']), WIN=h(RULES_PAY['WIN']), schema=h(json.dumps(SCHEMA, sort_keys=True)),
-                ROLE_H=h(ROLE_H), LOG_H=h(RULES_HALF['LOG']), WIN_H=h(RULES_HALF['WIN']), schema_H=h(json.dumps(SCHEMA_H, sort_keys=True)))
+                ROLE_H=h(ROLE_H), LOG_H=h(RULES_HALF['LOG']), WIN_H=h(RULES_HALF['WIN']), schema_H=h(json.dumps(SCHEMA_H, sort_keys=True)),
+                ROLE_H_NONE=h(ROLE_H_NONE))
 
 
 if __name__ == '__main__' and sys.argv[1:2] == ['hash']:
