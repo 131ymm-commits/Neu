@@ -23,6 +23,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 MEASURES = ('acc', 'conf', 'self_dec', 'brier', 'logloss', 'auc', 'ioi', 'ignorance', 'deception')
 N_PERM = 100_000
 MIN_VALID_SHARE = 0.9
+REPS = dict(opus=('0',), haiku=('0', '1'))   # вызовов на клетку: Opus — один, Haiku — два (шум одного вызова Haiku велик, PILOT2.md)
 
 # --- предсказания: замораживаются в PREREG ---
 # kind: 'lt0' — разность (или величина) < 0; 'gt0' — > 0; 'equiv' — |разность| < margin (TOST, 90 %).
@@ -55,15 +56,40 @@ PRED = [
     P(id='OE3', model='opus', measure='auc', target=RULE, kind='gt0', comp=None, expect=0.45,
       text='разведка: AUC (LOG + WIN)/2 − NONE > 0'),
 ]
-PRED_HAIKU = []          # заполняется после микропилота 2 Haiku
+RULE_NEG = ('contrast', {'LOG': 0.5, 'WIN': 0.5, 'NONE': -1.0})     # та же цель; у Haiku направление по пилоту — обратное
+PRED_HAIKU = [
+    P(id='H1', model='haiku', measure='self_dec', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_haiku', expect=0.65,
+      text='самообман WIN − LOG в пределах ±0,1'),
+    P(id='H2', model='haiku', measure='acc', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_haiku', expect=0.55,
+      text='точность WIN − LOG в пределах ±0,1'),
+    P(id='H3', model='haiku', measure='brier', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.05, comp='SA_haiku', expect=0.85,
+      text='Брайер WIN − LOG в пределах ±0,05'),
+    P(id='H4', model='haiku', measure='self_dec', target=('arm', 'LOG'), kind='gt0', comp='SB_haiku', expect=0.9,
+      text='самообман LOG > 0'),
+    P(id='H5', model='haiku', measure='self_dec', target=('arm', 'WIN'), kind='gt0', comp='SB_haiku', expect=0.85,
+      text='самообман WIN > 0'),
+    P(id='H6', model='haiku', measure='self_dec', target=('arm', 'NONE'), kind='gt0', comp='SB_haiku', expect=0.45,
+      text='самообман NONE > 0'),
+    P(id='H7', model='haiku', measure='acc', target=RULE_NEG, kind='lt0', comp='SC_haiku', expect=0.5,
+      text='точность (LOG + WIN)/2 − NONE < 0'),
+    P(id='H8', model='haiku', measure='out', target=RULE_NEG, kind='lt0', comp='SD_haiku', expect=0.6,
+      text='выходные токены (LOG + WIN)/2 − NONE < 0'),
+    P(id='HE1', model='haiku', measure='self_dec', target=('contrast', {'NONE': 1.0, 'LOG': -0.5, 'WIN': -0.5}), kind='lt0', comp=None,
+      expect=0.45, text='разведка: самообман NONE − (LOG + WIN)/2 < 0'),
+    P(id='HE2', model='haiku', measure='auc', target=RULE_NEG, kind='lt0', comp=None, expect=0.35,
+      text='разведка: AUC (LOG + WIN)/2 − NONE < 0'),
+]
 PRED += PRED_HAIKU
 # сводные: части — по comp; ESTABLISH — можно ли назвать «установлено» при подтверждении в обеих выборках
 ESTABLISH = dict(SA=True, SB=True, SC=False, SD=False)
+_SA = 'тип объявленного правила (LOG или WIN) не меняет самообман и точность оценщика больше чем на 0,1 и Брайер больше чем на 0,05'
+_SB = 'самообман оценщика (уверенность выше точности) есть в каждой руке, и при объявленном правиле, и без него'
 COMP_TEXT = dict(
-    SA='тип объявленного правила (LOG или WIN) не меняет самообман и точность оценщика больше чем на 0,1 и Брайер больше чем на 0,05',
-    SB='самообман оценщика (уверенность выше точности) есть в каждой руке, и при объявленном правиле, и без него',
-    SC='объявление правила (любого из двух) повышает точность оценщика по сравнению с промптом без правила',
-    SD='объявление правила (любого из двух) удлиняет рассуждение по сравнению с промптом без правила')
+    SA_opus=_SA, SA_haiku=_SA, SB_opus=_SB, SB_haiku=_SB,
+    SC_opus='объявление правила (среднее LOG и WIN) повышает точность оценщика по сравнению с промптом без правила',
+    SC_haiku='объявление правила (среднее LOG и WIN) понижает точность оценщика по сравнению с промптом без правила',
+    SD_opus='объявление правила (среднее LOG и WIN) удлиняет рассуждение (выходные токены) по сравнению с промптом без правила',
+    SD_haiku='объявление правила (среднее LOG и WIN) укорачивает рассуждение (выходные токены) по сравнению с промптом без правила')
 
 
 def value(row, m):
@@ -99,21 +125,27 @@ def weights(target):
     return dict(target[1])
 
 
-def series(E, target, m, rep='0'):
-    """Значение цели по задачам; задача входит, если годны все её клетки (рука|rep)."""
+def series(E, target, m, reps=('0',)):
+    """Значение цели по задачам. Величина руки в задаче — среднее по годным вызовам повторов reps (у Opus один вызов,
+    у Haiku два); задача входит, если у каждой руки цели есть хотя бы один годный вызов."""
     rows = E['rows']
     tasks = sorted({r['task'] for r in rows.values()})
     w = weights(target)
+    ok = lambda r: r is not None and r['valid'] and not (m == 'auc' and math.isnan(r['auc']))
     out = []
     for t in tasks:
-        rs = {a: rows.get(f'{t}|{a}|{rep}') for a in w}
-        if all(r and r['valid'] and not (m == 'auc' and math.isnan(r['auc'])) for r in rs.values()):
-            out.append(sum(wa * value(rs[a], m) for a, wa in w.items()))
+        vals = {}
+        for a in w:
+            v = [value(rows[f'{t}|{a}|{rp}'], m) for rp in reps if ok(rows.get(f'{t}|{a}|{rp}'))]
+            if v:
+                vals[a] = sum(v) / len(v)
+        if len(vals) == len(w):
+            out.append(sum(wa * vals[a] for a, wa in w.items()))
     return out, len(tasks)
 
 
 def verdict(p, E):
-    x, n_tasks = series(E, p['target'], p['measure'])
+    x, n_tasks = series(E, p['target'], p['measure'], REPS[p['model']])
     name = f"{p['id']}|{E['stage']}"
     if len(x) < MIN_VALID_SHARE * n_tasks or len(x) < 3:
         return dict(outcome='не показано (потери)', n=len(x), n_tasks=n_tasks)

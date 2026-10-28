@@ -5,7 +5,7 @@ LOG|0–WIN|0 (пилот 1) и LOG|1–WIN|1 (пилот 2); NONE — с пов
 Мощность — нормальное приближение с t-квантилем при n задач теста: направленное по 95 % интервалу,
 эквивалентность (TOST) по 90 % интервалу внутри ±δ. Ложный уровень — на границе: 0,025 у направленного
 (истинное среднее 0), 0,05 у эквивалентности (истинная разность ±δ). Вес — log₂(мощность / ложный уровень), пол 0,001.
-  python3 power_score01.py [--md]   → pilot_power.json и таблица"""
+  python3 power_score01.py [--md] [--single]   → pilot_power.json (или pilot_power_single.json) и таблица"""
 import json
 import math
 import os
@@ -15,9 +15,10 @@ from scipy import stats
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from analyze_score01 import PRED, value, weights  # noqa: E402
+from analyze_score01 import PRED, REPS, value, weights  # noqa: E402
 
 N_TEST = dict(main=100, rep=99)
+SINGLE = '--single' in sys.argv     # как если бы у всех моделей был один вызов на клетку (для записи в PREREG, почему у Haiku два)
 FLOOR = 0.001
 
 
@@ -27,13 +28,26 @@ def cells(model):
 
 
 def pilot_series(rows, tasks, p):
-    """Значения цели одного вызова на задачу в пилоте. Без NONE — по двум повторам (|0 из пилота 1, |1 из пилота 2);
-    с NONE — NONE|0 с повторами |1 остальных рук (тот же прогон пилота 2, вперемешку по задачам)."""
+    """Значения цели в пилоте в том виде, в каком их даст тест.
+    Один вызов на клетку (Opus): без NONE — по двум повторам (|0 из пилота 1, |1 из пилота 2); с NONE — NONE|0 с повторами |1
+    остальных рук (тот же прогон пилота 2, вперемешку по задачам).
+    Два вызова на клетку (Haiku): величина руки в задаче — среднее по повторам пилота (у LOG и WIN — два, у NONE — один,
+    поэтому разброс контрастов с NONE завышен — оценка мощности осторожная); одно значение на задачу."""
     m = p['measure']
     w = weights(p['target'])
     ok = lambda r: r and r['valid'] and not (m == 'auc' and math.isnan(r['auc']))
-    layouts = [{a: '1' if a != 'NONE' else '0' for a in w}] if 'NONE' in w else [{a: '0' for a in w}, {a: '1' for a in w}]
     out = []
+    if len(REPS[p['model']]) > 1 and not SINGLE:
+        for t in tasks:
+            vals = {}
+            for a in w:
+                v = [value(rows[f'{t}|{a}|{rp}'], m) for rp in ('0', '1') if ok(rows.get(f'{t}|{a}|{rp}'))]
+                if v:
+                    vals[a] = sum(v) / len(v)
+            if len(vals) == len(w):
+                out.append(sum(wa * vals[a] for a, wa in w.items()))
+        return out
+    layouts = [{a: '1' if a != 'NONE' else '0' for a in w}] if 'NONE' in w else [{a: '0' for a in w}, {a: '1' for a in w}]
     for t in tasks:
         for lay in layouts:
             rs = {a: rows.get(f'{t}|{a}|{lay[a]}') for a in w}
@@ -73,15 +87,16 @@ def main():
         out[p['id']] = dict(model=p['model'], measure=p['measure'], target=p['target'], kind=p['kind'], margin=p.get('margin'),
                             pilot_mean=mu, pilot_sd=s, pilot_n=len(x), power=pw, power_sd15=pw15, power_rep=pw_rep, alpha=a, bits=bits)
         tg = p['target']
-        what = (f'{tg[1]} − {tg[2]}' if tg[0] == 'pair' else f'рука {tg[1]}' if tg[0] == 'arm' else
-                ' '.join(f"{'+' if w > 0 else '−'} {abs(w):g}·{a}" for a, w in tg[1].items()).lstrip('+ '))
-        kind = {'lt0': '< 0', 'gt0': '> 0', 'equiv': f'|·| < {p.get("margin")}'}[p['kind']]
         f = lambda v, d=3: f'{v:.{d}f}'.replace('.', ',').replace('-', '−')
+        what = (f'{tg[1]} − {tg[2]}' if tg[0] == 'pair' else f'рука {tg[1]}' if tg[0] == 'arm' else
+                ' '.join(f"{'+' if w > 0 else '−'} {f(abs(w), 1) if abs(w) != 1 else ''}{'·' if abs(w) != 1 else ''}{a}" for a, w in tg[1].items()).lstrip('+ '))
+        kind = {'lt0': '< 0', 'gt0': '> 0', 'equiv': f'\\|·\\| < {f(p.get("margin") or 0, 2)}'}[p['kind']]
         if md:
-            print(f"| {p['id']} | {p['model']} | {p['measure']} | {what} | {kind} | {f(mu)} ({f(s)}; {len(x)}) | {f(pw)} | {f(pw15)} | {f(a)} | {f(bits, 1)} |")
+            d = 0 if p['measure'] == 'out' else 3
+            print(f"| {p['id']} | {p['model']} | {p['measure']} | {what} | {kind} | {f(mu, d)} ({f(s, d)}; {len(x)}) | {f(pw)} | {f(pw15)} | {f(a)} | {f(bits, 1)} |")
         else:
             print(p['id'], out[p['id']])
-    json.dump(out, open(os.path.join(HERE, 'pilot_power.json'), 'w'), ensure_ascii=False, indent=1)
+    json.dump(out, open(os.path.join(HERE, 'pilot_power_single.json' if SINGLE else 'pilot_power.json'), 'w'), ensure_ascii=False, indent=1)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,419 @@
+{
+ "O1": {
+  "model": "opus",
+  "measure": "self_dec",
+  "target": [
+   "pair",
+   "WIN",
+   "LOG"
+  ],
+  "kind": "equiv",
+  "margin": 0.1,
+  "pilot_mean": 0.009406249999999986,
+  "pilot_sd": 0.2364518008529488,
+  "pilot_n": 40,
+  "power": 0.9835286014647147,
+  "power_sd15": 0.7371194248460384,
+  "power_rep": 0.9826627324614781,
+  "alpha": 0.05,
+  "bits": 4.297967007350093
+ },
+ "O2": {
+  "model": "opus",
+  "measure": "acc",
+  "target": [
+   "pair",
+   "WIN",
+   "LOG"
+  ],
+  "kind": "equiv",
+  "margin": 0.1,
+  "pilot_mean": -0.0234375,
+  "pilot_sd": 0.2258741477216336,
+  "pilot_n": 40,
+  "power": 0.9580438768302741,
+  "power_sd15": 0.7018381613824334,
+  "power_rep": 0.9564784504131381,
+  "alpha": 0.05,
+  "bits": 4.2600917305291865
+ },
+ "O3": {
+  "model": "opus",
+  "measure": "brier",
+  "target": [
+   "pair",
+   "WIN",
+   "LOG"
+  ],
+  "kind": "equiv",
+  "margin": 0.05,
+  "pilot_mean": 0.0010928125000000005,
+  "pilot_sd": 0.09921221120236491,
+  "pilot_n": 40,
+  "power": 0.9992186687920555,
+  "power_sd15": 0.9098954308563676,
+  "power_rep": 0.9991446736113989,
+  "alpha": 0.05,
+  "bits": 4.320800431631731
+ },
+ "O4": {
+  "model": "opus",
+  "measure": "self_dec",
+  "target": [
+   "arm",
+   "LOG"
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.12256250000000002,
+  "pilot_sd": 0.2038886680085671,
+  "pilot_n": 40,
+  "power": 0.9999717570071505,
+  "power_sd15": 0.9784778859276603,
+  "power_rep": 0.9999678770157213,
+  "alpha": 0.025,
+  "bits": 5.321887348286233
+ },
+ "O5": {
+  "model": "opus",
+  "measure": "self_dec",
+  "target": [
+   "arm",
+   "WIN"
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.13196875,
+  "pilot_sd": 0.20308969367716476,
+  "pilot_n": 40,
+  "power": 0.9999968167210476,
+  "power_sd15": 0.9905581289487564,
+  "power_rep": 0.9999962855240105,
+  "alpha": 0.025,
+  "bits": 5.321923502379295
+ },
+ "O6": {
+  "model": "opus",
+  "measure": "self_dec",
+  "target": [
+   "arm",
+   "NONE"
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.206625,
+  "pilot_sd": 0.17678744113229666,
+  "pilot_n": 20,
+  "power": 1.0,
+  "power_sd15": 0.9999999968317593,
+  "power_rep": 1.0,
+  "alpha": 0.025,
+  "bits": 5.321928094887363
+ },
+ "O7": {
+  "model": "opus",
+  "measure": "acc",
+  "target": [
+   "contrast",
+   {
+    "LOG": 0.5,
+    "WIN": 0.5,
+    "NONE": -1.0
+   }
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.0703125,
+  "pilot_sd": 0.22210190399134122,
+  "pilot_n": 20,
+  "power": 0.8813097543807893,
+  "power_sd15": 0.5502530688250279,
+  "power_rep": 0.8780796229149201,
+  "alpha": 0.025,
+  "bits": 5.139649173024341
+ },
+ "O8": {
+  "model": "opus",
+  "measure": "out",
+  "target": [
+   "contrast",
+   {
+    "LOG": 0.5,
+    "WIN": 0.5,
+    "NONE": -1.0
+   }
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 908.6,
+  "pilot_sd": 1393.3752243345916,
+  "pilot_n": 20,
+  "power": 0.9999971421174008,
+  "power_sd15": 0.9909366731277677,
+  "power_rep": 0.999996661022895,
+  "alpha": 0.025,
+  "bits": 5.321923971828417
+ },
+ "OE1": {
+  "model": "opus",
+  "measure": "conf",
+  "target": [
+   "pair",
+   "WIN",
+   "LOG"
+  ],
+  "kind": "lt0",
+  "margin": null,
+  "pilot_mean": -0.014031250000000014,
+  "pilot_sd": 0.0449023936993998,
+  "pilot_n": 40,
+  "power": 0.8729852173107782,
+  "power_sd15": 0.5394329775151285,
+  "power_rep": 0.8696424455894083,
+  "alpha": 0.025,
+  "bits": 5.125957224194922
+ },
+ "OE2": {
+  "model": "opus",
+  "measure": "self_dec",
+  "target": [
+   "contrast",
+   {
+    "NONE": 1.0,
+    "LOG": -0.5,
+    "WIN": -0.5
+   }
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.06453125,
+  "pilot_sd": 0.22812287084442592,
+  "pilot_n": 20,
+  "power": 0.8008263533651797,
+  "power_sd15": 0.4608253613162786,
+  "power_rep": 0.7967720388411368,
+  "alpha": 0.025,
+  "bits": 5.001489450751922
+ },
+ "OE3": {
+  "model": "opus",
+  "measure": "auc",
+  "target": [
+   "contrast",
+   {
+    "LOG": 0.5,
+    "WIN": 0.5,
+    "NONE": -1.0
+   }
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.065625,
+  "pilot_sd": 0.24874272668552014,
+  "pilot_n": 20,
+  "power": 0.7434605722210175,
+  "power_sd15": 0.4108451195015418,
+  "power_rep": 0.7391009526778727,
+  "alpha": 0.025,
+  "bits": 4.894256234181531
+ },
+ "H1": {
+  "model": "haiku",
+  "measure": "self_dec",
+  "target": [
+   "pair",
+   "WIN",
+   "LOG"
+  ],
+  "kind": "equiv",
+  "margin": 0.1,
+  "pilot_mean": -0.05334374999999999,
+  "pilot_sd": 0.26366657562338375,
+  "pilot_n": 40,
+  "power": 0.5434324459658177,
+  "power_sd15": 0.30204259143587686,
+  "power_rep": 0.5398475028743073,
+  "alpha": 0.05,
+  "bits": 3.4421007051192465
+ },
+ "H2": {
+  "model": "haiku",
+  "measure": "acc",
+  "target": [
+   "pair",
+   "WIN",
+   "LOG"
+  ],
+  "kind": "equiv",
+  "margin": 0.1,
+  "pilot_mean": 0.0609375,
+  "pilot_sd": 0.282887859169291,
+  "pilot_n": 40,
+  "power": 0.38988578639374616,
+  "power_sd15": 0.21321315978945332,
+  "power_rep": 0.3871679605697602,
+  "alpha": 0.05,
+  "bits": 2.9630515610627333
+ },
+ "H3": {
+  "model": "haiku",
+  "measure": "brier",
+  "target": [
+   "pair",
+   "WIN",
+   "LOG"
+  ],
+  "kind": "equiv",
+  "margin": 0.05,
+  "pilot_mean": -0.023889062500000002,
+  "pilot_sd": 0.11775567900275485,
+  "pilot_n": 40,
+  "power": 0.711231337045267,
+  "power_sd15": 0.42191658479955585,
+  "power_rep": 0.7073672763492984,
+  "alpha": 0.05,
+  "bits": 3.830318891102174
+ },
+ "H4": {
+  "model": "haiku",
+  "measure": "self_dec",
+  "target": [
+   "arm",
+   "LOG"
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.17684375000000002,
+  "pilot_sd": 0.23200094418118547,
+  "pilot_n": 40,
+  "power": 0.9999999914145125,
+  "power_sd15": 0.9990241299371012,
+  "power_rep": 0.9999999892742748,
+  "alpha": 0.025,
+  "bits": 5.321928082501122
+ },
+ "H5": {
+  "model": "haiku",
+  "measure": "self_dec",
+  "target": [
+   "arm",
+   "WIN"
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.12350000000000001,
+  "pilot_sd": 0.22582508973505613,
+  "pilot_n": 40,
+  "power": 0.9997535793649163,
+  "power_sd15": 0.9517107802618383,
+  "power_rep": 0.9997268409362033,
+  "alpha": 0.025,
+  "bits": 5.321572541249478
+ },
+ "H6": {
+  "model": "haiku",
+  "measure": "self_dec",
+  "target": [
+   "arm",
+   "NONE"
+  ],
+  "kind": "gt0",
+  "margin": null,
+  "pilot_mean": 0.048812499999999995,
+  "pilot_sd": 0.2554551134095876,
+  "pilot_n": 20,
+  "power": 0.4707392969564595,
+  "power_sd15": 0.23874457987593756,
+  "power_rep": 0.4668303036183956,
+  "alpha": 0.025,
+  "bits": 4.234928293132912
+ },
+ "H7": {
+  "model": "haiku",
+  "measure": "acc",
+  "target": [
+   "contrast",
+   {
+    "LOG": 0.5,
+    "WIN": 0.5,
+    "NONE": -1.0
+   }
+  ],
+  "kind": "lt0",
+  "margin": null,
+  "pilot_mean": -0.1296875,
+  "pilot_sd": 0.25695006266577824,
+  "pilot_n": 20,
+  "power": 0.9989042398052145,
+  "power_sd15": 0.9162950612701907,
+  "power_rep": 0.9988069368979924,
+  "alpha": 0.025,
+  "bits": 5.320346380340072
+ },
+ "H8": {
+  "model": "haiku",
+  "measure": "out",
+  "target": [
+   "contrast",
+   {
+    "LOG": 0.5,
+    "WIN": 0.5,
+    "NONE": -1.0
+   }
+  ],
+  "kind": "lt0",
+  "margin": null,
+  "pilot_mean": -6259.35,
+  "pilot_sd": 15209.597021461916,
+  "pilot_n": 20,
+  "power": 0.9834627628913468,
+  "power_sd15": 0.7761872839298991,
+  "power_rep": 0.9825836908419285,
+  "alpha": 0.025,
+  "bits": 5.297870428397024
+ },
+ "HE1": {
+  "model": "haiku",
+  "measure": "self_dec",
+  "target": [
+   "contrast",
+   {
+    "NONE": 1.0,
+    "LOG": -0.5,
+    "WIN": -0.5
+   }
+  ],
+  "kind": "lt0",
+  "margin": null,
+  "pilot_mean": -0.10906249999999999,
+  "pilot_sd": 0.27893303673151226,
+  "pilot_n": 20,
+  "power": 0.9729335548766366,
+  "power_sd15": 0.7331744074372084,
+  "power_rep": 0.9716698436094181,
+  "alpha": 0.025,
+  "bits": 5.282341281549853
+ },
+ "HE2": {
+  "model": "haiku",
+  "measure": "auc",
+  "target": [
+   "contrast",
+   {
+    "LOG": 0.5,
+    "WIN": 0.5,
+    "NONE": -1.0
+   }
+  ],
+  "kind": "lt0",
+  "margin": null,
+  "pilot_mean": -0.07578125,
+  "pilot_sd": 0.2738084889301231,
+  "pilot_n": 20,
+  "power": 0.7833204710535489,
+  "power_sd15": 0.4446850575104666,
+  "power_rep": 0.7791521480611634,
+  "alpha": 0.025,
+  "bits": 4.969602661808045
+ }
+}
