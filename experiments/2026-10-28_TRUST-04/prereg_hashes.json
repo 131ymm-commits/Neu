@@ -1,0 +1,16 @@
+{
+ "exp_trust_04.py": "41cc133b0ed563e0d81c921ad85b41e40ba1a2d3f090214e7130430c2c0387e0",
+ "analyze_trust_04.py": "fe5d30dddb9643e0d5a3715d784645c17d3d6533516d90e2214f03a3a29022fa",
+ "prereg_hashes.py": "f4472622f0fd320dc0f2e7b37794881c6da44ad78dda75694145cc4ddd13a883",
+ "requirements.txt": "fc46c61614a4e356a7cc4268fe0f236b3b1e1564d1c5bd17caa1891dbb582240",
+ "indep_runner.py": "8066a2a9edaba55d5fe7069258e7fedf6392897f55a9168972bb04facc29fd10",
+ "indep/indep_trust_04.py": "55b1944f41a898e8d383a1837c7924a331ff6e6e9536e474721d9632e1321ac3",
+ "indep/SPEC.md": "4e032831877d7c2ff41f895ea2ad866023dabc572a8777be2ef8e9c376d30e3c",
+ "../2026-10-28_TRUST-01/exp_trust_01.py": "b1ad55f90dd1d50aafb9f76e5a0b9e8abee88f8f3c317d3f728da8894781d2fd",
+ "../2026-10-28_TRUST-02/exp_trust_02.py": "8ce0aaf951a7c4c18bc2a023d4eb8bea73f2e8ee2953602228dc4fa7043b394f",
+ "../2026-10-28_TRUST-03/exp_trust_03.py": "6aa799233663af019f86e7e63abbeea34901be5ceffa3713020658fc893fd23b",
+ "pilot/v2/pilot_calib2.py": "1ffe0dab7f164d666ecfed62da3c0ddaf08b40b05246ab4557bc6af576097e2f",
+ "pilot/v2/compare_v1.py": "b8180a03432a36184cf23b769e8f3b5376f25c2016222c10fe2addcbab1b2159",
+ "pilot/v2/prereg_tables.py": "952a66bede245391b3e53433eec208925cbf4348d626c9aefcc258cbd06f7632",
+ "pilot/v2/assemble_prereg.py": "08ec4c4e76ef80854ad813661b23d6ab5070f1d5187e8e511eb519bd6fcd91da"
+}
