@@ -1,0 +1,9 @@
+MYOPIC         {'sd_snap_u_mean': 0.337, 'sd_snap_u_min': 0.322, 'sd_snap_u_max': 0.361, 'share_snap_within_third': 0.677, 'n_seeds_window_mean_within_sixth': 10}
+DEMES_NOSEL    {'sd_snap_u_mean': 0.193, 'sd_snap_u_min': 0.173, 'sd_snap_u_max': 0.212, 'share_snap_within_third': 0.907, 'n_seeds_window_mean_within_sixth': 10}
+DEMES          {'sd_snap_u_mean': 0.31, 'sd_snap_u_min': 0.283, 'sd_snap_u_max': 0.342}
+DEMES_10x40    {'sd_snap_u_mean': 0.335, 'sd_snap_u_min': 0.303, 'sd_snap_u_max': 0.366}
+COUNCIL        {'sd_snap_u_mean': 0.342, 'sd_snap_u_min': 0.317, 'sd_snap_u_max': 0.377, 'share_snap_within_third': 0.661, 'n_seeds_window_mean_within_sixth': 10}
+COUNCIL_10x40  {'sd_snap_u_mean': 0.475, 'sd_snap_u_min': 0.431, 'sd_snap_u_max': 0.555, 'share_snap_within_third': 0.485, 'n_seeds_window_mean_within_sixth': 9}
+DEMES_POOLED   {'sd_snap_u_mean': 0.348, 'sd_snap_u_min': 0.31, 'sd_snap_u_max': 0.392, 'share_snap_within_third': 0.668, 'n_seeds_window_mean_within_sixth': 10}
+COUNCIL_IND    {'sd_snap_u_mean': 0.692, 'sd_snap_u_min': 0.511, 'sd_snap_u_max': 0.834, 'share_snap_within_third': 0.359, 'n_seeds_window_mean_within_sixth': 5}
+DEMES_IND      {'sd_snap_u_mean': 0.493, 'sd_snap_u_min': 0.428, 'sd_snap_u_max': 0.571}

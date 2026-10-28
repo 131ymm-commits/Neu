@@ -27,6 +27,15 @@ want += [('К1 разность', fmt(round(f['K1']['logloss_gap'][0], 4))), ('�
          ('Д2 макс u без срыва', fmt(max(f['D2']['u'])))]
 for cid in ('C-048', 'C-049', 'C-050', 'C-051', 'C-052'):
     want.append((f'{cid} бит', f"+{sb[cid]['bits_1']}".replace('.', ',')))
+an = json.load(open(os.path.join(HERE, 'analysis_trust_03.json')))
+ph = json.load(open(os.path.join(HERE, 'posthoc_trust_03.json')))
+for arm, m in an['arms'].items():                        # точность и самообман главной таблицы (правило «незнание и самообман отдельно»)
+    want.append((f'{arm} точность', fmt(round(m['acc'][0], 4))))
+    sd = round(m['self_dec'][0], 4)
+    want.append((f'{arm} самообман', fmt(sd) if sd != 0 else '| 0 |'))
+for arm in ('COUNCIL', 'DEMES_POOLED'):
+    want += [(f'{arm} SD снимков', fmt(ph[arm]['sd_snap_u_mean'])), (f'{arm} доля снимков', fmt(ph[arm]['share_snap_within_third']))]
+want += [('DEMES SD снимков', fmt(ph['DEMES']['sd_snap_u_mean'])), ('COUNCIL_IND зёрен в шестой', f"{ph['COUNCIL_IND']['n_seeds_window_mean_within_sixth']} из 10")]
 miss = [(lab, s) for lab, s in want if s not in rep]
 print(f'строк {len(want)}, не найдено {len(miss)}')
 for lab, s in miss:
