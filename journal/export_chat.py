@@ -6,7 +6,7 @@ src, dst = sys.argv[1], sys.argv[2]
 SESSION = os.environ.get('NEU_SESSION_URL', 'https://claude.ai/code/session_01EAUcgUVu3BhYQ16NUm8BDT')
 out = [f'# Журнал чата сессии\n\nСессия: {SESSION}\n'
        'Формат: реплики человека — полностью (длинные вставки сокращены до начала), ответы Claude — полностью, '
-       'действия — одной строкой. Выводы инструментов и служебные сообщения среды не включены.\n']
+       'действия — одной строкой. Выводы инструментов и служебные сообщения среды не включены. Время — UTC (Берлин: UTC+1 зимой, UTC+2 летом).\n']
 def clean(t):
     t = re.sub(r'<system-reminder>.*?</system-reminder>', '', t, flags=re.S)
     t = re.sub(r'<command-[a-z-]+>.*?</command-[a-z-]+>', '', t, flags=re.S)
@@ -35,6 +35,16 @@ for line in open(src):
         if txt:
             if len(txt) > 4000: txt = txt[:1500] + f'\n\n[… вставка сокращена, всего {len(txt)} символов …]'
             out.append(f'\n---\n\n## Человек · {ts}\n\n{txt}\n')
+    elif t == 'attachment' and (j.get('attachment') or {}).get('type') == 'queued_command':
+        # сообщение человека, пришедшее во время хода (28.10.2026: до этого в журнал не попадало; ERRORS № 115)
+        pr = j['attachment'].get('prompt')
+        txt = clean(pr if isinstance(pr, str) else '\n'.join(x.get('text', '') for x in (pr or []) if isinstance(x, dict) and x.get('type') == 'text'))
+        if txt and '<task-notification>' in txt:                      # уведомление фоновой задачи — среда, не человек
+            m = re.search(r'<summary>(.*?)</summary>', txt, re.S)
+            out.append(f'\n- _событие среды (не человек): {(m.group(1) if m else "фоновая задача").strip()[:200]}_\n')
+        elif txt:
+            if len(txt) > 4000: txt = txt[:1500] + f'\n\n[… вставка сокращена, всего {len(txt)} символов …]'
+            out.append(f'\n---\n\n## Человек (во время хода Claude) · {ts}\n\n{txt}\n')
     elif t == 'assistant' and isinstance(c, list):
         for x in c:
             if x.get('type') == 'text' and x.get('text', '').strip():
