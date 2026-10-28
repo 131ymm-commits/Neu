@@ -1,0 +1,76 @@
+{
+ "n_tasks": 50,
+ "excluded_eps": [],
+ "aliases": {},
+ "mean_regret": {
+  "OBS": 0.628,
+  "MODEL": 0.559,
+  "ANCHOR": 0.539
+ },
+ "primary": {
+  "diff_obs_minus_model": {
+   "mean": 0.069,
+   "ci95": [
+    -0.025,
+    0.163
+   ],
+   "df": 49,
+   "p_two": 0.147,
+   "p_greater": 0.073694,
+   "n": 50
+  },
+  "outcome": "не показано"
+ },
+ "gain_val": {
+  "OBS": -0.089,
+  "MODEL": -0.02
+ },
+ "shrinkage": {
+  "OBS": 1.853,
+  "MODEL": 1.379
+ },
+ "vs_anchor": {
+  "OBS": {
+   "mean": -0.089,
+   "ci95": [
+    -0.175,
+    -0.003
+   ],
+   "df": 49,
+   "p_two": 0.042,
+   "p_greater": 0.979104,
+   "n": 50
+  },
+  "MODEL": {
+   "mean": -0.02,
+   "ci95": [
+    -0.092,
+    0.051
+   ],
+   "df": 49,
+   "p_two": 0.572,
+   "p_greater": 0.713958,
+   "n": 50
+  }
+ },
+ "out_per_call": {
+  "OBS": 4035.276,
+  "MODEL": 5614.592,
+  "ANCHOR": 5421.4
+ },
+ "refusals": {
+  "OBS": 0,
+  "MODEL": 64,
+  "ANCHOR": 16
+ },
+ "degenerate_to_A0": {
+  "OBS": false,
+  "MODEL": false
+ },
+ "A0_no_calls": 0.795,
+ "shrinkage_model_note": "прогноз модели главных действий (только описательно)",
+ "vote_status_totals": {
+  "ok": 670,
+  "refused": 80
+ }
+}
