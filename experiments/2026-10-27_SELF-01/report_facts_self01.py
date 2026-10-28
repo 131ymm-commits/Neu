@@ -23,6 +23,8 @@ for q in (0.0, 0.5, 1.0):
         'mean_rrr': dict(zip(names, np.round(rrr.mean(0), 2).tolist())),
         'self_wins': int((mlp[:, 0] > mlp[:, 2]).sum()),
         'self_range_mlp': [round(float(mlp[:, 0].min()), 2), round(float(mlp[:, 0].max()), 2)],
+        'share_self_range_mlp': [round(float((mlp[:, 0] / (mlp[:, 0] + mlp[:, 2])).min()), 2),
+                                 round(float((mlp[:, 0] / (mlp[:, 0] + mlp[:, 2])).max()), 2)],  # доля SELF/(SELF+OTHER)
         'self_plus_other_mlp': np.round(mlp[:, 0] + mlp[:, 2], 2).tolist(),
         'max_abs_mlp_minus_rrr_self': round(float(np.abs(mlp[:, 0] - rrr[:, 0]).max()), 2),
     }
