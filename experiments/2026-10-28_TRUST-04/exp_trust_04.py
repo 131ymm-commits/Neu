@@ -107,7 +107,7 @@ WORLDS = {'base': WorldSpec(), 'r075': WorldSpec(rG=0.75), 'r095': WorldSpec(rG=
           'b03': WorldSpec(b_max=0.3), 'b09': WorldSpec(b_max=0.9)}
 
 _D = dict(world='base', m=40, n=10, council=False, group_sel=True, expr='own', link='link', common_eps=True, migr=0.0,
-          sig_g=SIG, part='A')
+          sig_g=SIG, sig=SIG, part='A')
 _ARMS = [
     # блок А — мир base
     ('MYOPIC', dict(m=1, n=400, group_sel=False)),
@@ -138,6 +138,9 @@ _ARMS = [
     ('POOLED_IND', dict(expr='pool', common_eps=False, part='B')),
     ('DEMES_MIG', dict(migr=0.1, part='B')),
     ('POOLED_MIG', dict(expr='pool', migr=0.1, part='B')),
+    # после независимой реализации (её прочтение «N(0; a) — дисперсия» сдвинуло DEMES к u ≈ 0,85): шаг мутации ×5
+    ('DEMES_SIG5', dict(sig=5 * SIG, part='B')),
+    ('POOLED_SIG5', dict(expr='pool', sig=5 * SIG, part='B')),
 ]
 ARMS = {name: {**_D, **v, 'stream': i} for i, (name, v) in enumerate(_ARMS)}
 for _a, _s in ARMS.items():
@@ -148,7 +151,7 @@ for _a, _s in ARMS.items():
 def evolve4(seed, arm, gens=G, track_every=10):
     sp = ARMS[arm]; wd = WORLDS[sp['world']]; m, n = sp['m'], sp['n']
     council, gsel, pooled, free = sp['council'], sp['group_sel'], sp['expr'] == 'pool', sp['link'] == 'free'
-    common, migr, sig_g = sp['common_eps'], sp['migr'], sp['sig_g']
+    common, migr, sig_g, sig = sp['common_eps'], sp['migr'], sp['sig_g'], sp['sig']
     rng = np.random.default_rng(seed * 100 + sp['stream'])
     w0 = rng.normal(0, 0.01, (m, n))
     wg = rng.normal(0, 0.01, (m, 1) if council else (m, n))
@@ -191,12 +194,12 @@ def evolve4(seed, arm, gens=G, track_every=10):
             p = parent[k]
             pr = np.exp(logF[p] - logF[p].max()); pr /= pr.sum()
             idx = rng.choice(n, size=n, p=pr)
-            new_w0[k] = w0[p, idx] + rng.normal(0, SIG, n)
+            new_w0[k] = w0[p, idx] + rng.normal(0, sig, n)
             if council:
                 new_wg[k] = wg[p] + rng.normal(0, sig_g, 1)
             else:
                 idg = rng.choice(n, size=n, p=pr) if free else idx     # раздельное наследование — свой родитель ∝ F
-                new_wg[k] = wg[p, idg] + rng.normal(0, SIG, n)
+                new_wg[k] = wg[p, idg] + rng.normal(0, sig, n)
         if migr > 0:                                       # миграция: K особей (пары генов) переставляются по группам
             K = int(round(migr * m * n)); pos = rng.choice(m * n, size=K, replace=False); perm = rng.permutation(K)
             f0, fg = new_w0.reshape(-1), new_wg.reshape(-1)
