@@ -8,13 +8,22 @@
   E — с каким весом особь действует: своим геном w_G (own) или средним геном группы (pool);
   L — наследование w0 и w_G: от одной особи-родителя (link) или от двух независимо выбранных ∝ F (free).
 Плюс общий ген группы (COUNCIL) с шагом мутации σ и σ/√10 и одна популяция 1 × 400 (MYOPIC).
+После второй проверки по трём линзам (ERRORS № 112):
+  - шаг среднего группы из 10 генов особей — около σ, не σ/√10 (пересэмплирование добавляет дрейф V_внутри/n):
+    COUNCIL уже уравнен с руками генов особей, COUNCIL_SIGN шагает втрое медленнее; SD шага — описательно (step_sd);
+  - фактор E разложен на два (оба — при раздельном наследовании, link = free):
+    E1 — отбор внутри группы по своему весу (wsel; DEMES_NOWITHIN — родитель гена w_G равновероятен, как в TRUST-03);
+    E2 — с каким весом считается F группы для отбора групп (gexpr; DEMES_GPOOL — свой вес внутри группы,
+    средний вес группы в F группы);
+  - в снимках — межгрупповая и внутригрупповая дисперсии w_G и доля межгрупповой R (разведка «u ≈ 1 − R»);
+  - тест — 20 зёрен 600–619 у всех рук.
 Блок Б (переносимость): те же DEMES (own, link) и POOLED (pool, link) — в мирах r_G 0,75 и 0,95, B_MAX 0,3 и 0,9
 (и MYOPIC в каждом), при независимом риске (свои эпизоды у групп) и при миграции 10 % особей за поколение.
 Мир, агент, выплата и оценка — как в TRUST-03 (`../2026-10-28_TRUST-03/exp_trust_03.py`): класс World и log_true —
 из TRUST-02 и TRUST-01; источник G (индекс 3) врёт в пользу W = 1 с долей b = B_MAX · clip(w̄_G / logit r_G, 0, 1),
 где w̄_G — средний ген веса на нём в группе. Агент сокращён: честные веса — точные веса честного мира того же r_G.
 
-Запуск: python3 exp_trust_04.py [--check | --pilot | --dry] [--part A|B]. PREREG: PREREG-TRUST-04.md.
+Запуск: python3 exp_trust_04.py [--check | --pilot | --dry] [--part A|B] [--out ПАПКА]. PREREG: PREREG-TRUST-04.md.
 """
 import json
 import os
@@ -33,7 +42,7 @@ import exp_trust_02 as T2  # noqa: E402
 PI, R_BASE, COPIES, G_IDX = 0.3, [0.55, 0.65, 0.75, 0.85, 0.92], [(2, 0.8)], 3   # мир G TRUST-02 (T2.WG)
 J = 1 + G_IDX                                     # индекс веса источника G в векторе из 7
 L_EP, G, SIG, WINDOW = 40, 3000, 0.04, 2000
-SEEDS = list(range(600, 610))
+SEEDS = list(range(600, 620))                    # после второй проверки по трём линзам: 20 зёрен (было 600–609)
 PILOT_SEEDS = list(range(1100, 1110))
 DRY_SEEDS = [1150, 1151]
 lg = lambda p: float(np.log(p / (1 - p)))
@@ -107,7 +116,7 @@ WORLDS = {'base': WorldSpec(), 'r075': WorldSpec(rG=0.75), 'r095': WorldSpec(rG=
           'b03': WorldSpec(b_max=0.3), 'b09': WorldSpec(b_max=0.9)}
 
 _D = dict(world='base', m=40, n=10, council=False, group_sel=True, expr='own', link='link', common_eps=True, migr=0.0,
-          sig_g=SIG, sig=SIG, part='A')
+          sig_g=SIG, sig=SIG, part='A', wsel=True, gexpr=None)
 _ARMS = [
     # блок А — мир base
     ('MYOPIC', dict(m=1, n=400, group_sel=False)),
@@ -141,18 +150,25 @@ _ARMS = [
     # после независимой реализации (её прочтение «N(0; a) — дисперсия» сдвинуло DEMES к u ≈ 0,85): шаг мутации ×5
     ('DEMES_SIG5', dict(sig=5 * SIG, part='B')),
     ('POOLED_SIG5', dict(expr='pool', sig=5 * SIG, part='B')),
+    # после второй проверки по трём линзам: разложение фактора E (при link = free)
+    ('DEMES_NOWITHIN', dict(link='free', wsel=False)),     # свой вес; ген w_G — от равновероятного родителя группы
+    ('DEMES_GPOOL', dict(link='free', gexpr='pool')),      # свой вес внутри группы; F группы — при среднем весе группы
 ]
 ARMS = {name: {**_D, **v, 'stream': i} for i, (name, v) in enumerate(_ARMS)}
 for _a, _s in ARMS.items():
-    assert not (_s['council'] and (_s['link'] == 'free' or _s['migr'] > 0)), _a
-    assert _s['expr'] in ('own', 'pool') and _s['link'] in ('link', 'free'), _a
+    assert not (_s['council'] and (_s['link'] == 'free' or _s['migr'] > 0 or not _s['wsel'] or _s['gexpr'])), _a
+    assert _s['expr'] in ('own', 'pool') and _s['link'] in ('link', 'free') and _s['gexpr'] in (None, 'own', 'pool'), _a
+    assert _s['wsel'] or _s['link'] == 'free', _a           # без отбора внутри группы ген w_G наследуется отдельно
 
 
-def evolve4(seed, arm, gens=G, track_every=10):
+def evolve4(seed, arm, gens=G, track_every=10, stream=None):
+    """stream — подмена потока (только для регрессии против TRUST-03 в check)."""
     sp = ARMS[arm]; wd = WORLDS[sp['world']]; m, n = sp['m'], sp['n']
     council, gsel, pooled, free = sp['council'], sp['group_sel'], sp['expr'] == 'pool', sp['link'] == 'free'
+    gpooled, wsel = (sp['gexpr'] or sp['expr']) == 'pool', sp['wsel']      # вес в F группы; отбор внутри группы по w_G
     common, migr, sig_g, sig = sp['common_eps'], sp['migr'], sp['sig_g'], sp['sig']
-    rng = np.random.default_rng(seed * 100 + sp['stream'])
+    rng = np.random.default_rng(seed * 100 + (sp['stream'] if stream is None else stream))
+    st_sum = st_sq = 0.0; st_n = 0                          # шаг среднего w_G группы от родительской (до миграции)
     w0 = rng.normal(0, 0.01, (m, n))
     wg = rng.normal(0, 0.01, (m, 1) if council else (m, n))
     traj, price = [], []
@@ -172,12 +188,17 @@ def evolve4(seed, arm, gens=G, track_every=10):
             zcm = X[..., zc_idx] @ W_EX[zc_idx]
             lie = (W == 0) & okG & (u < b[:, None])
             xg = np.where(lie, 1.0, X[..., J]); Wm = W
-        wgi = np.broadcast_to(wg, (m, n))
-        wex = np.broadcast_to(wg.mean(1, keepdims=True), (m, n)) if pooled else wgi    # вес, с которым особь действует
+        wgi = np.broadcast_to(wg, (m, n)); wpool = np.broadcast_to(wg.mean(1, keepdims=True), (m, n))
+        wex = wpool if pooled else wgi                                                   # вес, с которым особь действует
         Z = w0[:, :, None] + zcm[:, None, :] + wex[:, :, None] * xg[:, None, :]
         logF = T1.log_true(Z, Wm[:, None, :]).sum(2)
+        if gpooled == pooled:
+            logFg = logF
+        else:                                               # DEMES_GPOOL: F группы — при среднем весе группы
+            Zg = w0[:, :, None] + zcm[:, None, :] + (wpool if gpooled else wgi)[:, :, None] * xg[:, None, :]
+            logFg = T1.log_true(Zg, Wm[:, None, :]).sum(2)
         if gsel and m > 1:
-            lgF = np.logaddexp.reduce(logF, axis=1) - np.log(n)
+            lgF = np.logaddexp.reduce(logFg, axis=1) - np.log(n)
             pg = np.exp(lgF - lgF.max()); pg /= pg.sum()
             parent = rng.choice(m, size=m, p=pg)
         else:
@@ -186,7 +207,7 @@ def evolve4(seed, arm, gens=G, track_every=10):
         zbar = wgi.mean(1)
         prw = np.exp(logF - logF.max(1, keepdims=True)); prw /= prw.sum(1, keepdims=True)
         s_between = float(pg @ zbar - zbar.mean())
-        s_within = float(pg @ ((prw * wgi).sum(1) - zbar)) if not council else 0.0
+        s_within = float(pg @ ((prw * wgi).sum(1) - zbar)) if (wsel and not council) else 0.0
         if g >= gens - WINDOW:
             price.append((s_between, s_within))
         new_w0 = np.empty_like(w0); new_wg = np.empty_like(wg)
@@ -198,8 +219,15 @@ def evolve4(seed, arm, gens=G, track_every=10):
             if council:
                 new_wg[k] = wg[p] + rng.normal(0, sig_g, 1)
             else:
-                idg = rng.choice(n, size=n, p=pr) if free else idx     # раздельное наследование — свой родитель ∝ F
+                if not free:
+                    idg = idx
+                elif wsel:
+                    idg = rng.choice(n, size=n, p=pr)                  # раздельное наследование — свой родитель ∝ F
+                else:
+                    idg = rng.choice(n, size=n)                        # DEMES_NOWITHIN: родитель равновероятен (как TRUST-03)
                 new_wg[k] = wg[p, idg] + rng.normal(0, sig, n)
+            if g >= gens - WINDOW:
+                st = float(new_wg[k].mean() - wg[p].mean()); st_sum += st; st_sq += st * st; st_n += 1
         if migr > 0:                                       # миграция: K особей (пары генов) переставляются по группам
             K = int(round(migr * m * n)); pos = rng.choice(m * n, size=K, replace=False); perm = rng.permutation(K)
             f0, fg = new_w0.reshape(-1), new_wg.reshape(-1)
@@ -214,11 +242,16 @@ def evolve4(seed, arm, gens=G, track_every=10):
             traj.append(dict(g=g, wG=float(wgm.mean()), wG_sd_groups=float(wgm.std()), w0=float(w0m.mean()), b=float(bs.mean()),
                              logloss=float(np.mean([x['logloss'] for x in ms])), self_dec=float(np.mean([x['self_dec'] for x in ms])),
                              acc=float(np.mean([x['acc'] for x in ms])), ece=float(np.mean([x['ece'] for x in ms])),
-                             s_between=s_between, s_within=s_within))
+                             s_between=s_between, s_within=s_within,
+                             V_between=float(wgm.var()), V_within=float(wg.var(1).mean())))
     last = [t for t in traj if t['g'] >= gens - WINDOW]
-    fin = {k: float(np.mean([t[k] for t in last])) for k in ('wG', 'wG_sd_groups', 'w0', 'b', 'logloss', 'self_dec', 'acc', 'ece')}
+    fin = {k: float(np.mean([t[k] for t in last])) for k in ('wG', 'wG_sd_groups', 'w0', 'b', 'logloss', 'self_dec', 'acc', 'ece',
+                                                             'V_between', 'V_within')}
     pb = np.array(price)
     fin.update(price_between=float(pb[:, 0].mean()), price_within=float(pb[:, 1].mean()))
+    vt = fin['V_between'] + fin['V_within']
+    fin.update(R=fin['V_between'] / vt if vt > 0 else float('nan'),       # доля межгрупповой дисперсии w_G (описательно)
+               step_mean=st_sum / st_n, step_sd=float(np.sqrt(max(st_sq / st_n - (st_sum / st_n) ** 2, 0.0))))
     return dict(seed=seed, arm=arm, final=fin, n_snap=len(last), n_price=len(price), traj=traj)
 
 
@@ -246,6 +279,37 @@ def check():
         print(f"{name:5s} r_G {wd.rG} b_max {wd.b_max}: близорукая {t['myopic']['wG']:.4f} (b {bs:.4f}), дальновидная "
               f"{t['farsighted']['wG']:.4f} (b {t['farsighted']['b']:.4f}); разрыв {t['myopic']['wG'] - t['farsighted']['wG']:.4f}; "
               f"лог-потеря {t['myopic']['logloss']:.4f} → {t['farsighted']['logloss']:.4f}; численный ответ {np.round(r.x, 6)}; ложь {emp:.4f}/{want:.4f}")
+    regression_trust03()
+    ms = migration_share(); ms_th = 0.1 * (1 - (1 + 39 * 9 / 399) / 40)
+    assert abs(ms - ms_th) < 0.002, (ms, ms_th)
+    print(f"миграция 0,1: группу меняет доля {ms:.4f} особей за поколение (расчёт {ms_th:.4f}: часть переставленных остаётся в своей группе)")
+
+
+def regression_trust03(seed=970, gens=300):
+    """Руки с двойником в TRUST-03 при потоке двойника воспроизводят его траекторию бит в бит (gens поколений; зерно 970 —
+    пилот TRUST-03, не тест TRUST-03 и не зёрна TRUST-04). Записано в check после второй проверки по трём линзам."""
+    sys.path.insert(0, os.path.join(HERE, '..', '2026-10-28_TRUST-03'))
+    import exp_trust_03 as T3
+    pairs = [('MYOPIC', 'MYOPIC'), ('DEMES', 'DEMES'), ('DEMES_NOSEL', 'DEMES_NOSEL'), ('COUNCIL', 'COUNCIL'),
+             ('POOLED', 'DEMES_POOLED'), ('DEMES_NOWITHIN', 'DEMES_NOWITHIN'), ('DEMES_IND', 'DEMES_IND')]
+    keys = ('g', 'wG', 'wG_sd_groups', 'w0', 'b', 'logloss', 'self_dec', 'acc', 'ece', 's_between')
+    for a4, a3 in pairs:
+        r3 = T3.evolve3(seed, a3, gens=gens); r4 = evolve4(seed, a4, gens=gens, stream=T3.ARMS[a3]['stream'])
+        assert len(r3['traj']) == len(r4['traj']), (a4, a3)
+        for t3, t4 in zip(r3['traj'], r4['traj']):
+            assert all(t3[k] == t4[k] for k in keys), (a4, a3, t3['g'], {k: (t3[k], t4[k]) for k in keys if t3[k] != t4[k]})
+            assert abs(t3['s_within'] - t4['s_within']) < 1e-12, (a4, a3, t3['g'])
+        print(f"регрессия: {a4} = TRUST-03 {a3} (поток {T3.ARMS[a3]['stream']}, зерно {seed}, {gens} поколений, "
+              f"{len(r4['traj'])} снимков бит в бит; w_G в конце {r4['traj'][-1]['wG']:.6f})")
+
+
+def migration_share(migr=0.1, m=40, n=10, reps=4000, seed=12345):
+    """Доля особей, сменивших группу за поколение, при перестановке K = round(migr·m·n) пар генов (описательно)."""
+    g = np.random.default_rng(seed); K = int(round(migr * m * n)); moved = 0
+    for _ in range(reps):
+        pos = g.choice(m * n, size=K, replace=False); perm = g.permutation(K)
+        moved += int(np.sum(pos[perm] // n != pos // n))
+    return moved / (reps * m * n)
 
 
 def run(seeds, outdir, part=None, gens=G):
@@ -269,6 +333,8 @@ if __name__ == '__main__':
         out, seeds = os.path.join(HERE, 'dry'), DRY_SEEDS
     else:
         out, seeds = HERE, SEEDS
+    if '--out' in sys.argv:                                 # другая папка вывода (пилот v2 после правок кода)
+        out = os.path.join(HERE, sys.argv[sys.argv.index('--out') + 1])
     os.makedirs(out, exist_ok=True)
     th, runs, sec = run(seeds, out, part=part)
     print(f'готово за {sec:.0f} с (часть {part or "все"}); анализ — analyze_trust_04.py')
