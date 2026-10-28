@@ -14,4 +14,19 @@ q1, q2 = [float(c[0]) for c in co], [float(c[1]) for c in co]
 out = dict(note='линейный член насыщения (Т8); код анализа его не выводил — ERRORS № 94', n_tasks=len(T),
            linear=A.t_ci(q1), k2=A.t_ci(q2), k2_equals_open_an=A.t_ci(q2) == json.load(open('open_an.json'))['saturation_descriptive']['k2'],
            saturation_by_prereg=bool(st.mean(q2) > 0 and st.mean(q1) < 0))
+# пост-хок 2: мощность вопроса 1 (омнибус, 63 степени свободы) и Freedman–Lane для REFUSE при наблюдённых главных действиях.
+# Синтетика: 9 задач × 64 клетки, действия = оценки open_an.json (effect_raw), шум — остаток модели главных действий
+# (sd с поправкой на степени свободы: N − задачи − 8). Перестановок 2000 на тест, 200 повторов; зерно своё, потоки вопроса 1 не трогаются.
+me = json.load(open('open_an.json'))['main_effects']; import prompts_precond as PP
+beta = np.array([me[f]['effect_raw'] / 2 for f in PP.F]); N = Y.size
+res = Y - A.X @ ((Y.reshape(-1) @ np.tile(A.X, (len(T), 1))) / N); sd = float(np.sqrt((res ** 2).sum() / (N - len(T) - len(PP.F))))
+rng = np.random.default_rng(28102026); A.B = 2000; reps, hit_q1, hit_ref = 200, 0, 0
+for _ in range(reps):
+    Ys = A.X @ beta + rng.normal(0, sd, (len(T), len(A.CELLS))); Ys = Ys - Ys.mean(axis=1, keepdims=True)
+    S = float((Ys.mean(axis=0) ** 2).sum())
+    Ss = (np.stack([Ys[ti][rng.permuted(np.tile(np.arange(len(A.CELLS)), (A.B, 1)), axis=1)] for ti in range(len(T))]).mean(axis=0) ** 2).sum(axis=1)
+    hit_q1 += ((Ss >= S - 1e-12).sum() + 1) / (A.B + 1) < 0.05
+    j = PP.F.index('REFUSE'); hit_ref += A.fl_p(Ys, A.X[:, j], np.delete(A.X, j, axis=1), rng)[1] < 0.05
+out['power_posthoc'] = dict(note='пост-хок, описательно: мощность при наблюдённых действиях и шуме открытия', resid_sd=round(sd, 3), reps=reps, permutations=A.B,
+                            Q1=round(hit_q1 / reps, 3), REFUSE_fl=round(hit_ref / reps, 3))
 json.dump(out, open('posthoc_an.json', 'w'), ensure_ascii=False, indent=1); print(json.dumps(out, ensure_ascii=False))

@@ -24,5 +24,13 @@
   "n": 9
  },
  "k2_equals_open_an": true,
- "saturation_by_prereg": true
+ "saturation_by_prereg": true,
+ "power_posthoc": {
+  "note": "пост-хок, описательно: мощность при наблюдённых действиях и шуме открытия",
+  "resid_sd": 0.374,
+  "reps": 200,
+  "permutations": 2000,
+  "Q1": 0.415,
+  "REFUSE_fl": 0.8
+ }
 }
