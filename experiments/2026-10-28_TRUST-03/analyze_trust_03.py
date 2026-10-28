@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """TRUST-03: вердикты и сводные исходы по букве PREREG-TRUST-03.md §4 из results_trust_03.json →
-analysis_trust_03.json (рядом с входным файлом). Запуск: python3 analyze_trust_03.py [путь к results]."""
+analysis_trust_03.json (рядом с входным файлом). Запуск: python3 analyze_trust_03.py [путь к results].
+
+Правила исходов (одни для частей и сводных):
+  знаковое и интервальное предсказание с порогом k из 10: «подтверждено» — счёт ≥ k; «опровергнуто» — счёт ≤ 10 − k;
+  иначе «не показано»; сводный исход: «подтверждено» — все части подтверждены; «опровергнуто» — хоть одна
+  опровергнута; иначе «не подтверждено». При числе зёрен ≠ 10 (пилот, сухой прогон) сводные исходы не считаются."""
 import json
 import os
 import sys
@@ -11,15 +16,31 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import exp_trust_03 as E  # noqa: E402
 
+# кромки заморожены при регистрации (теория — сокращённый агент, точный перебор; PREREG §2)
+W_MY, W_FAR = 0.9873, 0.6891
+D = W_MY - W_FAR                                          # разрыв 0,2982; u = 0 — дальновидная точка, u = 1 — близорукая
+
 src = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, 'results_trust_03.json')
 d = json.load(open(src))
-th = d['theory']; seeds = d['params']['SEEDS']; NS = len(seeds)
-R = {(r['seed'], r['arm']): r['final'] for r in d['runs']}
+th = d['theory']; seeds = d['params']['SEEDS']; NS = len(seeds); G, WIN = d['params']['G'], d['params']['WINDOW']
+assert abs(th['myopic']['wG'] - W_MY) < 1e-4 and abs(th['farsighted']['wG'] - W_FAR) < 1e-4, 'теория не та, что в PREREG'
+FULL = NS == 10
+if FULL:
+    assert seeds == E.SEEDS, 'тестовые зёрна не те'
+else:
+    print(f'внимание: зёрен {NS}, пороги PREREG заданы для 10 — вердикты ниже не в зачёт, сводные исходы не считаются')
+R = {(r['seed'], r['arm']): r for r in d['runs']}
 assert all((s, a) in R for s in seeds for a in E.ARMS), 'неполные ячейки'
-W_MY, W_FAR = th['myopic']['wG'], th['farsighted']['wG']
-assert abs(W_MY - 0.9873) < 1e-3 and abs(W_FAR - 0.6891) < 2e-3, 'теория не та, что в PREREG'
-if NS != 10:
-    print(f'внимание: зёрен {NS}, пороги PREREG заданы для 10 — вердикты ниже не в зачёт (пилот или сухой прогон)')
+n_snap_exp = len([g for g in range(G) if (g % 10 == 0 or g == G - 1) and g >= G - WIN])
+assert all(r['n_snap'] == n_snap_exp and r['n_price'] == WIN for r in R.values()), 'не то число снимков или поколений окна'
+F = {k: v['final'] for k, v in R.items()}
+# проверки построения разложения Прайса
+for (s, a), f in F.items():
+    sp = E.ARMS[a]
+    if sp['council'] or not sp['within_sel']:
+        assert abs(f['price_within']) < 1e-12, (s, a, 'внутригрупповая часть должна быть нулём')
+    if not sp['group_sel'] or sp['m'] == 1:
+        assert abs(f['price_between']) < 1e-12, (s, a, 'межгрупповая часть должна быть нулём')
 
 
 def boot_ci(x, B=10000, seed=0):
@@ -28,72 +49,68 @@ def boot_ci(x, B=10000, seed=0):
     return [float(x.mean()), float(np.quantile(m, 0.025)), float(np.quantile(m, 0.975))]
 
 
-def sign_outcome(count, k):
+def outcome(count, k):
     return 'подтверждено' if count >= k else ('опровергнуто' if count <= NS - k else 'не показано')
 
 
-col = lambda arm, k: [R[(s, arm)][k] for s in seeds]
+col = lambda arm, k: [F[(s, arm)][k] for s in seeds]
+u = lambda arm: [(x - W_FAR) / D for x in col(arm, 'wG')]
+diff = lambda a, b, k='wG': [F[(s, a)][k] - F[(s, b)][k] for s in seeds]
 V = {}
-c1 = sum(abs(x - W_MY) <= 0.15 for x in col('MYOPIC', 'wG'))
-V['P1'] = dict(ok=c1 >= 9, n=c1, wG=boot_ci(col('MYOPIC', 'wG')))
-c2a = sum(abs(x - W_FAR) <= 0.1 for x in col('COUNCIL', 'wG'))
-c2b = sum(abs(x - W_FAR) < abs(x - W_MY) for x in col('COUNCIL', 'wG'))
-V['P2'] = dict(ok=bool(c2a >= 9 and c2b >= 9), n_near=c2a, n_closer=c2b, wG=boot_ci(col('COUNCIL', 'wG')),
-               b=boot_ci(col('COUNCIL', 'b')))
-c3 = sum(R[(s, 'COUNCIL')]['logloss'] < R[(s, 'MYOPIC')]['logloss'] for s in seeds)
-V['P3'] = dict(ok=c3 >= 9, n=c3, outcome=sign_outcome(c3, 9),
-               diff=boot_ci([R[(s, 'COUNCIL')]['logloss'] - R[(s, 'MYOPIC')]['logloss'] for s in seeds]))
-c4 = sum(R[(s, 'COUNCIL_NOSEL')]['logloss'] - R[(s, 'COUNCIL')]['logloss'] >= 0.02 for s in seeds)
-V['P4'] = dict(ok=c4 >= 9, n=c4, outcome=sign_outcome(c4, 9),
-               diff=boot_ci([R[(s, 'COUNCIL_NOSEL')]['logloss'] - R[(s, 'COUNCIL')]['logloss'] for s in seeds]),
-               wG_sd_groups=boot_ci(col('COUNCIL_NOSEL', 'wG_sd_groups')))
-lo, hi = W_FAR + 0.05, W_MY - 0.05
-c5 = sum(lo < x < hi for x in col('DEMES', 'wG'))
-V['P5'] = dict(ok=c5 >= 8, n=c5, interval=[lo, hi], wG=boot_ci(col('DEMES', 'wG')))
-c6 = sum(R[(s, 'DEMES')]['wG'] < R[(s, 'DEMES_10x40')]['wG'] for s in seeds)
-V['P6'] = dict(ok=c6 >= 8, n=c6, outcome=sign_outcome(c6, 8), wG_10x40=boot_ci(col('DEMES_10x40', 'wG')),
-               diff=boot_ci([R[(s, 'DEMES')]['wG'] - R[(s, 'DEMES_10x40')]['wG'] for s in seeds]))
-c7 = sum(abs(x - W_MY) <= 0.15 for x in col('DEMES_NOSEL', 'wG'))
-V['P7'] = dict(ok=c7 >= 9, n=c7, wG=boot_ci(col('DEMES_NOSEL', 'wG')))
-e1 = sum(R[(s, 'COUNCIL')]['self_dec'] < R[(s, 'MYOPIC')]['self_dec'] for s in seeds)
-V['E1'] = dict(ok=e1 >= 7, n=e1, outcome=sign_outcome(e1, 7),
-               diff=boot_ci([R[(s, 'COUNCIL')]['self_dec'] - R[(s, 'MYOPIC')]['self_dec'] for s in seeds]),
-               self_dec_council=boot_ci(col('COUNCIL', 'self_dec')), self_dec_myopic=boot_ci(col('MYOPIC', 'self_dec')))
-e2 = sum(abs(x - W_FAR) <= 0.1 for x in col('COUNCIL_10x40', 'wG'))
-V['E2'] = dict(ok=e2 >= 8, n=e2, wG=boot_ci(col('COUNCIL_10x40', 'wG')))
-# P8 (после пилота 3): разложение Прайса в DEMES — отбор внутри групп тянет w_G вверх, отбор групп — вниз
-assert all(abs(R[(s, a)]['price_within']) < 1e-12 for s in seeds for a in E.ARMS if E.ARMS[a]['council']), \
-    'у общего гена группы внутригрупповая часть Прайса должна быть нулём'
-assert all(abs(R[(s, a)]['price_between']) < 1e-12 for s in seeds for a in E.ARMS
-           if not E.ARMS[a]['group_sel'] or E.ARMS[a]['m'] == 1), 'без отбора групп межгрупповая часть должна быть нулём'
-c8 = sum(R[(s, 'DEMES')]['price_within'] > 0 and R[(s, 'DEMES')]['price_between'] < 0 for s in seeds)
-V['P8'] = dict(ok=c8 >= 9, n=c8, outcome=sign_outcome(c8, 9), within=boot_ci(col('DEMES', 'price_within')),
-               between=boot_ci(col('DEMES', 'price_between')), within_nosel=boot_ci(col('DEMES_NOSEL', 'price_within')),
-               within_10x40=boot_ci(col('DEMES_10x40', 'price_within')))
-for k in ('P1', 'P2', 'P5', 'P7', 'E2'):
-    V[k]['outcome'] = 'подтверждено' if V[k]['ok'] else 'не подтверждено'
-# сводные исходы (PREREG §4)
-if V['P2']['ok'] and V['P3']['ok'] and V['P4']['ok']:
-    s1 = 'подтверждено'
-elif (sum(abs(x - W_FAR) > 0.15 for x in col('COUNCIL', 'wG')) >= 5
-      or sum(R[(s, 'COUNCIL')]['logloss'] >= R[(s, 'MYOPIC')]['logloss'] for s in seeds) >= 5):
-    s1 = 'опровергнуто'
-else:
-    s1 = 'не подтверждено'
-if V['P5']['ok'] and V['P6']['ok']:
-    s2 = 'подтверждено'
-elif sum(x >= hi for x in col('DEMES', 'wG')) >= 5 or c6 <= 3:
-    s2 = 'опровергнуто'
-else:
-    s2 = 'не подтверждено'
-summary = dict(council_reaches_farsighted=s1, multilevel_partial_dose=s2)
-arms_mean = {a: {k: boot_ci(col(a, k)) for k in ('wG', 'b', 'logloss', 'self_dec', 'acc', 'ece', 'wG_sd_groups',
-                                                 'price_between', 'price_within')} for a in E.ARMS}
-out = dict(verdicts=V, summary=summary, arms=arms_mean, theory=th, n_seeds=NS,
-           rows={str(s): {a: R[(s, a)] for a in E.ARMS} for s in seeds})
+
+
+def interval(name, vals, lo, hi, k, **extra):
+    c = sum(lo <= x <= hi for x in vals)
+    V[name] = dict(kind='интервал', k=k, n=c, outcome=outcome(c, k), interval=[lo, hi], value=boot_ci(vals), **extra)
+
+
+def sign(name, dvals, k, **extra):                       # счёт зёрен, где разность < 0
+    c = sum(x < 0 for x in dvals)
+    V[name] = dict(kind='знак', k=k, n=c, outcome=outcome(c, k), diff=boot_ci(dvals), **extra)
+
+
+# основная семья
+interval('P1', u('MYOPIC'), 1 - 1 / 3, 1 + 1 / 3, 9, wG=boot_ci(col('MYOPIC', 'wG')))
+interval('P2', u('COUNCIL'), -1 / 3, 1 / 3, 9, wG=boot_ci(col('COUNCIL', 'wG')), b=boot_ci(col('COUNCIL', 'b')))
+sign('P3', diff('COUNCIL', 'MYOPIC', 'logloss'), 9)
+lo5, hi5 = 1 / 6, 5 / 6                                   # строго между точками с запасом шестой части разрыва
+c5 = sum(lo5 < x < hi5 for x in u('DEMES'))
+V['P5'] = dict(kind='интервал', k=8, n=c5, outcome=outcome(c5, 8), interval=[lo5, hi5], value=boot_ci(u('DEMES')),
+               wG=boot_ci(col('DEMES', 'wG')))
+sign('P6', diff('DEMES', 'DEMES_10x40'), 8, wG_10x40=boot_ci(col('DEMES_10x40', 'wG')))
+interval('P7', u('DEMES_NOSEL'), 1 - 1 / 3, 1 + 1 / 3, 9, wG=boot_ci(col('DEMES_NOSEL', 'wG')))
+sign('P9', diff('COUNCIL', 'DEMES'), 9)
+sign('P10', diff('DEMES', 'DEMES_NOSEL'), 9)
+sign('P11', diff('DEMES_NOWITHIN', 'DEMES'), 9)
+interval('P12', u('DEMES_NOWITHIN'), -1 / 3, 1 / 3, 8, wG=boot_ci(col('DEMES_NOWITHIN', 'wG')))
+# разведка
+sign('E1', diff('COUNCIL', 'MYOPIC', 'self_dec'), 7, self_dec_council=boot_ci(col('COUNCIL', 'self_dec')),
+     self_dec_myopic=boot_ci(col('MYOPIC', 'self_dec')), self_dec_demes=boot_ci(col('DEMES', 'self_dec')))
+interval('E2', u('COUNCIL_10x40'), -1 / 3, 1 / 3, 8, wG=boot_ci(col('COUNCIL_10x40', 'wG')))
+sign('E3', diff('COUNCIL', 'COUNCIL_IND'), 7, wG_ind=boot_ci(col('COUNCIL_IND', 'wG')))       # COUNCIL < COUNCIL_IND
+sign('E4', diff('DEMES', 'DEMES_IND'), 7, wG_ind=boot_ci(col('DEMES_IND', 'wG')))             # DEMES < DEMES_IND
+# проверка построения (вне семьи): у COUNCIL_NOSEL на w_G нет отбора — блуждание
+K1 = dict(logloss_gap=boot_ci(diff('COUNCIL_NOSEL', 'COUNCIL', 'logloss')), wG_sd_groups=boot_ci(col('COUNCIL_NOSEL', 'wG_sd_groups')),
+          n_gap_ge_002=sum(x >= 0.02 for x in diff('COUNCIL_NOSEL', 'COUNCIL', 'logloss')))
+# описательно (вне семьи): части Прайса; в стационарном окне межгрупповая ≈ − внутригрупповая (тождество)
+D1 = {a: dict(within=boot_ci(col(a, 'price_within')), between=boot_ci(col(a, 'price_between')),
+              total=boot_ci([F[(s, a)]['price_within'] + F[(s, a)]['price_between'] for s in seeds])) for a in E.ARMS}
+summary = None
+if FULL:
+    def combine(parts):
+        oc = [V[p]['outcome'] for p in parts]
+        return dict(parts=parts, outcome='подтверждено' if all(o == 'подтверждено' for o in oc)
+                    else ('опровергнуто' if 'опровергнуто' in oc else 'не подтверждено'))
+    summary = dict(S1_commitment=combine(['P2', 'P3', 'P9']), S2_multilevel=combine(['P5', 'P10']),
+                   S3_mechanism=combine(['P11', 'P12']))
+keys = ('wG', 'b', 'logloss', 'self_dec', 'acc', 'ece', 'wG_sd_groups', 'price_between', 'price_within')
+arms_mean = {a: {k: boot_ci(col(a, k)) for k in keys} for a in E.ARMS}
+out = dict(verdicts=V, summary=summary, construction_K1=K1, descriptive_D1=D1, arms=arms_mean, theory=th, n_seeds=NS,
+           frozen=dict(W_MY=W_MY, W_FAR=W_FAR, D=D), rows={str(s): {a: F[(s, a)] for a in E.ARMS} for s in seeds})
 json.dump(out, open(os.path.join(os.path.dirname(os.path.abspath(src)), 'analysis_trust_03.json'), 'w'),
           ensure_ascii=False, indent=1, default=lambda o: o.item() if hasattr(o, 'item') else str(o))
 for k, v in V.items():
-    print(k, '✓' if v['ok'] else '✗', v['outcome'], {kk: (np.round(vv, 4).tolist() if isinstance(vv, list) else vv)
-                                                    for kk, vv in v.items() if kk not in ('ok', 'outcome')})
+    print(k, v['outcome'], f"{v['n']}/{NS} (k = {v['k']})",
+          {kk: (np.round(vv, 4).tolist() if isinstance(vv, list) else vv) for kk, vv in v.items() if kk not in ('outcome', 'n', 'k', 'kind')})
+print('K1 (проверка построения):', {k: (np.round(v, 4).tolist() if isinstance(v, list) else v) for k, v in K1.items()})
 print('сводные исходы:', summary)

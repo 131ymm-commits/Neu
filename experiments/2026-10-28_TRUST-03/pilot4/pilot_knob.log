@@ -1,0 +1,9 @@
+KNOB_DEMES_10x40   n/m 4.0000: w_G 0.949 (0.932, 0.967); logloss 0.1785
+KNOB_COUNCIL_10x40 n/m 4.0000: w_G 0.707 (0.677, 0.737); logloss 0.1763
+KNOB_DEMES_20x20   n/m 1.0000: w_G 0.891 (0.882, 0.900); logloss 0.1777
+KNOB_COUNCIL_20x20 n/m 1.0000: w_G 0.706 (0.700, 0.713); logloss 0.1761
+KNOB_DEMES_40x10   n/m 0.2500: w_G 0.831 (0.841, 0.820); logloss 0.1769
+KNOB_COUNCIL_40x10 n/m 0.2500: w_G 0.693 (0.697, 0.689); logloss 0.1763
+KNOB_DEMES_80x5    n/m 0.0625: w_G 0.750 (0.751, 0.748); logloss 0.1764
+KNOB_COUNCIL_80x5  n/m 0.0625: w_G 0.700 (0.699, 0.701); logloss 0.1764
+код выхода 0

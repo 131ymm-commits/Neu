@@ -19,6 +19,8 @@ b = 0,6 · clip(w̄_G / W_REF, 0, 1), где w̄_G — средний вес н�
 Оценка — точным перебором 64 узоров для среднего генотипа каждой группы в её мире (своё b), среднее по группам.
 
 Запуск: python3 exp_trust_03.py [--check | --pilot | --dry]. PREREG: PREREG-TRUST-03.md.
+После проверки по трём линзам: 3000 поколений, окно 2000; руки DEMES_NOWITHIN (вмешательство: вес на G внутри группы
+наследуется без отбора), COUNCIL_IND и DEMES_IND (свои эпизоды у каждой группы — независимый риск).
 """
 import json
 import os
@@ -36,18 +38,26 @@ import exp_trust_02 as T2  # noqa: E402
 
 WG, WA, J = T2.WG, T2.WA, 1 + T2.G_IDX         # J = 4: индекс веса источника G в векторе из 7
 W_EX = WA.exact_weights()                        # точные веса честного мира A (честные источники от b не зависят)
-N_TOT, L_EP, G, SIG, WINDOW = 400, 40, 1500, 0.04, 300
+# после проверки по трём линзам: 3000 поколений, окно 2000 (было 1500 и 300 — ошибка среднего по окну 0,03–0,05)
+N_TOT, L_EP, G, SIG, WINDOW = 400, 40, 3000, 0.04, 2000
 SEEDS = list(range(500, 510))
-PILOT_SEEDS = [970, 971, 972]
+PILOT_SEEDS = [970, 971, 972, 973, 974, 975, 976, 977]
 DRY_SEEDS = [960, 961]
-ARMS = {'MYOPIC': dict(m=1, n=400, council=False, group_sel=False, stream=0),
-        'DEMES_NOSEL': dict(m=40, n=10, council=False, group_sel=False, stream=1),
-        'DEMES': dict(m=40, n=10, council=False, group_sel=True, stream=2),
-        'COUNCIL': dict(m=40, n=10, council=True, group_sel=True, stream=3),
-        'COUNCIL_NOSEL': dict(m=40, n=10, council=True, group_sel=False, stream=4),
-        # доза n/m (после пилота ручки): мало больших групп, n/m = 4 против 0,25
-        'DEMES_10x40': dict(m=10, n=40, council=False, group_sel=True, stream=5),
-        'COUNCIL_10x40': dict(m=10, n=40, council=True, group_sel=True, stream=6)}
+_BASE = dict(within_sel=True, common_eps=True)
+ARMS = {k: {**_BASE, **v} for k, v in {
+    'MYOPIC': dict(m=1, n=400, council=False, group_sel=False, stream=0),
+    'DEMES_NOSEL': dict(m=40, n=10, council=False, group_sel=False, stream=1),
+    'DEMES': dict(m=40, n=10, council=False, group_sel=True, stream=2),
+    'COUNCIL': dict(m=40, n=10, council=True, group_sel=True, stream=3),
+    'COUNCIL_NOSEL': dict(m=40, n=10, council=True, group_sel=False, stream=4),
+    # после пилота ручки: мало больших групп, n/m = 4 против 0,25
+    'DEMES_10x40': dict(m=10, n=40, council=False, group_sel=True, stream=5),
+    'COUNCIL_10x40': dict(m=10, n=40, council=True, group_sel=True, stream=6),
+    # после проверки по трём линзам: вмешательство (вес на G внутри группы наследуется без отбора — родитель
+    # равновероятен) и разведка со своими эпизодами у каждой группы (независимый риск)
+    'DEMES_NOWITHIN': dict(m=40, n=10, council=False, group_sel=True, stream=7, within_sel=False),
+    'COUNCIL_IND': dict(m=40, n=10, council=True, group_sel=True, stream=8, common_eps=False),
+    'DEMES_IND': dict(m=40, n=10, council=False, group_sel=True, stream=9, common_eps=False)}.items()}
 
 
 def full_w(w0, wg):
@@ -89,8 +99,19 @@ def episodes_common(rng, L):
     return X, W, okG, u
 
 
+def episodes_groups(rng, m, L):
+    """Свои эпизоды у каждой группы (независимый риск): X (m × L × 7), W, okG, u (m × L)."""
+    X, W = WA.episodes(rng, m * L)
+    X = X.reshape(m, L, X.shape[1]); W = W.reshape(m, L)
+    u = rng.random((m, L))
+    okG = X[..., J] == 2 * W - 1
+    return X, W, okG, u
+
+
 def evolve3(seed, arm, gens=G, track_every=10):
     spec = ARMS[arm]; m, n = spec['m'], spec['n']; council, gsel = spec['council'], spec['group_sel']
+    wsel, common = spec['within_sel'], spec['common_eps']
+    assert not (council and not wsel), 'у общего гена группы нет отбора внутри группы по построению'
     rng = np.random.default_rng(seed * 100 + spec['stream'])
     w0 = rng.normal(0, 0.01, (m, n))                    # ген w0 у каждой особи
     wg = rng.normal(0, 0.01, (m, 1) if council else (m, n))   # вес на G: ген группы (совет) или ген особи
@@ -99,13 +120,22 @@ def evolve3(seed, arm, gens=G, track_every=10):
     for g in range(gens):
         wgm = wg.mean(1)                                  # средний вес на G в каждой группе (у совета — сам ген)
         b = np.array([T2.b_of(x) for x in wgm])           # доля лжи источника каждой группы
-        X, W, okG, u = episodes_common(rng, L_EP)
-        zc = X[:, zc_idx] @ W_EX[zc_idx]                  # вклад честных источников (общий)
-        lie = (W[None, :] == 0) & okG[None, :] & (u[None, :] < b[:, None])     # m × L: где источник группы врёт
-        xg = np.where(lie, 1.0, X[None, :, J])            # m × L: сигнал источника G в каждой группе
+        if common:
+            X, W, okG, u = episodes_common(rng, L_EP)
+            zc = X[:, zc_idx] @ W_EX[zc_idx]              # вклад честных источников (общий)
+            lie = (W[None, :] == 0) & okG[None, :] & (u[None, :] < b[:, None])     # m × L: где источник группы врёт
+            xg = np.where(lie, 1.0, X[None, :, J])        # m × L: сигнал источника G в каждой группе
+            Wm = np.broadcast_to(W[None, :], (m, L_EP))   # m × L: истина
+            zcm = np.broadcast_to(zc[None, :], (m, L_EP))
+        else:
+            X, W, okG, u = episodes_groups(rng, m, L_EP)
+            zcm = X[..., zc_idx] @ W_EX[zc_idx]           # m × L
+            lie = (W == 0) & okG & (u < b[:, None])
+            xg = np.where(lie, 1.0, X[..., J])
+            Wm = W
         wgi = np.broadcast_to(wg, (m, n))                 # вес на G у каждой особи
-        Z = w0[:, :, None] + zc[None, None, :] + wgi[:, :, None] * xg[:, None, :]   # m × n × L
-        logF = T1.log_true(Z, W[None, None, :]).sum(2)    # m × n
+        Z = w0[:, :, None] + zcm[:, None, :] + wgi[:, :, None] * xg[:, None, :]   # m × n × L
+        logF = T1.log_true(Z, Wm[:, None, :]).sum(2)      # m × n
         # отбор групп: родитель новой группы ∝ средней F группы (Райт–Фишер на уровне групп)
         if gsel and m > 1:
             lg = np.logaddexp.reduce(logF, axis=1) - np.log(n)
@@ -118,6 +148,8 @@ def evolve3(seed, arm, gens=G, track_every=10):
         # межгрупповая часть Σ pg·z̄_k − mean z̄_k + внутригрупповая Σ pg·(Σ_i pr_ki·z_ki − z̄_k)
         zbar = wgi.mean(1)
         prw = np.exp(logF - logF.max(1, keepdims=True)); prw /= prw.sum(1, keepdims=True)
+        if not wsel:
+            prw = np.full((m, n), 1.0 / n)                # вес на G наследуется без отбора внутри группы
         s_between = float(pg @ zbar - zbar.mean())
         s_within = float(pg @ ((prw * wgi).sum(1) - zbar))
         if g >= gens - WINDOW:
@@ -131,8 +163,11 @@ def evolve3(seed, arm, gens=G, track_every=10):
             new_w0[k] = w0[p, idx] + rng.normal(0, SIG, n)
             if council:
                 new_wg[k] = wg[p] + rng.normal(0, SIG, 1)
-            else:
+            elif wsel:
                 new_wg[k] = wg[p, idx] + rng.normal(0, SIG, n)
+            else:                                          # DEMES_NOWITHIN: родитель гена w_G равновероятен
+                idw = rng.choice(n, size=n)
+                new_wg[k] = wg[p, idw] + rng.normal(0, SIG, n)
         w0, wg = new_w0, new_wg
         if g % track_every == 0 or g == gens - 1:
             wgm = wg.mean(1); w0m = w0.mean(1)
@@ -160,8 +195,15 @@ def check():
     assert abs(emp - want) < 0.004, (emp, want)
     th = theory()
     assert abs(th['myopic']['wG'] - 0.9873) < 1e-3 and abs(th['myopic']['b'] - 0.3415) < 1e-3
-    # лучший ответ особи на мир при b*: байесовский вес — и это неподвижная точка
-    assert abs(WG.with_b(T2.B_STAR).exact_weights()[J] - th['myopic']['wG']) < 1e-9
+    # лучший ответ сокращённого агента на мир при b* — численно (минимум точной лог-потери по w0 и w_G, честные веса
+    # закреплены), против формулы exact_weights; и неподвижная точка: b_of(лучший ответ) = b*
+    from scipy.optimize import minimize
+    ws = WG.with_b(T2.B_STAR)
+    r = minimize(lambda v: ws.exact_metrics(full_w(v[0], v[1]))['logloss'], x0=[-1.0, 0.8], method='Nelder-Mead',
+                 options=dict(xatol=1e-9, fatol=1e-13, maxiter=4000))
+    assert abs(r.x[0] - th['myopic']['w0']) < 1e-4 and abs(r.x[1] - th['myopic']['wG']) < 1e-4, (r.x, th['myopic'])
+    assert abs(T2.b_of(r.x[1]) - T2.B_STAR) < 1e-4
+    print('численный лучший ответ при b*:', np.round(r.x, 6))
     print('проверка: общие эпизоды = мир A; частота лжи', round(emp, 4), 'при', round(want, 4), '; теория:',
           {k: {kk: round(vv, 4) for kk, vv in v.items()} if isinstance(v, dict) else round(v, 4) for k, v in th.items()})
 
@@ -178,8 +220,9 @@ def run(seeds, outdir, arms=None, gens=G):
 if __name__ == '__main__':
     if '--check' in sys.argv:
         check(); sys.exit(0)
-    if '--pilot' in sys.argv:
-        th, runs, sec = run(PILOT_SEEDS, os.path.join(HERE, 'pilot')); print(f'пилот: {sec:.0f} с'); sys.exit(0)
+    if '--pilot' in sys.argv:                      # пилот 4 (окончательное устройство); пилоты 1–3 — в pilot/
+        os.makedirs(os.path.join(HERE, 'pilot4'), exist_ok=True)
+        th, runs, sec = run(PILOT_SEEDS, os.path.join(HERE, 'pilot4')); print(f'пилот: {sec:.0f} с'); sys.exit(0)
     dry = '--dry' in sys.argv
     outdir = os.path.join(HERE, 'dry') if dry else HERE
     os.makedirs(outdir, exist_ok=True)
