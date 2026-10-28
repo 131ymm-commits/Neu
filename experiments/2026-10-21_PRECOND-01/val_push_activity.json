@@ -1,0 +1,35 @@
+{
+ "note": "Серверное событие о пуше выборов этапа val PRECOND-01 (до расчёта правды).",
+ "commit": "5afabd2",
+ "evals_sha256": "4a006a2ed007e193537ceb13a30e113db291d52eb72f0d45114ffcc04ba95612",
+ "event": {
+  "id": 48043736186,
+  "node_id": "PSH_kwLOUpi23s8AAAALL6E8eg",
+  "before": "7161e02ed85f70d77d01dce89d2f4365c70375df",
+  "after": "5afabd23ca779f8e7a1915433179f9fe12691583",
+  "ref": "refs/heads/main",
+  "timestamp": "2026-10-28T03:18:58Z",
+  "activity_type": "push",
+  "actor": {
+   "login": "131ymm-commits",
+   "id": 276661975,
+   "node_id": "U_kgDOEH2G1w",
+   "avatar_url": "https://avatars.githubusercontent.com/u/276661975?v=4",
+   "gravatar_id": "",
+   "url": "https://api.github.com/users/131ymm-commits",
+   "html_url": "https://github.com/131ymm-commits",
+   "followers_url": "https://api.github.com/users/131ymm-commits/followers",
+   "following_url": "https://api.github.com/users/131ymm-commits/following{/other_user}",
+   "gists_url": "https://api.github.com/users/131ymm-commits/gists{/gist_id}",
+   "starred_url": "https://api.github.com/users/131ymm-commits/starred{/owner}{/repo}",
+   "subscriptions_url": "https://api.github.com/users/131ymm-commits/subscriptions",
+   "organizations_url": "https://api.github.com/users/131ymm-commits/orgs",
+   "repos_url": "https://api.github.com/users/131ymm-commits/repos",
+   "events_url": "https://api.github.com/users/131ymm-commits/events{/privacy}",
+   "received_events_url": "https://api.github.com/users/131ymm-commits/received_events",
+   "type": "User",
+   "user_view_type": "public",
+   "site_admin": false
+  }
+ }
+}
