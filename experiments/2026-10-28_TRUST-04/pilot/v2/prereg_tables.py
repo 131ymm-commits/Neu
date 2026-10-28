@@ -48,8 +48,9 @@ print(f"\n- Сумма ложных уровней (Бонферрони): по 
 print('\n### Разведка (пилот)\n')
 for k, v in C['explore'].items():
     if k == 'EB6':
-        print(f"- **EB6:** |ū − (1 − R̄)| ≤ 0,1 у {v['n_within_01']} из {len(v['arms'])} рук; ρ Спирмена {f(v['spearman'])} "
-              f"(p двусторонний {g(v['spearman_p_two_sided'])}). По рукам: " +
+        print(f"- **EB6** (правило — DEMES_MIG и DEMES_SIG5): |ū − (1 − R̄)| — {f(v['gap_MIG'], 4)} и {f(v['gap_SIG5'], 4)}; доля прохождений "
+              f"при 20 зёрнах с возвращением из 10 пилотных — {f(v['boot_pass'])}. Описательно: в пределах 0,1 у {v['n_within_01']} из "
+              f"{len(v['arms'])} рук; ρ Спирмена {f(v['spearman'])} (p двусторонний {g(v['spearman_p_two_sided'])}). По рукам: " +
               '; '.join(f"{a} {f(uu)} / {f(r)}" for a, uu, r in zip(v['arms'], v['u'], v['one_minus_R'])) + ' (u / 1 − R).')
     elif v['kind'] == 'эквивалентность':
         print(f"- **{k}:** разность {f(v['diff'], 4)}; мощность {f(v[f'power_{LEV}'])} ({f(v[f'power_sd15_{LEV}'])}); ложный уровень {g(v[f'false_level_{LEV}'])}.")
@@ -73,7 +74,7 @@ ind = {a: v['u_indep'] for a, v in C['confirm'].items() if a.startswith('C_') an
 print('\n- **Независимая реализация, пилот 1200–1209,** u по замороженной теории (среднее; по зёрнам): ' +
       '; '.join(f"{a[2:]} {f(sum(x) / len(x))} ({', '.join(f(y) for y in x)})" for a, x in ind.items()) + '.')
 log = open(os.path.join(HERE, 'compare_v1.log'), encoding='utf-8').read().strip().splitlines()
-print('- **Сверка пилота v1 с v2** (`pilot/v2/compare_v1.log`): ' + '; '.join(x.strip().rstrip('.') for x in log[:2]) + '. ' + log[-1].replace('ИТОГ: ', 'Итог: ') + '.')
+print('- **Сверка пилота v1 с v2** (`pilot/v2/compare_v1.log`): ' + '; '.join(x.strip().rstrip('.') for x in log[:2]) + '. ' + log[-1].replace('ИТОГ: ', 'Итог: ').replace('нынешним кодом', 'кодом пилота v2 (602fa27)') + '.')
 
 # ---- после третьей проверки по трём линзам: динамика пилота, шаг MYOPIC, расширенный пилот DEMES_NOWITHIN ----
 import numpy as np  # noqa: E402
