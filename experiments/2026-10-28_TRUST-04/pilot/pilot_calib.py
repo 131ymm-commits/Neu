@@ -2,7 +2,7 @@
 """TRUST-04: калибровка предсказаний PREREG §4 по пилоту (зёрна 1100–1109, не тестовые) → pilot/pilot_calib.json.
 Знаковые и интервальные: значение на зерне ~ N(среднее, SD) пилота, счёт из 10 — биномиальный; мощность при средних
 пилота и при SD × 1,5; ложный уровень знаковых — Bin(10; ½), интервальных — при названной альтернативе.
-Эквивалентность (TOST по бутстреп-ДИ 90 %): мощность — доля из 2000 симуляций (выборки по 10 из N(среднее, SD) пилота),
+Эквивалентность (TOST по ДИ Уэлча 90 %): мощность — доля из 20 000 симуляций (выборки по 10 из N(среднее, SD) пилота),
 где ДИ внутри (−δ; δ); ложный уровень — то же при истинной разности, равной δ (худший случай).
 Ложный уровень сводного — наибольший у частей (ERRORS № 106 (д)); мощность сводного — произведение.
 Запуск из папки опыта: python3 pilot/pilot_calib.py"""
@@ -22,10 +22,9 @@ FROZEN = {'base': (0.9873, 0.6891), 'r075': (0.5768, 0.3897), 'r095': (1.7134, 1
           'b09': (0.8328, 0.5372)}
 DELTA = 0.1
 runs = []
-for part in ('A', 'B'):
-    p = os.path.join(HERE, f'results_trust_04_{part}.json')
-    if os.path.exists(p):
-        runs += json.load(open(p))['runs']
+import glob
+for p in sorted(glob.glob(os.path.join(HERE, 'results_trust_04_*.json'))):
+    runs += json.load(open(p))['runs']
 F = {(r['seed'], r['arm']): r['final'] for r in runs}
 seeds = sorted({s for s, _ in F}); arms_present = {a for _, a in F}
 
@@ -56,14 +55,14 @@ def sign(name, a, b, k):
                      values=d.round(4).tolist())
 
 
-def tost_rate(mx, sx, my, sy, delta=DELTA, nsim=2000, B=2000, seed=0):
-    g = np.random.default_rng(seed); hits = 0
-    for _ in range(nsim):
-        x = g.normal(mx, sx, 10); y = g.normal(my, sy, 10)
-        d = x[g.integers(0, 10, (B, 10))].mean(1) - y[g.integers(0, 10, (B, 10))].mean(1)
-        lo, hi = np.quantile(d, 0.05), np.quantile(d, 0.95)
-        hits += (-delta < lo) and (hi < delta)
-    return hits / nsim
+def tost_rate(mx, sx, my, sy, delta=DELTA, nsim=20000, seed=0):
+    """Доля симуляций (по 10 значений из N пилота), где ДИ Уэлча 90 % разности средних внутри (−δ; δ)."""
+    from scipy.stats import t as tdist
+    g = np.random.default_rng(seed)
+    x = g.normal(mx, sx, (nsim, 10)); y = g.normal(my, sy, (nsim, 10))
+    vx, vy = x.var(1, ddof=1) / 10, y.var(1, ddof=1) / 10; se = np.sqrt(vx + vy)
+    df = (vx + vy) ** 2 / (vx ** 2 / 9 + vy ** 2 / 9); h = tdist.ppf(0.95, df) * se; d = x.mean(1) - y.mean(1)
+    return float(np.mean((d - h > -delta) & (d + h < delta)))
 
 
 def equiv(name, x, y):
@@ -88,13 +87,36 @@ if 'POOLED' in arms_present:
     interval('A13', u('COUNCIL'), -1 / 6, 1 / 6, 9, {'как DEMES': uD, 'у близорукой': 1.0})
     interval('A14', u('MYOPIC'), 2 / 3, 4 / 3, 9, {'у дальновидной': 0.0})
 if 'POOLED_r075' in arms_present:
-    for i, c in enumerate(('r075', 'r095', 'b03', 'b09', 'IND', 'MIG')):
-        sign(f'B{i + 1}', f'POOLED_{c}', f'DEMES_{c}', 9)
+    conds = [c for c in ('r075', 'r095', 'b03', 'b09', 'IND', 'MIG', 'SIG5') if f'POOLED_{c}' in arms_present]
+    for c in conds:
+        sign(f'B{1 + ["r075", "r095", "b03", "b09", "IND", "MIG", "SIG5"].index(c)}', f'POOLED_{c}', f'DEMES_{c}', 9)
     for i, w in enumerate(('r075', 'r095', 'b03', 'b09')):
         uDw = float(u(f'DEMES_{w}').mean())
-        interval(f'B{i + 7}', u(f'POOLED_{w}'), -1 / 3, 1 / 3, 8, {'как DEMES этого мира': uDw, 'у близорукой': 1.0})
-        interval(f'B{i + 11}', u(f'MYOPIC_{w}'), 2 / 3, 4 / 3, 9, {'у дальновидной': 0.0})
-    sign('EB1', 'POOLED', 'POOLED_IND', 7); sign('EB2', 'POOLED', 'POOLED_MIG', 7); sign('EB3', 'DEMES', 'DEMES_MIG', 7)
+        interval(f'B{i + 8}', u(f'POOLED_{w}'), -1 / 3, 1 / 3, 8, {'как DEMES этого мира': uDw, 'у близорукой': 1.0})
+        interval(f'B{i + 12}', u(f'MYOPIC_{w}'), 2 / 3, 4 / 3, 9, {'у дальновидной': 0.0})
+    _d1 = np.abs(u('POOLED')) - np.abs(u('POOLED_IND')); _mu, _sd = float(_d1.mean()), float(_d1.std(ddof=1))
+    out['EB1'] = dict(kind='знак', mean=_mu, sd=_sd, k=7, power=P_atleast(float(norm.cdf(-_mu / _sd)), 7),
+                      power_sd15=P_atleast(float(norm.cdf(-_mu / (1.5 * _sd))), 7), false_level=P_atleast(0.5, 7), values=_d1.round(4).tolist())
+    equiv('EB2', u('POOLED_MIG'), u('POOLED')); sign('EB3', 'DEMES', 'DEMES_MIG', 7)
+    for _w in ('r075', 'r095', 'b03', 'b09'):
+        equiv(f'EB5_{_w}', u(f'DEMES_{_w}'), u('DEMES'))
+    if 'DEMES_SIG5' in arms_present:
+        sign('EB4', 'DEMES', 'DEMES_SIG5', 7)
+# блок В: независимая реализация (пилот 1200–1204) против основного пилота; мощность — при n = 10 у обеих
+IP = os.path.join(os.path.dirname(HERE), 'indep', 'pilot', 'results_indep_04.json')
+if os.path.exists(IP) and 'POOLED' in arms_present:
+    ir = json.load(open(IP))['runs']
+    for a in ('MYOPIC', 'DEMES', 'POOLED', 'COUNCIL'):
+        ui = np.array([r['u'] for r in ir if r['arm'] == a])
+        x, y = ui, u(a)
+        out[f'C_{a}'] = dict(kind='эквивалентность', diff=float(x.mean() - y.mean()), sd_x=float(x.std(ddof=1)), sd_y=float(y.std(ddof=1)),
+                             n_indep_pilot=len(ui), delta=DELTA, power=tost_rate(x.mean(), x.std(ddof=1), y.mean(), y.std(ddof=1)),
+                             power_sd15=tost_rate(x.mean(), 1.5 * x.std(ddof=1), y.mean(), 1.5 * y.std(ddof=1), seed=1),
+                             false_level=tost_rate(y.mean() + DELTA, x.std(ddof=1), y.mean(), y.std(ddof=1), seed=2))
+    dp = np.array([r['u'] for r in ir if r['arm'] == 'POOLED']) - np.array([r['u'] for r in ir if r['arm'] == 'DEMES'])
+    out['C_ORDER'] = dict(kind='знак', mean=float(dp.mean()), sd=float(dp.std(ddof=1)), k=9,
+                          power=P_atleast(float(norm.cdf(-dp.mean() / dp.std(ddof=1))), 9),
+                          power_sd15=P_atleast(float(norm.cdf(-dp.mean() / (1.5 * dp.std(ddof=1)))), 9), false_level=P_atleast(0.5, 9))
 out['arms'] = {a: dict(u_mean=float(u(a).mean()), u_sd=float(u(a).std(ddof=1)), u=u(a).round(4).tolist(),
                        sd_groups=float(col(a, 'wG_sd_groups').mean()), price_within=float(col(a, 'price_within').mean()),
                        logloss=float(col(a, 'logloss').mean())) for a in E.ARMS if a in arms_present}

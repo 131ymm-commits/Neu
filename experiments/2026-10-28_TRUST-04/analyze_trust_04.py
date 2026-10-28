@@ -7,7 +7,7 @@ indep/test/results_indep_04.json (если есть). Выход — DIR/analysi
 Правила исходов (одни для частей и сводных):
   знаковое и интервальное предсказание с порогом k из N: «подтверждено» — счёт ≥ k; «опровергнуто» — счёт ≤ N − k;
   иначе «не показано»;
-  эквивалентность (TOST по бутстреп-ДИ 90 % разности средних): «подтверждено» — ДИ внутри (−δ; δ); «опровергнуто» —
+  эквивалентность (TOST Шуирмана по ДИ Уэлча 90 % разности средних): «подтверждено» — ДИ внутри (−δ; δ); «опровергнуто» —
   ДИ целиком вне (−δ; δ); иначе «не показано»;
   сводный: «подтверждено» — все части подтверждены; «опровергнуто» — хоть одна опровергнута; иначе «не подтверждено».
 Сводные исходы считаются только на тестовых зёрнах (600–609)."""
@@ -71,11 +71,13 @@ def boot_ci(x, B=10000, seed=0, q=(0.025, 0.975)):
     return [float(x.mean()), float(np.quantile(m, q[0])), float(np.quantile(m, q[1]))]
 
 
-def boot_diff_ci(x, y, B=10000, seed=1, level=0.90):
-    x, y = np.asarray(x, float), np.asarray(y, float); g = np.random.default_rng(seed)
-    d = x[g.integers(0, len(x), (B, len(x)))].mean(1) - y[g.integers(0, len(y), (B, len(y)))].mean(1)
-    a = (1 - level) / 2
-    return [float(x.mean() - y.mean()), float(np.quantile(d, a)), float(np.quantile(d, 1 - a))]
+def welch_ci(x, y, level=0.90):
+    """ДИ разности средних по Уэлчу (TOST Шуирмана: эквивалентность при ДИ 90 % внутри (−δ; δ))."""
+    from scipy.stats import t as tdist
+    x, y = np.asarray(x, float), np.asarray(y, float); vx, vy = x.var(ddof=1) / len(x), y.var(ddof=1) / len(y)
+    se = np.sqrt(vx + vy); df = (vx + vy) ** 2 / (vx ** 2 / (len(x) - 1) + vy ** 2 / (len(y) - 1))
+    h = float(tdist.ppf(1 - (1 - level) / 2, df)) * se; d = float(x.mean() - y.mean())
+    return [d, d - h, d + h]
 
 
 def outcome(count, k, n=None):
@@ -98,7 +100,7 @@ def sign(name, a, b, k, key='wG'):                         # счёт зёрен
 
 
 def equiv(name, x, y, delta=DELTA_EQ, **extra):
-    m, lo, hi = boot_diff_ci(x, y)
+    m, lo, hi = welch_ci(x, y)
     oc = 'подтверждено' if (-delta < lo and hi < delta) else ('опровергнуто' if (lo >= delta or hi <= -delta) else 'не показано')
     V[name] = dict(kind='эквивалентность', delta=delta, outcome=oc, diff_ci90=[m, lo, hi], **extra)
 
@@ -119,15 +121,20 @@ equiv('A12', uw('COUNCIL'), uw('COUNCIL_SIGN'))
 interval('A13', uw('COUNCIL'), -1 / 6, 1 / 6, 9)
 interval('A14', uw('MYOPIC'), 2 / 3, 4 / 3, 9)
 # ---- блок Б (переносимость) ----
-for i, c in enumerate(('r075', 'r095', 'b03', 'b09', 'IND', 'MIG')):
+for i, c in enumerate(('r075', 'r095', 'b03', 'b09', 'IND', 'MIG', 'SIG5')):
     sign(f'B{i + 1}', f'POOLED_{c}', f'DEMES_{c}', 9)
 for i, w in enumerate(('r075', 'r095', 'b03', 'b09')):
-    interval(f'B{i + 7}', uw(f'POOLED_{w}'), -1 / 3, 1 / 3, 8)
-    interval(f'B{i + 11}', uw(f'MYOPIC_{w}'), 2 / 3, 4 / 3, 9)
+    interval(f'B{i + 8}', uw(f'POOLED_{w}'), -1 / 3, 1 / 3, 8)
+    interval(f'B{i + 12}', uw(f'MYOPIC_{w}'), 2 / 3, 4 / 3, 9)
 # разведка блока Б
-sign('EB1', 'POOLED', 'POOLED_IND', 7)                    # независимый риск: POOLED дальше от точки
-sign('EB2', 'POOLED', 'POOLED_MIG', 7)                    # миграция: POOLED дальше от точки
+# EB1: независимый риск — |u| POOLED_IND больше, чем у POOLED (по номеру зерна); EB2: миграция POOLED не сдвигает (±0,1)
+_d1 = [abs(a) - abs(b) for a, b in zip(uw('POOLED'), uw('POOLED_IND'))]
+V['EB1'] = dict(kind='знак', k=7, n=sum(x < 0 for x in _d1), outcome=outcome(sum(x < 0 for x in _d1), 7), diff=boot_ci(_d1))
+equiv('EB2', uw('POOLED_MIG'), uw('POOLED'))
 sign('EB3', 'DEMES', 'DEMES_MIG', 7)                      # миграция: многоуровневый отбор слабее
+sign('EB4', 'DEMES', 'DEMES_SIG5', 7)                     # шаг мутации ×5: остаток многоуровневого отбора больше
+for _w in ('r075', 'r095', 'b03', 'b09'):                  # EB5: доля пути DEMES не зависит от мира (±0,1)
+    equiv(f'EB5_{_w}', uw(f'DEMES_{_w}'), uw('DEMES'))
 # ---- проверки построения (вне семьи) ----
 K = {}
 for a in ('POOLED_NOSEL', 'POOLED_NOSEL_FREE'):
@@ -156,7 +163,7 @@ if FULL:
         return dict(parts=parts, outcome='подтверждено' if all(o == 'подтверждено' for o in oc)
                     else ('опровергнуто' if 'опровергнуто' in oc else 'не подтверждено'))
     summary = dict(SA=combine(['A1', 'A2', 'A4', 'A5', 'A6', 'A7', 'A8']), SA2=combine(['A11', 'A12']),
-                   SB=combine([f'B{i}' for i in range(1, 7)]), SB2=combine([f'B{i}' for i in range(7, 11)]),
+                   SB=combine([f'B{i}' for i in range(1, 8)]), SB2=combine([f'B{i}' for i in range(8, 12)]),
                    SC=combine(['C_MYOPIC', 'C_DEMES', 'C_POOLED', 'C_COUNCIL', 'C_ORDER']))
 keys = ('wG', 'b', 'logloss', 'self_dec', 'acc', 'ece', 'wG_sd_groups', 'price_between', 'price_within')
 arms_mean = {a: dict(u=boot_ci(uw(a)), **{k: boot_ci(col(a, k)) for k in keys}) for a in E.ARMS}
