@@ -41,7 +41,12 @@ g = th['G']
 f['theory']['G'].update(b_star=round(g['b_star'], 4), wG_star=round(g['wG_star'], 4), share_of_honest=round(g['wG_star'] / g['w_ref'], 3),
                         honest_formula_self_dec=round(g['exact_honest_formula_at_bstar']['self_dec'], 4),
                         honest_formula_acc=round(g['exact_honest_formula_at_bstar']['acc'], 4),
-                        honest_formula_ignorance_excess=round(g['exact_honest_formula_at_bstar']['ignorance'] - g['exact_exact']['ignorance'], 4))
+                        honest_formula_ignorance_excess=round(g['exact_honest_formula_at_bstar']['ignorance'] - g['exact_exact']['ignorance'], 4),
+                        honest_formula_ignorance=round(g['exact_honest_formula_at_bstar']['ignorance'], 4))
+f['theory']['B']['naive_ignorance'] = round(th['B']['exact_naive']['ignorance'], 4)
+# избыток лог-потери честной формулы TRUST-01 в мире, который она создаёт (b = 0,6) — альтернатива G3 (как pilot_calib.py)
+wA = E.WA.exact_weights(); bh = E.b_of(wA[1 + E.G_IDX]); wh = E.WG.with_b(bh)
+f['theory']['G']['honest_formula_own_world_excess_logloss'] = round(wh.exact_metrics(wA)['logloss'] - wh.exact_metrics(wh.exact_weights())['logloss'], 4)
 for a in ('KELLY_G', 'KELLY_GFIX'):
     tr = {}
     for gen in (0, 50, 100, 200, 400, 800, 1200, 1499):

@@ -97,9 +97,13 @@ if __name__ == '__main__':
             print('\nПослужной список (≥ 5 исходов):', tu)
         sys.exit(0)
     data = json.load(open(os.path.join(ROOT, 'journal', 'support_bits.json'), encoding='utf-8'))
+    table = {}
     print('| Утверждение | Бит | P | Разбивка |\n|---|---|---|---|')
     for cid, c in data.items():
         if cid.startswith('_'):
             continue
         b, p, parts = claim_bits(c)
+        table[cid] = dict(bits=round(b, 2), bits_1=round(b, 1), p=round(p, 4), parts=parts)
         print(f"| {cid} | {b:+.1f} | {p:.3f} | " + '; '.join(f'{g} {v:+.2f}' for g, v in parts) + ' |')
+    if '--json' in sys.argv:                      # копия таблицы рядом с отчётом: числа отчёта — из json (ledger.py audit)
+        json.dump(table, open(sys.argv[sys.argv.index('--json') + 1], 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
