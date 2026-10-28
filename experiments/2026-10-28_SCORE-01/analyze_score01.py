@@ -170,8 +170,16 @@ def main():
     ap.add_argument('--stages', default='main_opus,main_haiku,rep_opus,rep_haiku')
     ap.add_argument('--out', default=os.path.join(HERE, 'analysis_score01.json'))
     ap.add_argument('--evals', default=os.path.join(HERE, 'evals'), help='папка с evals (для сухого прогона — dry/evals)')
+    ap.add_argument('--no-check', action='store_true', help='без сверки хешей регистрации (сухой прогон)')
     a = ap.parse_args()
-    res = dict(stages={}, verdicts={}, composites={}, status={}, n_perm=N_PERM, pred=PRED)
+    res = dict(stages={}, verdicts={}, composites={}, status={}, n_perm=N_PERM, pred=PRED, hashes_ok=None)
+    if not a.no_check:
+        import hashlib
+        reg = json.load(open(os.path.join(HERE, 'prereg_hashes.json')))
+        bad = [f for f, h in reg.items() if hashlib.sha256(open(os.path.join(HERE, f), 'rb').read()).hexdigest() != h]
+        assert not bad, f'файлы изменились после регистрации: {bad}'
+        res['hashes_ok'] = True
+        print('хеши регистрации совпадают:', len(reg), 'файлов')
     for st in a.stages.split(','):
         path = os.path.join(a.evals, f'{st}.json')
         if not os.path.exists(path):
@@ -179,6 +187,15 @@ def main():
             continue
         E = json.load(open(path))
         assert E.get('labels') == 'r4000', f'{st}: метки должны быть по 4000 реализациям (score01.py metrics … half4)'
+        jobs_path = os.path.join(HERE, 'run', f'{st}_jobs.jsonl')
+        if os.path.exists(jobs_path) and not a.no_check:
+            ids = {json.loads(l)['id'] for l in open(jobs_path, encoding='utf-8')}
+            missing = sorted(ids - set(E['rows']))
+            extra = sorted(set(E['rows']) - ids)
+            assert not extra, f'{st}: в evals есть вызовы не из заданий: {extra[:5]}'
+            res.setdefault('coverage', {})[st] = dict(jobs=len(ids), rows=len(E['rows']), missing=len(missing),
+                                                      invalid=sum(1 for r in E['rows'].values() if not r['valid']))
+            print(f'{st}: заданий {len(ids)}, записей {len(E["rows"])}, нет записи {len(missing)}, негодных {res["coverage"][st]["invalid"]}')
         sample, model = st.split('_', 1)
         res['stages'][st] = dict(summary=E['summary'], paired=E.get('paired'), labels=E.get('labels'))
         for p in PRED:
