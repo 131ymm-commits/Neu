@@ -47,8 +47,8 @@ def sign(name, x, k):                                       # «разность
 
 uD = float(u('DEMES').mean())
 interval('P1', u('MYOPIC'), 2 / 3, 4 / 3, 9, {'MYOPIC у дальновидной (u = 0)': 0.0})
-interval('P2', u('COUNCIL'), -1 / 3, 1 / 3, 9, {'COUNCIL у близорукой (u = 1)': 1.0})
-out['P2']['pass_if_partial_like_DEMES'] = P_atleast(p_in(uD, out['P2']['sd'], -1 / 3, 1 / 3), 9)  # различение, не ложный уровень
+interval('P2', u('COUNCIL'), -1 / 6, 1 / 6, 9, {'COUNCIL у близорукой (u = 1)': 1.0})
+out['P2']['pass_if_partial_like_DEMES'] = P_atleast(p_in(uD, out['P2']['sd'], -1 / 6, 1 / 6), 9)  # различение, не ложный уровень
 sign('P3', col('COUNCIL', 'logloss') - col('MYOPIC', 'logloss'), 9)
 interval('P5', u('DEMES'), 1 / 6, 5 / 6, 8, {'DEMES у близорукой (u = 1)': 1.0, 'DEMES у дальновидной (u = 0)': 0.0})
 sign('P6', col('DEMES') - col('DEMES_10x40'), 8)
@@ -56,7 +56,7 @@ interval('P7', u('DEMES_NOSEL'), 2 / 3, 4 / 3, 9, {'DEMES_NOSEL как DEMES': u
 sign('P9', col('COUNCIL') - col('DEMES'), 9)
 sign('P10', col('DEMES') - col('DEMES_NOSEL'), 9)
 sign('P11', col('DEMES_NOWITHIN') - col('DEMES'), 9)
-interval('P12', u('DEMES_NOWITHIN'), -1 / 3, 1 / 3, 8, {'DEMES_NOWITHIN как DEMES': uD})
+interval('P12', u('DEMES_NOWITHIN'), -1 / 6, 1 / 6, 8, {'DEMES_NOWITHIN как DEMES': uD})
 sign('E1', col('COUNCIL', 'self_dec') - col('MYOPIC', 'self_dec'), 7)
 interval('E2', u('COUNCIL_10x40'), -1 / 3, 1 / 3, 8, {'COUNCIL_10x40 у близорукой (u = 1)': 1.0})
 sign('E3', col('COUNCIL') - col('COUNCIL_IND'), 7)

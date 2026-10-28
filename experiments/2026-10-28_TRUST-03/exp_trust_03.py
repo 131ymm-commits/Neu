@@ -21,6 +21,7 @@ b = 0,6 · clip(w̄_G / W_REF, 0, 1), где w̄_G — средний вес н�
 Запуск: python3 exp_trust_03.py [--check | --pilot | --dry]. PREREG: PREREG-TRUST-03.md.
 После проверки по трём линзам: 3000 поколений, окно 2000; руки DEMES_NOWITHIN (вмешательство: вес на G внутри группы
 наследуется без отбора), COUNCIL_IND и DEMES_IND (свои эпизоды у каждой группы — независимый риск).
+После сухого прогона: DEMES_POOLED (вмешательство на выражении: особь действует со средним весом группы).
 """
 import json
 import os
@@ -41,9 +42,9 @@ W_EX = WA.exact_weights()                        # точные веса чес�
 # после проверки по трём линзам: 3000 поколений, окно 2000 (было 1500 и 300 — ошибка среднего по окну 0,03–0,05)
 N_TOT, L_EP, G, SIG, WINDOW = 400, 40, 3000, 0.04, 2000
 SEEDS = list(range(500, 510))
-PILOT_SEEDS = [970, 971, 972, 973, 974, 975, 976, 977]
+PILOT_SEEDS = list(range(970, 980))      # после сухого прогона: 10 зёрен (было 970–977)
 DRY_SEEDS = [960, 961]
-_BASE = dict(within_sel=True, common_eps=True)
+_BASE = dict(within_sel=True, common_eps=True, pooled=False)
 ARMS = {k: {**_BASE, **v} for k, v in {
     'MYOPIC': dict(m=1, n=400, council=False, group_sel=False, stream=0),
     'DEMES_NOSEL': dict(m=40, n=10, council=False, group_sel=False, stream=1),
@@ -57,7 +58,10 @@ ARMS = {k: {**_BASE, **v} for k, v in {
     # равновероятен) и разведка со своими эпизодами у каждой группы (независимый риск)
     'DEMES_NOWITHIN': dict(m=40, n=10, council=False, group_sel=True, stream=7, within_sel=False),
     'COUNCIL_IND': dict(m=40, n=10, council=True, group_sel=True, stream=8, common_eps=False),
-    'DEMES_IND': dict(m=40, n=10, council=False, group_sel=True, stream=9, common_eps=False)}.items()}
+    'DEMES_IND': dict(m=40, n=10, council=False, group_sel=True, stream=9, common_eps=False),
+    # после сухого прогона: вмешательство на выражении — гены w_G у особей, но каждая особь действует с весом,
+    # равным среднему гена в группе (свой ген на свою F не влияет); передача — как в DEMES
+    'DEMES_POOLED': dict(m=40, n=10, council=False, group_sel=True, stream=10, pooled=True)}.items()}
 
 
 def full_w(w0, wg):
@@ -112,6 +116,8 @@ def evolve3(seed, arm, gens=G, track_every=10):
     spec = ARMS[arm]; m, n = spec['m'], spec['n']; council, gsel = spec['council'], spec['group_sel']
     wsel, common = spec['within_sel'], spec['common_eps']
     assert not (council and not wsel), 'у общего гена группы нет отбора внутри группы по построению'
+    pooled = spec['pooled']
+    assert not (pooled and (council or not wsel)), 'выражение по среднему — только для гена особи с обычной передачей'
     rng = np.random.default_rng(seed * 100 + spec['stream'])
     w0 = rng.normal(0, 0.01, (m, n))                    # ген w0 у каждой особи
     wg = rng.normal(0, 0.01, (m, 1) if council else (m, n))   # вес на G: ген группы (совет) или ген особи
@@ -133,8 +139,9 @@ def evolve3(seed, arm, gens=G, track_every=10):
             lie = (W == 0) & okG & (u < b[:, None])
             xg = np.where(lie, 1.0, X[..., J])
             Wm = W
-        wgi = np.broadcast_to(wg, (m, n))                 # вес на G у каждой особи
-        Z = w0[:, :, None] + zcm[:, None, :] + wgi[:, :, None] * xg[:, None, :]   # m × n × L
+        wgi = np.broadcast_to(wg, (m, n))                 # ген веса на G у каждой особи
+        wex = np.broadcast_to(wg.mean(1, keepdims=True), (m, n)) if pooled else wgi   # вес, с которым особь действует
+        Z = w0[:, :, None] + zcm[:, None, :] + wex[:, :, None] * xg[:, None, :]   # m × n × L
         logF = T1.log_true(Z, Wm[:, None, :]).sum(2)      # m × n
         # отбор групп: родитель новой группы ∝ средней F группы (Райт–Фишер на уровне групп)
         if gsel and m > 1:
@@ -220,9 +227,9 @@ def run(seeds, outdir, arms=None, gens=G):
 if __name__ == '__main__':
     if '--check' in sys.argv:
         check(); sys.exit(0)
-    if '--pilot' in sys.argv:                      # пилот 4 (окончательное устройство); пилоты 1–3 — в pilot/
-        os.makedirs(os.path.join(HERE, 'pilot4'), exist_ok=True)
-        th, runs, sec = run(PILOT_SEEDS, os.path.join(HERE, 'pilot4')); print(f'пилот: {sec:.0f} с'); sys.exit(0)
+    if '--pilot' in sys.argv:                      # пилот 5 (окончательное устройство); пилоты 1–3 — в pilot/, пилот 4 — в pilot4/
+        os.makedirs(os.path.join(HERE, 'pilot5'), exist_ok=True)
+        th, runs, sec = run(PILOT_SEEDS, os.path.join(HERE, 'pilot5')); print(f'пилот: {sec:.0f} с'); sys.exit(0)
     dry = '--dry' in sys.argv
     outdir = os.path.join(HERE, 'dry') if dry else HERE
     os.makedirs(outdir, exist_ok=True)

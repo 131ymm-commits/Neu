@@ -81,8 +81,8 @@ sign('P6', diff('DEMES', 'DEMES_10x40'), 8, wG_10x40=boot_ci(col('DEMES_10x40', 
 interval('P7', u('DEMES_NOSEL'), 1 - 1 / 3, 1 + 1 / 3, 9, wG=boot_ci(col('DEMES_NOSEL', 'wG')))
 sign('P9', diff('COUNCIL', 'DEMES'), 9)
 sign('P10', diff('DEMES', 'DEMES_NOSEL'), 9)
-sign('P11', diff('DEMES_NOWITHIN', 'DEMES'), 9)
-interval('P12', u('DEMES_NOWITHIN'), -1 / 3, 1 / 3, 8, wG=boot_ci(col('DEMES_NOWITHIN', 'wG')))
+sign('P11', diff('DEMES_POOLED', 'DEMES'), 9)
+interval('P12', u('DEMES_POOLED'), -1 / 3, 1 / 3, 8, wG=boot_ci(col('DEMES_POOLED', 'wG')))
 # разведка
 sign('E1', diff('COUNCIL', 'MYOPIC', 'self_dec'), 7, self_dec_council=boot_ci(col('COUNCIL', 'self_dec')),
      self_dec_myopic=boot_ci(col('MYOPIC', 'self_dec')), self_dec_demes=boot_ci(col('DEMES', 'self_dec')))
@@ -95,6 +95,10 @@ K1 = dict(logloss_gap=boot_ci(diff('COUNCIL_NOSEL', 'COUNCIL', 'logloss')), wG_s
 # описательно (вне семьи): части Прайса; в стационарном окне межгрупповая ≈ − внутригрупповая (тождество)
 D1 = {a: dict(within=boot_ci(col(a, 'price_within')), between=boot_ci(col(a, 'price_between')),
               total=boot_ci([F[(s, a)]['price_within'] + F[(s, a)]['price_between'] for s in seeds])) for a in E.ARMS}
+# описательно (вне семьи): DEMES_NOWITHIN — снятие отбора на передаче при выражении своего веса; срыв — SD w_G между
+# группами > 0,5 в среднем по окну (сухой прогон, зерно 960: 1,26 и w_G −0,64)
+D2 = dict(wG=col('DEMES_NOWITHIN', 'wG'), sd_groups=col('DEMES_NOWITHIN', 'wG_sd_groups'),
+          n_breakdown=sum(x > 0.5 for x in col('DEMES_NOWITHIN', 'wG_sd_groups')))
 summary = None
 if FULL:
     def combine(parts):
@@ -105,7 +109,7 @@ if FULL:
                    S3_mechanism=combine(['P11', 'P12']))
 keys = ('wG', 'b', 'logloss', 'self_dec', 'acc', 'ece', 'wG_sd_groups', 'price_between', 'price_within')
 arms_mean = {a: {k: boot_ci(col(a, k)) for k in keys} for a in E.ARMS}
-out = dict(verdicts=V, summary=summary, construction_K1=K1, descriptive_D1=D1, arms=arms_mean, theory=th, n_seeds=NS,
+out = dict(verdicts=V, summary=summary, construction_K1=K1, descriptive_D1=D1, descriptive_D2=D2, arms=arms_mean, theory=th, n_seeds=NS,
            frozen=dict(W_MY=W_MY, W_FAR=W_FAR, D=D), rows={str(s): {a: F[(s, a)] for a in E.ARMS} for s in seeds})
 json.dump(out, open(os.path.join(os.path.dirname(os.path.abspath(src)), 'analysis_trust_03.json'), 'w'),
           ensure_ascii=False, indent=1, default=lambda o: o.item() if hasattr(o, 'item') else str(o))
@@ -113,4 +117,5 @@ for k, v in V.items():
     print(k, v['outcome'], f"{v['n']}/{NS} (k = {v['k']})",
           {kk: (np.round(vv, 4).tolist() if isinstance(vv, list) else vv) for kk, vv in v.items() if kk not in ('outcome', 'n', 'k', 'kind')})
 print('K1 (проверка построения):', {k: (np.round(v, 4).tolist() if isinstance(v, list) else v) for k, v in K1.items()})
+print('Д2 (DEMES_NOWITHIN, срывов из', NS, '):', D2['n_breakdown'], np.round(D2['wG'], 3).tolist())
 print('сводные исходы:', summary)
