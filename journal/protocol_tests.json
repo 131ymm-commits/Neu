@@ -17,7 +17,7 @@
    "flagged": false,
    "ok": true,
    "tail": [
-    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 6299916 (прогона ещё нет)",
+    "✓ experiments/2026-09-27_X-01/PREREG-X-01.md: закоммичен 0b9b21d",
     "  ⚠ X-01: PREREG-X-01.md без явного критерия провала",
     "проверка: всё в порядке"
    ]
@@ -111,5 +111,31 @@
  ],
  "caught": 1.0,
  "false_alarms": 0,
- "n_violations": 8
+ "n_violations": 8,
+ "hook": [
+  {
+   "scenario": "K1 чисто: PREREG → прогон → отчёт",
+   "violation": false,
+   "flagged": false,
+   "ok": true
+  },
+  {
+   "scenario": "K2 чисто: пилот и сухой прогон до PREREG",
+   "violation": false,
+   "flagged": false,
+   "ok": true
+  },
+  {
+   "scenario": "V1 PREREG изменён после прогона",
+   "violation": true,
+   "flagged": true,
+   "ok": true
+  },
+  {
+   "scenario": "V2 прогон раньше PREREG",
+   "violation": true,
+   "flagged": true,
+   "ok": true
+  }
+ ]
 }

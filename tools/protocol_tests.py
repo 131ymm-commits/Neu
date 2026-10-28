@@ -6,9 +6,12 @@ NEU = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PREREG = '# PREREG-X-01\nВопрос, постановка, предсказания P1 с порогом. Совет: принято (заседание 1).\n'
 
 
+DAY = '2026-09-27'   # день синтетических коммитов; проверка хука (verify-plans) идёт с днём после его исправления 28.10.2026
+
+
 def sh(cwd, *cmd, t=None):
     env = dict(os.environ); env.pop('GIT_DIR', None)
-    if t: env['GIT_AUTHOR_DATE'] = env['GIT_COMMITTER_DATE'] = f'2026-09-27T{t}:00'
+    if t: env['GIT_AUTHOR_DATE'] = env['GIT_COMMITTER_DATE'] = f'{DAY}T{t}:00'
     return subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True)
 
 
@@ -61,8 +64,21 @@ def main():
     score = sum(x['flagged'] for x in v) / len(v); fa = sum(x['flagged'] for x in k)
     for x in rows: print(f"{'✓' if x['ok'] else '✗'} {x['scenario']:48s} {'нарушение' if x['violation'] else 'чисто':9s} → {'поймано' if x['flagged'] else 'пропущено'}")
     print(f'доля пойманных нарушений: {sum(x["flagged"] for x in v)}/{len(v)} = {score:.2f}; ложных тревог на чистых: {fa}/{len(k)}')
-    json.dump(dict(rows=rows, caught=score, false_alarms=fa, n_violations=len(v)), open(f'{NEU}/journal/protocol_tests.json', 'w'), ensure_ascii=False, indent=1)
-    return 0 if score == 1.0 and fa == 0 else 1
+    # Хук pre-commit запускает только verify-plans. С 27.09 по 28.10.2026 он прогонов не видел (ERRORS № 101), а check
+    # ловил V1/V2 другими проверками, и корпус этого не замечал. Поэтому сценарии времени гоняются и через сам хук.
+    global DAY
+    DAY, hook = '2026-10-29', []
+    for name in [n for n in SCENARIOS if n[:2] in ('K1', 'K2', 'V1', 'V2')]:
+        is_violation, build = SCENARIOS[name]
+        d = repo(); build(d)
+        r = sh(d, 'python3', 'tools/ledger.py', 'verify-plans'); caught = r.returncode != 0
+        hook.append(dict(scenario=name, violation=is_violation, flagged=caught, ok=(caught == is_violation)))
+        print(f"{'✓' if caught == is_violation else '✗'} хук verify-plans: {name:31s} {'нарушение' if is_violation else 'чисто':9s} → {'поймано' if caught else 'пропущено'}")
+        shutil.rmtree(d, ignore_errors=True)
+    hook_ok = all(x['ok'] for x in hook)
+    print(f"хук verify-plans: {'все сценарии верно' if hook_ok else 'есть промахи'} ({sum(x['ok'] for x in hook)}/{len(hook)})")
+    json.dump(dict(rows=rows, caught=score, false_alarms=fa, n_violations=len(v), hook=hook), open(f'{NEU}/journal/protocol_tests.json', 'w'), ensure_ascii=False, indent=1)
+    return 0 if score == 1.0 and fa == 0 and hook_ok else 1
 
 
 if __name__ == '__main__': sys.exit(main())

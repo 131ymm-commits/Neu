@@ -1,8 +1,10 @@
 """Выгружает чат сессии Claude Code в markdown: реплики человека и текстовые ответы Claude.
 Вызовы инструментов показаны одной строкой (что делалось), их выводы и системные вставки не включаются."""
-import json, sys, re
+import json, os, sys, re
 src, dst = sys.argv[1], sys.argv[2]
-out = ['# Журнал чата сессии\n\nСессия: https://claude.ai/code/session_01EAUcgUVu3BhYQ16NUm8BDT\n'
+# адрес сессии: переменная NEU_SESSION_URL (с 28.10.2026: прежде был вшит адрес одной сессии и попадал во все выгрузки)
+SESSION = os.environ.get('NEU_SESSION_URL', 'https://claude.ai/code/session_01EAUcgUVu3BhYQ16NUm8BDT')
+out = [f'# Журнал чата сессии\n\nСессия: {SESSION}\n'
        'Формат: реплики человека — полностью (длинные вставки сокращены до начала), ответы Claude — полностью, '
        'действия — одной строкой. Выводы инструментов и служебные сообщения среды не включены.\n']
 def clean(t):
@@ -26,6 +28,8 @@ for line in open(src):
             out.append(f'\n- _событие среды (не человек): {(m.group(1) if m else "фоновая задача").strip()[:200]}_\n'); continue
         if txt.startswith('Stop hook feedback'):
             out.append(f'\n---\n\n## Проверка среды (stop hook, не человек) · {ts}\n\n{txt[:800]}\n'); continue
+        if txt.startswith('This session is being continued from a previous conversation'):   # сводка при сжатии контекста (28.10.2026)
+            out.append(f'\n---\n\n## Сводка контекста (среда, не человек) · {ts}\n\n_Сессия продолжена после сжатия контекста; сводку написала модель, она не слова человека. Сокращено._\n\n{txt[:1200]}\n'); continue
         if txt.startswith('# Workflow authoring reference') or txt.startswith('<skill-format>'):
             out.append('\n- _среда загрузила справку по Workflow (не человек)_\n'); continue
         if txt:

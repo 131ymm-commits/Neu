@@ -166,23 +166,24 @@ def cmd_audit(a):
 
 
 # ---------- проверка предрегистраций ----------
-def _is_run(d, p):
-    """Файл — результат прогона, по которому будет вердикт? Пилоты и сухие прогоны до регистрации допустимы."""
-    rp = os.path.relpath(p, d).replace(os.sep, '/'); b = os.path.basename(p)
-    if rp.startswith(('pilot', 'dry', 'test/')): return False
-    return rp.startswith('run/') or b.startswith(('REPORT', 'results', 'raw_', 'out_', 'res')) or '_out' in b or b.startswith('analysis')
+# _is_run(p, d) определена ниже (раздел проверок протокола). До 28.10.2026 здесь была вторая версия с обратным порядком
+# аргументов _is_run(d, p); её затеняла нижняя, и verify-plans с 27.09 (43faccd) звал её с переставленными аргументами,
+# поэтому прогонов не видел вовсе («прогона ещё нет» у всех PREREG; journal/ERRORS.md № 101).
+
+
+VERIFY_FIXED_AT = 1793169637   # 28.10.2026 07:40 CET: исправлен порядок аргументов _is_run (ERRORS № 101)
 
 
 def cmd_verify_plans(_=None):
     bad = 0
     for plan in sorted(glob.glob(os.path.join(ROOT, 'studies', '*', 'PLAN*.md')) + glob.glob(os.path.join(ROOT, 'experiments', '*', 'PREREG*.md'))):
-        if '_TEMPLATE' in plan:
+        if '_TEMPLATE' in plan or 'DRAFT' in os.path.basename(plan).upper():   # черновик может меняться (ERRORS № 101)
             continue
         d = os.path.dirname(plan); rel = os.path.relpath(plan, ROOT)
         first = git('log', '--diff-filter=A', '--format=%H %ct', '--', rel).splitlines()
         if not first:
             # Черновик до регистрации допустим, пока в папке нет результатов прогона (пилоты и сухие прогоны не в счёт).
-            drafts_runs = [p for p in glob.glob(os.path.join(d, '**', '*'), recursive=True) if os.path.isfile(p) and p != plan and _is_run(d, p)]
+            drafts_runs = [p for p in glob.glob(os.path.join(d, '**', '*'), recursive=True) if os.path.isfile(p) and p != plan and _is_run(p, d)]
             if drafts_runs: print(f'  ✗ {rel}: не закоммичен, а прогон уже есть: {os.path.relpath(drafts_runs[0], ROOT)}'); bad += 1
             else: print(f'  ⚠ {rel}: черновик, не закоммичен (прогона ещё нет)')
             continue
@@ -190,7 +191,7 @@ def cmd_verify_plans(_=None):
         # Правило (PROTOCOL.md §3.3, 27.09.2026): PREREG закоммичен раньше первого прогона, по которому будет вердикт, и не менялся после него.
         # Код, сухой прогон и пилоты до регистрации допустимы. Прогон = файлы в run/ или результаты/отчёт/сырые выводы в папке опыта.
         others = [p for p in glob.glob(os.path.join(d, '**', '*'), recursive=True) if os.path.isfile(p) and p != plan]
-        def is_run(p): return _is_run(d, p)
+        def is_run(p): return _is_run(p, d)
         run_times = []
         for p in others:
             if not is_run(p): continue
@@ -200,8 +201,13 @@ def cmd_verify_plans(_=None):
         late = [p for tt, p in run_times if tt < t] if t_run is not None else []
         changed = [c for c in git('log', '--format=%h %ct', f'{h}..HEAD', '--', rel).splitlines() if t_run is not None and int(c.split()[1]) > t_run]
         ok = not changed and not late
-        bad += not ok
-        print(f"  {'✓' if ok else '✗'} {rel}: закоммичен {h[:7]}" + ('' if run_times else ' (прогона ещё нет)')
+        # До 28.10.2026 эта проверка прогонов не видела (ERRORS № 101). Нарушения в PREREG, закоммиченных раньше
+        # исправления, показываются как ⚠ «историческое, ждёт разбора» и коммит не блокируют; новые — ✗.
+        hist = not ok and t < VERIFY_FIXED_AT
+        bad += not ok and not hist
+        mark = '✓' if ok else ('⚠' if hist else '✗')
+        print(f"  {mark} {rel}: закоммичен {h[:7]}" + ('' if run_times else ' (прогона ещё нет)')
+              + (' [историческое: до исправления проверки 28.10.2026, ждёт разбора — journal/ERRORS.md № 101]' if hist else '')
               + (f'; изменён после первого прогона: {", ".join(c.split()[0] for c in changed)}' if changed else '')
               + (f'; прогон раньше плана: {", ".join(late[:3])}' if late else ''))
     return bad
@@ -245,9 +251,12 @@ def _aux(p, d):
 
 
 def _is_run(p, d):
-    """Прогон, по которому будет вердикт: run/, результаты, сырые выводы, отчёт (как в verify-plans)."""
+    """Прогон, по которому будет вердикт: run/, результаты, сырые выводы, отчёт (как в verify-plans).
+    С 28.10.2026 (ERRORS № 101) не считаются прогоном код (.py, .js, .sh, .ipynb) и файлы, в имени которых есть
+    pilot, smoke, mock, dry (в имени файла или папки): пилоты и сухие прогоны до регистрации допустимы, где бы они ни лежали."""
     if _aux(p, d): return False
     rp = os.path.relpath(p, d).replace(os.sep, '/'); b = os.path.basename(p)
+    if b.endswith(('.py', '.js', '.sh', '.ipynb')) or re.search(r'pilot|smoke|mock|dry', rp, re.I): return False
     return rp.startswith('run/') or b.startswith(('REPORT', 'results', 'raw_', 'out_', 'res')) or '_out' in b or b.startswith('analysis')
 
 
