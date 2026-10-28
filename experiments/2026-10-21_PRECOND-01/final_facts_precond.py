@@ -77,6 +77,10 @@ commits = {f: dict(zip(('commit', 'at'), first(f))) for f in ('pools/WH_8359.jso
 assert commits['pools/WH_8359.json']['at'] < order['open']['truth_first_mtime'] and commits['winners.json']['at'] < commits['run/val_eval_medium_jobs.jsonl']['at']
 assert order['open']['push_time'][:19] < commits['salts/open_salt.txt']['at'][:19] and order['val']['push_time'][:19] < commits['salts/val_salt.txt']['at'][:19]
 assert commits['final_facts_precond.py']['at'][:19] < order['val']['truth_first_mtime']                     # правила исходов — до правды проверки
-facts = dict(defined=defined, expectations=expect, commits=commits, strongest=lo, calls=calls, out_total=out_total, streams=dict(streams), order=order,
-             selection_null_p=w['selection_null_p'], gain_open_raw=w['gain_open_raw'])
+# код на диске против sha256 регистрации (prereg_hashes.json, PREREG §10)
+PH = json.load(open('prereg_hashes.json'))['files']
+code_mismatch = sorted(f for f, h in PH.items() if hashlib.sha256(open(f, 'rb').read()).hexdigest() != h)
+facts = dict(defined=defined, expectations=expect, commits=commits, code_files=len(PH), code_mismatch=code_mismatch, strongest=lo, calls=calls, out_total=out_total, streams=dict(streams), order=order,
+             selection_null_p=w['selection_null_p'], gain_open_raw=w['gain_open_raw'],
+             out_ratio_high_medium=round(o['out_per_call']['high'] / o['out_per_call']['medium64'], 2))     # цена high против medium (совет 39)
 json.dump(facts, open('final_facts.json', 'w'), ensure_ascii=False, indent=1); print(json.dumps(facts, ensure_ascii=False)[:3000])

@@ -42,4 +42,13 @@ for arm in ('OBS', 'MODEL', 'ANCHOR'):
     out['val_refusals'][arm] = dict(votes=len(ks), refused=len(rf), share=round(len(rf) / len(ks), 3), answered_regret=round(ar, 3),
                                     A0_regret_refused=None if a0r is None else round(a0r, 3),
                                     contribution=0.0 if not rf else round(len(rf) / len(ks) * (a0r - ar), 3))
+# пост-хок 5 (совет 39, «что проверить первым», описательно): доля отказов на открытии по наличию REFUSE и UNSURE в клетке —
+# рост отказов от открытия к проверке идёт от руки (REFUSE × UNSURE) или от задач. По выборам, без правды.
+ev = [json.loads(l) for l in open('evals/open.jsonl', encoding='utf-8')]; cnt, tot = {}, {}
+for e in ev:
+    if e['arm'] not in HP.CELLS: continue
+    on = set(HP.CELLS[e['arm']]); k = f'REFUSE={"да" if "REFUSE" in on else "нет"}, UNSURE={"да" if "UNSURE" in on else "нет"}'
+    tot[k] = tot.get(k, 0) + 1; cnt[k] = cnt.get(k, 0) + (e['choice'] == -1)
+out['open_refusals_by_cell'] = {k: dict(refused=cnt[k], votes=tot[k], share=round(cnt[k] / tot[k], 3)) for k in sorted(tot)}
+out['open_refusals_C44'] = sum(e['choice'] == -1 for e in ev if e['arm'] == 'C44')
 json.dump(out, open('posthoc_an.json', 'w'), ensure_ascii=False, indent=1); print(json.dumps(out, ensure_ascii=False))

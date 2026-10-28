@@ -71,5 +71,28 @@
    "A0_regret_refused": 0.776,
    "contribution": 0.016
   }
- }
+ },
+ "open_refusals_by_cell": {
+  "REFUSE=да, UNSURE=да": {
+   "refused": 10,
+   "votes": 144,
+   "share": 0.069
+  },
+  "REFUSE=да, UNSURE=нет": {
+   "refused": 2,
+   "votes": 144,
+   "share": 0.014
+  },
+  "REFUSE=нет, UNSURE=да": {
+   "refused": 0,
+   "votes": 144,
+   "share": 0.0
+  },
+  "REFUSE=нет, UNSURE=нет": {
+   "refused": 0,
+   "votes": 144,
+   "share": 0.0
+  }
+ },
+ "open_refusals_C44": 0
 }

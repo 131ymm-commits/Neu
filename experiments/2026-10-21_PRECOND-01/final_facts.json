@@ -71,6 +71,10 @@
    "at": "2026-10-28T02:27:26+00:00"
   }
  },
+ "code_files": 16,
+ "code_mismatch": [
+  "checkin_precond.sh"
+ ],
  "strongest": "REFUSE",
  "calls": {
   "open_exec": {
@@ -324,5 +328,6 @@
  "gain_open_raw": {
   "OBS": 0.10455004820585498,
   "MODEL": 0.05338755801874248
- }
+ },
+ "out_ratio_high_medium": 3.2
 }

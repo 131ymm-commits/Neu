@@ -19,7 +19,7 @@ for f in sorted(me, key=lambda f: me[f]['effect_raw']):
                           f'{"+" if x["out"] > 0 else "−"}{big(abs(x["out"]))} | {r(x["refusal_on"])} |')
 assert [f for f in me if me[f]['holm_reject']] == ['REFUSE']
 x = o['REFUSE_x_CLAIMS']; need += [f'{sg(x["effect"])} (p {r(x["p_fl"])})', f'{sg(x["effect"])}, ДИ {ci(x["t"]["ci95"])}, p {r(x["p_fl"])}']
-md = o['mediator_descriptive']; need += [f'коэффициент ln(выход) {r(md["ln_out"])}', f'действие REFUSE {r(md["REFUSE"])}', f'падает до {r(md["REFUSE"])}']
+md = o['mediator_descriptive']; need += [f'коэффициент ln(выход) {r(md["ln_out"])}', f'действие REFUSE {r(md["REFUSE"])}', f'коэффициент REFUSE равен {r(md["REFUSE"])}']
 pw = ph['power_posthoc']; need += [f'остаточный sd {r(pw["resid_sd"])}', f'в {r(pw["Q1"])} повторов', f'в {r(pw["REFUSE_fl"])}']
 need += [f'линейный член {r(ph["linear"]["mean"])} (ДИ {ci(ph["linear"]["ci95"])})', f'k² {sg(ph["k2"]["mean"])} (ДИ {ci(ph["k2"]["ci95"])})']
 assert ph['k2_equals_open_an'] and ph['saturation_by_prereg']
@@ -51,14 +51,21 @@ need += [f'OBS − MODEL {sg(d_["mean"])}, ДИ {ci(d_["ci95"])}, df {d_["df"]},
          f'OBS − MODEL {sg(d_["mean"])} (ДИ {ci(d_["ci95"])}; односторонний p {r(round(d_["p_greater"], 3))})',
          f'у OBS {r(v["gain_val"]["OBS"])}, у MODEL {r(v["gain_val"]["MODEL"])}', f'Сжатие OBS — {r(v["shrinkage"]["OBS"])}', f'Сжатие MODEL — {r(v["shrinkage"]["MODEL"])}',
          f'хуже опоры ANCHOR на {r(-v["vs_anchor"]["OBS"]["mean"])} (ДИ разности ANCHOR − OBS {ci(v["vs_anchor"]["OBS"]["ci95"])})',
-         f'Нижняя граница ДИ ANCHOR − OBS — {r(v["vs_anchor"]["OBS"]["ci95"][0])}', f'от опоры не отличается: {r(v["vs_anchor"]["MODEL"]["mean"])} (ДИ {ci(v["vs_anchor"]["MODEL"]["ci95"])})',
+         f'Нижняя граница ДИ ANCHOR − OBS — {r(v["vs_anchor"]["OBS"]["ci95"][0])}', f'Разница с опорой не показана: {r(v["vs_anchor"]["MODEL"]["mean"])} (ДИ {ci(v["vs_anchor"]["MODEL"]["ci95"])})',
          f'регрет {r(v["mean_regret"]["ANCHOR"])}, у MODEL {r(v["mean_regret"]["MODEL"])}, у OBS {r(v["mean_regret"]["OBS"])}',
-         f'сбылось: {r(v["shrinkage"]["OBS"])}, выигрыш сменил знак', f'сбылось: {sg(d_["mean"])}, но p {r(round(d_["p_greater"], 3))}',
+         f'сбылось: {r(v["shrinkage"]["OBS"])}, выигрыш сменил знак', f'сбылось: точечно {sg(d_["mean"])}, тест не прошёл (p {r(round(d_["p_greater"], 3))})',
          f'не сбылось: {r(v["vs_anchor"]["OBS"]["ci95"][0])} |']
 vr = ph['val_refusals']
-need += [f'MODEL отказывается в {r(vr["MODEL"]["share"])} голосов, ANCHOR — в {r(vr["ANCHOR"]["share"])}', f'{r(vr["MODEL"]["A0_regret_refused"])} у отказов MODEL и {r(vr["ANCHOR"]["A0_regret_refused"])} у отказов ANCHOR',
-         f'у MODEL {sg(vr["MODEL"]["contribution"])}, у ANCHOR {sg(vr["ANCHOR"]["contribution"])}', f'MODEL {r(vr["MODEL"]["answered_regret"])}, ANCHOR {r(vr["ANCHOR"]["answered_regret"])}, OBS {r(vr["OBS"]["answered_regret"])}',
-         f'отказы стоили MODEL {r(vr["MODEL"]["contribution"])}']
+need += [f'MODEL отказывается в {r(vr["MODEL"]["share"])} голосов, ANCHOR — в {r(vr["ANCHOR"]["share"])}',
+         f'MODEL {sg(vr["MODEL"]["contribution"])}: {vr["MODEL"]["refused"]} отказа из {vr["MODEL"]["votes"]}, у каждого регрет A0 своей задачи, в среднем {r(vr["MODEL"]["A0_regret_refused"])}',
+         f'ANCHOR оно даёт {sg(vr["ANCHOR"]["contribution"])}: {vr["ANCHOR"]["refused"]} отказов, в среднем {r(vr["ANCHOR"]["A0_regret_refused"])}',
+         f'MODEL {r(vr["MODEL"]["answered_regret"])}, ANCHOR {r(vr["ANCHOR"]["answered_regret"])}, OBS {r(vr["OBS"]["answered_regret"])}',
+         f'ANCHOR (без UNSURE) — {r(vr["ANCHOR"]["share"])}, MODEL (с UNSURE) — {r(vr["MODEL"]["share"])}']
+orc = ph['open_refusals_by_cell']; ru, rn = orc['REFUSE=да, UNSURE=да'], orc['REFUSE=да, UNSURE=нет']
+assert orc['REFUSE=нет, UNSURE=да']['refused'] == orc['REFUSE=нет, UNSURE=нет']['refused'] == 0 and ru['refused'] + rn['refused'] == o['vote_status_totals']['refused']
+need += [f'{r(ru["share"])} голосов ({ru["refused"]} из {ru["votes"]})', f'без UNSURE — {r(rn["share"])} ({rn["refused"]} из {rn["votes"]})', f'у C44 — {ph["open_refusals_C44"]} из 9',
+         f'из них {r(ru["share"])} с UNSURE и {r(rn["share"])} без него', f'({o["vote_status_totals"]["refused"]} отказов)']
+need += [f'в {r(F["out_ratio_high_medium"])} раза больше: {big(op["high"])} против {big(op["medium64"])}']
 assert vr['OBS']['refused'] == 0 and all(vr[a]['refused'] == v['refusals'][a] for a in vr)
 need += [f'(0,118) лучше лучшей из 64 клеток на medium (0,218)'] if (r(c['H0_mean']), r(w['cell_means'][w['obs_cell']])) == ('0,118', '0,218') else ['H0 и OBS: числа не те']
 # порядок этапов, вызовы, потоки — по final_facts.json
@@ -69,6 +76,8 @@ for st_, name in (('open', 'открытие'), ('val', 'проверка')):
     need.append(x['evals_sha256'][:8])
 cm = F['commits']; need += [f'`winners.json`, {cm["winners.json"]["commit"]})'] + [f'({cm[k]["commit"]})' for k in ('run/val_eval_medium_jobs.jsonl', 'pools/WH_8359.json', 'final_facts_precond.py')]
 need += [f'| {cm[k]["commit"]} |' for k in ('salts/open_salt.txt', 'salts/val_salt.txt')] + [f'| {cm[k]["commit"]} | ' for k in ('open_an.json', 'val_an.json')]
+assert F['code_mismatch'] == ['checkin_precond.sh']
+need += [f'из {F["code_files"]} файлов `prereg_hashes.json` (PREREG §10) sha256 на диске совпал у {F["code_files"] - len(F["code_mismatch"])}']
 names = dict(open_exec='исполнитель, открытие', val_exec='исполнитель, проверка', open_eval_medium='оценщики, открытие', open_eval_high='оценщики, открытие', val_eval_medium='оценщики, проверка')
 for g, x in F['calls'].items():
     assert list(x['finals']) == ['годный'] and x['models'] == ['claude-opus-5-5'] and x['cli'] == ['2.1.294'] and x['init_tools'] == [['StructuredOutput']] and x['mcp_servers'] == [[]] and x['started_unrecorded'] == 0
