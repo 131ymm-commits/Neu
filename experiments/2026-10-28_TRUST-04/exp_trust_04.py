@@ -9,8 +9,9 @@
   L — наследование w0 и w_G: от одной особи-родителя (link) или от двух независимо выбранных ∝ F (free).
 Плюс общий ген группы (COUNCIL) с шагом мутации σ и σ/√10 и одна популяция 1 × 400 (MYOPIC).
 После второй проверки по трём линзам (ERRORS № 112):
-  - шаг среднего группы из 10 генов особей — около σ, не σ/√10 (пересэмплирование добавляет дрейф V_внутри/n):
-    COUNCIL уже уравнен с руками генов особей, COUNCIL_SIGN шагает втрое медленнее; SD шага — описательно (step_sd);
+  - шаг среднего группы из 10 генов особей — около σ, не σ/√10. Это замер; разложение на мутацию, дрейф и колебания
+    отбора не проверялось (у MYOPIC шаг почти весь от колебаний отбора от 40 эпизодов). COUNCIL уравнен с руками генов
+    особей по SD шага, не по его природе; COUNCIL_SIGN шагает втрое медленнее; SD шага — описательно (step_sd);
   - фактор E разложен на два (оба — при раздельном наследовании, link = free):
     E1 — отбор внутри группы по своему весу (wsel; DEMES_NOWITHIN — родитель гена w_G равновероятен, как в TRUST-03);
     E2 — с каким весом считается F группы для отбора групп (gexpr; DEMES_GPOOL — свой вес внутри группы,
@@ -319,8 +320,13 @@ def run(seeds, outdir, part=None, gens=G):
     th = {k: w.theory() for k, w in WORLDS.items()}
     runs = [evolve4(s, a, gens=gens) for s in seeds for a in arms]
     name = 'results_trust_04.json' if part is None else f'results_trust_04_{part}.json'
+    import scipy
+    deps = {os.path.relpath(m.__file__, HERE): hashlib.sha256(open(m.__file__, 'rb').read()).hexdigest() for m in (T1, T2)}
     json.dump(dict(theory=th, runs=runs, params=dict(L_EP=L_EP, G=gens, SIG=SIG, WINDOW=WINDOW, ARMS=ARMS, SEEDS=seeds,
-                                                       part=part, code_sha256=CODE_SHA256), seconds=time.time() - t0),
+                                                       part=part, code_sha256=CODE_SHA256, deps_sha256=deps,
+                                                       versions=dict(numpy=np.__version__, scipy=scipy.__version__,
+                                                                     python=sys.version.split()[0])),
+                   seconds=time.time() - t0),
               open(os.path.join(outdir, name), 'w'), default=float)
     return th, runs, time.time() - t0
 

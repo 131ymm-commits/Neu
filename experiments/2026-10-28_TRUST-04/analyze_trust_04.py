@@ -9,7 +9,10 @@ indep/test700/results_indep_04.json (обёртка indep_runner.py). Выход
   иначе «не показано»;
   эквивалентность (TOST Шуирмана по ДИ Уэлча уровня CI_EQ разности средних): «подтверждено» — ДИ внутри (−δ; δ);
   «опровергнуто» — ДИ целиком вне (−δ; δ); иначе «не показано»;
-  сводный: «подтверждено» — все части подтверждены; «опровергнуто» — хоть одна опровергнута; иначе «не подтверждено».
+  сводный: «подтверждено» — все части подтверждены; «опровергнуто» — хоть одна опровергнута; иначе «не подтверждено»;
+  разведка EB1 и EB6: «подтверждено» — условие выполнено, иначе «не показано» (опровержения нет);
+  чтения (PREREG §4, «Контроли»): вердикты по букве не меняются, но при провале контроля шкалы или фактора S
+  зависимые выводы читаются как «не установлено» (ключ readings).
 Пороги k заданы для 20 тестовых зёрен 600–619 (калибровка — pilot/v2/pilot_calib2.py). На других зёрнах (пилот, сухой
 прогон) k масштабируется: ⌈k·N/20⌉, а сводные исходы не считаются."""
 import glob
@@ -35,7 +38,7 @@ CI_EQ = 0.95                                               # уровень ДИ
 K = dict(A1=18, A2=17, A3=18, A4=18, A5=18, A6=18, A9=18, A10=18, A11=18, A13=18, A14=18, A16=18, A18=18, B1=18, B2=18, B3=18, B4=18, B5=18, B6=18, B7=18, B8=18, B9=18, B10=18, B11=18, B12=18, B13=18, B14=18, B15=18, C_ORDER=18)   # k из 20 (pilot/v2/pilot_calib2.json)
 K_EXPL = 15                                                # знаковые предсказания разведки: k из 20
 BREAK_SD, BREAK_VW = 0.5, 0.1                              # срыв: по окну SD w_G между группами > 0,5 (Д2 TRUST-03) или V_внутри > 0,1
-A15_NMIN, A15_FRAC = 14, 0.8                               # A15: не меньше 14 зёрен без срыва; доля в интервале ≥ 0,8
+A15_NMIN, A15_FRAC = 13, 0.8                               # A15: не меньше 13 зёрен без срыва; доля в интервале ≥ 0,8
 INDEP_SEEDS = list(range(700, 720))
 E1_ARMS = ['DEMES', 'DEMES_FREE', 'DEMES_GPOOL', 'DEMES_IND', 'DEMES_MIG', 'DEMES_SIG5', 'DEMES_r075', 'DEMES_r095',
            'DEMES_b03', 'DEMES_b09']                       # руки с отбором внутри группы по своему весу (EB6)
@@ -75,6 +78,10 @@ if MAIN:
     assert FULL, 'в папке опыта — не тестовые зёрна'
     assert HASHES is not None and pa['code_sha256'] == HASHES['exp_trust_04.py'] == E.CODE_SHA256, 'код результата — не зарегистрированный'
     assert sha(os.path.abspath(__file__)) == HASHES['analyze_trust_04.py'], 'анализ — не зарегистрированный'
+    for dep, h in pa['deps_sha256'].items():                 # мир и log_true из TRUST-01/02 — те, что при регистрации
+        assert h == pb['deps_sha256'][dep] == HASHES[dep] == sha(os.path.join(HERE, dep)), f'зависимость {dep} не та'
+    _req = dict(l.strip().split('==') for l in open(os.path.join(HERE, 'requirements.txt')) if '==' in l)
+    assert pa['versions'] == pb['versions'] and all(pa['versions'][k] == v for k, v in _req.items()), 'версии пакетов не те'
 if not FULL:
     print(f'внимание: зёрна {seeds[0]}–{seeds[-1]} ({NS}) — не тестовые; k масштабируется, сводные исходы не считаются')
 theory = parts['A']['theory']
@@ -160,7 +167,7 @@ interval('A11', uw('COUNCIL_SIGN'), -1 / 3, 1 / 3)
 equiv('A12', uw('COUNCIL'), uw('COUNCIL_SIGN'))
 interval('A13', uw('COUNCIL'), -1 / 6, 1 / 6)
 interval('A14', uw('MYOPIC'), 2 / 3, 4 / 3)
-# A15: среди зёрен DEMES_NOWITHIN без срыва |u| ≤ 1/6 в ≥ ⌈0,8·n_nb⌉ из n_nb; при n_nb < 14 (из 20) — «не показано»
+# A15: среди зёрен DEMES_NOWITHIN без срыва |u| ≤ 1/6 в ≥ ⌈0,8·n_nb⌉ из n_nb; при n_nb < 13 (из 20) — «не показано»
 brk_of = lambda a: [F[(s, a)]['wG_sd_groups'] > BREAK_SD or F[(s, a)]['V_within'] > BREAK_VW for s in seeds]
 _brk = brk_of('DEMES_NOWITHIN')
 _unb = [x for x, bb in zip(uw('DEMES_NOWITHIN'), _brk) if not bb]
@@ -218,23 +225,44 @@ for _w in ('r075', 'r095', 'b03', 'b09'):
 _ub = np.array([np.mean(uw(a)) for a in E1_ARMS])
 _R = np.array([np.mean(col(a, 'V_between')) / (np.mean(col(a, 'V_between')) + np.mean(col(a, 'V_within'))) for a in E1_ARMS])
 _rho = spearmanr(_ub, 1 - _R); _gap = np.abs(_ub - (1 - _R))
+# EB6 (после третьей проверки): исход — по двум рукам, где R̄ далеко от 0,5 (DEMES_MIG, DEMES_SIG5); все 10 — описательно
+_gm = {a: float(g) for a, g in zip(E1_ARMS, _gap)}
 X['EB6'] = dict(kind='u ≈ 1 − R', arms=E1_ARMS, u=_ub.round(4).tolist(), one_minus_R=(1 - _R).round(4).tolist(), abs_gap=_gap.round(4).tolist(),
                 n_within_01=int(np.sum(_gap <= 0.1)), spearman=float(_rho.statistic), spearman_p_two_sided=float(_rho.pvalue),
-                outcome='подтверждено' if (np.sum(_gap <= 0.1) >= 8 and _rho.statistic > 0) else 'не показано')
+                gap_MIG=_gm['DEMES_MIG'], gap_SIG5=_gm['DEMES_SIG5'],
+                outcome='подтверждено' if (_gm['DEMES_MIG'] <= 0.1 and _gm['DEMES_SIG5'] <= 0.1) else 'не показано')
 # ---- проверки построения и описательное (вне семьи) ----
 KC = {}
 for a in ('POOLED_NOSEL', 'POOLED_NOSEL_FREE'):
     gap = [F[(s, a)]['logloss'] - F[(s, 'POOLED')]['logloss'] for s in seeds]
     KC[a] = dict(logloss_gap=boot_ci(gap), n_gap_ge_002=sum(x >= 0.02 for x in gap), wG=boot_ci(col(a)),
                  sd_groups=boot_ci(col(a, 'wG_sd_groups')), price_within=boot_ci(col(a, 'price_within')))
-STEP = {a: boot_ci(col(a, 'step_sd')) for a in E.ARMS}    # K2: SD шага среднего w_G группы за поколение
+STEP = {a: boot_ci(col(a, 'step_sd')) for a in E.ARMS}    # K2: SD шага среднего w_G группы за поколение (среднее по зёрнам)
+STEP_NB = boot_ci([F[(s, 'DEMES_NOWITHIN')]['step_sd'] for s, bb in zip(seeds, _brk) if not bb] or [float('nan')])   # без срывов
+
+
+def u_traj(arm, s):
+    my, far = FROZEN[E.ARMS[arm]['world']]
+    return [(t['g'], (t['wG'] - far) / (my - far)) for t in R[(s, arm)]['traj']]
+
+
+DYN = {}                                                   # сходимость (описательно): u по шести отрезкам и разность половин окна
+for a in E.ARMS:
+    seg = np.zeros((NS, 6)); half = []
+    for i, s in enumerate(seeds):
+        tu = u_traj(a, s)
+        for j in range(6):
+            seg[i, j] = np.mean([x for g, x in tu if min(g // 500, 5) == j])
+        half.append(np.mean([x for g, x in tu if g >= 2000]) - np.mean([x for g, x in tu if 1000 <= g < 2000]))
+    DYN[a] = dict(segments=seg.mean(0).round(4).tolist(), half_diff=boot_ci(half), n_half_neg=int(sum(x < 0 for x in half)))
 BRK = {a: dict(n_break=sum(brk_of(a)), seeds_break=[s for s, b in zip(seeds, brk_of(a)) if b],
                V_within_break=[F[(s, a)]['V_within'] for s, b in zip(seeds, brk_of(a)) if b],
                u_break=[uw(a)[i] for i, b in enumerate(brk_of(a)) if b],
                V_within_ok=boot_ci([F[(s, a)]['V_within'] for s, b in zip(seeds, brk_of(a)) if not b] or [float('nan')]))
        for a in E.ARMS if E.ARMS[a]['sig'] == E.SIG and E.ARMS[a]['sig_g'] == E.SIG}   # порог V_внутри — для σ = 0,04
 D1 = {a: dict(within=boot_ci(col(a, 'price_within')), between=boot_ci(col(a, 'price_between'))) for a in E.ARMS}
-summary = None
+summary = readings = registry = None
+ok = lambda p: V.get(p, {}).get('outcome') == 'подтверждено'
 if FULL:
     def combine(ps):
         oc = [V[p]['outcome'] for p in ps if p in V]
@@ -243,10 +271,30 @@ if FULL:
         return dict(parts=ps, outcome='подтверждено' if all(o == 'подтверждено' for o in oc)
                     else ('опровергнуто' if 'опровергнуто' in oc else 'не подтверждено'))
     summary = {c: combine(ps) for c, ps in COMPOSITES.items()}
+    # чтения (PREREG §4, «Контроли»): вердикты не меняются; при провале контроля зависимое читается как «не установлено»
+    why = {c: [] for c in COMPOSITES}
+    if not ok('A14'):
+        for c in ('SA', 'SA2', 'SA3', 'SC'):
+            why[c].append('A14 (шкала u мира base) не подтверждено')
+    if not (ok('A9') and ok('A10')):
+        for c in ('SA', 'SA3'):
+            why[c].append('A9/A10 (контроль фактора S) не подтверждены')
+    for i, w in enumerate(('r075', 'r095', 'b03', 'b09')):
+        if not ok(f'B{12 + i}'):
+            why['SB'].append(f'B{12 + i} (шкала u мира {w}) не подтверждено: B{1 + i} не установлено')
+            why['SB2'].append(f'B{12 + i} (шкала u мира {w}) не подтверждено: B{8 + i} не установлено')
+    readings = {c: dict(verdict=summary[c]['outcome'], reading='не установлено' if why[c] else summary[c]['outcome'], why=why[c])
+                for c in COMPOSITES}
+    # реестр (PREREG §4): повтор утверждений TRUST-03; «установлено» — только если все части подтверждены и чтения чисты
+    REG = {'C-048': ['A13', 'A12', 'C_COUNCIL'], 'C-049': ['A3', 'A8', 'C_DEMES'], 'C-050': ['A1', 'A5', 'C_POOLED']}
+    registry = {cid: dict(parts=ps, all_confirmed=all(ok(p) for p in ps) and (cid != 'C-050' or readings['SA3']['reading'] == 'подтверждено')
+                          and ok('A14'), needs='+ SA3 (контроль на неспецифичность)' if cid == 'C-050' else '')
+                for cid, ps in REG.items()}
 keys = ('wG', 'b', 'logloss', 'self_dec', 'acc', 'ece', 'wG_sd_groups', 'V_between', 'V_within', 'R', 'step_sd',
         'price_between', 'price_within')
 arms_mean = {a: dict(u=boot_ci(uw(a)), **{k: boot_ci(col(a, k)) for k in keys}) for a in E.ARMS}
-out = dict(verdicts=V, explore=X, summary=summary, construction=KC, step_sd=STEP, breakdowns=BRK, descriptive_price=D1,
+out = dict(verdicts=V, explore=X, summary=summary, readings=readings, registry=registry, construction=KC, step_sd=STEP,
+           step_sd_nowithin_no_breakdown=STEP_NB, dynamics=DYN, breakdowns=BRK, descriptive_price=D1,
            indep=C, arms=arms_mean, theory=theory, frozen=FROZEN, K=K, CI_EQ=CI_EQ, n_seeds=NS, seeds=seeds,
            code_sha256=pa.get('code_sha256'),
            rows={str(s): {a: dict(F[(s, a)], u=uw(a)[seeds.index(s)]) for a in E.ARMS} for s in seeds})
@@ -267,4 +315,7 @@ for name, v in X.items():
 print('шаг среднего группы (SD):', {a: round(v[0], 4) for a, v in STEP.items()})
 print('срывы (по окну SD между группами > 0,5 или V_внутри > 0,1):', {a: (v['n_break'], v['seeds_break']) for a, v in BRK.items() if v['n_break']})
 print('проверки построения:', {a: {k: (np.round(v, 4).tolist() if isinstance(v, list) else v) for k, v in d.items()} for a, d in KC.items()})
+print('сходимость (разность половин окна, среднее; зёрен < 0):', {a: (round(v['half_diff'][0], 4), v['n_half_neg']) for a, v in DYN.items()})
 print('сводные исходы:', summary)
+print('чтения:', readings)
+print('реестр:', registry)

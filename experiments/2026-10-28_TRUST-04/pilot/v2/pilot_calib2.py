@@ -9,8 +9,10 @@ indep/pilot (1200–1204) и indep/pilot1205 (1205–1209). Выход: pilot/v2
   (правка 4 второй проверки; так же считается и знаковый тест);
   выбор k: наибольший k из 15…18, при котором мощность при SD × 1,5 ≥ 0,9; если такого нет — наибольший k из 14…18 с
   мощностью ≥ 0,9 при SD пилота (с пометкой «запас мал»);
-  A15 (DEMES_NOWITHIN) — смесь: со срывом (SD w_G между группами > 0,5 в среднем по окну; как Д2 TRUST-03) значение вне
-  интервала, без срыва — N(среднее, SD) зёрен без срыва; доля срывов q — по пилоту и «пессимистично» q = 0,2 при SD × 1,5;
+  A15 (DEMES_NOWITHIN) — критерий среди зёрен без срыва. Срыв — по окну SD w_G между группами > 0,5 (Д2 TRUST-03) или
+  V_внутри > 0,1 (после пилота v2). Доля срывов q — по 30 нетестовым зёрнам (1100–1109 и 1300–1319, `pilot/v2b/`);
+  мощность — при q̂, при верхней 95 % границе Клоппера–Пирсона и предсказательная (q ~ Beta(1 + срывы; 1 + без срыва));
+  n_min = 13 (после третьей проверки по трём линзам: ложный уровень тот же, мощность выше);
   эквивалентность (TOST Шуирмана по ДИ Уэлча уровня 90 % или 95 %, граница ±0,1 по u) — доля из 20 000 симуляций по
   20 значений из N пилота, где ДИ внутри (−0,1; 0,1); ложный уровень — то же при истинной разности 0,1;
   вес сводного — log₂(мощность / ложный уровень), ложный уровень сводного — наибольший у частей, мощность — произведение.
@@ -21,7 +23,8 @@ import os
 import sys
 
 import numpy as np
-from scipy.stats import binom, levene, norm, spearmanr
+from scipy.stats import beta as beta_dist
+from scipy.stats import betabinom, binom, levene, norm, spearmanr
 from scipy.stats import t as tdist
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -112,25 +115,30 @@ interval('A13', 'COUNCIL', -1 / 6, 1 / 6); interval('A14', 'MYOPIC', 2 / 3, 4 / 
 # A15: DEMES_NOWITHIN — среди зёрен без срыва. Срыв — SD w_G между группами > 0,5 в среднем по окну (Д2 TRUST-03) ИЛИ
 # внутригрупповая дисперсия w_G > 0,1 в среднем по окну (после пилота v2: зерно 1103 — SD между группами 0,382, но
 # V_внутри 1,03 при 0,015 у зёрен без срыва):
-# |u| ≤ 1/6 в ≥ ⌈0,8·n_nb⌉ из n_nb; при n_nb < 14 — «не показано». Мощность — по доле срывов q (пилот и q = 0,2) и
-# P(in | без срыва) из нормального приближения; ложный уровень — наибольший по n_nb = 14…20 при P(in) = ½.
-A15_NMIN, A15_FRAC = 14, 0.8
-xw = u('DEMES_NOWITHIN'); brk = (col('DEMES_NOWITHIN', 'wG_sd_groups') > BREAK_SD) | (col('DEMES_NOWITHIN', 'V_within') > BREAK_VW); q = float(brk.mean())
+# |u| ≤ 1/6 в ≥ ⌈0,8·n_nb⌉ из n_nb; при n_nb < 13 — «не показано». Мощность — по доле срывов q (30 нетестовых зёрен: q̂,
+# верхняя граница Клоппера–Пирсона, предсказательная) и P(in | без срыва) из нормального приближения; ложный уровень —
+# наибольший по n_nb = 13…20 при P(in) = ½.
+A15_NMIN, A15_FRAC = 13, 0.8
+_v2b = json.load(open(os.path.join(os.path.dirname(HERE), 'v2b', 'results_nowithin_1300.json')))['runs']
+_fw = [F[(s, 'DEMES_NOWITHIN')] for s in seeds] + [r['final'] for r in _v2b]          # 30 нетестовых зёрен
+xw = np.array([(f_['wG'] - FROZEN['base'][1]) / (FROZEN['base'][0] - FROZEN['base'][1]) for f_ in _fw])
+brk = np.array([f_['wG_sd_groups'] > BREAK_SD or f_['V_within'] > BREAK_VW for f_ in _fw]); nbk = int(brk.sum()); q = float(brk.mean())
 xnb = xw[~brk]; mu_nb, sd_nb = float(xnb.mean()), float(xnb.std(ddof=1))
+q_cp = float(beta_dist.ppf(0.975, nbk + 1, len(brk) - nbk))                            # верхняя 95 % граница Клоппера–Пирсона
 
 
-def a15_power(q_, p_):
-    return float(sum(binom.pmf(nb, N, 1 - q_) * P_atleast(p_, math.ceil(A15_FRAC * nb), nb) for nb in range(A15_NMIN, N + 1)))
+def a15_power(q_, p_, pred=False):
+    pk = (lambda nb: betabinom.pmf(N - nb, N, 1 + nbk, 1 + len(brk) - nbk)) if pred else (lambda nb: binom.pmf(nb, N, 1 - q_))
+    return float(sum(pk(nb) * P_atleast(p_, math.ceil(A15_FRAC * nb), nb) for nb in range(A15_NMIN, N + 1)))
 
 
 _p1, _p15 = p_in(mu_nb, sd_nb, -1 / 6, 1 / 6), p_in(mu_nb, 1.5 * sd_nb, -1 / 6, 1 / 6)
 out['A15'] = dict(kind='интервал среди зёрен без срыва', arm='DEMES_NOWITHIN', interval=[-1 / 6, 1 / 6], n_min=A15_NMIN, frac=A15_FRAC,
-                  breakdowns=int(brk.sum()), q=q, mean_nb=mu_nb, sd_nb=sd_nb, p_seed=_p1, p_seed_sd15=_p15,
-                  power=a15_power(q, _p1), power_sd15=a15_power(max(q, 0.2), _p15), power_q01=a15_power(0.1, _p1),
-                  power_q03=a15_power(0.3, _p1),
+                  n_pilot=len(brk), breakdowns=nbk, q=q, q_cp_upper=q_cp, mean_nb=mu_nb, sd_nb=sd_nb, p_seed=_p1, p_seed_sd15=_p15,
+                  power=a15_power(q, _p1), power_sd15=a15_power(q_cp, _p15), power_predictive=a15_power(None, _p1, pred=True),
+                  power_q01=a15_power(0.1, _p1), power_q03=a15_power(0.3, _p1),
                   false_level=max(f_bound(math.ceil(A15_FRAC * nb), nb) for nb in range(A15_NMIN, N + 1)), k='⌈0,8·n_nb⌉', flag='',
-                  pilot_count=int(np.sum(np.abs(xnb) <= 1 / 6)), pilot_n_nb=int((~brk).sum()), values=xw.round(4).tolist(),
-                  sd_groups=col('DEMES_NOWITHIN', 'wG_sd_groups').round(4).tolist())
+                  pilot_count=int(np.sum(np.abs(xnb) <= 1 / 6)), pilot_n_nb=int((~brk).sum()), values=xw.round(4).tolist())
 interval('A16', 'DEMES_GPOOL', 1 / 6, 5 / 6); equiv('A17', u('DEMES_GPOOL'), u('DEMES_FREE'))
 sign('A18', 'POOLED_FREE', 'DEMES_GPOOL')
 # ---- блок Б ----
@@ -181,9 +189,20 @@ for w in ('r075', 'r095', 'b03', 'b09'):
 E1_ARMS = ['DEMES', 'DEMES_FREE', 'DEMES_GPOOL', 'DEMES_IND', 'DEMES_MIG', 'DEMES_SIG5', 'DEMES_r075', 'DEMES_r095', 'DEMES_b03', 'DEMES_b09']
 ub = np.array([u(a).mean() for a in E1_ARMS]); Rb = np.array([col(a, 'V_between').mean() / (col(a, 'V_between').mean() + col(a, 'V_within').mean()) for a in E1_ARMS])
 rho = spearmanr(ub, 1 - Rb)
+_g6 = np.random.default_rng(6); _hit = 0
+for _ in range(20000):                                     # устойчивость к зёрнам: 20 зёрен с возвращением из 10 пилотных
+    ok6 = True
+    for a in ('DEMES_MIG', 'DEMES_SIG5'):
+        ii = _g6.integers(0, len(seeds), N)
+        uu = u(a)[ii].mean(); vb = col(a, 'V_between')[ii].mean(); vw = col(a, 'V_within')[ii].mean()
+        ok6 &= abs(uu - (1 - vb / (vb + vw))) <= 0.1
+    _hit += ok6
 EXPL['EB6'] = dict(kind='u ≈ 1 − R', arms=E1_ARMS, u=ub.round(4).tolist(), one_minus_R=(1 - Rb).round(4).tolist(),
                    abs_gap=np.abs(ub - (1 - Rb)).round(4).tolist(), n_within_01=int(np.sum(np.abs(ub - (1 - Rb)) <= 0.1)),
-                   spearman=float(rho.statistic), spearman_p_two_sided=float(rho.pvalue))
+                   spearman=float(rho.statistic), spearman_p_two_sided=float(rho.pvalue),
+                   gap_MIG=float(abs(ub[E1_ARMS.index('DEMES_MIG')] - (1 - Rb[E1_ARMS.index('DEMES_MIG')]))),
+                   gap_SIG5=float(abs(ub[E1_ARMS.index('DEMES_SIG5')] - (1 - Rb[E1_ARMS.index('DEMES_SIG5')]))),
+                   boot_pass=_hit / 20000)
 # ---- описательное ----
 DESC = {a: dict(u_mean=float(u(a).mean()), u_sd=float(u(a).std(ddof=1)), step_sd=float(col(a, 'step_sd').mean()),
                 R=float(col(a, 'V_between').mean() / max(col(a, 'V_between').mean() + col(a, 'V_within').mean(), 1e-300)),
