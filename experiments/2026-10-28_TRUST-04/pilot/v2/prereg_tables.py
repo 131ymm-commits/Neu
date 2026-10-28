@@ -122,3 +122,20 @@ print(f"- Мощность A15 (n_min = {A15c['n_min']}): при q̂ — {f(A15c
 E6 = C['explore']['EB6']
 print(f"- EB6 по новому правилу: |ū − (1 − R̄)| у DEMES_MIG {f(E6['gap_MIG'], 4)}, у DEMES_SIG5 {f(E6['gap_SIG5'], 4)}; "
       f"доля прохождений при 20 зёрнах с возвращением из 10 пилотных — {f(E6['boot_pass'])}.")
+
+# ---- после проверки правок (N2): вес повтора утверждений TRUST-03 ----
+print('\n### Реестр: вес повтора утверждений TRUST-03 (по `tools/support_bits.py`, класс «наш_рег»; мощность — при SD пилота)\n')
+print('| Утверждение | Части (вместе с A14) | Ложный уровень | Мощность | Держится | Опровергнуто |')
+print('|---|---|---|---|---|---|')
+for cid, r in C['bits'][str(LEV)]['registry'].items():
+    print(f"| {cid} | {', '.join(r['parts'])} | {g(r['false_level'])} | {f(r['power'], 4)} | +{f(r['bits_held'], 2)} бита | {f(r['bits_refuted'], 2)} бита |")
+# ---- класс калибровки «после пилота» (N8) ----
+sys.path.insert(0, os.path.join(EXP, '..', '..', 'tools'))
+import self_calibration as SCAL  # noqa: E402
+ALLR = list(SCAL.expand())                                 # как в self_calibration.main (у S2 строки повторяются)
+post = [r for r in ALLR if r[5] is not None and r[6].startswith('(после пилота)')]
+pre = [r for r in ALLR if r[5] is not None and not r[6].startswith('(после пилота)')]
+mc = sum(r[4] for r in post) / len(post); hr = sum(r[5] for r in post) / len(post)
+print(f"\n### Класс калибровки «после пилота»\n\n- Предсказаний с исходом: {len(post)}; средняя уверенность {f(mc)}, доля подтверждённых {f(hr)}, "
+      f"самообман {f(mc - hr, 2)}; Брайер {f(sum((r[4] - r[5]) ** 2 for r in post) / len(post), 3)}. "
+      f"Класс «до пилота»: {len(pre)}, Брайер {f(sum((r[4] - r[5]) ** 2 for r in pre) / len(pre), 3)}.")

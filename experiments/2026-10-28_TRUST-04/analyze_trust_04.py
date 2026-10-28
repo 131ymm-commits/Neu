@@ -40,6 +40,10 @@ K_EXPL = 15                                                # знаковые п
 BREAK_SD, BREAK_VW = 0.5, 0.1                              # срыв: по окну SD w_G между группами > 0,5 (Д2 TRUST-03) или V_внутри > 0,1
 A15_NMIN, A15_FRAC = 13, 0.8                               # A15: не меньше 13 зёрен без срыва; доля в интервале ≥ 0,8
 INDEP_SEEDS = list(range(700, 720))
+# реестр (PREREG §4): повтор утверждений TRUST-03; части — без A14 и SA3 (их добавляет код ниже); вес — (ложный уровень, мощность)
+REG = {'C-048': ['A13', 'A12', 'C_COUNCIL'], 'C-049': ['A3', 'A8', 'A9', 'A10', 'C_DEMES'], 'C-050': ['A1', 'A5', 'C_POOLED']}
+REG_BITS = {'C-048': (0.0274, 0.99575), 'C-049': (0.02385, 0.9985005),
+            'C-050': (0.02475, 0.9994107414501657)}   # pilot/v2/pilot_calib2.json, bits['95']['registry']
 E1_ARMS = ['DEMES', 'DEMES_FREE', 'DEMES_GPOOL', 'DEMES_IND', 'DEMES_MIG', 'DEMES_SIG5', 'DEMES_r075', 'DEMES_r095',
            'DEMES_b03', 'DEMES_b09']                       # руки с отбором внутри группы по своему весу (EB6)
 COMPOSITES = dict(SA=['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'], SA2=['A11', 'A12'],
@@ -80,6 +84,7 @@ if MAIN:
     assert sha(os.path.abspath(__file__)) == HASHES['analyze_trust_04.py'], 'анализ — не зарегистрированный'
     for dep, h in pa['deps_sha256'].items():                 # мир и log_true из TRUST-01/02 — те, что при регистрации
         assert h == pb['deps_sha256'][dep] == HASHES[dep] == sha(os.path.join(HERE, dep)), f'зависимость {dep} не та'
+    assert sha(os.path.join(HERE, 'requirements.txt')) == HASHES['requirements.txt'], 'requirements.txt — не зарегистрированный'
     _req = dict(l.strip().split('==') for l in open(os.path.join(HERE, 'requirements.txt')) if '==' in l)
     assert pa['versions'] == pb['versions'] and all(pa['versions'][k] == v for k, v in _req.items()), 'версии пакетов не те'
 if not FULL:
@@ -202,6 +207,7 @@ if os.path.exists(INDEP):
     if MAIN:
         assert m['script_sha256'] == HASHES['indep/indep_trust_04.py'] and m['spec_sha256'] == HASHES['indep/SPEC.md']
         assert m['wrapper']['sha256'] == HASHES['indep_runner.py'], 'обёртка — не зарегистрированная'
+        assert (m['numpy'], m['scipy']) == (_req['numpy'], _req['scipy']), 'версии пакетов независимой реализации не те'
     ui = lambda a: [(IR[(s, a)]['w_G'] - far0) / (my0 - far0) for s in iseeds]     # u — по FROZEN, не по своей теории
     C = dict(seeds=iseeds, theory=th, n=len(iseeds))
     for a in ('MYOPIC', 'DEMES', 'POOLED', 'COUNCIL'):
@@ -258,6 +264,7 @@ for a in E.ARMS:
 BRK = {a: dict(n_break=sum(brk_of(a)), seeds_break=[s for s, b in zip(seeds, brk_of(a)) if b],
                V_within_break=[F[(s, a)]['V_within'] for s, b in zip(seeds, brk_of(a)) if b],
                u_break=[uw(a)[i] for i, b in enumerate(brk_of(a)) if b],
+               u_ok=boot_ci([uw(a)[i] for i, b in enumerate(brk_of(a)) if not b] or [float('nan')]),
                V_within_ok=boot_ci([F[(s, a)]['V_within'] for s, b in zip(seeds, brk_of(a)) if not b] or [float('nan')]))
        for a in E.ARMS if E.ARMS[a]['sig'] == E.SIG and E.ARMS[a]['sig_g'] == E.SIG}   # порог V_внутри — для σ = 0,04
 D1 = {a: dict(within=boot_ci(col(a, 'price_within')), between=boot_ci(col(a, 'price_between'))) for a in E.ARMS}
@@ -281,15 +288,18 @@ if FULL:
             why[c].append('A9/A10 (контроль фактора S) не подтверждены')
     for i, w in enumerate(('r075', 'r095', 'b03', 'b09')):
         if not ok(f'B{12 + i}'):
-            why['SB'].append(f'B{12 + i} (шкала u мира {w}) не подтверждено: B{1 + i} не установлено')
             why['SB2'].append(f'B{12 + i} (шкала u мира {w}) не подтверждено: B{8 + i} не установлено')
     readings = {c: dict(verdict=summary[c]['outcome'], reading='не установлено' if why[c] else summary[c]['outcome'], why=why[c])
                 for c in COMPOSITES}
     # реестр (PREREG §4): повтор утверждений TRUST-03; «установлено» — только если все части подтверждены и чтения чисты
-    REG = {'C-048': ['A13', 'A12', 'C_COUNCIL'], 'C-049': ['A3', 'A8', 'C_DEMES'], 'C-050': ['A1', 'A5', 'C_POOLED']}
-    registry = {cid: dict(parts=ps, all_confirmed=all(ok(p) for p in ps) and (cid != 'C-050' or readings['SA3']['reading'] == 'подтверждено')
-                          and ok('A14'), needs='+ SA3 (контроль на неспецифичность)' if cid == 'C-050' else '')
-                for cid, ps in REG.items()}
+    registry = {}
+    for cid, ps in REG.items():
+        need = ps + ['A14'] + (COMPOSITES['SA3'] + ['A9', 'A10'] if cid == 'C-050' else [])
+        oc = [V[p]['outcome'] for p in need]
+        res = 'держится' if all(o == 'подтверждено' for o in oc) else ('опровергнуто' if 'опровергнуто' in oc else 'не показано')
+        a_, P_ = REG_BITS[cid]; fa = max(a_, 0.001)
+        bits_ = math.log2(P_ / fa) if res == 'держится' else (math.log2((1 - P_) / (1 - fa)) if res == 'опровергнуто' else 0.0)
+        registry[cid] = dict(parts=need, outcome=res, bits=bits_, false_level=a_, power=P_)
 keys = ('wG', 'b', 'logloss', 'self_dec', 'acc', 'ece', 'wG_sd_groups', 'V_between', 'V_within', 'R', 'step_sd',
         'price_between', 'price_within')
 arms_mean = {a: dict(u=boot_ci(uw(a)), **{k: boot_ci(col(a, k)) for k in keys}) for a in E.ARMS}

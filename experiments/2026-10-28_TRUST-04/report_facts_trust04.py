@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """TRUST-04: числа отчёта из analysis_trust_04.json → facts_trust_04.json (вердиктов не меняет; записан до регистрации и
-до теста). Округление — 4 знака (u, w_G, лог-потеря, R, SD), 5 знаков (части Прайса).
+до теста; новые ключи анализа — readings, registry, dynamics — добавлены по проверке правок, N3). Округление — 4 знака (u, w_G, лог-потеря, R, SD), 5 знаков (части Прайса).
 Запуск из папки опыта: python3 report_facts_trust04.py [папка с analysis, по умолчанию — опыт]"""
 import json
 import os
@@ -22,7 +22,7 @@ def verdict(v):
     for key in ('value', 'diff', 'diff_ci', 'value_no_breakdown', 'u_indep', 'u_main'):
         if v.get(key) is not None:
             e[key] = L4(v[key])
-    for key in ('sd_IND', 'sd_base', 'p_one_sided', 'spearman', 'spearman_p_two_sided'):
+    for key in ('sd_IND', 'sd_base', 'p_one_sided', 'spearman', 'spearman_p_two_sided', 'gap_MIG', 'gap_SIG5'):
         if key in v:
             e[key] = r4(v[key])
     for key in ('u', 'one_minus_R', 'abs_gap'):
@@ -37,7 +37,12 @@ f = dict(verdicts={k: verdict(v) for k, v in a['verdicts'].items()}, explore={k:
          summary=a['summary'], n_seeds=a['n_seeds'], seeds=[a['seeds'][0], a['seeds'][-1]], code_sha256=a.get('code_sha256'),
          arms={}, step_sd={k: r4(v[0]) for k, v in a['step_sd'].items()},
          breakdowns={k: dict(n=v['n_break'], seeds=v['seeds_break'], V_within=L4(v['V_within_break']), u=L4(v['u_break']),
-                             V_within_ok=r4(v['V_within_ok'][0])) for k, v in a['breakdowns'].items()},
+                             V_within_ok=r4(v['V_within_ok'][0]), u_ok=L4(v['u_ok'])) for k, v in a['breakdowns'].items()},
+         readings=a['readings'], registry=None if a['registry'] is None else {
+             k: dict(v, bits=round(v['bits'], 2)) for k, v in a['registry'].items()},
+         dynamics={k: dict(segments=L4(v['segments']), half_diff=L4(v['half_diff']), n_half_neg=v['n_half_neg'])
+                   for k, v in a['dynamics'].items()},
+         step_sd_nowithin_no_breakdown=L4(a['step_sd_nowithin_no_breakdown']),
          construction={k: dict(logloss_gap=L4(v['logloss_gap']), n_gap_ge_002=v['n_gap_ge_002'], wG=L4(v['wG']),
                                sd_groups=L4(v['sd_groups'])) for k, v in a['construction'].items()},
          price={k: dict(within=r5(v['within'][0]), between=r5(v['between'][0])) for k, v in a['descriptive_price'].items()},
@@ -49,3 +54,5 @@ for k, v in list(f['verdicts'].items()) + list(f['explore'].items()):
     print(k, v['outcome'], {kk: vv for kk, vv in v.items() if kk not in ('outcome', 'kind')})
 print('сводные:', f['summary'])
 print('срывы:', {k: (v['n'], v['seeds']) for k, v in f['breakdowns'].items() if v['n']})
+print('чтения:', f['readings'])
+print('реестр:', f['registry'])

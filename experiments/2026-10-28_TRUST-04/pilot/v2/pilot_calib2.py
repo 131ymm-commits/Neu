@@ -215,14 +215,23 @@ COMPOSITES = dict(SA=['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'], SA2=['A11
                   SA3=['A2', 'A4', 'A15', 'A16', 'A17', 'A18'], SB=[f'B{i}' for i in range(1, 8)],
                   SB2=[f'B{i}' for i in range(8, 12)], SC=['C_MYOPIC', 'C_DEMES', 'C_POOLED', 'C_COUNCIL', 'C_ORDER'])
 bits = {}
+FLOOR = 0.001                                              # ложный уровень меньше 0,001 не берётся (tools/support_bits.py)
+REG = {'C-048': ['A13', 'A12', 'C_COUNCIL', 'A14'], 'C-049': ['A3', 'A8', 'A9', 'A10', 'C_DEMES', 'A14'],
+       'C-050': ['A1', 'A5', 'C_POOLED', 'A2', 'A4', 'A15', 'A16', 'A17', 'A18', 'A9', 'A10', 'A14']}   # C-050: с частями SA3
 for lev in (90, 95):
     fl = lambda p: out[p]['false_level'] if 'false_level' in out[p] else out[p][f'false_level_{lev}']
     pw = lambda p, s='': out[p][f'power{s}'] if 'false_level' in out[p] else out[p][f'power{s}_{lev}']
     bits[lev] = {}
     for c, parts in COMPOSITES.items():
         f = max(fl(p) for p in parts); P = float(np.prod([pw(p) for p in parts])); P15 = float(np.prod([pw(p, '_sd15') for p in parts]))
-        bits[lev][c] = dict(false_level=f, power=P, power_sd15=P15, bits=math.log2(P / f))
+        bits[lev][c] = dict(false_level=f, power=P, power_sd15=P15, bits=math.log2(P / max(f, FLOOR)))
+    bits[lev]['registry'] = {}
+    for cid, parts in REG.items():                          # вес повтора утверждений TRUST-03 (PREREG §4, «Реестр»)
+        f = max(fl(p) for p in parts); P = float(np.prod([pw(p) for p in parts])); fa = max(f, FLOOR)
+        bits[lev]['registry'][cid] = dict(parts=parts, false_level=f, power=P, bits_held=math.log2(P / fa),
+                                         bits_refuted=math.log2((1 - P) / (1 - fa)))
     bits[lev]['family_sum_parts'] = float(sum(fl(p) for p in out))
+    bits[lev]['composites_list'] = list(COMPOSITES)
     bits[lev]['family_sum_composites'] = float(sum(bits[lev][c]['false_level'] for c in COMPOSITES))
     bits[lev]['expl_sum'] = float(sum(v['false_level'] if 'false_level' in v else v.get(f'false_level_{lev}', 0.0)
                                       for k, v in EXPL.items() if k != 'EB6'))
@@ -240,7 +249,9 @@ for k, v in EXPL.items():
     print(k, {kk: (round(vv, 4) if isinstance(vv, float) else vv) for kk, vv in v.items() if kk not in ('values',)})
 for lev in (90, 95):
     print(f'ДИ эквивалентности {lev} %:', {c: (round(b['false_level'], 4), round(b['power'], 3), round(b['power_sd15'], 3), round(b['bits'], 2))
-                                           for c, b in bits[lev].items() if isinstance(b, dict)},
+                                           for c, b in bits[lev].items() if isinstance(b, dict) and c in COMPOSITES},
+          'реестр:', {c: (round(b['false_level'], 4), round(b['power'], 4), round(b['bits_held'], 2), round(b['bits_refuted'], 2))
+                      for c, b in bits[lev]['registry'].items()},
           'семья: части', round(bits[lev]['family_sum_parts'], 4), 'сводные', round(bits[lev]['family_sum_composites'], 4),
           'разведка', round(bits[lev]['expl_sum'], 4))
 for a, v in DESC.items():
