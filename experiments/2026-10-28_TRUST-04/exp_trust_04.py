@@ -25,6 +25,7 @@
 
 Запуск: python3 exp_trust_04.py [--check | --pilot | --dry] [--part A|B] [--out ПАПКА]. PREREG: PREREG-TRUST-04.md.
 """
+import hashlib
 import json
 import os
 import sys
@@ -34,6 +35,7 @@ import numpy as np
 from scipy.optimize import minimize, minimize_scalar
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+CODE_SHA256 = hashlib.sha256(open(os.path.abspath(__file__), 'rb').read()).hexdigest()   # код при загрузке — в результат
 sys.path.insert(0, os.path.join(HERE, '..', '2026-10-28_TRUST-02'))
 sys.path.insert(0, os.path.join(HERE, '..', '2026-10-28_TRUST-01'))
 import exp_trust_01 as T1  # noqa: E402
@@ -318,7 +320,7 @@ def run(seeds, outdir, part=None, gens=G):
     runs = [evolve4(s, a, gens=gens) for s in seeds for a in arms]
     name = 'results_trust_04.json' if part is None else f'results_trust_04_{part}.json'
     json.dump(dict(theory=th, runs=runs, params=dict(L_EP=L_EP, G=gens, SIG=SIG, WINDOW=WINDOW, ARMS=ARMS, SEEDS=seeds,
-                                                       part=part), seconds=time.time() - t0),
+                                                       part=part, code_sha256=CODE_SHA256), seconds=time.time() - t0),
               open(os.path.join(outdir, name), 'w'), default=float)
     return th, runs, time.time() - t0
 
