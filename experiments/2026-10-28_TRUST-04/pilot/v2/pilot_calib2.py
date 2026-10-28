@@ -31,7 +31,7 @@ import exp_trust_04 as E  # noqa: E402
 
 FROZEN = {'base': (0.9873, 0.6891), 'r075': (0.5768, 0.3897), 'r095': (1.7134, 1.1968), 'b03': (1.2221, 0.9622),
           'b09': (0.8328, 0.5372)}
-N, DELTA, NSIM, BREAK_SD = 20, 0.1, 20000, 0.5
+N, DELTA, NSIM, BREAK_SD, BREAK_VW = 20, 0.1, 20000, 0.5, 0.1
 runs = []
 for part in ('A', 'B'):
     d = json.load(open(os.path.join(HERE, f'results_trust_04_{part}.json')))
@@ -109,14 +109,28 @@ equiv('A7', u('POOLED'), u('POOLED_FREE')); equiv('A8', u('DEMES'), u('DEMES_FRE
 interval('A9', 'DEMES_NOSEL', 2 / 3, 4 / 3); interval('A10', 'DEMES_NOSEL_FREE', 2 / 3, 4 / 3)
 interval('A11', 'COUNCIL_SIGN', -1 / 3, 1 / 3); equiv('A12', u('COUNCIL'), u('COUNCIL_SIGN'))
 interval('A13', 'COUNCIL', -1 / 6, 1 / 6); interval('A14', 'MYOPIC', 2 / 3, 4 / 3)
-# A15: DEMES_NOWITHIN, смесь «срыв / без срыва»
-xw = u('DEMES_NOWITHIN'); brk = col('DEMES_NOWITHIN', 'wG_sd_groups') > BREAK_SD; q = float(brk.mean())
+# A15: DEMES_NOWITHIN — среди зёрен без срыва. Срыв — SD w_G между группами > 0,5 в среднем по окну (Д2 TRUST-03) ИЛИ
+# внутригрупповая дисперсия w_G > 0,1 в среднем по окну (после пилота v2: зерно 1103 — SD между группами 0,382, но
+# V_внутри 1,03 при 0,015 у зёрен без срыва):
+# |u| ≤ 1/6 в ≥ ⌈0,8·n_nb⌉ из n_nb; при n_nb < 14 — «не показано». Мощность — по доле срывов q (пилот и q = 0,2) и
+# P(in | без срыва) из нормального приближения; ложный уровень — наибольший по n_nb = 14…20 при P(in) = ½.
+A15_NMIN, A15_FRAC = 14, 0.8
+xw = u('DEMES_NOWITHIN'); brk = (col('DEMES_NOWITHIN', 'wG_sd_groups') > BREAK_SD) | (col('DEMES_NOWITHIN', 'V_within') > BREAK_VW); q = float(brk.mean())
 xnb = xw[~brk]; mu_nb, sd_nb = float(xnb.mean()), float(xnb.std(ddof=1))
-p1 = (1 - q) * p_in(mu_nb, sd_nb, -1 / 6, 1 / 6); p15 = (1 - max(q, 0.2)) * p_in(mu_nb, 1.5 * sd_nb, -1 / 6, 1 / 6)
-counted('A15', 'интервал (срывы)', p1, p15, dict(arm='DEMES_NOWITHIN', interval=[-1 / 6, 1 / 6], breakdowns=int(brk.sum()),
-                                               q=q, q_pessimistic=max(q, 0.2), mean_nb=mu_nb, sd_nb=sd_nb,
-                                               pilot_count=int(np.sum(np.abs(xw) <= 1 / 6)), values=xw.round(4).tolist(),
-                                               sd_groups=col('DEMES_NOWITHIN', 'wG_sd_groups').round(4).tolist()))
+
+
+def a15_power(q_, p_):
+    return float(sum(binom.pmf(nb, N, 1 - q_) * P_atleast(p_, math.ceil(A15_FRAC * nb), nb) for nb in range(A15_NMIN, N + 1)))
+
+
+_p1, _p15 = p_in(mu_nb, sd_nb, -1 / 6, 1 / 6), p_in(mu_nb, 1.5 * sd_nb, -1 / 6, 1 / 6)
+out['A15'] = dict(kind='интервал среди зёрен без срыва', arm='DEMES_NOWITHIN', interval=[-1 / 6, 1 / 6], n_min=A15_NMIN, frac=A15_FRAC,
+                  breakdowns=int(brk.sum()), q=q, mean_nb=mu_nb, sd_nb=sd_nb, p_seed=_p1, p_seed_sd15=_p15,
+                  power=a15_power(q, _p1), power_sd15=a15_power(max(q, 0.2), _p15), power_q01=a15_power(0.1, _p1),
+                  power_q03=a15_power(0.3, _p1),
+                  false_level=max(f_bound(math.ceil(A15_FRAC * nb), nb) for nb in range(A15_NMIN, N + 1)), k='⌈0,8·n_nb⌉', flag='',
+                  pilot_count=int(np.sum(np.abs(xnb) <= 1 / 6)), pilot_n_nb=int((~brk).sum()), values=xw.round(4).tolist(),
+                  sd_groups=col('DEMES_NOWITHIN', 'wG_sd_groups').round(4).tolist())
 interval('A16', 'DEMES_GPOOL', 1 / 6, 5 / 6); equiv('A17', u('DEMES_GPOOL'), u('DEMES_FREE'))
 sign('A18', 'POOLED_FREE', 'DEMES_GPOOL')
 # ---- блок Б ----
@@ -174,7 +188,8 @@ EXPL['EB6'] = dict(kind='u ≈ 1 − R', arms=E1_ARMS, u=ub.round(4).tolist(), o
 DESC = {a: dict(u_mean=float(u(a).mean()), u_sd=float(u(a).std(ddof=1)), step_sd=float(col(a, 'step_sd').mean()),
                 R=float(col(a, 'V_between').mean() / max(col(a, 'V_between').mean() + col(a, 'V_within').mean(), 1e-300)),
                 V_between=float(col(a, 'V_between').mean()), V_within=float(col(a, 'V_within').mean()),
-                sd_groups=float(col(a, 'wG_sd_groups').mean()), n_break=int(np.sum(col(a, 'wG_sd_groups') > BREAK_SD)),
+                sd_groups=float(col(a, 'wG_sd_groups').mean()),
+                n_break=int(np.sum((col(a, 'wG_sd_groups') > BREAK_SD) | (col(a, 'V_within') > BREAK_VW))),
                 price_within=float(col(a, 'price_within').mean()), logloss=float(col(a, 'logloss').mean())) for a in E.ARMS}
 # ---- сводные и семья ----
 COMPOSITES = dict(SA=['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8'], SA2=['A11', 'A12'],
@@ -201,7 +216,7 @@ for k, v in out.items():
               f"  95 % {v['power_95']:.3f} ({v['power_sd15_95']:.3f})  ложн. {v['false_level_90']:.4f}/{v['false_level_95']:.4f}")
     else:
         print(f"{k:8s} {v['kind'][:9]:9s} p на зерне {v['p_seed']:.4f} ({v['p_seed_sd15']:.4f})  k = {v['k']}  мощн. {v['power']:.3f}"
-              f" ({v['power_sd15']:.3f})  ложн. {v['false_level']:.4g}  пилот {v['pilot_count']}/10 {v['flag']}")
+              f" ({v['power_sd15']:.3f})  ложн. {v['false_level']:.4g}  пилот {v['pilot_count']}/{v.get('pilot_n_nb', 10)} {v['flag']}")
 for k, v in EXPL.items():
     print(k, {kk: (round(vv, 4) if isinstance(vv, float) else vv) for kk, vv in v.items() if kk not in ('values',)})
 for lev in (90, 95):

@@ -31,10 +31,11 @@ import exp_trust_04 as E  # noqa: E402
 FROZEN = {'base': (0.9873, 0.6891), 'r075': (0.5768, 0.3897), 'r095': (1.7134, 1.1968), 'b03': (1.2221, 0.9622),
           'b09': (0.8328, 0.5372)}                         # (близорукая, дальновидная) w_G; assert до 1e-4 против теории
 DELTA_EQ = 0.1                                             # граница эквивалентности по u
-CI_EQ = None                                               # уровень ДИ Уэлча для TOST — после калибровки
-K = {}                                                     # пороги k из 20 — после калибровки
+CI_EQ = 0.95                                               # уровень ДИ Уэлча для TOST (калибровка: ложный уровень ≈ 0,025)
+K = dict(A1=18, A2=17, A3=18, A4=18, A5=18, A6=18, A9=18, A10=18, A11=18, A13=18, A14=18, A16=18, A18=18, B1=18, B2=18, B3=18, B4=18, B5=18, B6=18, B7=18, B8=18, B9=18, B10=18, B11=18, B12=18, B13=18, B14=18, B15=18, C_ORDER=18)   # k из 20 (pilot/v2/pilot_calib2.json)
 K_EXPL = 15                                                # знаковые предсказания разведки: k из 20
-BREAK_SD = 0.5                                             # срыв: SD w_G между группами > 0,5 в среднем по окну (Д2 TRUST-03)
+BREAK_SD, BREAK_VW = 0.5, 0.1                              # срыв: по окну SD w_G между группами > 0,5 (Д2 TRUST-03) или V_внутри > 0,1
+A15_NMIN, A15_FRAC = 14, 0.8                               # A15: не меньше 14 зёрен без срыва; доля в интервале ≥ 0,8
 INDEP_SEEDS = list(range(700, 720))
 E1_ARMS = ['DEMES', 'DEMES_FREE', 'DEMES_GPOOL', 'DEMES_IND', 'DEMES_MIG', 'DEMES_SIG5', 'DEMES_r075', 'DEMES_r095',
            'DEMES_b03', 'DEMES_b09']                       # руки с отбором внутри группы по своему весу (EB6)
@@ -63,8 +64,8 @@ for p in sorted(glob.glob(os.path.join(DIR, 'results_trust_04_*.json'))):
     parts[pt] = d
 assert set(parts) == {'A', 'B'}, f'нужны части A и B, есть {sorted(parts)}'
 pa, pb = parts['A']['params'], parts['B']['params']
-for key in ('L_EP', 'G', 'SIG', 'WINDOW', 'SEEDS', 'code_sha256'):
-    assert pa[key] == pb[key], f'части A и B различаются: {key}'
+for key in ('L_EP', 'G', 'SIG', 'WINDOW', 'SEEDS', 'code_sha256'):         # code_sha256 нет в пилоте v2 (добавлен позже)
+    assert pa.get(key) == pb.get(key), f'части A и B различаются: {key}'
 assert json.dumps(parts['A']['theory'], sort_keys=True) == json.dumps(parts['B']['theory'], sort_keys=True)
 assert json.loads(json.dumps(pa['ARMS'], default=float)) == json.loads(json.dumps(E.ARMS, default=float)), 'руки не те'
 assert json.loads(json.dumps(pb['ARMS'], default=float)) == json.loads(json.dumps(E.ARMS, default=float)), 'руки не те'
@@ -159,8 +160,15 @@ interval('A11', uw('COUNCIL_SIGN'), -1 / 3, 1 / 3)
 equiv('A12', uw('COUNCIL'), uw('COUNCIL_SIGN'))
 interval('A13', uw('COUNCIL'), -1 / 6, 1 / 6)
 interval('A14', uw('MYOPIC'), 2 / 3, 4 / 3)
-_brk = [x > BREAK_SD for x in col('DEMES_NOWITHIN', 'wG_sd_groups')]
-interval('A15', uw('DEMES_NOWITHIN'), -1 / 6, 1 / 6, breakdowns=int(sum(_brk)))
+# A15: среди зёрен DEMES_NOWITHIN без срыва |u| ≤ 1/6 в ≥ ⌈0,8·n_nb⌉ из n_nb; при n_nb < 14 (из 20) — «не показано»
+brk_of = lambda a: [F[(s, a)]['wG_sd_groups'] > BREAK_SD or F[(s, a)]['V_within'] > BREAK_VW for s in seeds]
+_brk = brk_of('DEMES_NOWITHIN')
+_unb = [x for x, bb in zip(uw('DEMES_NOWITHIN'), _brk) if not bb]
+_nnb, _nmin = len(_unb), (A15_NMIN if NS == 20 else math.ceil(A15_NMIN * NS / 20))
+_kn, _cn = math.ceil(A15_FRAC * _nnb), sum(abs(x) <= 1 / 6 for x in _unb)
+V['A15'] = dict(kind='интервал среди зёрен без срыва', k=_kn, n=_cn, N=_nnb, n_min=_nmin, breakdowns=NS - _nnb,
+                outcome='не показано' if _nnb < _nmin else outcome(_cn, _kn, _nnb), interval=[-1 / 6, 1 / 6],
+                value=boot_ci(uw('DEMES_NOWITHIN')), value_no_breakdown=boot_ci(_unb) if _unb else None)
 interval('A16', uw('DEMES_GPOOL'), 1 / 6, 5 / 6, strict=True)
 equiv('A17', uw('DEMES_GPOOL'), uw('DEMES_FREE'))
 sign('A18', 'POOLED_FREE', 'DEMES_GPOOL')
@@ -220,10 +228,11 @@ for a in ('POOLED_NOSEL', 'POOLED_NOSEL_FREE'):
     KC[a] = dict(logloss_gap=boot_ci(gap), n_gap_ge_002=sum(x >= 0.02 for x in gap), wG=boot_ci(col(a)),
                  sd_groups=boot_ci(col(a, 'wG_sd_groups')), price_within=boot_ci(col(a, 'price_within')))
 STEP = {a: boot_ci(col(a, 'step_sd')) for a in E.ARMS}    # K2: SD шага среднего w_G группы за поколение
-BRK = {a: dict(n_break=sum(x > BREAK_SD for x in col(a, 'wG_sd_groups')),
-               V_within_break=[F[(s, a)]['V_within'] for s in seeds if F[(s, a)]['wG_sd_groups'] > BREAK_SD],
-               V_within_ok=boot_ci([F[(s, a)]['V_within'] for s in seeds if F[(s, a)]['wG_sd_groups'] <= BREAK_SD] or [float('nan')]))
-       for a in E.ARMS}
+BRK = {a: dict(n_break=sum(brk_of(a)), seeds_break=[s for s, b in zip(seeds, brk_of(a)) if b],
+               V_within_break=[F[(s, a)]['V_within'] for s, b in zip(seeds, brk_of(a)) if b],
+               u_break=[uw(a)[i] for i, b in enumerate(brk_of(a)) if b],
+               V_within_ok=boot_ci([F[(s, a)]['V_within'] for s, b in zip(seeds, brk_of(a)) if not b] or [float('nan')]))
+       for a in E.ARMS if E.ARMS[a]['sig'] == E.SIG and E.ARMS[a]['sig_g'] == E.SIG}   # порог V_внутри — для σ = 0,04
 D1 = {a: dict(within=boot_ci(col(a, 'price_within')), between=boot_ci(col(a, 'price_between'))) for a in E.ARMS}
 summary = None
 if FULL:
@@ -239,7 +248,7 @@ keys = ('wG', 'b', 'logloss', 'self_dec', 'acc', 'ece', 'wG_sd_groups', 'V_betwe
 arms_mean = {a: dict(u=boot_ci(uw(a)), **{k: boot_ci(col(a, k)) for k in keys}) for a in E.ARMS}
 out = dict(verdicts=V, explore=X, summary=summary, construction=KC, step_sd=STEP, breakdowns=BRK, descriptive_price=D1,
            indep=C, arms=arms_mean, theory=theory, frozen=FROZEN, K=K, CI_EQ=CI_EQ, n_seeds=NS, seeds=seeds,
-           code_sha256=pa['code_sha256'],
+           code_sha256=pa.get('code_sha256'),
            rows={str(s): {a: dict(F[(s, a)], u=uw(a)[seeds.index(s)]) for a in E.ARMS} for s in seeds})
 json.dump(out, open(os.path.join(DIR, 'analysis_trust_04.json'), 'w'), ensure_ascii=False, indent=1,
           default=lambda o: o.item() if hasattr(o, 'item') else str(o))
@@ -256,6 +265,6 @@ print('разведка:')
 for name, v in X.items():
     print(' ', name, v['outcome'], show(v))
 print('шаг среднего группы (SD):', {a: round(v[0], 4) for a, v in STEP.items()})
-print('срывы (SD между группами > 0,5):', {a: v['n_break'] for a, v in BRK.items() if v['n_break']})
+print('срывы (по окну SD между группами > 0,5 или V_внутри > 0,1):', {a: (v['n_break'], v['seeds_break']) for a, v in BRK.items() if v['n_break']})
 print('проверки построения:', {a: {k: (np.round(v, 4).tolist() if isinstance(v, list) else v) for k, v in d.items()} for a, d in KC.items()})
 print('сводные исходы:', summary)
