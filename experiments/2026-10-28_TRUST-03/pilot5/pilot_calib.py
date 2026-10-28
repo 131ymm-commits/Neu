@@ -46,9 +46,12 @@ def sign(name, x, k):                                       # «разность
 
 
 uD = float(u('DEMES').mean())
+# частичная рука: DEMES 80 × 5 из пилота ручки (отбор внутри групп есть) — альтернатива «сократил отставание, но не снял»
+_knob = json.load(open(os.path.join(HERE, '..', 'pilot4', 'pilot_knob.json')))
+u80 = [(r['wG_mean'] - W_FAR) / D for r in _knob['rows'] if r['arm'] == 'KNOB_DEMES_80x5'][0]
 interval('P1', u('MYOPIC'), 2 / 3, 4 / 3, 9, {'MYOPIC у дальновидной (u = 0)': 0.0})
-interval('P2', u('COUNCIL'), -1 / 3, 1 / 3, 9, {'COUNCIL у близорукой (u = 1)': 1.0})
-out['P2']['pass_if_partial_like_DEMES'] = P_atleast(p_in(uD, out['P2']['sd'], -1 / 3, 1 / 3), 9)  # различение, не ложный уровень
+interval('P2', u('COUNCIL'), -1 / 6, 1 / 6, 9, {'COUNCIL у близорукой (u = 1)': 1.0, 'частично, как DEMES 80 × 5': u80})
+out['P2']['pass_if_partial_like_DEMES'] = P_atleast(p_in(uD, out['P2']['sd'], -1 / 6, 1 / 6), 9)  # различение, не ложный уровень
 sign('P3', col('COUNCIL', 'logloss') - col('MYOPIC', 'logloss'), 9)
 interval('P5', u('DEMES'), 1 / 6, 5 / 6, 8, {'DEMES у близорукой (u = 1)': 1.0, 'DEMES у дальновидной (u = 0)': 0.0})
 sign('P6', col('DEMES') - col('DEMES_10x40'), 8)
@@ -56,7 +59,7 @@ interval('P7', u('DEMES_NOSEL'), 2 / 3, 4 / 3, 9, {'DEMES_NOSEL как DEMES': u
 sign('P9', col('COUNCIL') - col('DEMES'), 9)
 sign('P10', col('DEMES') - col('DEMES_NOSEL'), 9)
 sign('P11', col('DEMES_POOLED') - col('DEMES'), 9)
-interval('P12', u('DEMES_POOLED'), -1 / 3, 1 / 3, 8, {'DEMES_POOLED как DEMES': uD})
+interval('P12', u('DEMES_POOLED'), -1 / 6, 1 / 6, 8, {'DEMES_POOLED как DEMES': uD, 'частично, как DEMES 80 × 5': u80})
 sign('E1', col('COUNCIL', 'self_dec') - col('MYOPIC', 'self_dec'), 7)
 interval('E2', u('COUNCIL_10x40'), -1 / 3, 1 / 3, 8, {'COUNCIL_10x40 у близорукой (u = 1)': 1.0})
 sign('E3', col('COUNCIL') - col('COUNCIL_IND'), 7)
@@ -74,6 +77,7 @@ out['price'] = {a: dict(within=col(a, 'price_within').round(5).tolist(), between
 out['wG_by_arm'] = {a: dict(mean=float(col(a).mean()), sd=float(col(a).std(ddof=1)), values=col(a).round(4).tolist(),
                             sd_groups=float(col(a, 'wG_sd_groups').mean())) for a in sorted({a for _, a in F})}
 out['D2_nowithin_breakdowns'] = int(sum(col('DEMES_NOWITHIN', 'wG_sd_groups') > 0.5))
+out['u_knob_demes_80x5'] = u80
 out['seeds'] = seeds
 json.dump(out, open(os.path.join(HERE, 'pilot_calib.json'), 'w'), ensure_ascii=False, indent=1)
 for k in fam + ['E1', 'E2', 'E3', 'E4']:

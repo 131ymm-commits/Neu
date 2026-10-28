@@ -1,0 +1,10 @@
+{
+ "exp_trust_03.py": "6aa799233663af019f86e7e63abbeea34901be5ceffa3713020658fc893fd23b",
+ "analyze_trust_03.py": "9d3dd6672b950b9fbfe1227030aeff124f7fa285698a2c05ac0fdf52aceaf948",
+ "prereg_hashes.py": "d7b03899d8cfbaad86b283473430809966e4f7e214204abaedffb830a3fdf76e",
+ "requirements.txt": "4d5c986629521c4bcbef8cd014b26cc95a538f7f8547f86954043d2835cf528f",
+ "../2026-10-28_TRUST-01/exp_trust_01.py": "b1ad55f90dd1d50aafb9f76e5a0b9e8abee88f8f3c317d3f728da8894781d2fd",
+ "../2026-10-28_TRUST-02/exp_trust_02.py": "8ce0aaf951a7c4c18bc2a023d4eb8bea73f2e8ee2953602228dc4fa7043b394f",
+ "pilot5/pilot_calib.py": "6dce38396633eb14fc5c5546e08540701a340ba7d6dd0c04740b8c451d00f4f1",
+ "pilot4/pilot_knob.py": "be999b0e4184c9266bd7f3f96275ff514cf3000cbcefd5e6bc71be5eb76d6872"
+}

@@ -27,6 +27,7 @@ assert abs(th['myopic']['wG'] - W_MY) < 1e-4 and abs(th['farsighted']['wG'] - W_
 MAIN = os.path.dirname(os.path.abspath(src)) == HERE        # основной прогон — results_trust_03.json в папке опыта
 if MAIN:
     assert seeds == E.SEEDS, 'тестовые зёрна не те'
+    assert (G, WIN) == (E.G, E.WINDOW) and d['params']['ARMS'] == E.ARMS, 'параметры результата не совпадают с кодом'
 FULL = seeds == E.SEEDS
 if not FULL:
     print(f'внимание: зёрна {seeds[0]}–{seeds[-1]} ({NS}) — не тестовые; вердикты ниже не в зачёт, сводные исходы не считаются')
@@ -72,7 +73,7 @@ def sign(name, dvals, k, **extra):                       # счёт зёрен, 
 
 # основная семья
 interval('P1', u('MYOPIC'), 1 - 1 / 3, 1 + 1 / 3, 9, wG=boot_ci(col('MYOPIC', 'wG')))
-interval('P2', u('COUNCIL'), -1 / 3, 1 / 3, 9, wG=boot_ci(col('COUNCIL', 'wG')), b=boot_ci(col('COUNCIL', 'b')))
+interval('P2', u('COUNCIL'), -1 / 6, 1 / 6, 9, wG=boot_ci(col('COUNCIL', 'wG')), b=boot_ci(col('COUNCIL', 'b')))
 sign('P3', diff('COUNCIL', 'MYOPIC', 'logloss'), 9)
 lo5, hi5 = 1 / 6, 5 / 6                                   # строго между точками с запасом шестой части разрыва
 c5 = sum(lo5 < x < hi5 for x in u('DEMES'))
@@ -83,7 +84,7 @@ interval('P7', u('DEMES_NOSEL'), 1 - 1 / 3, 1 + 1 / 3, 9, wG=boot_ci(col('DEMES_
 sign('P9', diff('COUNCIL', 'DEMES'), 9)
 sign('P10', diff('DEMES', 'DEMES_NOSEL'), 9)
 sign('P11', diff('DEMES_POOLED', 'DEMES'), 9)
-interval('P12', u('DEMES_POOLED'), -1 / 3, 1 / 3, 8, wG=boot_ci(col('DEMES_POOLED', 'wG')))
+interval('P12', u('DEMES_POOLED'), -1 / 6, 1 / 6, 8, wG=boot_ci(col('DEMES_POOLED', 'wG')))
 # разведка
 sign('E1', diff('COUNCIL', 'MYOPIC', 'self_dec'), 7, self_dec_council=boot_ci(col('COUNCIL', 'self_dec')),
      self_dec_myopic=boot_ci(col('MYOPIC', 'self_dec')), self_dec_demes=boot_ci(col('DEMES', 'self_dec')))
