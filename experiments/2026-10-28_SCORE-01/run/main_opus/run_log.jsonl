@@ -10,3 +10,7 @@
 {"arm": "WIN", "at": "2026-10-29T07:31:52+00:00", "attempt": 1, "event": "вызов", "job": "WH_8003|WIN|0", "role": "основной", "task": "WH_8003", "поток": "WH_8003_WIN_0-fa7b8b08.a001.osn.jsonl.gz"}
 {"arm": "NONE", "at": "2026-10-29T07:32:22+00:00", "attempt": 1, "event": "вызов", "job": "WH_8003|NONE|0", "role": "основной", "task": "WH_8003", "поток": "WH_8003_NONE_0-8080013f.a001.osn.jsonl.gz"}
 {"arm": "WIN", "at": "2026-10-29T07:32:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8004|WIN|0", "role": "основной", "task": "WH_8004", "поток": "WH_8004_WIN_0-b4874346.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T07:33:34+00:00", "attempt": 1, "event": "вызов", "job": "WH_8004|NONE|0", "role": "основной", "task": "WH_8004", "поток": "WH_8004_NONE_0-da9b42a8.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T07:33:36+00:00", "attempt": 1, "event": "вызов", "job": "WH_8004|LOG|0", "role": "основной", "task": "WH_8004", "поток": "WH_8004_LOG_0-3f33fdc3.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T07:33:56+00:00", "attempt": 1, "event": "вызов", "job": "WH_8005|LOG|0", "role": "основной", "task": "WH_8005", "поток": "WH_8005_LOG_0-42f5d13f.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T07:33:58+00:00", "attempt": 1, "event": "вызов", "job": "WH_8005|NONE|0", "role": "основной", "task": "WH_8005", "поток": "WH_8005_NONE_0-ef1007c5.a001.osn.jsonl.gz"}
