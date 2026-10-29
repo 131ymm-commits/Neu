@@ -1,0 +1,24 @@
+{
+ "trust04": {
+  "n": 47,
+  "conf": 0.9209,
+  "share": 1.0,
+  "brier": 0.0104,
+  "self_dec": -0.0791
+ },
+ "post_pilot": {
+  "n": 101,
+  "conf": 0.8916,
+  "share": 0.9802,
+  "brier": 0.0301,
+  "self_dec": -0.0886
+ },
+ "timing": {
+  "test_A": 2255.0,
+  "test_B": 5346.0,
+  "pilot_A": 1155.0,
+  "pilot_B": 1323.0,
+  "ratio_test": 2.37,
+  "ratio_pilot": 1.15
+ }
+}

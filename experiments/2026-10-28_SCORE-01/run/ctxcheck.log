@@ -1,0 +1,11 @@
+ctxcheck_opus_clean	WH_7001_LOG_20	5934
+ctxcheck_haiku_old	WH_7001_LOG_23	8518
+ctxcheck_haiku_clean	WH_7001_LOG_20	6726
+ctxcheck_opus_clean	WH_7001_LOG_21	5946
+ctxcheck_haiku_clean	WH_7001_LOG_21	6734
+ctxcheck_haiku_clean	WH_7001_LOG_22	6722
+одинаковые промпты (задача и рука): разброс входа
+  ctxcheck_haiku_clean WH_7001_LOG: [6726, 6734, 6722] → размах 12
+  ctxcheck_opus_clean WH_7001_LOG: [5934, 5946] → размах 12
+pilot1_haiku	WH_7001_LOG_0	8007
+pilot1_opus	WH_7001_LOG_0	7149
