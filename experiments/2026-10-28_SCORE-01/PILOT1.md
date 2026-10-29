@@ -1,5 +1,7 @@
 # SCORE-01, микропилот 1 (формат «в лучшей половине»): итог
 
+> **Поправка 29.10 01:34 (ERRORS № 118, LENSES-1 L1-1).** Этот пилот шёл со снимком git в контексте голов: CLI клал в системный контекст ветку, `git status` и пять последних коммитов, среди которых были гипотезы и итоги пилотов о LOG и WIN. Числа ниже — другое условие, чем в тесте; основа направлений и мощности — микропилот 3 в чистом контексте (`PILOT3.md`).
+
 - Задачи — те же 20 пилотных WH SELECT-01, что в микропилоте 0 (7001–7012, 7301–7308); соль пилота `pilot_salt.txt`, правда — `truth/pilot.json`. Метка кандидата — «в четвёрке лучших по правде» (ничьи по sha256).
 - Промпт — `prompts_score.ROLE_H` (8 вероятностей «кандидат в лучшей половине», каждая от 0 до 1), руки — `RULES_HALF` LOG и WIN; хеши — `python3 prompts_score.py hash` (ROLE_H 9d4c5390…).
 - Вызовы — `tools/run_sealed2.py`, `--tools ""`, Opus 5.5 и Haiku 5.5, effort medium, по 40 вызовов; журналы — `run/pilot1_opus/`, `run/pilot1_haiku/`; выгрузки — `run/pilot1_*_out.jsonl`; меры — `evals/pilot1_*.json` (`score01.py metrics … half`); описание — `run/pilot1_*_describe.log` (`pilot1_describe.py`); таблицы — `run/pilot1_tables.md` (`pilot_tables.py`, числа ниже скопированы оттуда командой).

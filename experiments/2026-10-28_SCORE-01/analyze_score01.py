@@ -15,6 +15,7 @@ import json
 import math
 import os
 import random
+import sys
 import zlib
 
 from scipy import stats
@@ -82,7 +83,8 @@ PRED_HAIKU = [
 PRED += PRED_HAIKU
 # сводные: части — по comp; ESTABLISH — можно ли назвать «установлено» при подтверждении в обеих выборках
 ESTABLISH = dict(SA=True, SB=True, SC=False, SD=False)
-_SA = 'тип объявленного правила (LOG или WIN) не меняет самообман и точность оценщика больше чем на 0,1 и Брайер больше чем на 0,05'
+_SA = ('строки правил LOG и WIN (как в RULES_HALF) не различаются по самообману оценщика (и зеркально — по точности) больше чем на 0,1 '
+       'и по Брайеру больше чем на 0,05; это разница порядка самого самообмана')
 _SB = 'самообман оценщика (уверенность выше точности) есть в каждой руке, и при объявленном правиле, и без него'
 COMP_TEXT = dict(
     SA_opus=_SA, SA_haiku=_SA, SB_opus=_SB, SB_haiku=_SB,
@@ -125,11 +127,22 @@ def weights(target):
     return dict(target[1])
 
 
+def sample_tasks(E):
+    """Задачи выборки этапа (main / rep / pilot — по score01.sample_tasks); иначе — задачи, попавшие в evals (сухой прогон без выборки).
+    Знаменатель правила потерь — задачи выборки: задача без записи в выгрузке — потеря (LENSES-1, L2-1)."""
+    sample = E.get('sample')
+    if sample in ('main', 'rep', 'pilot'):
+        sys.path.insert(0, HERE)
+        import score01
+        return list(score01.sample_tasks(sample))
+    return sorted({r['task'] for r in E['rows'].values()})
+
+
 def series(E, target, m, reps=('0',)):
     """Значение цели по задачам. Величина руки в задаче — среднее по годным вызовам повторов reps (у Opus один вызов,
     у Haiku два); задача входит, если у каждой руки цели есть хотя бы один годный вызов."""
     rows = E['rows']
-    tasks = sorted({r['task'] for r in rows.values()})
+    tasks = sample_tasks(E)
     w = weights(target)
     ok = lambda r: r is not None and r['valid'] and not (m == 'auc' and math.isnan(r['auc']))
     out = []
@@ -174,9 +187,11 @@ def main():
     a = ap.parse_args()
     res = dict(stages={}, verdicts={}, composites={}, status={}, n_perm=N_PERM, pred=PRED, hashes_ok=None)
     if not a.no_check:
-        import hashlib
+        sys.path.insert(0, HERE)
+        import prereg_hashes
         reg = json.load(open(os.path.join(HERE, 'prereg_hashes.json')))
-        bad = [f for f, h in reg.items() if hashlib.sha256(open(os.path.join(HERE, f), 'rb').read()).hexdigest() != h]
+        now = prereg_hashes.compute()
+        bad = sorted(set(reg) ^ set(now)) + [f for f in reg if f in now and now[f] != reg[f]]
         assert not bad, f'файлы изменились после регистрации: {bad}'
         res['hashes_ok'] = True
         print('хеши регистрации совпадают:', len(reg), 'файлов')
@@ -197,7 +212,7 @@ def main():
                                                       invalid=sum(1 for r in E['rows'].values() if not r['valid']))
             print(f'{st}: заданий {len(ids)}, записей {len(E["rows"])}, нет записи {len(missing)}, негодных {res["coverage"][st]["invalid"]}')
         sample, model = st.split('_', 1)
-        res['stages'][st] = dict(summary=E['summary'], paired=E.get('paired'), labels=E.get('labels'))
+        res['stages'][st] = dict(summary=E['summary'], labels=E.get('labels'))   # paired из evals не берём: у Haiku он только по повтору 0
         for p in PRED:
             if p['model'] != model:
                 continue
@@ -206,6 +221,20 @@ def main():
             ci = v.get('ci90') if p['kind'] == 'equiv' else v.get('ci95')
             print(f"{p['id']:6s} {st:11s} {p['measure']:9s} {str(p['target']):24s} {p['kind']:5s} → {v['outcome']}"
                   + (f"; среднее {v['mean']:+.4f} [{ci[0]:+.4f}; {ci[1]:+.4f}], n {v['n']}" if 'mean' in v else ''))
+        if len(REPS[model]) > 1:                      # встроенный A/A (только чтение; LENSES-1, L3-7): повтор 1 − повтор 0 внутри руки
+            aa = {}
+            for arm in ('LOG', 'WIN', 'NONE'):
+                for m_ in ('self_dec', 'acc'):
+                    x = []
+                    for t in sample_tasks(E):
+                        r0, r1 = E['rows'].get(f'{t}|{arm}|0'), E['rows'].get(f'{t}|{arm}|1')
+                        if r0 and r1 and r0['valid'] and r1['valid']:
+                            x.append(value(r1, m_) - value(r0, m_))
+                    if len(x) > 2:
+                        mm, lo, hi, sd_ = t_ci(x, 0.90)
+                        aa[f'{arm}|{m_}'] = dict(n=len(x), mean=mm, ci90=[lo, hi], sd=sd_, within_01=bool(lo > -0.1 and hi < 0.1))
+            res.setdefault('aa', {})[st] = aa
+            print(f'{st}: A/A (повтор 1 − повтор 0, 90 %): ' + '; '.join(f"{k} {v['mean']:+.3f} [{v['ci90'][0]:+.3f}; {v['ci90'][1]:+.3f}]" for k, v in aa.items()))
         for comp in sorted({p['comp'] for p in PRED if p['comp'] and p['model'] == model}):
             parts = [p['id'] for p in PRED if p['comp'] == comp]
             outs = [res['verdicts'][f'{i}|{st}']['outcome'] for i in parts]
