@@ -1,0 +1,3 @@
+pilot_opus: AUC agree 0.4803; single 0.5802; single_c опыта — см. pilot_describe.json; огрубление с точными долями (ничьи разорваны случайно) 0.5584 (SD по разрывам 0.0029)
+pilot_haiku: AUC agree 0.5567; single 0.5444; single_c опыта — см. pilot_describe.json; огрубление с точными долями (ничьи разорваны случайно) 0.5439 (SD по разрывам 0.0041)
+single_c опыта: {'pilot_opus': 0.5596, 'pilot_haiku': 0.5443}

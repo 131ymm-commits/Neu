@@ -1,0 +1,6 @@
+pilot_opus: AUC single_c своё 0.559582018927, в json 0.559582018927; доли своё [0.1242, 0.0, 0.0185, 0.2721, 0.5852], в json [0.1242, 0.0, 0.0185, 0.2721, 0.5852]
+pilot_haiku: AUC single_c своё 0.544313758287, в json 0.544313758287; доли своё [0.1907, 0.0, 0.2346, 0.2593, 0.3155], в json [0.1907, 0.0, 0.2346, 0.2593, 0.3155]
+D main_opus: AUC single_c своё 0.758722250334, в analysis_D.json 0.758722250334
+D rep_opus: AUC single_c своё 0.741163958398, в analysis_D.json 0.741163958398
+D main_haiku: AUC single_c своё 0.753358104264, в analysis_D.json 0.753358104264
+D rep_haiku: AUC single_c своё 0.760079800237, в analysis_D.json 0.760079800237

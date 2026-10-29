@@ -4,8 +4,10 @@
 Меры источника по набору задач (суждения всех задач вместе): AUC второго рода (через средние ранги, ничьи — ½), точность (доля верных
 суждений), средняя уверенность, самообман = уверенность − точность, Брайер уверенности против верности; ИОИ = незнание (1 − точность)
 + самообман⁺ (max(0, самообман)) — experiments/truth.py, описательно.
-single_c — один вызов, огрублённый до распределения уровней согласия этапа (контроль равной грубости, PREREG §4, X1oc; LENSES-1, L3-1);
-у него считается только AUC второго рода.
+single_c — один вызов, огрублённый до распределения уровней согласия (контроль равной грубости, PREREG §4, X1oc; LENSES-1, L3-1);
+у него считается только AUC второго рода. Карта огрубления строится по тем суждениям, по которым считается мера: по всей выборке
+этапа для оценки и заново на каждом пересэмпле бутстрепа (LENSES-2, П1-1: фиксированная карта занижала разброс при почти
+единогласных вызовах; было «края в бутстрепе не пересчитываются», LENSES-1, L3-1 (а)).
 Разности источников — на одном пересэмпле задач (бутстреп с возвращением; задача, взятая дважды, входит дважды)."""
 import bisect
 import json
@@ -56,15 +58,29 @@ def coarse_map(J, tasks):
     return cmap, list(zip(lv, q, got))
 
 
+def coarse_vec(sc, ac):
+    """То же огрубление, что coarse_map, по массивам: sc — уверенности single, ac — уверенности agree (с повторами пересэмпла).
+    Возвращает огрублённые sc (значения — уровни ac); при пустом ac или sc — nan."""
+    if len(ac) == 0 or len(sc) == 0:
+        return np.full(len(sc), np.nan)
+    lv, cnt = np.unique(ac, return_counts=True)
+    Q = np.cumsum(cnt) / len(ac)
+    Q[-1] = 1.0
+    xs, xc = np.unique(sc, return_counts=True)
+    r = (np.cumsum(xc) - xc + xc / 2) / len(sc)
+    j = np.minimum(np.searchsorted(Q + EPS, r, side='left'), len(lv) - 1)
+    return lv[j][np.searchsorted(xs, sc)]
+
+
+def nonempty(J, tasks):
+    """Число непустых уровней у agree и у single_c (по всей выборке этапа) — для оговорки «грубость не уравнена» (LENSES-2, П1-3)."""
+    _, lv = coarse_map(J, tasks)
+    return dict(agree=sum(1 for _, q, _ in lv if q > 0), single_c=sum(1 for _, _, g in lv if g > 0))
+
+
 def arrays(J, tasks):
-    """По задачам: {источник: (уверенности, верность)} — numpy-массивы; single_c — по огрублению всей выборки этапа (coarse_map)."""
-    cmap, _ = coarse_map(J, tasks)
-    out = []
-    for t in tasks:
-        d = {s: (np.array([c for c, _ in J[t][s]], float), np.array([o for _, o in J[t][s]], bool)) for s in SOURCES}
-        d['single_c'] = (np.array([cmap.get(c, np.nan) for c, _ in J[t]['single']], float), d['single'][1])
-        out.append(d)
-    return out
+    """По задачам: {источник: (уверенности, верность)} — numpy-массивы (single_c строится в measures_arr)."""
+    return [{s: (np.array([c for c, _ in J[t][s]], float), np.array([o for _, o in J[t][s]], bool)) for s in SOURCES} for t in tasks]
 
 
 def auc2_np(conf, ok):
@@ -77,9 +93,11 @@ def auc2_np(conf, ok):
 
 def measures_arr(A, idx):
     out = {}
+    cat = {s: (np.concatenate([A[i][s][0] for i in idx]) if idx else np.array([]),
+               np.concatenate([A[i][s][1] for i in idx]) if idx else np.array([], bool)) for s in SOURCES}
+    cat['single_c'] = (coarse_vec(cat['single'][0], cat['agree'][0]), cat['single'][1])
     for s in SOURCES + ('single_c',):
-        c = np.concatenate([A[i][s][0] for i in idx]) if idx else np.array([])
-        o = np.concatenate([A[i][s][1] for i in idx]) if idx else np.array([], bool)
+        c, o = cat[s]
         if len(c) == 0:
             out[s] = {m: float('nan') for m in MEASURES}
             out[s]['n'] = 0

@@ -7,12 +7,13 @@
   |p − 0,5| = 0,05 + 0,4·σ(s·(±1: сторона вызова верна / нет) + N(0, 1)). Уровень согласия почти не зависит от правоты мнения, а
   словесная уверенность вызова — зависит: согласие различает правоту хуже одного вызова и на равной грубости (заложенный эффект X1o, X1oc).
 Доля потерь — половина «потерян», половина негодный ответ.
-  python3 dry/make_stub.py <выборка> <выход.jsonl> [a] [c] [s] [доля_потерь] [зерно] [K] [задач_без_записи] [logit|belief]"""
+  python3 dry/make_stub.py <выборка> <выход.jsonl> [a] [c] [s] [доля_потерь] [зерно: число или строка] [K] [задач_без_записи] [logit|belief]"""
 import json
 import math
 import os
 import random
 import sys
+import zlib
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
@@ -28,7 +29,8 @@ def main():
     c = float(a_[4]) if len(a_) > 4 else 0.5
     s = float(a_[5]) if len(a_) > 5 else 1.0
     lost = float(a_[6]) if len(a_) > 6 else 0.0
-    rng = random.Random(int(a_[7]) if len(a_) > 7 else 1)
+    sd = a_[7] if len(a_) > 7 else '1'
+    rng = random.Random(int(sd) if sd.isdigit() else zlib.crc32(sd.encode()))   # зерно — число или crc32 строки «ветка|этап» (LENSES-2, П3-2)
     K = int(a_[8]) if len(a_) > 8 else 5
     n_drop = int(a_[9]) if len(a_) > 9 else 0
     mode = a_[10] if len(a_) > 10 else 'logit'

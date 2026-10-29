@@ -1,0 +1,2 @@
+pilot_opus: AUC agree 0.4803; один вызов на кандидата, огрублённый (среднее по k) 0.5573; pooled single_c 0.5596; agree − (по одному вызову) -0.0770 [-0.1722; +0.0080]; agree − pooled single_c -0.0793
+pilot_haiku: AUC agree 0.5567; один вызов на кандидата, огрублённый (среднее по k) 0.5497; pooled single_c 0.5443; agree − (по одному вызову) +0.0070 [-0.0791; +0.1037]; agree − pooled single_c +0.0124

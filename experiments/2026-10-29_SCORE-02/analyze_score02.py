@@ -5,6 +5,9 @@
 Направленное предсказание: 95 % интервал бутстрепа задач (B = 10 000, процентили; края по модулю меньше 1e−12 — ноль) целиком на
 предсказанной стороне — «подтверждено», целиком на другой — «опровергнуто», иначе — «не показано». Потери: годных вызовов меньше 90 %
 заданий этапа — «не показано (потери)».
+Чтение каждой части и каждого сводного: флаг контекста этапа — «не показано (контекст)», потери — «не показано (потери)»; часть с таким
+чтением в калибровку не идёт (LENSES-2, П2-1). У X1oc при не больше двух непустых уровнях огрублённого вызова — оговорка «грубость не
+уравнена», и «установлено» для SA_opus не ставится (LENSES-2, П1-3).
 Описательно (не вердикты): ИОИ источников, огрубление одного вызова (контроль X1oc), разложение самообмана согласия (§8), исключения.
   python3 analyze_score02.py [--stages main_opus,…] [--dry] → analysis_score02.json и печать (журнал — run/analysis_score02.log)
   --dry: суждения из dry/evals, контекст из dry/ctx_<этап>.json, хеши не сверяются, вывод — в dry/"""
@@ -113,8 +116,8 @@ def describe(J, cand, tasks, E):
     calls = sum(8 for r in rows.values() if r['valid'])
     ties = sum(1 for t in tasks for r, n in cand[t] if n and 2 * r == n)
     nc = sum(len(cand[t]) for t in tasks)
-    return dict(levels=[dict(level=v, agree_share=q, single_c_share=g) for v, q, g in lv], decomp_x2=L.decomp_x2(J, cand, tasks),
-                excl=dict(half_calls=half, call_judgments=calls, side_ties=ties, cand_with_side=nc))
+    return dict(levels=[dict(level=v, agree_share=q, single_c_share=g) for v, q, g in lv], nonempty=L.nonempty(J, tasks),
+                decomp_x2=L.decomp_x2(J, cand, tasks), excl=dict(half_calls=half, call_judgments=calls, side_ties=ties, cand_with_side=nc))
 
 
 def main():
@@ -146,7 +149,8 @@ def main():
             v = M[s]
             log.append(f'  {s:6s}: суждений {v["n"]}, AUC2 {v["auc2"]:.4f}, точность {v["acc"]:.4f}, уверенность {v["conf"]:.4f}, '
                        f'самообман {v["self_dec"]:+.4f}, Брайер {v["brier"]:.4f}, ИОИ {v["ioi"]:.4f} = незнание {v["ign"]:.4f} + самообман⁺ {v["dec_pos"]:.4f}')
-        log.append(f'  single_c: AUC2 {M["single_c"]["auc2"]:.4f}; уровни согласия (доля agree / доля single после огрубления): '
+        log.append(f'  single_c: AUC2 {M["single_c"]["auc2"]:.4f}; непустых уровней — agree {D["nonempty"]["agree"]}, single_c {D["nonempty"]["single_c"]}; '
+                   f'уровни согласия (доля agree / доля single после огрубления): '
                    + ', '.join(f'{x["level"]:.3f} — {x["agree_share"]:.3f} / {x["single_c_share"]:.3f}' for x in D['levels']))
         dx = D['decomp_x2']
         log.append(f'  разложение X2: T = {dx["T"]:.4f} (порог {dx["T_break"]:.4f}), приближение {dx["approx"]:+.4f}, факт {dx["x2"]:+.4f}; '
@@ -155,9 +159,15 @@ def main():
         BS = L.bootstrap(J, tasks, [(q['measure'], q['a'], q['b']) for q in preds], B=B, name=st)
         for p in preds:
             v = verdict(p, M, BS, tasks, cov)
+            why = (['контекст'] if c['flag'] else []) + (['потери'] if v['outcome'] == 'не показано (потери)' else [])
+            v['reading'] = f"не показано ({'; '.join(why)})" if why else v['outcome']
+            v['calib'] = not why   # часть с техническим чтением в калибровку не идёт (исход None, запись в DEVIATIONS)
+            if p['b'] == 'single_c' and D['nonempty']['single_c'] <= 2:
+                v['caveat'] = f"грубость не уравнена: у single_c непустых уровней {D['nonempty']['single_c']}"
             R['verdicts'][f"{p['id']}|{st}"] = v
             log.append(f"  {p['id']:4s} {p['measure']} {p['a']} − {p['b']} {'> 0' if p['dir'] > 0 else '< 0'} → {v['outcome']}"
-                       + (f"; {v['mean']:+.4f} [{v['ci95'][0]:+.4f}; {v['ci95'][1]:+.4f}], задач {v['n_tasks']}" if 'mean' in v else ''))
+                       + (f"; {v['mean']:+.4f} [{v['ci95'][0]:+.4f}; {v['ci95'][1]:+.4f}], задач {v['n_tasks']}" if 'mean' in v else '')
+                       + (f"; чтение — {v['reading']}" if v['reading'] != v['outcome'] else '') + (f"; {v['caveat']}" if 'caveat' in v else ''))
         for cname, parts in COMP.items():
             if not cname.endswith(model):
                 continue
@@ -174,11 +184,15 @@ def main():
             continue
         tech = sorted({w for r in rd if r.startswith('не показано (') for w in r[len('не показано ('):-1].split('; ')})
         if tech:
-            s = f"не показано ({'; '.join(tech)}) — технический исход, вес 0 бит (§6)"
+            s = f"не показано ({'; '.join(tech)}) — технический исход, вес 0 бит (§6); основная: {rd[0]}; повтор: {rd[1]}"
         elif rd == ['подтверждено', 'подтверждено']:
             if cname in CONTROL:
                 crd = [R['readings'].get(f'{CONTROL[cname]}|{x}_{mdl}') for x in ('main', 'rep')]
-                if crd == ['подтверждено', 'подтверждено']:
+                cav = [R['verdicts'][f'{pid}|{x}_{mdl}'].get('caveat') for pid in COMP[CONTROL[cname]] for x in ('main', 'rep')]
+                if crd == ['подтверждено', 'подтверждено'] and any(cav):
+                    s = ('подтверждено (повторено); контроль равной грубости подтверждён, но не применим — '
+                         + '; '.join(x for x in cav if x) + ' (§4)')
+                elif crd == ['подтверждено', 'подтверждено']:
                     s = 'установлено (повторено; контроль равной грубости подтверждён в обеих выборках; причина не проверялась)'
                 else:
                     s = (f'подтверждено (повторено); контроль равной грубости не подтверждён (основная: {crd[0]}; повтор: {crd[1]}) — '
