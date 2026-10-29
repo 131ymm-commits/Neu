@@ -1,0 +1,63 @@
+{
+ "backoff_base_s": 300,
+ "backoff_cap_s": 3600,
+ "call_timeout_s": 1800,
+ "cli": {
+  "bin": "/home/claude/neu/.cache/claude-cli/2.1.294/claude",
+  "sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262",
+  "version": "2.1.294",
+  "wheel": "claude_agent_sdk-0.2.165-py3-none-manylinux_2_17_x86_64.whl",
+  "wheel_sha256": "9dbee4bfc69f0bb27ee455afdc19d78f958540a99217d2e28831fb9b7d496f08"
+ },
+ "effort": "medium",
+ "env_access": [
+  "HTTPS_PROXY",
+  "https_proxy",
+  "HTTP_PROXY",
+  "http_proxy",
+  "NO_PROXY",
+  "no_proxy",
+  "NODE_EXTRA_CA_CERTS",
+  "SSL_CERT_FILE",
+  "REQUESTS_CA_BUNDLE",
+  "CURL_CA_BUNDLE",
+  "ANTHROPIC_BASE_URL",
+  "CLAUDE_SESSION_INGRESS_TOKEN_FILE",
+  "CLAUDE_CODE_PROXY_RESOLVES_HOSTS"
+ ],
+ "env_explicit": {
+  "API_TIMEOUT_MS": "1200000",
+  "CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS": "180000",
+  "CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS": "1",
+  "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+  "CLAUDE_CODE_MAX_RETRIES": "0",
+  "CLAUDE_ENABLE_BYTE_WATCHDOG": "1",
+  "CLAUDE_ENABLE_STREAM_WATCHDOG": "1",
+  "CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS": "180000",
+  "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "180000",
+  "DISABLE_AUTOUPDATER": "1",
+  "DISABLE_GROWTHBOOK": "1",
+  "MAX_THINKING_TOKENS": "31999"
+ },
+ "env_removed": [
+  "CLAUDE_CODE_EFFORT_LEVEL",
+  "CLAUDE_CODE_MAX_OUTPUT_TOKENS"
+ ],
+ "env_system": [
+  "PATH",
+  "LANG",
+  "LC_ALL"
+ ],
+ "home": "/tmp/neu_heads/home",
+ "jobs_sha256": "52c6d12c40bdb5488ff94ee0735e7eeae490a7878d3305a7189127510e222710",
+ "limit_margin_s": 120,
+ "max_consecutive_lost": 3,
+ "max_limit_waits_per_job": 30,
+ "max_single_wait_s": 93600,
+ "model": "claude-opus-5-5",
+ "secondary_retry": false,
+ "seed": "211",
+ "start_timeout_retry_limit": 3,
+ "work_dir": "/tmp/neu_heads/work",
+ "zero_retry_limit": 3
+}
