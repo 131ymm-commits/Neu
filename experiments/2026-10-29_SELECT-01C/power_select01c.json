@@ -1,0 +1,47 @@
+{
+ "main": {
+  "n_source": 100,
+  "mean_vs_B_blind": -0.18521,
+  "mean_vs_A0": -0.28907000000000005,
+  "sd_vs_B_blind": 0.5447343953847155,
+  "power_vs_B_blind": 0.893,
+  "power_vs_A0": 0.9645,
+  "power_both": 0.878
+ },
+ "rep": {
+  "n_source": 99,
+  "mean_vs_B_blind": -0.28617171717171713,
+  "mean_vs_A0": -0.21106060606060606,
+  "sd_vs_B_blind": 0.7040606571793637,
+  "power_vs_B_blind": 0.995,
+  "power_vs_A0": 0.907,
+  "power_both": 0.9055
+ },
+ "both": {
+  "n_source": 199,
+  "mean_vs_B_blind": -0.23543718592964827,
+  "mean_vs_A0": -0.2502613065326633,
+  "sd_vs_B_blind": 0.6295046191084778,
+  "power_vs_B_blind": 0.965,
+  "power_vs_A0": 0.9425,
+  "power_both": 0.9205
+ },
+ "rep_shift_main": {
+  "n_source": 99,
+  "mean_vs_B_blind": -0.18500000000000005,
+  "mean_vs_A0": -0.21106060606060606,
+  "sd_vs_B_blind": 0.7040606571793637,
+  "power_vs_B_blind": 0.7725,
+  "power_vs_A0": 0.9135,
+  "power_both": 0.734
+ },
+ "rep_shift_b_blind_main": {
+  "n_source": 99,
+  "mean_vs_B_blind": -0.11,
+  "mean_vs_A0": -0.21106060606060606,
+  "sd_vs_B_blind": 0.7040606571793637,
+  "power_vs_B_blind": 0.3045,
+  "power_vs_A0": 0.9095,
+  "power_both": 0.3005
+ }
+}

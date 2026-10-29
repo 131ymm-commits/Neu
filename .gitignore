@@ -6,3 +6,4 @@ games/*.zip
 .cache/
 experiments/2026-10-07_SELECT-01/run/main_eval_jobs.jsonl
 experiments/2026-10-07_SELECT-01/run/rep_eval_jobs.jsonl
+experiments/2026-10-29_SELECT-01C/jobs/test_jobs.jsonl
