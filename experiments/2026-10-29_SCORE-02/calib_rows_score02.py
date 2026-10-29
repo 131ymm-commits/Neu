@@ -17,7 +17,8 @@ def main():
     src = open(p, encoding='utf-8').read()
     if "('SCORE-02'," in src:
         raise SystemExit('строки SCORE-02 уже есть — ничего не меняю')
-    rows = ''.join(f"    ('SCORE-02', {repr(q['id'] + ' ' + q['text'] + ' (после пилота)')}, 'PREREG-SCORE-02 §5', 'вероятность', {q['expect']}, None, "
+    kind = dict(family='семья', check='проверка', explore='разведка')
+    rows = ''.join(f"    ('SCORE-02', {repr(q['id'] + ' ' + q['text'] + ' (после пилота; ' + kind[q['kind']] + ')')}, 'PREREG-SCORE-02 §5', 'вероятность', {q['expect']}, None, "
                    f"'(после пилота) основная выборка; ждёт результата'),\n" for q in PRED)
     lines = src.splitlines(keepends=True)
     last = max(i for i, l in enumerate(lines) if l.lstrip().startswith("('SCORE-01',"))
