@@ -1149,6 +1149,7 @@
     "config_sha_file": "e1f5b485ab30",
     "config_same": true,
     "n_init": 1,
+    "n_records_without_init": 0,
     "cache_read": {
      "886": 120
     },
@@ -1206,6 +1207,7 @@
     "config_sha_file": "e1f5b485ab30",
     "config_same": true,
     "n_init": 1,
+    "n_records_without_init": 0,
     "cache_read": {
      "886": 120
     },
@@ -1263,6 +1265,7 @@
     "config_sha_file": "96d38395701e",
     "config_same": true,
     "n_init": 1,
+    "n_records_without_init": 0,
     "cache_read": {
      "886": 120
     },
@@ -1320,6 +1323,7 @@
     "config_sha_file": "96d38395701e",
     "config_same": true,
     "n_init": 1,
+    "n_records_without_init": 0,
     "cache_read": {
      "886": 120
     },

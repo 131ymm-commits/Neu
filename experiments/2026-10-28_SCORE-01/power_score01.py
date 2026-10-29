@@ -16,6 +16,9 @@
   ±2δ) — ложный флаг; sa_ok0 — SA_haiku подтверждён без флага; power_<мера> — флаг при артефакте одного повтора одной руки
   a = 2δ по этой мере (смещает SA на δ); strict0 и sa_strict0 — строгое правило по рукам (все интервалы A/A внутри δ; предлагал
   LENSES-1b) и SA_haiku вместе с ним, для записи. sd_ratio — SD A/A одной руки к SD WIN − LOG (среднее двух повторов) по пилоту.
+  Сетка артефактов (LENSES-1d, Н3): артефакт одного повтора руки WIN размера a — самообман +a, точность −a, Брайер +a/2 (смещает SA
+  на a/2) — и общий сдвиг повторов обеих рук того же вида при c = COMMON; доля флага у трёх правил: нового (разность A/A между
+  руками вне ±2δ), «целиком вне» (интервал A/A руки целиком вне δ; черновик b739deb) и строгого (не все интервалы A/A рук внутри δ).
 Ложный уровень — на границе: 0,025 у направленного (истинное среднее 0), 0,05 у эквивалентности (истинная разность ±δ).
 Вес (правило 9962627 «по нижней», LENSES-1b N3): P = меньшая из мощностей «в точке» и «с неопределённостью пилота»;
   «подтверждено» — log₂(P / α), α не меньше 0,001; «опровергнуто» — log₂((1 − P)/(1 − α)), 1 − P не меньше 0,001; «не показано» — 0.
@@ -35,6 +38,8 @@ from analyze_score01 import AA_D_FACTOR, AA_MARGIN, PRED, REPS, value, weights  
 
 N_TEST = 100
 FLOOR = 0.001
+ART_GRID = (0.05, 0.10, 0.13, 0.15, 0.20)                  # размеры артефакта одного повтора руки WIN (сдвиг SA = a/2)
+COMMON = 0.15                                               # общий сдвиг повторов обеих рук (SA не смещает)
 PILOT = 'pilot3'
 f = lambda v, d=3: f'{v:.{d}f}'.replace('.', ',').replace('-', '−')
 
@@ -121,6 +126,12 @@ def assurance(model, rng, B, n=N_TEST):
         D = np.stack([AA[:, aa_keys.index(('WIN', m))] - AA[:, aa_keys.index(('LOG', m))] for m in ms], 1)
         tol = [AA_D_FACTOR * AA_MARGIN[m] for m in ms]
         cnt = dict(dflag0=0, sa_ok0=0, strict0=0, sa_strict0=0, **{f'power_{m}': 0 for m in ms})
+        for rule in ('new', 'gross', 'strict'):
+            cnt.update({f'art_{rule}_{x}': 0 for x in ART_GRID}); cnt[f'common_{rule}'] = 0
+        vec = lambda x: np.array([x if m == 'self_dec' else (-x if m == 'acc' else x / 2) for m in ms])
+        win_cols = [aa_keys.index(('WIN', m)) for m in ms]
+        marg = [AA_MARGIN[m] for _, m in aa_keys]
+        gross_of = lambda Y: any(_ci_pos(Y[:, k], 0.95, marg[k])[1] for k in range(Y.shape[1]))
         sa_j = [j for j, p in enumerate(ps) if p['comp'] == f'SA_{model}']
         inside = lambda Y, tl: all(_ci_pos(Y[:, k], 0.95, tl[k])[0] for k in range(Y.shape[1]))
     for _ in range(B):
@@ -142,6 +153,15 @@ def assurance(model, rng, B, n=N_TEST):
             for k, m in enumerate(ms):                            # артефакт одного повтора одной руки: a = 2δ по мере m
                 Da = D0.copy(); Da[:, k] += tol[k]
                 cnt[f'power_{m}'] += not inside(Da, tol)
+            for x in ART_GRID:                                    # сетка артефактов руки WIN (LENSES-1d, Н3)
+                Aa = A0.copy(); Aa[:, win_cols] += vec(x)
+                cnt[f'art_new_{x}'] += not inside(D0 + vec(x), tol)
+                cnt[f'art_gross_{x}'] += gross_of(Aa)
+                cnt[f'art_strict_{x}'] += not inside(Aa, marg)
+            Ac = A0 + np.tile(vec(COMMON), 2)                     # общий сдвиг повторов: D не меняется
+            cnt['common_new'] += fl
+            cnt['common_gross'] += gross_of(Ac)
+            cnt['common_strict'] += not inside(Ac, marg)
     extra = None
     if aa:
         extra = {k: v / B for k, v in cnt.items()}
@@ -212,7 +232,14 @@ def md_table(out):
               f"  - артефакт одного повтора одной руки, смещающий SA на δ, флаг ловит в доле: самообман {f(v['power_self_dec'])}, точность "
               f"{f(v['power_acc'])}, Брайер {f(v['power_brier'])};",
               f"  - строгое правило по рукам (все интервалы A/A внутри δ) выполнено в {f(v['strict0'])}, SA_{m} вместе с ним — {f(v['sa_strict0'])};",
-              f"  - SD A/A одной руки к SD разности WIN − LOG (среднее двух повторов) по пилоту 3 — от {f(min(r.values()), 2)} до {f(max(r.values()), 2)}."]
+              f"  - SD A/A одной руки к SD разности WIN − LOG (среднее двух повторов) по пилоту 3 — от {f(min(r.values()), 2)} до {f(max(r.values()), 2)};",
+              f"  - доля флага по правилам при артефакте одного повтора руки WIN (самообман +a, точность −a, Брайер +a/2; SA смещается на a/2) и при общем сдвиге повторов обеих рук (c = {f(COMMON, 2)}; SA не смещается):",
+              '',
+              '| Правило | ' + ' | '.join(f'a = {f(x, 2)}' for x in ART_GRID) + f' | общий сдвиг c = {f(COMMON, 2)} |',
+              '|---|' + '---|' * (len(ART_GRID) + 1),
+              *[f"| {nmr} | " + ' | '.join(f(v[f'art_{rk}_{x}']) for x in ART_GRID) + f" | {f(v[f'common_{rk}'])} |"
+                for rk, nmr in (('new', 'разность A/A между руками вне ±2δ (§4)'), ('gross', 'A/A руки целиком вне δ (черновик b739deb)'),
+                                ('strict', 'не все A/A рук внутри δ (LENSES-1b)'))]]
     return '\n'.join(L)
 
 

@@ -53,6 +53,7 @@
   "config_sha_file": "2dfad07030da",
   "config_same": true,
   "n_init": 1,
+  "n_records_without_init": 0,
   "cache_read": {
    "3093": 60
   },

@@ -50,6 +50,7 @@
   "config_sha_file": "fe45db36e162",
   "config_same": true,
   "n_init": 1,
+  "n_records_without_init": 0,
   "cache_read": {
    "0": 2,
    "2313": 38

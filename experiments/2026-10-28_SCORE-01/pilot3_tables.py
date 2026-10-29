@@ -65,45 +65,50 @@ def ci_txt(x, d=3):
     return f'{f(mean(x), d)} [{f(lo, d)}; {f(hi, d)}]'
 
 
-models = sys.argv[1:]
-print('| Модель | Клетка | Годных | Точность | Уверенность | Самообман | AUC | Брайер | Выход, ток. |')
-print('|---|---|---|---|---|---|---|---|---|')
-for mdl in models:
-    rows, tasks = load(mdl)
-    for a in ARMS:
+def main():
+    models = sys.argv[1:]
+    print('| Модель | Клетка | Годных | Точность | Уверенность | Самообман | AUC | Брайер | Выход, ток. |')
+    print('|---|---|---|---|---|---|---|---|---|')
+    for mdl in models:
+        rows, tasks = load(mdl)
+        for a in ARMS:
+            for k in '01':
+                v = [rows.get(f'{t}|{a}|{k}') for t in tasks]
+                g = [r for r in v if r and r['valid']]
+                au = [r['auc'] for r in g if not math.isnan(r['auc'])]
+                print(f"| {mdl} | {a}, повтор {k} | {len(g)} из {len(v)} | {f(mean([r['acc'] for r in g]))} | {f(mean([r['conf'] for r in g]))} | "
+                      f"{f(mean([val(r, 'self_dec') for r in g]))} | {f(mean(au))} | {f(mean([r['brier'] for r in g]))} | {mean([r['out'] for r in g]):.0f} |")
+    print()
+    print('| Модель | Пара вызовов | Корреляция p | Одна сторона от 0,5 |')
+    print('|---|---|---|---|')
+    for mdl in models:
+        rows, tasks = load(mdl)
+        pairs = [((a, '0'), (a, '1')) for a in ARMS] + [(('LOG', k), ('WIN', k)) for k in '01'] + [(('NONE', k), (o, k)) for o in ('LOG', 'WIN') for k in '01']
+        for (a, ka), (b, kb) in pairs:
+            pa, pb = [], []
+            for t in tasks:
+                ra, rb = cell(rows, t, a, ka), cell(rows, t, b, kb)
+                if ra and rb:
+                    pa += ra['p']; pb += rb['p']
+            side = sum(1 for x, y in zip(pa, pb) if (x > 0.5) == (y > 0.5) and x != 0.5 and y != 0.5)
+            print(f'| {mdl} | {a}, повтор {ka} и {b}, повтор {kb} | {f(corr(pa, pb))} | {side} из {len(pa)} |')
+    print()
+    print('| Модель | Разность по задачам (95 % бутстреп) | Самообман | Точность | Уверенность | Брайер | Выход, ток. |')
+    print('|---|---|---|---|---|---|---|')
+    for mdl in models:
+        rows, tasks = load(mdl)
+        lines = []
+        for a in ARMS:
+            lines.append((f'A/A: {a}, повтор 1 − повтор 0', lambda m, a=a: aa(rows, tasks, a, m)))
         for k in '01':
-            v = [rows.get(f'{t}|{a}|{k}') for t in tasks]
-            g = [r for r in v if r and r['valid']]
-            au = [r['auc'] for r in g if not math.isnan(r['auc'])]
-            print(f"| {mdl} | {a}, повтор {k} | {len(g)} из {len(v)} | {f(mean([r['acc'] for r in g]))} | {f(mean([r['conf'] for r in g]))} | "
-                  f"{f(mean([val(r, 'self_dec') for r in g]))} | {f(mean(au))} | {f(mean([r['brier'] for r in g]))} | {mean([r['out'] for r in g]):.0f} |")
-print()
-print('| Модель | Пара вызовов | Корреляция p | Одна сторона от 0,5 |')
-print('|---|---|---|---|')
-for mdl in models:
-    rows, tasks = load(mdl)
-    pairs = [((a, '0'), (a, '1')) for a in ARMS] + [(('LOG', k), ('WIN', k)) for k in '01'] + [(('NONE', k), (o, k)) for o in ('LOG', 'WIN') for k in '01']
-    for (a, ka), (b, kb) in pairs:
-        pa, pb = [], []
-        for t in tasks:
-            ra, rb = cell(rows, t, a, ka), cell(rows, t, b, kb)
-            if ra and rb:
-                pa += ra['p']; pb += rb['p']
-        side = sum(1 for x, y in zip(pa, pb) if (x > 0.5) == (y > 0.5) and x != 0.5 and y != 0.5)
-        print(f'| {mdl} | {a}, повтор {ka} и {b}, повтор {kb} | {f(corr(pa, pb))} | {side} из {len(pa)} |')
-print()
-print('| Модель | Разность по задачам (95 % бутстреп) | Самообман | Точность | Уверенность | Брайер | Выход, ток. |')
-print('|---|---|---|---|---|---|---|')
-for mdl in models:
-    rows, tasks = load(mdl)
-    lines = []
-    for a in ARMS:
-        lines.append((f'A/A: {a}, повтор 1 − повтор 0', lambda m, a=a: aa(rows, tasks, a, m)))
-    for k in '01':
-        lines.append((f'WIN − LOG, повтор {k}', lambda m, k=k: diff(rows, tasks, 'WIN', 'LOG', m, (k,))))
-    lines.append(('WIN − LOG, среднее двух повторов', lambda m: diff(rows, tasks, 'WIN', 'LOG', m, ('0', '1'))))
-    for o in ('LOG', 'WIN'):
-        lines.append((f'NONE − {o}, среднее двух повторов', lambda m, o=o: diff(rows, tasks, 'NONE', o, m, ('0', '1'))))
-    for name, fn in lines:
-        cells = [ci_txt(fn(m), 0 if m == 'out' else 3) for m in ('self_dec', 'acc', 'conf', 'brier', 'out')]
-        print(f"| {mdl} | {name} (n = {len(fn('acc'))}) | " + ' | '.join(cells) + ' |')
+            lines.append((f'WIN − LOG, повтор {k}', lambda m, k=k: diff(rows, tasks, 'WIN', 'LOG', m, (k,))))
+        lines.append(('WIN − LOG, среднее двух повторов', lambda m: diff(rows, tasks, 'WIN', 'LOG', m, ('0', '1'))))
+        for o in ('LOG', 'WIN'):
+            lines.append((f'NONE − {o}, среднее двух повторов', lambda m, o=o: diff(rows, tasks, 'NONE', o, m, ('0', '1'))))
+        for name, fn in lines:
+            cells = [ci_txt(fn(m), 0 if m == 'out' else 3) for m in ('self_dec', 'acc', 'conf', 'brier', 'out')]
+            print(f"| {mdl} | {name} (n = {len(fn('acc'))}) | " + ' | '.join(cells) + ' |')
+
+
+if __name__ == '__main__':
+    main()

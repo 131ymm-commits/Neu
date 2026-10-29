@@ -16,36 +16,42 @@ HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 import score01 as S  # noqa: E402
 
-sample, arms, skills, out = sys.argv[1], sys.argv[2].split(','), [float(x) for x in sys.argv[3].split(',')], sys.argv[4]
-lost = float(sys.argv[5]) if len(sys.argv) > 5 else 0.0
-rng = random.Random(int(sys.argv[6]) if len(sys.argv) > 6 else 1)
-nrep = int(sys.argv[7]) if len(sys.argv) > 7 else 1
-n_drop = int(sys.argv[8]) if len(sys.argv) > 8 else 0
-shift1 = float(sys.argv[9]) if len(sys.argv) > 9 else 0.0
-shift_arm = sys.argv[10] if len(sys.argv) > 10 else 'all'
-shift_mode = sys.argv[11] if len(sys.argv) > 11 else 'one'   # one — сдвиг повтора 1; pm — повтор 0 −сдвиг, повтор 1 +сдвиг
-tru = json.load(open(os.path.join(HERE, 'truth', f'{sample}.json')))['tasks']
-tasks = S.sample_tasks(sample)
-drop = set(rng.sample(tasks, n_drop)) if n_drop else set()
-with open(out, 'w', encoding='utf-8') as fh:
-    for t in tasks:
-        if t in drop:
-            continue
-        tr = tru[t]['truth']; pm = S.perm(t)
-        m = sum(tr) / 8; sd = math.sqrt(sum((v - m) ** 2 for v in tr) / 8) or 1.0
-        for arm, a in zip(arms, skills):
-            for rep in range(nrep):
-                jid = f'{t}|{arm}|{rep}'
-                u = rng.random()
-                if u < lost / 2:
-                    fh.write(json.dumps(dict(id=jid, error='потерян (заглушка)', inp=0, out=0, cost_usd=None), ensure_ascii=False) + '\n')
-                    continue
-                if u < lost:
-                    fh.write(json.dumps(dict(id=jid, result={'p': [0.5] * 7}, inp=6000, out=2000, cost_usd=0.07), ensure_ascii=False) + '\n')
-                    continue
-                # показанный кандидат i — это кандидат пула pm[i]
-                hit = shift_arm in ('all', arm)
-                a_ = a + (0.0 if not hit else (shift1 if rep == 1 else 0.0) if shift_mode == 'one' else (shift1 if rep == 1 else -shift1))
-                p = [round(1 / (1 + math.exp(-(a_ * (tr[pm[i]] - m) / sd + rng.gauss(0, 1)))), 3) for i in range(8)]
-                fh.write(json.dumps(dict(id=jid, result={'p': p}, inp=6000, out=2000 + int(500 * a), cost_usd=0.07), ensure_ascii=False) + '\n')
-print('заглушка:', out, 'задач без записи:', len(drop))
+
+def main():
+    sample, arms, skills, out = sys.argv[1], sys.argv[2].split(','), [float(x) for x in sys.argv[3].split(',')], sys.argv[4]
+    lost = float(sys.argv[5]) if len(sys.argv) > 5 else 0.0
+    rng = random.Random(int(sys.argv[6]) if len(sys.argv) > 6 else 1)
+    nrep = int(sys.argv[7]) if len(sys.argv) > 7 else 1
+    n_drop = int(sys.argv[8]) if len(sys.argv) > 8 else 0
+    shift1 = float(sys.argv[9]) if len(sys.argv) > 9 else 0.0
+    shift_arm = sys.argv[10] if len(sys.argv) > 10 else 'all'
+    shift_mode = sys.argv[11] if len(sys.argv) > 11 else 'one'   # one — сдвиг повтора 1; pm — повтор 0 −сдвиг, повтор 1 +сдвиг
+    tru = json.load(open(os.path.join(HERE, 'truth', f'{sample}.json')))['tasks']
+    tasks = S.sample_tasks(sample)
+    drop = set(rng.sample(tasks, n_drop)) if n_drop else set()
+    with open(out, 'w', encoding='utf-8') as fh:
+        for t in tasks:
+            if t in drop:
+                continue
+            tr = tru[t]['truth']; pm = S.perm(t)
+            m = sum(tr) / 8; sd = math.sqrt(sum((v - m) ** 2 for v in tr) / 8) or 1.0
+            for arm, a in zip(arms, skills):
+                for rep in range(nrep):
+                    jid = f'{t}|{arm}|{rep}'
+                    u = rng.random()
+                    if u < lost / 2:
+                        fh.write(json.dumps(dict(id=jid, error='потерян (заглушка)', inp=0, out=0, cost_usd=None), ensure_ascii=False) + '\n')
+                        continue
+                    if u < lost:
+                        fh.write(json.dumps(dict(id=jid, result={'p': [0.5] * 7}, inp=6000, out=2000, cost_usd=0.07), ensure_ascii=False) + '\n')
+                        continue
+                    # показанный кандидат i — это кандидат пула pm[i]
+                    hit = shift_arm in ('all', arm)
+                    a_ = a + (0.0 if not hit else (shift1 if rep == 1 else 0.0) if shift_mode == 'one' else (shift1 if rep == 1 else -shift1))
+                    p = [round(1 / (1 + math.exp(-(a_ * (tr[pm[i]] - m) / sd + rng.gauss(0, 1)))), 3) for i in range(8)]
+                    fh.write(json.dumps(dict(id=jid, result={'p': p}, inp=6000, out=2000 + int(500 * a), cost_usd=0.07), ensure_ascii=False) + '\n')
+    print('заглушка:', out, 'задач без записи:', len(drop))
+
+
+if __name__ == '__main__':
+    main()

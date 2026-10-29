@@ -17,7 +17,9 @@
       - (в) записей без входа больше FRAC_MAX — флаг;
       - (г) конфигурация (config_check): HOME и рабочая папка голов из run_config.json вне git-дерева,
         CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS=1, у всех итоговых записей config_sha256 = sha256 канонического run_config.json
-        (конфигурация не менялась между продолжениями), один init (среда головы не менялась посреди этапа).
+        (конфигурация не менялась между продолжениями), один init (среда головы не менялась посреди этапа). Записи без init
+        (драйвер пишет «потерян», когда CLI не дошёл до init) в счёт init не идут — это записи без входа, их считает (в)
+        (LENSES-1d, Н1). in_git смотрит путь в момент анализа; по существу снимок git закрывает (б): он даёт +700…+1900 токенов.
       Наклон остатков (а) по времени — только описательно: эффекты задач поглощают всё, что медленнее одной задачи (LENSES-1c П1)."""
 import collections
 import glob
@@ -161,7 +163,8 @@ def config_check(journal, meta=None):
              n_init_files=len(glob.glob(os.path.join(journal, 'init_*.json'))), model=c.get('model'))
     if meta is not None:
         r.update(config_sha_records={k[:12] if k else None: v for k, v in meta['config_sha'].items()}, config_sha_file=sha[:12],
-                 config_same=set(meta['config_sha']) == {sha}, n_init=len(meta['init']), cache_read=dict(meta['cache_read']),
+                 config_same={k for k in meta['config_sha'] if k} == {sha}, n_init=len({k for k in meta['init'] if k}),
+                 n_records_without_init=meta['init'].get(None, 0) + meta['init'].get('', 0), cache_read=dict(meta['cache_read']),
                  from_stream=meta['from_stream'])
     r['ok'] = bool(c.get('home') and c.get('work_dir') and not r['home_in_git'] and not r['work_dir_in_git'] and r['git_instructions_off']
                    and (meta is None or (r['config_same'] and r['n_init'] == 1)))
