@@ -10,7 +10,7 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 FILES = ['prompts_score.py', 'score01.py', 'score01_lib.py', 'analyze_score01.py', 'power_score01.py', 'truth_check.py', 'pilot2_describe.py',
          'pilot_tables.py', 'pilot2_tables.py', 'pilot3_tables.py', 'ctx_check.py',
-         'prereg_hashes.py', 'assemble_prereg_score01.py', 'prereg_template.md',
+         'prereg_hashes.py', 'assemble_prereg_score01.py', 'prereg_template.md', 'calib_rows_score01.py',
          'jobs/main_opus_jobs.jsonl', 'jobs/rep_opus_jobs.jsonl', 'jobs/main_haiku_jobs.jsonl', 'jobs/rep_haiku_jobs.jsonl',
          'jobs/cfg_opus_clean.json', 'jobs/cfg_haiku_clean.json',
          'truth/main.json', 'truth/rep.json', 'truth/pilot.json', 'truth/check_main.json', 'truth/check_rep.json', 'truth/check_pilot.json',
