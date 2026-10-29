@@ -139,25 +139,32 @@ def auc(scores, labels):
     return tot / (len(pos) * len(neg))
 
 
+RND = 9   # уверенности и среднее p округляются до 1e−9: равные по смыслу значения (0,67 и 1 − 0,33; среднее пяти p) — одно число
+
+
 def judgments(rows_t, lab, K):
     """Суждения задачи по трём источникам. rows_t — {k: p (в номерах пула) или None}; lab — четвёрка лучших.
-    Возвращает {источник: [(уверенность, верно), …]} по кандидатам, у которых суждение есть."""
+    Возвращает {источник: [(уверенность, верно), …]} по кандидатам, у которых суждение есть, и cand — [(вызовов на верной
+    стороне, вызовов с p ≠ 0,5), …] по кандидатам, у которых такой вызов есть (для разложения самообмана согласия, PREREG §8).
+    Округление (LENSES-1, L2-5 и та же ошибка у одного вызова): без него 1 − 0,33 = 0,6699999999999999 ≠ 0,67, и AUC разрывает ничью."""
     ok = [rows_t[k] for k in range(K) if rows_t.get(k) is not None]
-    out = dict(single=[], mean=[], agree=[])
+    out = dict(single=[], mean=[], agree=[], cand=[])
     if not ok:
         return out
     for i in range(8):
         y = i in lab
         for p in ok:
             if p[i] != 0.5:
-                out['single'].append((max(p[i], 1 - p[i]), (p[i] > 0.5) == y))
-        m = sum(p[i] for p in ok) / len(ok)
+                out['single'].append((round(max(p[i], 1 - p[i]), RND), (p[i] > 0.5) == y))
+        m = round(sum(p[i] for p in ok) / len(ok), RND)
         if m != 0.5:
-            out['mean'].append((max(m, 1 - m), (m > 0.5) == y))
+            out['mean'].append((round(max(m, 1 - m), RND), (m > 0.5) == y))
         up = sum(1 for p in ok if p[i] > 0.5)
         dn = sum(1 for p in ok if p[i] < 0.5)
         if up != dn:
-            out['agree'].append((max(up, dn) / (up + dn), (up > dn) == y))
+            out['agree'].append((round(max(up, dn) / (up + dn), RND), (up > dn) == y))
+        if up + dn:
+            out['cand'].append((up if y else dn, up + dn))
     return out
 
 
