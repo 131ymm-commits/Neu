@@ -1,0 +1,162 @@
+{
+ "analyze": {
+  "n_tasks": 6,
+  "excluded": [],
+  "invalid_votes": {
+   "B_blind": 0,
+   "D": 0,
+   "D_N": 0
+  },
+  "mean_regret": {
+   "E": {
+    "mean": 1.0,
+    "median": 1.0,
+    "n": 6
+   },
+   "A0": {
+    "mean": 0.613,
+    "median": 0.515,
+    "n": 6
+   },
+   "B_blind": {
+    "mean": 0.69,
+    "median": 0.664,
+    "n": 6
+   },
+   "D": {
+    "mean": 0.69,
+    "median": 0.664,
+    "n": 6
+   },
+   "D_N": {
+    "mean": 0.465,
+    "median": 0.501,
+    "n": 6
+   }
+  },
+  "tokens": {
+   "B_blind": {
+    "inp": 66081,
+    "out": 32286,
+    "calls": 12
+   },
+   "D": {
+    "inp": 5766,
+    "out": 4852,
+    "calls": 1
+   },
+   "D_N": {
+    "inp": 28840,
+    "out": 27441,
+    "calls": 5
+   }
+  },
+  "budget": {
+   "D_N": {
+    "total_ok": true,
+    "out_ok": true
+   },
+   "equal": true
+  },
+  "tests": {
+   "D_N": {
+    "vs_B_blind": {
+     "mean_diff": -0.225,
+     "ci95": [
+      -0.675,
+      0.0
+     ],
+     "p": 0.5,
+     "method": "полный перебор"
+    },
+    "vs_A0": {
+     "mean_diff": -0.148,
+     "ci95": [
+      -0.639,
+      0.159
+     ],
+     "p": 0.5
+    },
+    "holm_reject": false,
+    "counts": false
+   }
+  },
+  "secondary": {
+   "spearman_claim_truth": 0.131,
+   "doubt_auroc": 0.61,
+   "goodhart_gap_by_k": {
+    "1": -111.023,
+    "2": -15.515,
+    "4": -0.238,
+    "8": -134.437
+   },
+   "refusals": {
+    "D": 1,
+    "D_N": 3
+   }
+  }
+ },
+ "ctx": {
+  "n": 102,
+  "skipped": 0,
+  "line": {
+   "a": 3971.073336984577,
+   "b": 0.22875820177797263,
+   "resid_sd": 17.54815598186431,
+   "resid_max": 34.72061332990779,
+   "bytes_range": [
+    6628,
+    7951
+   ]
+  },
+  "vs_score01_line": {
+   "mean": -55.165164495024825,
+   "max_abs": 92.05512718428508
+  },
+  "within_task": {
+   "max_abs": 11.305882352935441,
+   "frac_gt": 0.0
+  },
+  "config": {
+   "home": "/tmp/neu_heads/home",
+   "work_dir": "/tmp/neu_heads/work",
+   "home_in_git": false,
+   "work_dir_in_git": false,
+   "git_instructions_off": true,
+   "n_init_files": 1,
+   "model": "claude-opus-5-5",
+   "config_sha_records": {
+    "3be1e34c596c": 102
+   },
+   "config_sha_file": "3be1e34c596c",
+   "config_same": true,
+   "n_init": 1,
+   "n_records_without_init": 0,
+   "cache_read": {
+    "0": 6,
+    "844": 96
+   },
+   "from_stream": 0,
+   "ok": true
+  }
+ },
+ "B_blind": {
+  "calls": 72,
+  "valid": 72,
+  "refusals": 0,
+  "out_mean": 2690.5,
+  "dur_median": 33.5,
+  "dur_max": 62.0,
+  "cost": 6.5979744
+ },
+ "D_N": {
+  "calls": 30,
+  "valid": 30,
+  "refusals": 3,
+  "out_mean": 5488.133333333333,
+  "dur_median": 57.5,
+  "dur_max": 143.0,
+  "cost": 4.4926464
+ },
+ "cost_total": 11.0906208
+}
