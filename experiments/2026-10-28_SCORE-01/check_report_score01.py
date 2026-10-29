@@ -5,7 +5,8 @@
 2) Каждое десятичное число прозы (вне строк таблиц) встречается дословно (как строка, без знака) в источниках:
    run/report_tables.md, PREREG-SCORE-01.md, DEVIATIONS.md, run/posthoc_*.md (пост-хок, если есть), журналы run/*.log;
    с 29.10 (при отчёте) — и раздел SCORE-01 в docs/PRIORITY.md (числа литературы в «Чтении») и расчёт цены и мощности чистого
-   повтора SELECT-01 journal/AUDIT_GIT_SNAPSHOT_2026-10-29_cost.txt («Что дальше»; десятичная точка читается как запятая).
+   повтора SELECT-01 journal/AUDIT_GIT_SNAPSHOT_2026-10-29_cost.txt («Что дальше»; десятичная точка читается как запятая); после проверки
+   отчёта — и пост-хок аудита экспозиции journal/AUDIT_GIT_SNAPSHOT_2026-10-29_posthoc.txt (так же).
    Нестрогое сравнение со всеми числами json почти ничего не проверяет (урок TRUST-04), поэтому json сюда не входит.
   python3 check_report_score01.py [REPORT-SCORE-01.md]"""
 import glob
@@ -36,8 +37,9 @@ def main():
     assert i >= 0, 'нет раздела SCORE-01 в docs/PRIORITY.md'
     j = pri.find('\n## ', i + 5)
     src += '\n' + pri[i:j if j > 0 else None]
-    cost = open(os.path.join(HERE, '..', '..', 'journal', 'AUDIT_GIT_SNAPSHOT_2026-10-29_cost.txt'), encoding='utf-8').read()
-    src += '\n' + re.sub(r'(\d)\.(\d)', r'\1,\2', cost)
+    for fn in ('AUDIT_GIT_SNAPSHOT_2026-10-29_cost.txt', 'AUDIT_GIT_SNAPSHOT_2026-10-29_posthoc.txt'):
+        txt = open(os.path.join(HERE, '..', '..', 'journal', fn), encoding='utf-8').read()
+        src += '\n' + re.sub(r'(\d)\.(\d)', r'\1,\2', txt)
     have = set(m.replace('−', '-').lstrip('-') for m in NUM.findall(src))
     prose = '\n'.join(l for l in rep.splitlines() if not l.startswith('|'))
     found = NUM.findall(prose)

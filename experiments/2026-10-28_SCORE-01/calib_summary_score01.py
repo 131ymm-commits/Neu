@@ -45,7 +45,21 @@ def main():
     out['rep_note'] = dict(all=st2(rr), opus=st2([x for x in rr if x[0] == 'opus']), haiku=st2([x for x in rr if x[0] == 'haiku']))
     for v in out['rep_note'].values():
         v['self_dec'] = v['mean_p'] - v['share']
+    # 29.10, после проверки отчёта (lenses/REPORT_CHECK.md, находка 10): описательно — Брайер моих ожиданий §5 против Брайера нижней
+    # мощности §6 как прогноза того же исхода (по основной выборке и по повтору; по 12 предсказаний на модель)
+    PW = P['preds']
+    vs = {}
+    for samp in ('main', 'rep'):
+        for mdl in ('opus', 'haiku', None):
+            qs = [q for q in PRED if mdl is None or q['model'] == mdl]
+            o = [1 if A['verdicts'][f"{q['id']}|{samp}_{q['model']}"]['outcome'] == 'подтверждено' else 0 for q in qs]
+            be = sum((q['expect'] - y) ** 2 for q, y in zip(qs, o)) / len(qs)
+            bp = sum((PW[q['id']]['power_low'] - y) ** 2 for q, y in zip(qs, o)) / len(qs)
+            vs[f"{samp}|{mdl or 'all'}"] = dict(n=len(qs), brier_expect=be, brier_power=bp)
+    out['expect_vs_power'] = vs
     json.dump(out, open(os.path.join(HERE, 'calib_score01.json'), 'w'), ensure_ascii=False, indent=1)
+    for k, v in vs.items():
+        print(f"описательно, {k}: предсказаний {v['n']}, Брайер ожиданий §5 {f(v['brier_expect'])}, Брайер нижней мощности §6 {f(v['brier_power'])}")
     for k in ('all', 'opus', 'haiku', 'class_after_pilot'):
         v = out[k]
         print(f"{k}: ожиданий {v['n']}, средняя уверенность {f(v['mean_p'])}, доля подтверждённых {f(v['share'])}, Брайер {f(v['brier'])}, самообман {f(v['self_dec'])}")

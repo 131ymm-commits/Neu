@@ -22,6 +22,7 @@ import json
 import math
 import os
 import random
+import sys
 import zlib
 from zoneinfo import ZoneInfo
 
@@ -215,6 +216,53 @@ def main():
     one_e = sum(1 for e in expl if p5[e].count('подтверждено') == 1)
     md += ['', f'- В обеих выборках подтвердились {both_c} сводных из {len(picked)}; частей разведки — {both_e} из {len(expl)} (ровно в одной выборке — {one_e}).', '']
     R['posthoc']['P5'] = dict(rows=p5, composites_both=both_c, explore_both=both_e, explore_one=one_e)
+    # П5б и П7 — добавлены 29.10 после независимой проверки отчёта (lenses/REPORT_CHECK.md, находки 3 и 13 г); тоже пост-хок, не в зачёт
+    sys.path.insert(0, HERE)
+    from analyze_score01 import PRED
+    PW = json.load(open(os.path.join(HERE, 'pilot_power.json'), encoding='utf-8'))['preds']
+    EX = {q['id']: q['expect'] for q in PRED}
+    comp_part = dict(SC_opus='O7', SD_opus='O8', SL_opus='O9', SD_haiku='H8', SL_haiku='H9')
+    parts = list(comp_part.values()) + expl
+    sign_ok = {}
+    for pid in parts:
+        mdl = 'opus' if pid.startswith('O') else 'haiku'
+        q = next(x for x in PRED if x['id'] == pid)
+        want = -1 if q['kind'] == 'lt0' else 1
+        sign_ok[pid] = [A['verdicts'][f'{pid}|{s}_{mdl}']['mean'] * want > 0 for s in ('main', 'rep')]
+    n_both = sum(1 for v in sign_ok.values() if all(v))
+    conf_main = dict(c=sum(1 for c in picked if p5[c][0] == 'подтверждено'), e=sum(1 for e in expl if p5[e][0] == 'подтверждено'))
+    conf_rep = dict(c=sum(1 for c in picked if p5[c][1] == 'подтверждено'), e=sum(1 for e in expl if p5[e][1] == 'подтверждено'))
+    sums = dict(expect_c=sum(EX[comp_part[c]] for c in picked), expect_e=sum(EX[e] for e in expl),
+                power_c=sum(PW[comp_part[c]]['power_low'] for c in picked), power_e=sum(PW[e]['power_low'] for e in expl))
+    shrink = {pid: [PW[pid]['pilot_mean'] / A['verdicts'][f'{pid}|{s}_haiku']['mean'] for s in ('main', 'rep')] for pid in ('H8', 'H9', 'HE3')}
+    md += ['## П5б. Знаки и число подтверждений против ожиданий §5 и мощности §6 (добавлено после проверки отчёта)', '',
+           f'- Знак теста совпал с направлением, выбранным по пилотам, в обеих выборках у {n_both} частей из {len(parts)}'
+           f" (не совпал у: {', '.join(p for p, v in sign_ok.items() if not all(v))}).",
+           f"- Подтверждено в основной выборке: сводных {conf_main['c']} из {len(picked)}, частей разведки {conf_main['e']} из {len(expl)}; "
+           f"в повторе — {conf_rep['c']} и {conf_rep['e']}.",
+           f"- Сумма моих ожиданий §5: {f(sums['expect_c'], 2)} (сводные) и {f(sums['expect_e'], 2)} (разведка); сумма нижних мощностей §6: "
+           f"{f(sums['power_c'], 2)} и {f(sums['power_e'], 2)}.",
+           '- Пилот 3 к тесту, во сколько раз пилотное среднее больше тестового (основная выборка; повтор): '
+           + '; '.join(f'{pid} {f(v[0], 1)} и {f(v[1], 1)}' for pid, v in shrink.items()) + '.', '']
+    R['posthoc']['P5b'] = dict(sign_both=n_both, n_parts=len(parts), sign_ok=sign_ok, confirmed_main=conf_main, confirmed_rep=conf_rep, sums=sums, shrink=shrink)
+    md += ['## П7. Два вызова одного промпта у Haiku в тесте (добавлено после проверки отчёта)', '',
+           '| Этап | Рука | Корреляция p двух вызовов | Доля суждений на одной стороне от 0,5 (среди пар, где оба p ≠ 0,5) |', '|---|---|---|---|']
+    p7 = {}
+    for st in ('main_haiku', 'rep_haiku'):
+        E = json.load(open(os.path.join(HERE, 'evals', f'{st}.json'), encoding='utf-8'))
+        for arm in ARMS:
+            xs, ys, same, tot = [], [], 0, 0
+            for t in sorted({r['task'] for r in E['rows'].values()}):
+                a, b = E['rows'].get(f'{t}|{arm}|0'), E['rows'].get(f'{t}|{arm}|1')
+                if a and b and a['valid'] and b['valid']:
+                    for x, y in zip(a['p'], b['p']):
+                        xs.append(x); ys.append(y)
+                        if x != 0.5 and y != 0.5:
+                            tot += 1; same += (x > 0.5) == (y > 0.5)
+            p7[f'{st}|{arm}'] = dict(r=pearson(xs, ys), same_side=same / tot, n=tot)
+            md.append(f'| {st} | {arm} | {f(pearson(xs, ys))} | {f(same / tot)} |')
+    md.append('')
+    R['posthoc']['P7'] = p7
     # П6
     sd = sorted(cells, key=lambda x: x[2])
     io = sorted(cells, key=lambda x: x[3])

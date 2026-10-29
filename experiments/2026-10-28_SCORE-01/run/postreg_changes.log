@@ -1,0 +1,16 @@
+Изменения после регистрации 78626cd (git log --name-status 78626cd..HEAD), по коммитам; журналы прогонов свёрнуты:
+- 17644a7 29.10 08:29: A run/main_haiku.log; A run/main_opus.log; A run/rep_haiku.log; A run/rep_opus.log; журнал run/main_haiku/ — файлов 2; журнал run/main_opus/ — файлов 2; журнал run/rep_haiku/ — файлов 2; журнал run/rep_opus/ — файлов 2
+- 883f1a4 29.10 08:33: A assemble_report_score01.py; A check_report_score01.py; журнал run/main_haiku/ — файлов 4; журнал run/main_opus/ — файлов 5; журнал run/rep_haiku/ — файлов 4; журнал run/rep_opus/ — файлов 5
+- ce90f67 29.10 08:34: журнал run/main_haiku/ — файлов 3; журнал run/main_opus/ — файлов 3; журнал run/rep_haiku/ — файлов 2; журнал run/rep_opus/ — файлов 3
+- 18dc0a6 29.10 10:19: M run/rep_opus.log; журнал run/main_haiku/ — файлов 47; журнал run/main_opus/ — файлов 92; журнал run/rep_haiku/ — файлов 47; журнал run/rep_opus/ — файлов 97
+- f1e0c12 29.10 10:20: M run/main_haiku.log; M run/main_opus.log; M run/rep_haiku.log; журнал run/main_haiku/ — файлов 2; журнал run/main_opus/ — файлов 3; журнал run/rep_haiku/ — файлов 3
+- 74a9ddb 29.10 10:25: A run/ctx_main_opus.json; A run/ctx_rep_opus.json; M run/main_opus.log; журнал run/main_haiku/ — файлов 4; журнал run/main_opus/ — файлов 5; журнал run/rep_haiku/ — файлов 4
+- 2296632 29.10 10:26: журнал run/main_haiku/ — файлов 2; журнал run/rep_haiku/ — файлов 2
+- b0880aa 29.10 12:14: M run/main_haiku.log; M run/rep_haiku.log; журнал run/main_haiku/ — файлов 51; журнал run/rep_haiku/ — файлов 42
+- 297bc99 29.10 12:23: M run/main_haiku.log; журнал run/main_haiku/ — файлов 4; журнал run/rep_haiku/ — файлов 6
+- 384e614 29.10 12:35: M run/rep_haiku.log; журнал run/rep_haiku/ — файлов 7
+- 0ac4437 29.10 12:36: A analysis_score01.json; A evals/main_haiku.json; A evals/main_opus.json; A evals/rep_haiku.json; A evals/rep_opus.json; A run/analysis_score01.log; A run/audit_heads_sealed.json; A run/audit_heads_sealed.log; A run/ctx_main_haiku.json; A run/ctx_rep_haiku.json; A run/main_haiku_metrics.log; A run/main_haiku_out.jsonl; A run/main_opus_metrics.log; A run/main_opus_out.jsonl; A run/rep_haiku_metrics.log; A run/rep_haiku_out.jsonl; A run/rep_opus_metrics.log; A run/rep_opus_out.jsonl; A run/report_tables.md
+- c6b6cd3 29.10 12:40: A calib_score01.json; A calib_summary_score01.py; A run/calib_score01.log; A update_calibration_score01.py; M journal/SELF_CALIBRATION.md; M tools/self_calibration.py
+- 0ed366f 29.10 12:54: M docs/PRIORITY.md; M calib_score01.json; M calib_summary_score01.py; M check_report_score01.py; A report_facts_score01.json; A report_facts_score01.py; M run/calib_score01.log; A run/posthoc_score01.md; A run/report_facts.log; A journal/CHAT_2026-10-29_8c9bf095_part6.md; M journal/ERRORS.md
+- 62b21cb 29.10 12:56: A REPORT-SCORE-01.md; M check_report_score01.py; A report_text.md; A run/check_report.log; A run/ledger_audit_report.log
+- cd48b60 29.10 13:15: M .gitignore; M journal/AUDIT_GIT_SNAPSHOT_2026-10-29.md; A journal/AUDIT_GIT_SNAPSHOT_2026-10-29_exposure.json; A journal/AUDIT_GIT_SNAPSHOT_2026-10-29_exposure.py; A journal/AUDIT_GIT_SNAPSHOT_2026-10-29_posthoc.py; A journal/AUDIT_GIT_SNAPSHOT_2026-10-29_posthoc.txt; M journal/ERRORS.md

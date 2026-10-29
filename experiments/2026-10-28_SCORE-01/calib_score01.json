@@ -168,5 +168,37 @@
    "brier": 0.120625,
    "self_dec": -0.07916666666666661
   }
+ },
+ "expect_vs_power": {
+  "main|opus": {
+   "n": 12,
+   "brier_expect": 0.187075,
+   "brier_power": 0.18891499291246883
+  },
+  "main|haiku": {
+   "n": 12,
+   "brier_expect": 0.145625,
+   "brier_power": 0.2294805436506819
+  },
+  "main|all": {
+   "n": 24,
+   "brier_expect": 0.16635,
+   "brier_power": 0.20919776828157535
+  },
+  "rep|opus": {
+   "n": 12,
+   "brier_expect": 0.12040833333333334,
+   "brier_power": 0.15232598745935905
+  },
+  "rep|haiku": {
+   "n": 12,
+   "brier_expect": 0.120625,
+   "brier_power": 0.16002221031734856
+  },
+  "rep|all": {
+   "n": 24,
+   "brier_expect": 0.12051666666666666,
+   "brier_power": 0.15617409888835382
+  }
  }
 }
