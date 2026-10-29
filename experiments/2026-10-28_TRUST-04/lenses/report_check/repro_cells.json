@@ -1,0 +1,93 @@
+[
+ {
+  "arm": "DEMES",
+  "seed": 600,
+  "part": "A",
+  "sec": 16.5,
+  "final_bitwise": true,
+  "traj_bitwise": true,
+  "n_diff_values": 0,
+  "max_rel_diff": 0.0,
+  "first_diff_g": null,
+  "wG_now": 0.827976371512746,
+  "wG_ref": 0.827976371512746
+ },
+ {
+  "arm": "POOLED",
+  "seed": 600,
+  "part": "A",
+  "sec": 16.7,
+  "final_bitwise": true,
+  "traj_bitwise": true,
+  "n_diff_values": 0,
+  "max_rel_diff": 0.0,
+  "first_diff_g": null,
+  "wG_now": 0.7090361364062303,
+  "wG_ref": 0.7090361364062303
+ },
+ {
+  "arm": "DEMES_NOWITHIN",
+  "seed": 607,
+  "part": "A",
+  "sec": 19.4,
+  "final_bitwise": true,
+  "traj_bitwise": true,
+  "n_diff_values": 0,
+  "max_rel_diff": 0.0,
+  "first_diff_g": null,
+  "wG_now": 0.6770047559067506,
+  "wG_ref": 0.6770047559067506
+ },
+ {
+  "arm": "MYOPIC",
+  "seed": 600,
+  "part": "A",
+  "sec": 4.7,
+  "final_bitwise": true,
+  "traj_bitwise": true,
+  "n_diff_values": 0,
+  "max_rel_diff": 0.0,
+  "first_diff_g": null,
+  "wG_now": 0.9871957487416858,
+  "wG_ref": 0.9871957487416858
+ },
+ {
+  "arm": "DEMES_GPOOL",
+  "seed": 619,
+  "part": "A",
+  "sec": 22.8,
+  "final_bitwise": true,
+  "traj_bitwise": true,
+  "n_diff_values": 0,
+  "max_rel_diff": 0.0,
+  "first_diff_g": null,
+  "wG_now": 0.8237752315774819,
+  "wG_ref": 0.8237752315774819
+ },
+ {
+  "arm": "DEMES_r075",
+  "seed": 600,
+  "part": "B",
+  "sec": 17.8,
+  "final_bitwise": true,
+  "traj_bitwise": true,
+  "n_diff_values": 0,
+  "max_rel_diff": 0.0,
+  "first_diff_g": null,
+  "wG_now": 0.48450951747050347,
+  "wG_ref": 0.48450951747050347
+ },
+ {
+  "arm": "POOLED_MIG",
+  "seed": 605,
+  "part": "B",
+  "sec": 17.8,
+  "final_bitwise": true,
+  "traj_bitwise": true,
+  "n_diff_values": 0,
+  "max_rel_diff": 0.0,
+  "first_diff_g": null,
+  "wG_now": 0.6952733527899619,
+  "wG_ref": 0.6952733527899619
+ }
+]
