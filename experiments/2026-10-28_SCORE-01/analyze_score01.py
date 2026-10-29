@@ -9,13 +9,13 @@
 «не показано (потери)» — годных пар меньше 90 % задач выборки.
 Сводный исход (по выборке): «подтверждено» — все части подтверждены; «опровергнуто» — хоть одна опровергнута;
 иначе «не подтверждено».
-Чтения (ключ readings; вердикты по букве не меняются; LENSES-1b, N5 и N19):
-  контекст — флаг проверки этапа ctx_check.stage_check (конфигурация голов не та, доля больших остатков входа или наклон) →
-  все сводные этапа читаются «не показано (контекст)»;
-  A/A у Haiku — 90 % интервал «повтор 1 − повтор 0» руки LOG или WIN по самообману, точности или Брайеру целиком вне допуска SA
-  (AA_MARGIN): процедура различает одинаковые промпты → подтверждённый SA_haiku этапа читается «не показано (A/A: процедура
-  различает одинаковые промпты)». Интервал A/A внутри допуска — описательно (within): строже не берётся, потому что разница
-  повторов одинакова у обеих рук и сокращается в WIN − LOG, а шум одного вызова SA учитывает своим интервалом.
+Чтения (ключ readings; вердикты по букве не меняются; LENSES-1b N5, N19; LENSES-1c П1–П3):
+  контекст — флаг проверки этапа ctx_check.stage (вход внутри задачи меняется, вход не на линии пилота 3, записи без входа,
+  конфигурация голов не та) → все части и сводные этапа читаются «не показано (контекст)»;
+  A/A у Haiku — разность A/A между руками (WIN|1 − WIN|0) − (LOG|1 − LOG|0) по задачам; если её 90 % интервал хоть по одной мере
+  AA_MARGIN не лежит внутри ±AA_D_FACTOR·δ, подтверждённый SA_haiku этапа читается «не показано (A/A: артефакт повтора различает
+  руки)». Причина: SA — WIN − LOG по среднему двух повторов; общий сдвиг повторов в SA сокращается, артефакт одного повтора одной
+  руки размера a смещает SA на a/2, а разность A/A — на a. A/A каждой руки — описательно.
 «Установлено» (ключ status) — чтение сводного «подтверждено» и в основной выборке, и в повторе, и сводный разрешено так
 называть (ESTABLISH); иначе статус — чтения основной выборки и повтора."""
 import argparse
@@ -34,6 +34,7 @@ N_PERM = 100_000
 MIN_VALID_SHARE = 0.9
 REPS = dict(opus=('0',), haiku=('0', '1'))   # вызовов на клетку: Opus — один, Haiku — два (шум одного вызова Haiku велик, PILOT2.md)
 AA_MARGIN = dict(self_dec=0.1, acc=0.1, brier=0.05)   # допуски встроенного A/A — те же, что у частей SA
+AA_D_FACTOR = 2.0                                     # допуск разности A/A между руками — 2δ: смещение SA на δ (LENSES-1c, П3)
 STREAMS = os.path.join(HERE, '..', '..', '.cache', 'score01_streams')   # потоки голов (вне git): проверка контекста этапа
 
 # --- предсказания: замораживаются в PREREG ---
@@ -197,22 +198,28 @@ def verdict(p, E):
                 p_perm_two_sided=perm_p(x, name) if p['target'][0] != 'arm' else None)
 
 
+def jobs_file(st):
+    """Задания этапа: теста — jobs/<этап>_jobs.jsonl; пилота — run/<пилот>_jobs.jsonl (один файл на обе модели)."""
+    return os.path.join(HERE, 'run', f"{st.split('_')[0]}_jobs.jsonl") if st.startswith('pilot') else os.path.join(HERE, 'jobs', f'{st}_jobs.jsonl')
+
+
 def ctx_stage(st, ctx_json):
-    """Проверка контекста этапа (PREREG §2 и §4): из готового json (сухой прогон, --ctx-json) или по журналу и потокам этапа."""
+    """Проверка контекста этапа (PREREG §2 и §4): из готового json (сухой прогон, --ctx-json) или по журналу этапа (вход —
+    из журнала, LENSES-1c П2; потоки .cache — только запасной путь)."""
     if ctx_json:
         p = os.path.join(ctx_json, f'ctx_{st}.json')
         return json.load(open(p)) if os.path.exists(p) else None
     sys.path.insert(0, HERE)
     import ctx_check
-    j, s = os.path.join(HERE, 'run', st), os.path.join(STREAMS, st)
-    if not (os.path.isdir(j) and os.path.isdir(s)):
+    j = os.path.join(HERE, 'run', st)
+    if not os.path.isdir(j):
         return None
-    rows, skipped = ctx_check.stage_rows(j, s)
-    return dict(ctx_check.stage_check(rows, skipped), config=ctx_check.config_check(j))
+    return ctx_check.stage(j, jobs_file(st), os.path.join(STREAMS, st))
 
 
 def aa_check(E, st):
-    """Встроенный A/A (LENSES-1, L3-7; чтение — LENSES-1b, N19): повтор 1 − повтор 0 внутри руки, 90 % t-интервал против допуска."""
+    """Встроенный A/A (LENSES-1, L3-7; чтение — LENSES-1c, П3): повтор 1 − повтор 0 внутри руки (описательно) и разность A/A между
+    руками WIN и LOG, 90 % t-интервал против ±AA_D_FACTOR·δ (флаг чтения SA_haiku)."""
     aa = {}
     for arm in ('LOG', 'WIN', 'NONE'):
         for m_, d in AA_MARGIN.items():
@@ -225,13 +232,25 @@ def aa_check(E, st):
                 mm, lo, hi, sd_ = t_ci(x, 0.90)
                 aa[f'{arm}|{m_}'] = dict(n=len(x), mean=mm, ci90=[lo, hi], sd=sd_, margin=d, within=bool(lo > -d and hi < d),
                                          outside=bool(lo >= d or hi <= -d))
-    keys = [f'{arm}|{m_}' for arm in ('LOG', 'WIN') for m_ in AA_MARGIN]
-    gross = any(aa.get(k, {}).get('outside', False) for k in keys)
-    within = sum(aa.get(k, {}).get('within', False) for k in keys)
+    diff = {}
+    for m_, d in AA_MARGIN.items():                    # (WIN|1 − WIN|0) − (LOG|1 − LOG|0) по задачам
+        x = []
+        for t in sample_tasks(E):
+            rr = {k: E['rows'].get(f'{t}|{k}') for k in ('WIN|0', 'WIN|1', 'LOG|0', 'LOG|1')}
+            if all(v and v['valid'] for v in rr.values()):
+                x.append(value(rr['WIN|1'], m_) - value(rr['WIN|0'], m_) - (value(rr['LOG|1'], m_) - value(rr['LOG|0'], m_)))
+        tol = AA_D_FACTOR * d
+        if len(x) > 2:
+            mm, lo, hi, sd_ = t_ci(x, 0.90)
+            diff[m_] = dict(n=len(x), mean=mm, ci90=[lo, hi], sd=sd_, tol=tol, within=bool(lo > -tol and hi < tol))
+        else:
+            diff[m_] = dict(n=len(x), tol=tol, within=False)
+    flag = not all(v['within'] for v in diff.values())
     print(f'{st}: A/A (повтор 1 − повтор 0, 90 %): ' + '; '.join(f"{k} {v['mean']:+.3f} [{v['ci90'][0]:+.3f}; {v['ci90'][1]:+.3f}]"
                                                               for k, v in aa.items()) +
-          f' → у LOG и WIN внутри допуска {within} из {len(keys)}; целиком вне допуска (процедура различает одинаковые промпты): {gross}')
-    return aa, gross
+          '; разность A/A WIN − LOG: ' + '; '.join(f"{m_} {v['mean']:+.3f} [{v['ci90'][0]:+.3f}; {v['ci90'][1]:+.3f}] (±{v['tol']:.2f})"
+                                                   for m_, v in diff.items() if 'mean' in v) + f' → флаг A/A: {flag}')
+    return aa, diff, flag
 
 
 def main():
@@ -259,7 +278,7 @@ def main():
             continue
         E = json.load(open(path))
         assert E.get('labels') == 'r4000', f'{st}: метки должны быть по 4000 реализациям (score01.py metrics … half4)'
-        jobs_path = os.path.join(HERE, 'jobs', f'{st}_jobs.jsonl')
+        jobs_path = jobs_file(st)
         if not a.no_check:                            # сверка покрытия: без файла заданий анализ не идёт (LENSES-1b, N1)
             assert os.path.exists(jobs_path), f'{st}: нет файла заданий {jobs_path}'
             ids = {json.loads(l)['id'] for l in open(jobs_path, encoding='utf-8')}
@@ -271,15 +290,15 @@ def main():
             print(f'{st}: заданий {len(ids)}, записей {len(E["rows"])}, нет записи {len(missing)}, негодных {res["coverage"][st]["invalid"]}')
         ctx = ctx_stage(st, a.ctx_json)
         if ctx is None:
-            assert a.no_check, f'{st}: нет проверки контекста (журнал run/{st} или потоки {STREAMS}/{st})'
+            assert a.no_check, f'{st}: нет проверки контекста (журнал run/{st})'
             print(f'{st}: проверки контекста нет (сухой прогон)')
         else:
-            if 'config' in ctx:                       # конфигурация голов — часть флага (LENSES-1b, N5)
-                ctx['flag'] = bool(ctx['flag'] or not ctx['config']['ok'])
             res['ctx'][st] = ctx
-            print(f"{st}: контекст — вызовов {ctx['n']}, пропущено {ctx['skipped']}, доля |остаток| > {ctx['thresholds']['r_max']:.0f}: "
-                  f"{ctx['frac_resid_gt']:.3f}, наклон {ctx['slope_per_hour']:+.2f} ток./ч" +
-                  (f", конфигурация {'та' if ctx['config']['ok'] else 'НЕ та'}" if 'config' in ctx else '') + f" → флаг {ctx['flag']}")
+            print(f"{st}: контекст — вызовов {ctx['n']}, без входа {ctx['skipped']}, доля |остаток внутри задачи| > {ctx['thresholds']['r_max']:.0f}: "
+                  f"{ctx['frac_resid_gt']:.3f}" + (f", против линии пилота 3: среднее {ctx['abs_mean']:+.1f}, доля > {ctx['thresholds']['r_abs']:.0f}: "
+                                                   f"{ctx['frac_abs_gt']:.3f}" if 'abs_mean' in ctx else '') +
+                  (f", конфигурация {'та' if ctx['config']['ok'] else 'НЕ та'}" if 'config' in ctx else '') +
+                  f" → флаг {ctx['flag']}" + (f" ({'; '.join(ctx.get('why') or [])})" if ctx['flag'] else ''))
         sample, model = st.split('_', 1)
         res['stages'][st] = dict(summary=E['summary'], labels=E.get('labels'))   # paired из evals не берём: у Haiku он только по повтору 0
         for p in PRED:
@@ -293,10 +312,10 @@ def main():
             print(f"{p['id']:6s} {st:11s} {p['measure']:9s} {str(p['target']):24s} {p['kind']:5s} → {v['outcome']}"
                   + (f"; среднее {v['mean']:+.4f} [{ci[0]:+.4f}; {ci[1]:+.4f}], n {v['n']}" if 'mean' in v else '')
                   + (f"; чтение: {v['reading']}" if 'reading' in v else ''))
-        aa_gross = False
+        aa_flag = False
         if len(REPS[model]) > 1:                      # встроенный A/A у Haiku
-            res.setdefault('aa', {})[st], aa_gross = aa_check(E, st)
-            res['aa'][st]['_gross_LOG_WIN'] = aa_gross
+            aa_arms, aa_diff, aa_flag = aa_check(E, st)
+            res.setdefault('aa', {})[st] = dict(arms=aa_arms, diff=aa_diff, flag=aa_flag)
         for comp in sorted({p['comp'] for p in PRED if p['comp'] and p['model'] == model}):
             parts = [p['id'] for p in PRED if p['comp'] == comp]
             outs = [res['verdicts'][f'{i}|{st}']['outcome'] for i in parts]
@@ -306,8 +325,8 @@ def main():
             rd = o
             if ctx is not None and ctx['flag']:
                 rd = 'не показано (контекст)'
-            elif comp.startswith('SA_') and aa_gross and o == 'подтверждено':
-                rd = 'не показано (A/A: процедура различает одинаковые промпты)'
+            elif comp.startswith('SA_') and aa_flag and o == 'подтверждено':
+                rd = 'не показано (A/A: артефакт повтора различает руки)'
             res['readings'][f'{comp}|{st}'] = rd
             print(f'сводный {comp} {st}: {o} ({", ".join(f"{i} {x}" for i, x in zip(parts, outs))})' + ('' if rd == o else f'; чтение: {rd}'))
     for comp in sorted({p['comp'] for p in PRED if p['comp']}):

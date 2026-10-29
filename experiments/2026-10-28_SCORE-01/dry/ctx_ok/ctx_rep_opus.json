@@ -2,6 +2,12 @@
  "n": 120,
  "skipped": 0,
  "skipped_jobs": [],
+ "thresholds": {
+  "r_max": 25.0,
+  "frac_max": 0.05,
+  "r_abs": 100.0,
+  "m_abs": 50.0
+ },
  "tasks": 20,
  "arms": [
   "LOG",
@@ -19,21 +25,33 @@
   "NONE": -125.30000000000342,
   "WIN": -7.550000000002939
  },
- "thresholds": {
-  "r_max": 25.0,
-  "frac_max": 0.05,
-  "slope_max": 5.0
- },
+ "abs_mean": -1.5158245029548805e-12,
+ "abs_sd": 21.522239167586292,
+ "abs_max": 51.03499266689232,
+ "n_abs_gt": 0,
+ "frac_abs_gt": 0.0,
  "flag": false,
+ "why": [],
  "journal": "run/pilot3_opus",
- "streams": "../../.cache/score01_streams/pilot3_opus",
+ "jobs": "run/pilot3_jobs.jsonl",
  "config": {
   "home": "/tmp/neu_heads/home",
   "work_dir": "/tmp/neu_heads/work",
   "home_in_git": false,
   "work_dir_in_git": false,
   "git_instructions_off": true,
+  "n_init_files": 1,
+  "model": "claude-opus-5-5",
+  "config_sha_records": {
+   "e1f5b485ab30": 120
+  },
+  "config_sha_file": "e1f5b485ab30",
+  "config_same": true,
   "n_init": 1,
+  "cache_read": {
+   "886": 120
+  },
+  "from_stream": 0,
   "ok": true
  }
 }

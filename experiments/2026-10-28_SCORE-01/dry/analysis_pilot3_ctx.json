@@ -1,0 +1,956 @@
+{
+ "stages": {
+  "pilot3_opus": {
+   "summary": {
+    "LOG": {
+     "n": 40,
+     "invalid": 0,
+     "logloss": 0.6910226218275933,
+     "brier": 0.244563125,
+     "acc": 0.596875,
+     "conf": 0.7021875,
+     "self_dec": 0.10531249999999992,
+     "auc_pooled": 0.64873046875,
+     "ece": 0.10531250000000002,
+     "sum_p": 3.7725,
+     "n_half": 16,
+     "inp": 5944.8,
+     "out": 4755.85,
+     "ioi": 0.54803125,
+     "ignorance": 0.403125,
+     "deception": 0.14490625000000001,
+     "cost": 0.1357566
+    },
+    "WIN": {
+     "n": 40,
+     "invalid": 0,
+     "logloss": 0.7425726493522438,
+     "brier": 0.2654140625,
+     "acc": 0.5671875,
+     "conf": 0.69315625,
+     "self_dec": 0.12596875000000007,
+     "auc_pooled": 0.59076171875,
+     "ece": 0.12596875000000005,
+     "sum_p": 3.8042499999999997,
+     "n_half": 9,
+     "inp": 5937.25,
+     "out": 3881.525,
+     "ioi": 0.590875,
+     "ignorance": 0.4328125,
+     "deception": 0.15806250000000002,
+     "cost": 0.1182097
+    },
+    "NONE": {
+     "n": 40,
+     "invalid": 0,
+     "logloss": 0.782552780034139,
+     "brier": 0.2776446875,
+     "acc": 0.55625,
+     "conf": 0.7067812499999999,
+     "self_dec": 0.1505312499999999,
+     "auc_pooled": 0.57478515625,
+     "ece": 0.15053125,
+     "sum_p": 3.78025,
+     "n_half": 22,
+     "inp": 5819.5,
+     "out": 3698.3,
+     "ioi": 0.6163125,
+     "ignorance": 0.44375,
+     "deception": 0.1725625,
+     "cost": 0.11360319999999999
+    }
+   },
+   "labels": "r4000"
+  },
+  "pilot3_haiku": {
+   "summary": {
+    "LOG": {
+     "n": 40,
+     "invalid": 0,
+     "logloss": 0.7532088352669842,
+     "brier": 0.27318312499999997,
+     "acc": 0.5078125,
+     "conf": 0.6689375,
+     "self_dec": 0.16112499999999996,
+     "auc_pooled": 0.54087890625,
+     "ece": 0.161125,
+     "sum_p": 3.893,
+     "n_half": 19,
+     "inp": 6725.5,
+     "out": 17503.15,
+     "ioi": 0.66834375,
+     "ignorance": 0.4921875,
+     "deception": 0.17615625000000001,
+     "cost": 0.009928135000000001
+    },
+    "WIN": {
+     "n": 40,
+     "invalid": 0,
+     "logloss": 0.6849405399320873,
+     "brier": 0.24405812500000001,
+     "acc": 0.5984375,
+     "conf": 0.700125,
+     "self_dec": 0.10168750000000004,
+     "auc_pooled": 0.64626953125,
+     "ece": 0.10168749999999997,
+     "sum_p": 3.7340000000000004,
+     "n_half": 9,
+     "inp": 6718.6,
+     "out": 26926.025,
+     "ioi": 0.5414375,
+     "ignorance": 0.4015625,
+     "deception": 0.13987500000000003,
+     "cost": 0.0146381925
+    },
+    "NONE": {
+     "n": 40,
+     "invalid": 0,
+     "logloss": 0.7626096170273242,
+     "brier": 0.2750753125,
+     "acc": 0.5421875,
+     "conf": 0.67684375,
+     "self_dec": 0.13465624999999992,
+     "auc_pooled": 0.553046875,
+     "ece": 0.13465625,
+     "sum_p": 3.92825,
+     "n_half": 33,
+     "inp": 6602.2,
+     "out": 16996.1,
+     "ioi": 0.623,
+     "ignorance": 0.4578125,
+     "deception": 0.1651875,
+     "cost": 0.009649950000000001
+    }
+   },
+   "labels": "r4000"
+  }
+ },
+ "verdicts": {
+  "O1|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "O2|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "O3|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "O4|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "O5|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "O6|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "O7|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "O8|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "O9|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "OE1|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "OE2|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "OE3|pilot3_opus": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H1|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H2|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H3|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H4|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H5|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H6|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H8|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H9|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "H7|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "HE1|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "HE2|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  },
+  "HE3|pilot3_haiku": {
+   "outcome": "не показано (потери)",
+   "n": 20,
+   "n_tasks": 24
+  }
+ },
+ "composites": {
+  "SA_opus|pilot3_opus": {
+   "parts": [
+    "O1",
+    "O2",
+    "O3"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SB_opus|pilot3_opus": {
+   "parts": [
+    "O4",
+    "O5",
+    "O6"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SC_opus|pilot3_opus": {
+   "parts": [
+    "O7"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SD_opus|pilot3_opus": {
+   "parts": [
+    "O8"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SL_opus|pilot3_opus": {
+   "parts": [
+    "O9"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SA_haiku|pilot3_haiku": {
+   "parts": [
+    "H1",
+    "H2",
+    "H3"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SB_haiku|pilot3_haiku": {
+   "parts": [
+    "H4",
+    "H5",
+    "H6"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SD_haiku|pilot3_haiku": {
+   "parts": [
+    "H8"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SL_haiku|pilot3_haiku": {
+   "parts": [
+    "H9"
+   ],
+   "outcome": "не подтверждено"
+  }
+ },
+ "readings": {
+  "SA_opus|pilot3_opus": "не подтверждено",
+  "SB_opus|pilot3_opus": "не подтверждено",
+  "SC_opus|pilot3_opus": "не подтверждено",
+  "SD_opus|pilot3_opus": "не подтверждено",
+  "SL_opus|pilot3_opus": "не подтверждено",
+  "SA_haiku|pilot3_haiku": "не подтверждено",
+  "SB_haiku|pilot3_haiku": "не подтверждено",
+  "SD_haiku|pilot3_haiku": "не подтверждено",
+  "SL_haiku|pilot3_haiku": "не подтверждено"
+ },
+ "status": {},
+ "ctx": {
+  "pilot3_opus": {
+   "n": 120,
+   "skipped": 0,
+   "skipped_jobs": [],
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "r_abs": 100.0,
+    "m_abs": 50.0
+   },
+   "tasks": 20,
+   "arms": [
+    "LOG",
+    "NONE",
+    "WIN"
+   ],
+   "max_abs_resid": 11.283333333333758,
+   "sd_resid": 4.274804039933518,
+   "n_resid_gt": 0,
+   "frac_resid_gt": 0.0,
+   "slope_per_hour": 0.12630601875765518,
+   "span_hours": 0.5441666666301899,
+   "arm_effect_vs_first": {
+    "LOG": 0.0,
+    "NONE": -125.30000000000342,
+    "WIN": -7.550000000002939
+   },
+   "abs_mean": -1.5158245029548805e-12,
+   "abs_sd": 21.522239167586292,
+   "abs_max": 51.03499266689232,
+   "n_abs_gt": 0,
+   "frac_abs_gt": 0.0,
+   "flag": false,
+   "why": [],
+   "journal": "run/pilot3_opus",
+   "jobs": "run/pilot3_jobs.jsonl",
+   "config": {
+    "home": "/tmp/neu_heads/home",
+    "work_dir": "/tmp/neu_heads/work",
+    "home_in_git": false,
+    "work_dir_in_git": false,
+    "git_instructions_off": true,
+    "n_init_files": 1,
+    "model": "claude-opus-5-5",
+    "config_sha_records": {
+     "e1f5b485ab30": 120
+    },
+    "config_sha_file": "e1f5b485ab30",
+    "config_same": true,
+    "n_init": 1,
+    "cache_read": {
+     "886": 120
+    },
+    "from_stream": 0,
+    "ok": true
+   }
+  },
+  "pilot3_haiku": {
+   "n": 120,
+   "skipped": 0,
+   "skipped_jobs": [],
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "r_abs": 100.0,
+    "m_abs": 50.0
+   },
+   "tasks": 20,
+   "arms": [
+    "LOG",
+    "NONE",
+    "WIN"
+   ],
+   "max_abs_resid": 12.166666666668789,
+   "sd_resid": 4.043738459432227,
+   "n_resid_gt": 0,
+   "frac_resid_gt": 0.0,
+   "slope_per_hour": 0.024217783427633567,
+   "span_hours": 0.8613888889085501,
+   "arm_effect_vs_first": {
+    "LOG": 0.0,
+    "NONE": -123.30000000000454,
+    "WIN": -6.900000000004596
+   },
+   "abs_mean": -4.395891058569153e-12,
+   "abs_sd": 21.737114713824923,
+   "abs_max": 56.146448969548146,
+   "n_abs_gt": 0,
+   "frac_abs_gt": 0.0,
+   "flag": false,
+   "why": [],
+   "journal": "run/pilot3_haiku",
+   "jobs": "run/pilot3_jobs.jsonl",
+   "config": {
+    "home": "/tmp/neu_heads/home",
+    "work_dir": "/tmp/neu_heads/work",
+    "home_in_git": false,
+    "work_dir_in_git": false,
+    "git_instructions_off": true,
+    "n_init_files": 1,
+    "model": "claude-haiku-5-5",
+    "config_sha_records": {
+     "96d38395701e": 120
+    },
+    "config_sha_file": "96d38395701e",
+    "config_same": true,
+    "n_init": 1,
+    "cache_read": {
+     "886": 120
+    },
+    "from_stream": 0,
+    "ok": true
+   }
+  }
+ },
+ "n_perm": 100000,
+ "pred": [
+  {
+   "id": "O1",
+   "model": "opus",
+   "measure": "self_dec",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "equiv",
+   "margin": 0.1,
+   "comp": "SA_opus",
+   "expect": 0.7,
+   "text": "самообман WIN − LOG в пределах ±0,1"
+  },
+  {
+   "id": "O2",
+   "model": "opus",
+   "measure": "acc",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "equiv",
+   "margin": 0.1,
+   "comp": "SA_opus",
+   "expect": 0.7,
+   "text": "точность WIN − LOG в пределах ±0,1"
+  },
+  {
+   "id": "O3",
+   "model": "opus",
+   "measure": "brier",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "equiv",
+   "margin": 0.05,
+   "comp": "SA_opus",
+   "expect": 0.65,
+   "text": "Брайер WIN − LOG в пределах ±0,05"
+  },
+  {
+   "id": "O4",
+   "model": "opus",
+   "measure": "self_dec",
+   "target": [
+    "arm",
+    "LOG"
+   ],
+   "kind": "gt0",
+   "comp": "SB_opus",
+   "expect": 0.9,
+   "text": "самообман LOG > 0"
+  },
+  {
+   "id": "O5",
+   "model": "opus",
+   "measure": "self_dec",
+   "target": [
+    "arm",
+    "WIN"
+   ],
+   "kind": "gt0",
+   "comp": "SB_opus",
+   "expect": 0.93,
+   "text": "самообман WIN > 0"
+  },
+  {
+   "id": "O6",
+   "model": "opus",
+   "measure": "self_dec",
+   "target": [
+    "arm",
+    "NONE"
+   ],
+   "kind": "gt0",
+   "comp": "SB_opus",
+   "expect": 0.95,
+   "text": "самообман NONE > 0"
+  },
+  {
+   "id": "O7",
+   "model": "opus",
+   "measure": "acc",
+   "target": [
+    "contrast",
+    {
+     "LOG": 0.5,
+     "WIN": 0.5,
+     "NONE": -1.0
+    }
+   ],
+   "kind": "gt0",
+   "comp": "SC_opus",
+   "expect": 0.3,
+   "text": "точность (LOG + WIN)/2 − NONE > 0"
+  },
+  {
+   "id": "O8",
+   "model": "opus",
+   "measure": "out",
+   "target": [
+    "contrast",
+    {
+     "LOG": 0.5,
+     "WIN": 0.5,
+     "NONE": -1.0
+    }
+   ],
+   "kind": "gt0",
+   "comp": "SD_opus",
+   "expect": 0.7,
+   "text": "выходные токены (LOG + WIN)/2 − NONE > 0"
+  },
+  {
+   "id": "O9",
+   "model": "opus",
+   "measure": "out",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "lt0",
+   "comp": "SL_opus",
+   "expect": 0.6,
+   "text": "выходные токены WIN − LOG < 0 (гипотеза из пилота 3)"
+  },
+  {
+   "id": "OE1",
+   "model": "opus",
+   "measure": "conf",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "lt0",
+   "comp": null,
+   "expect": 0.35,
+   "text": "разведка: уверенность WIN − LOG < 0"
+  },
+  {
+   "id": "OE2",
+   "model": "opus",
+   "measure": "self_dec",
+   "target": [
+    "contrast",
+    {
+     "NONE": 1.0,
+     "LOG": -0.5,
+     "WIN": -0.5
+    }
+   ],
+   "kind": "gt0",
+   "comp": null,
+   "expect": 0.4,
+   "text": "разведка: самообман NONE − (LOG + WIN)/2 > 0"
+  },
+  {
+   "id": "OE3",
+   "model": "opus",
+   "measure": "auc",
+   "target": [
+    "contrast",
+    {
+     "LOG": 0.5,
+     "WIN": 0.5,
+     "NONE": -1.0
+    }
+   ],
+   "kind": "gt0",
+   "comp": null,
+   "expect": 0.55,
+   "text": "разведка: AUC (LOG + WIN)/2 − NONE > 0"
+  },
+  {
+   "id": "H1",
+   "model": "haiku",
+   "measure": "self_dec",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "equiv",
+   "margin": 0.1,
+   "comp": "SA_haiku",
+   "expect": 0.6,
+   "text": "самообман WIN − LOG в пределах ±0,1"
+  },
+  {
+   "id": "H2",
+   "model": "haiku",
+   "measure": "acc",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "equiv",
+   "margin": 0.1,
+   "comp": "SA_haiku",
+   "expect": 0.3,
+   "text": "точность WIN − LOG в пределах ±0,1"
+  },
+  {
+   "id": "H3",
+   "model": "haiku",
+   "measure": "brier",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "equiv",
+   "margin": 0.05,
+   "comp": "SA_haiku",
+   "expect": 0.65,
+   "text": "Брайер WIN − LOG в пределах ±0,05"
+  },
+  {
+   "id": "H4",
+   "model": "haiku",
+   "measure": "self_dec",
+   "target": [
+    "arm",
+    "LOG"
+   ],
+   "kind": "gt0",
+   "comp": "SB_haiku",
+   "expect": 0.95,
+   "text": "самообман LOG > 0"
+  },
+  {
+   "id": "H5",
+   "model": "haiku",
+   "measure": "self_dec",
+   "target": [
+    "arm",
+    "WIN"
+   ],
+   "kind": "gt0",
+   "comp": "SB_haiku",
+   "expect": 0.9,
+   "text": "самообман WIN > 0"
+  },
+  {
+   "id": "H6",
+   "model": "haiku",
+   "measure": "self_dec",
+   "target": [
+    "arm",
+    "NONE"
+   ],
+   "kind": "gt0",
+   "comp": "SB_haiku",
+   "expect": 0.9,
+   "text": "самообман NONE > 0"
+  },
+  {
+   "id": "H8",
+   "model": "haiku",
+   "measure": "out",
+   "target": [
+    "contrast",
+    {
+     "LOG": 0.5,
+     "WIN": 0.5,
+     "NONE": -1.0
+    }
+   ],
+   "kind": "gt0",
+   "comp": "SD_haiku",
+   "expect": 0.6,
+   "text": "выходные токены (LOG + WIN)/2 − NONE > 0"
+  },
+  {
+   "id": "H9",
+   "model": "haiku",
+   "measure": "out",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "gt0",
+   "comp": "SL_haiku",
+   "expect": 0.85,
+   "text": "выходные токены WIN − LOG > 0 (гипотеза из пилотов 0–3, §3)"
+  },
+  {
+   "id": "H7",
+   "model": "haiku",
+   "measure": "acc",
+   "target": [
+    "contrast",
+    {
+     "LOG": 0.5,
+     "WIN": 0.5,
+     "NONE": -1.0
+    }
+   ],
+   "kind": "gt0",
+   "comp": null,
+   "expect": 0.25,
+   "text": "разведка: точность (LOG + WIN)/2 − NONE > 0 (знак условный: в пилоте 3 меньше 1 SE)"
+  },
+  {
+   "id": "HE1",
+   "model": "haiku",
+   "measure": "self_dec",
+   "target": [
+    "contrast",
+    {
+     "NONE": 1.0,
+     "LOG": -0.5,
+     "WIN": -0.5
+    }
+   ],
+   "kind": "gt0",
+   "comp": null,
+   "expect": 0.15,
+   "text": "разведка: самообман NONE − (LOG + WIN)/2 > 0"
+  },
+  {
+   "id": "HE2",
+   "model": "haiku",
+   "measure": "auc",
+   "target": [
+    "contrast",
+    {
+     "LOG": 0.5,
+     "WIN": 0.5,
+     "NONE": -1.0
+    }
+   ],
+   "kind": "gt0",
+   "comp": null,
+   "expect": 0.25,
+   "text": "разведка: AUC (LOG + WIN)/2 − NONE > 0"
+  },
+  {
+   "id": "HE3",
+   "model": "haiku",
+   "measure": "acc",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "gt0",
+   "comp": null,
+   "expect": 0.65,
+   "text": "разведка: точность WIN − LOG > 0 (гипотеза из пилота 3)"
+  }
+ ],
+ "hashes_ok": null,
+ "aa": {
+  "pilot3_haiku": {
+   "arms": {
+    "LOG|self_dec": {
+     "n": 20,
+     "mean": 0.046999999999999986,
+     "ci90": [
+      -0.05777540765607829,
+      0.15177540765607828
+     ],
+     "sd": 0.2709854700901877,
+     "margin": 0.1,
+     "within": false,
+     "outside": false
+    },
+    "LOG|acc": {
+     "n": 20,
+     "mean": -0.071875,
+     "ci90": [
+      -0.18664207698073315,
+      0.04289207698073316
+     ],
+     "sd": 0.2968273853783143,
+     "margin": 0.1,
+     "within": false,
+     "outside": false
+    },
+    "LOG|brier": {
+     "n": 20,
+     "mean": 0.018813749999999997,
+     "ci90": [
+      -0.025460502222626587,
+      0.06308800222262659
+     ],
+     "sd": 0.11450854088606344,
+     "margin": 0.05,
+     "within": false,
+     "outside": false
+    },
+    "WIN|self_dec": {
+     "n": 20,
+     "mean": 0.07400000000000002,
+     "ci90": [
+      -0.02617455430962072,
+      0.17417455430962075
+     ],
+     "sd": 0.25908607084377033,
+     "margin": 0.1,
+     "within": false,
+     "outside": false
+    },
+    "WIN|acc": {
+     "n": 20,
+     "mean": -0.078125,
+     "ci90": [
+      -0.18356874953432015,
+      0.027318749534320147
+     ],
+     "sd": 0.2727140335203661,
+     "margin": 0.1,
+     "within": false,
+     "outside": false
+    },
+    "WIN|brier": {
+     "n": 20,
+     "mean": 0.0385825,
+     "ci90": [
+      -0.012687000584880176,
+      0.08985200058488017
+     ],
+     "sd": 0.13260067441481269,
+     "margin": 0.05,
+     "within": false,
+     "outside": false
+    },
+    "NONE|self_dec": {
+     "n": 20,
+     "mean": 0.014437499999999997,
+     "ci90": [
+      -0.060588116879248595,
+      0.08946311687924859
+     ],
+     "sd": 0.1940422138519836,
+     "margin": 0.1,
+     "within": true,
+     "outside": false
+    },
+    "NONE|acc": {
+     "n": 20,
+     "mean": -0.021875,
+     "ci90": [
+      -0.10193612124471041,
+      0.05818612124471042
+     ],
+     "sd": 0.2070657710792191,
+     "margin": 0.1,
+     "within": false,
+     "outside": false
+    },
+    "NONE|brier": {
+     "n": 20,
+     "mean": -0.010735625000000009,
+     "ci90": [
+      -0.046725084085005,
+      0.02525383408500499
+     ],
+     "sd": 0.09308119821832908,
+     "margin": 0.05,
+     "within": true,
+     "outside": false
+    }
+   },
+   "diff": {
+    "self_dec": {
+     "n": 20,
+     "mean": 0.02700000000000003,
+     "ci90": [
+      -0.12501648932657952,
+      0.17901648932657957
+     ],
+     "sd": 0.3931672588365575,
+     "tol": 0.2,
+     "within": true
+    },
+    "acc": {
+     "n": 20,
+     "mean": -0.00625,
+     "ci90": [
+      -0.17383770275366003,
+      0.16133770275366002
+     ],
+     "sd": 0.43343980642007685,
+     "tol": 0.2,
+     "within": true
+    },
+    "brier": {
+     "n": 20,
+     "mean": 0.019768749999999995,
+     "ci90": [
+      -0.04847889829770708,
+      0.08801639829770708
+     ],
+     "sd": 0.1765120410431642,
+     "tol": 0.1,
+     "within": true
+    }
+   },
+   "flag": false
+  }
+ }
+}

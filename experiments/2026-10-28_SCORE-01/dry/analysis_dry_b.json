@@ -1024,7 +1024,7 @@
   "SC_opus|rep_opus": "подтверждено",
   "SD_opus|rep_opus": "подтверждено",
   "SL_opus|rep_opus": "не подтверждено",
-  "SA_haiku|main_haiku": "не показано (A/A: процедура различает одинаковые промпты)",
+  "SA_haiku|main_haiku": "подтверждено",
   "SB_haiku|main_haiku": "подтверждено",
   "SD_haiku|main_haiku": "опровергнуто",
   "SL_haiku|main_haiku": "не подтверждено",
@@ -1036,10 +1036,10 @@
  "status": {
   "SA_haiku": {
    "main": "подтверждено",
-   "main_reading": "не показано (A/A: процедура различает одинаковые промпты)",
+   "main_reading": "подтверждено",
    "rep": "подтверждено",
    "rep_reading": "подтверждено",
-   "status": "не показано (A/A: процедура различает одинаковые промпты); повтор: подтверждено"
+   "status": "установлено"
   },
   "SA_opus": {
    "main": "подтверждено",
@@ -1103,6 +1103,12 @@
    "n": 120,
    "skipped": 0,
    "skipped_jobs": [],
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "r_abs": 100.0,
+    "m_abs": 50.0
+   },
    "tasks": 20,
    "arms": [
     "LOG",
@@ -1120,21 +1126,33 @@
     "NONE": -125.30000000000342,
     "WIN": -7.550000000002939
    },
-   "thresholds": {
-    "r_max": 25.0,
-    "frac_max": 0.05,
-    "slope_max": 5.0
-   },
+   "abs_mean": -1.5158245029548805e-12,
+   "abs_sd": 21.522239167586292,
+   "abs_max": 51.03499266689232,
+   "n_abs_gt": 0,
+   "frac_abs_gt": 0.0,
    "flag": false,
+   "why": [],
    "journal": "run/pilot3_opus",
-   "streams": "../../.cache/score01_streams/pilot3_opus",
+   "jobs": "run/pilot3_jobs.jsonl",
    "config": {
     "home": "/tmp/neu_heads/home",
     "work_dir": "/tmp/neu_heads/work",
     "home_in_git": false,
     "work_dir_in_git": false,
     "git_instructions_off": true,
+    "n_init_files": 1,
+    "model": "claude-opus-5-5",
+    "config_sha_records": {
+     "e1f5b485ab30": 120
+    },
+    "config_sha_file": "e1f5b485ab30",
+    "config_same": true,
     "n_init": 1,
+    "cache_read": {
+     "886": 120
+    },
+    "from_stream": 0,
     "ok": true
    }
   },
@@ -1142,6 +1160,12 @@
    "n": 120,
    "skipped": 0,
    "skipped_jobs": [],
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "r_abs": 100.0,
+    "m_abs": 50.0
+   },
    "tasks": 20,
    "arms": [
     "LOG",
@@ -1159,21 +1183,33 @@
     "NONE": -125.30000000000342,
     "WIN": -7.550000000002939
    },
-   "thresholds": {
-    "r_max": 25.0,
-    "frac_max": 0.05,
-    "slope_max": 5.0
-   },
+   "abs_mean": -1.5158245029548805e-12,
+   "abs_sd": 21.522239167586292,
+   "abs_max": 51.03499266689232,
+   "n_abs_gt": 0,
+   "frac_abs_gt": 0.0,
    "flag": false,
+   "why": [],
    "journal": "run/pilot3_opus",
-   "streams": "../../.cache/score01_streams/pilot3_opus",
+   "jobs": "run/pilot3_jobs.jsonl",
    "config": {
     "home": "/tmp/neu_heads/home",
     "work_dir": "/tmp/neu_heads/work",
     "home_in_git": false,
     "work_dir_in_git": false,
     "git_instructions_off": true,
+    "n_init_files": 1,
+    "model": "claude-opus-5-5",
+    "config_sha_records": {
+     "e1f5b485ab30": 120
+    },
+    "config_sha_file": "e1f5b485ab30",
+    "config_same": true,
     "n_init": 1,
+    "cache_read": {
+     "886": 120
+    },
+    "from_stream": 0,
     "ok": true
    }
   },
@@ -1181,6 +1217,12 @@
    "n": 120,
    "skipped": 0,
    "skipped_jobs": [],
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "r_abs": 100.0,
+    "m_abs": 50.0
+   },
    "tasks": 20,
    "arms": [
     "LOG",
@@ -1198,21 +1240,33 @@
     "NONE": -123.30000000000454,
     "WIN": -6.900000000004596
    },
-   "thresholds": {
-    "r_max": 25.0,
-    "frac_max": 0.05,
-    "slope_max": 5.0
-   },
+   "abs_mean": -4.395891058569153e-12,
+   "abs_sd": 21.737114713824923,
+   "abs_max": 56.146448969548146,
+   "n_abs_gt": 0,
+   "frac_abs_gt": 0.0,
    "flag": false,
+   "why": [],
    "journal": "run/pilot3_haiku",
-   "streams": "../../.cache/score01_streams/pilot3_haiku",
+   "jobs": "run/pilot3_jobs.jsonl",
    "config": {
     "home": "/tmp/neu_heads/home",
     "work_dir": "/tmp/neu_heads/work",
     "home_in_git": false,
     "work_dir_in_git": false,
     "git_instructions_off": true,
+    "n_init_files": 1,
+    "model": "claude-haiku-5-5",
+    "config_sha_records": {
+     "96d38395701e": 120
+    },
+    "config_sha_file": "96d38395701e",
+    "config_same": true,
     "n_init": 1,
+    "cache_read": {
+     "886": 120
+    },
+    "from_stream": 0,
     "ok": true
    }
   },
@@ -1220,6 +1274,12 @@
    "n": 120,
    "skipped": 0,
    "skipped_jobs": [],
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "r_abs": 100.0,
+    "m_abs": 50.0
+   },
    "tasks": 20,
    "arms": [
     "LOG",
@@ -1237,21 +1297,33 @@
     "NONE": -123.30000000000454,
     "WIN": -6.900000000004596
    },
-   "thresholds": {
-    "r_max": 25.0,
-    "frac_max": 0.05,
-    "slope_max": 5.0
-   },
+   "abs_mean": -4.395891058569153e-12,
+   "abs_sd": 21.737114713824923,
+   "abs_max": 56.146448969548146,
+   "n_abs_gt": 0,
+   "frac_abs_gt": 0.0,
    "flag": false,
+   "why": [],
    "journal": "run/pilot3_haiku",
-   "streams": "../../.cache/score01_streams/pilot3_haiku",
+   "jobs": "run/pilot3_jobs.jsonl",
    "config": {
     "home": "/tmp/neu_heads/home",
     "work_dir": "/tmp/neu_heads/work",
     "home_in_git": false,
     "work_dir_in_git": false,
     "git_instructions_off": true,
+    "n_init_files": 1,
+    "model": "claude-haiku-5-5",
+    "config_sha_records": {
+     "96d38395701e": 120
+    },
+    "config_sha_file": "96d38395701e",
+    "config_same": true,
     "n_init": 1,
+    "cache_read": {
+     "886": 120
+    },
+    "from_stream": 0,
     "ok": true
    }
   }
@@ -1622,226 +1694,300 @@
  "hashes_ok": null,
  "aa": {
   "main_haiku": {
-   "LOG|self_dec": {
-    "n": 96,
-    "mean": 0.18447135416666668,
-    "ci90": [
-     0.1428567856153426,
-     0.22608592271799077
-    ],
-    "sd": 0.24546966628387173,
-    "margin": 0.1,
-    "within": false,
-    "outside": true
+   "arms": {
+    "LOG|self_dec": {
+     "n": 96,
+     "mean": 0.18447135416666668,
+     "ci90": [
+      0.1428567856153426,
+      0.22608592271799077
+     ],
+     "sd": 0.24546966628387173,
+     "margin": 0.1,
+     "within": false,
+     "outside": true
+    },
+    "LOG|acc": {
+     "n": 96,
+     "mean": -0.18098958333333334,
+     "ci90": [
+      -0.2210936296753419,
+      -0.14088553699132478
+     ],
+     "sd": 0.23655962839226755,
+     "margin": 0.1,
+     "within": false,
+     "outside": true
+    },
+    "LOG|brier": {
+     "n": 96,
+     "mean": 0.09367243229166666,
+     "ci90": [
+      0.07488804842714833,
+      0.112456816156185
+     ],
+     "sd": 0.11080245690603817,
+     "margin": 0.05,
+     "within": false,
+     "outside": true
+    },
+    "WIN|self_dec": {
+     "n": 93,
+     "mean": 0.1624986559139785,
+     "ci90": [
+      0.1188531750674586,
+      0.2061441367604984
+     ],
+     "sd": 0.2533133568481628,
+     "margin": 0.1,
+     "within": false,
+     "outside": true
+    },
+    "WIN|acc": {
+     "n": 93,
+     "mean": -0.16532258064516128,
+     "ci90": [
+      -0.20743974724541583,
+      -0.12320541404490673
+     ],
+     "sd": 0.24444319653530616,
+     "margin": 0.1,
+     "within": false,
+     "outside": true
+    },
+    "WIN|brier": {
+     "n": 93,
+     "mean": 0.08829584811827956,
+     "ci90": [
+      0.07025979464781212,
+      0.106331901588747
+     ],
+     "sd": 0.104679182363994,
+     "margin": 0.05,
+     "within": false,
+     "outside": true
+    },
+    "NONE|self_dec": {
+     "n": 93,
+     "mean": 0.1494260752688172,
+     "ci90": [
+      0.10807463807095156,
+      0.19077751246668284
+     ],
+     "sd": 0.23999899105069789,
+     "margin": 0.1,
+     "within": false,
+     "outside": true
+    },
+    "NONE|acc": {
+     "n": 93,
+     "mean": -0.16061827956989247,
+     "ci90": [
+      -0.20114164016333766,
+      -0.12009491897644728
+     ],
+     "sd": 0.2351929295679338,
+     "margin": 0.1,
+     "within": false,
+     "outside": true
+    },
+    "NONE|brier": {
+     "n": 93,
+     "mean": 0.09443786155913979,
+     "ci90": [
+      0.07590988844843063,
+      0.11296583466984894
+     ],
+     "sd": 0.1075342274443166,
+     "margin": 0.05,
+     "within": false,
+     "outside": true
+    }
    },
-   "LOG|acc": {
-    "n": 96,
-    "mean": -0.18098958333333334,
-    "ci90": [
-     -0.2210936296753419,
-     -0.14088553699132478
-    ],
-    "sd": 0.23655962839226755,
-    "margin": 0.1,
-    "within": false,
-    "outside": true
+   "diff": {
+    "self_dec": {
+     "n": 89,
+     "mean": -0.007946629213483148,
+     "ci90": [
+      -0.06975074081583495,
+      0.053857482388868644
+     ],
+     "sd": 0.3507428697557962,
+     "tol": 0.2,
+     "within": true
+    },
+    "acc": {
+     "n": 89,
+     "mean": 0.0028089887640449437,
+     "ci90": [
+      -0.05753289009616444,
+      0.06315086762425433
+     ],
+     "sd": 0.3424445916164758,
+     "tol": 0.2,
+     "within": true
+    },
+    "brier": {
+     "n": 89,
+     "mean": -0.001079126404494379,
+     "ci90": [
+      -0.028150105911328775,
+      0.025991853102340017
+     ],
+     "sd": 0.15362979570708915,
+     "tol": 0.1,
+     "within": true
+    }
    },
-   "LOG|brier": {
-    "n": 96,
-    "mean": 0.09367243229166666,
-    "ci90": [
-     0.07488804842714833,
-     0.112456816156185
-    ],
-    "sd": 0.11080245690603817,
-    "margin": 0.05,
-    "within": false,
-    "outside": true
-   },
-   "WIN|self_dec": {
-    "n": 93,
-    "mean": 0.1624986559139785,
-    "ci90": [
-     0.1188531750674586,
-     0.2061441367604984
-    ],
-    "sd": 0.2533133568481628,
-    "margin": 0.1,
-    "within": false,
-    "outside": true
-   },
-   "WIN|acc": {
-    "n": 93,
-    "mean": -0.16532258064516128,
-    "ci90": [
-     -0.20743974724541583,
-     -0.12320541404490673
-    ],
-    "sd": 0.24444319653530616,
-    "margin": 0.1,
-    "within": false,
-    "outside": true
-   },
-   "WIN|brier": {
-    "n": 93,
-    "mean": 0.08829584811827956,
-    "ci90": [
-     0.07025979464781212,
-     0.106331901588747
-    ],
-    "sd": 0.104679182363994,
-    "margin": 0.05,
-    "within": false,
-    "outside": true
-   },
-   "NONE|self_dec": {
-    "n": 93,
-    "mean": 0.1494260752688172,
-    "ci90": [
-     0.10807463807095156,
-     0.19077751246668284
-    ],
-    "sd": 0.23999899105069789,
-    "margin": 0.1,
-    "within": false,
-    "outside": true
-   },
-   "NONE|acc": {
-    "n": 93,
-    "mean": -0.16061827956989247,
-    "ci90": [
-     -0.20114164016333766,
-     -0.12009491897644728
-    ],
-    "sd": 0.2351929295679338,
-    "margin": 0.1,
-    "within": false,
-    "outside": true
-   },
-   "NONE|brier": {
-    "n": 93,
-    "mean": 0.09443786155913979,
-    "ci90": [
-     0.07590988844843063,
-     0.11296583466984894
-    ],
-    "sd": 0.1075342274443166,
-    "margin": 0.05,
-    "within": false,
-    "outside": true
-   },
-   "_gross_LOG_WIN": true
+   "flag": false
   },
   "rep_haiku": {
-   "LOG|self_dec": {
-    "n": 97,
-    "mean": -0.01004381443298969,
-    "ci90": [
-     -0.04805829478992265,
-     0.027970665923943268
-    ],
-    "sd": 0.22542199723261305,
-    "margin": 0.1,
-    "within": true,
-    "outside": false
+   "arms": {
+    "LOG|self_dec": {
+     "n": 97,
+     "mean": -0.01004381443298969,
+     "ci90": [
+      -0.04805829478992265,
+      0.027970665923943268
+     ],
+     "sd": 0.22542199723261305,
+     "margin": 0.1,
+     "within": true,
+     "outside": false
+    },
+    "LOG|acc": {
+     "n": 97,
+     "mean": 0.012242268041237113,
+     "ci90": [
+      -0.026322947402420575,
+      0.0508074834848948
+     ],
+     "sd": 0.22868780021163293,
+     "margin": 0.1,
+     "within": true,
+     "outside": false
+    },
+    "LOG|brier": {
+     "n": 97,
+     "mean": -0.007839247422680412,
+     "ci90": [
+      -0.024409155916701838,
+      0.008730661071341014
+     ],
+     "sd": 0.09825786993830975,
+     "margin": 0.05,
+     "within": true,
+     "outside": false
+    },
+    "WIN|self_dec": {
+     "n": 92,
+     "mean": 0.019418478260869565,
+     "ci90": [
+      -0.022641970628718117,
+      0.06147892715045725
+     ],
+     "sd": 0.24277088461302507,
+     "margin": 0.1,
+     "within": true,
+     "outside": false
+    },
+    "WIN|acc": {
+     "n": 92,
+     "mean": -0.01358695652173913,
+     "ci90": [
+      -0.05574897832870914,
+      0.028575065285230884
+     ],
+     "sd": 0.24335715859860155,
+     "margin": 0.1,
+     "within": true,
+     "outside": false
+    },
+    "WIN|brier": {
+     "n": 92,
+     "mean": -0.0049713124999999974,
+     "ci90": [
+      -0.02250648752737791,
+      0.012563862527377914
+     ],
+     "sd": 0.1012121854527952,
+     "margin": 0.05,
+     "within": true,
+     "outside": false
+    },
+    "NONE|self_dec": {
+     "n": 94,
+     "mean": -0.006371010638297885,
+     "ci90": [
+      -0.046983047762635635,
+      0.03424102648603987
+     ],
+     "sd": 0.23699737451766992,
+     "margin": 0.1,
+     "within": true,
+     "outside": false
+    },
+    "NONE|acc": {
+     "n": 94,
+     "mean": 0.008643617021276596,
+     "ci90": [
+      -0.03199817490130797,
+      0.049285408943861166
+     ],
+     "sd": 0.23717101291562095,
+     "margin": 0.1,
+     "within": true,
+     "outside": false
+    },
+    "NONE|brier": {
+     "n": 94,
+     "mean": 0.0021449029255319126,
+     "ci90": [
+      -0.013342707315582047,
+      0.017632513166645873
+     ],
+     "sd": 0.0903801735790627,
+     "margin": 0.05,
+     "within": true,
+     "outside": false
+    }
    },
-   "LOG|acc": {
-    "n": 97,
-    "mean": 0.012242268041237113,
-    "ci90": [
-     -0.026322947402420575,
-     0.0508074834848948
-    ],
-    "sd": 0.22868780021163293,
-    "margin": 0.1,
-    "within": true,
-    "outside": false
+   "diff": {
+    "self_dec": {
+     "n": 90,
+     "mean": 0.037768055555555555,
+     "ci90": [
+      -0.011537224974416525,
+      0.08707333608552764
+     ],
+     "sd": 0.28141230495414304,
+     "tol": 0.2,
+     "within": true
+    },
+    "acc": {
+     "n": 90,
+     "mean": -0.035416666666666666,
+     "ci90": [
+      -0.08633206954946036,
+      0.015498736216127032
+     ],
+     "sd": 0.2906021571909695,
+     "tol": 0.2,
+     "within": true
+    },
+    "brier": {
+     "n": 90,
+     "mean": 0.006852904166666668,
+     "ci90": [
+      -0.016498280518882504,
+      0.030204088852215843
+     ],
+     "sd": 0.1332780309763304,
+     "tol": 0.1,
+     "within": true
+    }
    },
-   "LOG|brier": {
-    "n": 97,
-    "mean": -0.007839247422680412,
-    "ci90": [
-     -0.024409155916701838,
-     0.008730661071341014
-    ],
-    "sd": 0.09825786993830975,
-    "margin": 0.05,
-    "within": true,
-    "outside": false
-   },
-   "WIN|self_dec": {
-    "n": 92,
-    "mean": 0.019418478260869565,
-    "ci90": [
-     -0.022641970628718117,
-     0.06147892715045725
-    ],
-    "sd": 0.24277088461302507,
-    "margin": 0.1,
-    "within": true,
-    "outside": false
-   },
-   "WIN|acc": {
-    "n": 92,
-    "mean": -0.01358695652173913,
-    "ci90": [
-     -0.05574897832870914,
-     0.028575065285230884
-    ],
-    "sd": 0.24335715859860155,
-    "margin": 0.1,
-    "within": true,
-    "outside": false
-   },
-   "WIN|brier": {
-    "n": 92,
-    "mean": -0.0049713124999999974,
-    "ci90": [
-     -0.02250648752737791,
-     0.012563862527377914
-    ],
-    "sd": 0.1012121854527952,
-    "margin": 0.05,
-    "within": true,
-    "outside": false
-   },
-   "NONE|self_dec": {
-    "n": 94,
-    "mean": -0.006371010638297885,
-    "ci90": [
-     -0.046983047762635635,
-     0.03424102648603987
-    ],
-    "sd": 0.23699737451766992,
-    "margin": 0.1,
-    "within": true,
-    "outside": false
-   },
-   "NONE|acc": {
-    "n": 94,
-    "mean": 0.008643617021276596,
-    "ci90": [
-     -0.03199817490130797,
-     0.049285408943861166
-    ],
-    "sd": 0.23717101291562095,
-    "margin": 0.1,
-    "within": true,
-    "outside": false
-   },
-   "NONE|brier": {
-    "n": 94,
-    "mean": 0.0021449029255319126,
-    "ci90": [
-     -0.013342707315582047,
-     0.017632513166645873
-    ],
-    "sd": 0.0903801735790627,
-    "margin": 0.05,
-    "within": true,
-    "outside": false
-   },
-   "_gross_LOG_WIN": false
+   "flag": false
   }
  }
 }

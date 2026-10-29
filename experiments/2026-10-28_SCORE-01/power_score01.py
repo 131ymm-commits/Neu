@@ -10,10 +10,12 @@
   или среднем около допуска бутстреп выше точки (LENSES-1b, N3), так что «в точке» — не верхняя оценка;
   «с неопределённостью пилота» — двухуровневый бутстреп (как у проверяльщика, lenses/scripts/assurance.py): пилотные задачи
   пересэмплируются, затем тест из n задач по букве анализа; так же — совместно для сводных.
-Встроенный A/A у Haiku (чтение §4): в том же бутстрепе — доля, в которой 90 % интервалы «повтор 1 − повтор 0» рук LOG и WIN по
-самообману, точности и Брайеру все внутри допусков SA (±0,1, ±0,1, ±0,05; описательно), доля, в которой хоть один интервал целиком
-вне допуска (флаг чтения §4), и доля, в которой SA_haiku подтверждён без флага A/A; ложный флаг при нулевой разнице повторов —
-одноуровневый бутстреп центрированных значений A/A пилота (истинная разность 0, разброс пилота).
+Встроенный A/A у Haiku (чтение §4; LENSES-1c П3). В том же бутстрепе, в мире исправной процедуры: A/A и разность A/A между руками
+центрированы внутри каждого мира бутстрепа (E = 0: повторы — один промпт в случайном порядке). Считаются:
+  dflag0 — флаг правила §4 (90 % интервал разности A/A между руками (WIN|1 − WIN|0) − (LOG|1 − LOG|0) хоть по одной мере не внутри
+  ±2δ) — ложный флаг; sa_ok0 — SA_haiku подтверждён без флага; power_<мера> — флаг при артефакте одного повтора одной руки
+  a = 2δ по этой мере (смещает SA на δ); strict0 и sa_strict0 — строгое правило по рукам (все интервалы A/A внутри δ; предлагал
+  LENSES-1b) и SA_haiku вместе с ним, для записи. sd_ratio — SD A/A одной руки к SD WIN − LOG (среднее двух повторов) по пилоту.
 Ложный уровень — на границе: 0,025 у направленного (истинное среднее 0), 0,05 у эквивалентности (истинная разность ±δ).
 Вес (правило 9962627 «по нижней», LENSES-1b N3): P = меньшая из мощностей «в точке» и «с неопределённостью пилота»;
   «подтверждено» — log₂(P / α), α не меньше 0,001; «опровергнуто» — log₂((1 − P)/(1 − α)), 1 − P не меньше 0,001; «не показано» — 0.
@@ -29,7 +31,7 @@ from scipy import stats
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from analyze_score01 import AA_MARGIN, PRED, REPS, value, weights  # noqa: E402
+from analyze_score01 import AA_D_FACTOR, AA_MARGIN, PRED, REPS, value, weights  # noqa: E402
 
 N_TEST = 100
 FLOOR = 0.001
@@ -115,8 +117,12 @@ def assurance(model, rng, B, n=N_TEST):
     aa = len(REPS[model]) > 1
     if aa:
         aa_keys, AA = aa_values(model)
-        aa_hits = gross_hits = sa_ok_hits = 0
+        ms = list(AA_MARGIN)
+        D = np.stack([AA[:, aa_keys.index(('WIN', m))] - AA[:, aa_keys.index(('LOG', m))] for m in ms], 1)
+        tol = [AA_D_FACTOR * AA_MARGIN[m] for m in ms]
+        cnt = dict(dflag0=0, sa_ok0=0, strict0=0, sa_strict0=0, **{f'power_{m}': 0 for m in ms})
         sa_j = [j for j, p in enumerate(ps) if p['comp'] == f'SA_{model}']
+        inside = lambda Y, tl: all(_ci_pos(Y[:, k], 0.95, tl[k])[0] for k in range(Y.shape[1]))
     for _ in range(B):
         base = rng.integers(0, K, K)                              # пилот пересэмплирован: истина неизвестна
         idx = base[rng.integers(0, K, n)]
@@ -125,20 +131,24 @@ def assurance(model, rng, B, n=N_TEST):
         hits += okv
         for c in comps:
             chits[c] += all(okv[j] for j, p in enumerate(ps) if p['comp'] == c)
-        if aa:
-            A_ = AA[idx]
-            pos = [_ci_pos(A_[:, k], 0.95, AA_MARGIN[m]) for k, (_, m) in enumerate(aa_keys)]
-            aa_hits += all(w for w, _ in pos)
-            gross = any(o for _, o in pos)
-            gross_hits += gross
-            sa_ok_hits += (not gross) and all(okv[j] for j in sa_j)
+        if aa:                                                    # мир исправной процедуры: E[A/A] = 0 внутри мира
+            A0 = AA[idx] - np.nanmean(AA[base], 0)
+            D0 = D[idx] - np.nanmean(D[base], 0)
+            sa_ok = all(okv[j] for j in sa_j)
+            fl = not inside(D0, tol)
+            cnt['dflag0'] += fl; cnt['sa_ok0'] += sa_ok and not fl
+            st_ = inside(A0, [AA_MARGIN[m] for _, m in aa_keys])
+            cnt['strict0'] += st_; cnt['sa_strict0'] += sa_ok and st_
+            for k, m in enumerate(ms):                            # артефакт одного повтора одной руки: a = 2δ по мере m
+                Da = D0.copy(); Da[:, k] += tol[k]
+                cnt[f'power_{m}'] += not inside(Da, tol)
     extra = None
     if aa:
-        Z = AA - np.nanmean(AA, 0); null_hits = 0               # ложный флаг: разницы повторов нет, только шум теста
-        for _ in range(B):
-            Zi = Z[rng.integers(0, K, n)]
-            null_hits += any(_ci_pos(Zi[:, k], 0.95, AA_MARGIN[m])[1] for k, (_, m) in enumerate(aa_keys))
-        extra = dict(aa_within_all=aa_hits / B, aa_gross=gross_hits / B, SA_without_gross=sa_ok_hits / B, aa_gross_null=null_hits / B)
+        extra = {k: v / B for k, v in cnt.items()}
+        ja = {m: next(j for j, p in enumerate(ps) if p['comp'] == f'SA_{model}' and p['measure'] == m) for m in ms}
+        sa_vals = {m: np.concatenate([v[:, ja[m]] for v in per_task]) for m in ms}
+        extra['sd_ratio'] = {f'{a}|{m}': float(np.nanstd(AA[:, aa_keys.index((a, m))], ddof=1) / np.nanstd(sa_vals[m], ddof=1))
+                             for a in ('LOG', 'WIN') for m in ms}
     return {p['id']: hits[j] / B for j, p in enumerate(ps)}, {c: v / B for c, v in chits.items()}, ps, per_task, extra
 
 
@@ -195,9 +205,14 @@ def md_table(out):
         L.append(f"| {c} | {', '.join(v['parts'])} | {f(v['alpha'])} | {f(v['power_point_product'])} | {f(v['power_assurance_joint'])} | "
                  f"{f(v['bits'], 1)} / {f(v['bits_refuted'], 1)} |")
     for m, v in out.get('aa', {}).items():
-        L += ['', f"- Встроенный A/A ({m}, бутстреп пилота 3): все шесть интервалов LOG и WIN внутри допусков SA — в доле {f(v['aa_within_all'])}; "
-                  f"хоть один целиком вне допуска (флаг чтения §4) — {f(v['aa_gross'])}; SA_{m} подтверждён без флага — {f(v['SA_without_gross'])} "
-                  f"(без условия A/A — {f(out['comps'][f'SA_{m}']['power_assurance_joint'])}); ложный флаг при нулевой разнице повторов — {f(v['aa_gross_null'], 4)}."]
+        r = v['sd_ratio']
+        L += ['', f"- **Встроенный A/A ({m})** — бутстреп пилота 3 в мире исправной процедуры (A/A центрированы, E = 0):",
+              f"  - флаг правила §4 (разность A/A между руками вне ±2δ) — ложный в доле {f(v['dflag0'])}; SA_{m} подтверждён без флага — "
+              f"{f(v['sa_ok0'])} (без условия A/A — {f(out['comps'][f'SA_{m}']['power_assurance_joint'])});",
+              f"  - артефакт одного повтора одной руки, смещающий SA на δ, флаг ловит в доле: самообман {f(v['power_self_dec'])}, точность "
+              f"{f(v['power_acc'])}, Брайер {f(v['power_brier'])};",
+              f"  - строгое правило по рукам (все интервалы A/A внутри δ) выполнено в {f(v['strict0'])}, SA_{m} вместе с ним — {f(v['sa_strict0'])};",
+              f"  - SD A/A одной руки к SD разности WIN − LOG (среднее двух повторов) по пилоту 3 — от {f(min(r.values()), 2)} до {f(max(r.values()), 2)}."]
     return '\n'.join(L)
 
 

@@ -2,9 +2,10 @@
 """SCORE-01, сухой прогон цепочки: заглушка выгрузки run_sealed2 (формат export) для выборки, рук и повторов.
 Ответ заглушки: p = σ(a_руки · z(правда) + шум) — навык a_руки задаётся, чтобы проверить, что анализ видит заложенный эффект;
 задаются доля негодных/потерянных ответов, число повторов на клетку и число задач без единой записи (как задания,
-у которых итога нет и которые export не выгружает), и сдвиг навыка во втором вызове клетки (A/A не проходит; LENSES-1b, N19).
+у которых итога нет и которые export не выгружает), и сдвиг навыка по повторам: во втором вызове (общий сдвиг повторов) или,
+для одной руки, ±сдвиг в двух вызовах (артефакт повтора, который различает руки, но среднее руки не меняет; LENSES-1c П3).
 Головы не вызываются.
-  python3 dry/make_stub.py <выборка> <руки через запятую> <a через запятую> <выход.jsonl> [доля_потерь] [зерно] [повторов] [задач_без_записи] [сдвиг_a_повтора_1]"""
+  python3 dry/make_stub.py <выборка> <руки через запятую> <a через запятую> <выход.jsonl> [доля_потерь] [зерно] [повторов] [задач_без_записи] [сдвиг] [рука сдвига|all] [one|pm]"""
 import json
 import math
 import os
@@ -21,6 +22,8 @@ rng = random.Random(int(sys.argv[6]) if len(sys.argv) > 6 else 1)
 nrep = int(sys.argv[7]) if len(sys.argv) > 7 else 1
 n_drop = int(sys.argv[8]) if len(sys.argv) > 8 else 0
 shift1 = float(sys.argv[9]) if len(sys.argv) > 9 else 0.0
+shift_arm = sys.argv[10] if len(sys.argv) > 10 else 'all'
+shift_mode = sys.argv[11] if len(sys.argv) > 11 else 'one'   # one — сдвиг повтора 1; pm — повтор 0 −сдвиг, повтор 1 +сдвиг
 tru = json.load(open(os.path.join(HERE, 'truth', f'{sample}.json')))['tasks']
 tasks = S.sample_tasks(sample)
 drop = set(rng.sample(tasks, n_drop)) if n_drop else set()
@@ -41,7 +44,8 @@ with open(out, 'w', encoding='utf-8') as fh:
                     fh.write(json.dumps(dict(id=jid, result={'p': [0.5] * 7}, inp=6000, out=2000, cost_usd=0.07), ensure_ascii=False) + '\n')
                     continue
                 # показанный кандидат i — это кандидат пула pm[i]
-                a_ = a + (shift1 if rep == 1 else 0.0)
+                hit = shift_arm in ('all', arm)
+                a_ = a + (0.0 if not hit else (shift1 if rep == 1 else 0.0) if shift_mode == 'one' else (shift1 if rep == 1 else -shift1))
                 p = [round(1 / (1 + math.exp(-(a_ * (tr[pm[i]] - m) / sd + rng.gauss(0, 1)))), 3) for i in range(8)]
                 fh.write(json.dumps(dict(id=jid, result={'p': p}, inp=6000, out=2000 + int(500 * a), cost_usd=0.07), ensure_ascii=False) + '\n')
 print('заглушка:', out, 'задач без записи:', len(drop))

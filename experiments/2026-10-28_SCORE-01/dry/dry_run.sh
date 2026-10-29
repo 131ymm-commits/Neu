@@ -4,13 +4,16 @@
 #   ветка A: потери и задачи без записи (Opus main — «не показано (потери)»), флаг контекста на rep_haiku (копия проверки
 #            загрязнённого пилота 2) → чтение «не показано (контекст)»;
 #   ветка B: Opus без потерь → статусы «установлено» и «подтверждено (повторено; причина не проверялась)»; у Haiku main навык
-#            второго вызова сдвинут → A/A не проходит → SA_haiku читается «не показано (A/A …)»;
+#            второго вызова сдвинут у всех рук (общий сдвиг повторов) → SA он не смещает, флага A/A нет;
+#   ветка C: у Haiku main навык WIN — ±0,6 в двух вызовах (артефакт повтора, различающий руки; среднее руки то же) →
+#            флаг A/A → SA_haiku читается «не показано (A/A …)»;
+#   проверка контекста по журналам (LENSES-1c, З6): анализ чистого пилота 3 — флага нет; пилоты 1–2 со снимком git — флаг;
 #   сверка хешей и покрытия — в копии опыта (prereg_hashes.json пишется только там; временные файлы — там же и удаляются).
 set -euo pipefail
 cd "$(dirname "$0")/.."
 EXP=$(pwd)
 STAGES=main_opus,rep_opus,main_haiku,rep_haiku
-mkdir -p dry/evals dry/evals_b dry/ctx dry/ctx_ok
+mkdir -p dry/evals dry/evals_b dry/evals_c dry/ctx dry/ctx_ok
 # 0) проверки контекста этапов — копии калибровки на пилотах (run/pilot_ctx_stage_*.json): чистый пилот 3, загрязнённый пилот 2
 cp run/pilot_ctx_stage_pilot3_opus.json dry/ctx/ctx_main_opus.json
 cp run/pilot_ctx_stage_pilot3_opus.json dry/ctx/ctx_rep_opus.json
@@ -28,6 +31,9 @@ python3 dry/make_stub.py main LOG,WIN,NONE 0.45,0.45,0.0 dry/stub_b_main_opus.js
 python3 dry/make_stub.py rep LOG,WIN,NONE 0.45,0.45,0.0 dry/stub_b_rep_opus.jsonl 0.0 22 1 0
 python3 dry/make_stub.py main LOG,WIN,NONE 0.3,0.3,0.5 dry/stub_b_main_haiku.jsonl 0.03 23 2 0 -0.6
 python3 dry/make_stub.py rep LOG,WIN,NONE 0.3,0.3,0.5 dry/stub_b_rep_haiku.jsonl 0.03 24 2 0
+# ветка C: Haiku main — артефакт повтора у одной руки
+python3 dry/make_stub.py main LOG,WIN,NONE 0.3,0.3,0.5 dry/stub_c_main_haiku.jsonl 0.03 25 2 0 0.6 WIN pm
+python3 dry/make_stub.py rep LOG,WIN,NONE 0.3,0.3,0.5 dry/stub_c_rep_haiku.jsonl 0.03 26 2 0
 # 2) меры (метки по 4000 реализациям) → dry/evals*/<этап>.json
 mk() {  # $1 — этап, $2 — заглушка, $3 — папка evals
   local sample=${1%%_*}
@@ -43,9 +49,16 @@ for st in main_opus rep_opus main_haiku rep_haiku; do
   mk $st dry/stub_$st.jsonl dry/evals
   mk $st dry/stub_b_$st.jsonl dry/evals_b
 done
+for st in main_haiku rep_haiku; do mk $st dry/stub_c_$st.jsonl dry/evals_c; done
 # 3) анализ без сверки хешей (в рабочей папке опыта)
 python3 analyze_score01.py --stages $STAGES --evals dry/evals --ctx-json dry/ctx --out dry/analysis_dry.json --no-check | tee dry/dry_analysis.log
 python3 analyze_score01.py --stages $STAGES --evals dry/evals_b --ctx-json dry/ctx_ok --out dry/analysis_dry_b.json --no-check | tee dry/dry_analysis_b.log
+python3 analyze_score01.py --stages main_haiku,rep_haiku --evals dry/evals_c --ctx-json dry/ctx_ok --out dry/analysis_dry_c.json --no-check | tee dry/dry_analysis_c.log
+# 3б) проверка контекста по журналам, без готовых json
+python3 analyze_score01.py --stages pilot3_opus,pilot3_haiku --no-check --out dry/analysis_pilot3_ctx.json | grep -E "контекст|флаг A/A" | tee dry/dry_ctx_journal.log
+for st in pilot1_opus pilot1_haiku pilot2_opus pilot2_haiku; do
+  python3 ctx_check.py --journal run/$st --jobs run/${st%%_*}_jobs.jsonl | python3 -c "import json, sys; d = json.load(sys.stdin); print('$st: флаг', d['flag'], '|', '; '.join(d['why']))" | tee -a dry/dry_ctx_journal.log
+done
 # 4) сверка хешей и покрытия — в копии опыта: хеши пишутся там, задания берутся настоящие (jobs/)
 TMP=$(mktemp -d)
 mkdir -p "$TMP/experiments" "$TMP/tools"

@@ -637,10 +637,21 @@
  },
  "aa": {
   "haiku": {
-   "aa_within_all": 0.0875,
-   "aa_gross": 0.34125,
-   "SA_without_gross": 0.198,
-   "aa_gross_null": 0.0
+   "dflag0": 0.00825,
+   "sa_ok0": 0.31525,
+   "strict0": 0.87375,
+   "sa_strict0": 0.27775,
+   "power_self_dec": 0.946,
+   "power_acc": 0.96075,
+   "power_brier": 0.9435,
+   "sd_ratio": {
+    "LOG|self_dec": 1.6633001172834605,
+    "LOG|acc": 1.7593582007197595,
+    "LOG|brier": 1.6011821765901788,
+    "WIN|self_dec": 1.590261986657558,
+    "WIN|acc": 1.6164333042043935,
+    "WIN|brier": 1.8541659411073337
+   }
   }
  }
 }

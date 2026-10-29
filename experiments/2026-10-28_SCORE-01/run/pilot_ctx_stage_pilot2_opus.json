@@ -2,6 +2,12 @@
  "n": 60,
  "skipped": 0,
  "skipped_jobs": [],
+ "thresholds": {
+  "r_max": 25.0,
+  "frac_max": 0.05,
+  "r_abs": 100.0,
+  "m_abs": 50.0
+ },
  "tasks": 20,
  "arms": [
   "LOG",
@@ -19,21 +25,38 @@
   "NONE": -153.4000000000086,
   "WIN": -3.9500000000087816
  },
- "thresholds": {
-  "r_max": 25.0,
-  "frac_max": 0.05,
-  "slope_max": 5.0
- },
+ "abs_mean": 961.4333333333317,
+ "abs_sd": 174.79116527103037,
+ "abs_max": 1369.299412594265,
+ "n_abs_gt": 60,
+ "frac_abs_gt": 1.0,
  "flag": true,
+ "why": [
+  "вход меняется внутри задачи: |остаток| > 25 у 22 из 60",
+  "средний вход выше линии пилота 3 на 961 токенов",
+  "|остаток против линии пилота 3| > 100 у 60 из 60",
+  "конфигурация голов не та"
+ ],
  "journal": "run/pilot2_opus",
- "streams": "../../.cache/score01_streams/pilot2_opus",
+ "jobs": "run/pilot2_jobs.jsonl",
  "config": {
   "home": "/home/claude/neu/.cache/claude-cli/home",
   "work_dir": "/home/claude/neu/.cache/claude-cli/work",
   "home_in_git": true,
   "work_dir_in_git": true,
   "git_instructions_off": false,
+  "n_init_files": 1,
+  "model": "claude-opus-5-5",
+  "config_sha_records": {
+   "2993f4ed7a1e": 60
+  },
+  "config_sha_file": "2993f4ed7a1e",
+  "config_same": true,
   "n_init": 1,
+  "cache_read": {
+   "2313": 60
+  },
+  "from_stream": 0,
   "ok": false
  }
 }

@@ -19,6 +19,7 @@ FILES = ['prompts_score.py', 'score01.py', 'score01_lib.py', 'analyze_score01.py
          'evals/pilot0_opus.json', 'evals/pilot0_haiku.json', 'evals/pilot1_opus.json', 'evals/pilot1_haiku.json',
          'evals/pilot12_opus.json', 'evals/pilot12_haiku.json', 'evals/pilot3_opus.json', 'evals/pilot3_haiku.json',
          'pilot_power.json', 'pilot12_power.json', 'pilot12_power_single.json', 'run/pilot_ctxcheck.log',
+         'ctx_line_calib.py', 'run/pilot_ctx_line.json', 'run/pilot1_jobs.jsonl', 'run/pilot2_jobs.jsonl', 'run/pilot3_jobs.jsonl',
          *[f'run/pilot_ctx_stage_{p}_{m}.json' for p in ('pilot1', 'pilot2', 'pilot3') for m in ('opus', 'haiku')],
          '../../tools/run_sealed2.py', '../2026-10-07_SELECT-01/sim.py']
 SELECT = os.path.join(HERE, '..', '2026-10-07_SELECT-01')

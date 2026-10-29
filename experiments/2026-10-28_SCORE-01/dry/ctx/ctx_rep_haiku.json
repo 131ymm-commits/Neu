@@ -2,6 +2,12 @@
  "n": 60,
  "skipped": 0,
  "skipped_jobs": [],
+ "thresholds": {
+  "r_max": 25.0,
+  "frac_max": 0.05,
+  "r_abs": 100.0,
+  "m_abs": 50.0
+ },
  "tasks": 20,
  "arms": [
   "LOG",
@@ -19,21 +25,38 @@
   "NONE": -132.55000000000226,
   "WIN": 33.14999999999575
  },
- "thresholds": {
-  "r_max": 25.0,
-  "frac_max": 0.05,
-  "slope_max": 5.0
- },
+ "abs_mean": 1167.1666666666622,
+ "abs_sd": 384.551262161457,
+ "abs_max": 1920.645169379416,
+ "n_abs_gt": 60,
+ "frac_abs_gt": 1.0,
  "flag": true,
+ "why": [
+  "вход меняется внутри задачи: |остаток| > 25 у 34 из 60",
+  "средний вход выше линии пилота 3 на 1167 токенов",
+  "|остаток против линии пилота 3| > 100 у 60 из 60",
+  "конфигурация голов не та"
+ ],
  "journal": "run/pilot2_haiku",
- "streams": "../../.cache/score01_streams/pilot2_haiku",
+ "jobs": "run/pilot2_jobs.jsonl",
  "config": {
   "home": "/home/claude/neu/.cache/claude-cli/home",
   "work_dir": "/home/claude/neu/.cache/claude-cli/work",
   "home_in_git": true,
   "work_dir_in_git": true,
   "git_instructions_off": false,
+  "n_init_files": 1,
+  "model": "claude-haiku-5-5",
+  "config_sha_records": {
+   "2dfad07030da": 60
+  },
+  "config_sha_file": "2dfad07030da",
+  "config_same": true,
   "n_init": 1,
+  "cache_read": {
+   "3093": 60
+  },
+  "from_stream": 0,
   "ok": false
  }
 }
