@@ -1,0 +1,59 @@
+{
+ "n": 300,
+ "skipped": 0,
+ "skipped_jobs": [],
+ "thresholds": {
+  "r_max": 25.0,
+  "frac_max": 0.05,
+  "r_abs": 100.0,
+  "m_abs": 50.0
+ },
+ "tasks": 100,
+ "arms": [
+  "LOG",
+  "NONE",
+  "WIN"
+ ],
+ "max_abs_resid": 10.559999999997672,
+ "sd_resid": 3.947357045887109,
+ "n_resid_gt": 0,
+ "frac_resid_gt": 0.0,
+ "slope_per_hour": 0.0121054455947482,
+ "span_hours": 1.907500000030268,
+ "arm_effect_vs_first": {
+  "LOG": 0.0,
+  "NONE": -126.12000000000428,
+  "WIN": -8.220000000003228
+ },
+ "abs_mean": -3.256555693488417,
+ "abs_sd": 21.902049622146652,
+ "abs_max": 54.746110796855646,
+ "n_abs_gt": 0,
+ "frac_abs_gt": 0.0,
+ "flag": false,
+ "why": [],
+ "journal": "run/main_opus",
+ "jobs": "jobs/main_opus_jobs.jsonl",
+ "config": {
+  "home": "/tmp/neu_heads/home",
+  "work_dir": "/tmp/neu_heads/work",
+  "home_in_git": false,
+  "work_dir_in_git": false,
+  "git_instructions_off": true,
+  "n_init_files": 1,
+  "model": "claude-opus-5-5",
+  "config_sha_records": {
+   "40c6320de633": 300
+  },
+  "config_sha_file": "40c6320de633",
+  "config_same": true,
+  "n_init": 1,
+  "n_records_without_init": 0,
+  "cache_read": {
+   "0": 2,
+   "886": 298
+  },
+  "from_stream": 0,
+  "ok": true
+ }
+}

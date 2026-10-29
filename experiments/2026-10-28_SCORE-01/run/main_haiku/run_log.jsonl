@@ -288,3 +288,12 @@
 {"arm": "NONE", "at": "2026-10-29T09:20:38+00:00", "attempt": 1, "event": "вызов", "job": "WH_8048|NONE|1", "role": "основной", "task": "WH_8048", "поток": "WH_8048_NONE_1-f92a4536.a001.osn.jsonl.gz"}
 {"arm": "WIN", "at": "2026-10-29T09:20:38+00:00", "attempt": 1, "event": "вызов", "job": "WH_8048|WIN|1", "role": "основной", "task": "WH_8048", "поток": "WH_8048_WIN_1-4ff7c80d.a001.osn.jsonl.gz"}
 {"arm": "WIN", "at": "2026-10-29T09:20:38+00:00", "attempt": 1, "event": "вызов", "job": "WH_8048|WIN|0", "role": "основной", "task": "WH_8048", "поток": "WH_8048_WIN_0-d219a299.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T09:21:53+00:00", "attempt": 1, "event": "вызов", "job": "WH_8048|LOG|0", "role": "основной", "task": "WH_8048", "поток": "WH_8048_LOG_0-968cd904.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T09:21:54+00:00", "attempt": 1, "event": "вызов", "job": "WH_8048|LOG|1", "role": "основной", "task": "WH_8048", "поток": "WH_8048_LOG_1-c2da4aaa.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T09:22:02+00:00", "attempt": 1, "event": "вызов", "job": "WH_8048|NONE|0", "role": "основной", "task": "WH_8048", "поток": "WH_8048_NONE_0-9b49af31.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T09:22:22+00:00", "attempt": 1, "event": "вызов", "job": "WH_8049|NONE|0", "role": "основной", "task": "WH_8049", "поток": "WH_8049_NONE_0-da2c9754.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T09:22:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8049|LOG|0", "role": "основной", "task": "WH_8049", "поток": "WH_8049_LOG_0-36c5dd18.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T09:23:56+00:00", "attempt": 1, "event": "вызов", "job": "WH_8049|NONE|1", "role": "основной", "task": "WH_8049", "поток": "WH_8049_NONE_1-9193c2c9.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T09:24:33+00:00", "attempt": 1, "event": "вызов", "job": "WH_8049|LOG|1", "role": "основной", "task": "WH_8049", "поток": "WH_8049_LOG_1-7dcb39b2.a001.osn.jsonl.gz"}
+{"arm": "WIN", "at": "2026-10-29T09:24:37+00:00", "attempt": 1, "event": "вызов", "job": "WH_8049|WIN|1", "role": "основной", "task": "WH_8049", "поток": "WH_8049_WIN_1-63493903.a001.osn.jsonl.gz"}
+{"arm": "WIN", "at": "2026-10-29T09:24:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8049|WIN|0", "role": "основной", "task": "WH_8049", "поток": "WH_8049_WIN_0-5ff66eae.a001.osn.jsonl.gz"}
