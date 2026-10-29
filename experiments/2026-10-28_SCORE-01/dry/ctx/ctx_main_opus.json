@@ -1,0 +1,39 @@
+{
+ "n": 120,
+ "skipped": 0,
+ "skipped_jobs": [],
+ "tasks": 20,
+ "arms": [
+  "LOG",
+  "NONE",
+  "WIN"
+ ],
+ "max_abs_resid": 11.283333333333758,
+ "sd_resid": 4.274804039933518,
+ "n_resid_gt": 0,
+ "frac_resid_gt": 0.0,
+ "slope_per_hour": 0.12630601875765518,
+ "span_hours": 0.5441666666301899,
+ "arm_effect_vs_first": {
+  "LOG": 0.0,
+  "NONE": -125.30000000000342,
+  "WIN": -7.550000000002939
+ },
+ "thresholds": {
+  "r_max": 25.0,
+  "frac_max": 0.05,
+  "slope_max": 5.0
+ },
+ "flag": false,
+ "journal": "run/pilot3_opus",
+ "streams": "../../.cache/score01_streams/pilot3_opus",
+ "config": {
+  "home": "/tmp/neu_heads/home",
+  "work_dir": "/tmp/neu_heads/work",
+  "home_in_git": false,
+  "work_dir_in_git": false,
+  "git_instructions_off": true,
+  "n_init": 1,
+  "ok": true
+ }
+}

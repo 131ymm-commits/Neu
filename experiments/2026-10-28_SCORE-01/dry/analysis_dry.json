@@ -643,7 +643,8 @@
    ],
    "sd": 0.17307990699756223,
    "margin": 0.1,
-   "p_perm_two_sided": 0.34165658343416566
+   "p_perm_two_sided": 0.34165658343416566,
+   "reading": "не показано (контекст)"
   },
   "H2|rep_haiku": {
    "outcome": "подтверждено",
@@ -660,7 +661,8 @@
    ],
    "sd": 0.17188685867337594,
    "margin": 0.1,
-   "p_perm_two_sided": 0.26019739802601977
+   "p_perm_two_sided": 0.26019739802601977,
+   "reading": "не показано (контекст)"
   },
   "H3|rep_haiku": {
    "outcome": "подтверждено",
@@ -677,7 +679,8 @@
    ],
    "sd": 0.07447325372266596,
    "margin": 0.05,
-   "p_perm_two_sided": 0.22535774642253578
+   "p_perm_two_sided": 0.22535774642253578,
+   "reading": "не показано (контекст)"
   },
   "H4|rep_haiku": {
    "outcome": "подтверждено",
@@ -689,7 +692,8 @@
     0.10683271849660267
    ],
    "sd": 0.12455882436026001,
-   "p_perm_two_sided": null
+   "p_perm_two_sided": null,
+   "reading": "не показано (контекст)"
   },
   "H5|rep_haiku": {
    "outcome": "подтверждено",
@@ -701,7 +705,8 @@
     0.12121141161077553
    ],
    "sd": 0.11365696662491746,
-   "p_perm_two_sided": null
+   "p_perm_two_sided": null,
+   "reading": "не показано (контекст)"
   },
   "H6|rep_haiku": {
    "outcome": "подтверждено",
@@ -713,7 +718,8 @@
     0.07214706339985073
    ],
    "sd": 0.11426493848562667,
-   "p_perm_two_sided": null
+   "p_perm_two_sided": null,
+   "reading": "не показано (контекст)"
   },
   "H8|rep_haiku": {
    "outcome": "опровергнуто",
@@ -725,7 +731,8 @@
     -100.0
    ],
    "sd": 0.0,
-   "p_perm_two_sided": 9.99990000099999e-06
+   "p_perm_two_sided": 9.99990000099999e-06,
+   "reading": "не показано (контекст)"
   },
   "H9|rep_haiku": {
    "outcome": "не показано",
@@ -737,7 +744,8 @@
     0.0
    ],
    "sd": 0.0,
-   "p_perm_two_sided": 1.0
+   "p_perm_two_sided": 1.0,
+   "reading": "не показано (контекст)"
   },
   "H7|rep_haiku": {
    "outcome": "опровергнуто",
@@ -749,7 +757,8 @@
     -0.02852433210714508
    ],
    "sd": 0.14265319445871308,
-   "p_perm_two_sided": 0.00016999830001699983
+   "p_perm_two_sided": 0.00016999830001699983,
+   "reading": "не показано (контекст)"
   },
   "HE1|rep_haiku": {
    "outcome": "опровергнуто",
@@ -761,7 +770,8 @@
     -0.013292611424261264
    ],
    "sd": 0.1384656124346672,
-   "p_perm_two_sided": 0.0044299557004429954
+   "p_perm_two_sided": 0.0044299557004429954,
+   "reading": "не показано (контекст)"
   },
   "HE2|rep_haiku": {
    "outcome": "опровергнуто",
@@ -773,7 +783,8 @@
     -0.03928075662671038
    ],
    "sd": 0.14213668784073746,
-   "p_perm_two_sided": 9.99990000099999e-06
+   "p_perm_two_sided": 9.99990000099999e-06,
+   "reading": "не показано (контекст)"
   },
   "HE3|rep_haiku": {
    "outcome": "не показано",
@@ -785,7 +796,8 @@
     0.014395865884737524
    ],
    "sd": 0.17188685867337594,
-   "p_perm_two_sided": 0.26119738802611975
+   "p_perm_two_sided": 0.26119738802611975,
+   "reading": "не показано (контекст)"
   }
  },
  "composites": {
@@ -817,7 +829,7 @@
    ],
    "outcome": "не подтверждено"
   },
-  "SE_opus|main_opus": {
+  "SL_opus|main_opus": {
    "parts": [
     "O9"
    ],
@@ -851,7 +863,7 @@
    ],
    "outcome": "подтверждено"
   },
-  "SE_opus|rep_opus": {
+  "SL_opus|rep_opus": {
    "parts": [
     "O9"
    ],
@@ -879,7 +891,7 @@
    ],
    "outcome": "опровергнуто"
   },
-  "SE_haiku|main_haiku": {
+  "SL_haiku|main_haiku": {
    "parts": [
     "H9"
    ],
@@ -907,58 +919,254 @@
    ],
    "outcome": "опровергнуто"
   },
-  "SE_haiku|rep_haiku": {
+  "SL_haiku|rep_haiku": {
    "parts": [
     "H9"
    ],
    "outcome": "не подтверждено"
   }
  },
+ "readings": {
+  "SA_opus|main_opus": "не подтверждено",
+  "SB_opus|main_opus": "не подтверждено",
+  "SC_opus|main_opus": "не подтверждено",
+  "SD_opus|main_opus": "не подтверждено",
+  "SL_opus|main_opus": "не подтверждено",
+  "SA_opus|rep_opus": "подтверждено",
+  "SB_opus|rep_opus": "подтверждено",
+  "SC_opus|rep_opus": "подтверждено",
+  "SD_opus|rep_opus": "подтверждено",
+  "SL_opus|rep_opus": "не подтверждено",
+  "SA_haiku|main_haiku": "подтверждено",
+  "SB_haiku|main_haiku": "подтверждено",
+  "SD_haiku|main_haiku": "опровергнуто",
+  "SL_haiku|main_haiku": "не подтверждено",
+  "SA_haiku|rep_haiku": "не показано (контекст)",
+  "SB_haiku|rep_haiku": "не показано (контекст)",
+  "SD_haiku|rep_haiku": "не показано (контекст)",
+  "SL_haiku|rep_haiku": "не показано (контекст)"
+ },
  "status": {
   "SA_haiku": {
    "main": "подтверждено",
+   "main_reading": "подтверждено",
    "rep": "подтверждено",
-   "status": "установлено"
+   "rep_reading": "не показано (контекст)",
+   "status": "подтверждено; повтор: не показано (контекст)"
   },
   "SA_opus": {
    "main": "не подтверждено",
+   "main_reading": "не подтверждено",
    "rep": "подтверждено",
+   "rep_reading": "подтверждено",
    "status": "не подтверждено; повтор: подтверждено"
   },
   "SB_haiku": {
    "main": "подтверждено",
+   "main_reading": "подтверждено",
    "rep": "подтверждено",
-   "status": "установлено"
+   "rep_reading": "не показано (контекст)",
+   "status": "подтверждено; повтор: не показано (контекст)"
   },
   "SB_opus": {
    "main": "не подтверждено",
+   "main_reading": "не подтверждено",
    "rep": "подтверждено",
+   "rep_reading": "подтверждено",
    "status": "не подтверждено; повтор: подтверждено"
   },
   "SC_opus": {
    "main": "не подтверждено",
+   "main_reading": "не подтверждено",
    "rep": "подтверждено",
+   "rep_reading": "подтверждено",
    "status": "не подтверждено; повтор: подтверждено"
   },
   "SD_haiku": {
    "main": "опровергнуто",
+   "main_reading": "опровергнуто",
    "rep": "опровергнуто",
-   "status": "опровергнуто; повтор: опровергнуто"
+   "rep_reading": "не показано (контекст)",
+   "status": "опровергнуто; повтор: не показано (контекст)"
   },
   "SD_opus": {
    "main": "не подтверждено",
+   "main_reading": "не подтверждено",
    "rep": "подтверждено",
+   "rep_reading": "подтверждено",
    "status": "не подтверждено; повтор: подтверждено"
   },
-  "SE_haiku": {
+  "SL_haiku": {
    "main": "не подтверждено",
+   "main_reading": "не подтверждено",
    "rep": "не подтверждено",
-   "status": "не подтверждено; повтор: не подтверждено"
+   "rep_reading": "не показано (контекст)",
+   "status": "не подтверждено; повтор: не показано (контекст)"
   },
-  "SE_opus": {
+  "SL_opus": {
    "main": "не подтверждено",
+   "main_reading": "не подтверждено",
    "rep": "не подтверждено",
+   "rep_reading": "не подтверждено",
    "status": "не подтверждено; повтор: не подтверждено"
+  }
+ },
+ "ctx": {
+  "main_opus": {
+   "n": 120,
+   "skipped": 0,
+   "skipped_jobs": [],
+   "tasks": 20,
+   "arms": [
+    "LOG",
+    "NONE",
+    "WIN"
+   ],
+   "max_abs_resid": 11.283333333333758,
+   "sd_resid": 4.274804039933518,
+   "n_resid_gt": 0,
+   "frac_resid_gt": 0.0,
+   "slope_per_hour": 0.12630601875765518,
+   "span_hours": 0.5441666666301899,
+   "arm_effect_vs_first": {
+    "LOG": 0.0,
+    "NONE": -125.30000000000342,
+    "WIN": -7.550000000002939
+   },
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "slope_max": 5.0
+   },
+   "flag": false,
+   "journal": "run/pilot3_opus",
+   "streams": "../../.cache/score01_streams/pilot3_opus",
+   "config": {
+    "home": "/tmp/neu_heads/home",
+    "work_dir": "/tmp/neu_heads/work",
+    "home_in_git": false,
+    "work_dir_in_git": false,
+    "git_instructions_off": true,
+    "n_init": 1,
+    "ok": true
+   }
+  },
+  "rep_opus": {
+   "n": 120,
+   "skipped": 0,
+   "skipped_jobs": [],
+   "tasks": 20,
+   "arms": [
+    "LOG",
+    "NONE",
+    "WIN"
+   ],
+   "max_abs_resid": 11.283333333333758,
+   "sd_resid": 4.274804039933518,
+   "n_resid_gt": 0,
+   "frac_resid_gt": 0.0,
+   "slope_per_hour": 0.12630601875765518,
+   "span_hours": 0.5441666666301899,
+   "arm_effect_vs_first": {
+    "LOG": 0.0,
+    "NONE": -125.30000000000342,
+    "WIN": -7.550000000002939
+   },
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "slope_max": 5.0
+   },
+   "flag": false,
+   "journal": "run/pilot3_opus",
+   "streams": "../../.cache/score01_streams/pilot3_opus",
+   "config": {
+    "home": "/tmp/neu_heads/home",
+    "work_dir": "/tmp/neu_heads/work",
+    "home_in_git": false,
+    "work_dir_in_git": false,
+    "git_instructions_off": true,
+    "n_init": 1,
+    "ok": true
+   }
+  },
+  "main_haiku": {
+   "n": 120,
+   "skipped": 0,
+   "skipped_jobs": [],
+   "tasks": 20,
+   "arms": [
+    "LOG",
+    "NONE",
+    "WIN"
+   ],
+   "max_abs_resid": 12.166666666668789,
+   "sd_resid": 4.043738459432227,
+   "n_resid_gt": 0,
+   "frac_resid_gt": 0.0,
+   "slope_per_hour": 0.024217783427633567,
+   "span_hours": 0.8613888889085501,
+   "arm_effect_vs_first": {
+    "LOG": 0.0,
+    "NONE": -123.30000000000454,
+    "WIN": -6.900000000004596
+   },
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "slope_max": 5.0
+   },
+   "flag": false,
+   "journal": "run/pilot3_haiku",
+   "streams": "../../.cache/score01_streams/pilot3_haiku",
+   "config": {
+    "home": "/tmp/neu_heads/home",
+    "work_dir": "/tmp/neu_heads/work",
+    "home_in_git": false,
+    "work_dir_in_git": false,
+    "git_instructions_off": true,
+    "n_init": 1,
+    "ok": true
+   }
+  },
+  "rep_haiku": {
+   "n": 60,
+   "skipped": 0,
+   "skipped_jobs": [],
+   "tasks": 20,
+   "arms": [
+    "LOG",
+    "NONE",
+    "WIN"
+   ],
+   "max_abs_resid": 371.7166666666635,
+   "sd_resid": 74.85736719741628,
+   "n_resid_gt": 34,
+   "frac_resid_gt": 0.5666666666666667,
+   "slope_per_hour": 0.44073150558537144,
+   "span_hours": 0.8991666666697711,
+   "arm_effect_vs_first": {
+    "LOG": 0.0,
+    "NONE": -132.55000000000226,
+    "WIN": 33.14999999999575
+   },
+   "thresholds": {
+    "r_max": 25.0,
+    "frac_max": 0.05,
+    "slope_max": 5.0
+   },
+   "flag": true,
+   "journal": "run/pilot2_haiku",
+   "streams": "../../.cache/score01_streams/pilot2_haiku",
+   "config": {
+    "home": "/home/claude/neu/.cache/claude-cli/home",
+    "work_dir": "/home/claude/neu/.cache/claude-cli/work",
+    "home_in_git": true,
+    "work_dir_in_git": true,
+    "git_instructions_off": false,
+    "n_init": 1,
+    "ok": false
+   }
   }
  },
  "n_perm": 100000,
@@ -1091,7 +1299,7 @@
     "LOG"
    ],
    "kind": "lt0",
-   "comp": "SE_opus",
+   "comp": "SL_opus",
    "expect": 0.6,
    "text": "выходные токены WIN − LOG < 0 (гипотеза из пилота 3)"
   },
@@ -1254,9 +1462,9 @@
     "LOG"
    ],
    "kind": "gt0",
-   "comp": "SE_haiku",
+   "comp": "SL_haiku",
    "expect": 0.85,
-   "text": "выходные токены WIN − LOG > 0 (гипотеза из пилотов; знак тот же во всех четырёх)"
+   "text": "выходные токены WIN − LOG > 0 (гипотеза из пилотов 0–3, §3)"
   },
   {
    "id": "H7",
@@ -1273,7 +1481,7 @@
    "kind": "gt0",
    "comp": null,
    "expect": 0.25,
-   "text": "разведка: точность (LOG + WIN)/2 − NONE > 0"
+   "text": "разведка: точность (LOG + WIN)/2 − NONE > 0 (знак условный: в пилоте 3 меньше 1 SE)"
   },
   {
    "id": "HE1",
@@ -1335,7 +1543,9 @@
      0.03277027571750878
     ],
     "sd": 0.23981075205568195,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
    },
    "LOG|acc": {
     "n": 95,
@@ -1345,7 +1555,21 @@
      0.04816279631613228
     ],
     "sd": 0.24784203011696218,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
+   },
+   "LOG|brier": {
+    "n": 95,
+    "mean": -0.01940256578947368,
+    "ci90": [
+     -0.03622845141808442,
+     -0.0025766801608629354
+    ],
+    "sd": 0.0987213426569704,
+    "margin": 0.05,
+    "within": true,
+    "outside": false
    },
    "WIN|self_dec": {
     "n": 95,
@@ -1355,7 +1579,9 @@
      0.09047625917135624
     ],
     "sd": 0.22564870551672078,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
    },
    "WIN|acc": {
     "n": 95,
@@ -1365,7 +1591,21 @@
      -0.010033536944662434
     ],
     "sd": 0.2344924351181922,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
+   },
+   "WIN|brier": {
+    "n": 95,
+    "mean": 0.02745012236842105,
+    "ci90": [
+     0.011068180297693405,
+     0.043832064439148694
+    ],
+    "sd": 0.09611662365046478,
+    "margin": 0.05,
+    "within": true,
+    "outside": false
    },
    "NONE|self_dec": {
     "n": 96,
@@ -1375,7 +1615,9 @@
      0.0520275277786898
     ],
     "sd": 0.23833562620143706,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
    },
    "NONE|acc": {
     "n": 96,
@@ -1385,8 +1627,23 @@
      0.034350583809941
     ],
     "sd": 0.2371843686950923,
-    "within_01": true
-   }
+    "margin": 0.1,
+    "within": true,
+    "outside": false
+   },
+   "NONE|brier": {
+    "n": 96,
+    "mean": 0.010378486979166662,
+    "ci90": [
+     -0.005699605700229088,
+     0.026456579658562414
+    ],
+    "sd": 0.09483899946301043,
+    "margin": 0.05,
+    "within": true,
+    "outside": false
+   },
+   "_gross_LOG_WIN": false
   },
   "rep_haiku": {
    "LOG|self_dec": {
@@ -1397,7 +1654,9 @@
      0.029556652333342974
     ],
     "sd": 0.2501363242652505,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
    },
    "LOG|acc": {
     "n": 89,
@@ -1407,7 +1666,21 @@
      0.06185271981489476
     ],
     "sd": 0.24341550737649917,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
+   },
+   "LOG|brier": {
+    "n": 89,
+    "mean": -0.013779693820224717,
+    "ci90": [
+     -0.03041898271623534,
+     0.002859595075785905
+    ],
+    "sd": 0.09442918580615017,
+    "margin": 0.05,
+    "within": true,
+    "outside": false
    },
    "WIN|self_dec": {
     "n": 94,
@@ -1417,7 +1690,9 @@
      0.050618548942587105
     ],
     "sd": 0.2660583898797089,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
    },
    "WIN|acc": {
     "n": 94,
@@ -1427,7 +1702,21 @@
      0.04171497259078575
     ],
     "sd": 0.26671420589752093,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
+   },
+   "WIN|brier": {
+    "n": 94,
+    "mean": 0.00717471276595745,
+    "ci90": [
+     -0.011476938758654277,
+     0.025826364290569177
+    ],
+    "sd": 0.1088443908444683,
+    "margin": 0.05,
+    "within": true,
+    "outside": false
    },
    "NONE|self_dec": {
     "n": 97,
@@ -1437,7 +1726,9 @@
      0.04230248106221285
     ],
     "sd": 0.22480675919720616,
-    "within_01": true
+    "margin": 0.1,
+    "within": true,
+    "outside": false
    },
    "NONE|acc": {
     "n": 97,
@@ -1447,8 +1738,23 @@
      0.03446373293658486
     ],
     "sd": 0.2272912906596025,
-    "within_01": true
-   }
+    "margin": 0.1,
+    "within": true,
+    "outside": false
+   },
+   "NONE|brier": {
+    "n": 97,
+    "mean": -0.008882087628865973,
+    "ci90": [
+     -0.025117903289157716,
+     0.007353728031425769
+    ],
+    "sd": 0.09627673345733419,
+    "margin": 0.05,
+    "within": true,
+    "outside": false
+   },
+   "_gross_LOG_WIN": false
   }
  }
 }

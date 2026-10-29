@@ -2,8 +2,9 @@
 """SCORE-01, сухой прогон цепочки: заглушка выгрузки run_sealed2 (формат export) для выборки, рук и повторов.
 Ответ заглушки: p = σ(a_руки · z(правда) + шум) — навык a_руки задаётся, чтобы проверить, что анализ видит заложенный эффект;
 задаются доля негодных/потерянных ответов, число повторов на клетку и число задач без единой записи (как задания,
-у которых итога нет и которые export не выгружает). Головы не вызываются.
-  python3 dry/make_stub.py <выборка> <руки через запятую> <a через запятую> <выход.jsonl> [доля_потерь] [зерно] [повторов] [задач_без_записи]"""
+у которых итога нет и которые export не выгружает), и сдвиг навыка во втором вызове клетки (A/A не проходит; LENSES-1b, N19).
+Головы не вызываются.
+  python3 dry/make_stub.py <выборка> <руки через запятую> <a через запятую> <выход.jsonl> [доля_потерь] [зерно] [повторов] [задач_без_записи] [сдвиг_a_повтора_1]"""
 import json
 import math
 import os
@@ -19,6 +20,7 @@ lost = float(sys.argv[5]) if len(sys.argv) > 5 else 0.0
 rng = random.Random(int(sys.argv[6]) if len(sys.argv) > 6 else 1)
 nrep = int(sys.argv[7]) if len(sys.argv) > 7 else 1
 n_drop = int(sys.argv[8]) if len(sys.argv) > 8 else 0
+shift1 = float(sys.argv[9]) if len(sys.argv) > 9 else 0.0
 tru = json.load(open(os.path.join(HERE, 'truth', f'{sample}.json')))['tasks']
 tasks = S.sample_tasks(sample)
 drop = set(rng.sample(tasks, n_drop)) if n_drop else set()
@@ -39,6 +41,7 @@ with open(out, 'w', encoding='utf-8') as fh:
                     fh.write(json.dumps(dict(id=jid, result={'p': [0.5] * 7}, inp=6000, out=2000, cost_usd=0.07), ensure_ascii=False) + '\n')
                     continue
                 # показанный кандидат i — это кандидат пула pm[i]
-                p = [round(1 / (1 + math.exp(-(a * (tr[pm[i]] - m) / sd + rng.gauss(0, 1)))), 3) for i in range(8)]
+                a_ = a + (shift1 if rep == 1 else 0.0)
+                p = [round(1 / (1 + math.exp(-(a_ * (tr[pm[i]] - m) / sd + rng.gauss(0, 1)))), 3) for i in range(8)]
                 fh.write(json.dumps(dict(id=jid, result={'p': p}, inp=6000, out=2000 + int(500 * a), cost_usd=0.07), ensure_ascii=False) + '\n')
 print('заглушка:', out, 'задач без записи:', len(drop))

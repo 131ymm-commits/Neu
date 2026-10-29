@@ -19,8 +19,10 @@
    "power_point": 0.9000401686146757,
    "power_point_sd15": 0.5308531403667063,
    "power_assurance": 0.75225,
+   "power_low": 0.75225,
    "alpha": 0.05,
-   "bits": 3.911212201558612
+   "bits": 3.911212201558612,
+   "bits_refuted": -1.9390424560318218
   },
   "O2": {
    "model": "opus",
@@ -38,8 +40,10 @@
    "power_point": 0.8788891514724682,
    "power_point_sd15": 0.5553545530809332,
    "power_assurance": 0.74175,
+   "power_low": 0.74175,
    "alpha": 0.05,
-   "bits": 3.8909330217055422
+   "bits": 3.8909330217055422,
+   "bits_refuted": -1.8791591643532508
   },
   "O3": {
    "model": "opus",
@@ -57,8 +61,10 @@
    "power_point": 0.8180161184228503,
    "power_point_sd15": 0.5144530714733937,
    "power_assurance": 0.72075,
+   "power_low": 0.72075,
    "alpha": 0.05,
-   "bits": 3.849498931720182
+   "bits": 3.849498931720182,
+   "bits_refuted": -1.7663702327349953
   },
   "O4": {
    "model": "opus",
@@ -75,8 +81,10 @@
    "power_point": 0.9990051347766057,
    "power_point_sd15": 0.9192086407881557,
    "power_assurance": 0.95025,
+   "power_low": 0.95025,
    "alpha": 0.025,
-   "bits": 5.248307120087241
+   "bits": 5.248307120087241,
+   "bits_refuted": -4.292633788093325
   },
   "O5": {
    "model": "opus",
@@ -93,8 +101,10 @@
    "power_point": 0.9999667678417633,
    "power_point_sd15": 0.9771232970943059,
    "power_assurance": 0.98675,
+   "power_low": 0.98675,
    "alpha": 0.025,
-   "bits": 5.3026846141183785
+   "bits": 5.3026846141183785,
+   "bits_refuted": -6.201337954073775
   },
   "O6": {
    "model": "opus",
@@ -111,8 +121,10 @@
    "power_point": 0.9999999993648,
    "power_point_sd15": 0.9996453925578985,
    "power_assurance": 0.99925,
+   "power_low": 0.99925,
    "alpha": 0.025,
-   "bits": 5.320845667645722
+   "bits": 5.320845667645722,
+   "bits_refuted": -9.929258408636972
   },
   "O7": {
    "model": "opus",
@@ -133,8 +145,10 @@
    "power_point": 0.2991505321037855,
    "power_point_sd15": 0.15561707427553378,
    "power_assurance": 0.37625,
+   "power_low": 0.2991505321037855,
    "alpha": 0.025,
-   "bits": 3.9116915818723395
+   "bits": 3.5808716291396507,
+   "bits_refuted": -0.4762976109182401
   },
   "O8": {
    "model": "opus",
@@ -155,8 +169,10 @@
    "power_point": 0.9580164265535295,
    "power_point_sd15": 0.6881710329122575,
    "power_assurance": 0.854,
+   "power_low": 0.854,
    "alpha": 0.025,
-   "bits": 5.094236069845765
+   "bits": 5.094236069845765,
+   "bits_refuted": -2.7394338497569555
   },
   "O9": {
    "model": "opus",
@@ -174,8 +190,10 @@
    "power_point": 0.9527535796383229,
    "power_point_sd15": 0.6748579192651113,
    "power_assurance": 0.8395,
+   "power_low": 0.8395,
    "alpha": 0.025,
-   "bits": 5.069530325162305
+   "bits": 5.069530325162305,
+   "bits_refuted": -2.60282892151467
   },
   "OE1": {
    "model": "opus",
@@ -193,8 +211,10 @@
    "power_point": 0.3106588214806273,
    "power_point_sd15": 0.16090916772261182,
    "power_assurance": 0.44025,
+   "power_low": 0.3106588214806273,
    "alpha": 0.025,
-   "bits": 4.138323004056484
+   "bits": 3.6353310216887507,
+   "bits_refuted": -0.5001840200684523
   },
   "OE2": {
    "model": "opus",
@@ -215,8 +235,10 @@
    "power_point": 0.48065661369692847,
    "power_point_sd15": 0.24392176645216168,
    "power_assurance": 0.494,
+   "power_low": 0.48065661369692847,
    "alpha": 0.025,
-   "bits": 4.304511041809953
+   "bits": 4.26500658498366,
+   "bits_refuted": -0.9087134646676759
   },
   "OE3": {
    "model": "opus",
@@ -237,8 +259,10 @@
    "power_point": 0.7169427097406248,
    "power_point_sd15": 0.39016708575058584,
    "power_assurance": 0.69,
+   "power_low": 0.69,
    "alpha": 0.025,
-   "bits": 4.7865963618908065
+   "bits": 4.7865963618908065,
+   "bits_refuted": -1.6531340033627353
   },
   "H1": {
    "model": "haiku",
@@ -256,8 +280,10 @@
    "power_point": 0.7965389083687859,
    "power_point_sd15": 0.49976710571451877,
    "power_assurance": 0.65075,
+   "power_low": 0.65075,
    "alpha": 0.05,
-   "bits": 3.7021034066293876
+   "bits": 3.7021034066293876,
+   "bits_refuted": -1.4436673978088472
   },
   "H2": {
    "model": "haiku",
@@ -275,8 +301,10 @@
    "power_point": 0.13464150032221056,
    "power_point_sd15": 0.0985356495555898,
    "power_assurance": 0.3195,
+   "power_low": 0.13464150032221056,
    "alpha": 0.05,
-   "bits": 2.6758159311722696
+   "bits": 1.4291231579491956,
+   "bits_refuted": -0.13462957889210678
   },
   "H3": {
    "model": "haiku",
@@ -294,8 +322,10 @@
    "power_point": 0.8959084125534824,
    "power_point_sd15": 0.6124029879080064,
    "power_assurance": 0.71525,
+   "power_low": 0.71525,
    "alpha": 0.05,
-   "bits": 3.8384475925484582
+   "bits": 3.8384475925484582,
+   "bits_refuted": -1.7382316715101984
   },
   "H4": {
    "model": "haiku",
@@ -312,8 +342,10 @@
    "power_point": 1.0,
    "power_point_sd15": 0.9999999999998594,
    "power_assurance": 1.0,
+   "power_low": 1.0,
    "alpha": 0.025,
-   "bits": 5.321928094887363
+   "bits": 5.321928094887363,
+   "bits_refuted": -9.929258408636972
   },
   "H5": {
    "model": "haiku",
@@ -330,8 +362,10 @@
    "power_point": 0.9999992055032716,
    "power_point_sd15": 0.9944319342078516,
    "power_assurance": 0.98175,
+   "power_low": 0.98175,
    "alpha": 0.025,
-   "bits": 5.295355692891672
+   "bits": 5.295355692891672,
+   "bits_refuted": -5.739433849756956
   },
   "H6": {
    "model": "haiku",
@@ -348,8 +382,10 @@
    "power_point": 0.9999999730830864,
    "power_point_sd15": 0.9984818257993597,
    "power_assurance": 0.99075,
+   "power_low": 0.99075,
    "alpha": 0.025,
-   "bits": 5.308521062193259
+   "bits": 5.308521062193259,
+   "bits_refuted": -6.7198050430080265
   },
   "H8": {
    "model": "haiku",
@@ -370,8 +406,10 @@
    "power_point": 0.9986826199828732,
    "power_point_sd15": 0.9104515056990894,
    "power_assurance": 0.947,
+   "power_low": 0.947,
    "alpha": 0.025,
-   "bits": 5.2433644256936605
+   "bits": 5.2433644256936605,
+   "bits_refuted": -4.2013379540737725
   },
   "H9": {
    "model": "haiku",
@@ -389,8 +427,10 @@
    "power_point": 0.9999999999999915,
    "power_point_sd15": 0.9999957582003177,
    "power_assurance": 1.0,
+   "power_low": 0.9999999999999915,
    "alpha": 0.025,
-   "bits": 5.321928094887363
+   "bits": 5.32192809488735,
+   "bits_refuted": -9.929258408636972
   },
   "H7": {
    "model": "haiku",
@@ -411,8 +451,10 @@
    "power_point": 0.09057193892149662,
    "power_point_sd15": 0.06022352955714188,
    "power_assurance": 0.29625,
+   "power_low": 0.09057193892149662,
    "alpha": 0.025,
-   "bits": 3.5668151540108965
+   "bits": 1.8571360475532384,
+   "bits_refuted": -0.10044269866563574
   },
   "HE1": {
    "model": "haiku",
@@ -433,8 +475,10 @@
    "power_point": 0.036534796452999965,
    "power_point_sd15": 0.03170282903848547,
    "power_assurance": 0.2325,
+   "power_low": 0.036534796452999965,
    "alpha": 0.025,
-   "bits": 3.2172307162206693
+   "bits": 0.5473430747639647,
+   "bits_refuted": -0.017169655690182747
   },
   "HE2": {
    "model": "haiku",
@@ -455,8 +499,10 @@
    "power_point": 0.23380934727193226,
    "power_point_sd15": 0.1259710327026246,
    "power_assurance": 0.385,
+   "power_low": 0.23380934727193226,
    "alpha": 0.025,
-   "bits": 3.944858445807539
+   "bits": 3.2253326073430544,
+   "bits_refuted": -0.347698793394269
   },
   "HE3": {
    "model": "haiku",
@@ -474,8 +520,10 @@
    "power_point": 0.99964710103459,
    "power_point_sd15": 0.944845483359188,
    "power_assurance": 0.91675,
+   "power_low": 0.91675,
    "alpha": 0.025,
-   "bits": 5.196528360936941
+   "bits": 5.196528360936941,
+   "bits_refuted": -3.54988004156571
   }
  },
  "comps": {
@@ -488,7 +536,9 @@
    "alpha": 0.05,
    "power_point_product": 0.6470798220347643,
    "power_assurance_joint": 0.62625,
-   "bits": 3.646738698307846
+   "power_low": 0.62625,
+   "bits": 3.646738698307846,
+   "bits_refuted": -1.3458539341328426
   },
   "SB_opus": {
    "parts": [
@@ -499,7 +549,9 @@
    "alpha": 0.025,
    "power_point_product": 0.9989719350453405,
    "power_assurance_joint": 0.939,
-   "bits": 5.23112515787905
+   "power_low": 0.939,
+   "bits": 5.23112515787905,
+   "bits_refuted": -3.9985210710740855
   },
   "SC_opus": {
    "parts": [
@@ -508,7 +560,9 @@
    "alpha": 0.025,
    "power_point_product": 0.2991505321037855,
    "power_assurance_joint": 0.37625,
-   "bits": 3.9116915818723395
+   "power_low": 0.2991505321037855,
+   "bits": 3.5808716291396507,
+   "bits_refuted": -0.4762976109182401
   },
   "SD_opus": {
    "parts": [
@@ -517,16 +571,20 @@
    "alpha": 0.025,
    "power_point_product": 0.9580164265535295,
    "power_assurance_joint": 0.854,
-   "bits": 5.094236069845765
+   "power_low": 0.854,
+   "bits": 5.094236069845765,
+   "bits_refuted": -2.7394338497569555
   },
-  "SE_opus": {
+  "SL_opus": {
    "parts": [
     "O9"
    ],
    "alpha": 0.025,
    "power_point_product": 0.9527535796383229,
    "power_assurance_joint": 0.8395,
-   "bits": 5.069530325162305
+   "power_low": 0.8395,
+   "bits": 5.069530325162305,
+   "bits_refuted": -2.60282892151467
   },
   "SA_haiku": {
    "parts": [
@@ -537,7 +595,9 @@
    "alpha": 0.05,
    "power_point_product": 0.09608366304764303,
    "power_assurance_joint": 0.31825,
-   "bits": 2.670160514126633
+   "power_low": 0.09608366304764303,
+   "bits": 0.9423630578207653,
+   "bits_refuted": -0.07173826497297414
   },
   "SB_haiku": {
    "parts": [
@@ -548,7 +608,9 @@
    "alpha": 0.025,
    "power_point_product": 0.9999991785863794,
    "power_assurance_joint": 0.97575,
-   "bits": 5.286511557664227
+   "power_low": 0.97575,
+   "bits": 5.286511557664227,
+   "bits_refuted": -5.329345566449846
   },
   "SD_haiku": {
    "parts": [
@@ -557,16 +619,28 @@
    "alpha": 0.025,
    "power_point_product": 0.9986826199828732,
    "power_assurance_joint": 0.947,
-   "bits": 5.2433644256936605
+   "power_low": 0.947,
+   "bits": 5.2433644256936605,
+   "bits_refuted": -4.2013379540737725
   },
-  "SE_haiku": {
+  "SL_haiku": {
    "parts": [
     "H9"
    ],
    "alpha": 0.025,
    "power_point_product": 0.9999999999999915,
    "power_assurance_joint": 1.0,
-   "bits": 5.321928094887363
+   "power_low": 0.9999999999999915,
+   "bits": 5.32192809488735,
+   "bits_refuted": -9.929258408636972
+  }
+ },
+ "aa": {
+  "haiku": {
+   "aa_within_all": 0.0875,
+   "aa_gross": 0.34125,
+   "SA_without_gross": 0.198,
+   "aa_gross_null": 0.0
   }
  }
 }

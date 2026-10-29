@@ -1,0 +1,37 @@
+{
+ "n": 40,
+ "skipped": 0,
+ "skipped_jobs": [],
+ "tasks": 20,
+ "arms": [
+  "LOG",
+  "WIN"
+ ],
+ "max_abs_resid": 20.825000000001637,
+ "sd_resid": 5.233704870038686,
+ "n_resid_gt": 0,
+ "frac_resid_gt": 0.0,
+ "slope_per_hour": 0.27848638021223654,
+ "span_hours": 0.24249999999301508,
+ "arm_effect_vs_first": {
+  "LOG": 0.0,
+  "WIN": -5.650000000001455
+ },
+ "thresholds": {
+  "r_max": 25.0,
+  "frac_max": 0.05,
+  "slope_max": 5.0
+ },
+ "flag": true,
+ "journal": "run/pilot1_opus",
+ "streams": "../../.cache/score01_streams/pilot1_opus",
+ "config": {
+  "home": "/home/claude/neu/.cache/claude-cli/home",
+  "work_dir": "/home/claude/neu/.cache/claude-cli/work",
+  "home_in_git": true,
+  "work_dir_in_git": true,
+  "git_instructions_off": false,
+  "n_init": 1,
+  "ok": false
+ }
+}

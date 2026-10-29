@@ -8,8 +8,16 @@
 «опровергнуто» — интервал целиком на другой стороне (эквивалентность: 90 % интервал целиком вне ±δ); «не показано» — иначе;
 «не показано (потери)» — годных пар меньше 90 % задач выборки.
 Сводный исход (по выборке): «подтверждено» — все части подтверждены; «опровергнуто» — хоть одна опровергнута;
-иначе «не подтверждено». «Установлено» (ключ status) — сводный подтверждён и в основной выборке, и в повторе, и
-сводный разрешено так называть (ESTABLISH); иначе статус по основной выборке."""
+иначе «не подтверждено».
+Чтения (ключ readings; вердикты по букве не меняются; LENSES-1b, N5 и N19):
+  контекст — флаг проверки этапа ctx_check.stage_check (конфигурация голов не та, доля больших остатков входа или наклон) →
+  все сводные этапа читаются «не показано (контекст)»;
+  A/A у Haiku — 90 % интервал «повтор 1 − повтор 0» руки LOG или WIN по самообману, точности или Брайеру целиком вне допуска SA
+  (AA_MARGIN): процедура различает одинаковые промпты → подтверждённый SA_haiku этапа читается «не показано (A/A: процедура
+  различает одинаковые промпты)». Интервал A/A внутри допуска — описательно (within): строже не берётся, потому что разница
+  повторов одинакова у обеих рук и сокращается в WIN − LOG, а шум одного вызова SA учитывает своим интервалом.
+«Установлено» (ключ status) — чтение сводного «подтверждено» и в основной выборке, и в повторе, и сводный разрешено так
+называть (ESTABLISH); иначе статус — чтения основной выборки и повтора."""
 import argparse
 import json
 import math
@@ -25,6 +33,8 @@ MEASURES = ('acc', 'conf', 'self_dec', 'brier', 'logloss', 'auc', 'ioi', 'ignora
 N_PERM = 100_000
 MIN_VALID_SHARE = 0.9
 REPS = dict(opus=('0',), haiku=('0', '1'))   # вызовов на клетку: Opus — один, Haiku — два (шум одного вызова Haiku велик, PILOT2.md)
+AA_MARGIN = dict(self_dec=0.1, acc=0.1, brier=0.05)   # допуски встроенного A/A — те же, что у частей SA
+STREAMS = os.path.join(HERE, '..', '..', '.cache', 'score01_streams')   # потоки голов (вне git): проверка контекста этапа
 
 # --- предсказания: замораживаются в PREREG ---
 # kind: 'lt0' — разность (или величина) < 0; 'gt0' — > 0; 'equiv' — |разность| < margin (TOST, 90 %).
@@ -50,7 +60,7 @@ PRED = [
       text='точность (LOG + WIN)/2 − NONE > 0'),
     P(id='O8', model='opus', measure='out', target=RULE, kind='gt0', comp='SD_opus', expect=0.7,
       text='выходные токены (LOG + WIN)/2 − NONE > 0'),
-    P(id='O9', model='opus', measure='out', target=('pair', 'WIN', 'LOG'), kind='lt0', comp='SE_opus', expect=0.6,
+    P(id='O9', model='opus', measure='out', target=('pair', 'WIN', 'LOG'), kind='lt0', comp='SL_opus', expect=0.6,
       text='выходные токены WIN − LOG < 0 (гипотеза из пилота 3)'),
     P(id='OE1', model='opus', measure='conf', target=('pair', 'WIN', 'LOG'), kind='lt0', comp=None, expect=0.35,
       text='разведка: уверенность WIN − LOG < 0'),
@@ -60,7 +70,8 @@ PRED = [
       text='разведка: AUC (LOG + WIN)/2 − NONE > 0'),
 ]
 # направления NONE-контрастов и разведки — по знаку среднего пилота 3 (правило DESIGN_after_lenses1.md, коммит 9962627);
-# H7 при |среднее| < 1 SE ушёл в разведку; H8 сменил знак против загрязнённого пилота 2; O9, H9, HE3 — гипотезы из пилота 3
+# H7 при |среднее| < 1 SE ушёл в разведку (знак условный); H8 сменил знак против загрязнённого пилота 2; O9, HE3 — гипотезы из пилота 3,
+# H9 — из пилотов 0–3; сводные SL — длина рассуждения (до LENSES-1b, N18, назывались SE)
 PRED_HAIKU = [
     P(id='H1', model='haiku', measure='self_dec', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_haiku', expect=0.6,
       text='самообман WIN − LOG в пределах ±0,1'),
@@ -76,10 +87,10 @@ PRED_HAIKU = [
       text='самообман NONE > 0'),
     P(id='H8', model='haiku', measure='out', target=RULE, kind='gt0', comp='SD_haiku', expect=0.6,
       text='выходные токены (LOG + WIN)/2 − NONE > 0'),
-    P(id='H9', model='haiku', measure='out', target=('pair', 'WIN', 'LOG'), kind='gt0', comp='SE_haiku', expect=0.85,
-      text='выходные токены WIN − LOG > 0 (гипотеза из пилотов; знак тот же во всех четырёх)'),
+    P(id='H9', model='haiku', measure='out', target=('pair', 'WIN', 'LOG'), kind='gt0', comp='SL_haiku', expect=0.85,
+      text='выходные токены WIN − LOG > 0 (гипотеза из пилотов 0–3, §3)'),
     P(id='H7', model='haiku', measure='acc', target=RULE, kind='gt0', comp=None, expect=0.25,
-      text='разведка: точность (LOG + WIN)/2 − NONE > 0'),
+      text='разведка: точность (LOG + WIN)/2 − NONE > 0 (знак условный: в пилоте 3 меньше 1 SE)'),
     P(id='HE1', model='haiku', measure='self_dec', target=('contrast', {'NONE': 1.0, 'LOG': -0.5, 'WIN': -0.5}), kind='gt0', comp=None,
       expect=0.15, text='разведка: самообман NONE − (LOG + WIN)/2 > 0'),
     P(id='HE2', model='haiku', measure='auc', target=RULE, kind='gt0', comp=None, expect=0.25,
@@ -89,7 +100,7 @@ PRED_HAIKU = [
 ]
 PRED += PRED_HAIKU
 # сводные: части — по comp; ESTABLISH — можно ли назвать «установлено» при подтверждении в обеих выборках
-ESTABLISH = dict(SA=True, SB=True, SC=False, SD=False, SE=False)
+ESTABLISH = dict(SA=True, SB=True, SC=False, SD=False, SL=False)
 _SA = ('строки правил LOG и WIN (как в RULES_HALF) не различаются по самообману оценщика (и зеркально — по точности) больше чем на 0,1 '
        'и по Брайеру больше чем на 0,05; это разница порядка самого самообмана')
 _SB = 'самообман оценщика (уверенность выше точности) есть в каждой руке, и при объявленном правиле, и без него'
@@ -98,8 +109,8 @@ COMP_TEXT = dict(
     SC_opus='объявление правила (среднее LOG и WIN) повышает точность оценщика по сравнению с промптом без правила',
     SD_opus='объявление правила (среднее LOG и WIN) удлиняет рассуждение (выходные токены) по сравнению с промптом без правила',
     SD_haiku='объявление правила (среднее LOG и WIN) удлиняет рассуждение (выходные токены) по сравнению с промптом без правила',
-    SE_opus='строка WIN укорачивает рассуждение Opus (выходные токены) по сравнению со строкой LOG',
-    SE_haiku='строка WIN удлиняет рассуждение Haiku (выходные токены) по сравнению со строкой LOG')
+    SL_opus='строка WIN укорачивает рассуждение Opus (выходные токены) по сравнению со строкой LOG',
+    SL_haiku='строка WIN удлиняет рассуждение Haiku (выходные токены) по сравнению со строкой LOG')
 
 
 def value(row, m):
@@ -186,14 +197,52 @@ def verdict(p, E):
                 p_perm_two_sided=perm_p(x, name) if p['target'][0] != 'arm' else None)
 
 
+def ctx_stage(st, ctx_json):
+    """Проверка контекста этапа (PREREG §2 и §4): из готового json (сухой прогон, --ctx-json) или по журналу и потокам этапа."""
+    if ctx_json:
+        p = os.path.join(ctx_json, f'ctx_{st}.json')
+        return json.load(open(p)) if os.path.exists(p) else None
+    sys.path.insert(0, HERE)
+    import ctx_check
+    j, s = os.path.join(HERE, 'run', st), os.path.join(STREAMS, st)
+    if not (os.path.isdir(j) and os.path.isdir(s)):
+        return None
+    rows, skipped = ctx_check.stage_rows(j, s)
+    return dict(ctx_check.stage_check(rows, skipped), config=ctx_check.config_check(j))
+
+
+def aa_check(E, st):
+    """Встроенный A/A (LENSES-1, L3-7; чтение — LENSES-1b, N19): повтор 1 − повтор 0 внутри руки, 90 % t-интервал против допуска."""
+    aa = {}
+    for arm in ('LOG', 'WIN', 'NONE'):
+        for m_, d in AA_MARGIN.items():
+            x = []
+            for t in sample_tasks(E):
+                r0, r1 = E['rows'].get(f'{t}|{arm}|0'), E['rows'].get(f'{t}|{arm}|1')
+                if r0 and r1 and r0['valid'] and r1['valid']:
+                    x.append(value(r1, m_) - value(r0, m_))
+            if len(x) > 2:
+                mm, lo, hi, sd_ = t_ci(x, 0.90)
+                aa[f'{arm}|{m_}'] = dict(n=len(x), mean=mm, ci90=[lo, hi], sd=sd_, margin=d, within=bool(lo > -d and hi < d),
+                                         outside=bool(lo >= d or hi <= -d))
+    keys = [f'{arm}|{m_}' for arm in ('LOG', 'WIN') for m_ in AA_MARGIN]
+    gross = any(aa.get(k, {}).get('outside', False) for k in keys)
+    within = sum(aa.get(k, {}).get('within', False) for k in keys)
+    print(f'{st}: A/A (повтор 1 − повтор 0, 90 %): ' + '; '.join(f"{k} {v['mean']:+.3f} [{v['ci90'][0]:+.3f}; {v['ci90'][1]:+.3f}]"
+                                                              for k, v in aa.items()) +
+          f' → у LOG и WIN внутри допуска {within} из {len(keys)}; целиком вне допуска (процедура различает одинаковые промпты): {gross}')
+    return aa, gross
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--stages', default='main_opus,main_haiku,rep_opus,rep_haiku')
     ap.add_argument('--out', default=os.path.join(HERE, 'analysis_score01.json'))
     ap.add_argument('--evals', default=os.path.join(HERE, 'evals'), help='папка с evals (для сухого прогона — dry/evals)')
+    ap.add_argument('--ctx-json', default=None, help='папка с готовыми ctx_<этап>.json вместо журналов и потоков (сухой прогон)')
     ap.add_argument('--no-check', action='store_true', help='без сверки хешей регистрации (сухой прогон)')
     a = ap.parse_args()
-    res = dict(stages={}, verdicts={}, composites={}, status={}, n_perm=N_PERM, pred=PRED, hashes_ok=None)
+    res = dict(stages={}, verdicts={}, composites={}, readings={}, status={}, ctx={}, n_perm=N_PERM, pred=PRED, hashes_ok=None)
     if not a.no_check:
         sys.path.insert(0, HERE)
         import prereg_hashes
@@ -210,8 +259,9 @@ def main():
             continue
         E = json.load(open(path))
         assert E.get('labels') == 'r4000', f'{st}: метки должны быть по 4000 реализациям (score01.py metrics … half4)'
-        jobs_path = os.path.join(HERE, 'run', f'{st}_jobs.jsonl')
-        if os.path.exists(jobs_path) and not a.no_check:
+        jobs_path = os.path.join(HERE, 'jobs', f'{st}_jobs.jsonl')
+        if not a.no_check:                            # сверка покрытия: без файла заданий анализ не идёт (LENSES-1b, N1)
+            assert os.path.exists(jobs_path), f'{st}: нет файла заданий {jobs_path}'
             ids = {json.loads(l)['id'] for l in open(jobs_path, encoding='utf-8')}
             missing = sorted(ids - set(E['rows']))
             extra = sorted(set(E['rows']) - ids)
@@ -219,46 +269,57 @@ def main():
             res.setdefault('coverage', {})[st] = dict(jobs=len(ids), rows=len(E['rows']), missing=len(missing),
                                                       invalid=sum(1 for r in E['rows'].values() if not r['valid']))
             print(f'{st}: заданий {len(ids)}, записей {len(E["rows"])}, нет записи {len(missing)}, негодных {res["coverage"][st]["invalid"]}')
+        ctx = ctx_stage(st, a.ctx_json)
+        if ctx is None:
+            assert a.no_check, f'{st}: нет проверки контекста (журнал run/{st} или потоки {STREAMS}/{st})'
+            print(f'{st}: проверки контекста нет (сухой прогон)')
+        else:
+            if 'config' in ctx:                       # конфигурация голов — часть флага (LENSES-1b, N5)
+                ctx['flag'] = bool(ctx['flag'] or not ctx['config']['ok'])
+            res['ctx'][st] = ctx
+            print(f"{st}: контекст — вызовов {ctx['n']}, пропущено {ctx['skipped']}, доля |остаток| > {ctx['thresholds']['r_max']:.0f}: "
+                  f"{ctx['frac_resid_gt']:.3f}, наклон {ctx['slope_per_hour']:+.2f} ток./ч" +
+                  (f", конфигурация {'та' if ctx['config']['ok'] else 'НЕ та'}" if 'config' in ctx else '') + f" → флаг {ctx['flag']}")
         sample, model = st.split('_', 1)
         res['stages'][st] = dict(summary=E['summary'], labels=E.get('labels'))   # paired из evals не берём: у Haiku он только по повтору 0
         for p in PRED:
             if p['model'] != model:
                 continue
             v = verdict(p, E)
+            if ctx is not None and ctx['flag']:
+                v['reading'] = 'не показано (контекст)'
             res['verdicts'][f"{p['id']}|{st}"] = v
             ci = v.get('ci90') if p['kind'] == 'equiv' else v.get('ci95')
             print(f"{p['id']:6s} {st:11s} {p['measure']:9s} {str(p['target']):24s} {p['kind']:5s} → {v['outcome']}"
-                  + (f"; среднее {v['mean']:+.4f} [{ci[0]:+.4f}; {ci[1]:+.4f}], n {v['n']}" if 'mean' in v else ''))
-        if len(REPS[model]) > 1:                      # встроенный A/A (только чтение; LENSES-1, L3-7): повтор 1 − повтор 0 внутри руки
-            aa = {}
-            for arm in ('LOG', 'WIN', 'NONE'):
-                for m_ in ('self_dec', 'acc'):
-                    x = []
-                    for t in sample_tasks(E):
-                        r0, r1 = E['rows'].get(f'{t}|{arm}|0'), E['rows'].get(f'{t}|{arm}|1')
-                        if r0 and r1 and r0['valid'] and r1['valid']:
-                            x.append(value(r1, m_) - value(r0, m_))
-                    if len(x) > 2:
-                        mm, lo, hi, sd_ = t_ci(x, 0.90)
-                        aa[f'{arm}|{m_}'] = dict(n=len(x), mean=mm, ci90=[lo, hi], sd=sd_, within_01=bool(lo > -0.1 and hi < 0.1))
-            res.setdefault('aa', {})[st] = aa
-            print(f'{st}: A/A (повтор 1 − повтор 0, 90 %): ' + '; '.join(f"{k} {v['mean']:+.3f} [{v['ci90'][0]:+.3f}; {v['ci90'][1]:+.3f}]" for k, v in aa.items()))
+                  + (f"; среднее {v['mean']:+.4f} [{ci[0]:+.4f}; {ci[1]:+.4f}], n {v['n']}" if 'mean' in v else '')
+                  + (f"; чтение: {v['reading']}" if 'reading' in v else ''))
+        aa_gross = False
+        if len(REPS[model]) > 1:                      # встроенный A/A у Haiku
+            res.setdefault('aa', {})[st], aa_gross = aa_check(E, st)
+            res['aa'][st]['_gross_LOG_WIN'] = aa_gross
         for comp in sorted({p['comp'] for p in PRED if p['comp'] and p['model'] == model}):
             parts = [p['id'] for p in PRED if p['comp'] == comp]
             outs = [res['verdicts'][f'{i}|{st}']['outcome'] for i in parts]
             o = 'подтверждено' if all(x == 'подтверждено' for x in outs) else (
                 'опровергнуто' if any(x == 'опровергнуто' for x in outs) else 'не подтверждено')
             res['composites'][f'{comp}|{st}'] = dict(parts=parts, outcome=o)
-            print(f'сводный {comp} {st}: {o} ({", ".join(f"{i} {x}" for i, x in zip(parts, outs))})')
+            rd = o
+            if ctx is not None and ctx['flag']:
+                rd = 'не показано (контекст)'
+            elif comp.startswith('SA_') and aa_gross and o == 'подтверждено':
+                rd = 'не показано (A/A: процедура различает одинаковые промпты)'
+            res['readings'][f'{comp}|{st}'] = rd
+            print(f'сводный {comp} {st}: {o} ({", ".join(f"{i} {x}" for i, x in zip(parts, outs))})' + ('' if rd == o else f'; чтение: {rd}'))
     for comp in sorted({p['comp'] for p in PRED if p['comp']}):
         model = comp.split('_', 1)[1]
-        m_, r_ = res['composites'].get(f'{comp}|main_{model}'), res['composites'].get(f'{comp}|rep_{model}')
+        m_, r_ = res['readings'].get(f'{comp}|main_{model}'), res['readings'].get(f'{comp}|rep_{model}')
         if m_ is None:
             continue
-        both = r_ is not None and m_['outcome'] == r_['outcome'] == 'подтверждено'
+        both = r_ is not None and m_ == r_ == 'подтверждено'
         st_ = ('установлено' if ESTABLISH[comp.split('_')[0]] else 'подтверждено (повторено; причина не проверялась)') if both else (
-            m_['outcome'] + ('' if r_ is None else f'; повтор: {r_["outcome"]}'))
-        res['status'][comp] = dict(main=m_['outcome'], rep=None if r_ is None else r_['outcome'], status=st_)
+            m_ + ('' if r_ is None else f'; повтор: {r_}'))
+        res['status'][comp] = dict(main=res['composites'][f'{comp}|main_{model}']['outcome'], main_reading=m_,
+                                   rep=None if r_ is None else res['composites'][f'{comp}|rep_{model}']['outcome'], rep_reading=r_, status=st_)
         print(f'статус {comp}: {st_}')
     json.dump(res, open(a.out, 'w'), ensure_ascii=False, indent=1)
     print('→', a.out)

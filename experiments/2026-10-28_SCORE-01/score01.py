@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""SCORE-01: обвязка. Головы — только через tools/run_sealed2.py (claude -p --tools "", пустая папка).
-  python3 score01.py jobs <этап> <выборка> [n] [best|half] → run/<этап>_jobs.jsonl (руки LOG и WIN, по вызову на задачу;
+"""SCORE-01: обвязка. Головы — только через tools/run_sealed2.py (claude -p --tools ""; с пилота 3 — чистый контекст: HOME и
+рабочая папка вне git, без снимка git, ERRORS № 118).
+  python3 score01.py jobs <этап> <выборка> [n] [best|half] → jobs/<этап>_jobs.jsonl, у пилотов и сухих прогонов — run/ (LENSES-1b, N1:
+                                                        verify-plans считает файлы run/ прогоном; руки LOG и WIN, по вызову на задачу;
                                                         формат best — «фактически лучший из 8», half — «в лучшей половине»)
   python3 score01.py truth <выборка>                  → truth/<выборка>.json: правда 8 кандидатов и фактически лучший
   python3 score01.py metrics <этап> <выборка> <выгрузка run_sealed2 export> [best|half] → evals/<этап>.json и меры по рукам
@@ -62,11 +64,12 @@ def argmax_tie(t, xs):
 
 def cmd_jobs(stage, sample, n=None, fmt='best', arms=None, rep='0'):
     """arms — через запятую (по умолчанию LOG,WIN); rep — номер повтора в id задания (по умолчанию 0)."""
-    os.makedirs(os.path.join(HERE, 'run'), exist_ok=True)
+    d = 'run' if stage.startswith(('pilot', 'dry')) else 'jobs'
+    os.makedirs(os.path.join(HERE, d), exist_ok=True)
     ts = sample_tasks(sample)[:int(n) if n and n != 'all' else None]
     arms = tuple(arms.split(',')) if arms else ARMS
     assert all(a in ARMS_ALL for a in arms) and (fmt == 'half' or 'NONE' not in arms), arms
-    path = os.path.join(HERE, 'run', f'{stage}_jobs.jsonl')
+    path = os.path.join(HERE, d, f'{stage}_jobs.jsonl')
     with open(path, 'w', encoding='utf-8') as fh:
         for t in ts:
             tk, pl, pm = task(t), pool(t), perm(t)
