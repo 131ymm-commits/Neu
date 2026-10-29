@@ -12,3 +12,4 @@
 {"arm": "LOG", "at": "2026-10-29T15:47:25+00:00", "attempt": 1, "event": "вызов", "job": "WH_8202|LOG|1", "role": "основной", "task": "WH_8202", "поток": "WH_8202_LOG_1-55bbe057.a001.osn.jsonl.gz"}
 {"arm": "LOG", "at": "2026-10-29T15:48:17+00:00", "attempt": 1, "event": "вызов", "job": "WH_8203|LOG|3", "role": "основной", "task": "WH_8203", "поток": "WH_8203_LOG_3-c9f26666.a001.osn.jsonl.gz"}
 {"arm": "LOG", "at": "2026-10-29T15:48:47+00:00", "attempt": 1, "event": "вызов", "job": "WH_8203|LOG|0", "role": "основной", "task": "WH_8203", "поток": "WH_8203_LOG_0-1bdaf208.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T15:49:22+00:00", "attempt": 1, "event": "вызов", "job": "WH_8203|LOG|1", "role": "основной", "task": "WH_8203", "поток": "WH_8203_LOG_1-9e46cc21.a001.osn.jsonl.gz"}
