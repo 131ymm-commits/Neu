@@ -22,25 +22,25 @@ MIN_VALID = 0.9
 P = lambda **k: k
 # Предсказания — по пилоту (PREREG §4); одинаковы для основной выборки и повтора. Заполняются до регистрации.
 PRED = [  # направления — по пилоту (PREREG §3); разведка — вне семьи, в реестр только гипотезой
-    P(id='X1o', model='opus', measure='auc2', a='agree', b='single', dir=-1, family=True,
+    P(id='X1o', expect=0.55, model='opus', measure='auc2', a='agree', b='single', dir=-1, family=True,
       text='Opus: AUC второго рода согласия пяти вызовов меньше, чем у словесной уверенности одного вызова'),
-    P(id='X2o', model='opus', measure='self_dec', a='agree', b='single', dir=+1, family=True,
+    P(id='X2o', expect=0.95, model='opus', measure='self_dec', a='agree', b='single', dir=+1, family=True,
       text='Opus: самообман доли согласных вызовов (как вероятности) больше, чем у словесной уверенности одного вызова'),
-    P(id='X3o', model='opus', measure='acc', a='agree', b='single', dir=+1, family=True,
+    P(id='X3o', expect=0.55, model='opus', measure='acc', a='agree', b='single', dir=+1, family=True,
       text='Opus: точность суждения большинства пяти вызовов выше, чем у одного вызова'),
-    P(id='X4o', model='opus', measure='self_dec', a='mean', b='single', dir=-1, family=True,
+    P(id='X4o', expect=0.95, model='opus', measure='self_dec', a='mean', b='single', dir=-1, family=True,
       text='Opus: самообман среднего p пяти вызовов меньше, чем у одного вызова'),
-    P(id='XE1o', model='opus', measure='auc2', a='mean', b='single', dir=+1, family=False,
+    P(id='XE1o', expect=0.25, model='opus', measure='auc2', a='mean', b='single', dir=+1, family=False,
       text='разведка, Opus: AUC второго рода среднего p пяти вызовов больше, чем у одного вызова'),
-    P(id='X2h', model='haiku', measure='self_dec', a='agree', b='single', dir=+1, family=True,
+    P(id='X2h', expect=0.95, model='haiku', measure='self_dec', a='agree', b='single', dir=+1, family=True,
       text='Haiku: самообман доли согласных вызовов (как вероятности) больше, чем у словесной уверенности одного вызова'),
-    P(id='X3h', model='haiku', measure='acc', a='agree', b='single', dir=+1, family=True,
+    P(id='X3h', expect=0.45, model='haiku', measure='acc', a='agree', b='single', dir=+1, family=True,
       text='Haiku: точность суждения большинства пяти вызовов выше, чем у одного вызова'),
-    P(id='X4h', model='haiku', measure='self_dec', a='mean', b='single', dir=-1, family=True,
+    P(id='X4h', expect=0.95, model='haiku', measure='self_dec', a='mean', b='single', dir=-1, family=True,
       text='Haiku: самообман среднего p пяти вызовов меньше, чем у одного вызова'),
-    P(id='XE1h', model='haiku', measure='auc2', a='agree', b='single', dir=+1, family=False,
+    P(id='XE1h', expect=0.2, model='haiku', measure='auc2', a='agree', b='single', dir=+1, family=False,
       text='разведка, Haiku: AUC второго рода согласия пяти вызовов больше, чем у одного вызова (знак условный: в пилоте меньше 1 SE)'),
-    P(id='XE2h', model='haiku', measure='auc2', a='mean', b='single', dir=+1, family=False,
+    P(id='XE2h', expect=0.25, model='haiku', measure='auc2', a='mean', b='single', dir=+1, family=False,
       text='разведка, Haiku: AUC второго рода среднего p пяти вызовов больше, чем у одного вызова'),
 ]
 COMP = dict(SA_opus=['X1o'], SB_opus=['X2o'], SC_opus=['X3o'], SD_opus=['X4o'], SB_haiku=['X2h'], SC_haiku=['X3h'], SD_haiku=['X4h'])
@@ -52,8 +52,10 @@ def sha(p):
 
 
 def check_hashes():
+    import prereg_hashes
     H = json.load(open(os.path.join(HERE, 'prereg_hashes.json'), encoding='utf-8'))
-    bad = [k for k, v in H.items() if sha(os.path.join(HERE, k)) != v]
+    now = prereg_hashes.compute()
+    bad = sorted(set(H) ^ set(now)) + [k for k in H if k in now and now[k] != H[k]]
     assert not bad, f'хеши не совпали: {bad}'
     return len(H)
 
