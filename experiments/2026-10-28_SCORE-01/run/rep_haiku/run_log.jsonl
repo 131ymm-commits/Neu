@@ -283,3 +283,10 @@
 {"arm": "NONE", "at": "2026-10-29T09:18:21+00:00", "attempt": 1, "event": "вызов", "job": "WH_8148|NONE|1", "role": "основной", "task": "WH_8148", "поток": "WH_8148_NONE_1-667e7c23.a001.osn.jsonl.gz"}
 {"arm": "LOG", "at": "2026-10-29T09:18:39+00:00", "attempt": 1, "event": "вызов", "job": "WH_8148|LOG|0", "role": "основной", "task": "WH_8148", "поток": "WH_8148_LOG_0-d8f99c80.a001.osn.jsonl.gz"}
 {"arm": "NONE", "at": "2026-10-29T09:18:58+00:00", "attempt": 1, "event": "вызов", "job": "WH_8149|NONE|1", "role": "основной", "task": "WH_8149", "поток": "WH_8149_NONE_1-366ad1df.a001.osn.jsonl.gz"}
+{"at": "2026-10-29T09:20:24+00:00", "event": "пауза", "причина": "--stop-after 6600.0 с"}
+{"at": "2026-10-29T09:20:35+00:00", "binary_sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262", "config_sha256": "355cd82b4bae762a68f1e294ad2219cfc171cfc6370f9be1dff272839ab25f6a", "event": "старт"}
+{"at": "2026-10-29T09:20:35+00:00", "event": "план", "заданий_в_плане": 311, "задач": 99}
+{"arm": "WIN", "at": "2026-10-29T09:20:35+00:00", "attempt": 1, "event": "вызов", "job": "WH_8149|WIN|0", "role": "основной", "task": "WH_8149", "поток": "WH_8149_WIN_0-4167110d.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T09:20:35+00:00", "attempt": 1, "event": "вызов", "job": "WH_8149|LOG|1", "role": "основной", "task": "WH_8149", "поток": "WH_8149_LOG_1-09fc6fde.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T09:20:35+00:00", "attempt": 1, "event": "вызов", "job": "WH_8149|NONE|0", "role": "основной", "task": "WH_8149", "поток": "WH_8149_NONE_0-16389278.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T09:20:35+00:00", "attempt": 1, "event": "вызов", "job": "WH_8149|LOG|0", "role": "основной", "task": "WH_8149", "поток": "WH_8149_LOG_0-4a3d7ebb.a001.osn.jsonl.gz"}
