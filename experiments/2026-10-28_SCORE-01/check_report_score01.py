@@ -3,7 +3,8 @@
 1) Каждая строка таблиц run/report_tables.md (их печатает report_tables_score01.py из analysis_score01.json) стоит в
    REPORT-SCORE-01.md дословно: таблицы вставляются командой (assemble_report_score01.py), не перепечаткой.
 2) Каждое десятичное число прозы (вне строк таблиц) встречается дословно (как строка, без знака) в источниках:
-   run/report_tables.md, PREREG-SCORE-01.md, DEVIATIONS.md, run/posthoc_*.md (пост-хок, если есть), журналы run/*.log.
+   run/report_tables.md, PREREG-SCORE-01.md, DEVIATIONS.md, run/posthoc_*.md (пост-хок, если есть), журналы run/*.log;
+   с 29.10 (при отчёте) — и раздел SCORE-01 в docs/PRIORITY.md (числа литературы в «Чтении»).
    Нестрогое сравнение со всеми числами json почти ничего не проверяет (урок TRUST-04), поэтому json сюда не входит.
   python3 check_report_score01.py [REPORT-SCORE-01.md]"""
 import glob
@@ -29,7 +30,12 @@ def main():
         p = fn if os.path.isabs(fn) else os.path.join(HERE, fn)
         if os.path.exists(p):
             src += '\n' + open(p, encoding='utf-8', errors='replace').read()
-    have = set(m.replace('−', '-').lstrip('-') for m in NUM.findall(src))
+    pri = open(os.path.join(HERE, '..', '..', 'docs', 'PRIORITY.md'), encoding='utf-8').read()
+    i = pri.find('## 2026-10-28 — SCORE-01')
+    assert i >= 0, 'нет раздела SCORE-01 в docs/PRIORITY.md'
+    j = pri.find('\n## ', i + 5)
+    src += '\n' + pri[i:j if j > 0 else None]
+    have =set(m.replace('−', '-').lstrip('-') for m in NUM.findall(src))
     prose = '\n'.join(l for l in rep.splitlines() if not l.startswith('|'))
     found = NUM.findall(prose)
     miss = sorted(set(m for m in found if m.replace('−', '-').lstrip('-') not in have))

@@ -4,6 +4,7 @@
   python3 calib_summary_score01.py   → calib_score01.json и печать (run/calib_score01.log)"""
 import json
 import math
+import sys
 import os
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -32,10 +33,24 @@ def main():
         w = [math.log2(p / a) if x == 'подтверждено' else (math.log2((1 - p) / (1 - v['alpha'])) if x == 'опровергнуто' else 0.0) for x in rd]
         bits[c] = dict(readings=rd, bits_each=w, group_max=max(w), alpha=v['alpha'], power_low=v['power_low'])
     out['bits'] = bits
+    # 29.10, при написании отчёта: те же ожидания против исходов повтора — для записи; в счёт не идут (PREREG §5)
+    sys.path.insert(0, HERE)
+    from analyze_score01 import PRED
+    rr = []
+    for q in PRED:
+        rep = A['verdicts'][f"{q['id']}|rep_{q['model']}"]['outcome']
+        rr.append((q['model'], q['expect'], 1 if rep == 'подтверждено' else 0))
+    st2 = lambda xs: dict(n=len(xs), mean_p=sum(x[1] for x in xs) / len(xs), share=sum(x[2] for x in xs) / len(xs),
+                          brier=sum((x[1] - x[2]) ** 2 for x in xs) / len(xs))
+    out['rep_note'] = dict(all=st2(rr), opus=st2([x for x in rr if x[0] == 'opus']), haiku=st2([x for x in rr if x[0] == 'haiku']))
+    for v in out['rep_note'].values():
+        v['self_dec'] = v['mean_p'] - v['share']
     json.dump(out, open(os.path.join(HERE, 'calib_score01.json'), 'w'), ensure_ascii=False, indent=1)
     for k in ('all', 'opus', 'haiku', 'class_after_pilot'):
         v = out[k]
         print(f"{k}: ожиданий {v['n']}, средняя уверенность {f(v['mean_p'])}, доля подтверждённых {f(v['share'])}, Брайер {f(v['brier'])}, самообман {f(v['self_dec'])}")
+    for k, v in out['rep_note'].items():
+        print(f"по повтору (в счёт не идёт) {k}: ожиданий {v['n']}, подтвердилось {round(v['share'] * v['n'])}, доля {f(v['share'])}, Брайер {f(v['brier'])}, самообман {f(v['self_dec'])}")
     for c, v in bits.items():
         print(f"{c}: чтения {v['readings']}, вес основной и повтора {', '.join(f(x, 2) for x in v['bits_each'])} бита, группа — {f(v['group_max'], 2)}")
 
