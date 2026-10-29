@@ -1,0 +1,531 @@
+{
+ "hashes": null,
+ "coverage": {
+  "main_opus": {
+   "jobs": 500,
+   "rows": 500,
+   "missing": 0,
+   "invalid": 86,
+   "valid": 414
+  },
+  "rep_opus": {
+   "jobs": 295,
+   "rows": 295,
+   "missing": 0,
+   "invalid": 37,
+   "valid": 258
+  },
+  "main_haiku": {
+   "jobs": 500,
+   "rows": 500,
+   "missing": 0,
+   "invalid": 61,
+   "valid": 439
+  },
+  "rep_haiku": {
+   "jobs": 295,
+   "rows": 295,
+   "missing": 0,
+   "invalid": 49,
+   "valid": 246
+  }
+ },
+ "ctx": {
+  "main_opus": {
+   "flag": false,
+   "why": [],
+   "n": 1
+  },
+  "rep_opus": {
+   "flag": false,
+   "why": [],
+   "n": 1
+  },
+  "main_haiku": {
+   "flag": false,
+   "why": [],
+   "n": 1
+  },
+  "rep_haiku": {
+   "flag": false,
+   "why": [],
+   "n": 1
+  }
+ },
+ "verdicts": {
+  "X1o|main_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X2o|main_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X3o|main_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X4o|main_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X5o|main_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "XE1o|main_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X1o|rep_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X2o|rep_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X3o|rep_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X4o|rep_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X5o|rep_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "XE1o|rep_opus": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X1h|main_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X2h|main_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X3h|main_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X4h|main_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X5h|main_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "XE1h|main_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 100
+  },
+  "X1h|rep_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X2h|rep_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X3h|rep_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X4h|rep_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "X5h|rep_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  },
+  "XE1h|rep_haiku": {
+   "outcome": "не показано (потери)",
+   "n_tasks": 59
+  }
+ },
+ "composites": {
+  "SA_opus|main_opus": {
+   "parts": [
+    "X1o"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SB_opus|main_opus": {
+   "parts": [
+    "X2o"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SC_opus|main_opus": {
+   "parts": [
+    "X3o"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SD_opus|main_opus": {
+   "parts": [
+    "X4o",
+    "X5o"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SA_opus|rep_opus": {
+   "parts": [
+    "X1o"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SB_opus|rep_opus": {
+   "parts": [
+    "X2o"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SC_opus|rep_opus": {
+   "parts": [
+    "X3o"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SD_opus|rep_opus": {
+   "parts": [
+    "X4o",
+    "X5o"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SA_haiku|main_haiku": {
+   "parts": [
+    "X1h"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SB_haiku|main_haiku": {
+   "parts": [
+    "X2h"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SC_haiku|main_haiku": {
+   "parts": [
+    "X3h"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SD_haiku|main_haiku": {
+   "parts": [
+    "X4h",
+    "X5h"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SA_haiku|rep_haiku": {
+   "parts": [
+    "X1h"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SB_haiku|rep_haiku": {
+   "parts": [
+    "X2h"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SC_haiku|rep_haiku": {
+   "parts": [
+    "X3h"
+   ],
+   "outcome": "не подтверждено"
+  },
+  "SD_haiku|rep_haiku": {
+   "parts": [
+    "X4h",
+    "X5h"
+   ],
+   "outcome": "не подтверждено"
+  }
+ },
+ "readings": {
+  "SA_opus|main_opus": "не подтверждено",
+  "SB_opus|main_opus": "не подтверждено",
+  "SC_opus|main_opus": "не подтверждено",
+  "SD_opus|main_opus": "не подтверждено",
+  "SA_opus|rep_opus": "не подтверждено",
+  "SB_opus|rep_opus": "не подтверждено",
+  "SC_opus|rep_opus": "не подтверждено",
+  "SD_opus|rep_opus": "не подтверждено",
+  "SA_haiku|main_haiku": "не подтверждено",
+  "SB_haiku|main_haiku": "не подтверждено",
+  "SC_haiku|main_haiku": "не подтверждено",
+  "SD_haiku|main_haiku": "не подтверждено",
+  "SA_haiku|rep_haiku": "не подтверждено",
+  "SB_haiku|rep_haiku": "не подтверждено",
+  "SC_haiku|rep_haiku": "не подтверждено",
+  "SD_haiku|rep_haiku": "не подтверждено"
+ },
+ "status": {
+  "SA_opus": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  },
+  "SB_opus": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  },
+  "SC_opus": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  },
+  "SD_opus": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  },
+  "SA_haiku": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  },
+  "SB_haiku": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  },
+  "SC_haiku": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  },
+  "SD_haiku": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  }
+ },
+ "pred": [
+  {
+   "id": "X1o",
+   "measure": "auc2",
+   "a": "agree",
+   "b": "single",
+   "dir": 1,
+   "text": "AUC второго рода: согласие пяти вызовов − словесная уверенность одного > 0",
+   "model": "opus"
+  },
+  {
+   "id": "X2o",
+   "measure": "auc2",
+   "a": "agree",
+   "b": "mean",
+   "dir": 1,
+   "text": "AUC второго рода: согласие пяти − среднее p пяти > 0 (специфичность: при равном числе вызовов)",
+   "model": "opus"
+  },
+  {
+   "id": "X3o",
+   "measure": "acc",
+   "a": "agree",
+   "b": "single",
+   "dir": 1,
+   "text": "точность суждений: большинство пяти − один вызов > 0",
+   "model": "opus"
+  },
+  {
+   "id": "X4o",
+   "measure": "self_dec",
+   "a": "mean",
+   "b": "single",
+   "dir": -1,
+   "text": "самообман: среднее p пяти − один вызов < 0",
+   "model": "opus"
+  },
+  {
+   "id": "X5o",
+   "measure": "brier",
+   "a": "mean",
+   "b": "single",
+   "dir": -1,
+   "text": "Брайер: среднее p пяти − один вызов < 0",
+   "model": "opus"
+  },
+  {
+   "id": "XE1o",
+   "measure": "auc2",
+   "a": "mean",
+   "b": "single",
+   "dir": 1,
+   "text": "разведка: AUC второго рода: среднее p пяти − один вызов > 0",
+   "model": "opus"
+  },
+  {
+   "id": "X1h",
+   "measure": "auc2",
+   "a": "agree",
+   "b": "single",
+   "dir": 1,
+   "text": "AUC второго рода: согласие пяти вызовов − словесная уверенность одного > 0",
+   "model": "haiku"
+  },
+  {
+   "id": "X2h",
+   "measure": "auc2",
+   "a": "agree",
+   "b": "mean",
+   "dir": 1,
+   "text": "AUC второго рода: согласие пяти − среднее p пяти > 0 (специфичность: при равном числе вызовов)",
+   "model": "haiku"
+  },
+  {
+   "id": "X3h",
+   "measure": "acc",
+   "a": "agree",
+   "b": "single",
+   "dir": 1,
+   "text": "точность суждений: большинство пяти − один вызов > 0",
+   "model": "haiku"
+  },
+  {
+   "id": "X4h",
+   "measure": "self_dec",
+   "a": "mean",
+   "b": "single",
+   "dir": -1,
+   "text": "самообман: среднее p пяти − один вызов < 0",
+   "model": "haiku"
+  },
+  {
+   "id": "X5h",
+   "measure": "brier",
+   "a": "mean",
+   "b": "single",
+   "dir": -1,
+   "text": "Брайер: среднее p пяти − один вызов < 0",
+   "model": "haiku"
+  },
+  {
+   "id": "XE1h",
+   "measure": "auc2",
+   "a": "mean",
+   "b": "single",
+   "dir": 1,
+   "text": "разведка: AUC второго рода: среднее p пяти − один вызов > 0",
+   "model": "haiku"
+  }
+ ],
+ "measures": {
+  "main_opus": {
+   "single": {
+    "auc2": 0.7999485966896268,
+    "acc": 0.8282950423216445,
+    "conf": 0.7379576783555017,
+    "self_dec": -0.09033736396614278,
+    "brier": 0.12851760943168078,
+    "n": 3308
+   },
+   "mean": {
+    "auc2": 0.9378011388523873,
+    "acc": 0.95125,
+    "conf": 0.7002285416666666,
+    "self_dec": -0.25102145833333345,
+    "brier": 0.1039583119326389,
+    "n": 800
+   },
+   "agree": {
+    "auc2": 0.843627106741573,
+    "acc": 0.9468085106382979,
+    "conf": 0.8699024822695035,
+    "self_dec": -0.07690602836879434,
+    "brier": 0.0582705378250591,
+    "n": 752
+   }
+  },
+  "rep_opus": {
+   "single": {
+    "auc2": 0.785261120909269,
+    "acc": 0.8253275109170306,
+    "conf": 0.7333095584667637,
+    "self_dec": -0.0920179524502669,
+    "brier": 0.13249917855409996,
+    "n": 2061
+   },
+   "mean": {
+    "auc2": 0.9180128814275156,
+    "acc": 0.9555084745762712,
+    "conf": 0.6918235875706216,
+    "self_dec": -0.2636848870056496,
+    "brier": 0.10885996422787193,
+    "n": 472
+   },
+   "agree": {
+    "auc2": 0.871654501216545,
+    "acc": 0.9448275862068966,
+    "conf": 0.8677011494252874,
+    "self_dec": -0.07712643678160913,
+    "brier": 0.05757279693486591,
+    "n": 435
+   }
+  },
+  "main_haiku": {
+   "single": {
+    "auc2": 0.7824611121712571,
+    "acc": 0.8229255774165953,
+    "conf": 0.7319298545765611,
+    "self_dec": -0.09099572284003421,
+    "brier": 0.13373474479612205,
+    "n": 3507
+   },
+   "mean": {
+    "auc2": 0.9265908804899534,
+    "acc": 0.96125,
+    "conf": 0.6914551875000001,
+    "self_dec": -0.2697948124999999,
+    "brier": 0.10750697054131944,
+    "n": 800
+   },
+   "agree": {
+    "auc2": 0.8539452294610479,
+    "acc": 0.9565789473684211,
+    "conf": 0.8556798245614035,
+    "self_dec": -0.10089912280701763,
+    "brier": 0.056537646198830414,
+    "n": 760
+   }
+  },
+  "rep_haiku": {
+   "single": {
+    "auc2": 0.8059767251635931,
+    "acc": 0.8333333333333334,
+    "conf": 0.7414278455284553,
+    "self_dec": -0.09190548780487806,
+    "brier": 0.12538810569105693,
+    "n": 1968
+   },
+   "mean": {
+    "auc2": 0.8926331145149526,
+    "acc": 0.9682203389830508,
+    "conf": 0.7036349223163841,
+    "self_dec": -0.2645854166666667,
+    "brier": 0.10067853393185028,
+    "n": 472
+   },
+   "agree": {
+    "auc2": 0.8330461008186126,
+    "acc": 0.9504504504504504,
+    "conf": 0.8749624624624623,
+    "self_dec": -0.07548798798798806,
+    "brier": 0.05639952452452453,
+    "n": 444
+   }
+  }
+ }
+}

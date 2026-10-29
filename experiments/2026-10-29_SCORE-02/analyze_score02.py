@@ -21,9 +21,30 @@ B = 10000
 MIN_VALID = 0.9
 P = lambda **k: k
 # Предсказания — по пилоту (PREREG §4); одинаковы для основной выборки и повтора. Заполняются до регистрации.
-PRED = []
-COMP = {}           # сводный → части
-ESTABLISH = {}      # сводный → может ли получить «установлено» (PREREG §4)
+PRED = [  # направления — по пилоту (PREREG §3); разведка — вне семьи, в реестр только гипотезой
+    P(id='X1o', model='opus', measure='auc2', a='agree', b='single', dir=-1, family=True,
+      text='Opus: AUC второго рода согласия пяти вызовов меньше, чем у словесной уверенности одного вызова'),
+    P(id='X2o', model='opus', measure='self_dec', a='agree', b='single', dir=+1, family=True,
+      text='Opus: самообман доли согласных вызовов (как вероятности) больше, чем у словесной уверенности одного вызова'),
+    P(id='X3o', model='opus', measure='acc', a='agree', b='single', dir=+1, family=True,
+      text='Opus: точность суждения большинства пяти вызовов выше, чем у одного вызова'),
+    P(id='X4o', model='opus', measure='self_dec', a='mean', b='single', dir=-1, family=True,
+      text='Opus: самообман среднего p пяти вызовов меньше, чем у одного вызова'),
+    P(id='XE1o', model='opus', measure='auc2', a='mean', b='single', dir=+1, family=False,
+      text='разведка, Opus: AUC второго рода среднего p пяти вызовов больше, чем у одного вызова'),
+    P(id='X2h', model='haiku', measure='self_dec', a='agree', b='single', dir=+1, family=True,
+      text='Haiku: самообман доли согласных вызовов (как вероятности) больше, чем у словесной уверенности одного вызова'),
+    P(id='X3h', model='haiku', measure='acc', a='agree', b='single', dir=+1, family=True,
+      text='Haiku: точность суждения большинства пяти вызовов выше, чем у одного вызова'),
+    P(id='X4h', model='haiku', measure='self_dec', a='mean', b='single', dir=-1, family=True,
+      text='Haiku: самообман среднего p пяти вызовов меньше, чем у одного вызова'),
+    P(id='XE1h', model='haiku', measure='auc2', a='agree', b='single', dir=+1, family=False,
+      text='разведка, Haiku: AUC второго рода согласия пяти вызовов больше, чем у одного вызова (знак условный: в пилоте меньше 1 SE)'),
+    P(id='XE2h', model='haiku', measure='auc2', a='mean', b='single', dir=+1, family=False,
+      text='разведка, Haiku: AUC второго рода среднего p пяти вызовов больше, чем у одного вызова'),
+]
+COMP = dict(SA_opus=['X1o'], SB_opus=['X2o'], SC_opus=['X3o'], SD_opus=['X4o'], SB_haiku=['X2h'], SC_haiku=['X3h'], SD_haiku=['X4h'])
+ESTABLISH = {c: True for c in COMP}   # PREREG §4: свойства двух прочтений одних и тех же вызовов, вмешательства нет
 
 
 def sha(p):
@@ -37,9 +58,9 @@ def check_hashes():
     return len(H)
 
 
-def coverage(st):
+def coverage(st, evals_dir):
     jobs = [json.loads(l)['id'] for l in open(os.path.join(HERE, 'jobs', f'{st.split("_")[0]}_jobs.jsonl'), encoding='utf-8')]
-    E = json.load(open(os.path.join(HERE, 'evals', f'{st}.json'), encoding='utf-8'))
+    E = json.load(open(os.path.join(evals_dir, f'{st}.json'), encoding='utf-8'))
     rows = E['rows']
     missing = [j for j in jobs if j not in rows]
     stray = [j for j in rows if j not in set(jobs)]
@@ -56,13 +77,12 @@ def ctx(st, ctx_json=None):
     return C.stage(os.path.join(HERE, 'run', st), os.path.join(HERE, 'jobs', f'{st.split("_")[0]}_jobs.jsonl'))
 
 
-def verdict(p, J, tasks, cov, st):
+def verdict(p, M, BS, tasks, cov):
     if cov['valid'] < MIN_VALID * cov['jobs']:
         return dict(outcome='не показано (потери)', n_tasks=len(tasks))
     spec = (p['measure'], p['a'], p['b'])
-    M = L.measures(J, tasks)
     mu = L.contrast(M, spec)
-    xs = L.bootstrap(J, tasks, [spec], B=B, name=f"{p['id']}|{st}")[spec]
+    xs = BS[spec]
     lo, hi = L.pct(xs, 0.025), L.pct(xs, 0.975)
     d = p['dir']
     if (lo > 0 and d > 0) or (hi < 0 and d < 0):
@@ -80,18 +100,23 @@ def main():
     dry = '--dry' in a
     R = dict(hashes=None if dry else check_hashes(), coverage={}, ctx={}, verdicts={}, composites={}, readings={}, status={}, pred=PRED)
     log = []
+    evals_dir = os.path.join(HERE, 'dry', 'evals') if dry else os.path.join(HERE, 'evals')
     for st in stages:
         model = st.split('_')[1]
-        cov = coverage(st)
+        cov = coverage(st, evals_dir)
         R['coverage'][st] = cov
         c = ctx(st, os.path.join(HERE, 'dry', f'ctx_{st}.json') if dry else None)
         R['ctx'][st] = {k: c[k] for k in ('flag', 'why', 'n', 'skipped', 'abs_mean', 'abs_max', 'max_abs_resid', 'frac_resid_gt', 'frac_abs_gt', 'config') if k in c}
-        J = L.load(st)
+        J = L.load(st, evals_dir)
         tasks = sorted(J)
         log.append(f'{st}: заданий {cov["jobs"]}, записей {cov["rows"]}, нет записи {cov["missing"]}, негодных {cov["invalid"]}; '
                    f'контекст — флаг {c["flag"]} ({"; ".join(c["why"]) or "нет"})')
-        for p in [q for q in PRED if q['model'] == model]:
-            v = verdict(p, J, tasks, cov, st)
+        preds = [q for q in PRED if q['model'] == model]
+        M = L.measures(J, tasks)
+        R['measures'] = R.get('measures', {}); R['measures'][st] = M
+        BS = L.bootstrap(J, tasks, [(q['measure'], q['a'], q['b']) for q in preds], B=B, name=st)
+        for p in preds:
+            v = verdict(p, M, BS, tasks, cov)
             R['verdicts'][f"{p['id']}|{st}"] = v
             log.append(f"  {p['id']:4s} {p['measure']} {p['a']} − {p['b']} {'> 0' if p['dir'] > 0 else '< 0'} → {v['outcome']}"
                        + (f"; {v['mean']:+.4f} [{v['ci95'][0]:+.4f}; {v['ci95'][1]:+.4f}], задач {v['n_tasks']}" if 'mean' in v else ''))

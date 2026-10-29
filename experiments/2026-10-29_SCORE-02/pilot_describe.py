@@ -60,6 +60,15 @@ def main():
                        f'самообман {f(v["self_dec"])}, Брайер {f(v["brier"])}')
         tot = sum(lev.values())
         log.append('   уровни согласия (доля вызовов на стороне большинства): ' + ', '.join(f'{f(k, 2)} — {v} ({f(v / tot, 2)})' for k, v in sorted(lev.items())))
+        acc_lev, acc_bin = {}, {}
+        for t in tasks:
+            for c, o in J[t]['agree']:
+                a_ = acc_lev.setdefault(round(c, 2), [0, 0]); a_[0] += 1; a_[1] += o
+            for c, o in J[t]['single']:
+                b_ = acc_bin.setdefault(min(int((c - 0.5) * 10), 4), [0, 0]); b_[0] += 1; b_[1] += o
+        log.append('   точность по уровню согласия: ' + ', '.join(f'{f(k, 2)} — {f(v[1] / v[0])} ({v[0]})' for k, v in sorted(acc_lev.items())))
+        log.append('   один вызов, точность по уверенности (корзины от 0,5 с шагом 0,1): '
+                   + ', '.join(f'{f(0.5 + k / 10, 1)} — {f(v[1] / v[0])} ({v[0]})' for k, v in sorted(acc_bin.items())))
         for (meas, a, b, d) in CONTRASTS:
             mu = L.contrast(M, (meas, a, b))
             xs = bs[(meas, a, b)]
@@ -73,7 +82,9 @@ def main():
             res[f'{meas}|{a}-{b}'] = dict(mean=mu, ci95=[lo, hi], sd_boot=sd, direction=d, power=pw)
             log.append(f'   {meas} {a} − {b}: {f(mu)} [{f(lo)}; {f(hi)}] (SD бутстрепа {f(sd)}); мощность, ждём {"> 0" if d > 0 else "< 0"}: '
                        f'100 задач — {f(pw[100]["point"], 2)} в точке, {f(pw[100]["unc"], 2)} с неопределённостью; 59 задач — {f(pw[59]["point"], 2)} и {f(pw[59]["unc"], 2)}')
-        out[st] = dict(calls=E['calls'], ctx={k: ctx[k] for k in ('flag', 'why') if k in ctx}, measures=M, agree_levels=lev, contrasts=res)
+        out[st] = dict(calls=E['calls'], ctx={k: ctx[k] for k in ('flag', 'why', 'abs_mean', 'abs_max', 'max_abs_resid') if k in ctx}, measures=M,
+                       agree_levels=lev, acc_by_agree={str(k): v for k, v in acc_lev.items()}, acc_by_conf_bin={str(k): v for k, v in acc_bin.items()},
+                       contrasts=res)
     json.dump(out, open(os.path.join(HERE, 'pilot_describe.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     open(os.path.join(HERE, 'run', 'pilot_describe.log'), 'w', encoding='utf-8').write('\n'.join(log) + '\n')
     print('\n'.join(log))

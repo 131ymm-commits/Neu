@@ -4,7 +4,8 @@ CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS=1). Промпт — рука LOG SCORE-01 
 на задачу K вызовов одного промпта (id «задача|LOG|k»).
   python3 score02.py jobs <этап> <выборка> [K]          → задания: пилот — run/<этап>_jobs.jsonl, тест — jobs/<этап>_jobs.jsonl
   python3 score02.py truth <выборка>                    → truth/<выборка>.json: правда 8 кандидатов по R = 4000 и четвёрка лучших
-  python3 score02.py metrics <этап> <выборка> <выгрузка> [K] → evals/<этап>.json: меры вызовов и три источника уверенности
+  python3 score02.py metrics <этап> <выборка> <выгрузка> [K] [папка] → <папка, по умолчанию evals>/<этап>.json: меры вызовов и три
+                                                        источника уверенности (сухой прогон пишет в dry/evals, не в evals)
 Выборки:
   pilot — WH 7001–7012 и 7301–7308 (задачи и пулы SELECT-01; метки — четвёрка по R = 4000 из SCORE-01, truth/check_pilot.json; это
           пилотные задачи SCORE-01 и в тест не входят);
@@ -184,8 +185,9 @@ def summarize(J):
     return out
 
 
-def cmd_metrics(stage, sample, export, K=K_DEFAULT):
+def cmd_metrics(stage, sample, export, K=K_DEFAULT, out_dir=None):
     K = int(K)
+    out_dir = os.path.join(HERE, out_dir) if out_dir else os.path.join(HERE, 'evals')
     lab = labels_for(sample)
     rec = {}
     for r in map(json.loads, open(export, encoding='utf-8')):
@@ -215,9 +217,9 @@ def cmd_metrics(stage, sample, export, K=K_DEFAULT):
                  cost=sum(r['cost'] or 0 for r in rows.values()), acc=sum(r['acc'] for r in v) / max(1, len(v)),
                  conf=sum(r['conf'] for r in v) / max(1, len(v)))
     calls['self_dec'] = calls['conf'] - calls['acc']
-    os.makedirs(os.path.join(HERE, 'evals'), exist_ok=True)
+    os.makedirs(out_dir, exist_ok=True)
     json.dump(dict(stage=stage, sample=sample, K=K, rows=rows, judgments={t: {s: [[c, ok] for c, ok in J[t][s]] for s in J[t]} for t in J},
-                   summary=summ, calls=calls), open(os.path.join(HERE, 'evals', f'{stage}.json'), 'w'), ensure_ascii=False, indent=0)
+                   summary=summ, calls=calls), open(os.path.join(out_dir, f'{stage}.json'), 'w'), ensure_ascii=False, indent=0)
     print('вызовы:', {k: round(x, 4) if isinstance(x, float) else x for k, x in calls.items()})
     for s_, d in summ.items():
         print(s_, {k: round(x, 4) if isinstance(x, float) else x for k, x in d.items()})
