@@ -111,6 +111,11 @@ def main():
     rep['SC1_SLICES'] = (f"в {better} срезах из {len(sl)} (модель × выборка) Брайер ожиданий ниже Брайера мощности; у Opus в основной — "
                          f"{f(C1['main|opus']['brier_expect'], 4)} против {f(C1['main|opus']['brier_power'], 4)} (`../2026-10-28_SCORE-01/run/calib_score01.log`)")
     rep['X3_Z'] = f"{f(W['preds']['X3o']['z_pilot'], 2)} SD у Opus и {f(W['preds']['X3h']['z_pilot'], 2)} у Haiku (`pilot_power.json`, z_pilot)"
+    ax = []
+    for b in ('A', 'D', 'Dm', 'A3'):
+        v = json.load(open(os.path.join(HERE, 'dry', f'analysis_{b}.json'), encoding='utf-8'))['verdicts']['X1o|main_opus']
+        ax.append(f"{b} {f(v['mean'])} [{f(v['ci95'][0])}; {f(v['ci95'][1])}]")
+    rep['A_X1O'] = '; '.join(ax)
     rep['DRY_RESULT'] = dry_summary(os.path.join(HERE, 'dry', 'check_expect.log'), os.path.join(HERE, 'dry', 'run1'))
     rep['DRY2_RESULT'] = dry_summary(os.path.join(HERE, 'dry', 'check_expect2.log'), os.path.join(HERE, 'dry'))
     pl = []
