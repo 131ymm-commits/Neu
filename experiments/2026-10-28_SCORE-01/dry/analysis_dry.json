@@ -290,6 +290,11 @@
    "n": 82,
    "n_tasks": 100
   },
+  "O9|main_opus": {
+   "outcome": "не показано (потери)",
+   "n": 83,
+   "n_tasks": 100
+  },
   "OE1|main_opus": {
    "outcome": "не показано (потери)",
    "n": 83,
@@ -416,6 +421,18 @@
    "sd": 0.0,
    "p_perm_two_sided": 9.99990000099999e-06
   },
+  "O9|rep_opus": {
+   "outcome": "не показано",
+   "n": 94,
+   "n_tasks": 99,
+   "mean": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "sd": 0.0,
+   "p_perm_two_sided": 1.0
+  },
   "OE1|rep_opus": {
    "outcome": "не показано",
    "n": 94,
@@ -539,6 +556,30 @@
    "sd": 0.11014441412160707,
    "p_perm_two_sided": null
   },
+  "H8|main_haiku": {
+   "outcome": "опровергнуто",
+   "n": 98,
+   "n_tasks": 100,
+   "mean": -100.0,
+   "ci95": [
+    -100.0,
+    -100.0
+   ],
+   "sd": 0.0,
+   "p_perm_two_sided": 9.99990000099999e-06
+  },
+  "H9|main_haiku": {
+   "outcome": "не показано",
+   "n": 99,
+   "n_tasks": 100,
+   "mean": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "sd": 0.0,
+   "p_perm_two_sided": 1.0
+  },
   "H7|main_haiku": {
    "outcome": "не показано",
    "n": 98,
@@ -550,18 +591,6 @@
    ],
    "sd": 0.13541124024487194,
    "p_perm_two_sided": 0.05777942220577794
-  },
-  "H8|main_haiku": {
-   "outcome": "подтверждено",
-   "n": 98,
-   "n_tasks": 100,
-   "mean": -100.0,
-   "ci95": [
-    -100.0,
-    -100.0
-   ],
-   "sd": 0.0,
-   "p_perm_two_sided": 9.99990000099999e-06
   },
   "HE1|main_haiku": {
    "outcome": "не показано",
@@ -576,7 +605,7 @@
    "p_perm_two_sided": 0.2080579194208058
   },
   "HE2|main_haiku": {
-   "outcome": "подтверждено",
+   "outcome": "опровергнуто",
    "n": 98,
    "n_tasks": 100,
    "mean": -0.04193239795918367,
@@ -586,6 +615,18 @@
    ],
    "sd": 0.1584310873703463,
    "p_perm_two_sided": 0.010559894401055989
+  },
+  "HE3|main_haiku": {
+   "outcome": "не показано",
+   "n": 99,
+   "n_tasks": 100,
+   "mean": -0.03188131313131313,
+   "ci95": [
+    -0.0673180059834023,
+    0.0035553797207760474
+   ],
+   "sd": 0.17767519502690837,
+   "p_perm_two_sided": 0.08014919850801493
   },
   "H1|rep_haiku": {
    "outcome": "подтверждено",
@@ -674,20 +715,8 @@
    "sd": 0.11426493848562667,
    "p_perm_two_sided": null
   },
-  "H7|rep_haiku": {
-   "outcome": "подтверждено",
-   "n": 99,
-   "n_tasks": 99,
-   "mean": -0.056976010101010104,
-   "ci95": [
-    -0.08542768809487512,
-    -0.02852433210714508
-   ],
-   "sd": 0.14265319445871308,
-   "p_perm_two_sided": 0.00016999830001699983
-  },
   "H8|rep_haiku": {
-   "outcome": "подтверждено",
+   "outcome": "опровергнуто",
    "n": 99,
    "n_tasks": 99,
    "mean": -100.0,
@@ -698,8 +727,32 @@
    "sd": 0.0,
    "p_perm_two_sided": 9.99990000099999e-06
   },
+  "H9|rep_haiku": {
+   "outcome": "не показано",
+   "n": 99,
+   "n_tasks": 99,
+   "mean": 0.0,
+   "ci95": [
+    0.0,
+    0.0
+   ],
+   "sd": 0.0,
+   "p_perm_two_sided": 1.0
+  },
+  "H7|rep_haiku": {
+   "outcome": "опровергнуто",
+   "n": 99,
+   "n_tasks": 99,
+   "mean": -0.056976010101010104,
+   "ci95": [
+    -0.08542768809487512,
+    -0.02852433210714508
+   ],
+   "sd": 0.14265319445871308,
+   "p_perm_two_sided": 0.00016999830001699983
+  },
   "HE1|rep_haiku": {
-   "outcome": "подтверждено",
+   "outcome": "опровергнуто",
    "n": 99,
    "n_tasks": 99,
    "mean": -0.04090909090909091,
@@ -711,7 +764,7 @@
    "p_perm_two_sided": 0.0044299557004429954
   },
   "HE2|rep_haiku": {
-   "outcome": "подтверждено",
+   "outcome": "опровергнуто",
    "n": 99,
    "n_tasks": 99,
    "mean": -0.06762941919191919,
@@ -721,6 +774,18 @@
    ],
    "sd": 0.14213668784073746,
    "p_perm_two_sided": 9.99990000099999e-06
+  },
+  "HE3|rep_haiku": {
+   "outcome": "не показано",
+   "n": 99,
+   "n_tasks": 99,
+   "mean": -0.019886363636363636,
+   "ci95": [
+    -0.05416859315746479,
+    0.014395865884737524
+   ],
+   "sd": 0.17188685867337594,
+   "p_perm_two_sided": 0.26119738802611975
   }
  },
  "composites": {
@@ -752,6 +817,12 @@
    ],
    "outcome": "не подтверждено"
   },
+  "SE_opus|main_opus": {
+   "parts": [
+    "O9"
+   ],
+   "outcome": "не подтверждено"
+  },
   "SA_opus|rep_opus": {
    "parts": [
     "O1",
@@ -780,6 +851,12 @@
    ],
    "outcome": "подтверждено"
   },
+  "SE_opus|rep_opus": {
+   "parts": [
+    "O9"
+   ],
+   "outcome": "не подтверждено"
+  },
   "SA_haiku|main_haiku": {
    "parts": [
     "H1",
@@ -796,17 +873,17 @@
    ],
    "outcome": "подтверждено"
   },
-  "SC_haiku|main_haiku": {
-   "parts": [
-    "H7"
-   ],
-   "outcome": "не подтверждено"
-  },
   "SD_haiku|main_haiku": {
    "parts": [
     "H8"
    ],
-   "outcome": "подтверждено"
+   "outcome": "опровергнуто"
+  },
+  "SE_haiku|main_haiku": {
+   "parts": [
+    "H9"
+   ],
+   "outcome": "не подтверждено"
   },
   "SA_haiku|rep_haiku": {
    "parts": [
@@ -824,17 +901,17 @@
    ],
    "outcome": "подтверждено"
   },
-  "SC_haiku|rep_haiku": {
-   "parts": [
-    "H7"
-   ],
-   "outcome": "подтверждено"
-  },
   "SD_haiku|rep_haiku": {
    "parts": [
     "H8"
    ],
-   "outcome": "подтверждено"
+   "outcome": "опровергнуто"
+  },
+  "SE_haiku|rep_haiku": {
+   "parts": [
+    "H9"
+   ],
+   "outcome": "не подтверждено"
   }
  },
  "status": {
@@ -858,25 +935,30 @@
    "rep": "подтверждено",
    "status": "не подтверждено; повтор: подтверждено"
   },
-  "SC_haiku": {
-   "main": "не подтверждено",
-   "rep": "подтверждено",
-   "status": "не подтверждено; повтор: подтверждено"
-  },
   "SC_opus": {
    "main": "не подтверждено",
    "rep": "подтверждено",
    "status": "не подтверждено; повтор: подтверждено"
   },
   "SD_haiku": {
-   "main": "подтверждено",
-   "rep": "подтверждено",
-   "status": "подтверждено (повторено; причина не проверялась)"
+   "main": "опровергнуто",
+   "rep": "опровергнуто",
+   "status": "опровергнуто; повтор: опровергнуто"
   },
   "SD_opus": {
    "main": "не подтверждено",
    "rep": "подтверждено",
    "status": "не подтверждено; повтор: подтверждено"
+  },
+  "SE_haiku": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
+  },
+  "SE_opus": {
+   "main": "не подтверждено",
+   "rep": "не подтверждено",
+   "status": "не подтверждено; повтор: не подтверждено"
   }
  },
  "n_perm": 100000,
@@ -893,7 +975,7 @@
    "kind": "equiv",
    "margin": 0.1,
    "comp": "SA_opus",
-   "expect": 0.85,
+   "expect": 0.7,
    "text": "самообман WIN − LOG в пределах ±0,1"
   },
   {
@@ -908,7 +990,7 @@
    "kind": "equiv",
    "margin": 0.1,
    "comp": "SA_opus",
-   "expect": 0.85,
+   "expect": 0.7,
    "text": "точность WIN − LOG в пределах ±0,1"
   },
   {
@@ -923,7 +1005,7 @@
    "kind": "equiv",
    "margin": 0.05,
    "comp": "SA_opus",
-   "expect": 0.9,
+   "expect": 0.65,
    "text": "Брайер WIN − LOG в пределах ±0,05"
   },
   {
@@ -936,7 +1018,7 @@
    ],
    "kind": "gt0",
    "comp": "SB_opus",
-   "expect": 0.95,
+   "expect": 0.9,
    "text": "самообман LOG > 0"
   },
   {
@@ -949,7 +1031,7 @@
    ],
    "kind": "gt0",
    "comp": "SB_opus",
-   "expect": 0.95,
+   "expect": 0.93,
    "text": "самообман WIN > 0"
   },
   {
@@ -979,7 +1061,7 @@
    ],
    "kind": "gt0",
    "comp": "SC_opus",
-   "expect": 0.5,
+   "expect": 0.3,
    "text": "точность (LOG + WIN)/2 − NONE > 0"
   },
   {
@@ -996,8 +1078,22 @@
    ],
    "kind": "gt0",
    "comp": "SD_opus",
-   "expect": 0.85,
+   "expect": 0.7,
    "text": "выходные токены (LOG + WIN)/2 − NONE > 0"
+  },
+  {
+   "id": "O9",
+   "model": "opus",
+   "measure": "out",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "lt0",
+   "comp": "SE_opus",
+   "expect": 0.6,
+   "text": "выходные токены WIN − LOG < 0 (гипотеза из пилота 3)"
   },
   {
    "id": "OE1",
@@ -1010,7 +1106,7 @@
    ],
    "kind": "lt0",
    "comp": null,
-   "expect": 0.6,
+   "expect": 0.35,
    "text": "разведка: уверенность WIN − LOG < 0"
   },
   {
@@ -1027,7 +1123,7 @@
    ],
    "kind": "gt0",
    "comp": null,
-   "expect": 0.45,
+   "expect": 0.4,
    "text": "разведка: самообман NONE − (LOG + WIN)/2 > 0"
   },
   {
@@ -1044,7 +1140,7 @@
    ],
    "kind": "gt0",
    "comp": null,
-   "expect": 0.45,
+   "expect": 0.55,
    "text": "разведка: AUC (LOG + WIN)/2 − NONE > 0"
   },
   {
@@ -1059,7 +1155,7 @@
    "kind": "equiv",
    "margin": 0.1,
    "comp": "SA_haiku",
-   "expect": 0.65,
+   "expect": 0.6,
    "text": "самообман WIN − LOG в пределах ±0,1"
   },
   {
@@ -1074,7 +1170,7 @@
    "kind": "equiv",
    "margin": 0.1,
    "comp": "SA_haiku",
-   "expect": 0.55,
+   "expect": 0.3,
    "text": "точность WIN − LOG в пределах ±0,1"
   },
   {
@@ -1089,7 +1185,7 @@
    "kind": "equiv",
    "margin": 0.05,
    "comp": "SA_haiku",
-   "expect": 0.85,
+   "expect": 0.65,
    "text": "Брайер WIN − LOG в пределах ±0,05"
   },
   {
@@ -1102,7 +1198,7 @@
    ],
    "kind": "gt0",
    "comp": "SB_haiku",
-   "expect": 0.9,
+   "expect": 0.95,
    "text": "самообман LOG > 0"
   },
   {
@@ -1115,7 +1211,7 @@
    ],
    "kind": "gt0",
    "comp": "SB_haiku",
-   "expect": 0.85,
+   "expect": 0.9,
    "text": "самообман WIN > 0"
   },
   {
@@ -1128,25 +1224,8 @@
    ],
    "kind": "gt0",
    "comp": "SB_haiku",
-   "expect": 0.45,
+   "expect": 0.9,
    "text": "самообман NONE > 0"
-  },
-  {
-   "id": "H7",
-   "model": "haiku",
-   "measure": "acc",
-   "target": [
-    "contrast",
-    {
-     "LOG": 0.5,
-     "WIN": 0.5,
-     "NONE": -1.0
-    }
-   ],
-   "kind": "lt0",
-   "comp": "SC_haiku",
-   "expect": 0.5,
-   "text": "точность (LOG + WIN)/2 − NONE < 0"
   },
   {
    "id": "H8",
@@ -1160,10 +1239,41 @@
      "NONE": -1.0
     }
    ],
-   "kind": "lt0",
+   "kind": "gt0",
    "comp": "SD_haiku",
    "expect": 0.6,
-   "text": "выходные токены (LOG + WIN)/2 − NONE < 0"
+   "text": "выходные токены (LOG + WIN)/2 − NONE > 0"
+  },
+  {
+   "id": "H9",
+   "model": "haiku",
+   "measure": "out",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "gt0",
+   "comp": "SE_haiku",
+   "expect": 0.85,
+   "text": "выходные токены WIN − LOG > 0 (гипотеза из пилотов; знак тот же во всех четырёх)"
+  },
+  {
+   "id": "H7",
+   "model": "haiku",
+   "measure": "acc",
+   "target": [
+    "contrast",
+    {
+     "LOG": 0.5,
+     "WIN": 0.5,
+     "NONE": -1.0
+    }
+   ],
+   "kind": "gt0",
+   "comp": null,
+   "expect": 0.25,
+   "text": "разведка: точность (LOG + WIN)/2 − NONE > 0"
   },
   {
    "id": "HE1",
@@ -1177,10 +1287,10 @@
      "WIN": -0.5
     }
    ],
-   "kind": "lt0",
+   "kind": "gt0",
    "comp": null,
-   "expect": 0.45,
-   "text": "разведка: самообман NONE − (LOG + WIN)/2 < 0"
+   "expect": 0.15,
+   "text": "разведка: самообман NONE − (LOG + WIN)/2 > 0"
   },
   {
    "id": "HE2",
@@ -1194,10 +1304,24 @@
      "NONE": -1.0
     }
    ],
-   "kind": "lt0",
+   "kind": "gt0",
    "comp": null,
-   "expect": 0.35,
-   "text": "разведка: AUC (LOG + WIN)/2 − NONE < 0"
+   "expect": 0.25,
+   "text": "разведка: AUC (LOG + WIN)/2 − NONE > 0"
+  },
+  {
+   "id": "HE3",
+   "model": "haiku",
+   "measure": "acc",
+   "target": [
+    "pair",
+    "WIN",
+    "LOG"
+   ],
+   "kind": "gt0",
+   "comp": null,
+   "expect": 0.65,
+   "text": "разведка: точность WIN − LOG > 0 (гипотеза из пилота 3)"
   }
  ],
  "hashes_ok": null,

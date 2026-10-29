@@ -34,64 +34,72 @@ REPS = dict(opus=('0',), haiku=('0', '1'))   # вызовов на клетку:
 RULE = ('contrast', {'LOG': 0.5, 'WIN': 0.5, 'NONE': -1.0})          # объявление правила (среднее LOG и WIN) − NONE
 P = lambda **k: k
 PRED = [
-    P(id='O1', model='opus', measure='self_dec', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_opus', expect=0.85,
+    P(id='O1', model='opus', measure='self_dec', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_opus', expect=0.7,
       text='самообман WIN − LOG в пределах ±0,1'),
-    P(id='O2', model='opus', measure='acc', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_opus', expect=0.85,
+    P(id='O2', model='opus', measure='acc', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_opus', expect=0.7,
       text='точность WIN − LOG в пределах ±0,1'),
-    P(id='O3', model='opus', measure='brier', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.05, comp='SA_opus', expect=0.9,
+    P(id='O3', model='opus', measure='brier', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.05, comp='SA_opus', expect=0.65,
       text='Брайер WIN − LOG в пределах ±0,05'),
-    P(id='O4', model='opus', measure='self_dec', target=('arm', 'LOG'), kind='gt0', comp='SB_opus', expect=0.95,
+    P(id='O4', model='opus', measure='self_dec', target=('arm', 'LOG'), kind='gt0', comp='SB_opus', expect=0.9,
       text='самообман LOG > 0'),
-    P(id='O5', model='opus', measure='self_dec', target=('arm', 'WIN'), kind='gt0', comp='SB_opus', expect=0.95,
+    P(id='O5', model='opus', measure='self_dec', target=('arm', 'WIN'), kind='gt0', comp='SB_opus', expect=0.93,
       text='самообман WIN > 0'),
     P(id='O6', model='opus', measure='self_dec', target=('arm', 'NONE'), kind='gt0', comp='SB_opus', expect=0.95,
       text='самообман NONE > 0'),
-    P(id='O7', model='opus', measure='acc', target=RULE, kind='gt0', comp='SC_opus', expect=0.5,
+    P(id='O7', model='opus', measure='acc', target=RULE, kind='gt0', comp='SC_opus', expect=0.3,
       text='точность (LOG + WIN)/2 − NONE > 0'),
-    P(id='O8', model='opus', measure='out', target=RULE, kind='gt0', comp='SD_opus', expect=0.85,
+    P(id='O8', model='opus', measure='out', target=RULE, kind='gt0', comp='SD_opus', expect=0.7,
       text='выходные токены (LOG + WIN)/2 − NONE > 0'),
-    P(id='OE1', model='opus', measure='conf', target=('pair', 'WIN', 'LOG'), kind='lt0', comp=None, expect=0.6,
+    P(id='O9', model='opus', measure='out', target=('pair', 'WIN', 'LOG'), kind='lt0', comp='SE_opus', expect=0.6,
+      text='выходные токены WIN − LOG < 0 (гипотеза из пилота 3)'),
+    P(id='OE1', model='opus', measure='conf', target=('pair', 'WIN', 'LOG'), kind='lt0', comp=None, expect=0.35,
       text='разведка: уверенность WIN − LOG < 0'),
     P(id='OE2', model='opus', measure='self_dec', target=('contrast', {'NONE': 1.0, 'LOG': -0.5, 'WIN': -0.5}), kind='gt0', comp=None,
-      expect=0.45, text='разведка: самообман NONE − (LOG + WIN)/2 > 0'),
-    P(id='OE3', model='opus', measure='auc', target=RULE, kind='gt0', comp=None, expect=0.45,
+      expect=0.4, text='разведка: самообман NONE − (LOG + WIN)/2 > 0'),
+    P(id='OE3', model='opus', measure='auc', target=RULE, kind='gt0', comp=None, expect=0.55,
       text='разведка: AUC (LOG + WIN)/2 − NONE > 0'),
 ]
-RULE_NEG = ('contrast', {'LOG': 0.5, 'WIN': 0.5, 'NONE': -1.0})     # та же цель; у Haiku направление по пилоту — обратное
+# направления NONE-контрастов и разведки — по знаку среднего пилота 3 (правило DESIGN_after_lenses1.md, коммит 9962627);
+# H7 при |среднее| < 1 SE ушёл в разведку; H8 сменил знак против загрязнённого пилота 2; O9, H9, HE3 — гипотезы из пилота 3
 PRED_HAIKU = [
-    P(id='H1', model='haiku', measure='self_dec', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_haiku', expect=0.65,
+    P(id='H1', model='haiku', measure='self_dec', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_haiku', expect=0.6,
       text='самообман WIN − LOG в пределах ±0,1'),
-    P(id='H2', model='haiku', measure='acc', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_haiku', expect=0.55,
+    P(id='H2', model='haiku', measure='acc', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.1, comp='SA_haiku', expect=0.3,
       text='точность WIN − LOG в пределах ±0,1'),
-    P(id='H3', model='haiku', measure='brier', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.05, comp='SA_haiku', expect=0.85,
+    P(id='H3', model='haiku', measure='brier', target=('pair', 'WIN', 'LOG'), kind='equiv', margin=0.05, comp='SA_haiku', expect=0.65,
       text='Брайер WIN − LOG в пределах ±0,05'),
-    P(id='H4', model='haiku', measure='self_dec', target=('arm', 'LOG'), kind='gt0', comp='SB_haiku', expect=0.9,
+    P(id='H4', model='haiku', measure='self_dec', target=('arm', 'LOG'), kind='gt0', comp='SB_haiku', expect=0.95,
       text='самообман LOG > 0'),
-    P(id='H5', model='haiku', measure='self_dec', target=('arm', 'WIN'), kind='gt0', comp='SB_haiku', expect=0.85,
+    P(id='H5', model='haiku', measure='self_dec', target=('arm', 'WIN'), kind='gt0', comp='SB_haiku', expect=0.9,
       text='самообман WIN > 0'),
-    P(id='H6', model='haiku', measure='self_dec', target=('arm', 'NONE'), kind='gt0', comp='SB_haiku', expect=0.45,
+    P(id='H6', model='haiku', measure='self_dec', target=('arm', 'NONE'), kind='gt0', comp='SB_haiku', expect=0.9,
       text='самообман NONE > 0'),
-    P(id='H7', model='haiku', measure='acc', target=RULE_NEG, kind='lt0', comp='SC_haiku', expect=0.5,
-      text='точность (LOG + WIN)/2 − NONE < 0'),
-    P(id='H8', model='haiku', measure='out', target=RULE_NEG, kind='lt0', comp='SD_haiku', expect=0.6,
-      text='выходные токены (LOG + WIN)/2 − NONE < 0'),
-    P(id='HE1', model='haiku', measure='self_dec', target=('contrast', {'NONE': 1.0, 'LOG': -0.5, 'WIN': -0.5}), kind='lt0', comp=None,
-      expect=0.45, text='разведка: самообман NONE − (LOG + WIN)/2 < 0'),
-    P(id='HE2', model='haiku', measure='auc', target=RULE_NEG, kind='lt0', comp=None, expect=0.35,
-      text='разведка: AUC (LOG + WIN)/2 − NONE < 0'),
+    P(id='H8', model='haiku', measure='out', target=RULE, kind='gt0', comp='SD_haiku', expect=0.6,
+      text='выходные токены (LOG + WIN)/2 − NONE > 0'),
+    P(id='H9', model='haiku', measure='out', target=('pair', 'WIN', 'LOG'), kind='gt0', comp='SE_haiku', expect=0.85,
+      text='выходные токены WIN − LOG > 0 (гипотеза из пилотов; знак тот же во всех четырёх)'),
+    P(id='H7', model='haiku', measure='acc', target=RULE, kind='gt0', comp=None, expect=0.25,
+      text='разведка: точность (LOG + WIN)/2 − NONE > 0'),
+    P(id='HE1', model='haiku', measure='self_dec', target=('contrast', {'NONE': 1.0, 'LOG': -0.5, 'WIN': -0.5}), kind='gt0', comp=None,
+      expect=0.15, text='разведка: самообман NONE − (LOG + WIN)/2 > 0'),
+    P(id='HE2', model='haiku', measure='auc', target=RULE, kind='gt0', comp=None, expect=0.25,
+      text='разведка: AUC (LOG + WIN)/2 − NONE > 0'),
+    P(id='HE3', model='haiku', measure='acc', target=('pair', 'WIN', 'LOG'), kind='gt0', comp=None, expect=0.65,
+      text='разведка: точность WIN − LOG > 0 (гипотеза из пилота 3)'),
 ]
 PRED += PRED_HAIKU
 # сводные: части — по comp; ESTABLISH — можно ли назвать «установлено» при подтверждении в обеих выборках
-ESTABLISH = dict(SA=True, SB=True, SC=False, SD=False)
+ESTABLISH = dict(SA=True, SB=True, SC=False, SD=False, SE=False)
 _SA = ('строки правил LOG и WIN (как в RULES_HALF) не различаются по самообману оценщика (и зеркально — по точности) больше чем на 0,1 '
        'и по Брайеру больше чем на 0,05; это разница порядка самого самообмана')
 _SB = 'самообман оценщика (уверенность выше точности) есть в каждой руке, и при объявленном правиле, и без него'
 COMP_TEXT = dict(
     SA_opus=_SA, SA_haiku=_SA, SB_opus=_SB, SB_haiku=_SB,
     SC_opus='объявление правила (среднее LOG и WIN) повышает точность оценщика по сравнению с промптом без правила',
-    SC_haiku='объявление правила (среднее LOG и WIN) понижает точность оценщика по сравнению с промптом без правила',
     SD_opus='объявление правила (среднее LOG и WIN) удлиняет рассуждение (выходные токены) по сравнению с промптом без правила',
-    SD_haiku='объявление правила (среднее LOG и WIN) укорачивает рассуждение (выходные токены) по сравнению с промптом без правила')
+    SD_haiku='объявление правила (среднее LOG и WIN) удлиняет рассуждение (выходные токены) по сравнению с промптом без правила',
+    SE_opus='строка WIN укорачивает рассуждение Opus (выходные токены) по сравнению со строкой LOG',
+    SE_haiku='строка WIN удлиняет рассуждение Haiku (выходные токены) по сравнению со строкой LOG')
 
 
 def value(row, m):
