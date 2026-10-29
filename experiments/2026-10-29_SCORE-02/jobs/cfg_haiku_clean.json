@@ -1,0 +1,20 @@
+{
+ "model": "claude-haiku-5-5",
+ "effort": "medium",
+ "home": "/tmp/neu_heads/home",
+ "work_dir": "/tmp/neu_heads/work",
+ "env_explicit": {
+  "MAX_THINKING_TOKENS": "31999",
+  "CLAUDE_CODE_MAX_RETRIES": "0",
+  "API_TIMEOUT_MS": "1200000",
+  "CLAUDE_STREAM_FIRST_BYTE_TIMEOUT_MS": "180000",
+  "CLAUDE_BYTE_STREAM_IDLE_TIMEOUT_MS": "180000",
+  "CLAUDE_STREAM_IDLE_TIMEOUT_MS": "180000",
+  "CLAUDE_ENABLE_STREAM_WATCHDOG": "1",
+  "CLAUDE_ENABLE_BYTE_WATCHDOG": "1",
+  "DISABLE_GROWTHBOOK": "1",
+  "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+  "DISABLE_AUTOUPDATER": "1",
+  "CLAUDE_CODE_DISABLE_GIT_INSTRUCTIONS": "1"
+ }
+}
