@@ -44,8 +44,8 @@ def tables(R, evals_dir):
         m = R['measures'][st]['single_c']
         out.append(f"| {st} | {NAME['single_c']} | {m['n']} | {f(m['auc2'])} | — | — | — | — | — |")
     out.append('\n### Вердикты частей (95 % интервал бутстрепа задач, B = 10 000)\n')
-    out.append('| Часть | Вид | Этап | Мера | Контраст | Предсказание | Среднее [95 %] | Задач | Исход |')
-    out.append('|---|---|---|---|---|---|---|---|---|')
+    out.append('| Часть | Вид | Этап | Мера | Контраст | Предсказание | Среднее [95 %] | Задач | Исход | Чтение |')
+    out.append('|---|---|---|---|---|---|---|---|---|---|')
     for q in R['pred']:
         for st in st_all:
             v = R['verdicts'].get(f"{q['id']}|{st}")
@@ -53,7 +53,7 @@ def tables(R, evals_dir):
                 continue
             ci = f"{f(v['mean'])} [{f(v['ci95'][0])}; {f(v['ci95'][1])}]" if 'mean' in v else '—'
             out.append(f"| {q['id']} | {KIND[q['kind']]} | {st} | {MNAME[q['measure']]} | {q['a']} − {q['b']} | {'> 0' if q['dir'] > 0 else '< 0'} | {ci} | "
-                       f"{v['n_tasks']} | {v['outcome']} |")
+                       f"{v['n_tasks']} | {v['outcome']} | {v.get('reading', v['outcome'])}{('; ' + v['caveat']) if v.get('caveat') else ''} |")
     out.append('\n### Сводные: чтения и статусы\n')
     out.append('| Сводный | Части | Основная | Повтор | Статус |')
     out.append('|---|---|---|---|---|')
@@ -66,6 +66,11 @@ def tables(R, evals_dir):
         d, e = R['describe'][st]['decomp_x2'], R['describe'][st]['excl']
         out.append(f"| {st} | {f(d['T'])} | {f(d['T_break'])} | {f(d['approx'])} | {f(d['x2'])} | {f(d['unanimous'])} | {e['half_calls']} из {e['call_judgments']} | "
                    f"{e['side_ties']} из {e['cand_with_side']} |")
+    out.append('\n| Этап | Непустых уровней: agree / single_c |')
+    out.append('|---|---|')
+    for st in st_all:
+        ne = R['describe'][st].get('nonempty', {})
+        out.append(f"| {st} | {ne.get('agree', '—')} / {ne.get('single_c', '—')} |")
     out.append('\n| Этап | Уровень согласия | Доля суждений согласия | Доля суждений одного вызова после огрубления |')
     out.append('|---|---|---|---|')
     for st in st_all:

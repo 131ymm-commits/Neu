@@ -82,22 +82,37 @@ def main():
     rep['POOL_GAPS'] = (f"медиана отношения разрыва 4-го и 5-го кандидатов к размаху правды пула — {f(G['main_R4000']['median'])} (основная, R = 4000) и "
                         f"{f(G['rep_R4000']['median'])} (повтор) против {f(G['pilot_R1000']['median'])} в пилоте (правда пилота — по R = 1000; у основной и "
                         f"повтора по R = 1000 — {f(G['main_R1000']['median'])} и {f(G['rep_R1000']['median'])}; `truth/pool_gaps.log`).")
-    ce = os.path.join(HERE, 'dry', 'check_expect.log')
-    if os.path.exists(ce):
-        lines = open(ce, encoding='utf-8').read().strip().splitlines()
+    def dry_summary(log, adir):
+        """Итог сверки сухого прогона: число ожиданий и несовпадений; по каждому несовпадению — вид, ключ, ждал/вышло, для вердикта — интервал."""
+        if not os.path.exists(log):
+            return 'сверка — после сухого прогона.'
+        lines = open(log, encoding='utf-8').read().strip().splitlines()
         miss, br = [], None
         for ln in lines:
             if ln.startswith('== ветка '):
                 br = ln.split()[2].rstrip(':')
-            elif ln.strip().startswith('НЕ СОВПАЛО: verdicts '):
-                k = ln.split('verdicts ')[1].split(' — ')[0]
-                R = json.load(open(os.path.join(HERE, 'dry', f'analysis_{br}.json'), encoding='utf-8'))
-                v, dx = R['verdicts'][k], R['describe'][k.split('|')[1]]['decomp_x2']
-                miss.append(f"ветка {br}, {k}: «{v['outcome']}», {f(v['mean'])} [{f(v['ci95'][0])}; {f(v['ci95'][1])}]; разложение этапа — T = {f(dx['T'])} "
-                            f"при пороге {f(dx['T_break'])}, приближение {f(dx['approx'], 4)}, факт {f(dx['x2'], 4)}")
-        rep['DRY_RESULT'] = ('Итог сверки: ' + lines[-1].replace('итог: ', '') + '.' + (' Не совпало (по частям): ' + '; '.join(miss) + '.' if miss else ''))
-    else:
-        rep['DRY_RESULT'] = 'сверка — после сухого прогона.'
+            elif ln.strip().startswith('НЕ СОВПАЛО: '):
+                kind, rest = ln.strip()[len('НЕ СОВПАЛО: '):].split(' ', 1)
+                k = rest.split(' — ')[0]
+                got = rest.split('вышло «')[1].rstrip('»')
+                txt = f"ветка {br}, {kind} {k}: «{got}»"
+                if kind == 'verdicts':
+                    R = json.load(open(os.path.join(adir, f'analysis_{br}.json'), encoding='utf-8'))
+                    v, dx = R['verdicts'][k], R['describe'][k.split('|')[1]]['decomp_x2']
+                    if 'mean' in v:
+                        txt += f", {f(v['mean'])} [{f(v['ci95'][0])}; {f(v['ci95'][1])}]"
+                    if k.startswith('X2'):
+                        txt += f"; разложение этапа — T = {f(dx['T'])} при пороге {f(dx['T_break'])}, приближение {f(dx['approx'], 4)}, факт {f(dx['x2'], 4)}"
+                miss.append(txt)
+        return 'Итог сверки: ' + lines[-1].replace('итог: ', '') + '.' + (' Не совпало: ' + '; '.join(miss) + '.' if miss else '')
+    C1 = json.load(open(os.path.join(HERE, '..', '2026-10-28_SCORE-01', 'calib_score01.json'), encoding='utf-8'))['expect_vs_power']
+    sl = [k for k in C1 if not k.endswith('|all')]
+    better = sum(1 for k in sl if C1[k]['brier_expect'] < C1[k]['brier_power'])
+    rep['SC1_SLICES'] = (f"в {better} срезах из {len(sl)} (модель × выборка) Брайер ожиданий ниже Брайера мощности; у Opus в основной — "
+                         f"{f(C1['main|opus']['brier_expect'], 4)} против {f(C1['main|opus']['brier_power'], 4)} (`../2026-10-28_SCORE-01/run/calib_score01.log`)")
+    rep['X3_Z'] = f"{f(W['preds']['X3o']['z_pilot'], 2)} SD у Opus и {f(W['preds']['X3h']['z_pilot'], 2)} у Haiku (`pilot_power.json`, z_pilot)"
+    rep['DRY_RESULT'] = dry_summary(os.path.join(HERE, 'dry', 'check_expect.log'), os.path.join(HERE, 'dry', 'run1'))
+    rep['DRY2_RESULT'] = dry_summary(os.path.join(HERE, 'dry', 'check_expect2.log'), os.path.join(HERE, 'dry'))
     pl = []
     for c, parts in COMP.items():
         q = next(x for x in PRED if x['id'] == parts[0])
@@ -141,6 +156,8 @@ def main():
                     + f" — внутри диапазона, по которому построена линия ({L['bytes_range'][0]}–{L['bytes_range'][1]}).")
     fx = os.path.join(HERE, 'lenses', 'LENSES-1_fixes.md')
     rep['LENSES'] = open(fx, encoding='utf-8').read().strip() if os.path.exists(fx) else 'проверка по трём линзам — после этого черновика.'
+    fx2 = os.path.join(HERE, 'lenses', 'LENSES-2_fixes.md')
+    rep['LENSES2'] = open(fx2, encoding='utf-8').read().strip() if os.path.exists(fx2) else 'узкая проверка правок — после этого черновика.'
     for k, v in rep.items():
         assert '{{' + k + '}}' in t, k
         t = t.replace('{{' + k + '}}', v)

@@ -11,7 +11,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 EXP = os.path.join(HERE, '..')
 FILES = ['score02.py', 'score02_lib.py', 'analyze_score02.py', 'power_score02.py', 'pilot_describe.py', 'truth_check_score02.py',
          'calib_rows_score02.py', 'assemble_prereg_score02.py', 'prereg_template.md', 'prereg_hashes.py', 'pool_gaps_score02.py',
-         'dry/make_stub.py', 'dry/dry_run.sh', 'dry/expect.json', 'dry/check_expect.py', 'lenses/LENSES-1_fixes.md', 'truth/pool_gaps.json',
+         'dry/make_stub.py', 'dry/dry_run.sh', 'dry/expect.json', 'dry/expect2.json', 'dry/check_expect.py', 'lenses/LENSES-1_fixes.md',
+         'lenses/LENSES-2_fixes.md', 'truth/pool_gaps.json', 'report_tables_score02.py', 'run_stage.sh',
          'jobs/main_jobs.jsonl', 'jobs/rep_jobs.jsonl', 'jobs/cfg_opus_clean.json', 'jobs/cfg_haiku_clean.json', 'run/pilot_jobs.jsonl',
          'salts/main_salt.txt', 'salts/rep_salt.txt', 'truth/main.json', 'truth/rep.json', 'truth/check_main.json', 'truth/check_rep.json',
          'evals/pilot_opus.json', 'evals/pilot_haiku.json', 'pilot_describe.json', 'pilot_power.json',
