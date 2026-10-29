@@ -1,0 +1,513 @@
+{
+"summary": {
+"sample": "main",
+"n": 100,
+"same_truth1000": 100,
+"top4_same": 99,
+"z45_lt2": 7,
+"z45_lt1": 3,
+"z45_median": 17.53849074548519
+},
+"tasks": {
+"WH_8201": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 22.61961801702759
+},
+"WH_8202": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 74.73581088586268
+},
+"WH_8203": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 27.358997711572677
+},
+"WH_8204": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 45.82103369115156
+},
+"WH_8205": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 0.9222944204061989
+},
+"WH_8206": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 4.182117357235666
+},
+"WH_8207": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 43.17665812924468
+},
+"WH_8208": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 2.9382049836817594
+},
+"WH_8209": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 28.25838779776385
+},
+"WH_8210": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 21.113279264106474
+},
+"WH_8211": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 34.38818130061916
+},
+"WH_8212": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 20.33304983604059
+},
+"WH_8213": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 8.183211540201983
+},
+"WH_8214": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 17.683303925546294
+},
+"WH_8215": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 12.363610092514996
+},
+"WH_8216": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 23.979472292604132
+},
+"WH_8217": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 53.918464518922654
+},
+"WH_8218": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 10.30035403526014
+},
+"WH_8219": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 26.93298059729341
+},
+"WH_8220": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 4.461183253369271
+},
+"WH_8221": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 14.154521274675254
+},
+"WH_8222": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 83.37826651743471
+},
+"WH_8223": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 18.491298286734832
+},
+"WH_8224": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 6.531390961122976
+},
+"WH_8225": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 10.659924186167022
+},
+"WH_8226": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 21.303108803821978
+},
+"WH_8227": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 4.763658934561704
+},
+"WH_8228": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 11.999477340373337
+},
+"WH_8229": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 2.2923775923432856
+},
+"WH_8230": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 18.38109419066256
+},
+"WH_8231": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 8.927803174309028
+},
+"WH_8232": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 30.45620214038848
+},
+"WH_8233": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 35.831679096506925
+},
+"WH_8234": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 1.6380089012682841
+},
+"WH_8235": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 11.69780456087722
+},
+"WH_8236": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 58.92369482216485
+},
+"WH_8237": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 82.88110713078676
+},
+"WH_8238": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 33.181141468243894
+},
+"WH_8239": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 18.11395208124137
+},
+"WH_8240": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 26.973659308430175
+},
+"WH_8241": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 10.170784536509753
+},
+"WH_8242": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 20.461947757543854
+},
+"WH_8243": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 19.16087449816824
+},
+"WH_8244": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 8.610806303056938
+},
+"WH_8245": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 81.94840243224077
+},
+"WH_8246": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 4.828678975123056
+},
+"WH_8247": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 19.526161764713976
+},
+"WH_8248": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 36.87117501794795
+},
+"WH_8249": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 13.15581704781444
+},
+"WH_8250": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 7.6649626492742975
+},
+"WH_8251": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 15.689651267859068
+},
+"WH_8252": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 8.67252592770705
+},
+"WH_8253": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 8.728179702826637
+},
+"WH_8254": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 34.19818390024134
+},
+"WH_8255": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 4.633834857844576
+},
+"WH_8256": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 13.858049833534258
+},
+"WH_8257": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 2.7793962439044533
+},
+"WH_8258": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 10.320345893206927
+},
+"WH_8259": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 71.00898188480217
+},
+"WH_8260": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 24.805944274683018
+},
+"WH_8261": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 13.782634495959927
+},
+"WH_8262": {
+"same_truth1000": true,
+"top4_same": false,
+"z45": 0.0275910679066737
+},
+"WH_8263": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 12.97534236769716
+},
+"WH_8264": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 5.47549513501756
+},
+"WH_8265": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 44.5404266690101
+},
+"WH_8266": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 17.504497242447
+},
+"WH_8267": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 30.8092732646496
+},
+"WH_8268": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 30.691322573055892
+},
+"WH_8269": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 1.9825897808860442
+},
+"WH_8270": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 3.9062009574117704
+},
+"WH_8271": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 5.718953045363315
+},
+"WH_8272": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 80.42540516283421
+},
+"WH_8273": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 45.05329842932546
+},
+"WH_8274": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 2.8228958431480233
+},
+"WH_8275": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 13.230466558599927
+},
+"WH_8276": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 12.020579863583073
+},
+"WH_8277": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 54.90742181848156
+},
+"WH_8278": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 1.3548485787436328
+},
+"WH_8279": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 74.66084402856771
+},
+"WH_8280": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 0.7393516895387191
+},
+"WH_8281": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 2.086901395831046
+},
+"WH_8282": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 19.942756714333687
+},
+"WH_8283": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 1.6248522776288432
+},
+"WH_8284": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 7.315091660957787
+},
+"WH_8285": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 72.69794322536943
+},
+"WH_8286": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 20.947296118921535
+},
+"WH_8287": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 41.91961457713804
+},
+"WH_8288": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 2.607013141935587
+},
+"WH_8289": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 82.21424675831506
+},
+"WH_8290": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 30.242515677299583
+},
+"WH_8291": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 16.511573085473916
+},
+"WH_8292": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 140.35245432533725
+},
+"WH_8293": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 10.246173073675859
+},
+"WH_8294": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 17.53849074548519
+},
+"WH_8295": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 2.7326958357111706
+},
+"WH_8296": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 16.818681709140876
+},
+"WH_8297": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 122.05219660369885
+},
+"WH_8298": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 23.209274136260124
+},
+"WH_8299": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 47.55954601055701
+},
+"WH_8300": {
+"same_truth1000": true,
+"top4_same": true,
+"z45": 10.458234117709226
+}
+}
+}
