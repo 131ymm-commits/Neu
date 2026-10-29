@@ -4,3 +4,11 @@
 {"arm": "NONE", "at": "2026-10-29T07:29:16+00:00", "attempt": 1, "event": "вызов", "job": "WH_8101|NONE|1", "role": "основной", "task": "WH_8101", "поток": "WH_8101_NONE_1-16fe34cd.a001.osn.jsonl.gz"}
 {"arm": "LOG", "at": "2026-10-29T07:29:16+00:00", "attempt": 1, "event": "вызов", "job": "WH_8101|LOG|1", "role": "основной", "task": "WH_8101", "поток": "WH_8101_LOG_1-bcedf493.a001.osn.jsonl.gz"}
 {"arm": "WIN", "at": "2026-10-29T07:29:16+00:00", "attempt": 1, "event": "вызов", "job": "WH_8101|WIN|1", "role": "основной", "task": "WH_8101", "поток": "WH_8101_WIN_1-79795d3c.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T07:30:42+00:00", "attempt": 1, "event": "вызов", "job": "WH_8101|LOG|0", "role": "основной", "task": "WH_8101", "поток": "WH_8101_LOG_0-0b5c4e0f.a001.osn.jsonl.gz"}
+{"arm": "WIN", "at": "2026-10-29T07:31:14+00:00", "attempt": 1, "event": "вызов", "job": "WH_8101|WIN|0", "role": "основной", "task": "WH_8101", "поток": "WH_8101_WIN_0-d3cce61f.a001.osn.jsonl.gz"}
+{"arm": "WIN", "at": "2026-10-29T07:31:38+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|WIN|0", "role": "основной", "task": "WH_8102", "поток": "WH_8102_WIN_0-b2d9d3bf.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T07:31:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|NONE|0", "role": "основной", "task": "WH_8102", "поток": "WH_8102_NONE_0-4eb027df.a001.osn.jsonl.gz"}
+{"arm": "WIN", "at": "2026-10-29T07:32:35+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|WIN|1", "role": "основной", "task": "WH_8102", "поток": "WH_8102_WIN_1-7160ec10.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T07:33:01+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|NONE|1", "role": "основной", "task": "WH_8102", "поток": "WH_8102_NONE_1-f556eb11.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T07:33:16+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|LOG|0", "role": "основной", "task": "WH_8102", "поток": "WH_8102_LOG_0-a98771ce.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T07:33:25+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|LOG|1", "role": "основной", "task": "WH_8102", "поток": "WH_8102_LOG_1-8fabd967.a001.osn.jsonl.gz"}

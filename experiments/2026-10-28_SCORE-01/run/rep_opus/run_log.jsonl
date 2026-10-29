@@ -2,3 +2,11 @@
 {"at": "2026-10-29T07:29:16+00:00", "event": "план", "заданий_в_плане": 297, "задач": 99}
 {"arm": "LOG", "at": "2026-10-29T07:29:16+00:00", "attempt": 1, "event": "вызов", "job": "WH_8101|LOG|0", "role": "основной", "task": "WH_8101", "поток": "WH_8101_LOG_0-0b5c4e0f.a001.osn.jsonl.gz"}
 {"arm": "NONE", "at": "2026-10-29T07:29:16+00:00", "attempt": 1, "event": "вызов", "job": "WH_8101|NONE|0", "role": "основной", "task": "WH_8101", "поток": "WH_8101_NONE_0-836eb3b1.a001.osn.jsonl.gz"}
+{"arm": "WIN", "at": "2026-10-29T07:30:06+00:00", "attempt": 1, "event": "вызов", "job": "WH_8101|WIN|0", "role": "основной", "task": "WH_8101", "поток": "WH_8101_WIN_0-d3cce61f.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T07:30:23+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|LOG|0", "role": "основной", "task": "WH_8102", "поток": "WH_8102_LOG_0-a98771ce.a001.osn.jsonl.gz"}
+{"arm": "WIN", "at": "2026-10-29T07:31:10+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|WIN|0", "role": "основной", "task": "WH_8102", "поток": "WH_8102_WIN_0-b2d9d3bf.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T07:31:15+00:00", "attempt": 1, "event": "вызов", "job": "WH_8102|NONE|0", "role": "основной", "task": "WH_8102", "поток": "WH_8102_NONE_0-4eb027df.a001.osn.jsonl.gz"}
+{"arm": "LOG", "at": "2026-10-29T07:31:44+00:00", "attempt": 1, "event": "вызов", "job": "WH_8103|LOG|0", "role": "основной", "task": "WH_8103", "поток": "WH_8103_LOG_0-87762e87.a001.osn.jsonl.gz"}
+{"arm": "WIN", "at": "2026-10-29T07:31:54+00:00", "attempt": 1, "event": "вызов", "job": "WH_8103|WIN|0", "role": "основной", "task": "WH_8103", "поток": "WH_8103_WIN_0-48116022.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T07:32:28+00:00", "attempt": 1, "event": "вызов", "job": "WH_8103|NONE|0", "role": "основной", "task": "WH_8103", "поток": "WH_8103_NONE_0-57e697bb.a001.osn.jsonl.gz"}
+{"arm": "NONE", "at": "2026-10-29T07:33:01+00:00", "attempt": 1, "event": "вызов", "job": "WH_8104|NONE|0", "role": "основной", "task": "WH_8104", "поток": "WH_8104_NONE_0-88dd437c.a001.osn.jsonl.gz"}
