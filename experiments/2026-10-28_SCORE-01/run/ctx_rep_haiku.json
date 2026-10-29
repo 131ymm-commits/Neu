@@ -1,0 +1,58 @@
+{
+ "n": 594,
+ "skipped": 0,
+ "skipped_jobs": [],
+ "thresholds": {
+  "r_max": 25.0,
+  "frac_max": 0.05,
+  "r_abs": 100.0,
+  "m_abs": 50.0
+ },
+ "tasks": 99,
+ "arms": [
+  "LOG",
+  "NONE",
+  "WIN"
+ ],
+ "max_abs_resid": 11.437710437713577,
+ "sd_resid": 4.169898928559026,
+ "n_resid_gt": 0,
+ "frac_resid_gt": 0.0,
+ "slope_per_hour": 0.0016820861363569775,
+ "span_hours": 4.063611111138016,
+ "arm_effect_vs_first": {
+  "LOG": 0.0,
+  "NONE": -126.96969696968637,
+  "WIN": -9.252525252517371
+ },
+ "abs_mean": -1.0891882526725614,
+ "abs_sd": 20.912527480302277,
+ "abs_max": 58.147826862996226,
+ "n_abs_gt": 0,
+ "frac_abs_gt": 0.0,
+ "flag": false,
+ "why": [],
+ "journal": "run/rep_haiku",
+ "jobs": "jobs/rep_haiku_jobs.jsonl",
+ "config": {
+  "home": "/tmp/neu_heads/home",
+  "work_dir": "/tmp/neu_heads/work",
+  "home_in_git": false,
+  "work_dir_in_git": false,
+  "git_instructions_off": true,
+  "n_init_files": 1,
+  "model": "claude-haiku-5-5",
+  "config_sha_records": {
+   "355cd82b4bae": 594
+  },
+  "config_sha_file": "355cd82b4bae",
+  "config_same": true,
+  "n_init": 1,
+  "n_records_without_init": 0,
+  "cache_read": {
+   "886": 594
+  },
+  "from_stream": 0,
+  "ok": true
+ }
+}

@@ -1,0 +1,4 @@
+experiments/2026-10-28_SCORE-01/run/main_opus                 300 вызовов  модель {'claude-opus-5-5': 300}
+experiments/2026-10-28_SCORE-01/run/rep_opus                  297 вызовов  модель {'claude-opus-5-5': 297}
+experiments/2026-10-28_SCORE-01/run/main_haiku                600 вызовов  модель {'claude-haiku-5-5': 600}
+experiments/2026-10-28_SCORE-01/run/rep_haiku                 594 вызовов  модель {'claude-haiku-5-5': 594}

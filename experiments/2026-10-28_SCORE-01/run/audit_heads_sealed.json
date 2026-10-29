@@ -1,0 +1,62 @@
+[
+ {
+  "journal": "experiments/2026-10-28_SCORE-01/run/main_opus",
+  "calls": 300,
+  "home": "/tmp/neu_heads/home",
+  "work_dir": "/tmp/neu_heads/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-opus-5-5": 300
+  }
+ },
+ {
+  "journal": "experiments/2026-10-28_SCORE-01/run/rep_opus",
+  "calls": 297,
+  "home": "/tmp/neu_heads/home",
+  "work_dir": "/tmp/neu_heads/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-opus-5-5": 297
+  }
+ },
+ {
+  "journal": "experiments/2026-10-28_SCORE-01/run/main_haiku",
+  "calls": 600,
+  "home": "/tmp/neu_heads/home",
+  "work_dir": "/tmp/neu_heads/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-haiku-5-5": 600
+  }
+ },
+ {
+  "journal": "experiments/2026-10-28_SCORE-01/run/rep_haiku",
+  "calls": 594,
+  "home": "/tmp/neu_heads/home",
+  "work_dir": "/tmp/neu_heads/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-haiku-5-5": 594
+  }
+ }
+]
