@@ -1,0 +1,131 @@
+{
+ "sd_sources": {
+  "SELECT-01 main": 0.3292,
+  "SELECT-01 rep": 0.4536,
+  "THINK-01 rep": 0.261
+ },
+ "sd_plan": 0.4536,
+ "effects": {
+  "C-041 (открытие, точечно)": 0.089,
+  "половина C-041 (совет 39)": 0.045,
+  "старые выборки, среднее по трём": 0.118
+ },
+ "out_per_eval_call": 4728,
+ "out_per_exec_call": 7617,
+ "designs": {
+  "90/180": {
+   "n1": 90,
+   "n_max": 180,
+   "c1": 2.538,
+   "c2": 1.6621,
+   "p1_nominal": 0.00557,
+   "p2_nominal": 0.04825,
+   "by_effect": {
+    "C-041 (открытие, точечно)": {
+     "delta": 0.089,
+     "power_no_futility": 0.836,
+     "power": 0.829,
+     "p_stop_efficacy": 0.249,
+     "p_stop_futility": 0.031,
+     "expected_tasks": 155,
+     "expected_out_mln": 8.5
+    },
+    "половина C-041 (совет 39)": {
+     "delta": 0.045,
+     "power_no_futility": 0.374,
+     "power": 0.368,
+     "p_stop_efficacy": 0.055,
+     "p_stop_futility": 0.173,
+     "expected_tasks": 159,
+     "expected_out_mln": 8.75
+    },
+    "старые выборки, среднее по трём": {
+     "delta": 0.118,
+     "power_no_futility": 0.967,
+     "power": 0.964,
+     "p_stop_efficacy": 0.472,
+     "p_stop_futility": 0.007,
+     "expected_tasks": 137,
+     "expected_out_mln": 7.52
+    }
+   },
+   "max_out_mln": 9.88
+  },
+  "120/240": {
+   "n1": 120,
+   "n_max": 240,
+   "c1": 2.538,
+   "c2": 1.6621,
+   "p1_nominal": 0.00557,
+   "p2_nominal": 0.04825,
+   "by_effect": {
+    "C-041 (открытие, точечно)": {
+     "delta": 0.089,
+     "power_no_futility": 0.917,
+     "power": 0.912,
+     "p_stop_efficacy": 0.349,
+     "p_stop_futility": 0.016,
+     "expected_tasks": 196,
+     "expected_out_mln": 10.77
+    },
+    "половина C-041 (совет 39)": {
+     "delta": 0.045,
+     "power_no_futility": 0.454,
+     "power": 0.447,
+     "p_stop_efficacy": 0.073,
+     "p_stop_futility": 0.139,
+     "expected_tasks": 215,
+     "expected_out_mln": 11.78
+    },
+    "старые выборки, среднее по трём": {
+     "delta": 0.118,
+     "power_no_futility": 0.991,
+     "power": 0.99,
+     "p_stop_efficacy": 0.622,
+     "p_stop_futility": 0.002,
+     "expected_tasks": 165,
+     "expected_out_mln": 9.06
+    }
+   },
+   "max_out_mln": 13.18
+  },
+  "180/360": {
+   "n1": 180,
+   "n_max": 360,
+   "c1": 2.538,
+   "c2": 1.6621,
+   "p1_nominal": 0.00557,
+   "p2_nominal": 0.04825,
+   "by_effect": {
+    "C-041 (открытие, точечно)": {
+     "delta": 0.089,
+     "power_no_futility": 0.981,
+     "power": 0.979,
+     "p_stop_efficacy": 0.538,
+     "p_stop_futility": 0.004,
+     "expected_tasks": 262,
+     "expected_out_mln": 14.41
+    },
+    "половина C-041 (совет 39)": {
+     "delta": 0.045,
+     "power_no_futility": 0.591,
+     "power": 0.583,
+     "p_stop_efficacy": 0.114,
+     "p_stop_futility": 0.092,
+     "expected_tasks": 323,
+     "expected_out_mln": 17.73
+    },
+    "старые выборки, среднее по трём": {
+     "delta": 0.118,
+     "power_no_futility": 0.999,
+     "power": 0.999,
+     "p_stop_efficacy": 0.829,
+     "p_stop_futility": 0.0,
+     "expected_tasks": 211,
+     "expected_out_mln": 11.56
+    }
+   },
+   "max_out_mln": 19.76
+  }
+ }
+}
