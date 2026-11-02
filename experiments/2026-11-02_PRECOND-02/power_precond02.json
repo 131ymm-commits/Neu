@@ -2,7 +2,8 @@
  "sd_sources": {
   "SELECT-01 main": 0.3292,
   "SELECT-01 rep": 0.4536,
-  "THINK-01 rep": 0.261
+  "THINK-01 rep": 0.261,
+  "pilot": 0.3453
  },
  "sd_plan": 0.4536,
  "effects": {

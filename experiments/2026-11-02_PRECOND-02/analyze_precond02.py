@@ -87,7 +87,9 @@ def describe(L):
     # чистота входа: у пяти голосов одной руки на одной задаче промпт один, вход первого запроса должен совпадать
     # (снимок git менял его от вызова к вызову — ERRORS № 118); здесь — вход из выгрузки драйвера (inp итоговой записи)
     spans = [max(L['INP'][(t, a, i)] for i in range(HP.VOTES)) - min(L['INP'][(t, a, i)] for i in range(HP.VOTES)) for t in T for a in HP.ARMS]
-    out['input_span'] = dict(max=max(spans), share_over_25=r3(sum(s > 25 for s in spans) / len(spans)))
+    # порог — по пилоту (чистый контекст: размах 2–28 токенов — путь рабочей папки); снимок git добавлял около +400 (PRECOND-01) и +700…+1900 (SCORE-01)
+    out['input_span'] = dict(max=max(spans), share_over_30=r3(sum(s > 30 for s in spans) / len(spans)),
+                             flag=bool(max(spans) > 100 or sum(s > 30 for s in spans) / len(spans) > 0.05))
     return out
 
 def test(g, p_nominal):

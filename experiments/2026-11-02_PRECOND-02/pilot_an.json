@@ -1,0 +1,67 @@
+{
+ "n_tasks": 10,
+ "excluded_eps": [],
+ "primary": {
+  "gain": {
+   "mean": 0.042,
+   "ci95": [
+    -0.205,
+    0.289
+   ],
+   "df": 9,
+   "p_two": 0.707,
+   "p_greater": 0.353654,
+   "n": 10,
+   "sd": 0.3453
+  },
+  "effect_REFUSE": -0.042
+ },
+ "per_task": {
+  "WH_9301": 0.628,
+  "WH_9302": 0.14,
+  "WH_9303": -0.581,
+  "WH_9304": 0.347,
+  "WH_9305": 0.145,
+  "WH_9306": 0.126,
+  "WH_9307": -0.003,
+  "WH_9308": -0.424,
+  "WH_9309": 0.0,
+  "WH_9310": 0.046
+ },
+ "describe": {
+  "ANCHOR": {
+   "regret": 0.567,
+   "refusals": 5,
+   "votes": 50,
+   "refusal_share": 0.1,
+   "answered_regret": 0.543,
+   "refusal_contribution": 0.025,
+   "out_per_call": 5860.92
+  },
+  "NOREF": {
+   "regret": 0.61,
+   "refusals": 0,
+   "votes": 50,
+   "refusal_share": 0.0,
+   "answered_regret": 0.61,
+   "refusal_contribution": 0.0,
+   "out_per_call": 4855.9
+  },
+  "A0_no_calls": 0.697,
+  "vote_status": {
+   "ok": 95,
+   "refused": 5
+  },
+  "input_span": {
+   "max": 28,
+   "share_over_30": 0.0,
+   "flag": false
+  }
+ },
+ "ctx_control": {
+  "precond01_val_anchor_inp": 6191,
+  "pilot_anchor_inp": 5778,
+  "precond01_val_anchor_prompt_chars": 5667,
+  "pilot_anchor_prompt_chars": 5648
+ }
+}
