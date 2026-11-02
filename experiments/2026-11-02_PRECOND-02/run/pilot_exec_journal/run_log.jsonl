@@ -1,0 +1,13 @@
+{"at": "2026-11-02T16:40:56+00:00", "binary_sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262", "config_sha256": "65780da6bf06a218feb879f60ce46bfb2059235dd7fe5a2994cc6d53b4b95ba2", "event": "старт"}
+{"at": "2026-11-02T16:40:56+00:00", "event": "план", "заданий_в_плане": 10, "задач": 10}
+{"arm": "exec", "at": "2026-11-02T16:40:56+00:00", "attempt": 1, "event": "вызов", "job": "WH_9301|exec", "role": "основной", "task": "WH_9301", "поток": "WH_9301_exec-26a8feed.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:40:56+00:00", "attempt": 1, "event": "вызов", "job": "WH_9302|exec", "role": "основной", "task": "WH_9302", "поток": "WH_9302_exec-fa6f7920.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:40:56+00:00", "attempt": 1, "event": "вызов", "job": "WH_9303|exec", "role": "основной", "task": "WH_9303", "поток": "WH_9303_exec-e2c82e39.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:42:03+00:00", "attempt": 1, "event": "вызов", "job": "WH_9304|exec", "role": "основной", "task": "WH_9304", "поток": "WH_9304_exec-933231cc.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:42:27+00:00", "attempt": 1, "event": "вызов", "job": "WH_9305|exec", "role": "основной", "task": "WH_9305", "поток": "WH_9305_exec-1ac4ab5b.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:42:28+00:00", "attempt": 1, "event": "вызов", "job": "WH_9306|exec", "role": "основной", "task": "WH_9306", "поток": "WH_9306_exec-f9cd0736.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:43:19+00:00", "attempt": 1, "event": "вызов", "job": "WH_9307|exec", "role": "основной", "task": "WH_9307", "поток": "WH_9307_exec-d7e0e079.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:43:29+00:00", "attempt": 1, "event": "вызов", "job": "WH_9308|exec", "role": "основной", "task": "WH_9308", "поток": "WH_9308_exec-ba43ee7d.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:44:04+00:00", "attempt": 1, "event": "вызов", "job": "WH_9309|exec", "role": "основной", "task": "WH_9309", "поток": "WH_9309_exec-594f85dd.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-02T16:44:32+00:00", "attempt": 1, "event": "вызов", "job": "WH_9310|exec", "role": "основной", "task": "WH_9310", "поток": "WH_9310_exec-39ab81d4.a001.osn.jsonl.gz"}
+{"at": "2026-11-02T16:45:32+00:00", "event": "готово", "заданий_в_плане": 10}
