@@ -1,0 +1,9 @@
+задач 10
+/home/user/neu/experiments/2026-11-02_PRECOND-02/run/pilot_exec_jobs.jsonl 10 голов
+выгружено 10 итоговых записей в experiments/2026-11-02_PRECOND-02/run/pilot_exec_out.jsonl
+пулов: 10
+исполнитель: пулы этапов pilot собраны
+/home/user/neu/experiments/2026-11-02_PRECOND-02/run/pilot_eval_jobs.jsonl 100 голов
+выгружено 100 итоговых записей в experiments/2026-11-02_PRECOND-02/run/pilot_eval_out.jsonl
+100 выборов
+этап pilot: выборы собраны. Дальше — коммит и пуш, событие пуша, затем truth и анализ.
