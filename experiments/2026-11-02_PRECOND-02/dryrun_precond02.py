@@ -37,6 +37,11 @@ dry, dryB = range(8001, 8011), range(8011, 8021)
 for s_ in list(dry) + list(dryB):
     shutil.copy(f'{SEL}/tasks/WH_{s_}.json', f'{root}/tasks/'); shutil.copy(f'{SEL}/pools/WH_{s_}.json', f'{root}/pools/')
 json.dump({'WH': list(dry)}, open(f'{root}/seeds_dry.json', 'w')); json.dump({'WH': list(dryB)}, open(f'{root}/seeds_dryB.json', 'w'))
+import hashlib  # noqa: E402
+os.makedirs(f'{root}/run')
+for st_, rng_ in (('dry', dry), ('dryB', dryB)):          # как collect_exec: манифест пулов и явный список задач без пула
+    json.dump({f'WH_{s_}': hashlib.sha256(open(f'{root}/pools/WH_{s_}.json', 'rb').read()).hexdigest() for s_ in rng_}, open(f'{root}/run/{st_}_exec_pools.sha256', 'w'), indent=0)
+    json.dump([], open(f'{root}/run/{st_}_exec_missing.json', 'w'))
 json.dump(dict(n1=len(dry), n_max=len(dry) + len(dryB), alpha=0.05, note='сухой прогон'), open(f'{root}/plan.json', 'w'))
 G = lambda *a: subprocess.run(['git', '-C', root, *a], check=True, capture_output=True, text=True)
 G('init', '-q'); G('config', 'user.email', 'dry@example'); G('config', 'user.name', 'dry'); G('add', '-A'); G('commit', '-qm', 'сухой прогон: задачи и пулы')
@@ -61,7 +66,11 @@ def fake(name, seed):
             fh.write(json.dumps(dict(id=j['id'], result=res, error='сбой' if res is None else None, out=rr.randrange(2000, 9000), inp=6000,
                                      models={'stub': 1}), ensure_ascii=False) + '\n'); n += 1
     return n
-H('salt', 'dry'); H('eval_jobs', 'dry'); n = fake('dry_eval', 1)
+H('salt', 'dry')
+os.rename(f'{root}/pools/WH_8005.json', f'{root}/WH_8005.bak')
+f0, m0 = H('eval_jobs', 'dry', fail=True); check(f0 and 'нет пула WH_8005' in m0, f'пропавший пул без записи в список пропусков ловится: {m0}')
+os.rename(f'{root}/WH_8005.bak', f'{root}/pools/WH_8005.json')
+H('eval_jobs', 'dry'); n = fake('dry_eval', 1)
 check(n == 10 * 2 * 5, f'задания этапа A: {n} (= 10 задач × 2 руки × 5 голосов)')
 jobs = [json.loads(l) for l in open(f'{root}/run/dry_eval_jobs.jsonl')]
 import prompts_think as PT, sim  # noqa: E402

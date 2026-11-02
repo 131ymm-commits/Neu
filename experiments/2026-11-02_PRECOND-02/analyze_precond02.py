@@ -55,9 +55,11 @@ def load(stage, evals):
     for e in map(json.loads, open(evals, encoding='utf-8')):
         k = (e['task'], e['arm'], int(e['i']))
         if k not in rec or (rec[k].get('error') and not e.get('error')): rec[k] = e
+    miss = HP.missing_pools(stage) if stage != 'pilot' else set()     # совет 40, правка 3: без пула — только по закоммиченному списку
     for t in HP.tids(stage):
         p = f'{sec}/truth/{t}.json'
-        if not os.path.exists(p): continue
+        if t in miss: continue
+        assert os.path.exists(p), f'нет правды для {t}, хотя пул есть'
         tr = json.load(open(p)); orc, mean = max(tr), st.mean(tr)
         if orc - mean <= EPS['WH']: excl.append(t); continue
         reg = lambda i: (orc - tr[i]) / (orc - mean); A0R[t] = reg(a0(HP.pool(t), t))
@@ -66,8 +68,10 @@ def load(stage, evals):
                 e = rec.get((t, a, i)); c = None if e is None or e.get('error') else e.get('choice')
                 valid = isinstance(c, int) and 0 <= c < len(tr); refused = c == -1
                 R[(t, a, i)] = reg(c) if valid else (A0R[t] if refused else 1.0)
-                REF[(t, a, i)] = refused; OUT[(t, a, i)] = (e or {}).get('out') or 0; INP[(t, a, i)] = (e or {}).get('inp') or 0
                 STA[(t, a, i)] = 'missing' if e is None else 'ok' if valid else 'refused' if refused else 'error' if e.get('error') else 'invalid'
+                # совет 40, правка 4: у пропусков и сбоев нет ни выхода, ни входа — в длину и в проверку входа они не идут
+                REF[(t, a, i)] = refused; got = STA[(t, a, i)] in ('ok', 'refused')
+                OUT[(t, a, i)] = (e.get('out') or 0) if got else None; INP[(t, a, i)] = (e.get('inp') or 0) if got else None
     T = sorted({t for (t, a, i) in R})
     return dict(T=T, R=R, REF=REF, OUT=OUT, INP=INP, A0R=A0R, excl=excl, STA=STA)
 
@@ -81,12 +85,12 @@ def describe(L):
         out[a] = dict(regret=r3(st.mean(arm_mean(L, t, a) for t in T)), refusals=len(rf), votes=len(ks), refusal_share=r3(len(rf) / len(ks)),
                       answered_regret=r3(st.mean(L['R'][k] for k in an)) if an else None,                    # условие после воздействия, описательно
                       refusal_contribution=r3(len(rf) / len(ks) * (st.mean(L['A0R'][k[0]] for k in rf) - st.mean(L['R'][k] for k in an))) if rf and an else 0.0,
-                      out_per_call=r3(st.mean(L['OUT'][k] for k in ks)))
+                      out_per_call=r3(st.mean(L['OUT'][k] for k in ks if L['OUT'][k] is not None)), not_ok=sum(L['STA'][k] not in ('ok', 'refused') for k in ks))
     out['A0_no_calls'] = r3(st.mean(L['A0R'][t] for t in T))
     out['vote_status'] = dict(collections.Counter(L['STA'].values()))
     # чистота входа: у пяти голосов одной руки на одной задаче промпт один, вход первого запроса должен совпадать
     # (снимок git менял его от вызова к вызову — ERRORS № 118); здесь — вход из выгрузки драйвера (inp итоговой записи)
-    spans = [max(L['INP'][(t, a, i)] for i in range(HP.VOTES)) - min(L['INP'][(t, a, i)] for i in range(HP.VOTES)) for t in T for a in HP.ARMS]
+    spans = [max(v) - min(v) for t in T for a in HP.ARMS for v in [[L['INP'][(t, a, i)] for i in range(HP.VOTES) if L['INP'][(t, a, i)] is not None]] if len(v) > 1]
     # порог — по пилоту (чистый контекст: размах 2–28 токенов — путь рабочей папки); снимок git добавлял около +400 (PRECOND-01) и +700…+1900 (SCORE-01)
     out['input_span'] = dict(max=max(spans), share_over_30=r3(sum(s > 30 for s in spans) / len(spans)),
                              flag=bool(max(spans) > 100 or sum(s > 30 for s in spans) / len(spans) > 0.05))
@@ -98,18 +102,19 @@ def test(g, p_nominal):
                 reject=bool(p is not None and p <= p_nominal))
 
 def interim(evA, key='A'):
-    pl = plan(); L = load(key, evA); g = gains(L); n1 = len(g); b = bounds(n1 / pl['n_max'])
+    HP.verify_hashes(key); pl = plan(); L = load(key, evA); g = gains(L); n1 = len(g); b = bounds(n1 / pl['n_max'])
     out = dict(stage=key, n_tasks=n1, excluded_eps=L['excl'], plan=pl, bounds={k: round(v, 6) for k, v in b.items()}, primary=test(g, b['p1_nominal']),
                describe=describe(L))
-    # Т1 PRECOND-01: если выпало больше 20 % задач этапа, этап «не определён» — промежуточный анализ не останавливает, план идёт дальше
-    out['defined'] = n1 >= 0.8 * len(HP.tids(key))
+    # Т1 PRECOND-01: если выпало больше 20 % задач этапа, этап «не определён» — промежуточный анализ не останавливает, план идёт дальше.
+    # Совет 40, правка 1: исключённые по EPS от рук не зависят — их нет в знаменателе; выпавшие — задачи без пула или без голосов
+    out['defined'] = n1 >= 0.8 * (len(HP.tids(key)) - len(L['excl']))
     if out['defined'] and out['primary']['reject']: out['decision'] = 'остановить: эффективность'
     elif out['defined'] and st.mean(g) <= 0: out['decision'] = 'остановить: бесполезность'          # необязывающая граница, правило заранее
     else: out['decision'] = 'продолжить'
     return out
 
 def final(evA, evB, keyA='A', keyB='B'):
-    pl = plan(); LA, LB = load(keyA, evA), load(keyB, evB); gA, gB = gains(LA), gains(LB); g = gA + gB
+    HP.verify_hashes(keyB); pl = plan(); LA, LB = load(keyA, evA), load(keyB, evB); gA, gB = gains(LA), gains(LB); g = gA + gB
     ia = json.load(open(os.path.join(HP.D, 'interim_an.json')))
     c1 = ia['bounds']['c1']; a1 = ia['bounds']['alpha1']; n1 = ia['n_tasks']; rho = math.sqrt(n1 / len(g)); lo, hi = 0.0, 10.0
     for _ in range(80):                                     # итоговая граница при фактической доле информации n1 / n (весь остаток α)

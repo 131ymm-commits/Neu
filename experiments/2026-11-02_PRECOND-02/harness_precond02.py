@@ -23,6 +23,8 @@ SECRETS = dict(pilot='/root/precond02_secret_pilot', A='/root/precond02_secret_A
 ARMS = dict(ANCHOR=['REFUSE', 'ROLE', 'PROCEDURE'], NOREF=['ROLE', 'PROCEDURE'])
 VOTES = 5
 PREV = dict(B='A', dryB='dry')                 # этап B продолжает этап A: задачи не пересекаются, решение промежуточного анализа — «продолжить»
+NEXT = {v: k for k, v in PREV.items()}
+TEST = ('A', 'B')                              # этапы теста: перед заданиями B, промежуточным и итоговым анализом код сверяет хеши регистрации
 
 def sec_for(stage):
     env = os.environ.get('PRECOND02_SECRET')
@@ -65,14 +67,32 @@ def committed_clean(rel):
     assert git('ls-files', '--error-unmatch', rel).returncode == 0, f'{rel} не закоммичен'
     assert git('diff', '--quiet', 'HEAD', '--', rel).returncode == 0, f'{rel} изменён после коммита'
 def sha_file(p): return hashlib.sha256(open(p, 'rb').read()).hexdigest()
+def missing_pools(stage):
+    # совет 40, правка 3: задача без пула исключается только явно — по закоммиченному списку collect_exec, не молча
+    rel = f'run/{stage}_exec_missing.json'; committed_clean(rel); return set(json.load(open(f'{D}/{rel}')))
+def guard_pools(stages):
+    # пулы всех задач этапов закоммичены и совпадают с манифестом collect_exec (до правды этапа A — совет 40, правка 3)
+    for st_ in stages:
+        man_rel = f'run/{st_}_exec_pools.sha256'; committed_clean(man_rel); man = json.load(open(f'{D}/{man_rel}')); miss = missing_pools(st_)
+        for t in tids(st_):
+            if t in miss: assert t not in man, f'{t}: и в пулах, и в пропусках'; continue
+            committed_clean(f'pools/{t}.json'); assert sha_file(f'{D}/pools/{t}.json') == man[t], f'пул {t} не совпадает с манифестом'
+def verify_hashes(stage):
+    # совет 40, правка 2: код, план, сиды и конфигурация — те же, что при регистрации (prereg_hashes.json закоммичен)
+    if stage not in TEST: return
+    committed_clean('prereg_hashes.json'); ph = json.load(open(f'{D}/prereg_hashes.json'))
+    for f, h in ph['files'].items():
+        assert sha_file(os.path.join(HERE, f)) == h, f'{f} изменён после регистрации'
 def guard_truth(stage):
+    verify_hashes(stage)
     rel = f'evals/{stage}.jsonl'; committed_clean(rel); committed_clean(f'{stage}_push_activity.json'); committed_clean(f'run/{stage}_eval_prompts.sha256')
+    if stage in NEXT: guard_pools([stage, NEXT[stage]])         # до правды этапа A — пулы обоих этапов в git
     pa = json.load(open(f'{D}/{stage}_push_activity.json')); after = pa['event']['after']
     assert git('merge-base', '--is-ancestor', after, 'HEAD').returncode == 0, f'коммит события {after[:7]} не предок HEAD'
     pushed = subprocess.run(['git', '-C', D, 'show', f'{after}:./{rel}'], capture_output=True).stdout
     assert hashlib.sha256(pushed).hexdigest() == sha_file(f'{D}/{rel}') == pa['evals_sha256'], 'выборы на диске не совпадают с запушенными'
 def guard_b_jobs(stage):
-    prev = PREV[stage]; committed_clean('interim_an.json')
+    verify_hashes(stage); prev = PREV[stage]; committed_clean('interim_an.json')
     assert not set(tids(stage)) & set(tids(prev)), 'задачи этапа B пересекаются с задачами этапа A'
     import analyze_precond02 as AN
     re_ = AN.interim(f'{D}/evals/{prev}.jsonl', prev)
@@ -99,7 +119,9 @@ if __name__ == '__main__':
             t = lab.split('|')[0]; c = (r.get('result') or {}).get('candidates')
             if not c or len(c) != 8: print('нет пула:', t, r.get('error')); continue
             s = json.dumps(c, ensure_ascii=False); open(f'{D}/pools/{t}.json', 'w').write(s); man[t] = hashlib.sha256(s.encode()).hexdigest()
-        json.dump(man, open(f'{D}/run/{stage}_exec_pools.sha256', 'w'), indent=0); print('пулов:', len(man))
+        miss = sorted(set(tids(stage)) - set(man))
+        json.dump(man, open(f'{D}/run/{stage}_exec_pools.sha256', 'w'), indent=0); json.dump(miss, open(f'{D}/run/{stage}_exec_missing.json', 'w'))
+        print('пулов:', len(man), '| без пула:', miss)
     elif cmd == 'push_event':
         head = git('rev-parse', 'HEAD').stdout.strip(); rel = f'evals/{stage}.jsonl'; committed_clean(rel)
         evsha = hashlib.sha256(subprocess.run(['git', '-C', D, 'show', f'{head}:./{rel}'], capture_output=True).stdout).hexdigest()
@@ -115,9 +137,10 @@ if __name__ == '__main__':
         print('событие:', ev['timestamp'], head[:7], 'sha256 выборов', evsha[:16])
     elif cmd == 'eval_jobs':
         if stage in PREV: guard_b_jobs(stage)
-        jobs = []
+        jobs = []; miss = missing_pools(stage)
         for t in tids(stage):
-            if not os.path.exists(f'{D}/pools/{t}.json'): print('нет пула — задача исключена до оценщиков:', t); continue
+            if t in miss: print('нет пула — задача исключена до оценщиков (run/{}_exec_missing.json):'.format(stage), t); continue
+            assert os.path.exists(f'{D}/pools/{t}.json'), f'нет пула {t}, а в списке пропусков его нет'
             for a, on in ARMS.items():
                 text, schema = prompt_for(on, t)
                 jobs += [dict(id=f'{t}|{a}|{i}', prompt=text, schema=schema) for i in range(VOTES)]

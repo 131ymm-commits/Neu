@@ -13,6 +13,11 @@
  },
  "out_per_eval_call": 4728,
  "out_per_exec_call": 7617,
+ "speed": {
+  "exec_calls_per_hour": 130.4,
+  "eval_calls_per_hour": 178.7,
+  "note": "пилот 02.11: исполнитель 10 вызовов, оценщики 100, параллельность 3; без ожиданий лимита"
+ },
  "designs": {
   "90/180": {
    "n1": 90,
@@ -29,7 +34,8 @@
      "p_stop_efficacy": 0.249,
      "p_stop_futility": 0.031,
      "expected_tasks": 155,
-     "expected_out_mln": 8.5
+     "expected_out_mln": 8.5,
+     "expected_hours": 10.1
     },
     "половина C-041 (совет 39)": {
      "delta": 0.045,
@@ -38,7 +44,8 @@
      "p_stop_efficacy": 0.055,
      "p_stop_futility": 0.173,
      "expected_tasks": 159,
-     "expected_out_mln": 8.75
+     "expected_out_mln": 8.75,
+     "expected_hours": 10.3
     },
     "старые выборки, среднее по трём": {
      "delta": 0.118,
@@ -47,10 +54,12 @@
      "p_stop_efficacy": 0.472,
      "p_stop_futility": 0.007,
      "expected_tasks": 137,
-     "expected_out_mln": 7.52
+     "expected_out_mln": 7.52,
+     "expected_hours": 9.0
     }
    },
-   "max_out_mln": 9.88
+   "max_out_mln": 9.88,
+   "max_hours": 11.5
   },
   "120/240": {
    "n1": 120,
@@ -67,7 +76,8 @@
      "p_stop_efficacy": 0.349,
      "p_stop_futility": 0.016,
      "expected_tasks": 196,
-     "expected_out_mln": 10.77
+     "expected_out_mln": 10.77,
+     "expected_hours": 12.8
     },
     "половина C-041 (совет 39)": {
      "delta": 0.045,
@@ -76,7 +86,8 @@
      "p_stop_efficacy": 0.073,
      "p_stop_futility": 0.139,
      "expected_tasks": 215,
-     "expected_out_mln": 11.78
+     "expected_out_mln": 11.78,
+     "expected_hours": 13.9
     },
     "старые выборки, среднее по трём": {
      "delta": 0.118,
@@ -85,10 +96,12 @@
      "p_stop_efficacy": 0.622,
      "p_stop_futility": 0.002,
      "expected_tasks": 165,
-     "expected_out_mln": 9.06
+     "expected_out_mln": 9.06,
+     "expected_hours": 11.1
     }
    },
-   "max_out_mln": 13.18
+   "max_out_mln": 13.18,
+   "max_hours": 15.3
   },
   "180/360": {
    "n1": 180,
@@ -105,7 +118,8 @@
      "p_stop_efficacy": 0.538,
      "p_stop_futility": 0.004,
      "expected_tasks": 262,
-     "expected_out_mln": 14.41
+     "expected_out_mln": 14.41,
+     "expected_hours": 17.4
     },
     "половина C-041 (совет 39)": {
      "delta": 0.045,
@@ -114,7 +128,8 @@
      "p_stop_efficacy": 0.114,
      "p_stop_futility": 0.092,
      "expected_tasks": 323,
-     "expected_out_mln": 17.73
+     "expected_out_mln": 17.73,
+     "expected_hours": 20.8
     },
     "старые выборки, среднее по трём": {
      "delta": 0.118,
@@ -123,10 +138,12 @@
      "p_stop_efficacy": 0.829,
      "p_stop_futility": 0.0,
      "expected_tasks": 211,
-     "expected_out_mln": 11.56
+     "expected_out_mln": 11.56,
+     "expected_hours": 14.6
     }
    },
-   "max_out_mln": 19.76
+   "max_out_mln": 19.76,
+   "max_hours": 22.9
   }
  }
 }
