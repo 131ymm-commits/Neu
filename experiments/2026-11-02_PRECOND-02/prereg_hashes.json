@@ -1,0 +1,26 @@
+{
+ "files": {
+  "harness_precond02.py": "0cb2caef84d6494b42044cb9643afdb5d361e9a3f7ccba397c04a34e4c07247e",
+  "analyze_precond02.py": "66fb53071283da328f78342f32fc7d8b425ad2aacafac37468848ca6dbc1db32",
+  "run_precond02.sh": "363b732d38bc891b31245db370c751cce249ac26a3063c6b8d5d7e8059da663e",
+  "dryrun_precond02.py": "9893c9b67f26f49febbf867f4a888838a7bb6a1dfb7c6fd24d8b9cde2c4ed747",
+  "power_precond02.py": "a4288d2579d865e2c78b0d097f3dc553493d337f96089beac7edee3b7514c5e8",
+  "prior_refuse.py": "1774982e094c3c7de134736ea2032b94d3d15282c08c90531521632f6424dab7",
+  "pilot_precond02.py": "996ed4f34315c58e64deb148e80774ec011bb67cbb879b3a953f14023b01dfc5",
+  "prereg_hashes.py": "ca5e08e440bb182e150b618da75dc92a2c14d592f9c5ad57b505cf68ea8cda8f",
+  "cfg_medium_clean.json": "118e29e834dd37dfd191dbe07319ab6c4b9fcc398ee07e7f1675f638a1c7b560",
+  "plan.json": "4f65f2f074567187743f5e69f3b5a0184e0f51df327d72390dd06fa18ac6e10f",
+  "seeds_A.json": "6a25a313424d6bb6b8828ce46065b19ac0569c3d003efdf5d8860e7e16e3bddc",
+  "seeds_B.json": "6629ff31f8fea4ea4c88e518685e731ced5999435c497915185f2838ea69c624",
+  "../2026-10-21_PRECOND-01/prompts_precond.py": "2bf4d0893088323bcd3a14e23804f822d62b4f6177eb07110ec23ed4fa9418a7",
+  "../2026-10-21_PRECOND-01/analyze_precond.py": "f0bc1e5f78a6ec520827f82ff1a6f00a25d4ec03b5290d813e3f7cba134d6eae",
+  "../2026-10-07_SELECT-01/sim.py": "8acc6606bed6e79970bc6ea8192bbf740eb4363a634917edd3590fba1255e33a",
+  "../2026-10-07_SELECT-01/prompts.py": "48ce93b0b4905c6ee2eee8d6dd37004936b50f565fbad1324368f842a1aeb92c",
+  "../2026-10-07_SELECT-01/analyze.py": "06f4f5f8cdba27ff39e3b4c0bfb79972d9f0b28ca69c4f4dff67f45358900f5e",
+  "../../tools/run_sealed2.py": "1dc321f47f2be32c30ad625c14b651a0e22307a48fd9e8f42b1c3f68e727b3e8"
+ },
+ "preambles": {
+  "ANCHOR": "dcc1928a0fe7d4b3c4a10c2e5644e20b85d8b58dd0be7babac551d0256104ffc",
+  "NOREF": "48e6487a430fcd0a2598e2cc4342c955e46a980f63f95a577665973a2c84846d"
+ }
+}
