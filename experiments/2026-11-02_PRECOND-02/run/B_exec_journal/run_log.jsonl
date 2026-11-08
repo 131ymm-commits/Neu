@@ -165,3 +165,26 @@
 {"arm": "exec", "at": "2026-11-08T14:32:28+00:00", "attempt": 2, "event": "вызов", "job": "WH_9734|exec", "role": "основной", "task": "WH_9734", "поток": "WH_9734_exec-8d62e0d6.a002.osn.jsonl.gz"}
 {"arm": "exec", "at": "2026-11-08T14:33:35+00:00", "attempt": 1, "event": "вызов", "job": "WH_9737|exec", "role": "основной", "task": "WH_9737", "поток": "WH_9737_exec-7d2fea59.a001.osn.jsonl.gz"}
 {"arm": "exec", "at": "2026-11-08T14:33:39+00:00", "attempt": 1, "event": "вызов", "job": "WH_9738|exec", "role": "основной", "task": "WH_9738", "поток": "WH_9738_exec-c32dc33f.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:34:01+00:00", "attempt": 1, "event": "вызов", "job": "WH_9739|exec", "role": "основной", "task": "WH_9739", "поток": "WH_9739_exec-a3c9928b.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:34:34+00:00", "attempt": 1, "event": "вызов", "job": "WH_9740|exec", "role": "основной", "task": "WH_9740", "поток": "WH_9740_exec-f3de1e8b.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:34:51+00:00", "attempt": 1, "event": "вызов", "job": "WH_9741|exec", "role": "основной", "task": "WH_9741", "поток": "WH_9741_exec-50f20036.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:35:17+00:00", "attempt": 1, "event": "вызов", "job": "WH_9742|exec", "role": "основной", "task": "WH_9742", "поток": "WH_9742_exec-8892f04a.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:35:21+00:00", "attempt": 1, "event": "вызов", "job": "WH_9743|exec", "role": "основной", "task": "WH_9743", "поток": "WH_9743_exec-8379ee89.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:35:57+00:00", "attempt": 1, "event": "вызов", "job": "WH_9744|exec", "role": "основной", "task": "WH_9744", "поток": "WH_9744_exec-7840de9e.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:36:14+00:00", "attempt": 1, "event": "вызов", "job": "WH_9745|exec", "role": "основной", "task": "WH_9745", "поток": "WH_9745_exec-6e1f6a90.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:36:21+00:00", "attempt": 1, "event": "вызов", "job": "WH_9746|exec", "role": "основной", "task": "WH_9746", "поток": "WH_9746_exec-360d5583.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:36:56+00:00", "attempt": 1, "event": "вызов", "job": "WH_9747|exec", "role": "основной", "task": "WH_9747", "поток": "WH_9747_exec-3f1fd4a9.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:37:20+00:00", "attempt": 1, "event": "вызов", "job": "WH_9748|exec", "role": "основной", "task": "WH_9748", "поток": "WH_9748_exec-0fda9b5f.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:37:25+00:00", "attempt": 1, "event": "вызов", "job": "WH_9749|exec", "role": "основной", "task": "WH_9749", "поток": "WH_9749_exec-e4691f4c.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:37:54+00:00", "attempt": 1, "event": "вызов", "job": "WH_9750|exec", "role": "основной", "task": "WH_9750", "поток": "WH_9750_exec-8c356db5.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:38:32+00:00", "attempt": 1, "event": "вызов", "job": "WH_9751|exec", "role": "основной", "task": "WH_9751", "поток": "WH_9751_exec-0dffaa5f.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:38:37+00:00", "attempt": 1, "event": "вызов", "job": "WH_9752|exec", "role": "основной", "task": "WH_9752", "поток": "WH_9752_exec-61ddb610.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:39:10+00:00", "attempt": 1, "event": "вызов", "job": "WH_9753|exec", "role": "основной", "task": "WH_9753", "поток": "WH_9753_exec-a3c311a5.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:39:41+00:00", "attempt": 1, "event": "вызов", "job": "WH_9754|exec", "role": "основной", "task": "WH_9754", "поток": "WH_9754_exec-3151a62c.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:39:57+00:00", "attempt": 1, "event": "вызов", "job": "WH_9755|exec", "role": "основной", "task": "WH_9755", "поток": "WH_9755_exec-9f05b844.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:40:27+00:00", "attempt": 1, "event": "вызов", "job": "WH_9756|exec", "role": "основной", "task": "WH_9756", "поток": "WH_9756_exec-17d10ce3.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:40:58+00:00", "attempt": 1, "event": "вызов", "job": "WH_9757|exec", "role": "основной", "task": "WH_9757", "поток": "WH_9757_exec-270192aa.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:41:22+00:00", "attempt": 1, "event": "вызов", "job": "WH_9758|exec", "role": "основной", "task": "WH_9758", "поток": "WH_9758_exec-7430fbce.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:41:26+00:00", "attempt": 1, "event": "вызов", "job": "WH_9759|exec", "role": "основной", "task": "WH_9759", "поток": "WH_9759_exec-ff45ff06.a001.osn.jsonl.gz"}
+{"arm": "exec", "at": "2026-11-08T14:41:53+00:00", "attempt": 1, "event": "вызов", "job": "WH_9760|exec", "role": "основной", "task": "WH_9760", "поток": "WH_9760_exec-e953b6e0.a001.osn.jsonl.gz"}
+{"at": "2026-11-08T14:42:47+00:00", "event": "готово", "заданий_в_плане": 27}
