@@ -1809,3 +1809,22 @@
 {"arm": "ANCHOR", "at": "2026-11-09T08:15:05+00:00", "attempt": 1, "event": "вызов", "job": "WH_9579|ANCHOR|1", "role": "основной", "task": "WH_9579", "поток": "WH_9579_ANCHOR_1-95658e44.a001.osn.jsonl.gz"}
 {"arm": "ANCHOR", "at": "2026-11-09T08:15:59+00:00", "attempt": 1, "event": "вызов", "job": "WH_9579|ANCHOR|3", "role": "основной", "task": "WH_9579", "поток": "WH_9579_ANCHOR_3-06c48935.a001.osn.jsonl.gz"}
 {"at": "2026-11-09T08:54:38+00:00", "event": "пауза", "причина": "--stop-after 5999.0 с"}
+{"at": "2026-11-09T10:32:40+00:00", "binary_sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262", "config_sha256": "e3877af3c60ac704293b320b70ebd82ecc5dc4939b77950baf899efca4aa2dff", "event": "старт"}
+{"at": "2026-11-09T10:32:41+00:00", "event": "план", "заданий_в_плане": 16, "задач": 180}
+{"arm": "NOREF", "at": "2026-11-09T10:32:41+00:00", "attempt": 1, "event": "вызов", "job": "WH_9579|NOREF|3", "role": "основной", "task": "WH_9579", "поток": "WH_9579_NOREF_3-212f4b41.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T10:32:41+00:00", "attempt": 2, "event": "вызов", "job": "WH_9579|ANCHOR|3", "role": "основной", "task": "WH_9579", "поток": "WH_9579_ANCHOR_3-06c48935.a002.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T10:32:41+00:00", "attempt": 1, "event": "вызов", "job": "WH_9579|NOREF|0", "role": "основной", "task": "WH_9579", "поток": "WH_9579_NOREF_0-0a5d40e2.a001.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T10:33:20+00:00", "attempt": 1, "event": "вызов", "job": "WH_9579|NOREF|1", "role": "основной", "task": "WH_9579", "поток": "WH_9579_NOREF_1-97ca7e5c.a001.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T10:34:05+00:00", "attempt": 1, "event": "вызов", "job": "WH_9579|NOREF|4", "role": "основной", "task": "WH_9579", "поток": "WH_9579_NOREF_4-96609266.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T10:34:34+00:00", "attempt": 1, "event": "вызов", "job": "WH_9579|ANCHOR|2", "role": "основной", "task": "WH_9579", "поток": "WH_9579_ANCHOR_2-0f022fbc.a001.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T10:34:38+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|NOREF|4", "role": "основной", "task": "WH_9580", "поток": "WH_9580_NOREF_4-52639616.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T10:34:52+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|ANCHOR|1", "role": "основной", "task": "WH_9580", "поток": "WH_9580_ANCHOR_1-dc0065ca.a001.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T10:35:21+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|NOREF|3", "role": "основной", "task": "WH_9580", "поток": "WH_9580_NOREF_3-319f8107.a001.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T10:35:24+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|NOREF|2", "role": "основной", "task": "WH_9580", "поток": "WH_9580_NOREF_2-da481708.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T10:35:28+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|ANCHOR|4", "role": "основной", "task": "WH_9580", "поток": "WH_9580_ANCHOR_4-2b89a872.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T10:36:00+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|ANCHOR|0", "role": "основной", "task": "WH_9580", "поток": "WH_9580_ANCHOR_0-a16fd951.a001.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T10:36:14+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|NOREF|0", "role": "основной", "task": "WH_9580", "поток": "WH_9580_NOREF_0-3a65fda3.a001.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T10:36:38+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|NOREF|1", "role": "основной", "task": "WH_9580", "поток": "WH_9580_NOREF_1-96ab69fa.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T10:36:40+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|ANCHOR|2", "role": "основной", "task": "WH_9580", "поток": "WH_9580_ANCHOR_2-f355a04e.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T10:36:52+00:00", "attempt": 1, "event": "вызов", "job": "WH_9580|ANCHOR|3", "role": "основной", "task": "WH_9580", "поток": "WH_9580_ANCHOR_3-47ff7a00.a001.osn.jsonl.gz"}
+{"at": "2026-11-09T10:37:49+00:00", "event": "готово", "заданий_в_плане": 16}
