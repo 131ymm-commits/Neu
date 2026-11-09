@@ -1,0 +1,75 @@
+{
+ "stage": "A",
+ "n_tasks": 180,
+ "excluded_eps": [],
+ "plan": {
+  "n1": 180,
+  "n_max": 360,
+  "alpha": 0.05,
+  "note": "выбор автора 02.11 — «180/360 (Recommended)», рекомендация совета 40"
+ },
+ "bounds": {
+  "t1": 0.5,
+  "alpha1": 0.005575,
+  "c1": 2.537988,
+  "c2": 1.662107,
+  "p1_nominal": 0.005575,
+  "p2_nominal": 0.048246,
+  "alpha_check": 0.05
+ },
+ "primary": {
+  "gain": {
+   "mean": 0.134,
+   "ci95": [
+    0.095,
+    0.172
+   ],
+   "df": 179,
+   "p_two": 0.0,
+   "p_greater": 0.0,
+   "n": 180
+  },
+  "effect_REFUSE": -0.134,
+  "effect_ci95": [
+   -0.172,
+   -0.095
+  ],
+  "p_one_sided": 0.0,
+  "p_nominal_bound": 0.005575,
+  "reject": true
+ },
+ "describe": {
+  "ANCHOR": {
+   "regret": 0.448,
+   "refusals": 53,
+   "votes": 900,
+   "refusal_share": 0.059,
+   "answered_regret": 0.432,
+   "refusal_contribution": 0.016,
+   "out_per_call": 5769.663,
+   "not_ok": 0
+  },
+  "NOREF": {
+   "regret": 0.581,
+   "refusals": 0,
+   "votes": 900,
+   "refusal_share": 0.0,
+   "answered_regret": 0.581,
+   "refusal_contribution": 0.0,
+   "out_per_call": 4280.349,
+   "not_ok": 0
+  },
+  "A0_no_calls": 0.766,
+  "vote_status": {
+   "ok": 1747,
+   "refused": 53
+  },
+  "input_span": {
+   "max": 22,
+   "share_over_30": 0.0,
+   "flag": false
+  }
+ },
+ "defined": true,
+ "decision": "остановить: эффективность"
+}
