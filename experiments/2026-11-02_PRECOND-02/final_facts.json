@@ -1,0 +1,234 @@
+{
+ "totals": {
+  "pilot_out": 612025,
+  "pilot_calls": 110,
+  "heads_calls": 2270
+ },
+ "n_tasks": 180,
+ "t": 6.795,
+ "p_exact": 7.74853514684537e-11,
+ "p_exact_sci": "7.7e-11",
+ "se": 0.0197,
+ "sd": 0.2639,
+ "expectations": {
+  "E1": {
+   "outcome": true,
+   "p": 0.6
+  },
+  "E2": {
+   "outcome": true,
+   "p": 0.3
+  },
+  "E3": {
+   "outcome": null,
+   "p": 0.75,
+   "note": "механически выполнено: остановка на промежуточном (оценка ≥ 0,086); в Брайер не идёт",
+   "value": -0.134,
+   "holds": true
+  },
+  "E4": {
+   "outcome": true,
+   "p": 0.8,
+   "value": 0.059
+  },
+  "E5": {
+   "outcome": true,
+   "p": 0.8,
+   "value": 1489.3
+  }
+ },
+ "calls": {
+  "pilot_exec": {
+   "finals": {
+    "годный": 10
+   },
+   "attempts": 10,
+   "no_answer_attempts": 0,
+   "out": 76184,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "started_unrecorded": 0,
+   "segments": 1
+  },
+  "pilot_eval": {
+   "finals": {
+    "годный": 100
+   },
+   "attempts": 100,
+   "no_answer_attempts": 0,
+   "out": 535841,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "started_unrecorded": 0,
+   "segments": 1
+  },
+  "A_exec": {
+   "finals": {
+    "годный": 180
+   },
+   "attempts": 180,
+   "no_answer_attempts": 0,
+   "out": 1261245,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "started_unrecorded": 0,
+   "segments": 3
+  },
+  "B_exec": {
+   "finals": {
+    "годный": 180
+   },
+   "attempts": 181,
+   "no_answer_attempts": 1,
+   "out": 1263252,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "started_unrecorded": 0,
+   "segments": 3
+  },
+  "A_eval": {
+   "finals": {
+    "годный": 1800
+   },
+   "attempts": 1804,
+   "no_answer_attempts": 4,
+   "out": 9045011,
+   "models": [
+    "claude-opus-5-5"
+   ],
+   "started_unrecorded": 0,
+   "segments": 8
+  }
+ },
+ "test_out": 11569508,
+ "streams": {
+  "совпал": 2165
+ },
+ "order": {
+  "prereg": [
+   "14a1671",
+   "2026-11-08T09:33:10+00:00"
+  ],
+  "pools_B": [
+   "d0ac8af",
+   "2026-11-08T14:43:03+00:00"
+  ],
+  "jobs_A": [
+   "cf38f37",
+   "2026-11-08T14:43:06+00:00"
+  ],
+  "evals_A": [
+   "b0957f0",
+   "2026-11-09T10:38:00+00:00"
+  ],
+  "push_time": "2026-11-09T10:38:02Z",
+  "truth_first_mtime": "2026-11-09T10:38:18",
+  "interim": [
+   "b6a39ce",
+   "2026-11-09T10:42:58+00:00"
+  ],
+  "salt_A": [
+   "9d369ed",
+   "2026-11-09T10:43:00+00:00"
+  ],
+  "evals_sha_event": "35722e166d2c47ad34cef60f2a99f27a50236a824af00045009318c99ee4ec23",
+  "evals_sha_disk": "35722e166d2c47ad34cef60f2a99f27a50236a824af00045009318c99ee4ec23",
+  "salt_A_sha": "d7885a5f4d4fb15062e763efb089b0b9a186b942ea98215ada6d68ece0939f88"
+ },
+ "heads_audit": [
+  {
+   "journal": "experiments/2026-11-02_PRECOND-02/run/pilot_exec_journal",
+   "calls": 10,
+   "home": "/home/user/neu_heads/precond02/home",
+   "work_dir": "/home/user/neu_heads/precond02/work",
+   "git_instructions_off": true,
+   "git_snapshot_possible": false,
+   "tools": [
+    "StructuredOutput"
+   ],
+   "mcp": [],
+   "model": {
+    "claude-opus-5-5": 10
+   }
+  },
+  {
+   "journal": "experiments/2026-11-02_PRECOND-02/run/pilot_eval_journal",
+   "calls": 100,
+   "home": "/home/user/neu_heads/precond02/home",
+   "work_dir": "/home/user/neu_heads/precond02/work",
+   "git_instructions_off": true,
+   "git_snapshot_possible": false,
+   "tools": [
+    "StructuredOutput"
+   ],
+   "mcp": [],
+   "model": {
+    "claude-opus-5-5": 100
+   }
+  },
+  {
+   "journal": "experiments/2026-11-02_PRECOND-02/run/A_exec_journal",
+   "calls": 180,
+   "home": "/home/user/neu_heads/precond02/home",
+   "work_dir": "/home/user/neu_heads/precond02/work",
+   "git_instructions_off": true,
+   "git_snapshot_possible": false,
+   "tools": [
+    "StructuredOutput"
+   ],
+   "mcp": [],
+   "model": {
+    "claude-opus-5-5": 180
+   }
+  },
+  {
+   "journal": "experiments/2026-11-02_PRECOND-02/run/B_exec_journal",
+   "calls": 180,
+   "home": "/home/user/neu_heads/precond02/home",
+   "work_dir": "/home/user/neu_heads/precond02/work",
+   "git_instructions_off": true,
+   "git_snapshot_possible": false,
+   "tools": [
+    "StructuredOutput"
+   ],
+   "mcp": [],
+   "model": {
+    "claude-opus-5-5": 180
+   }
+  },
+  {
+   "journal": "experiments/2026-11-02_PRECOND-02/run/A_eval_journal",
+   "calls": 1800,
+   "home": "/home/user/neu_heads/precond02/home",
+   "work_dir": "/home/user/neu_heads/precond02/work",
+   "git_instructions_off": true,
+   "git_snapshot_possible": false,
+   "tools": [
+    "StructuredOutput"
+   ],
+   "mcp": [],
+   "model": {
+    "claude-opus-5-5": 1800
+   }
+  }
+ ],
+ "support_bits": {
+  "precond02": 3.54,
+  "power": 0.583,
+  "false_level": 0.05,
+  "base_hypothesis_neu": 0.23,
+  "old_samples_posthoc": 1.0,
+  "total": 4.77
+ },
+ "plan": {
+  "n1": 180,
+  "n_max": 360,
+  "alpha": 0.05,
+  "note": "выбор автора 02.11 — «180/360 (Recommended)», рекомендация совета 40"
+ },
+ "decision": "остановить: эффективность"
+}

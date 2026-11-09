@@ -1,0 +1,77 @@
+[
+ {
+  "journal": "experiments/2026-11-02_PRECOND-02/run/pilot_exec_journal",
+  "calls": 10,
+  "home": "/home/user/neu_heads/precond02/home",
+  "work_dir": "/home/user/neu_heads/precond02/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-opus-5-5": 10
+  }
+ },
+ {
+  "journal": "experiments/2026-11-02_PRECOND-02/run/pilot_eval_journal",
+  "calls": 100,
+  "home": "/home/user/neu_heads/precond02/home",
+  "work_dir": "/home/user/neu_heads/precond02/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-opus-5-5": 100
+  }
+ },
+ {
+  "journal": "experiments/2026-11-02_PRECOND-02/run/A_exec_journal",
+  "calls": 180,
+  "home": "/home/user/neu_heads/precond02/home",
+  "work_dir": "/home/user/neu_heads/precond02/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-opus-5-5": 180
+  }
+ },
+ {
+  "journal": "experiments/2026-11-02_PRECOND-02/run/B_exec_journal",
+  "calls": 180,
+  "home": "/home/user/neu_heads/precond02/home",
+  "work_dir": "/home/user/neu_heads/precond02/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-opus-5-5": 180
+  }
+ },
+ {
+  "journal": "experiments/2026-11-02_PRECOND-02/run/A_eval_journal",
+  "calls": 1800,
+  "home": "/home/user/neu_heads/precond02/home",
+  "work_dir": "/home/user/neu_heads/precond02/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-opus-5-5": 1800
+  }
+ }
+]
