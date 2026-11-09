@@ -1,0 +1,76 @@
+{
+ "prices_per_mtok": {
+  "claude-opus-5-5": [
+   4.0,
+   20.0,
+   0.2
+  ],
+  "claude-sonnet-5-5": [
+   2.0,
+   10.0,
+   0.1
+  ],
+  "claude-haiku-5-5": [
+   0.1,
+   0.5,
+   null
+  ]
+ },
+ "cache_write_multipliers": {
+  "5m": 1.25,
+  "1h": 2.0,
+  "status": "по памяти"
+ },
+ "main_loop": {
+  "first": "2026-10-21T10:47:31.902Z",
+  "last": "2026-11-09T22:39:59.684Z",
+  "by_model": {
+   "claude-opus-5-5": {
+    "msgs": 1025,
+    "input_tokens": 2149,
+    "output_tokens": 1171669,
+    "cache_read_input_tokens": 432274366,
+    "cache_creation_input_tokens": 12067825,
+    "usd": 206.44,
+    "share_output": 0.114,
+    "share_cache_read": 0.419
+   }
+  }
+ },
+ "subagents_and_workflows": {
+  "first": "2026-10-26T18:40:10.643Z",
+  "last": "2026-11-09T16:19:57.543Z",
+  "by_model": {
+   "claude-haiku-5-5": {
+    "msgs": 37,
+    "input_tokens": 74,
+    "output_tokens": 233854,
+    "cache_read_input_tokens": 3152823,
+    "cache_creation_input_tokens": 751397,
+    "usd": 0.24,
+    "share_output": 0.482,
+    "share_cache_read": 0.13
+   },
+   "claude-opus-5-5": {
+    "msgs": 387,
+    "input_tokens": 774,
+    "output_tokens": 230098,
+    "cache_read_input_tokens": 20081609,
+    "cache_creation_input_tokens": 2881108,
+    "usd": 23.03,
+    "share_output": 0.2,
+    "share_cache_read": 0.174
+   }
+  }
+ },
+ "subagent_files": 119,
+ "heads": {
+  "pilot_journal": {
+   "calls": 6,
+   "inp": 180751643,
+   "out": 249835,
+   "usd_cli": 65.46,
+   "share_out_tokens": 0.0014
+  }
+ }
+}

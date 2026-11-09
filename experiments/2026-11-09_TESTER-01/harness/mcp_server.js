@@ -30,7 +30,7 @@ const REPORT = { type: 'object', required: ['title', 'category', 'expected', 'ac
 const FULL = ARM === 'P';   // плагин: текст + снимок + клики по точкам + исходник
 const TOOLS = [
   { name: 'game_observe', description: ARM === 'S' ? 'Снимок экрана игры (PNG 1280×800).' : 'Экран игры текстом: области экрана, номера кнопок и полей, состояние игры (сводка, объекты карты с клетками, люди, журнал), новые ошибки страницы.', inputSchema: { type: 'object', properties: {} } },
-  { name: 'game_act', description: 'Выполнить действие в игре. После действия игра идёт ещё 0,4 с; номера кнопок обновляет только game_observe.', inputSchema: ARM === 'S' ? ACT_S : FULL ? { ...ACT_A, properties: { ...ACT_A.properties, click_xy: ACT_S.properties.click_xy } } : ACT_A },
+  { name: 'game_act', description: ARM === 'S' ? 'Выполнить действие в игре; в ответ — снимок экрана после действия (игра идёт ещё 0,4 с).' : 'Выполнить действие в игре; в ответ — только то, что изменилось с прошлого наблюдения (области экрана, номера элементов, сводка, объекты, журнал, ошибки). Номера элементов в ответе — действующие. Полный экран — game_observe.', inputSchema: ARM === 'S' ? ACT_S : FULL ? { ...ACT_A, properties: { ...ACT_A.properties, click_xy: ACT_S.properties.click_xy } } : ACT_A },
   { name: 'game_restart', description: 'Начать игру заново с тем же зерном (тот же старт). Удобно, чтобы проверить, повторяется ли баг.', inputSchema: { type: 'object', properties: {} } },
   { name: 'report_bug', description: 'Записать найденный баг. Привязывается к текущему моменту игры: сообщайте сразу, как увидели.', inputSchema: REPORT },
 ];
@@ -40,12 +40,27 @@ if (ARM === 'W' || FULL) TOOLS.push(
   { name: 'source_search', description: 'Поиск по исходному коду игры (регулярное выражение JavaScript). Возвращает до 30 строк с номерами.', inputSchema: { type: 'object', required: ['pattern'], properties: { pattern: { type: 'string' } } } },
   { name: 'source_read', description: 'Строки исходного кода игры с номерами, не больше 150 за раз.', inputSchema: { type: 'object', required: ['from'], properties: { from: { type: 'number' }, to: { type: 'number' } } } });
 
+let lastObs = null;
+function diffObs(o) {   // только изменившиеся части наблюдения; номера элементов — целиком, если список изменился
+  const prev = lastObs; lastObs = o; if (!prev) return o;
+  const d = { t_s: o.t_s }, same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  for (const k of Object.keys(o.screen)) if (!same(o.screen[k], prev.screen[k])) (d.screen = d.screen || {})[k] = o.screen[k] === undefined ? '(скрыто)' : o.screen[k];
+  if (!same(o.controls, prev.controls)) d.controls = o.controls;
+  const st = o.state || {}, ps = prev.state || {};
+  if (st.summary && !same(st.summary, ps.summary)) d.summary = Object.fromEntries(Object.entries(st.summary).filter(([k, v]) => !same(v, (ps.summary || {})[k])));
+  if (st.map && ps.map) { for (const k of ['view', 'objects', 'people']) if (!same(st.map[k], ps.map[k])) (d.map = d.map || {})[k] = st.map[k]; } else if (st.map) d.map = st.map;
+  if (st.log && !same(st.log, ps.log)) d.log = st.log.filter(l => !(ps.log || []).includes(l));
+  if (st.text && st.text !== ps.text) d.text = st.text;
+  if (o.errors.length) d.errors = o.errors;
+  if (Object.keys(d).length === 1) d.note = 'на экране ничего не изменилось';
+  return d;
+}
 const text = (o, isError = false) => ({ content: [{ type: 'text', text: typeof o === 'string' ? o : JSON.stringify(o, null, 1) }], isError });
 async function call(name, a = {}) {
   if (name === 'game_observe') {
     const e = await ensure();
     if (ARM === 'S') { e.trace.push({ op: 'observe' }); return { content: [{ type: 'image', data: await e.screenshot(), mimeType: 'image/png' }] }; }
-    return text(await e.observe());
+    const o = await e.observe(); lastObs = o; return text(o);
   }
   if (name === 'game_act') {
     const e = await ensure();
@@ -53,7 +68,11 @@ async function call(name, a = {}) {
     const keys = Object.keys(a || {}).filter(k => k !== 'button');
     const allowed = ARM === 'S' ? ['click_xy', 'drag', 'key', 'wait'] : FULL ? ['click', 'map', 'drag', 'key', 'fill', 'select', 'wait', 'click_xy'] : ['click', 'map', 'drag', 'key', 'fill', 'select', 'wait'];
     if (keys.length !== 1 || !allowed.includes(keys[0])) return text(`Нужно ровно одно действие из: ${allowed.join(', ')}`, true);
-    acts++; const r = await e.act(a); save(); return text({ ...r, acts_left: MAX_ACTS - acts }, !r.ok);
+    acts++; const r = await e.act(a); delete r._data; save();
+    if (!r.ok) return text({ ...r, acts_left: MAX_ACTS - acts }, true);
+    // после действия — сразу то, что изменилось (экономия ходов и токенов): рука S — снимок, A/W/P — разница с прошлым наблюдением
+    if (ARM === 'S') { e.trace.push({ op: 'observe' }); return { content: [{ type: 'text', text: JSON.stringify({ ...r, acts_left: MAX_ACTS - acts }) }, { type: 'image', data: await e.screenshot(), mimeType: 'image/png' }] }; }
+    return text({ ...r, acts_left: MAX_ACTS - acts, changed: diffObs(await e.observe()) });
   }
   if (name === 'game_open' && !process.env.TESTER_GAME) {
     const f = path.resolve(String(a.path || '')); if (!fs.existsSync(f)) return text('нет такого файла: ' + f, true);

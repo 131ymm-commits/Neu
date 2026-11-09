@@ -11,11 +11,16 @@ async function replayTruths(file, trace, seed) {
     for (let i = 0; i < trace.length; i++) {
       const s = trace[i];
       if (s.op === 'observe') { await e.observe(); continue; }
-      if (s.op === 'act') { const r = await e.act(s.a); out.push({ step: i + 1, truth: await T.truth(e), act: { ...s.a, label: r.label || null } }); }
+      if (s.op === 'act') { const r = await e.act(s.a); out.push({ step: i + 1, truth: await T.truth(e), act: { ...s.a, label: r.label || null, data: r._data || {} } }); }
     }
   } finally { await e.close(); }
   return out;
 }
+// Текст для ключевых слов: что сломано (заголовок, объект, ожидание, факт). Шаги воспроизведения не входят:
+// в них общие слова («язык», «вкладка», «деньги») — пилот дал ложное засчитывание (BP1 у руки S по слову «язык» в repro).
+function matchText(r) { return [r.title, r.object, r.expected, r.actual].filter(Boolean).join(' '); }
+// Ключевые слова бага: строка (одна регулярка) или массив групп [«где», «что не так»] — нужны все группы (после пилота).
+function kwMatch(b, text) { return (Array.isArray(b.kw) ? b.kw : [b.kw]).every(k => new RegExp(k, 'i').test(text)); }
 function fireAll(run, bugs) {   // для каждого бага — шаги следа, на которых сработал детектор
   const res = {}; for (const b of bugs) { const d = T.detectorFn(b.det); res[b.id] = [];
     run.forEach((s, i) => { try { if (d(s.truth, i ? run[i - 1].truth : null, s.act || {}, run.slice(0, i).map(x => x.truth))) res[b.id].push(s.step); } catch (e) { /* детектор не применим к этому снимку */ } }); }
@@ -31,11 +36,11 @@ async function score(sessionFile, bankFile, copyId) {
   }
   const credited = {}, reports = [];
   for (const [ri, r] of (S.reports || []).entries()) {
-    const seg = segs.find(s => s.restart === (r.segment || 0)), text = [r.title, r.object, r.expected, r.actual, r.repro].filter(Boolean).join(' ');
+    const seg = segs.find(s => s.restart === (r.segment || 0)), text = matchText(r);
     let match = null;
     for (const b of bugs) {
       if (credited[b.id] !== undefined) continue;
-      const exposed = seg && seg.fireM[b.id].some(k => k <= r.step + 1), catOk = b.cat.includes(r.category), kwOk = new RegExp(b.kw, 'i').test(text);
+      const exposed = seg && seg.fireM[b.id].some(k => k <= r.step + 1), catOk = b.cat.includes(r.category), kwOk = kwMatch(b, text);
       if (exposed && catOk && kwOk) { match = b.id; credited[b.id] = ri; break; }
     }
     reports.push({ i: ri, step: r.step, segment: r.segment || 0, category: r.category, confidence: r.confidence, title: r.title, match });
@@ -43,9 +48,9 @@ async function score(sessionFile, bankFile, copyId) {
   const exposedAny = Object.fromEntries(bugs.map(b => [b.id, segs.some(s => s.fireM[b.id].length > 0)]));
   const cleanFires = Object.fromEntries(bugs.map(b => [b.id, segs.some(s => s.fireC[b.id].length > 0)]));
   return { session: sessionFile, arm: S.arm, copy: copyId, acts: S.acts, restarts: S.restarts, nReports: reports.length,
-    bugs: bugs.map(b => ({ id: b.id, found: credited[b.id] !== undefined, exposed: exposedAny[b.id], cleanFire: cleanFires[b.id] })), reports, segs: segs.map(s => ({ restart: s.restart, steps: s.steps, errorsM: s.errorsM, errorsC: s.errorsC })) };
+    bugs: bugs.map(b => ({ id: b.id, found: credited[b.id] !== undefined, exposed: exposedAny[b.id], cleanFire: cleanFires[b.id] })), reports, segs: segs.map(s => ({ restart: s.restart, steps: s.steps, errorsM: s.errorsM, errorsC: s.errorsC, fireM: s.fireM, fireC: s.fireC })) };
 }
-module.exports = { score, replayTruths, fireAll };
+module.exports = { score, replayTruths, fireAll, matchText, kwMatch };
 if (require.main === module) (async () => {
   const [sf, bf, cid] = process.argv.slice(2), o = process.argv.includes('--out') ? process.argv[process.argv.indexOf('--out') + 1] : null;
   const r = await score(sf, bf, cid); const s = JSON.stringify(r, null, 1); if (o) fs.writeFileSync(o, s); console.log(s.slice(0, 3000));

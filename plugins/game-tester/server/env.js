@@ -77,9 +77,9 @@ class GameEnv {
     const P = this.page; let note = null;
     if (a.click || a.fill || a.select) {
       const id = a.click || (a.fill || a.select)[0];
-      const ok = await P.evaluate(id => { const el = document.querySelector(`[data-tid="${id}"]`); if (!el) return false; el.scrollIntoView({ block: 'center', inline: 'center' }); return (el.innerText || el.value || el.title || '').replace(/\s+/g, ' ').trim().slice(0, 80) || '(без подписи)'; }, id);
+      const ok = await P.evaluate(id => { const el = document.querySelector(`[data-tid="${id}"]`); if (!el) return false; el.scrollIntoView({ block: 'center', inline: 'center' }); return { label: (el.innerText || el.value || el.title || '').replace(/\s+/g, ' ').trim().slice(0, 80) || '(без подписи)', data: { ...el.dataset } }; }, id);
       if (!ok) return { ok: false, error: `элемента ${id} нет: номера даёт последнее observe` };
-      this.lastLabel = ok;
+      this.lastLabel = ok.label; this.lastData = ok.data;   // data — только для оценщика; голове MCP-сервер её не отдаёт
       const L = P.locator(`[data-tid="${id}"]`);
       if (a.click) { const b = await L.boundingBox(); if (!b) return { ok: false, error: `элемент ${id} не виден` }; await P.mouse.click(b.x + b.width / 2, b.y + b.height / 2); }
       else if (a.fill) await L.fill(String(a.fill[1]), { timeout: 2000 });
@@ -100,8 +100,8 @@ class GameEnv {
     if (a.wait !== undefined && +a.wait > MAX_WAIT_S) note = `ожидание урезано до ${MAX_WAIT_S} с`;
     this.trace.push({ op: 'act', a });
     const r = await this._advance(ms);
-    const label = this.lastLabel; this.lastLabel = null;
-    return { ok: true, t_s: Math.round(r.now / 100) / 10, loopStopped: r.loopStopped, note, ...(label ? { label } : {}) };
+    const label = this.lastLabel, data = this.lastData; this.lastLabel = this.lastData = null;
+    return { ok: true, t_s: Math.round(r.now / 100) / 10, loopStopped: r.loopStopped, note, ...(label ? { label } : {}), ...(data ? { _data: data } : {}) };
   }
   report(r) { const rec = { ...r, step: this.trace.length }; this.reports.push(rec); return rec; }
 

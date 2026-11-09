@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # TESTER-01: задания для голов-тестировщиков. Промпт одинаков для рук, кроме абзаца об инструментах; описание игры — из её README.
-#   python3 make_jobs.py <этап: pilot|test> <выход.jsonl>
+#   python3 make_jobs.py <этап: pilot|test> <выход.jsonl> [--sessions <каталог сессий>]
 import json, os, sys
 from pathlib import Path
 HERE = Path(__file__).resolve().parent
@@ -39,7 +39,7 @@ PROMPT = """Ты — тестировщик браузерной игры «{tit
 ---"""
 SCHEMA = {'type': 'object', 'required': ['summary'], 'properties': {'summary': {'type': 'string', 'description': 'краткий итог тестирования'}}}
 
-def job(game, copy, arm, seed=1):
+def job(game, copy, arm, seed=1, sessions=SECRET / 'sessions'):
     title, clean, readme = GAMES[game]
     file = clean if copy == 'clean' else SECRET / 'mutants' / f'{game}_{copy}.html'
     text = readme.read_text(encoding='utf-8')[:README_MAX]
@@ -47,13 +47,14 @@ def job(game, copy, arm, seed=1):
     task = f'{game}_{copy}'
     mcp = {'mcpServers': {'game': {'command': 'node', 'args': [str(HERE / 'harness' / 'mcp_server.js')],
            'env': {'TESTER_ARM': arm, 'TESTER_GAME': str(file), 'TESTER_SEED': str(seed), 'TESTER_MAX_ACTS': str(MAX_ACTS),
-                   'TESTER_OUT': str(SECRET / 'sessions' / task / arm),
+                   'TESTER_OUT': str(Path(sessions) / task / arm),
                    # в чистом окружении драйвера этих переменных нет, а без них сервер не найдёт Playwright и Chromium (проверено 09.11)
                    'NODE_PATH': os.environ.get('NODE_PATH', ''), 'PLAYWRIGHT_BROWSERS_PATH': os.environ.get('PLAYWRIGHT_BROWSERS_PATH', '')}}}}
-    return {'id': f'{task}|{arm}|0', 'task': task, 'arm': arm, 'prompt': prompt, 'schema': SCHEMA, 'mcp': mcp, 'max_turns': 220}
+    return {'id': f'{task}|{arm}|0', 'task': task, 'arm': arm, 'prompt': prompt, 'schema': SCHEMA, 'mcp': mcp, 'max_turns': 300}
 
 if __name__ == '__main__':
     stage, out = sys.argv[1], Path(sys.argv[2])
-    jobs = [job(g, c, a) for g, c in STAGES[stage] for a in ARMS]
+    sessions = Path(sys.argv[sys.argv.index('--sessions') + 1]) if '--sessions' in sys.argv else SECRET / 'sessions'
+    jobs = [job(g, c, a, sessions=sessions) for g, c in STAGES[stage] for a in ARMS]
     out.write_text(''.join(json.dumps(j, ensure_ascii=False) + '\n' for j in jobs), encoding='utf-8')
     print(f'{stage}: заданий {len(jobs)} → {out}')

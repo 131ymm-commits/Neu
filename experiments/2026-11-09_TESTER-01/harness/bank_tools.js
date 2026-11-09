@@ -23,14 +23,19 @@ function pageTruth(game) {
     return { game, phase: S.phase, t: S.t, day: Math.floor(S.t / 1440), clock: c, money: S.money, lang: S.lang, speed: S.speed, loan: { ...S.loan },
       items: S.items.map(s => ({ uid: s.uid, type: s.type, price: s.price, x: s.x, y: s.y, w: s.w, h: s.h, zone: B.EQUIP[s.type] && B.EQUIP[s.type].zone })),
       workers: S.workers.map(w => ({ name: w.name, role: w.role, shift: w.shift, away: w.away, fired: !!w.fired, from: w.from, to: w.to })), cands: S.cands.length,
+      plan: { ...S.plan }, planPm: { ...S.planPm }, price: { ...S.price }, up: { ...S.up }, supOrders: (S.supOrders || []).map(o => ({ k: o.k, packs: o.packs, at: o.at })), flowInvest: (S.d && S.d.flow && S.d.flow.invest) || 0, flowDev: (S.d && S.d.flow && S.d.flow.dev) || 0,
+      tutOpen: !!(document.getElementById('tut') && document.getElementById('tut').offsetParent !== null && (document.getElementById('tut').innerText || '').trim()),
       log: logs(S), errors: T.errors.map(e => e.msg), top, all };
   }
   if (game === 'reifenwerk') {
     const R = window.RW, S = R.S, c = Math.floor(S.t % 1440);
     return { game, phase: S.phase, t: S.t, day: Math.floor(S.t / 1440), clock: c, money: S.money, lang: S.lang, speed: S.speed, kfw: { ...S.kfw },
       stations: R.STATIONS.filter(s => s.built).map(s => ({ id: s.id, kind: s.kind, x: s.x, y: s.y, w: s.w, h: s.h, state: s.state, broken: !!s.broken })),
-      workers: S.workers.map(w => ({ name: w.name, role: w.role, shift: w.shift, away: w.away, fee: w.fee })), cands: S.cands.length,
-      offers: S.offers.length, orders: S.orders.map(o => ({ id: o.id, state: o.state, qty: o.qty, finished: o.finished })), trucks: S.trucks.length, shipped: S.shipped,
+      workers: S.workers.map(w => ({ name: w.name, role: w.role, shift: w.shift, away: w.away, fee: w.fee, wage: w.wage, temp: !!w.temp })), cands: S.cands.length,
+      offers: S.offers.length, orders: S.orders.map(o => ({ id: o.id, state: o.state, qty: o.qty, finished: o.finished, pp: !!o.pickupPending, shippedN: o.shippedN, contract: !!o.contract })), trucks: S.trucks.length, hiring: S.stats.hiring,
+      trk: S.trucks.map(t => ({ kind: t.kind, order: t.order, state: t.state })), shipped: S.shipped,
+      forks: (S.forks || []).length, autoNight: !!S.autoNight, autoAccept: !!S.autoAccept,
+      camZ: window.PixelGfx && window.PixelGfx.cam ? window.PixelGfx.cam.z : null, viewW: window.PixelGfx ? (window.PixelGfx.toTile(1, 1)[0] - window.PixelGfx.toTile(0, 0)[0]) : null, tutOpen: !!(document.getElementById('tut') && document.getElementById('tut').offsetParent !== null && (document.getElementById('tut').innerText || '').trim()),
       log: logs(S), errors: T.errors.map(e => e.msg), top, all };
   }
   return { game, errors: T.errors.map(e => e.msg), top, all };
@@ -45,11 +50,13 @@ async function runMacro(file, steps, { seed = 1 } = {}) {
     for (const st of steps) {
       let a = st, miss = null;
       if (st.label) {
-        const o = await e.observe(); const hits = o.controls.filter(c => c.slice(c.indexOf(':') + 1).includes(st.label) && (!st.region || c.split(' ')[1].replace(':', '') === st.region));
+        const o = await e.observe(); const lab = c => c.slice(c.indexOf(':') + 2);
+        const labels = Array.isArray(st.label) ? st.label : [st.label];   // несколько вариантов подписи (соседний баг мог её изменить)
+        const hits = o.controls.filter(c => labels.some(L => st.exact ? lab(c) === L : lab(c).includes(L)) && (!st.region || c.split(' ')[1].replace(':', '') === st.region) && (!st.kind || c[0] === st.kind));
         const h = hits[st.nth || 0]; if (!h) { if (st.optional) continue; miss = `нет кнопки «${st.label}»`; } else a = { click: h.split(' ')[0] };
       }
       const r = miss ? { ok: false, error: miss } : await e.act(a);
-      out.push({ step: out.length, macro: st, act: { ...a, label: r.label || null }, ok: r.ok, error: r.error, truth: await truth(e) });
+      out.push({ step: out.length, macro: st, act: { ...a, label: r.label || null, data: r._data || {} }, ok: r.ok, error: r.error, truth: await truth(e) });
     }
   } finally { out.trace = e.trace.slice(); await e.close(); }
   return out;
