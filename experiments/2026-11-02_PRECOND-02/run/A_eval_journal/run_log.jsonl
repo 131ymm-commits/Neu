@@ -1295,3 +1295,9 @@
 {"arm": "NOREF", "at": "2026-11-09T03:15:25+00:00", "attempt": 1, "event": "вызов", "job": "WH_9528|NOREF|2", "role": "основной", "task": "WH_9528", "поток": "WH_9528_NOREF_2-0a734d78.a001.osn.jsonl.gz"}
 {"arm": "ANCHOR", "at": "2026-11-09T03:16:01+00:00", "attempt": 1, "event": "вызов", "job": "WH_9528|ANCHOR|4", "role": "основной", "task": "WH_9528", "поток": "WH_9528_ANCHOR_4-2f8e78a6.a001.osn.jsonl.gz"}
 {"at": "2026-11-09T03:56:11+00:00", "event": "пауза", "причина": "--stop-after 6000.0 с"}
+{"at": "2026-11-09T05:32:25+00:00", "binary_sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262", "config_sha256": "e3877af3c60ac704293b320b70ebd82ecc5dc4939b77950baf899efca4aa2dff", "event": "старт"}
+{"at": "2026-11-09T05:32:25+00:00", "event": "план", "заданий_в_плане": 523, "задач": 180}
+{"arm": "ANCHOR", "at": "2026-11-09T05:32:25+00:00", "attempt": 1, "event": "вызов", "job": "WH_9528|ANCHOR|3", "role": "основной", "task": "WH_9528", "поток": "WH_9528_ANCHOR_3-f25cfcdb.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T05:32:25+00:00", "attempt": 1, "event": "вызов", "job": "WH_9528|ANCHOR|2", "role": "основной", "task": "WH_9528", "поток": "WH_9528_ANCHOR_2-a7dd83aa.a001.osn.jsonl.gz"}
+{"arm": "ANCHOR", "at": "2026-11-09T05:32:25+00:00", "attempt": 2, "event": "вызов", "job": "WH_9528|ANCHOR|4", "role": "основной", "task": "WH_9528", "поток": "WH_9528_ANCHOR_4-2f8e78a6.a002.osn.jsonl.gz"}
+{"arm": "NOREF", "at": "2026-11-09T05:33:06+00:00", "attempt": 1, "event": "вызов", "job": "WH_9529|NOREF|0", "role": "основной", "task": "WH_9529", "поток": "WH_9529_NOREF_0-5ff4c775.a001.osn.jsonl.gz"}
