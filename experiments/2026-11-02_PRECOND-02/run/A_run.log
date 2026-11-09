@@ -8,3 +8,5 @@
 2026-11-08T22:12:14Z продолжение этапа A по слову автора «Продолжи» (бюджет: 50 % недели)
 /home/user/neu/experiments/2026-11-02_PRECOND-02/run/A_eval_jobs.jsonl 1800 голов
 пауза или остановка драйвера (см. .cache/precond02_live/A_eval.log)
+2026-11-09T00:34:35Z продолжение этапа A после сброса окна лимита
+/home/user/neu/experiments/2026-11-02_PRECOND-02/run/A_eval_jobs.jsonl 1800 голов
