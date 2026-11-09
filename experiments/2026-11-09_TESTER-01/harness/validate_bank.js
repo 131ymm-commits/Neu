@@ -13,7 +13,7 @@ const T = require('./bank_tools');
     const dets = cp.bugs.map(b => [b.id, T.detectorFn(b.det)]);
     for (const b of cp.bugs) {
       if (only && b.id !== only) continue;
-      const fire = run => run.map((s, i) => dets.filter(([, d]) => { try { return d(s.truth, i ? run[i - 1].truth : null, s.act || {}); } catch (e) { return false; } }).map(([id]) => id));
+      const fire = run => run.map((s, i) => dets.filter(([, d]) => { try { return d(s.truth, i ? run[i - 1].truth : null, s.act || {}, run.slice(0, i).map(x => x.truth)); } catch (e) { return false; } }).map(([id]) => id));
       const m = await T.runMacro(mfile, b.ref), c = await T.runMacro(spec.clean, b.ref);
       const fm = fire(m), fc = fire(c), hitM = fm.some(f => f.includes(b.id)), hitC = fc.some(f => f.includes(b.id));
       const miss = [...m, ...c].filter(s => s.error).map(s => s.error);

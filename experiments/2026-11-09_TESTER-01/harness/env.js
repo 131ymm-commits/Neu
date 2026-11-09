@@ -17,9 +17,17 @@ function pageControls() {   // в странице: заново пронуме�
   const vis = el => { const r = el.getBoundingClientRect(), cs = getComputedStyle(el); return r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && cs.display !== 'none'; };
   document.querySelectorAll('[data-tid]').forEach(e => e.removeAttribute('data-tid'));
   const out = []; let n = 0;
-  for (const el of document.querySelectorAll('button, input, select, textarea, a[href], [role=button], [onclick], [data-selw]')) {
+  // кнопки и поля, плюс любые внешние элементы с курсором-указателем (строки списков, карточки) — так ловятся клики, которые игра делегирует
+  const BASE = 'button, input, select, textarea, a[href], [role=button], [onclick], [data-selw]';
+  const set = new Set(document.querySelectorAll(BASE));
+  for (const el of document.querySelectorAll('#side *, #topbar *, #tut *, #modal *, #buildBar *')) {
+    if (set.has(el) || el.closest(BASE)) continue;
+    if (getComputedStyle(el).cursor === 'pointer' && !(el.parentElement && getComputedStyle(el.parentElement).cursor === 'pointer')) set.add(el);
+  }
+  const all = [...set].sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
+  for (const el of all) {
     if (!vis(el)) continue;
-    const kind = el.tagName === 'INPUT' ? 'i' : el.tagName === 'SELECT' ? 's' : 'b', id = kind + (++n);
+    const kind = el.tagName === 'INPUT' ? 'i' : el.tagName === 'SELECT' ? 's' : (el.matches(BASE) ? 'b' : 'r'), id = kind + (++n);   // r — строка/карточка
     el.setAttribute('data-tid', id);
     const region = ['topbar', 'tut', 'modal', 'buildBar', 'tabs', 'sel', 'panel', 'evbar'].find(r => el.closest('#' + r)) || 'other';
     let label = (el.innerText || el.value || el.title || el.getAttribute('aria-label') || '').replace(/\s+/g, ' ').trim().slice(0, 70);
