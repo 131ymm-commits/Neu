@@ -41,6 +41,8 @@ for line in open(src):
             out.append(f'\n---\n\n## Сводка контекста (среда, не человек) · {ts}\n\n_Сессия продолжена после сжатия контекста; сводку написала модель, она не слова человека. Сокращено._\n\n{txt[:1200]}\n'); continue
         if txt.startswith('# Workflow authoring reference') or txt.startswith('<skill-format>'):
             out.append('\n- _среда загрузила справку по Workflow (не человек)_\n'); continue
+        if txt.startswith('Base directory for this skill:'):   # 09.11.2026: текст навыка, загруженный средой, шёл как «Человек» (ERRORS № 132)
+            out.append('\n- _среда загрузила текст навыка (не человек)_\n'); continue
         if txt:
             if len(txt) > 4000: txt = txt[:1500] + f'\n\n[… вставка сокращена, всего {len(txt)} символов …]'
             out.append(f'\n---\n\n## Человек · {ts}\n\n{txt}\n')
