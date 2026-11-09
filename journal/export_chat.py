@@ -12,6 +12,11 @@ def clean(t):
     t = re.sub(r'<command-[a-z-]+>.*?</command-[a-z-]+>', '', t, flags=re.S)
     t = re.sub(r'<local-command-[a-z-]+>.*?</local-command-[a-z-]+>', '', t, flags=re.S)
     return t.strip()
+ENV = (("This session's worker process was restarted", 'перезапуск рабочего процесса сессии'),   # 09.11.2026: прежде шли как «Человек»
+       ('Another Claude session sent a message', 'сообщение другой сессии или отчёт подагента'))
+def env_event(txt):
+    for head, label in ENV:
+        if txt.startswith(head): return f'\n- _событие среды (не человек): {label}_\n'
 last_ts = None
 for line in open(src):
     try: j = json.loads(line)
@@ -19,6 +24,9 @@ for line in open(src):
     t, msg, ts = j.get('type'), j.get('message') or {}, (j.get('timestamp') or '')[:16].replace('T', ' ')
     c = msg.get('content')
     if t == 'user':
+        r = j.get('toolUseResult')
+        if isinstance(r, dict) and isinstance(r.get('answers'), dict) and r['answers']:
+            out.append(f'\n---\n\n## Человек (ответ на вопрос Claude) · {ts}\n\n' + '\n'.join(f'- «{q[:300]}» → **{a}**' for q, a in r['answers'].items()) + '\n'); continue
         if isinstance(c, str): txt = clean(c)
         elif isinstance(c, list): txt = clean('\n'.join(x.get('text', '') for x in c if isinstance(x, dict) and x.get('type') == 'text'))
         else: txt = ''
@@ -26,9 +34,10 @@ for line in open(src):
         if txt and '<task-notification>' in txt:
             m = re.search(r'<summary>(.*?)</summary>', txt, re.S)
             out.append(f'\n- _событие среды (не человек): {(m.group(1) if m else "фоновая задача").strip()[:200]}_\n'); continue
+        if txt and env_event(txt): out.append(env_event(txt)); continue
         if txt.startswith('Stop hook feedback'):
             out.append(f'\n---\n\n## Проверка среды (stop hook, не человек) · {ts}\n\n{txt[:800]}\n'); continue
-        if txt.startswith('This session is being continued from a previous conversation'):   # сводка при сжатии контекста (28.10.2026)
+        if 'This session is being continued from a previous conversation' in txt[:600]:   # сводка при сжатии контекста (28.10.2026; с 11.2026 перед ней служебная пометка)
             out.append(f'\n---\n\n## Сводка контекста (среда, не человек) · {ts}\n\n_Сессия продолжена после сжатия контекста; сводку написала модель, она не слова человека. Сокращено._\n\n{txt[:1200]}\n'); continue
         if txt.startswith('# Workflow authoring reference') or txt.startswith('<skill-format>'):
             out.append('\n- _среда загрузила справку по Workflow (не человек)_\n'); continue
@@ -42,6 +51,7 @@ for line in open(src):
         if txt and '<task-notification>' in txt:                      # уведомление фоновой задачи — среда, не человек
             m = re.search(r'<summary>(.*?)</summary>', txt, re.S)
             out.append(f'\n- _событие среды (не человек): {(m.group(1) if m else "фоновая задача").strip()[:200]}_\n')
+        elif txt and env_event(txt): out.append(env_event(txt))
         elif txt:
             if len(txt) > 4000: txt = txt[:1500] + f'\n\n[… вставка сокращена, всего {len(txt)} символов …]'
             out.append(f'\n---\n\n## Человек (во время хода Claude) · {ts}\n\n{txt}\n')

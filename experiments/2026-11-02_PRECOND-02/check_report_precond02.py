@@ -21,7 +21,7 @@ assert A_['not_ok'] == N_['not_ok'] == 0 and set(d['vote_status']) == {'ok', 're
 need += [f'| ANCHOR (D_N) | {r(A_["regret"])} | {r(A_["refusal_share"])} | {sg(A_["refusal_contribution"])} | {r(A_["answered_regret"])} | {big(A_["out_per_call"])} |',
          f'| NOREF (C_N) | {r(N_["regret"])} | 0 | 0 | {r(N_["answered_regret"])} | {big(N_["out_per_call"])} |',
          f'| {r(d["A0_no_calls"])} |', f'«ок» {d["vote_status"]["ok"]}, отказов {d["vote_status"]["refused"]}',
-         f'в {r(A_["refusal_share"])} голосов ({A_["refusals"]} из {A_["votes"]})', f'вклад в регрет {sg(A_["refusal_contribution"])}',
+         f'в {r(A_["refusal_share"])} голосов ({A_["refusals"]} из {A_["votes"]})', f'Вклад отказов в регрет {sg(A_["refusal_contribution"])}',
          f'длиннее на {round(A_["out_per_call"] - N_["out_per_call"])} токенов', f'не больше {d["input_span"]["max"]} токенов']
 E = F['expectations']; need += [f'сбылось: {r(E["E4"]["value"])}', f'сбылось: {sg(E["E5"]["value"]).replace(",3", ",3")}', f'механически выполнено: {r(E["E3"]["value"])}']
 assert E['E1']['outcome'] and E['E2']['outcome'] and E['E4']['outcome'] and E['E5']['outcome'] and E['E3']['outcome'] is None and E['E3']['holds']
@@ -43,6 +43,14 @@ assert all(h['tools'] == ['StructuredOutput'] and not h['mcp'] and h['git_instru
 need += [f'во всех {nh} вызовах', f'пилот {C["pilot_exec"]["attempts"] + C["pilot_eval"]["attempts"]}']
 sb = F['support_bits']; need += [f'Вес опоры C-041 — {r(sb["total"])} бита', f'{r(sb["base_hypothesis_neu"])};', f'PRECOND-02 — {r(sb["precond02"])}, это log₂({r(sb["power"])} / {r(sb["false_level"])})']
 d3 = pw['designs']['180/360']; need += [f'максимум {r(d3["max_out_mln"])} млн']
+K = F['council41']; e3 = K['e3_threshold']; npw = K['next_power']   # совет 41 (09.11)
+assert K['no_answer'] == {'всего': 5, 'usage 0': 5, 'повтор годный': 5} and len(K['init_hashes']) == 1 and K['exec_jobs_arm_hits'] == 0
+assert K['pools_B'] == {'files': 180, 'commits': {o['pools_B'][0]: 180}} and K['attempts_all'] == nh + 5
+need += [f'не меньше {r(e3["plan"])} по sd плана (PREREG §5); ≈{r(e3["observed"])} по наблюдённому sd', f'было бы {r(K["bits_alt"]["C-041 (открытие, точечно)"]["bits"])}',
+         f'при мощности {r(K["bits_alt"]["C-041 (открытие, точечно)"]["power"])}', f'(init {K["init_hashes"][0]}…) одна у всех {K["attempts_all"]} попыток',
+         f'модель — у {nh} вызовов с итогом', f'все {K["pools_B"]["files"]} пулов — один коммит {o["pools_B"][0]}',
+         f'{r(npw["left_n180"])}–{r(npw["engineer_n180"])} на 180 задачах B, около {r(npw["engineer_n360"])} на 360', f'по sd плана {r(round(npw["sd"], 3))} (§8)',
+         f'Остановка сберегла {C["A_eval"]["finals"]["годный"]} вызовов оценщиков B']
 miss = [x for x in need if x not in T]
 print(f'проверено фраз: {len(need)}; не найдено: {len(miss)}')
 [print('  НЕТ:', x) for x in miss]

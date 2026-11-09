@@ -59,8 +59,34 @@ bits = dict(precond02=round(math.log2(power_half / 0.05), 2), power=power_half, 
 bits['total'] = round(bits['base_hypothesis_neu'] + bits['precond02'] + bits['old_samples_posthoc'], 2)
 totals = dict(pilot_out=calls['pilot_exec']['out'] + calls['pilot_eval']['out'], pilot_calls=calls['pilot_exec']['attempts'] + calls['pilot_eval']['attempts'],
               heads_calls=sum(h['calls'] for h in aud))                         # суммы для отчёта — здесь, чтобы аудит находил их в данных
+# совет 41 (09.11.2026): порог E3 при остановке — по sd плана (PREREG §5, «оценка ≥ 0,086») и по наблюдённому sd (справка после данных);
+# вес PRECOND-02 при другой мощности §8; попытки «нет ответа»; одна конфигурация запуска у всех попыток; пулы B — один коммит;
+# задания исполнителя без рук; грубая мощность главного эффекта 2×2 — z-приближения совета (двусторонний α 0,05, без промежуточного анализа)
+c1 = ia['bounds']['c1']; sd_plan = json.load(open('power_precond02.json'))['sd_plan']
+e3_thr = dict(plan=round(c1 * sd_plan / math.sqrt(n), 3), observed=round(c1 * st.stdev(g) / math.sqrt(n), 3), sd_plan=sd_plan)
+pw3 = json.load(open('power_precond02.json'))['designs']['180/360']['by_effect']
+bits_alt = {k: dict(power=v['power'], bits=round(math.log2(v['power'] / 0.05), 2)) for k, v in pw3.items()}
+noans, inits, att_all = collections.Counter(), set(), 0
+for j in ('pilot_exec', 'pilot_eval', 'A_exec', 'B_exec', 'A_eval'):
+    for p_ in glob.glob(f'run/{j}_journal/WH_*.jsonl'):
+        recs = [json.loads(l) for l in open(p_, encoding='utf-8')]
+        for x in recs:
+            att_all += 1; inits.add(x.get('init_sha256'))
+            if x['outcome'] == 'нет ответа':
+                u = x.get('usage') or {}; noans['всего'] += 1; noans['usage 0'] += not (u.get('inp') or u.get('out'))
+                noans['повтор годный'] += any(y['job'] == x['job'] and y.get('final') == 'годный' and y['attempt'] > x['attempt'] for y in recs)
+pools_B = collections.Counter(tuple(git('log', '--format=%h', '--', f'pools/WH_{t}.json').split()) for t in range(9581, 9761))
+arm_words = ('REFUSE', 'ANCHOR', 'NOREF', 'D_N', 'C_N', 'отказ')
+exec_arm_hits = sum(any(w in l for w in arm_words) for st_ in ('A', 'B') for l in open(f'run/{st_}_exec_jobs.jsonl', encoding='utf-8'))
+Phi = lambda z: 0.5 * (1 + math.erf(z / math.sqrt(2)))
+next_power = dict(delta=0.045, sd=sd_plan, z=1.96, left_n180=round(Phi(0.045 * math.sqrt(180) / sd_plan - 1.96), 2),
+                  engineer_n180=round(Phi(0.045 * math.sqrt(2 * 180) / sd_plan - 1.96), 2), engineer_n360=round(Phi(0.045 * math.sqrt(2 * 360) / sd_plan - 1.96), 2),
+                  note='Левое: se = sd/√n; Инженер: se = sd/√(2n) (контраст по двум клеткам 2×2); грубо, считать кодом до PREREG')
+council41 = dict(e3_threshold=e3_thr, bits_alt=bits_alt, no_answer=dict(noans), init_hashes=sorted(i[:8] for i in inits), attempts_all=att_all,
+                 pools_B=dict(files=sum(pools_B.values()), commits={' '.join(k): v for k, v in pools_B.items()}), exec_jobs_arm_hits=exec_arm_hits, next_power=next_power)
+assert noans['всего'] == noans['usage 0'] == noans['повтор годный'] == 5 and len(inits) == 1 and exec_arm_hits == 0 and list(pools_B) == [('d0ac8af',)]
 facts = dict(totals=totals, n_tasks=n, t=round(t, 3), p_exact=p_exact, p_exact_sci=f'{p_exact:.1e}', se=round(se, 4), sd=round(st.stdev(g), 4),
              expectations=E, calls=calls, test_out=test_out, streams=dict(streams), order=order, heads_audit=aud, support_bits=bits,
-             plan=pl, decision=ia['decision'])
+             plan=pl, decision=ia['decision'], council41=council41)
 json.dump(facts, open('final_facts.json', 'w'), ensure_ascii=False, indent=1); print(json.dumps({k: facts[k] for k in ('n_tasks', 't', 'p_exact_sci', 'sd', 'test_out', 'streams', 'support_bits', 'decision')}, ensure_ascii=False))
 for k, v in facts['calls'].items(): print(k, v)
