@@ -1,0 +1,1 @@
+{ "name": "game-tester", "version": "0.1.0", "private": true, "description": "MCP-сервер тестировщика игр", "license": "MIT", "dependencies": { "playwright": "1.63.0" } }

@@ -1,0 +1,10 @@
+{
+  "name": "game-tester",
+  "version": "0.1.0",
+  "description": "Тестировщик браузерных игр, сделанных с ИИ: игра в Chromium с виртуальным временем, экран текстом без снимков, повтор следа, отчёты о багах (TESTER-01, Neu)",
+  "author": { "name": "131ymm-commits" },
+  "homepage": "https://github.com/131ymm-commits/Neu",
+  "repository": "https://github.com/131ymm-commits/Neu",
+  "license": "MIT",
+  "keywords": ["game", "testing", "qa", "playwright", "vibe-coding"]
+}

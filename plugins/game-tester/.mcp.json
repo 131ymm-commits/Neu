@@ -1,0 +1,1 @@
+{ "mcpServers": { "game": { "command": "node", "args": ["${CLAUDE_PLUGIN_ROOT}/server/mcp_server.js"], "env": { "TESTER_ARM": "P", "TESTER_OUT": "${CLAUDE_PLUGIN_DATA}/sessions" } } } }
