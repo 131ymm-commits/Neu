@@ -479,6 +479,20 @@
    }
   }
  },
+ "holm_family": {
+  "p_values": {
+   "P1": 1.0,
+   "P2": 1.0,
+   "P3": 1.0
+  },
+  "rejected": {
+   "P1": false,
+   "P2": false,
+   "P3": false
+  },
+  "family_alpha": 0.05,
+  "m": 3
+ },
  "tests": {
   "n_instances": 20,
   "instances": [

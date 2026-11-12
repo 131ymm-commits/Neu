@@ -11,6 +11,8 @@
   junk   — разные неверные выражения;                                    ждём: K = 0.
   split  — две головы закон, две НЕТ;                                    ждём: K = 0 (клика 2).
   lossy  — prior, но голова h4 потеряна, h3 неразборна;                  ждём: K = 0 (две годные из четырёх).
+  regimes — оба режима на одних таблицах: свободный — oracle, F — prior при S и junk при N;
+            ждём: свободный — третий исход; F — гипотеза подтверждена; P4 отвергнута; Холм на 6 проверках.
 Запуск: python3 dry_platon.py  → dry/<заглушка>/..., dry/dry_summary.json; код 1 при несовпадении ожиданий.
 """
 import json
@@ -47,6 +49,10 @@ def answer(strategy, tb, inst, k):
         return JUNK[k % len(JUNK)].format(a=idents[0], b=idents[1])
     if strategy == 'split':
         return canon if k < 2 else 'НЕТ'
+    if strategy == 'regimes':                       # свободный режим — оракул; режим F — априор при S, мусор при N
+        if tb.get('regime', 'free') == 'free':
+            return answer('oracle', tb, inst, k)
+        return REWRITE[k % 4](canon) if names == 'S' else JUNK[k % len(JUNK)].format(a=idents[0], b=idents[1])
     raise KeyError(strategy)
 
 
@@ -85,6 +91,11 @@ EXPECT = {
     'lossy': lambda s, t: all(s[c]['K'] == 0 for c in s) and s['ZS']['head_kinds'].get('LOST') == s['ZS']['n_tables']
                           and s['ZS']['head_kinds'].get('PARSE_ERR') == s['ZS']['n_tables'],
 }
+# оба режима: ждём — свободный: третий исход; F: гипотеза подтверждена; P4 отвергнута
+EXPECT_REG = lambda d: (d['tests']['third_outcome_rare_false_consensus']
+                        and d['tests_forced']['P1']['rejected_holm'] and d['tests_forced']['P2']['rejected_holm']
+                        and d['regime_cmp']['rejected_holm'] and d['summary']['ZSF']['FC'] == d['summary']['ZSF']['n_tables']
+                        and d['summary']['ZNF']['FC'] == 0 and d['holm_family']['m'] == 6)
 
 
 def main():
@@ -115,6 +126,23 @@ def main():
             print(f"    {c}: K {s[c]['K']} FC {s[c]['FC']} TC {s[c]['TC']} НЕТ {s[c]['none_consensus']} {s[c]['head_kinds']}")
         if not ok:
             bad.append(strat)
+    # оба режима на одних таблицах
+    jobs2, tables2 = J.build(SEEDS, 4, DRY / 'jobs2', regimes=('free', 'forced'))
+    jdir = DRY / 'regimes' / 'journal'
+    fake_journal('regimes', jobs2, tables2, jdir)
+    outp = DRY / 'regimes' / 'dry_out.json'
+    r = subprocess.run([sys.executable, str(HERE / 'platon_analyze.py'), '--tables', str(DRY / 'jobs2' / 'tables.json'),
+                        '--journal', str(jdir), '--out', str(outp)], capture_output=True, text=True)
+    if r.returncode != 0:
+        print(r.stdout, r.stderr); bad.append('regimes')
+    else:
+        d = json.loads(outp.read_text(encoding='utf-8'))
+        ok = bool(EXPECT_REG(d))
+        res['regimes'] = {'ok': ok, 'verdict_free': d['tests']['verdict'], 'verdict_forced': d['tests_forced']['verdict'],
+                          'P4': d['regime_cmp']['verdict'], 'holm': d['holm_family']['rejected']}
+        print(f"regimes: {'✓' if ok else '✗'}  свободный: {d['tests']['verdict']} | F: {d['tests_forced']['verdict']} | P4: {d['regime_cmp']['verdict']}")
+        if not ok:
+            bad.append('regimes')
     (DRY / 'dry_summary.json').write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding='utf-8')
     print('несовпадений:', bad)
     sys.exit(1 if bad else 0)

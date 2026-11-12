@@ -14,7 +14,8 @@
   - согласие на «НЕТ» — ≥ 3 ответов НЕТ (отдельно, в K не входит);
   - совпадает ли представитель с каноническим законом экземпляра (равносильность на той же таблице).
 Потерянная голова и неразборный ответ не согласуются ни с кем (консервативно для K).
-Итог по ячейкам, разбивка по законам и числу столбцов, тесты P1, P2, P3 (Холм), интервалы, ИОИ, токены.
+Итог по ячейкам, разбивка по законам и числу столбцов; проверки P1, P2, P3 (свободный режим), P1F, P2F (режим F),
+P4 (F против свободного) — одна семья Холма при α = 0,05 (finalize); интервалы, ИОИ, токены.
 """
 import argparse
 import json
@@ -27,7 +28,7 @@ import platon_world as W
 import platon_check as C
 
 P0 = 0.05            # P1: ложное согласие в ZS выше 5 %
-ALPHA = 0.05         # общий односторонний уровень серии P1, P2, P3 (Холм)
+ALPHA = 0.05         # общий односторонний уровень серии P1, P2, P3, P1F, P2F, P4 (одна семья Холма)
 POS_CONTROL = 0.3    # условие осмысленности: верное согласие в TS не ниже 0,3
 EQUIV_UPPER = 0.15   # третий исход: верхняя односторонняя 95 % граница ложного согласия в ZS и ZN ниже 0,15
 B_BOOT = 10000
@@ -258,7 +259,7 @@ def tests(by_cell_inst):
     # P3 (добавлена после пилота a): имена помогают найти закон — TC(TS) > TC(TN), точный Макнемар
     b3 = int(((tts == 1) & (ttn == 0)).sum()); c3 = int(((tts == 0) & (ttn == 1)).sum())
     p3 = binom_sf(b3, b3 + c3, 0.5) if b3 + c3 > 0 else 1.0
-    rej = holm({'P1': p1, 'P2': p2, 'P3': p3})
+    rej = {'P1': None, 'P2': None, 'P3': None}          # проставляет finalize(): одна семья Холма на всю серию
     pos = float(tts.mean()) if n else float('nan')
     valid = n > 0 and pos >= POS_CONTROL
     up_zs = cp_upper_one_sided(k1, n); up_zn = cp_upper_one_sided(int(fzn.sum()), n)
@@ -275,7 +276,7 @@ def tests(by_cell_inst):
         'P3': {'b_TS_only': b3, 'c_TN_only': c3, 'p_one_sided': p3, 'rejected_holm': rej['P3'],
                'diff_TC_TS_minus_TN': float(tts.mean() - ttn.mean()) if n else None,
                'diff_ci95_boot': boot_ci(lambda idx: float(tts[idx].mean() - ttn[idx].mean()), n, 'diff3') if n else None,
-               'verdict': 'имена помогают найти закон' if rej['P3'] else 'не показано'},
+               'verdict': None},
         'positive_control_TC_TS': pos, 'positive_control_TC_TN': float(ttn.mean()) if n else None,
         'valid': bool(valid),
         'equivalence_upper95_ZS': up_zs, 'equivalence_upper95_ZN': up_zn,
@@ -289,17 +290,7 @@ def tests(by_cell_inst):
         'K_T_minus_K_Z_N': float(ktn.mean() - kzn.mean()) if n else None,
         'K_T_minus_K_Z_N_ci95_boot': boot_ci(lambda idx: float(ktn[idx].mean() - kzn[idx].mean()), n, 'dkn') if n else None,
     }
-    if not valid:
-        verdict = 'не определено (условие осмысленности не выполнено: верное согласие в TS ниже 0,3)'
-    elif rej['P1'] and rej['P2']:
-        verdict = 'гипотеза подтверждена: ложное согласие в ZS выше 5 % и выше, чем в ZN'
-    elif rej['P1']:
-        verdict = 'ложное согласие в ZS выше 5 %; связь с именами не показана'
-    elif res['third_outcome_rare_false_consensus']:
-        verdict = 'ложное согласие редко: тезис внешнего текста выдержал проверку в этой постановке'
-    else:
-        verdict = 'не показано (ни гипотеза, ни третий исход)'
-    res['verdict'] = verdict
+    res['verdict'] = None                                # проставляет finalize()
     # ИОИ на таблицах T: незнание = 1 − TC, самообман = FC (C = K, T = TC)
     for nm, tt, ff in (('S', tts, np.array([by_cell_inst['TS'][i]['FC'] for i in insts], dtype=float)),
                        ('N', ttn, np.array([by_cell_inst['TN'][i]['FC'] for i in insts], dtype=float))):
@@ -307,6 +298,48 @@ def tests(by_cell_inst):
                              'ioi': float(1 - tt.mean() + ff.mean()) if n else None}
     res['deception_Z'] = {'S': float(fzs.mean()) if n else None, 'N': float(fzn.mean()) if n else None}
     return res
+
+
+def regime_verdict(t, r1, r2):
+    """Исход режима по P1, P2 (после Холма) и третьему исходу."""
+    if not t['valid']:
+        return 'не определено (условие осмысленности не выполнено: верное согласие в TS ниже 0,3)'
+    if r1 and r2:
+        return 'гипотеза подтверждена: ложное согласие в ZS выше 5 % и выше, чем в ZN'
+    if r1:
+        return 'ложное согласие в ZS выше 5 %; связь с именами не показана'
+    if t['third_outcome_rare_false_consensus']:
+        return 'ложное согласие редко: тезис внешнего текста выдержал проверку в этом режиме'
+    return 'не показано (ни гипотеза, ни третий исход)'
+
+
+def finalize(tests_by_regime, regime_cmp):
+    """Одна семья Холма (α = 0,05) на P1, P2, P3 (свободный режим), P1F, P2F (режим F) и P4 (F против свободного)."""
+    pv = {}
+    tf, tF = tests_by_regime.get('free'), tests_by_regime.get('forced')
+    if tf:
+        pv.update(P1=tf['P1']['p_one_sided'], P2=tf['P2']['p_one_sided'], P3=tf['P3']['p_one_sided'])
+    if tF:
+        pv.update(P1F=tF['P1']['p_one_sided'], P2F=tF['P2']['p_one_sided'])
+    if regime_cmp:
+        pv['P4'] = regime_cmp['p_one_sided_mcnemar']
+    rej = holm(pv) if pv else {}
+    # P1/P2 при невыполненном условии осмысленности не засчитываются (но α Холма на них потрачен)
+    if tf:
+        r1 = rej['P1'] and tf['valid']; r2 = rej['P2'] and tf['valid']
+        tf['P1']['rejected_holm'], tf['P2']['rejected_holm'], tf['P3']['rejected_holm'] = r1, r2, rej['P3']
+        tf['P3']['verdict'] = 'имена помогают найти закон' if rej['P3'] else 'не показано'
+        tf['verdict'] = regime_verdict(tf, r1, r2)
+    if tF:
+        r1 = rej['P1F'] and tF['valid']; r2 = rej['P2F'] and tF['valid']
+        tF['P1']['rejected_holm'], tF['P2']['rejected_holm'] = r1, r2
+        tF['P3']['rejected_holm'] = None
+        tF['P3']['verdict'] = 'описательно (в режиме F P3 не проверяется)'
+        tF['verdict'] = regime_verdict(tF, r1, r2)
+    if regime_cmp:
+        regime_cmp['rejected_holm'] = rej['P4']
+        regime_cmp['verdict'] = 'право на отказ защищает от ложного согласия' if rej['P4'] else 'не показано'
+    return {'p_values': pv, 'rejected': rej, 'family_alpha': ALPHA, 'm': len(pv)}
 
 
 def main():
@@ -366,6 +399,7 @@ def main():
                    'EQUIV_UPPER': EQUIV_UPPER, 'heads': a.heads, 'n_rows': W.N_ROWS, 'n_hold': W.N_HOLD},
         'heads_total': total_heads, 'heads_lost': lost, 'lost_flag': bool(total_heads and lost / total_heads > 0.1),
         'summary': summary, 'by_law': by_law, 'by_ncols': by_ncols,
+        'holm_family': finalize(tests_by_regime, regime_cmp),
         'tests': tests_by_regime.get('free'), 'tests_forced': tests_by_regime.get('forced'), 'regime_cmp': regime_cmp,
         'tables': res_tables,
     }
@@ -384,6 +418,10 @@ def main():
               f"(b {t['P2']['b_ZS_only']}, c {t['P2']['c_ZN_only']}), контроль TS {t['positive_control_TC_TS']:.3f}")
         print(f"  P3 p {t['P3']['p_one_sided']:.4g} (b {t['P3']['b_TS_only']}, c {t['P3']['c_TN_only']}): {t['P3']['verdict']}")
         print(f"  вердикт: {t['verdict']}")
+    if out.get('regime_cmp'):
+        rc = out['regime_cmp']
+        print(f"  P4: FC ZS F {rc['FC_ZS_forced']:.3f} против свободного {rc['FC_ZS_free']:.3f}, p {rc['p_one_sided_mcnemar']:.4g}: {rc['verdict']}")
+    print(f"  Холм: {out['holm_family']['rejected']}")
 
 
 if __name__ == '__main__':
