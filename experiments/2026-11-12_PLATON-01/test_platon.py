@@ -248,9 +248,26 @@ def test_variant_b(law, seed, heads=4):
                     check(ok, f'{law}/{seed}/{names}{data}/b: канонические утверждения голов {i},{j} не согласованы ({r21:.3f}, {r12:.3f})')
 
 
+def test_clique_tie():
+    """Совет 42, правка 7 (ожидание записано до запуска): две клики размера 3 — {0,1,2} и {1,2,3}; R = [0,05; 0,02;
+    0,03; 0,01]. Представитель {0,1,2} — узел 1 (0,02), представитель {1,2,3} — узел 3 (0,01) → выбирается {1,2,3}."""
+    edges = set()
+    for a, b in [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3)]:
+        edges.add((a, b)); edges.add((b, a))
+    allc = C.all_max_cliques(4, edges)
+    check(sorted(allc) == [[0, 1, 2], [1, 2, 3]], f'все наибольшие клики: {allc}')
+    R = [0.05, 0.02, 0.03, 0.01]
+    got = C.max_clique(4, edges, key=lambda i: R[i])
+    check(got == [1, 2, 3], f'выбор клики при ничьей: {got} вместо [1, 2, 3]')
+    R2 = [0.01, 0.02, 0.03, 0.04]          # теперь у {0,1,2} представитель 0 с R 0,01 → выбирается {0,1,2}
+    got2 = C.max_clique(4, edges, key=lambda i: R2[i])
+    check(got2 == [0, 1, 2], f'выбор клики при ничьей (2): {got2} вместо [0, 1, 2]')
+
+
 if __name__ == '__main__':
     k = int(sys.argv[1]) if len(sys.argv) > 1 else 3
     test_parse()
+    test_clique_tie()
     nz = test_z_false_claims()
     agg = {}
     for law in W.LAW_ORDER:

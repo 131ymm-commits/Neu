@@ -221,9 +221,12 @@ def _shown_pair(law, p, cols, f_inv, seed, rows_stream, perm_stream):
         for c in cols:
             rp.shuffle(cols_vals[c])
         shown_Z = [{c: cols_vals[c][i] for c in cols} for i in range(N_ROWS)]
-        if R_measure(f_inv, shown_Z, cols, seed=f'{seed}|{perm_stream}|z|{tries}') >= 0.3 or tries >= 50:
+        r_z = R_measure(f_inv, shown_Z, cols, seed=f'{seed}|{perm_stream}|z|{tries}')
+        if r_z >= 0.3 or tries >= 50:
             break
-    return shown_T, shown_Z, tries
+    # флаг (совет 42, правка 8): после 50 попыток истинный закон на Z всё ещё держится лучше порога 0,3
+    z_ok = bool(r_z >= 0.3)
+    return shown_T, shown_Z, (tries, z_ok, r_z)
 
 
 def make_instance(seed, law_key, heads=None):
@@ -246,7 +249,9 @@ def make_instance(seed, law_key, heads=None):
         pairs = [_shown_pair(law, p, cols, f_inv, seed, f'rows|{i}', f'perm|{i}') for i in range(heads)]
     shown_T = [a for a, _, _ in pairs]
     shown_Z = [b for _, b, _ in pairs]
-    tries = [t for _, _, t in pairs]
+    tries = [t[0] for _, _, t in pairs]
+    z_ok = [t[1] for _, _, t in pairs]
+    z_R = [t[2] for _, _, t in pairs]
     # новые строки T: в показанном диапазоне и вне его (без округления)
     rh = rng_for(seed, 'hold')
     hold_in_T = [_row(law, p, rh, p['rng']) for _ in range(N_HOLD)]
@@ -264,7 +269,8 @@ def make_instance(seed, law_key, heads=None):
     letters = {c: LETTERS[i] for i, c in enumerate(order)}   # N: буквы по порядку столбцов в таблице
     return {
         'seed': seed, 'law': law_key, 'params': p, 'cols': cols, 'order': order, 'letters': letters,
-        'desc': dict(law['cols']), 'inv_S': inv, 'z_tries': tries, 'variant': 'a' if heads is None else 'b',
+        'desc': dict(law['cols']), 'inv_S': inv, 'z_tries': tries, 'z_ok': z_ok, 'z_R_true': z_R,
+        'variant': 'a' if heads is None else 'b',
         'shown': {'T': shown_T, 'Z': shown_Z},
         'hold': {'T': {'in': hold_in_T, 'out': hold_out_T}, 'Z': {'in': hold_in_Z, 'out': hold_out_Z}},
     }

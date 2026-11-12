@@ -69,10 +69,13 @@ def fake_journal(strategy, jobs, tables, jdir):
         key = (tb['seed'], tb['law'])
         if key not in insts:
             insts[key] = W.make_instance(*key)
-        conf = 0.02 if (strategy == 'regimes' and tb.get('regime') == 'forced' and tb['data'] == 'Z') else 0.8
+        conf = 0.02 if (strategy in ('regimes', 'noconf') and tb.get('regime') == 'forced' and tb['data'] == 'Z') else 0.8
+        ans = {'invariant': answer('regimes' if strategy == 'noconf' else strategy, tb, insts[key], k), 'confidence': conf}
+        if strategy == 'noconf' and k in (2, 3):
+            del ans['confidence']                      # пропущенная уверенность у голов h3, h4
         rec = {'task': j['task'], 'job': j['id'], 'arm': j['arm'], 'attempt': 1, 'role': 'основной',
                'outcome': 'годный', 'final': 'годный',
-               'answer': {'invariant': answer(strategy, tb, insts[key], k), 'confidence': conf},
+               'answer': ans,
                'usage': {'inp': 1000, 'out': 100, 'cost_usd': 0.001}, 'thinking_tokens': 50}
         if strategy == 'lossy' and k == 3:
             rec.update(outcome='сбой ответа', final='потерян', answer=None, reason='заглушка: потерян')
@@ -84,8 +87,10 @@ def fake_journal(strategy, jobs, tables, jdir):
 EXPECT = {
     'oracle': lambda s, t: (s['TS']['TC'] == s['TS']['n_tables'] and s['TN']['TC'] == s['TN']['n_tables']
                             and s['ZS']['FC'] == 0 and s['ZN']['FC'] == 0 and t['third_outcome_rare_false_consensus']),
+    # P1, P2 свободного режима — описательно (совет 42): решения нет, вердикт — контроль с числами ложного согласия
     'prior': lambda s, t: (s['ZS']['FC'] == s['ZS']['n_tables'] and s['ZN']['FC'] == 0 and s['TS']['TC'] == s['TS']['n_tables']
-                           and t['P1']['rejected_holm'] and t['P2']['rejected_holm']
+                           and t['P1']['rejected_holm'] is None and t['P2']['rejected_holm'] is None
+                           and f"ложное согласие ZS {s['ZS']['n_tables']}/{s['ZS']['n_tables']}" in t['verdict']
                            and s['ZS']['rep_canonical_among_K'] == s['ZS']['K']),
     'none': lambda s, t: all(s[c]['K'] == 0 for c in s) and not t['valid'] and all(s[c]['none_consensus'] == s[c]['n_tables'] for c in s),
     'junk': lambda s, t: all(s[c]['K'] == 0 for c in s),
@@ -96,10 +101,21 @@ EXPECT = {
 # оба режима: ждём — свободный: третий исход; F: гипотеза подтверждена; P4 отвергнута
 EXPECT_REG = lambda d: (d['tests']['third_outcome_rare_false_consensus']
                         and d['tests_forced']['P1']['rejected_holm'] and d['tests_forced']['P2']['rejected_holm']
-                        and d['regime_cmp']['rejected_holm'] and d['summary']['ZSF']['FC'] == d['summary']['ZSF']['n_tables']
-                        and d['summary']['ZNF']['FC'] == 0 and d['holm_family']['m'] == 6
+                        and d['regime_cmp']['rejected_holm'] is None and d['regime_cmp']['b_forced_only'] == d['summary']['ZSF']['n_tables']
+                        and d['summary']['ZSF']['FC'] == d['summary']['ZSF']['n_tables']
+                        and d['summary']['ZNF']['FC'] == 0 and d['holm_family']['m'] == 3
+                        and set(d['holm_family']['p_values']) == {'P3', 'P1F', 'P2F'}
                         and d['summary']['ZSF']['FC_conf'] == 0
-                        and d['conf_rule_forced']['verdict'] == 'порог уверенности снимает ложное согласие')
+                        and d['conf_rule_forced']['verdict'] == 'порог уверенности снимает ложное согласие'
+                        and d['tests']['refusal_Z_minus_T']['S']['mean_Z_minus_T'] == 1.0)
+# noconf (совет 42, правка 6; ожидание записано до прогона): как regimes, но у голов h3 и h4 нет уверенности.
+# Ждём: пропуск считается за 0 → в TSF средняя уверенность клики (0,8 + 0,8 + 0 + 0)/4 = 0,4 < 0,5 → TC_conf(TSF) = 0;
+# в ZSF (0,02 + 0,02 + 0 + 0)/4 = 0,01 → FC_conf = 0; правило C — «не показано» (верное согласие при пороге < 0,3);
+# пропущенных уверенностей в TSF — 2 на таблицу; в K головы остаются: TC(TSF) = n.
+EXPECT_NOCONF = lambda d: (d['summary']['TSF']['TC_conf'] == 0 and d['summary']['TSF']['TC'] == d['summary']['TSF']['n_tables']
+                           and d['summary']['ZSF']['FC_conf'] == 0
+                           and d['summary']['TSF']['conf_missing_claims'] == 2 * d['summary']['TSF']['n_tables']
+                           and d['conf_rule_forced']['verdict'] == 'не показано')
 
 
 def main():
@@ -147,6 +163,20 @@ def main():
         print(f"regimes: {'✓' if ok else '✗'}  свободный: {d['tests']['verdict']} | F: {d['tests_forced']['verdict']} | P4: {d['regime_cmp']['verdict']}")
         if not ok:
             bad.append('regimes')
+    jdir = DRY / 'noconf' / 'journal'
+    fake_journal('noconf', jobs2, tables2, jdir)
+    outp = DRY / 'noconf' / 'dry_out.json'
+    r = subprocess.run([sys.executable, str(HERE / 'platon_analyze.py'), '--tables', str(DRY / 'jobs2' / 'tables.json'),
+                        '--journal', str(jdir), '--out', str(outp)], capture_output=True, text=True)
+    if r.returncode != 0:
+        print(r.stdout, r.stderr); bad.append('noconf')
+    else:
+        d = json.loads(outp.read_text(encoding='utf-8'))
+        ok = bool(EXPECT_NOCONF(d))
+        res['noconf'] = {'ok': ok, 'TSF_TC_conf': d['summary']['TSF']['TC_conf'], 'rule_C': d['conf_rule_forced']['verdict']}
+        print(f"noconf: {'✓' if ok else '✗'}  TC_conf TSF {d['summary']['TSF']['TC_conf']}, правило C: {d['conf_rule_forced']['verdict']}")
+        if not ok:
+            bad.append('noconf')
     (DRY / 'dry_summary.json').write_text(json.dumps(res, ensure_ascii=False, indent=1), encoding='utf-8')
     print('несовпадений:', bad)
     sys.exit(1 if bad else 0)

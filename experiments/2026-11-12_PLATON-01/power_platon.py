@@ -77,13 +77,13 @@ def power_p3(n, pts, ptn, reps=REPS, seed=33, p1_rejects=False):
     return rej / reps
 
 
-def power_family(n, rates, reps=REPS, seed=606):
-    """Мощность каждой из шести проверок при одной семье Холма (α = 0,05), оценка Монте-Карло.
+def power_family(n, rates, reps=REPS, seed=606, family=('P3', 'P1F', 'P2F')):
+    """Мощность проверок семьи Холма (α = 0,05; по совету 42 — три проверки P3, P1F, P2F), оценка Монте-Карло.
     rates: доли событий по ячейкам — FC_ZS, FC_ZN, TC_TS, TC_TN (свободный), FC_ZSF, FC_ZNF (режим F).
     Ячейки моделируются независимо (консервативно для Макнемара при положительной связи)."""
     g = np.random.default_rng(seed)
     sim = {k: g.random((reps, n)) < v for k, v in rates.items()}
-    cnt = {k: 0 for k in ('P1', 'P2', 'P3', 'P1F', 'P2F', 'P4')}
+    cnt = {k: 0 for k in family}
     cache = {}
 
     def mc(a, b):
@@ -91,14 +91,15 @@ def power_family(n, rates, reps=REPS, seed=606):
         return A.binom_sf(bb, bb + cc, 0.5) if bb + cc else 1.0
     for r in range(reps):
         zs, zn, ts, tn, zsf, znf = (sim[k][r] for k in ('FC_ZS', 'FC_ZN', 'TC_TS', 'TC_TN', 'FC_ZSF', 'FC_ZNF'))
-        pv = {'P1': A.binom_sf(int(zs.sum()), n, A.P0), 'P2': mc(zs, zn), 'P3': mc(ts, tn),
-              'P1F': A.binom_sf(int(zsf.sum()), n, A.P0), 'P2F': mc(zsf, znf), 'P4': mc(zsf, zs)}
+        allp = {'P1': A.binom_sf(int(zs.sum()), n, A.P0), 'P2': mc(zs, zn), 'P3': mc(ts, tn),
+                'P1F': A.binom_sf(int(zsf.sum()), n, A.P0), 'P2F': mc(zsf, znf), 'P4': mc(zsf, zs)}
+        pv = {k: allp[k] for k in family}
         key = tuple(round(v, 12) for v in pv.values())
         if key not in cache:
             cache[key] = A.holm(pv)
         for k, v in cache[key].items():
             cnt[k] += v
-    return {k: v / reps for k, v in cnt.items()}
+    return {k: cnt[k] / reps for k in family}
 
 
 def false_level_mc(n, reps=REPS, seed=7):
@@ -148,10 +149,14 @@ def main():
     for n in NS:
         for pts, ptn in ((0.9, 0.5), (0.8, 0.6), (0.85, 0.65), (0.7, 0.5)):
             res['P3'].append({'n': n, 'TC_TS': pts, 'TC_TN': ptn, 'power_P3_holm3': power_p3(n, pts, ptn)})
-    # семья из шести проверок при долях пилотов (свободный режим — пилоты a и b; режим F — пилот F, см. --rates)
+    # семья Холма из трёх проверок (совет 42) при долях пилотов; для сравнения — прежняя семья из шести
     res['family'] = []
     for name, rates in FAMILY_SCENARIOS.items():
-        res['family'].append({'scenario': name, 'n': 40, 'rates': rates, 'power': power_family(40, rates)})
+        res['family'].append({'scenario': name, 'n': 40, 'rates': rates, 'family': ['P3', 'P1F', 'P2F'],
+                              'power': power_family(40, rates)})
+        res['family'].append({'scenario': name + ' (прежняя семья из шести)', 'n': 40, 'rates': rates,
+                              'family': ['P1', 'P2', 'P3', 'P1F', 'P2F', 'P4'],
+                              'power': power_family(40, rates, family=('P1', 'P2', 'P3', 'P1F', 'P2F', 'P4'))})
     print('критическое k для P1 (α 0,025 / 0,05):', res['crit_P1_alpha_0.025'], res['crit_P1_alpha_0.05'])
     for f in res['family']:
         print('семья, n 40,', f['scenario'], f['rates'], '→', {k: round(v, 3) for k, v in f['power'].items()})

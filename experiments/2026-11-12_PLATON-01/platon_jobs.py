@@ -94,7 +94,8 @@ def build(seeds, heads, out, cells=CELLS, variant='b', regimes=('free',)):
             tables.append({'table': tid, 'task': f"I{ent['seed']}", 'seed': ent['seed'], 'law': ent['law'],
                            'cell': cell, 'data': cell[0], 'names': cell[1], 'idents': idents, 'variant': variant,
                            'regime': regime, 'heads': heads, 'prompt_sha256': [sha(pr) for pr in prs],
-                           'z_tries': inst['z_tries']})
+                           'z_tries': inst['z_tries'], 'z_ok': inst['z_ok'],
+                           'z_flag': bool(cell[0] == 'Z' and not all(inst['z_ok']))})
             for k, pr in enumerate(prs, 1):
                 shas.append(f'{sha(pr)}  {tid}|h{k}')
                 arm = cell + ('F' if regime == 'forced' else '')

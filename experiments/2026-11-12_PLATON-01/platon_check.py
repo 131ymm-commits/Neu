@@ -323,16 +323,34 @@ def agree(c1, c2, shown_rows, label):
     return ok, r21, r12
 
 
-def max_clique(n, edges):
-    """Наибольшая клика (перебор подмножеств; n ≤ 6). Ничья — лексикографически первая."""
-    best = []
+def all_max_cliques(n, edges):
+    """Все клики наибольшего размера (перебор подмножеств; n ≤ 6)."""
+    best, size = [], 0
     for mask in range(1, 1 << n):
         mem = [i for i in range(n) if mask >> i & 1]
-        if len(mem) <= len(best):
+        if len(mem) < size:
             continue
         if all((a, b) in edges for ia, a in enumerate(mem) for b in mem[ia + 1:]):
-            best = mem
+            if len(mem) > size:
+                best, size = [mem], len(mem)
+            else:
+                best.append(mem)
     return best
+
+
+def max_clique(n, edges, key=None):
+    """Наибольшая клика. Ничья между кликами одного размера (совет 42, правка 7): по ключу представителя
+    key(i) — у представителя наименьший key среди членов; между кликами — наименьший key представителя, затем номер
+    представителя, затем лексикографически. Без key — лексикографически первая."""
+    cl = all_max_cliques(n, edges)
+    if not cl:
+        return []
+    if key is None:
+        return cl[0]
+    def rank(mem):
+        rep = min(mem, key=lambda i: (key(i), i))
+        return (key(rep), rep, mem)
+    return min(cl, key=rank)
 
 
 def holds(claim, hold_rows_in, hold_rows_out, label):
