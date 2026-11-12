@@ -3,7 +3,9 @@
 """PLATON-01: мощность и ложный уровень до прогона (точно для P1, Монте-Карло для P2 и Холма).
 
 P1: точный односторонний биномиальный тест «ложное согласие в ZS > 0,05»; P2: точный односторонний тест Макнемара
-«ZS > ZN» (парно по экземпляру). Холм на двух проверках при общем α = 0,05.
+«ZS > ZN» (парно по экземпляру); P3 (после пилота a): Макнемар «верное согласие TS > TN». Холм на трёх проверках
+при общем α = 0,05. Сетка P1/P2 — для Холма на трёх в двух крайних случаях: P3 не отвергнута (худший для P1/P2:
+первый шаг α/3) и P3 отвергнута первой (тогда P1/P2 идут как Холм на двух).
 Мощность считается по Холму: P1 и P2 отвергаются вместе (оценка Монте-Карло, 20 000 повторов, зерно фиксировано).
 Совместная модель: ячейки ZS и ZN независимы при заданных вероятностях (консервативно для Макнемара, если события
 положительно связаны, — мощность выше).
@@ -31,7 +33,9 @@ def crit_p1(n, alpha):
     return n + 1
 
 
-def power_mc(n, ps, pn, reps=REPS, seed=20261112):
+def power_mc(n, ps, pn, reps=REPS, seed=20261112, p3=1.0):
+    """Мощность P1, P2 и обеих вместе по Холму на трёх проверках; p3 — фиксированное p проверки P3
+    (0 — P3 отвергнута первой, тогда P1/P2 идут как Холм на двух; 1 — P3 не отвергнута, худший случай)."""
     g = np.random.default_rng(seed)
     s = g.random((reps, n)) < ps
     z = g.random((reps, n)) < pn
@@ -44,11 +48,26 @@ def power_mc(n, ps, pn, reps=REPS, seed=20261112):
         if key not in cache:
             p1 = A.binom_sf(k, n, A.P0)
             p2 = A.binom_sf(b, b + c, 0.5) if b + c else 1.0
-            h = A.holm({'P1': p1, 'P2': p2})
+            h = A.holm({'P1': p1, 'P2': p2, 'P3': p3})
             cache[key] = (h['P1'], h['P2'])
         a1, a2 = cache[key]
         rej1 += a1; rej2 += a2; both += a1 and a2
     return rej1 / reps, rej2 / reps, both / reps
+
+
+def power_p3(n, pts, ptn, reps=REPS, seed=33, p1_rejects=False):
+    """Мощность P3 (TC(TS) > TC(TN), Макнемар) по Холму на трёх проверках. Худший случай для порога — P1 и P2 не
+    отвергнуты (ожидание пилота): тогда P3 проходит только при p3 ≤ α/3 на первом шаге Холма."""
+    g = np.random.default_rng(seed)
+    s = g.random((reps, n)) < pts
+    z = g.random((reps, n)) < ptn
+    rej = 0
+    for r in range(reps):
+        b = int((s[r] & ~z[r]).sum()); c = int((~s[r] & z[r]).sum())
+        p3 = A.binom_sf(b, b + c, 0.5) if b + c else 1.0
+        h = A.holm({'P1': 0.0 if p1_rejects else 1.0, 'P2': 1.0, 'P3': p3})
+        rej += h['P3']
+    return rej / reps
 
 
 def false_level_mc(n, reps=REPS, seed=7):
@@ -64,8 +83,10 @@ def false_level_mc(n, reps=REPS, seed=7):
             b = int((s[r] & ~z[r]).sum()); c = int((~s[r] & z[r]).sum())
             p1 = A.binom_sf(k, n, A.P0) if p == 0.05 else 1.0
             p2 = A.binom_sf(b, b + c, 0.5) if b + c else 1.0
-            h = A.holm({'P1': p1, 'P2': p2})
-            any_rej += h['P1'] or h['P2']
+            # P3 под нулём: TC(TS) и TC(TN) одинаково распределены (те же s, z в роли TS, TN)
+            p3 = A.binom_sf(c, b + c, 0.5) if b + c else 1.0
+            h = A.holm({'P1': p1, 'P2': p2, 'P3': p3})
+            any_rej += h['P1'] or h['P2'] or h['P3']
         out[str(p)] = any_rej / reps
     return out
 
@@ -88,14 +109,22 @@ def main():
         res['false_level'][n] = false_level_mc(n)
         for ps in PS:
             for pn in PN:
-                p1, p2, both = power_mc(n, ps, pn)
-                res['grid'].append({'n': n, 'p_ZS': ps, 'p_ZN': pn, 'power_P1': p1, 'power_P2': p2, 'power_both': both})
+                p1, p2, both = power_mc(n, ps, pn, p3=1.0)
+                q1, q2, qb = power_mc(n, ps, pn, p3=0.0)
+                res['grid'].append({'n': n, 'p_ZS': ps, 'p_ZN': pn, 'power_P1_p3not': p1, 'power_P2_p3not': p2,
+                                    'power_both_p3not': both, 'power_P1_p3rej': q1, 'power_P2_p3rej': q2, 'power_both_p3rej': qb})
+    res['P3'] = []
+    for n in NS:
+        for pts, ptn in ((0.9, 0.5), (0.8, 0.6), (0.85, 0.65), (0.7, 0.5)):
+            res['P3'].append({'n': n, 'TC_TS': pts, 'TC_TN': ptn, 'power_P3_holm3': power_p3(n, pts, ptn)})
     print('критическое k для P1 (α 0,025 / 0,05):', res['crit_P1_alpha_0.025'], res['crit_P1_alpha_0.05'])
+    print('P3 (Холм на трёх, P1 и P2 не отвергнуты):', [(r['n'], r['TC_TS'], r['TC_TN'], round(r['power_P3_holm3'], 3)) for r in res['P3']])
     print('третий исход:', res['third_outcome'])
     print('ложный уровень серии (оценка Монте-Карло):', res['false_level'])
-    print('n   p_ZS  p_ZN  P1     P2     оба')
+    print('n   p_ZS  p_ZN  | P3 не отвергнута: P1  P2  оба | P3 отвергнута: P1  P2  оба')
     for r in res['grid']:
-        print(f"{r['n']:<3} {r['p_ZS']:<5} {r['p_ZN']:<5} {r['power_P1']:.3f}  {r['power_P2']:.3f}  {r['power_both']:.3f}")
+        print(f"{r['n']:<3} {r['p_ZS']:<5} {r['p_ZN']:<5} | {r['power_P1_p3not']:.3f} {r['power_P2_p3not']:.3f} {r['power_both_p3not']:.3f}"
+              f" | {r['power_P1_p3rej']:.3f} {r['power_P2_p3rej']:.3f} {r['power_both_p3rej']:.3f}")
     with open(a.out, 'w', encoding='utf-8') as fh:
         json.dump(res, fh, ensure_ascii=False, indent=1)
 

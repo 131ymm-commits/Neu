@@ -530,6 +530,18 @@
     0.0
    ]
   },
+  "P3": {
+   "b_TS_only": 0,
+   "c_TN_only": 0,
+   "p_one_sided": 1.0,
+   "rejected_holm": false,
+   "diff_TC_TS_minus_TN": 0.0,
+   "diff_ci95_boot": [
+    0.0,
+    0.0
+   ],
+   "verdict": "не показано"
+  },
   "positive_control_TC_TS": 0.0,
   "positive_control_TC_TN": 0.0,
   "valid": false,
@@ -572,6 +584,8 @@
    "N": 0.0
   }
  },
+ "tests_forced": null,
+ "regime_cmp": null,
  "tables": [
   {
    "table": "I80001|TS",
@@ -681,7 +695,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80001|TN",
@@ -758,7 +773,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80001|ZS",
@@ -868,7 +884,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80001|ZN",
@@ -945,7 +962,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80002|TS",
@@ -1055,7 +1073,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80002|TN",
@@ -1132,7 +1151,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80002|ZS",
@@ -1242,7 +1262,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80002|ZN",
@@ -1319,7 +1340,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80003|TS",
@@ -1429,7 +1451,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80003|TN",
@@ -1506,7 +1529,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80003|ZS",
@@ -1616,7 +1640,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80003|ZN",
@@ -1693,7 +1718,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80004|TS",
@@ -1805,7 +1831,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80004|TN",
@@ -1882,7 +1909,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80004|ZS",
@@ -1994,7 +2022,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80004|ZN",
@@ -2071,7 +2100,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80005|TS",
@@ -2181,7 +2211,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80005|TN",
@@ -2258,7 +2289,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80005|ZS",
@@ -2368,7 +2400,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80005|ZN",
@@ -2445,7 +2478,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80006|TS",
@@ -2555,7 +2589,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80006|TN",
@@ -2632,7 +2667,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80006|ZS",
@@ -2742,7 +2778,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80006|ZN",
@@ -2819,7 +2856,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80007|TS",
@@ -2929,7 +2967,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80007|TN",
@@ -3006,7 +3045,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80007|ZS",
@@ -3116,7 +3156,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80007|ZN",
@@ -3193,7 +3234,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80008|TS",
@@ -3307,7 +3349,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80008|TN",
@@ -3384,7 +3427,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80008|ZS",
@@ -3498,7 +3542,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80008|ZN",
@@ -3575,7 +3620,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80009|TS",
@@ -3687,7 +3733,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80009|TN",
@@ -3764,7 +3811,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80009|ZS",
@@ -3876,7 +3924,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80009|ZN",
@@ -3953,7 +4002,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80010|TS",
@@ -4065,7 +4115,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80010|TN",
@@ -4142,7 +4193,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80010|ZS",
@@ -4254,7 +4306,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80010|ZN",
@@ -4331,7 +4384,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80011|TS",
@@ -4441,7 +4495,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80011|TN",
@@ -4518,7 +4573,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80011|ZS",
@@ -4628,7 +4684,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80011|ZN",
@@ -4705,7 +4762,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80012|TS",
@@ -4815,7 +4873,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80012|TN",
@@ -4892,7 +4951,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80012|ZS",
@@ -5002,7 +5062,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80012|ZN",
@@ -5079,7 +5140,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80013|TS",
@@ -5189,7 +5251,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80013|TN",
@@ -5266,7 +5329,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80013|ZS",
@@ -5376,7 +5440,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80013|ZN",
@@ -5453,7 +5518,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80014|TS",
@@ -5565,7 +5631,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80014|TN",
@@ -5642,7 +5709,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80014|ZS",
@@ -5754,7 +5822,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80014|ZN",
@@ -5831,7 +5900,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80015|TS",
@@ -5941,7 +6011,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80015|TN",
@@ -6018,7 +6089,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80015|ZS",
@@ -6128,7 +6200,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80015|ZN",
@@ -6205,7 +6278,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80016|TS",
@@ -6315,7 +6389,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80016|TN",
@@ -6392,7 +6467,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80016|ZS",
@@ -6502,7 +6578,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80016|ZN",
@@ -6579,7 +6656,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80017|TS",
@@ -6689,7 +6767,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80017|TN",
@@ -6766,7 +6845,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80017|ZS",
@@ -6876,7 +6956,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80017|ZN",
@@ -6953,7 +7034,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80018|TS",
@@ -7067,7 +7149,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80018|TN",
@@ -7144,7 +7227,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80018|ZS",
@@ -7258,7 +7342,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80018|ZN",
@@ -7335,7 +7420,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80019|TS",
@@ -7447,7 +7533,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80019|TN",
@@ -7524,7 +7611,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80019|ZS",
@@ -7636,7 +7724,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80019|ZN",
@@ -7713,7 +7802,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80020|TS",
@@ -7825,7 +7915,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80020|TN",
@@ -7902,7 +7993,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80020|ZS",
@@ -8014,7 +8106,8 @@
    "none_consensus": false,
    "n_none": 0,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   },
   {
    "table": "I80020|ZN",
@@ -8091,7 +8184,8 @@
    "none_consensus": false,
    "n_none": 2,
    "mixed_clique": false,
-   "variant": "b"
+   "variant": "b",
+   "regime": "free"
   }
  ]
 }

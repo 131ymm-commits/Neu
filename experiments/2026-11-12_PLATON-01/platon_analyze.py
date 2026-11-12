@@ -14,7 +14,7 @@
   - согласие на «НЕТ» — ≥ 3 ответов НЕТ (отдельно, в K не входит);
   - совпадает ли представитель с каноническим законом экземпляра (равносильность на той же таблице).
 Потерянная голова и неразборный ответ не согласуются ни с кем (консервативно для K).
-Итог по ячейкам, разбивка по законам и числу столбцов, тесты P1 и P2 (Холм), интервалы, ИОИ, токены.
+Итог по ячейкам, разбивка по законам и числу столбцов, тесты P1, P2, P3 (Холм), интервалы, ИОИ, токены.
 """
 import argparse
 import json
@@ -27,7 +27,7 @@ import platon_world as W
 import platon_check as C
 
 P0 = 0.05            # P1: ложное согласие в ZS выше 5 %
-ALPHA = 0.05         # общий односторонний уровень серии P1, P2 (Холм)
+ALPHA = 0.05         # общий односторонний уровень серии P1, P2, P3 (Холм)
 POS_CONTROL = 0.3    # условие осмысленности: верное согласие в TS не ниже 0,3
 EQUIV_UPPER = 0.15   # третий исход: верхняя односторонняя 95 % граница ложного согласия в ZS и ZN ниже 0,15
 B_BOOT = 10000
@@ -198,7 +198,7 @@ def analyze_table(tb, inst, finals, heads):
         'rep_is_canonical': bool(rows[rep].get('is_canonical')) if rep is not None else None,
         'none_consensus': n_none >= 3, 'n_none': n_none,
         'mixed_clique': bool(clique) and len({bool(rows[i]['holds']) for i in clique}) > 1,
-        'variant': inst['variant'],
+        'variant': inst['variant'], 'regime': tb.get('regime', 'free'),
     }
     return out
 
@@ -255,7 +255,10 @@ def tests(by_cell_inst):
     p1 = binom_sf(k1, n, P0)
     b = int(((fzs == 1) & (fzn == 0)).sum()); c = int(((fzs == 0) & (fzn == 1)).sum())
     p2 = binom_sf(b, b + c, 0.5) if b + c > 0 else 1.0
-    rej = holm({'P1': p1, 'P2': p2})
+    # P3 (добавлена после пилота a): имена помогают найти закон — TC(TS) > TC(TN), точный Макнемар
+    b3 = int(((tts == 1) & (ttn == 0)).sum()); c3 = int(((tts == 0) & (ttn == 1)).sum())
+    p3 = binom_sf(b3, b3 + c3, 0.5) if b3 + c3 > 0 else 1.0
+    rej = holm({'P1': p1, 'P2': p2, 'P3': p3})
     pos = float(tts.mean()) if n else float('nan')
     valid = n > 0 and pos >= POS_CONTROL
     up_zs = cp_upper_one_sided(k1, n); up_zn = cp_upper_one_sided(int(fzn.sum()), n)
@@ -269,6 +272,10 @@ def tests(by_cell_inst):
         'P2': {'b_ZS_only': b, 'c_ZN_only': c, 'p_one_sided': p2, 'rejected_holm': rej['P2'],
                'diff_FC_ZS_minus_ZN': float(fzs.mean() - fzn.mean()) if n else None,
                'diff_ci95_boot': boot_ci(lambda idx: float(fzs[idx].mean() - fzn[idx].mean()), n, 'diff') if n else None},
+        'P3': {'b_TS_only': b3, 'c_TN_only': c3, 'p_one_sided': p3, 'rejected_holm': rej['P3'],
+               'diff_TC_TS_minus_TN': float(tts.mean() - ttn.mean()) if n else None,
+               'diff_ci95_boot': boot_ci(lambda idx: float(tts[idx].mean() - ttn[idx].mean()), n, 'diff3') if n else None,
+               'verdict': 'имена помогают найти закон' if rej['P3'] else 'не показано'},
         'positive_control_TC_TS': pos, 'positive_control_TC_TN': float(ttn.mean()) if n else None,
         'valid': bool(valid),
         'equivalence_upper95_ZS': up_zs, 'equivalence_upper95_ZN': up_zn,
@@ -318,21 +325,40 @@ def main():
         if key not in insts:
             insts[key] = W.make_instance(tb['seed'], tb['law'], heads=None if key[2] == 'a' else tb.get('heads', a.heads))
         res_tables.append(analyze_table(tb, insts[key], finals, a.heads))
+    # ключ ячейки: TS, TN, ZS, ZN — свободный режим; TSF, TNF, ZSF, ZNF — режим F («опубликуй»)
+    def ckey(t):
+        return t['cell'] + ('F' if t.get('regime') == 'forced' else '')
     by_cell = {}
-    by_cell_inst = {c: {} for c in ('TS', 'TN', 'ZS', 'ZN')}
+    regimes = sorted({t.get('regime', 'free') for t in res_tables})
+    by_cell_inst = {rg: {c: {} for c in ('TS', 'TN', 'ZS', 'ZN')} for rg in regimes}
     for t in res_tables:
-        by_cell.setdefault(t['cell'], []).append(t)
-        by_cell_inst[t['cell']][t['seed']] = t
+        by_cell.setdefault(ckey(t), []).append(t)
+        by_cell_inst[t.get('regime', 'free')][t['cell']][t['seed']] = t
     summary = {c: summarize_cell(v) for c, v in sorted(by_cell.items())}
     by_law = {}
     for t in res_tables:
-        d = by_law.setdefault(t['law'], {}).setdefault(t['cell'], {'n': 0, 'K': 0, 'FC': 0, 'TC': 0})
+        d = by_law.setdefault(t['law'], {}).setdefault(ckey(t), {'n': 0, 'K': 0, 'FC': 0, 'TC': 0})
         d['n'] += 1; d['K'] += t['K']; d['FC'] += t['FC']; d['TC'] += t['TC']
     by_ncols = {}
     for t in res_tables:
         grp = '2' if t['n_cols'] == 2 else '3-4'
-        d = by_ncols.setdefault(grp, {}).setdefault(t['cell'], {'n': 0, 'K': 0, 'FC': 0, 'TC': 0})
+        d = by_ncols.setdefault(grp, {}).setdefault(ckey(t), {'n': 0, 'K': 0, 'FC': 0, 'TC': 0})
         d['n'] += 1; d['K'] += t['K']; d['FC'] += t['FC']; d['TC'] += t['TC']
+    tests_by_regime = {rg: (tests(by_cell_inst[rg]) if all(by_cell_inst[rg][c] for c in by_cell_inst[rg]) else None)
+                       for rg in regimes}
+    # сравнение режимов на ZS: ложное согласие в F против свободного (парно по экземпляру, описательно здесь;
+    # проверка — по PREREG)
+    regime_cmp = None
+    if 'free' in regimes and 'forced' in regimes:
+        common = sorted(set(by_cell_inst['free']['ZS']) & set(by_cell_inst['forced']['ZS']))
+        if common:
+            a_ = np.array([by_cell_inst['forced']['ZS'][i]['FC'] for i in common], dtype=float)
+            b_ = np.array([by_cell_inst['free']['ZS'][i]['FC'] for i in common], dtype=float)
+            bb = int(((a_ == 1) & (b_ == 0)).sum()); cc = int(((a_ == 0) & (b_ == 1)).sum())
+            regime_cmp = {'n': len(common), 'FC_ZS_forced': float(a_.mean()), 'FC_ZS_free': float(b_.mean()),
+                          'b_forced_only': bb, 'c_free_only': cc,
+                          'p_one_sided_mcnemar': binom_sf(bb, bb + cc, 0.5) if bb + cc else 1.0,
+                          'diff_ci95_boot': boot_ci(lambda idx: float(a_[idx].mean() - b_[idx].mean()), len(common), 'reg')}
     lost = sum(1 for t in res_tables for h in t['heads'] if h.get('kind') in ('LOST', 'NO_RECORD'))
     total_heads = sum(len(t['heads']) for t in res_tables)
     out = {
@@ -340,7 +366,7 @@ def main():
                    'EQUIV_UPPER': EQUIV_UPPER, 'heads': a.heads, 'n_rows': W.N_ROWS, 'n_hold': W.N_HOLD},
         'heads_total': total_heads, 'heads_lost': lost, 'lost_flag': bool(total_heads and lost / total_heads > 0.1),
         'summary': summary, 'by_law': by_law, 'by_ncols': by_ncols,
-        'tests': tests(by_cell_inst) if all(by_cell_inst[c] for c in by_cell_inst) else None,
+        'tests': tests_by_regime.get('free'), 'tests_forced': tests_by_regime.get('forced'), 'regime_cmp': regime_cmp,
         'tables': res_tables,
     }
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
@@ -349,10 +375,14 @@ def main():
     for c, s in summary.items():
         print(f"  {c}: n {s['n_tables']}, K {s['K']}, FC {s['FC']}, TC {s['TC']}, НЕТ-согласие {s['none_consensus']}, "
               f"виды {s['head_kinds']}, держится {s['claim_hold_rate']}, вых. ток. {s['out_tokens_mean']}")
-    if out['tests']:
-        t = out['tests']
+    for name in ('tests', 'tests_forced'):
+        t = out.get(name)
+        if not t:
+            continue
+        print(f"  [{name}]")
         print(f"  P1 p {t['P1']['p_one_sided']:.4g} ({t['P1']['k']}/{t['P1']['n']}), P2 p {t['P2']['p_one_sided']:.4g} "
               f"(b {t['P2']['b_ZS_only']}, c {t['P2']['c_ZN_only']}), контроль TS {t['positive_control_TC_TS']:.3f}")
+        print(f"  P3 p {t['P3']['p_one_sided']:.4g} (b {t['P3']['b_TS_only']}, c {t['P3']['c_TN_only']}): {t['P3']['verdict']}")
         print(f"  вердикт: {t['verdict']}")
 
 

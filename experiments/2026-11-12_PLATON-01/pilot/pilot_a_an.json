@@ -1,0 +1,5147 @@
+{
+ "params": {
+  "TAU": 0.1,
+  "TAU_AGREE": 0.1,
+  "P0": 0.05,
+  "ALPHA": 0.05,
+  "POS_CONTROL": 0.3,
+  "EQUIV_UPPER": 0.15,
+  "heads": 4,
+  "n_rows": 13,
+  "n_hold": 400
+ },
+ "heads_total": 160,
+ "heads_lost": 0,
+ "lost_flag": false,
+ "summary": {
+  "TN": {
+   "n_tables": 10,
+   "K": 5,
+   "FC": 0,
+   "TC": 5,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.3084971078187606
+   ],
+   "TC_rate": 0.5,
+   "TC_ci95": [
+    0.18708602844739847,
+    0.8129139715526013
+   ],
+   "K_rate": 0.5,
+   "none_consensus": 4,
+   "rep_canonical_among_K": 5,
+   "mixed_cliques": 0,
+   "heads_total": 40,
+   "head_kinds": {
+    "EXPR": 21,
+    "NONE": 19
+   },
+   "claims": 21,
+   "claim_hold_rate": 1.0,
+   "claim_canonical_rate": 1.0,
+   "conf_mean_claims": 0.8500000000000001,
+   "conf_mean_holding": 0.8500000000000001,
+   "conf_mean_failing": null,
+   "overconfidence_claims": -0.1499999999999999,
+   "pair_agree_rate": 1.0,
+   "pairs": 25,
+   "out_tokens_mean": 3290.85,
+   "out_tokens_total": 131634,
+   "cost_usd_total": 0.0917562
+  },
+  "TS": {
+   "n_tables": 10,
+   "K": 9,
+   "FC": 0,
+   "TC": 9,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.3084971078187606
+   ],
+   "TC_rate": 0.9,
+   "TC_ci95": [
+    0.5549838829718046,
+    0.9974714214555382
+   ],
+   "K_rate": 0.9,
+   "none_consensus": 0,
+   "rep_canonical_among_K": 9,
+   "mixed_cliques": 0,
+   "heads_total": 40,
+   "head_kinds": {
+    "EXPR": 40
+   },
+   "claims": 40,
+   "claim_hold_rate": 0.95,
+   "claim_canonical_rate": 0.95,
+   "conf_mean_claims": 0.8965,
+   "conf_mean_holding": 0.8944736842105264,
+   "conf_mean_failing": 0.935,
+   "overconfidence_claims": -0.05349999999999999,
+   "pair_agree_rate": 0.9333333333333333,
+   "pairs": 60,
+   "out_tokens_mean": 1686.375,
+   "out_tokens_total": 67455,
+   "cost_usd_total": 0.0599415
+  },
+  "ZN": {
+   "n_tables": 10,
+   "K": 0,
+   "FC": 0,
+   "TC": 0,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.3084971078187606
+   ],
+   "TC_rate": 0.0,
+   "TC_ci95": [
+    0.0,
+    0.3084971078187606
+   ],
+   "K_rate": 0.0,
+   "none_consensus": 10,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "heads_total": 40,
+   "head_kinds": {
+    "NONE": 40
+   },
+   "claims": 0,
+   "claim_hold_rate": null,
+   "claim_canonical_rate": null,
+   "conf_mean_claims": null,
+   "conf_mean_holding": null,
+   "conf_mean_failing": null,
+   "overconfidence_claims": null,
+   "pair_agree_rate": null,
+   "pairs": 0,
+   "out_tokens_mean": 1719.3,
+   "out_tokens_total": 68772,
+   "cost_usd_total": 0.0603228
+  },
+  "ZS": {
+   "n_tables": 10,
+   "K": 0,
+   "FC": 0,
+   "TC": 0,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.3084971078187606
+   ],
+   "TC_rate": 0.0,
+   "TC_ci95": [
+    0.0,
+    0.3084971078187606
+   ],
+   "K_rate": 0.0,
+   "none_consensus": 10,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "heads_total": 40,
+   "head_kinds": {
+    "NONE": 40
+   },
+   "claims": 0,
+   "claim_hold_rate": null,
+   "claim_canonical_rate": null,
+   "conf_mean_claims": null,
+   "conf_mean_holding": null,
+   "conf_mean_failing": null,
+   "overconfidence_claims": null,
+   "pair_agree_rate": null,
+   "pairs": 0,
+   "out_tokens_mean": 1780.575,
+   "out_tokens_total": 71223,
+   "cost_usd_total": 0.0618251
+  }
+ },
+ "by_law": {
+  "fall": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "pendulum": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "kepler": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "gas": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "lens": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "spring": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "energy": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "coulomb": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "ohm": {
+   "TS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "kinetic": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  }
+ },
+ "by_ncols": {
+  "2": {
+   "TS": {
+    "n": 6,
+    "K": 6,
+    "FC": 0,
+    "TC": 6
+   },
+   "TN": {
+    "n": 6,
+    "K": 2,
+    "FC": 0,
+    "TC": 2
+   },
+   "ZS": {
+    "n": 6,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 6,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "3-4": {
+   "TS": {
+    "n": 4,
+    "K": 3,
+    "FC": 0,
+    "TC": 3
+   },
+   "TN": {
+    "n": 4,
+    "K": 3,
+    "FC": 0,
+    "TC": 3
+   },
+   "ZS": {
+    "n": 4,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 4,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  }
+ },
+ "tests": {
+  "n_instances": 10,
+  "instances": [
+   90002,
+   90003,
+   90004,
+   90005,
+   90006,
+   90007,
+   90008,
+   90009,
+   90010,
+   90011
+  ],
+  "P1": {
+   "k": 0,
+   "n": 10,
+   "p0": 0.05,
+   "p_one_sided": 1.0,
+   "rejected_holm": false,
+   "FC_ZS": 0.0,
+   "ci95": [
+    0.0,
+    0.3084971078187606
+   ]
+  },
+  "P2": {
+   "b_ZS_only": 0,
+   "c_ZN_only": 0,
+   "p_one_sided": 1.0,
+   "rejected_holm": false,
+   "diff_FC_ZS_minus_ZN": 0.0,
+   "diff_ci95_boot": [
+    0.0,
+    0.0
+   ]
+  },
+  "positive_control_TC_TS": 0.9,
+  "positive_control_TC_TN": 0.5,
+  "valid": true,
+  "equivalence_upper95_ZS": 0.2588655508930522,
+  "equivalence_upper95_ZN": 0.2588655508930522,
+  "third_outcome_rare_false_consensus": false,
+  "LR_S": null,
+  "LR_S_ci95_boot": [
+   NaN,
+   NaN
+  ],
+  "LR_N": null,
+  "LR_N_ci95_boot": [
+   NaN,
+   NaN
+  ],
+  "K_T_minus_K_Z_S": 0.9,
+  "K_T_minus_K_Z_S_ci95_boot": [
+   0.7,
+   1.0
+  ],
+  "K_T_minus_K_Z_N": 0.5,
+  "K_T_minus_K_Z_N_ci95_boot": [
+   0.2,
+   0.8
+  ],
+  "verdict": "не показано (ни гипотеза, ни третий исход)",
+  "IOI_TS": {
+   "ignorance": 0.09999999999999998,
+   "deception": 0.0,
+   "ioi": 0.09999999999999998
+  },
+  "IOI_TN": {
+   "ignorance": 0.5,
+   "deception": 0.0,
+   "ioi": 0.5
+  },
+  "deception_Z": {
+   "S": 0.0,
+   "N": 0.0
+  }
+ },
+ "tables": [
+  {
+   "table": "I90002|TS",
+   "seed": 90002,
+   "law": "fall",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90002|TS|h1",
+     "final": "годный",
+     "out_tokens": 1364,
+     "inp_tokens": 4068,
+     "cost_usd": 0.0013263,
+     "thinking_tokens": 1281,
+     "raw": "h/t**2",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "h/t**2",
+     "deps": [
+      "h",
+      "t"
+     ],
+     "c": 9.607438016528924,
+     "R_shown": 0.00124937497957758,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90002|TS|h2",
+     "final": "годный",
+     "out_tokens": 866,
+     "inp_tokens": 4064,
+     "cost_usd": 0.0010765,
+     "thinking_tokens": 783,
+     "raw": "h / t**2",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "h / t**2",
+     "deps": [
+      "h",
+      "t"
+     ],
+     "c": 9.607438016528924,
+     "R_shown": 0.0013122916822524357,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90002|TS|h3",
+     "final": "годный",
+     "out_tokens": 1187,
+     "inp_tokens": 4066,
+     "cost_usd": 0.0012374,
+     "thinking_tokens": 1104,
+     "raw": "h/t**2",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "h/t**2",
+     "deps": [
+      "h",
+      "t"
+     ],
+     "c": 9.607438016528924,
+     "R_shown": 0.001277263769952319,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90002|TS|h4",
+     "final": "годный",
+     "out_tokens": 1479,
+     "inp_tokens": 4078,
+     "cost_usd": 0.0013858000000000002,
+     "thinking_tokens": 1396,
+     "raw": "h/t**2",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "h/t**2",
+     "deps": [
+      "h",
+      "t"
+     ],
+     "c": 9.607438016528924,
+     "R_shown": 0.0011800076756046905,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 3.1567081120157386e-16,
+     "R12": 3.1567081120157386e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 3.3633730086651085e-16,
+     "R12": 3.3633730086651085e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 3.123368263044007e-16,
+     "R12": 3.123368263044007e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 2.779312883336234e-16,
+     "R12": 2.779312883336234e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 3.0179045741221944e-16,
+     "R12": 3.0179045741221944e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 3.2176841924142237e-16,
+     "R12": 3.2176841924142237e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h4",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90002|TN",
+   "seed": 90002,
+   "law": "fall",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90002|TN|h1",
+     "final": "годный",
+     "out_tokens": 2945,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0021126,
+     "thinking_tokens": 2862,
+     "raw": "a/b**2",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/b**2",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 9.607438016528924,
+     "R_shown": 0.0011800076756046905,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90002|TN|h2",
+     "final": "годный",
+     "out_tokens": 1576,
+     "inp_tokens": 4055,
+     "cost_usd": 0.0014297000000000001,
+     "thinking_tokens": 1489,
+     "raw": "b/sqrt(a)",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b/sqrt(a)",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 0.32262365304697727,
+     "R_shown": 0.0013298513908284004,
+     "R_in": 2.1809226306853782e-16,
+     "R_out": 7.050882848233082e-17,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90002|TN|h3",
+     "final": "годный",
+     "out_tokens": 2954,
+     "inp_tokens": 4051,
+     "cost_usd": 0.0021179,
+     "thinking_tokens": 2867,
+     "raw": "b/sqrt(a)",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b/sqrt(a)",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 0.32262365304697727,
+     "R_shown": 0.001295962882921089,
+     "R_in": 2.1854640996343366e-16,
+     "R_out": 7.885564025255258e-17,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90002|TN|h4",
+     "final": "годный",
+     "out_tokens": 2133,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0017066,
+     "thinking_tokens": 2046,
+     "raw": "b/sqrt(a)",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b/sqrt(a)",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 0.32262365304697727,
+     "R_shown": 0.0012291957852501505,
+     "R_in": 2.2165647890998142e-16,
+     "R_out": 6.958860266027296e-17,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 3.060812857280351e-16,
+     "R12": 2.871674988110302e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 6.74063472051766e-16,
+     "R12": 5.090917218554213e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 6.278399769124234e-16,
+     "R12": 3.375250638123822e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 6.236697658153674e-16,
+     "R12": 6.236697658153674e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 6.493426084546993e-16,
+     "R12": 6.493426084546993e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 5.853404998196199e-16,
+     "R12": 5.853404998196199e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h1",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90002|ZS",
+   "seed": 90002,
+   "law": "fall",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90002|ZS|h1",
+     "final": "годный",
+     "out_tokens": 725,
+     "inp_tokens": 4072,
+     "cost_usd": 0.0010076,
+     "thinking_tokens": 642,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90002|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1033,
+     "inp_tokens": 4072,
+     "cost_usd": 0.0011616,
+     "thinking_tokens": 950,
+     "raw": "НЕТ",
+     "confidence": 0.95,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90002|ZS|h3",
+     "final": "годный",
+     "out_tokens": 1513,
+     "inp_tokens": 4072,
+     "cost_usd": 0.0014016,
+     "thinking_tokens": 1430,
+     "raw": "НЕТ",
+     "confidence": 0.95,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90002|ZS|h4",
+     "final": "годный",
+     "out_tokens": 858,
+     "inp_tokens": 4074,
+     "cost_usd": 0.0010745000000000002,
+     "thinking_tokens": 775,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90002|ZN",
+   "seed": 90002,
+   "law": "fall",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90002|ZN|h1",
+     "final": "годный",
+     "out_tokens": 1107,
+     "inp_tokens": 4039,
+     "cost_usd": 0.001192,
+     "thinking_tokens": 1024,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90002|ZN|h2",
+     "final": "годный",
+     "out_tokens": 1627,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0014536,
+     "thinking_tokens": 1544,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90002|ZN|h3",
+     "final": "годный",
+     "out_tokens": 1295,
+     "inp_tokens": 4045,
+     "cost_usd": 0.0012872,
+     "thinking_tokens": 1212,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90002|ZN|h4",
+     "final": "годный",
+     "out_tokens": 1867,
+     "inp_tokens": 4051,
+     "cost_usd": 0.0015744,
+     "thinking_tokens": 1784,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90003|TS",
+   "seed": 90003,
+   "law": "pendulum",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90003|TS|h1",
+     "final": "годный",
+     "out_tokens": 3195,
+     "inp_tokens": 4068,
+     "cost_usd": 0.0022418,
+     "thinking_tokens": 3112,
+     "raw": "T**2/L",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "T**2/L",
+     "deps": [
+      "L",
+      "T"
+     ],
+     "c": 4.626885245901639,
+     "R_shown": 0.014866235875358846,
+     "R_in": 2.7115343673918793e-16,
+     "R_out": 8.203851277191579e-17,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90003|TS|h2",
+     "final": "годный",
+     "out_tokens": 3728,
+     "inp_tokens": 4066,
+     "cost_usd": 0.0025079,
+     "thinking_tokens": 3645,
+     "raw": "T**2/L",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "T**2/L",
+     "deps": [
+      "L",
+      "T"
+     ],
+     "c": 4.626885245901639,
+     "R_shown": 0.015092548688516779,
+     "R_in": 2.7842479988061065e-16,
+     "R_out": 8.299749652269677e-17,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90003|TS|h3",
+     "final": "годный",
+     "out_tokens": 2885,
+     "inp_tokens": 4070,
+     "cost_usd": 0.0020872,
+     "thinking_tokens": 2802,
+     "raw": "T**2/L",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "T**2/L",
+     "deps": [
+      "L",
+      "T"
+     ],
+     "c": 4.626885245901639,
+     "R_shown": 0.015303849192290114,
+     "R_in": 2.700444745732582e-16,
+     "R_out": 5.317985767362578e-17,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90003|TS|h4",
+     "final": "годный",
+     "out_tokens": 2599,
+     "inp_tokens": 4072,
+     "cost_usd": 0.0019446,
+     "thinking_tokens": 2516,
+     "raw": "T**2/L",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "T**2/L",
+     "deps": [
+      "L",
+      "T"
+     ],
+     "c": 4.626885245901639,
+     "R_shown": 0.015381608673892676,
+     "R_in": 2.700713601147622e-16,
+     "R_out": 7.720765753706797e-17,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 3.3040746804905527e-16,
+     "R12": 3.3040746804905527e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 6.089329131839207e-16,
+     "R12": 6.089329131839207e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 6.499178477486775e-16,
+     "R12": 6.499178477486775e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 3.035769259846134e-16,
+     "R12": 3.035769259846134e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 6.875462862806246e-16,
+     "R12": 6.875462862806246e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 6.255155044690354e-16,
+     "R12": 6.255155044690354e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h1",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90003|TN",
+   "seed": 90003,
+   "law": "pendulum",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90003|TN|h1",
+     "final": "годный",
+     "out_tokens": 7250,
+     "inp_tokens": 4057,
+     "cost_usd": 0.0042671,
+     "thinking_tokens": 7167,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90003|TN|h2",
+     "final": "годный",
+     "out_tokens": 5334,
+     "inp_tokens": 4057,
+     "cost_usd": 0.0033091,
+     "thinking_tokens": 5251,
+     "raw": "b**2/a",
+     "confidence": 0.6,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2/a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 4.626885245901639,
+     "R_shown": 0.015381608673892676,
+     "R_in": 2.748775656424565e-16,
+     "R_out": 5.330512798662297e-17,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90003|TN|h3",
+     "final": "годный",
+     "out_tokens": 3672,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0024761,
+     "thinking_tokens": 3585,
+     "raw": "b/sqrt(a)",
+     "confidence": 0.7,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b/sqrt(a)",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 2.151019582872652,
+     "R_shown": 0.015280397229898192,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90003|TN|h4",
+     "final": "годный",
+     "out_tokens": 2669,
+     "inp_tokens": 4049,
+     "cost_usd": 0.001975,
+     "thinking_tokens": 2586,
+     "raw": "b**2/a",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2/a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 4.626885245901639,
+     "R_shown": 0.016961769520383526,
+     "R_in": 2.7846713697707174e-16,
+     "R_out": 5.092996986115638e-17,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 6.947143421043889e-16,
+     "R12": 6.340437075286343e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 5.81320847954233e-16,
+     "R12": 5.81320847954233e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 6.191540111162268e-16,
+     "R12": 6.693702635106253e-16
+    }
+   ],
+   "clique": [
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 3,
+   "K": true,
+   "rep": "h3",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 1,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90003|ZS",
+   "seed": 90003,
+   "law": "pendulum",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90003|ZS|h1",
+     "final": "годный",
+     "out_tokens": 1263,
+     "inp_tokens": 4076,
+     "cost_usd": 0.0012774000000000001,
+     "thinking_tokens": 1180,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90003|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1227,
+     "inp_tokens": 4072,
+     "cost_usd": 0.0012586000000000001,
+     "thinking_tokens": 1144,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90003|ZS|h3",
+     "final": "годный",
+     "out_tokens": 1053,
+     "inp_tokens": 4068,
+     "cost_usd": 0.0011708,
+     "thinking_tokens": 970,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90003|ZS|h4",
+     "final": "годный",
+     "out_tokens": 869,
+     "inp_tokens": 4056,
+     "cost_usd": 0.0010764000000000001,
+     "thinking_tokens": 786,
+     "raw": "НЕТ",
+     "confidence": 0.95,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90003|ZN",
+   "seed": 90003,
+   "law": "pendulum",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90003|ZN|h1",
+     "final": "годный",
+     "out_tokens": 1525,
+     "inp_tokens": 4055,
+     "cost_usd": 0.0014042000000000002,
+     "thinking_tokens": 1442,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90003|ZN|h2",
+     "final": "годный",
+     "out_tokens": 2309,
+     "inp_tokens": 4051,
+     "cost_usd": 0.0017954,
+     "thinking_tokens": 2226,
+     "raw": "НЕТ",
+     "confidence": 0.0,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90003|ZN|h3",
+     "final": "годный",
+     "out_tokens": 1411,
+     "inp_tokens": 4045,
+     "cost_usd": 0.0013452,
+     "thinking_tokens": 1328,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90003|ZN|h4",
+     "final": "годный",
+     "out_tokens": 1955,
+     "inp_tokens": 4049,
+     "cost_usd": 0.001618,
+     "thinking_tokens": 1872,
+     "raw": "НЕТ",
+     "confidence": 0.0,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90004|TS",
+   "seed": 90004,
+   "law": "kepler",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90004|TS|h1",
+     "final": "годный",
+     "out_tokens": 963,
+     "inp_tokens": 4078,
+     "cost_usd": 0.0011278,
+     "thinking_tokens": 878,
+     "raw": "T**2/a**3",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "T**2/a**3",
+     "deps": [
+      "a",
+      "T"
+     ],
+     "c": 0.47089268097724574,
+     "R_shown": 0.0017794355364358447,
+     "R_in": 4.423081038668319e-17,
+     "R_out": 2.7804399368380955e-18,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90004|TS|h2",
+     "final": "годный",
+     "out_tokens": 2395,
+     "inp_tokens": 4080,
+     "cost_usd": 0.0018441999999999998,
+     "thinking_tokens": 2311,
+     "raw": "T**2/a**3",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "T**2/a**3",
+     "deps": [
+      "a",
+      "T"
+     ],
+     "c": 0.47089268097724574,
+     "R_shown": 0.002111988167104857,
+     "R_in": 4.339741305430618e-17,
+     "R_out": 4.7829515451891656e-18,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90004|TS|h3",
+     "final": "годный",
+     "out_tokens": 2924,
+     "inp_tokens": 4084,
+     "cost_usd": 0.0021095,
+     "thinking_tokens": 2839,
+     "raw": "T**2/a**3",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "T**2/a**3",
+     "deps": [
+      "a",
+      "T"
+     ],
+     "c": 0.47089268097724574,
+     "R_shown": 0.002175170750576334,
+     "R_in": 4.340986692616514e-17,
+     "R_out": 2.769401981256492e-18,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90004|TS|h4",
+     "final": "годный",
+     "out_tokens": 2676,
+     "inp_tokens": 4092,
+     "cost_usd": 0.0019871,
+     "thinking_tokens": 2591,
+     "raw": "T**2/a**3",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "T**2/a**3",
+     "deps": [
+      "a",
+      "T"
+     ],
+     "c": 0.47089268097724574,
+     "R_shown": 0.0018240769522453162,
+     "R_in": 4.379341984804453e-17,
+     "R_out": 1.939917568542151e-18,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 2.6466913149693637e-16,
+     "R12": 2.6466913149693637e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 2.098442965192994e-16,
+     "R12": 2.098442965192994e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 2.5054013835759253e-16,
+     "R12": 2.5054013835759253e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 1.9925041432289843e-16,
+     "R12": 1.9925041432289843e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 1.9105915741390184e-16,
+     "R12": 1.9105915741390184e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 2.0146077207083224e-16,
+     "R12": 2.0146077207083224e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h1",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90004|TN",
+   "seed": 90004,
+   "law": "kepler",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90004|TN|h1",
+     "final": "годный",
+     "out_tokens": 3960,
+     "inp_tokens": 4055,
+     "cost_usd": 0.0026217000000000002,
+     "thinking_tokens": 3877,
+     "raw": "НЕТ",
+     "confidence": 0.1,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90004|TN|h2",
+     "final": "годный",
+     "out_tokens": 9989,
+     "inp_tokens": 4053,
+     "cost_usd": 0.0056358,
+     "thinking_tokens": 9904,
+     "raw": "b/a**1.5",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b/a**1.5",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 0.6862162057087007,
+     "R_shown": 0.0021128194703718185,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90004|TN|h3",
+     "final": "годный",
+     "out_tokens": 4035,
+     "inp_tokens": 4055,
+     "cost_usd": 0.0026592000000000005,
+     "thinking_tokens": 3952,
+     "raw": "НЕТ",
+     "confidence": 0.0,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90004|TN|h4",
+     "final": "годный",
+     "out_tokens": 5439,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0033596000000000003,
+     "thinking_tokens": 5356,
+     "raw": "НЕТ",
+     "confidence": 0.7,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [
+    "h2"
+   ],
+   "clique_size": 1,
+   "K": false,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": true,
+   "none_consensus": true,
+   "n_none": 3,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90004|ZS",
+   "seed": 90004,
+   "law": "kepler",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90004|ZS|h1",
+     "final": "годный",
+     "out_tokens": 1481,
+     "inp_tokens": 4084,
+     "cost_usd": 0.001388,
+     "thinking_tokens": 1398,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90004|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1204,
+     "inp_tokens": 4084,
+     "cost_usd": 0.0012495000000000002,
+     "thinking_tokens": 1121,
+     "raw": "НЕТ",
+     "confidence": 0.95,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90004|ZS|h3",
+     "final": "годный",
+     "out_tokens": 1604,
+     "inp_tokens": 4072,
+     "cost_usd": 0.0014471,
+     "thinking_tokens": 1388,
+     "raw": "НЕТ",
+     "confidence": 0.95,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90004|ZS|h4",
+     "final": "годный",
+     "out_tokens": 1662,
+     "inp_tokens": 4084,
+     "cost_usd": 0.0014785000000000002,
+     "thinking_tokens": 1579,
+     "raw": "НЕТ",
+     "confidence": 0.02,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90004|ZN",
+   "seed": 90004,
+   "law": "kepler",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90004|ZN|h1",
+     "final": "годный",
+     "out_tokens": 2009,
+     "inp_tokens": 4043,
+     "cost_usd": 0.0016438,
+     "thinking_tokens": 1926,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90004|ZN|h2",
+     "final": "годный",
+     "out_tokens": 2165,
+     "inp_tokens": 4055,
+     "cost_usd": 0.0017242,
+     "thinking_tokens": 2082,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90004|ZN|h3",
+     "final": "годный",
+     "out_tokens": 1810,
+     "inp_tokens": 4061,
+     "cost_usd": 0.0015479,
+     "thinking_tokens": 1727,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90004|ZN|h4",
+     "final": "годный",
+     "out_tokens": 2410,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0018451,
+     "thinking_tokens": 2327,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90005|TS",
+   "seed": 90005,
+   "law": "gas",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90005|TS|h1",
+     "final": "годный",
+     "out_tokens": 710,
+     "inp_tokens": 4110,
+     "cost_usd": 0.0010077,
+     "thinking_tokens": 627,
+     "raw": "P*V/T",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "P*V/T",
+     "deps": [
+      "T",
+      "P",
+      "V"
+     ],
+     "c": 15.31686046511628,
+     "R_shown": 0.0019892284294719467,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90005|TS|h2",
+     "final": "годный",
+     "out_tokens": 785,
+     "inp_tokens": 4108,
+     "cost_usd": 0.0010448,
+     "thinking_tokens": 702,
+     "raw": "P*V/T",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "P*V/T",
+     "deps": [
+      "T",
+      "P",
+      "V"
+     ],
+     "c": 15.31686046511628,
+     "R_shown": 0.002048099922747934,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90005|TS|h3",
+     "final": "годный",
+     "out_tokens": 640,
+     "inp_tokens": 4122,
+     "cost_usd": 0.0009751,
+     "thinking_tokens": 557,
+     "raw": "P*V/T",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "P*V/T",
+     "deps": [
+      "T",
+      "P",
+      "V"
+     ],
+     "c": 15.31686046511628,
+     "R_shown": 0.002080634431461916,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90005|TS|h4",
+     "final": "годный",
+     "out_tokens": 749,
+     "inp_tokens": 4124,
+     "cost_usd": 0.00103,
+     "thinking_tokens": 666,
+     "raw": "P*V/T",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "P*V/T",
+     "deps": [
+      "T",
+      "P",
+      "V"
+     ],
+     "c": 15.31686046511628,
+     "R_shown": 0.002031582204100483,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 1.3539223867357798e-15,
+     "R12": 1.3539223867357798e-15
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 1.4609821843841686e-15,
+     "R12": 1.4609821843841686e-15
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 1.3879053877474459e-15,
+     "R12": 1.3879053877474459e-15
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 1.4325325656982355e-15,
+     "R12": 1.4325325656982355e-15
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 1.4887043017427128e-15,
+     "R12": 1.4887043017427128e-15
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 1.6693311261003017e-15,
+     "R12": 1.6693311261003017e-15
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h1",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90005|TN",
+   "seed": 90005,
+   "law": "gas",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90005|TN|h1",
+     "final": "годный",
+     "out_tokens": 1094,
+     "inp_tokens": 4080,
+     "cost_usd": 0.0011936999999999998,
+     "thinking_tokens": 1011,
+     "raw": "b*c/a",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b*c/a",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 15.31686046511628,
+     "R_shown": 0.001969113148929516,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90005|TN|h2",
+     "final": "годный",
+     "out_tokens": 2184,
+     "inp_tokens": 4082,
+     "cost_usd": 0.0017391000000000002,
+     "thinking_tokens": 2101,
+     "raw": "b*c/a",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b*c/a",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 15.31686046511628,
+     "R_shown": 0.0019829281682473506,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90005|TN|h3",
+     "final": "годный",
+     "out_tokens": 1492,
+     "inp_tokens": 4090,
+     "cost_usd": 0.0013947,
+     "thinking_tokens": 1409,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90005|TN|h4",
+     "final": "годный",
+     "out_tokens": 2783,
+     "inp_tokens": 4092,
+     "cost_usd": 0.0020406,
+     "thinking_tokens": 2698,
+     "raw": "a/(b*c)",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.06528753084076674,
+     "R_shown": 0.0020017431897122956,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 1.1763194175231137e-15,
+     "R12": 1.1763194175231137e-15
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 1.3467679985014413e-15,
+     "R12": 1.4067952885695054e-15
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 1.4014676657739975e-15,
+     "R12": 1.5038908531557029e-15
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h4"
+   ],
+   "clique_size": 3,
+   "K": true,
+   "rep": "h1",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 1,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90005|ZS",
+   "seed": 90005,
+   "law": "gas",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90005|ZS|h1",
+     "final": "годный",
+     "out_tokens": 1895,
+     "inp_tokens": 4124,
+     "cost_usd": 0.001603,
+     "thinking_tokens": 1812,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90005|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1348,
+     "inp_tokens": 4110,
+     "cost_usd": 0.0013267,
+     "thinking_tokens": 1265,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90005|ZS|h3",
+     "final": "годный",
+     "out_tokens": 5053,
+     "inp_tokens": 4110,
+     "cost_usd": 0.0031792,
+     "thinking_tokens": 4970,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90005|ZS|h4",
+     "final": "годный",
+     "out_tokens": 2416,
+     "inp_tokens": 4112,
+     "cost_usd": 0.0018611,
+     "thinking_tokens": 2333,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90005|ZN",
+   "seed": 90005,
+   "law": "gas",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90005|ZN|h1",
+     "final": "годный",
+     "out_tokens": 1811,
+     "inp_tokens": 4086,
+     "cost_usd": 0.0015534,
+     "thinking_tokens": 1728,
+     "raw": "НЕТ",
+     "confidence": 0.1,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90005|ZN|h2",
+     "final": "годный",
+     "out_tokens": 1921,
+     "inp_tokens": 4088,
+     "cost_usd": 0.0016088,
+     "thinking_tokens": 1715,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90005|ZN|h3",
+     "final": "годный",
+     "out_tokens": 1211,
+     "inp_tokens": 4084,
+     "cost_usd": 0.0012530000000000002,
+     "thinking_tokens": 1128,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90005|ZN|h4",
+     "final": "годный",
+     "out_tokens": 1587,
+     "inp_tokens": 4078,
+     "cost_usd": 0.0014398000000000002,
+     "thinking_tokens": 1504,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90006|TS",
+   "seed": 90006,
+   "law": "lens",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90006|TS|h1",
+     "final": "годный",
+     "out_tokens": 1420,
+     "inp_tokens": 4102,
+     "cost_usd": 0.0013611,
+     "thinking_tokens": 1329,
+     "raw": "d1*d2/(d1+d2)",
+     "confidence": 0.92,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "d1*d2/(d1+d2)",
+     "deps": [
+      "d1",
+      "d2"
+     ],
+     "c": 17.389228723404255,
+     "R_shown": 0.002563789205160305,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90006|TS|h2",
+     "final": "годный",
+     "out_tokens": 1069,
+     "inp_tokens": 4100,
+     "cost_usd": 0.0011852,
+     "thinking_tokens": 978,
+     "raw": "d1*d2/(d1+d2)",
+     "confidence": 0.95,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "d1*d2/(d1+d2)",
+     "deps": [
+      "d1",
+      "d2"
+     ],
+     "c": 17.389228723404255,
+     "R_shown": 0.0026066893960866853,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90006|TS|h3",
+     "final": "годный",
+     "out_tokens": 858,
+     "inp_tokens": 4090,
+     "cost_usd": 0.0010777,
+     "thinking_tokens": 769,
+     "raw": "1/d1 + 1/d2",
+     "confidence": 0.95,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "1/d1 + 1/d2",
+     "deps": [
+      "d1",
+      "d2"
+     ],
+     "c": 0.057506863352374836,
+     "R_shown": 0.0027891618730467834,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90006|TS|h4",
+     "final": "годный",
+     "out_tokens": 963,
+     "inp_tokens": 4092,
+     "cost_usd": 0.0011306,
+     "thinking_tokens": 874,
+     "raw": "1/d1 + 1/d2",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "1/d1 + 1/d2",
+     "deps": [
+      "d1",
+      "d2"
+     ],
+     "c": 0.057506863352374836,
+     "R_shown": 0.002744572322736963,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 6.827205907532781e-16,
+     "R12": 6.827205907532781e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 8.223529085871228e-16,
+     "R12": 6.743287286457824e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 8.404559845674243e-16,
+     "R12": 7.024395509107837e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 8.616620783390954e-16,
+     "R12": 6.947461997795085e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 8.639148416879952e-16,
+     "R12": 7.106616644025203e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 7.940342810543489e-16,
+     "R12": 7.940342810543489e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h1",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90006|TN",
+   "seed": 90006,
+   "law": "lens",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90006|TN|h1",
+     "final": "годный",
+     "out_tokens": 2628,
+     "inp_tokens": 4049,
+     "cost_usd": 0.0019545,
+     "thinking_tokens": 2545,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90006|TN|h2",
+     "final": "годный",
+     "out_tokens": 3916,
+     "inp_tokens": 4051,
+     "cost_usd": 0.0025989000000000003,
+     "thinking_tokens": 3833,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90006|TN|h3",
+     "final": "годный",
+     "out_tokens": 2417,
+     "inp_tokens": 4051,
+     "cost_usd": 0.0018494,
+     "thinking_tokens": 2334,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90006|TN|h4",
+     "final": "годный",
+     "out_tokens": 3747,
+     "inp_tokens": 4049,
+     "cost_usd": 0.0025139999999999997,
+     "thinking_tokens": 3517,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90006|ZS",
+   "seed": 90006,
+   "law": "lens",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90006|ZS|h1",
+     "final": "годный",
+     "out_tokens": 2048,
+     "inp_tokens": 4096,
+     "cost_usd": 0.0016738999999999999,
+     "thinking_tokens": 1965,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90006|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1379,
+     "inp_tokens": 4092,
+     "cost_usd": 0.0013386000000000001,
+     "thinking_tokens": 1296,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90006|ZS|h3",
+     "final": "годный",
+     "out_tokens": 1764,
+     "inp_tokens": 4096,
+     "cost_usd": 0.0015318999999999999,
+     "thinking_tokens": 1529,
+     "raw": "НЕТ",
+     "confidence": 0.95,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90006|ZS|h4",
+     "final": "годный",
+     "out_tokens": 2282,
+     "inp_tokens": 4090,
+     "cost_usd": 0.0017897,
+     "thinking_tokens": 1918,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90006|ZN",
+   "seed": 90006,
+   "law": "lens",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90006|ZN|h1",
+     "final": "годный",
+     "out_tokens": 1150,
+     "inp_tokens": 4051,
+     "cost_usd": 0.0012159,
+     "thinking_tokens": 1067,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90006|ZN|h2",
+     "final": "годный",
+     "out_tokens": 1514,
+     "inp_tokens": 4049,
+     "cost_usd": 0.0013975,
+     "thinking_tokens": 1431,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90006|ZN|h3",
+     "final": "годный",
+     "out_tokens": 1487,
+     "inp_tokens": 4049,
+     "cost_usd": 0.001384,
+     "thinking_tokens": 1404,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90006|ZN|h4",
+     "final": "годный",
+     "out_tokens": 1556,
+     "inp_tokens": 4045,
+     "cost_usd": 0.0014177,
+     "thinking_tokens": 1473,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90007|TS",
+   "seed": 90007,
+   "law": "spring",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90007|TS|h1",
+     "final": "годный",
+     "out_tokens": 1528,
+     "inp_tokens": 4094,
+     "cost_usd": 0.0014135000000000003,
+     "thinking_tokens": 1439,
+     "raw": "v**2 + 10*x**2",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 10*x**2",
+     "deps": [
+      "x",
+      "v"
+     ],
+     "c": 0.2802681,
+     "R_shown": 0.02290046712878179,
+     "R_in": 0.004519226450184601,
+     "R_out": 0.004370324324098629,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90007|TS|h2",
+     "final": "годный",
+     "out_tokens": 1406,
+     "inp_tokens": 4090,
+     "cost_usd": 0.0013517,
+     "thinking_tokens": 1317,
+     "raw": "v**2 + 10*x**2",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 10*x**2",
+     "deps": [
+      "x",
+      "v"
+     ],
+     "c": 0.2802681,
+     "R_shown": 0.0182289253390161,
+     "R_in": 0.004480301775093025,
+     "R_out": 0.004360579011741842,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90007|TS|h3",
+     "final": "годный",
+     "out_tokens": 1115,
+     "inp_tokens": 4094,
+     "cost_usd": 0.0012070000000000002,
+     "thinking_tokens": 1026,
+     "raw": "v**2 + 10*x**2",
+     "confidence": 0.92,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 10*x**2",
+     "deps": [
+      "x",
+      "v"
+     ],
+     "c": 0.2802681,
+     "R_shown": 0.019209876342269238,
+     "R_in": 0.004444343458683277,
+     "R_out": 0.004363348041847819,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90007|TS|h4",
+     "final": "годный",
+     "out_tokens": 1698,
+     "inp_tokens": 4092,
+     "cost_usd": 0.0014981,
+     "thinking_tokens": 1609,
+     "raw": "v**2 + 10*x**2",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 10*x**2",
+     "deps": [
+      "x",
+      "v"
+     ],
+     "c": 0.2802681,
+     "R_shown": 0.02290046712878179,
+     "R_in": 0.004606795818534494,
+     "R_out": 0.004305060623722633,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 9.642355750003612e-16,
+     "R12": 9.642355750003612e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 8.517486544244465e-16,
+     "R12": 8.517486544244465e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 9.674390991995389e-16,
+     "R12": 9.674390991995389e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 1.1035105783593268e-15,
+     "R12": 1.1035105783593268e-15
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 8.44019478035654e-16,
+     "R12": 8.44019478035654e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 9.48245741954705e-16,
+     "R12": 9.48245741954705e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90007|TN",
+   "seed": 90007,
+   "law": "spring",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90007|TN|h1",
+     "final": "годный",
+     "out_tokens": 3906,
+     "inp_tokens": 4059,
+     "cost_usd": 0.0025955,
+     "thinking_tokens": 3823,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90007|TN|h2",
+     "final": "годный",
+     "out_tokens": 4641,
+     "inp_tokens": 4057,
+     "cost_usd": 0.0029626,
+     "thinking_tokens": 4558,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90007|TN|h3",
+     "final": "годный",
+     "out_tokens": 3931,
+     "inp_tokens": 4061,
+     "cost_usd": 0.0026084,
+     "thinking_tokens": 3848,
+     "raw": "НЕТ",
+     "confidence": 0.3,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90007|TN|h4",
+     "final": "годный",
+     "out_tokens": 3206,
+     "inp_tokens": 4071,
+     "cost_usd": 0.0022479,
+     "thinking_tokens": 3123,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90007|ZS",
+   "seed": 90007,
+   "law": "spring",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90007|ZS|h1",
+     "final": "годный",
+     "out_tokens": 1141,
+     "inp_tokens": 4094,
+     "cost_usd": 0.0012200000000000002,
+     "thinking_tokens": 1058,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90007|ZS|h2",
+     "final": "годный",
+     "out_tokens": 2119,
+     "inp_tokens": 4096,
+     "cost_usd": 0.0017093999999999998,
+     "thinking_tokens": 2036,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90007|ZS|h3",
+     "final": "годный",
+     "out_tokens": 2108,
+     "inp_tokens": 4092,
+     "cost_usd": 0.0017031,
+     "thinking_tokens": 2025,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90007|ZS|h4",
+     "final": "годный",
+     "out_tokens": 3293,
+     "inp_tokens": 4088,
+     "cost_usd": 0.0022948,
+     "thinking_tokens": 3210,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90007|ZN",
+   "seed": 90007,
+   "law": "spring",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90007|ZN|h1",
+     "final": "годный",
+     "out_tokens": 1983,
+     "inp_tokens": 4067,
+     "cost_usd": 0.0016356,
+     "thinking_tokens": 1900,
+     "raw": "НЕТ",
+     "confidence": 0.02,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90007|ZN|h2",
+     "final": "годный",
+     "out_tokens": 1788,
+     "inp_tokens": 4059,
+     "cost_usd": 0.0015365,
+     "thinking_tokens": 1705,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90007|ZN|h3",
+     "final": "годный",
+     "out_tokens": 1781,
+     "inp_tokens": 4061,
+     "cost_usd": 0.0015333999999999999,
+     "thinking_tokens": 1698,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90007|ZN|h4",
+     "final": "годный",
+     "out_tokens": 1324,
+     "inp_tokens": 4063,
+     "cost_usd": 0.0013053000000000001,
+     "thinking_tokens": 1241,
+     "raw": "НЕТ",
+     "confidence": 0.12,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90008|TS",
+   "seed": 90008,
+   "law": "energy",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90008|TS|h1",
+     "final": "годный",
+     "out_tokens": 3122,
+     "inp_tokens": 4078,
+     "cost_usd": 0.0022073,
+     "thinking_tokens": 3033,
+     "raw": "v**2 + 19.6*h",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 19.6*h",
+     "deps": [
+      "v",
+      "h"
+     ],
+     "c": 331.0489,
+     "R_shown": 0.011331752158613003,
+     "R_in": 0.0008673262216413008,
+     "R_out": 0.0008395868694333531,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90008|TS|h2",
+     "final": "годный",
+     "out_tokens": 1852,
+     "inp_tokens": 4082,
+     "cost_usd": 0.0015731,
+     "thinking_tokens": 1763,
+     "raw": "v**2 + 19.62*h",
+     "confidence": 0.8,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 19.62*h",
+     "deps": [
+      "v",
+      "h"
+     ],
+     "c": 331.3009,
+     "R_shown": 0.011483919523659115,
+     "R_in": 0.0,
+     "R_out": 1.977405634852449e-15,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90008|TS|h3",
+     "final": "годный",
+     "out_tokens": 2676,
+     "inp_tokens": 4082,
+     "cost_usd": 0.0019851,
+     "thinking_tokens": 2585,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.8,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "v",
+      "h"
+     ],
+     "c": 165.65045,
+     "R_shown": 0.011605194145355725,
+     "R_in": 0.0,
+     "R_out": 1.927057892155239e-15,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90008|TS|h4",
+     "final": "годный",
+     "out_tokens": 2239,
+     "inp_tokens": 4082,
+     "cost_usd": 0.0017666000000000001,
+     "thinking_tokens": 2148,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.6,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "v",
+      "h"
+     ],
+     "c": 165.65045,
+     "R_shown": 0.011565201971347845,
+     "R_in": 0.0,
+     "R_out": 1.937582853238221e-15,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 0.0009758087904398886,
+     "R12": 0.0009749918131305262
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 0.0009807246343901995,
+     "R12": 0.0009809094048365578
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 0.0009584875425729133,
+     "R12": 0.0009590113432270544
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 4.3193038814974467e-16,
+     "R12": 4.3193038814974467e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 9.12523523967955e-16,
+     "R12": 9.12523523967955e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 9.702749264846595e-16,
+     "R12": 9.702749264846595e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h1",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90008|TN",
+   "seed": 90008,
+   "law": "energy",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90008|TN|h1",
+     "final": "годный",
+     "out_tokens": 3626,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0024530999999999997,
+     "thinking_tokens": 3543,
+     "raw": "НЕТ",
+     "confidence": 0.1,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90008|TN|h2",
+     "final": "годный",
+     "out_tokens": 5321,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0033006000000000003,
+     "thinking_tokens": 5232,
+     "raw": "a**2 + 19.6*b",
+     "confidence": 0.75,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a**2 + 19.6*b",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 331.0489,
+     "R_shown": 0.012920216338505534,
+     "R_in": 0.0008627100938094344,
+     "R_out": 0.0008379638254750009,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90008|TN|h3",
+     "final": "годный",
+     "out_tokens": 4362,
+     "inp_tokens": 4055,
+     "cost_usd": 0.0028227000000000005,
+     "thinking_tokens": 4279,
+     "raw": "НЕТ",
+     "confidence": 0.15,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90008|TN|h4",
+     "final": "годный",
+     "out_tokens": 8109,
+     "inp_tokens": 4055,
+     "cost_usd": 0.004696199999999999,
+     "thinking_tokens": 8020,
+     "raw": "b + 0.0511*a**2",
+     "confidence": 0.55,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b + 0.0511*a**2",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 16.89694279,
+     "R_shown": 0.010612296962089837,
+     "R_in": 0.0021450051543596936,
+     "R_out": 0.0021475707522649614,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 0.001518437645938054,
+     "R12": 0.001521717655472403
+    }
+   ],
+   "clique": [
+    "h2",
+    "h4"
+   ],
+   "clique_size": 2,
+   "K": false,
+   "rep": "h4",
+   "rep_holds": true,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 2,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90008|ZS",
+   "seed": 90008,
+   "law": "energy",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90008|ZS|h1",
+     "final": "годный",
+     "out_tokens": 1119,
+     "inp_tokens": 4084,
+     "cost_usd": 0.0012070000000000002,
+     "thinking_tokens": 1036,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90008|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1646,
+     "inp_tokens": 4082,
+     "cost_usd": 0.0014701,
+     "thinking_tokens": 1563,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90008|ZS|h3",
+     "final": "годный",
+     "out_tokens": 1015,
+     "inp_tokens": 4078,
+     "cost_usd": 0.0011538000000000002,
+     "thinking_tokens": 932,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90008|ZS|h4",
+     "final": "годный",
+     "out_tokens": 1668,
+     "inp_tokens": 4080,
+     "cost_usd": 0.0014807000000000002,
+     "thinking_tokens": 1339,
+     "raw": "НЕТ",
+     "confidence": 0.02,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90008|ZN",
+   "seed": 90008,
+   "law": "energy",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90008|ZN|h1",
+     "final": "годный",
+     "out_tokens": 1731,
+     "inp_tokens": 4055,
+     "cost_usd": 0.0015072,
+     "thinking_tokens": 1648,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90008|ZN|h2",
+     "final": "годный",
+     "out_tokens": 1019,
+     "inp_tokens": 4047,
+     "cost_usd": 0.0011496,
+     "thinking_tokens": 936,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90008|ZN|h3",
+     "final": "годный",
+     "out_tokens": 1170,
+     "inp_tokens": 4053,
+     "cost_usd": 0.0012263,
+     "thinking_tokens": 1086,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90008|ZN|h4",
+     "final": "годный",
+     "out_tokens": 2255,
+     "inp_tokens": 4053,
+     "cost_usd": 0.0017688,
+     "thinking_tokens": 2172,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90009|TS",
+   "seed": 90009,
+   "law": "coulomb",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 4,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90009|TS|h1",
+     "final": "годный",
+     "out_tokens": 1223,
+     "inp_tokens": 4281,
+     "cost_usd": 0.0012984000000000001,
+     "thinking_tokens": 1132,
+     "raw": "F*r**2/(q1*q2)",
+     "confidence": 0.95,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "F*r**2/(q1*q2)",
+     "deps": [
+      "q2",
+      "F",
+      "q1",
+      "r"
+     ],
+     "c": 0.0013023250732363252,
+     "R_shown": 0.000641659223480992,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90009|TS|h2",
+     "final": "годный",
+     "out_tokens": 1576,
+     "inp_tokens": 4289,
+     "cost_usd": 0.0014765,
+     "thinking_tokens": 1485,
+     "raw": "F*r**2/(q1*q2)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "F*r**2/(q1*q2)",
+     "deps": [
+      "q2",
+      "F",
+      "q1",
+      "r"
+     ],
+     "c": 0.0013023250732363252,
+     "R_shown": 0.0006255117716034258,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90009|TS|h3",
+     "final": "годный",
+     "out_tokens": 1985,
+     "inp_tokens": 4283,
+     "cost_usd": 0.0016798,
+     "thinking_tokens": 1894,
+     "raw": "F*r**2/(q1*q2)",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "F*r**2/(q1*q2)",
+     "deps": [
+      "q2",
+      "F",
+      "q1",
+      "r"
+     ],
+     "c": 0.0013023250732363252,
+     "R_shown": 0.000638833705688265,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90009|TS|h4",
+     "final": "годный",
+     "out_tokens": 2020,
+     "inp_tokens": 4279,
+     "cost_usd": 0.0016965,
+     "thinking_tokens": 1929,
+     "raw": "F*r**2/(q1*q2)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "F*r**2/(q1*q2)",
+     "deps": [
+      "q2",
+      "F",
+      "q1",
+      "r"
+     ],
+     "c": 0.0013023250732363252,
+     "R_shown": 0.000632804037925188,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 1.3062402561497247e-16,
+     "R12": 1.3062402561497247e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 1.1996102397222273e-16,
+     "R12": 1.1996102397222273e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 1.2444487517224015e-16,
+     "R12": 1.2444487517224015e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 1.3127384537407871e-16,
+     "R12": 1.3127384537407871e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 1.3894631466418122e-16,
+     "R12": 1.3894631466418122e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 1.3973134669352453e-16,
+     "R12": 1.3973134669352453e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90009|TN",
+   "seed": 90009,
+   "law": "coulomb",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 4,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90009|TN|h1",
+     "final": "годный",
+     "out_tokens": 1587,
+     "inp_tokens": 4219,
+     "cost_usd": 0.0014680000000000001,
+     "thinking_tokens": 1504,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90009|TN|h2",
+     "final": "годный",
+     "out_tokens": 1173,
+     "inp_tokens": 4219,
+     "cost_usd": 0.001261,
+     "thinking_tokens": 1090,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90009|TN|h3",
+     "final": "годный",
+     "out_tokens": 1306,
+     "inp_tokens": 4215,
+     "cost_usd": 0.0013267,
+     "thinking_tokens": 1223,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90009|TN|h4",
+     "final": "годный",
+     "out_tokens": 1283,
+     "inp_tokens": 4215,
+     "cost_usd": 0.0013152,
+     "thinking_tokens": 1200,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90009|ZS",
+   "seed": 90009,
+   "law": "coulomb",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 4,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90009|ZS|h1",
+     "final": "годный",
+     "out_tokens": 3429,
+     "inp_tokens": 4283,
+     "cost_usd": 0.0024018,
+     "thinking_tokens": 3346,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90009|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1684,
+     "inp_tokens": 4285,
+     "cost_usd": 0.0015297000000000002,
+     "thinking_tokens": 1601,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90009|ZS|h3",
+     "final": "годный",
+     "out_tokens": 2372,
+     "inp_tokens": 4287,
+     "cost_usd": 0.0018741,
+     "thinking_tokens": 2289,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90009|ZS|h4",
+     "final": "годный",
+     "out_tokens": 2830,
+     "inp_tokens": 4271,
+     "cost_usd": 0.0020999,
+     "thinking_tokens": 2747,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90009|ZN",
+   "seed": 90009,
+   "law": "coulomb",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 4,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90009|ZN|h1",
+     "final": "годный",
+     "out_tokens": 1784,
+     "inp_tokens": 4225,
+     "cost_usd": 0.0015677,
+     "thinking_tokens": 1527,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90009|ZN|h2",
+     "final": "годный",
+     "out_tokens": 960,
+     "inp_tokens": 4217,
+     "cost_usd": 0.0011541,
+     "thinking_tokens": 877,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90009|ZN|h3",
+     "final": "годный",
+     "out_tokens": 1251,
+     "inp_tokens": 4219,
+     "cost_usd": 0.0013,
+     "thinking_tokens": 1168,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90009|ZN|h4",
+     "final": "годный",
+     "out_tokens": 1608,
+     "inp_tokens": 4213,
+     "cost_usd": 0.0014773,
+     "thinking_tokens": 1525,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90010|TS",
+   "seed": 90010,
+   "law": "ohm",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90010|TS|h1",
+     "final": "годный",
+     "out_tokens": 878,
+     "inp_tokens": 4172,
+     "cost_usd": 0.0011041,
+     "thinking_tokens": 797,
+     "raw": "U/R",
+     "confidence": 0.97,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/R",
+     "deps": [
+      "U",
+      "R"
+     ],
+     "c": 0.3353353353353353,
+     "R_shown": 0.36721860858202393,
+     "R_in": 0.7082657737797667,
+     "R_out": 0.7180798968361394,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h2",
+     "job": "I90010|TS|h2",
+     "final": "годный",
+     "out_tokens": 1417,
+     "inp_tokens": 4176,
+     "cost_usd": 0.0013744,
+     "thinking_tokens": 1336,
+     "raw": "U/R",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/R",
+     "deps": [
+      "U",
+      "R"
+     ],
+     "c": 0.3353353353353353,
+     "R_shown": 0.3733997592623355,
+     "R_in": 0.7161764686292414,
+     "R_out": 0.7171953236223122,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h3",
+     "job": "I90010|TS|h3",
+     "final": "годный",
+     "out_tokens": 1202,
+     "inp_tokens": 4174,
+     "cost_usd": 0.0012665,
+     "thinking_tokens": 1117,
+     "raw": "U/(R*I)",
+     "confidence": 0.97,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 1.0003040437823045,
+     "R_shown": 0.0015702646606562008,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90010|TS|h4",
+     "final": "годный",
+     "out_tokens": 2520,
+     "inp_tokens": 4174,
+     "cost_usd": 0.0019255000000000001,
+     "thinking_tokens": 2435,
+     "raw": "U/(I*R)",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(I*R)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 1.0003040437823045,
+     "R_shown": 0.0014870619349158136,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 1.9573010864132088e-16,
+     "R12": 1.9573010864132088e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": false,
+     "R21": 0.28870440477884723,
+     "R12": 0.5160477890531792
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": false,
+     "R21": 0.32836962859709323,
+     "R12": 0.5338170797362881
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": false,
+     "R21": 0.3759340772043991,
+     "R12": 0.48233668828852316
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": false,
+     "R21": 0.3285886590084518,
+     "R12": 0.5832213652710486
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 2.86674876736686e-16,
+     "R12": 2.86674876736686e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2"
+   ],
+   "clique_size": 2,
+   "K": false,
+   "rep": "h1",
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": false,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90010|TN",
+   "seed": 90010,
+   "law": "ohm",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90010|TN|h1",
+     "final": "годный",
+     "out_tokens": 1465,
+     "inp_tokens": 4132,
+     "cost_usd": 0.0013896,
+     "thinking_tokens": 1380,
+     "raw": "a/(b*c)",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 1.0003040437823045,
+     "R_shown": 0.0014814860622594296,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90010|TN|h2",
+     "final": "годный",
+     "out_tokens": 2313,
+     "inp_tokens": 4134,
+     "cost_usd": 0.001814,
+     "thinking_tokens": 2230,
+     "raw": "a/b - c",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/b - c",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.00010033444816048842,
+     "R_shown": 0.0012766965607119852,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90010|TN|h3",
+     "final": "годный",
+     "out_tokens": 1084,
+     "inp_tokens": 4132,
+     "cost_usd": 0.0011990999999999998,
+     "thinking_tokens": 1001,
+     "raw": "c - a/b",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "c - a/b",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": -0.00010033444816048842,
+     "R_shown": 0.0013272820496090687,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90010|TN|h4",
+     "final": "годный",
+     "out_tokens": 1396,
+     "inp_tokens": 4130,
+     "cost_usd": 0.0013547,
+     "thinking_tokens": 1313,
+     "raw": "a/b-c",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/b-c",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.00010033444816048842,
+     "R_shown": 0.0012783649220044636,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 0.00013013279860051553,
+     "R12": 9.836507001827351e-05
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 0.00020210675318767032,
+     "R12": 0.0001318469793578417
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 0.00013850437047438008,
+     "R12": 0.00010910395661125537
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 2.0813009321851187e-16,
+     "R12": 2.0813009321851187e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 2.1981949958957562e-16,
+     "R12": 2.1981949958957562e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 3.2510655949934e-16,
+     "R12": 3.2510655949934e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90010|ZS",
+   "seed": 90010,
+   "law": "ohm",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90010|ZS|h1",
+     "final": "годный",
+     "out_tokens": 1046,
+     "inp_tokens": 4176,
+     "cost_usd": 0.0011889000000000001,
+     "thinking_tokens": 963,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90010|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1093,
+     "inp_tokens": 4176,
+     "cost_usd": 0.0012124000000000002,
+     "thinking_tokens": 1010,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90010|ZS|h3",
+     "final": "годный",
+     "out_tokens": 1804,
+     "inp_tokens": 4178,
+     "cost_usd": 0.0015683,
+     "thinking_tokens": 1721,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90010|ZS|h4",
+     "final": "годный",
+     "out_tokens": 1100,
+     "inp_tokens": 4180,
+     "cost_usd": 0.0012167000000000002,
+     "thinking_tokens": 1017,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90010|ZN",
+   "seed": 90010,
+   "law": "ohm",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90010|ZN|h1",
+     "final": "годный",
+     "out_tokens": 1917,
+     "inp_tokens": 4130,
+     "cost_usd": 0.0016152000000000002,
+     "thinking_tokens": 1834,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90010|ZN|h2",
+     "final": "годный",
+     "out_tokens": 1373,
+     "inp_tokens": 4138,
+     "cost_usd": 0.0013448000000000002,
+     "thinking_tokens": 1290,
+     "raw": "НЕТ",
+     "confidence": 0.03,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90010|ZN|h3",
+     "final": "годный",
+     "out_tokens": 2074,
+     "inp_tokens": 4144,
+     "cost_usd": 0.0016965,
+     "thinking_tokens": 1991,
+     "raw": "НЕТ",
+     "confidence": 0.02,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90010|ZN|h4",
+     "final": "годный",
+     "out_tokens": 1762,
+     "inp_tokens": 4132,
+     "cost_usd": 0.0015381000000000001,
+     "thinking_tokens": 1679,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90011|TS",
+   "seed": 90011,
+   "law": "kinetic",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90011|TS|h1",
+     "final": "годный",
+     "out_tokens": 1314,
+     "inp_tokens": 4175,
+     "cost_usd": 0.0013227,
+     "thinking_tokens": 1227,
+     "raw": "E/(m*v**2)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "E/(m*v**2)",
+     "deps": [
+      "E",
+      "v",
+      "m"
+     ],
+     "c": 0.5000466175535345,
+     "R_shown": 0.0005717493774190352,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90011|TS|h2",
+     "final": "годный",
+     "out_tokens": 1389,
+     "inp_tokens": 4167,
+     "cost_usd": 0.0013586000000000002,
+     "thinking_tokens": 1298,
+     "raw": "E/(0.5*m*v**2)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "E/(0.5*m*v**2)",
+     "deps": [
+      "E",
+      "v",
+      "m"
+     ],
+     "c": 1.000093235107069,
+     "R_shown": 0.0005672898525514174,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90011|TS|h3",
+     "final": "годный",
+     "out_tokens": 1409,
+     "inp_tokens": 4167,
+     "cost_usd": 0.0013686000000000002,
+     "thinking_tokens": 1322,
+     "raw": "E/(m*v**2)",
+     "confidence": 0.95,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "E/(m*v**2)",
+     "deps": [
+      "E",
+      "v",
+      "m"
+     ],
+     "c": 0.5000466175535345,
+     "R_shown": 0.0005766782431723426,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90011|TS|h4",
+     "final": "годный",
+     "out_tokens": 1431,
+     "inp_tokens": 4165,
+     "cost_usd": 0.0013792,
+     "thinking_tokens": 1340,
+     "raw": "E/(0.5*m*v**2)",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "E/(0.5*m*v**2)",
+     "deps": [
+      "E",
+      "v",
+      "m"
+     ],
+     "c": 1.000093235107069,
+     "R_shown": 0.0005858966049092334,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 2.732239350673812e-16,
+     "R12": 2.732239350673812e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 2.621405622650847e-16,
+     "R12": 2.621405622650847e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 2.6766045326823896e-16,
+     "R12": 2.6766045326823896e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 2.694684900923846e-16,
+     "R12": 2.694684900923846e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 2.512199023115718e-16,
+     "R12": 2.512199023115718e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 2.928505442902019e-16,
+     "R12": 2.928505442902019e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90011|TN",
+   "seed": 90011,
+   "law": "kinetic",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90011|TN|h1",
+     "final": "годный",
+     "out_tokens": 2833,
+     "inp_tokens": 4138,
+     "cost_usd": 0.0020748,
+     "thinking_tokens": 2742,
+     "raw": "a/(0.5*b**2*c)",
+     "confidence": 0.96,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(0.5*b**2*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 1.000093235107069,
+     "R_shown": 0.0005815937284966757,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90011|TN|h2",
+     "final": "годный",
+     "out_tokens": 2533,
+     "inp_tokens": 4132,
+     "cost_usd": 0.0019236000000000001,
+     "thinking_tokens": 2448,
+     "raw": "b**2*c/a",
+     "confidence": 0.95,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2*c/a",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 1.9998135471698115,
+     "R_shown": 0.0006057511341056201,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90011|TN|h3",
+     "final": "годный",
+     "out_tokens": 2509,
+     "inp_tokens": 4136,
+     "cost_usd": 0.0019123999999999999,
+     "thinking_tokens": 2422,
+     "raw": "a/(b**2*c)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b**2*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.5000466175535345,
+     "R_shown": 0.0005626954130514666,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90011|TN|h4",
+     "final": "годный",
+     "out_tokens": 2833,
+     "inp_tokens": 4138,
+     "cost_usd": 0.0020748,
+     "thinking_tokens": 2746,
+     "raw": "a/(b**2*c)",
+     "confidence": 0.96,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b**2*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.5000466175535345,
+     "R_shown": 0.0005883169078690083,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 1.879933212566997e-16,
+     "R12": 2.3296128932479907e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 2.797676748283871e-16,
+     "R12": 2.797676748283871e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 2.778957156550202e-16,
+     "R12": 2.778957156550202e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 2.674225715845871e-16,
+     "R12": 2.2364971278251613e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 3.1602083950091803e-16,
+     "R12": 2.6020110996563753e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 2.8690963177342083e-16,
+     "R12": 2.8690963177342083e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h3",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90011|ZS",
+   "seed": 90011,
+   "law": "kinetic",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90011|ZS|h1",
+     "final": "годный",
+     "out_tokens": 2932,
+     "inp_tokens": 4173,
+     "cost_usd": 0.0021313,
+     "thinking_tokens": 2849,
+     "raw": "НЕТ",
+     "confidence": 0.1,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90011|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1317,
+     "inp_tokens": 4173,
+     "cost_usd": 0.0013238,
+     "thinking_tokens": 1234,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90011|ZS|h3",
+     "final": "годный",
+     "out_tokens": 2529,
+     "inp_tokens": 4171,
+     "cost_usd": 0.0019294,
+     "thinking_tokens": 2446,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90011|ZS|h4",
+     "final": "годный",
+     "out_tokens": 2301,
+     "inp_tokens": 4165,
+     "cost_usd": 0.0018142,
+     "thinking_tokens": 2218,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  },
+  {
+   "table": "I90011|ZN",
+   "seed": 90011,
+   "law": "kinetic",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90011|ZN|h1",
+     "final": "годный",
+     "out_tokens": 2521,
+     "inp_tokens": 4134,
+     "cost_usd": 0.001918,
+     "thinking_tokens": 2438,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90011|ZN|h2",
+     "final": "годный",
+     "out_tokens": 1995,
+     "inp_tokens": 4136,
+     "cost_usd": 0.0016554,
+     "thinking_tokens": 1912,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90011|ZN|h3",
+     "final": "годный",
+     "out_tokens": 2216,
+     "inp_tokens": 4138,
+     "cost_usd": 0.0017663000000000002,
+     "thinking_tokens": 2133,
+     "raw": "НЕТ",
+     "confidence": 0.05,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90011|ZN|h4",
+     "final": "годный",
+     "out_tokens": 2533,
+     "inp_tokens": 4142,
+     "cost_usd": 0.0019256,
+     "thinking_tokens": 2450,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "a"
+  }
+ ]
+}
