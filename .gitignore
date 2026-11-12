@@ -10,3 +10,4 @@ experiments/2026-10-29_SELECT-01C/jobs/test_jobs.jsonl
 # PLATON-01: задания с промптами и журналы заглушек сухого прогона воспроизводятся кодом (dry_platon.py)
 experiments/2026-11-12_PLATON-01/dry/jobs*/jobs.jsonl
 experiments/2026-11-12_PLATON-01/dry/*/journal/
+experiments/2026-11-12_PLATON-01/run/jobs.jsonl
