@@ -1,0 +1,1242 @@
+[
+ {
+  "table": "I80001|TS",
+  "task": "I80001",
+  "seed": 80001,
+  "law": "fall",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "t"
+  ],
+  "prompt_sha256": "36b59b2dd3a24a533c8741ef53c9a98d072fb7ade6b2c845d194a5cceef83a2f",
+  "z_tries": 2
+ },
+ {
+  "table": "I80001|TN",
+  "task": "I80001",
+  "seed": 80001,
+  "law": "fall",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "e4e623b202b9bb57415112d29b21e1ae1df9f54f6836ed8bf408d2d43a3922c5",
+  "z_tries": 2
+ },
+ {
+  "table": "I80001|ZS",
+  "task": "I80001",
+  "seed": 80001,
+  "law": "fall",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "h",
+   "t"
+  ],
+  "prompt_sha256": "597b0ab66844418d2ce635cb7630453e971c55bbe806e3cc4e5861aec260c680",
+  "z_tries": 2
+ },
+ {
+  "table": "I80001|ZN",
+  "task": "I80001",
+  "seed": 80001,
+  "law": "fall",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "59f2fa1683b23b4ed85bc4d6f9f3deba972752a652ea26a321f06042bb713056",
+  "z_tries": 2
+ },
+ {
+  "table": "I80002|TS",
+  "task": "I80002",
+  "seed": 80002,
+  "law": "pendulum",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "L",
+   "T"
+  ],
+  "prompt_sha256": "04f018cf0c5ca6053f2ff96fb3b95b0db936fe37ebdcc9ab958c9119f7b45715",
+  "z_tries": 1
+ },
+ {
+  "table": "I80002|TN",
+  "task": "I80002",
+  "seed": 80002,
+  "law": "pendulum",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "f62a20791b63491b6a18d40eda4bc1e981c09cac798f37779515867389569621",
+  "z_tries": 1
+ },
+ {
+  "table": "I80002|ZS",
+  "task": "I80002",
+  "seed": 80002,
+  "law": "pendulum",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "L",
+   "T"
+  ],
+  "prompt_sha256": "a151cd7cd03eacebfc406ed388ba59964765ae545b4f783e9559d824c1c459ab",
+  "z_tries": 1
+ },
+ {
+  "table": "I80002|ZN",
+  "task": "I80002",
+  "seed": 80002,
+  "law": "pendulum",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "e3757905464253e3ff2981095887ad1c592d61a3fa1ec52cb17f9017567b4151",
+  "z_tries": 1
+ },
+ {
+  "table": "I80003|TS",
+  "task": "I80003",
+  "seed": 80003,
+  "law": "kepler",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "T",
+   "a"
+  ],
+  "prompt_sha256": "33d8dcc94500c4049b40e0c50fc51fa0546a4d123572d83d1816b4c371174202",
+  "z_tries": 1
+ },
+ {
+  "table": "I80003|TN",
+  "task": "I80003",
+  "seed": 80003,
+  "law": "kepler",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "1b9ab20a15f78523d597ed69ae041a4b4582a3176960bcdd39c1c94e4e7bc583",
+  "z_tries": 1
+ },
+ {
+  "table": "I80003|ZS",
+  "task": "I80003",
+  "seed": 80003,
+  "law": "kepler",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "T",
+   "a"
+  ],
+  "prompt_sha256": "b336a3c0ddf902231754f0bb6c05d0d617d8d9e54ef125f36edaceb4d8b76330",
+  "z_tries": 1
+ },
+ {
+  "table": "I80003|ZN",
+  "task": "I80003",
+  "seed": 80003,
+  "law": "kepler",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "e2f1eb7d06b317bbaf3bac6e0345dca2761a132a81b99ac365685d65e131d596",
+  "z_tries": 1
+ },
+ {
+  "table": "I80004|TS",
+  "task": "I80004",
+  "seed": 80004,
+  "law": "gas",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "V",
+   "T",
+   "P"
+  ],
+  "prompt_sha256": "8d62f1db33c6257c55a71de1d7e6da75e2e5a81c02bd406a3f7db05da5aae8cc",
+  "z_tries": 1
+ },
+ {
+  "table": "I80004|TN",
+  "task": "I80004",
+  "seed": 80004,
+  "law": "gas",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "313c8d581350b101317d0ca877ae60384ed8c9e0f9a3250540f7b36a7d38372b",
+  "z_tries": 1
+ },
+ {
+  "table": "I80004|ZS",
+  "task": "I80004",
+  "seed": 80004,
+  "law": "gas",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "V",
+   "T",
+   "P"
+  ],
+  "prompt_sha256": "286f7029c16688b3f8a2e6e58bc45b880e4f3db39aaa66c3e224ff1f754e0fb0",
+  "z_tries": 1
+ },
+ {
+  "table": "I80004|ZN",
+  "task": "I80004",
+  "seed": 80004,
+  "law": "gas",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "9feb950ec0a4e6477f899763fe7ef388efa2c565b6a554ee62cf48fb1dcf9f07",
+  "z_tries": 1
+ },
+ {
+  "table": "I80005|TS",
+  "task": "I80005",
+  "seed": 80005,
+  "law": "lens",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "d1",
+   "d2"
+  ],
+  "prompt_sha256": "f02745cfec6b836615e34a52e0d8e9e40e9ed3d38a35d53eac7056ba308e8717",
+  "z_tries": 1
+ },
+ {
+  "table": "I80005|TN",
+  "task": "I80005",
+  "seed": 80005,
+  "law": "lens",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "c49078fc3ec9ad763a6b0e48d7d5f22b56af783c15bf1472cb831566f4b21c1c",
+  "z_tries": 1
+ },
+ {
+  "table": "I80005|ZS",
+  "task": "I80005",
+  "seed": 80005,
+  "law": "lens",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "d1",
+   "d2"
+  ],
+  "prompt_sha256": "b863f4024d427737c5ed9b460fe8788723987b30fc41d4e486c1c40f09b3f413",
+  "z_tries": 1
+ },
+ {
+  "table": "I80005|ZN",
+  "task": "I80005",
+  "seed": 80005,
+  "law": "lens",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "e86186a20e5959929359939ee0e8c59dd2c6af4419e84503f37f02c3ba46cd50",
+  "z_tries": 1
+ },
+ {
+  "table": "I80006|TS",
+  "task": "I80006",
+  "seed": 80006,
+  "law": "spring",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "x"
+  ],
+  "prompt_sha256": "842ba744ae20573ffd3190324f0d3000e7a3d52e456f7c4fa0b3330cbd2ddd41",
+  "z_tries": 1
+ },
+ {
+  "table": "I80006|TN",
+  "task": "I80006",
+  "seed": 80006,
+  "law": "spring",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "a83160bdff6b7c2729f7246ca7abb82792fd83d155b0859016110b1a86e2f6e3",
+  "z_tries": 1
+ },
+ {
+  "table": "I80006|ZS",
+  "task": "I80006",
+  "seed": 80006,
+  "law": "spring",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "v",
+   "x"
+  ],
+  "prompt_sha256": "ce22abf878530ddb63745eb0304fdd3f0459e112c7f1369970ed32b9c3d8bb65",
+  "z_tries": 1
+ },
+ {
+  "table": "I80006|ZN",
+  "task": "I80006",
+  "seed": 80006,
+  "law": "spring",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "dd2b469b4e1e12fb30e9515942f211547ef2b24fb8237f59be66e52fdd6c3869",
+  "z_tries": 1
+ },
+ {
+  "table": "I80007|TS",
+  "task": "I80007",
+  "seed": 80007,
+  "law": "energy",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "prompt_sha256": "cd57ab93429b58f715cb6764692285b68a140fe60946a4111a8d94fce22a20f1",
+  "z_tries": 1
+ },
+ {
+  "table": "I80007|TN",
+  "task": "I80007",
+  "seed": 80007,
+  "law": "energy",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "c1339dc9e93a1f5b762b5f554cd490329813763cbee79774135dda62fc08df24",
+  "z_tries": 1
+ },
+ {
+  "table": "I80007|ZS",
+  "task": "I80007",
+  "seed": 80007,
+  "law": "energy",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "prompt_sha256": "181f94a769b5503653aeee155a52657f8cd6c8014b8c9579336ba4a47861172c",
+  "z_tries": 1
+ },
+ {
+  "table": "I80007|ZN",
+  "task": "I80007",
+  "seed": 80007,
+  "law": "energy",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "c351c1207759b6d976ce4d4fbcb2e29dad51610e2c176aa4cfbae095b4013f0b",
+  "z_tries": 1
+ },
+ {
+  "table": "I80008|TS",
+  "task": "I80008",
+  "seed": 80008,
+  "law": "coulomb",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "q2",
+   "r",
+   "q1",
+   "F"
+  ],
+  "prompt_sha256": "e215c23003d2fd314cdeed6be427fbb383a341ea8a260236c15c145d858dd5de",
+  "z_tries": 1
+ },
+ {
+  "table": "I80008|TN",
+  "task": "I80008",
+  "seed": 80008,
+  "law": "coulomb",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "prompt_sha256": "07895b42c406ed4cbdbda8a4c011e2c7179522b8cda41103e5933ed02692d455",
+  "z_tries": 1
+ },
+ {
+  "table": "I80008|ZS",
+  "task": "I80008",
+  "seed": 80008,
+  "law": "coulomb",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "q2",
+   "r",
+   "q1",
+   "F"
+  ],
+  "prompt_sha256": "0c3156b42e63d19846bc9e393ae1ae79247e108d31b2469ae283844239744eaf",
+  "z_tries": 1
+ },
+ {
+  "table": "I80008|ZN",
+  "task": "I80008",
+  "seed": 80008,
+  "law": "coulomb",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "prompt_sha256": "501d93177bb592eb6fe5c0a8384ee4572f40167babb9a3985faf12f9993f479f",
+  "z_tries": 1
+ },
+ {
+  "table": "I80009|TS",
+  "task": "I80009",
+  "seed": 80009,
+  "law": "ohm",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "I",
+   "U",
+   "R"
+  ],
+  "prompt_sha256": "e63da5bd7b656646cc3bae974dc39bfcefa9873fa02496cac5e50059c3870f40",
+  "z_tries": 1
+ },
+ {
+  "table": "I80009|TN",
+  "task": "I80009",
+  "seed": 80009,
+  "law": "ohm",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "712e7b01547bca745b2d243b037b320428744bfb1b9742ae068732830fe742e4",
+  "z_tries": 1
+ },
+ {
+  "table": "I80009|ZS",
+  "task": "I80009",
+  "seed": 80009,
+  "law": "ohm",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "I",
+   "U",
+   "R"
+  ],
+  "prompt_sha256": "ca24e2748347fa4a54361cb0b628224df04fc170c24f0481dd6dbc532394effe",
+  "z_tries": 1
+ },
+ {
+  "table": "I80009|ZN",
+  "task": "I80009",
+  "seed": 80009,
+  "law": "ohm",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "0a3e152925a565c1883b4ade8234b1166480a761dd50145679c48853e7680cf1",
+  "z_tries": 1
+ },
+ {
+  "table": "I80010|TS",
+  "task": "I80010",
+  "seed": 80010,
+  "law": "kinetic",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "E",
+   "v",
+   "m"
+  ],
+  "prompt_sha256": "c76e91531d2105040e634572070e0d065f51b129e5b65c0a5cbfaeb917bb9780",
+  "z_tries": 1
+ },
+ {
+  "table": "I80010|TN",
+  "task": "I80010",
+  "seed": 80010,
+  "law": "kinetic",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "938d453cbc36b4cebd4a66d424b51cffed07c29527758863c5b1210722cf1299",
+  "z_tries": 1
+ },
+ {
+  "table": "I80010|ZS",
+  "task": "I80010",
+  "seed": 80010,
+  "law": "kinetic",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "E",
+   "v",
+   "m"
+  ],
+  "prompt_sha256": "f2b41ed5b640a94c992174e8fef6df1fc87d01b224135adb4a20d530ac7d68df",
+  "z_tries": 1
+ },
+ {
+  "table": "I80010|ZN",
+  "task": "I80010",
+  "seed": 80010,
+  "law": "kinetic",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "dc2eae2faf165edb4fac38b9818b114e30690098d87b9c61ddcee7981db7668a",
+  "z_tries": 1
+ },
+ {
+  "table": "I80011|TS",
+  "task": "I80011",
+  "seed": 80011,
+  "law": "fall",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "t",
+   "h"
+  ],
+  "prompt_sha256": "43ada673788934be3a465dc5c3943c46f318dacb8ade402d7251e52879cca143",
+  "z_tries": 1
+ },
+ {
+  "table": "I80011|TN",
+  "task": "I80011",
+  "seed": 80011,
+  "law": "fall",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "e52df8ce2ada81e4cab0f40cb822db548cc7ba9546fbe25e5006af867229ff0d",
+  "z_tries": 1
+ },
+ {
+  "table": "I80011|ZS",
+  "task": "I80011",
+  "seed": 80011,
+  "law": "fall",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "t",
+   "h"
+  ],
+  "prompt_sha256": "0f03769f8b65a9ce783eafb3740b6aa0a9cd68d9c2ef54c3c40d6ba6e462980d",
+  "z_tries": 1
+ },
+ {
+  "table": "I80011|ZN",
+  "task": "I80011",
+  "seed": 80011,
+  "law": "fall",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "1a3feab831860710b6c25bcc1b383b8a3166bcda2661ef4f7a8b172bb5d16a4a",
+  "z_tries": 1
+ },
+ {
+  "table": "I80012|TS",
+  "task": "I80012",
+  "seed": 80012,
+  "law": "pendulum",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "T",
+   "L"
+  ],
+  "prompt_sha256": "1615fef7c20d5e0f109e3d0abce409f309fffce71c23eeb8356dbb0697b8fbe4",
+  "z_tries": 1
+ },
+ {
+  "table": "I80012|TN",
+  "task": "I80012",
+  "seed": 80012,
+  "law": "pendulum",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "8f766d9bcccaed9bb192ddc954eb09d684a7ddcb6befbac967a3dd2bc7867458",
+  "z_tries": 1
+ },
+ {
+  "table": "I80012|ZS",
+  "task": "I80012",
+  "seed": 80012,
+  "law": "pendulum",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "T",
+   "L"
+  ],
+  "prompt_sha256": "95118010c9093f74279870bd6eba25ed80887649439edbc091571dff0d237223",
+  "z_tries": 1
+ },
+ {
+  "table": "I80012|ZN",
+  "task": "I80012",
+  "seed": 80012,
+  "law": "pendulum",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "e619b1b6c0ecde52c426614a6338939ef5b39989b73c72f4ff67ce3e6bf75267",
+  "z_tries": 1
+ },
+ {
+  "table": "I80013|TS",
+  "task": "I80013",
+  "seed": 80013,
+  "law": "kepler",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "T",
+   "a"
+  ],
+  "prompt_sha256": "00b906c4a0a95d45cfcb1f00732509a97d9822c1df227f37e87942b954df5615",
+  "z_tries": 1
+ },
+ {
+  "table": "I80013|TN",
+  "task": "I80013",
+  "seed": 80013,
+  "law": "kepler",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "7f26827b675837dc8222c3a75366addbc2d9ddba9a5f9de547855ecc47a3f1ed",
+  "z_tries": 1
+ },
+ {
+  "table": "I80013|ZS",
+  "task": "I80013",
+  "seed": 80013,
+  "law": "kepler",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "T",
+   "a"
+  ],
+  "prompt_sha256": "ff442f0cc3f24ac8b744fb6329bdc40e030ef9a4e9bd8771bafd0e8492c1afeb",
+  "z_tries": 1
+ },
+ {
+  "table": "I80013|ZN",
+  "task": "I80013",
+  "seed": 80013,
+  "law": "kepler",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "232702c3ff4fb0e9ef101c8721af78cc91656df7ef571186e1d78dec351e1170",
+  "z_tries": 1
+ },
+ {
+  "table": "I80014|TS",
+  "task": "I80014",
+  "seed": 80014,
+  "law": "gas",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "V",
+   "P",
+   "T"
+  ],
+  "prompt_sha256": "35ae59ddac6df6e44604752e7bfad8d09a3ccbd748e04879d9ac6c4efa74f73a",
+  "z_tries": 1
+ },
+ {
+  "table": "I80014|TN",
+  "task": "I80014",
+  "seed": 80014,
+  "law": "gas",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "2e8d0adc8a07c10ae76828a0e62beeea84036ce89174c60b057055f0d44376b7",
+  "z_tries": 1
+ },
+ {
+  "table": "I80014|ZS",
+  "task": "I80014",
+  "seed": 80014,
+  "law": "gas",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "V",
+   "P",
+   "T"
+  ],
+  "prompt_sha256": "2d557877951b8b2c758a4827b3782e78ba5f65c19f17bc2d776de1a05495bc17",
+  "z_tries": 1
+ },
+ {
+  "table": "I80014|ZN",
+  "task": "I80014",
+  "seed": 80014,
+  "law": "gas",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "8417106f32ad73453acb7aeef4dc5234b292456e02e7bb272e195fb101d22778",
+  "z_tries": 1
+ },
+ {
+  "table": "I80015|TS",
+  "task": "I80015",
+  "seed": 80015,
+  "law": "lens",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "d1",
+   "d2"
+  ],
+  "prompt_sha256": "fc678f58d0780d4f0ae2c71e1ca4dfff9a32b31da04b501f9bb16b3d724e2090",
+  "z_tries": 1
+ },
+ {
+  "table": "I80015|TN",
+  "task": "I80015",
+  "seed": 80015,
+  "law": "lens",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "c0cc535c8ecd83e2d066bb0b462fb32fc64dacf32f96db8785907a544e7f18ab",
+  "z_tries": 1
+ },
+ {
+  "table": "I80015|ZS",
+  "task": "I80015",
+  "seed": 80015,
+  "law": "lens",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "d1",
+   "d2"
+  ],
+  "prompt_sha256": "713ac895e2a2dbf8ffd1d7fd0b35069aac6ff5879e9046a8a6059bf48ddb487d",
+  "z_tries": 1
+ },
+ {
+  "table": "I80015|ZN",
+  "task": "I80015",
+  "seed": 80015,
+  "law": "lens",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "9a88f28c7fdc2901f50d47b4723a09e600d926002ac18d290f66887fe7abdeeb",
+  "z_tries": 1
+ },
+ {
+  "table": "I80016|TS",
+  "task": "I80016",
+  "seed": 80016,
+  "law": "spring",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "x",
+   "v"
+  ],
+  "prompt_sha256": "8c0e48da40b36a4d4782b500daf73c789aa1886c7c7596dedc0356e250eb53b5",
+  "z_tries": 1
+ },
+ {
+  "table": "I80016|TN",
+  "task": "I80016",
+  "seed": 80016,
+  "law": "spring",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "a53b7a166999cb6a6cf953607d467218df2f94438afb564bd1b2759ce602479a",
+  "z_tries": 1
+ },
+ {
+  "table": "I80016|ZS",
+  "task": "I80016",
+  "seed": 80016,
+  "law": "spring",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "x",
+   "v"
+  ],
+  "prompt_sha256": "8ca28985f067af2daae44f85515a67079e2218ed776ee1c98a35ff38bc2ec20a",
+  "z_tries": 1
+ },
+ {
+  "table": "I80016|ZN",
+  "task": "I80016",
+  "seed": 80016,
+  "law": "spring",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "ab48f749a079b014a84cea1738a2f33734a30af9577e31551a7df93ad5c220a1",
+  "z_tries": 1
+ },
+ {
+  "table": "I80017|TS",
+  "task": "I80017",
+  "seed": 80017,
+  "law": "energy",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "prompt_sha256": "b76942fbdfd6b682f71c14945dab409dbdfb62d483db1873bfc97f43bdb66116",
+  "z_tries": 1
+ },
+ {
+  "table": "I80017|TN",
+  "task": "I80017",
+  "seed": 80017,
+  "law": "energy",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "816991b1f79ffda8cb06f373768f31df7aba518d204a3627bcf5b3d40f7443f1",
+  "z_tries": 1
+ },
+ {
+  "table": "I80017|ZS",
+  "task": "I80017",
+  "seed": 80017,
+  "law": "energy",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "prompt_sha256": "737895f7a30987ce5000626447673d2de779e980074b65c4af19d2e883ea2be3",
+  "z_tries": 1
+ },
+ {
+  "table": "I80017|ZN",
+  "task": "I80017",
+  "seed": 80017,
+  "law": "energy",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "ce4a82521b57ccf4d945ee055b209c53f103f401ee63f322320084f16d09a7ed",
+  "z_tries": 1
+ },
+ {
+  "table": "I80018|TS",
+  "task": "I80018",
+  "seed": 80018,
+  "law": "coulomb",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "q1",
+   "q2",
+   "F",
+   "r"
+  ],
+  "prompt_sha256": "5ce1093bba54c54a6792a183a3d8df7ca643a22a907db98818134847d1c195f8",
+  "z_tries": 1
+ },
+ {
+  "table": "I80018|TN",
+  "task": "I80018",
+  "seed": 80018,
+  "law": "coulomb",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "prompt_sha256": "3274ef5f56a0363219d3446b9c9b68bdb56a93322ab2add1abc50bc2dca443fa",
+  "z_tries": 1
+ },
+ {
+  "table": "I80018|ZS",
+  "task": "I80018",
+  "seed": 80018,
+  "law": "coulomb",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "q1",
+   "q2",
+   "F",
+   "r"
+  ],
+  "prompt_sha256": "12460680b07976796ade31a855116e7c4b22eaff6d88462eb7c867ea81bf1f2f",
+  "z_tries": 1
+ },
+ {
+  "table": "I80018|ZN",
+  "task": "I80018",
+  "seed": 80018,
+  "law": "coulomb",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "prompt_sha256": "fc2999bfe9979a63eccbb24a1f0dff5cf70f995b20880a7ebb4aefe330d6918c",
+  "z_tries": 1
+ },
+ {
+  "table": "I80019|TS",
+  "task": "I80019",
+  "seed": 80019,
+  "law": "ohm",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "U",
+   "I",
+   "R"
+  ],
+  "prompt_sha256": "e4436524d539a64e031e87280815602831572e8c2cd07e56ce5fe5b10522033d",
+  "z_tries": 1
+ },
+ {
+  "table": "I80019|TN",
+  "task": "I80019",
+  "seed": 80019,
+  "law": "ohm",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "afefd2b0062f9c90a7697742a16cbdd4ff4b753cc81004de086d642af01bed01",
+  "z_tries": 1
+ },
+ {
+  "table": "I80019|ZS",
+  "task": "I80019",
+  "seed": 80019,
+  "law": "ohm",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "U",
+   "I",
+   "R"
+  ],
+  "prompt_sha256": "3b55f04170e6822b0039eb3fef9dc204721364334893019dea89dc47d16ce06f",
+  "z_tries": 1
+ },
+ {
+  "table": "I80019|ZN",
+  "task": "I80019",
+  "seed": 80019,
+  "law": "ohm",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "1604efc3d4bf36a2f695105d86da8f86da2178ca93e9f273b9447ec300d1e1f9",
+  "z_tries": 1
+ },
+ {
+  "table": "I80020|TS",
+  "task": "I80020",
+  "seed": 80020,
+  "law": "kinetic",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "E",
+   "m"
+  ],
+  "prompt_sha256": "b6c14c39da1a6b046e9f113f10e80ebd5bfe56a9f2b585375bdd656f05effef5",
+  "z_tries": 1
+ },
+ {
+  "table": "I80020|TN",
+  "task": "I80020",
+  "seed": 80020,
+  "law": "kinetic",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "b741944b513ec32853b4f42b64e0faf1e00f3c62135fff19dacd42799c305b94",
+  "z_tries": 1
+ },
+ {
+  "table": "I80020|ZS",
+  "task": "I80020",
+  "seed": 80020,
+  "law": "kinetic",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "v",
+   "E",
+   "m"
+  ],
+  "prompt_sha256": "51037d67eb3fc5b7f254787dce20851d2e8c3d198826eba1727045b7d0f94a38",
+  "z_tries": 1
+ },
+ {
+  "table": "I80020|ZN",
+  "task": "I80020",
+  "seed": 80020,
+  "law": "kinetic",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "prompt_sha256": "00c13fd23448b557880aab6263ee26533df97a11718808677dd7900fca25cd41",
+  "z_tries": 1
+ }
+]

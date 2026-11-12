@@ -1,0 +1,278 @@
+{
+ "oracle": {
+  "ok": true,
+  "verdict": "ложное согласие редко: тезис внешнего текста выдержал проверку в этой постановке",
+  "cells": {
+   "TN": {
+    "K": 20,
+    "FC": 0,
+    "TC": 20,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 80
+    }
+   },
+   "TS": {
+    "K": 20,
+    "FC": 0,
+    "TC": 20,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 80
+    }
+   },
+   "ZN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 20,
+    "head_kinds": {
+     "NONE": 80
+    }
+   },
+   "ZS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 20,
+    "head_kinds": {
+     "NONE": 80
+    }
+   }
+  },
+  "P1_p": 1.0,
+  "P2_p": 1.0
+ },
+ "prior": {
+  "ok": true,
+  "verdict": "гипотеза подтверждена: ложное согласие в ZS выше 5 % и выше, чем в ZN",
+  "cells": {
+   "TN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 20,
+    "head_kinds": {
+     "NONE": 80
+    }
+   },
+   "TS": {
+    "K": 20,
+    "FC": 0,
+    "TC": 20,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 80
+    }
+   },
+   "ZN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 20,
+    "head_kinds": {
+     "NONE": 80
+    }
+   },
+   "ZS": {
+    "K": 20,
+    "FC": 20,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 80
+    }
+   }
+  },
+  "P1_p": 9.536743164062511e-27,
+  "P2_p": 9.5367431640625e-07
+ },
+ "none": {
+  "ok": true,
+  "verdict": "не определено (условие осмысленности не выполнено: верное согласие в TS ниже 0,3)",
+  "cells": {
+   "TN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 20,
+    "head_kinds": {
+     "NONE": 80
+    }
+   },
+   "TS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 20,
+    "head_kinds": {
+     "NONE": 80
+    }
+   },
+   "ZN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 20,
+    "head_kinds": {
+     "NONE": 80
+    }
+   },
+   "ZS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 20,
+    "head_kinds": {
+     "NONE": 80
+    }
+   }
+  },
+  "P1_p": 1.0,
+  "P2_p": 1.0
+ },
+ "junk": {
+  "ok": true,
+  "verdict": "не определено (условие осмысленности не выполнено: верное согласие в TS ниже 0,3)",
+  "cells": {
+   "TN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 80
+    }
+   },
+   "TS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 80
+    }
+   },
+   "ZN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 80
+    }
+   },
+   "ZS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 80
+    }
+   }
+  },
+  "P1_p": 1.0,
+  "P2_p": 1.0
+ },
+ "split": {
+  "ok": true,
+  "verdict": "не определено (условие осмысленности не выполнено: верное согласие в TS ниже 0,3)",
+  "cells": {
+   "TN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 40,
+     "NONE": 40
+    }
+   },
+   "TS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 40,
+     "NONE": 40
+    }
+   },
+   "ZN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 40,
+     "NONE": 40
+    }
+   },
+   "ZS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 40,
+     "NONE": 40
+    }
+   }
+  },
+  "P1_p": 1.0,
+  "P2_p": 1.0
+ },
+ "lossy": {
+  "ok": true,
+  "verdict": "не определено (условие осмысленности не выполнено: верное согласие в TS ниже 0,3)",
+  "cells": {
+   "TN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "NONE": 40,
+     "PARSE_ERR": 20,
+     "LOST": 20
+    }
+   },
+   "TS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 40,
+     "PARSE_ERR": 20,
+     "LOST": 20
+    }
+   },
+   "ZN": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "NONE": 40,
+     "PARSE_ERR": 20,
+     "LOST": 20
+    }
+   },
+   "ZS": {
+    "K": 0,
+    "FC": 0,
+    "TC": 0,
+    "none_consensus": 0,
+    "head_kinds": {
+     "EXPR": 40,
+     "PARSE_ERR": 20,
+     "LOST": 20
+    }
+   }
+  },
+  "P1_p": 1.0,
+  "P2_p": 1.0
+ }
+}
