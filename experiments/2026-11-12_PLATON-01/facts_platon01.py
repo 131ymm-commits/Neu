@@ -151,7 +151,10 @@ def main():
     bits = {'C-070 (P1F и P2F; по P2F)': {'power': r3(half['P2F']), 'bits': round(math.log2(half['P2F'] / 0.05), 2)},
             'C-071 (P3)': {'power': r3(half['P3']), 'bits': round(math.log2(half['P3'] / 0.05), 2)},
             'C-072 (контроль свободного режима)': {'power': r3(reach), 'bits': round(math.log2(reach / 0.05), 2)},
-            'C-073 (правило C; мощность без числа — 0,8)': {'power': 0.8, 'bits': round(math.log2(0.8 / 0.05), 2)}}
+            'C-073 (правило C; мощность без числа — 0,8, по совету 43 ограничено сверху наименьшим в серии)':
+                {'power_rule_default': 0.8, 'bits_uncapped': round(math.log2(0.8 / 0.05), 2),
+                 'power': r3(half['P2F']), 'bits': round(math.log2(half['P2F'] / 0.05), 2)},
+            'сценарий «доли пилотов» (для DEVIATIONS)': {'power': 1.0, 'bits': round(math.log2(1.0 / 0.05), 2)}}
     out = {'cells': cells, 'tests': tests, 'by_law': by_law, 'ZNF_false_consensus': znf_fc, 'TNF_false_consensus': tnf_fc,
            'parse_errors': parse, 'sensitivity': sens, 'totals': totals, 'audit_heads': audit,
            'expectations': expectations, 'support_bits': bits,
