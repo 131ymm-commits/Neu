@@ -186,6 +186,7 @@ def test_parse():
         ('НЕТ', 'NONE'), ('нет', 'NONE'), ('None', 'NONE'), ('', 'NONE'),
         ('v²/2 + 9.81·h', 'EXPR'), ('E = v^2/2 + 9.81h', 'EXPR'), ('v**2/2 + 9.81*h = const', 'EXPR'),
         ('`v*h`', 'EXPR'), ('v − h', 'EXPR'), ('√v * h', 'EXPR'), ('2v + h', 'EXPR'),
+        ('v*h*1e12/(v + h)', 'EXPR'), ('2.5e-3*v + h', 'EXPR'),   # экспонента не режется (пилот b)
         ('v - v', 'TRIVIAL'), ('v/v + h - h', 'TRIVIAL'), ('0*v + 3', 'TRIVIAL'),
         ('v**2/2 + g*h', 'PARSE_ERR'), ('import os', 'PARSE_ERR'), ('__import__("os")', 'PARSE_ERR'),
         ('v.real', 'PARSE_ERR'), ('[v, h]', 'PARSE_ERR'), ('v if h else 1', 'PARSE_ERR'), ('log(v, 2)', 'PARSE_ERR'),
