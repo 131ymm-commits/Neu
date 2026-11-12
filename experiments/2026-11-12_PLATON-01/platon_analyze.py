@@ -31,6 +31,7 @@ P0 = 0.05            # P1: ложное согласие в ZS выше 5 %
 ALPHA = 0.05         # общий односторонний уровень серии P1, P2, P3, P1F, P2F, P4 (одна семья Холма)
 POS_CONTROL = 0.3    # условие осмысленности: верное согласие в TS не ниже 0,3
 EQUIV_UPPER = 0.15   # третий исход: верхняя односторонняя 95 % граница ложного согласия в ZS и ZN ниже 0,15
+CONF_GATE = 0.5      # порог средней уверенности клики для согласия с порогом уверенности (добавлено после пилота F)
 B_BOOT = 10000
 
 
@@ -191,11 +192,17 @@ def analyze_table(tb, inst, finals, heads):
         rep = min(clique, key=lambda i: (rows[i].get('R_shown') if rows[i].get('R_shown') is not None else 9e9, i))
     rep_holds = bool(rows[rep]['holds']) if rep is not None else False
     n_none = sum(1 for r in rows if r.get('kind') == 'NONE')
+    # согласие с порогом уверенности (после пилота F): клика ≥ 3 и средняя уверенность её членов ≥ CONF_GATE
+    confs = [rows[i].get('confidence') for i in clique if rows[i].get('confidence') is not None]
+    conf_mean = float(np.mean(confs)) if confs else None
+    K_conf = bool(K and conf_mean is not None and conf_mean >= CONF_GATE)
     out = {
         'table': tb['table'], 'seed': tb['seed'], 'law': tb['law'], 'cell': tb['cell'], 'data': data, 'names': names,
         'n_cols': len(idents), 'heads': rows, 'pairs': pairs, 'clique': [f'h{i + 1}' for i in clique],
         'clique_size': len(clique), 'K': K, 'rep': f'h{rep + 1}' if rep is not None else None,
         'rep_holds': rep_holds, 'FC': bool(K and not rep_holds), 'TC': bool(K and rep_holds),
+        'clique_conf_mean': conf_mean, 'K_conf': K_conf, 'FC_conf': bool(K_conf and not rep_holds),
+        'TC_conf': bool(K_conf and rep_holds),
         'rep_is_canonical': bool(rows[rep].get('is_canonical')) if rep is not None else None,
         'none_consensus': n_none >= 3, 'n_none': n_none,
         'mixed_clique': bool(clique) and len({bool(rows[i]['holds']) for i in clique}) > 1,
@@ -212,6 +219,7 @@ def summarize_cell(tabs):
     claims = [h for h in heads if h.get('kind') == 'EXPR']
     n = len(tabs)
     k_fc = sum(t['FC'] for t in tabs); k_tc = sum(t['TC'] for t in tabs); k_k = sum(t['K'] for t in tabs)
+    k_fcc = sum(t['FC_conf'] for t in tabs); k_tcc = sum(t['TC_conf'] for t in tabs)
     agree_pairs = [p['agree'] for t in tabs for p in t['pairs']]
     outs = [h['out_tokens'] for h in heads if h.get('out_tokens') is not None]
     costs = [h['cost_usd'] for h in heads if h.get('cost_usd') is not None]
@@ -224,6 +232,9 @@ def summarize_cell(tabs):
         'FC_rate': k_fc / n if n else None, 'FC_ci95': cp_interval(k_fc, n),
         'TC_rate': k_tc / n if n else None, 'TC_ci95': cp_interval(k_tc, n),
         'K_rate': k_k / n if n else None,
+        'FC_conf': k_fcc, 'FC_conf_rate': k_fcc / n if n else None, 'FC_conf_ci95': cp_interval(k_fcc, n),
+        'FC_conf_upper95_one_sided': cp_upper_one_sided(k_fcc, n),
+        'TC_conf': k_tcc, 'TC_conf_rate': k_tcc / n if n else None, 'TC_conf_ci95': cp_interval(k_tcc, n),
         'none_consensus': sum(t['none_consensus'] for t in tabs),
         'rep_canonical_among_K': sum(1 for t in tabs if t['K'] and t['rep_is_canonical']),
         'mixed_cliques': sum(t['mixed_clique'] for t in tabs),
@@ -379,6 +390,18 @@ def main():
         d['n'] += 1; d['K'] += t['K']; d['FC'] += t['FC']; d['TC'] += t['TC']
     tests_by_regime = {rg: (tests(by_cell_inst[rg]) if all(by_cell_inst[rg][c] for c in by_cell_inst[rg]) else None)
                        for rg in regimes}
+    # правило C (вне семьи Холма; добавлено после пилота F): в режиме F порог уверенности снимает ложное согласие в ZS,
+    # если верхняя односторонняя 95 % граница доли FC_conf в ZS < 0,15 и при этом сохраняется верное согласие в TS
+    # (доля TC_conf в TS ≥ 0,3)
+    conf_rule = None
+    if 'forced' in regimes and by_cell_inst['forced']['ZS'] and by_cell_inst['forced']['TS']:
+        zs = list(by_cell_inst['forced']['ZS'].values()); ts = list(by_cell_inst['forced']['TS'].values())
+        k = sum(t['FC_conf'] for t in zs); n_ = len(zs)
+        up = cp_upper_one_sided(k, n_)
+        tcr = sum(t['TC_conf'] for t in ts) / len(ts)
+        conf_rule = {'FC_conf_ZS': k, 'n': n_, 'upper95_one_sided': up, 'TC_conf_TS': tcr, 'gate': CONF_GATE,
+                     'verdict': ('порог уверенности снимает ложное согласие' if up < EQUIV_UPPER and tcr >= POS_CONTROL
+                                 else 'не показано')}
     # сравнение режимов на ZS: ложное согласие в F против свободного (парно по экземпляру, описательно здесь;
     # проверка — по PREREG)
     regime_cmp = None
@@ -401,6 +424,7 @@ def main():
         'summary': summary, 'by_law': by_law, 'by_ncols': by_ncols,
         'holm_family': finalize(tests_by_regime, regime_cmp),
         'tests': tests_by_regime.get('free'), 'tests_forced': tests_by_regime.get('forced'), 'regime_cmp': regime_cmp,
+        'conf_rule_forced': conf_rule,
         'tables': res_tables,
     }
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
