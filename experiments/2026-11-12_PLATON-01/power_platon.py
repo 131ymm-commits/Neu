@@ -20,6 +20,12 @@ import numpy as np
 import platon_analyze as A
 
 NS = [20, 30, 40]
+# Сценарии для семьи из шести проверок; доли свободного режима — по пилотам a и b (FC 0 из 20 в каждой ячейке Z;
+# TC TS 19/20, TN 10/20). Доли режима F вписываются после пилота F (до регистрации) — см. PREREG §9.
+FAMILY_SCENARIOS = {
+    'пилоты; F как задумано (ZSF 0,5, ZNF 0,05)': {'FC_ZS': 0.0, 'FC_ZN': 0.0, 'TC_TS': 0.95, 'TC_TN': 0.5, 'FC_ZSF': 0.5, 'FC_ZNF': 0.05},
+    'вдвое слабее (ZSF 0,25, TN 0,7)': {'FC_ZS': 0.0, 'FC_ZN': 0.0, 'TC_TS': 0.9, 'TC_TN': 0.7, 'FC_ZSF': 0.25, 'FC_ZNF': 0.05},
+}
 PS = [0.15, 0.25, 0.4, 0.6]
 PN = [0.0, 0.05, 0.1]
 REPS = 20000
@@ -70,6 +76,30 @@ def power_p3(n, pts, ptn, reps=REPS, seed=33, p1_rejects=False):
     return rej / reps
 
 
+def power_family(n, rates, reps=REPS, seed=606):
+    """Мощность каждой из шести проверок при одной семье Холма (α = 0,05), оценка Монте-Карло.
+    rates: доли событий по ячейкам — FC_ZS, FC_ZN, TC_TS, TC_TN (свободный), FC_ZSF, FC_ZNF (режим F).
+    Ячейки моделируются независимо (консервативно для Макнемара при положительной связи)."""
+    g = np.random.default_rng(seed)
+    sim = {k: g.random((reps, n)) < v for k, v in rates.items()}
+    cnt = {k: 0 for k in ('P1', 'P2', 'P3', 'P1F', 'P2F', 'P4')}
+    cache = {}
+
+    def mc(a, b):
+        bb = int((a & ~b).sum()); cc = int((~a & b).sum())
+        return A.binom_sf(bb, bb + cc, 0.5) if bb + cc else 1.0
+    for r in range(reps):
+        zs, zn, ts, tn, zsf, znf = (sim[k][r] for k in ('FC_ZS', 'FC_ZN', 'TC_TS', 'TC_TN', 'FC_ZSF', 'FC_ZNF'))
+        pv = {'P1': A.binom_sf(int(zs.sum()), n, A.P0), 'P2': mc(zs, zn), 'P3': mc(ts, tn),
+              'P1F': A.binom_sf(int(zsf.sum()), n, A.P0), 'P2F': mc(zsf, znf), 'P4': mc(zsf, zs)}
+        key = tuple(round(v, 12) for v in pv.values())
+        if key not in cache:
+            cache[key] = A.holm(pv)
+        for k, v in cache[key].items():
+            cnt[k] += v
+    return {k: v / reps for k, v in cnt.items()}
+
+
 def false_level_mc(n, reps=REPS, seed=7):
     """Ложный уровень серии: P1 при p = 0,05 (граница нуля) и P2 при ps = pn (худший случай — pn = ps = 0,05…0,3)."""
     out = {}
@@ -117,7 +147,13 @@ def main():
     for n in NS:
         for pts, ptn in ((0.9, 0.5), (0.8, 0.6), (0.85, 0.65), (0.7, 0.5)):
             res['P3'].append({'n': n, 'TC_TS': pts, 'TC_TN': ptn, 'power_P3_holm3': power_p3(n, pts, ptn)})
+    # семья из шести проверок при долях пилотов (свободный режим — пилоты a и b; режим F — пилот F, см. --rates)
+    res['family'] = []
+    for name, rates in FAMILY_SCENARIOS.items():
+        res['family'].append({'scenario': name, 'n': 40, 'rates': rates, 'power': power_family(40, rates)})
     print('критическое k для P1 (α 0,025 / 0,05):', res['crit_P1_alpha_0.025'], res['crit_P1_alpha_0.05'])
+    for f in res['family']:
+        print('семья, n 40,', f['scenario'], f['rates'], '→', {k: round(v, 3) for k, v in f['power'].items()})
     print('P3 (Холм на трёх, P1 и P2 не отвергнуты):', [(r['n'], r['TC_TS'], r['TC_TN'], round(r['power_P3_holm3'], 3)) for r in res['P3']])
     print('третий исход:', res['third_outcome'])
     print('ложный уровень серии (оценка Монте-Карло):', res['false_level'])
