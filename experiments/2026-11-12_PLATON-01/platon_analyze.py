@@ -222,6 +222,7 @@ def summarize_cell(tabs):
     k_fcc = sum(t['FC_conf'] for t in tabs); k_tcc = sum(t['TC_conf'] for t in tabs)
     agree_pairs = [p['agree'] for t in tabs for p in t['pairs']]
     outs = [h['out_tokens'] for h in heads if h.get('out_tokens') is not None]
+    inps = [h['inp_tokens'] for h in heads if h.get('inp_tokens') is not None]
     costs = [h['cost_usd'] for h in heads if h.get('cost_usd') is not None]
     conf = [h['confidence'] for h in claims if h.get('confidence') is not None]
     conf_hold = [h['confidence'] for h in claims if h.get('confidence') is not None and h.get('holds')]
@@ -247,6 +248,7 @@ def summarize_cell(tabs):
         'overconfidence_claims': (float(np.mean(conf)) - hold_rate) if conf and hold_rate is not None else None,
         'pair_agree_rate': (sum(agree_pairs) / len(agree_pairs)) if agree_pairs else None, 'pairs': len(agree_pairs),
         'out_tokens_mean': float(np.mean(outs)) if outs else None, 'out_tokens_total': int(sum(outs)) if outs else 0,
+        'inp_tokens_mean': float(np.mean(inps)) if inps else None,
         'cost_usd_total': float(sum(costs)) if costs else 0.0,
     }
 
@@ -359,7 +361,12 @@ def main():
     ap.add_argument('--journal', action='append', required=True)
     ap.add_argument('--out', required=True)
     ap.add_argument('--heads', type=int, default=4)
+    ap.add_argument('--tau', type=float, default=None,
+                    help='чувствительность: TAU = TAU_AGREE = значение (описательно, PREREG §5); основной анализ — 0,1')
     a = ap.parse_args()
+    if a.tau is not None:
+        C.TAU = a.tau
+        C.TAU_AGREE = a.tau
     tables = json.loads(Path(a.tables).read_text(encoding='utf-8'))
     finals = load_finals(a.journal)
     insts = {}

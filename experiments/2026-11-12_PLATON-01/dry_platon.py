@@ -12,7 +12,8 @@
   split  — две головы закон, две НЕТ;                                    ждём: K = 0 (клика 2).
   lossy  — prior, но голова h4 потеряна, h3 неразборна;                  ждём: K = 0 (две годные из четырёх).
   regimes — оба режима на одних таблицах: свободный — oracle, F — prior при S и junk при N;
-            ждём: свободный — третий исход; F — гипотеза подтверждена; P4 отвергнута; Холм на 6 проверках.
+            ждём: свободный — третий исход; F — гипотеза подтверждена; P4 отвергнута; Холм на 6 проверках;
+            в Z режима F уверенность 0,02 → правило C: «порог уверенности снимает ложное согласие».
 Запуск: python3 dry_platon.py  → dry/<заглушка>/..., dry/dry_summary.json; код 1 при несовпадении ожиданий.
 """
 import json
@@ -68,9 +69,10 @@ def fake_journal(strategy, jobs, tables, jdir):
         key = (tb['seed'], tb['law'])
         if key not in insts:
             insts[key] = W.make_instance(*key)
+        conf = 0.02 if (strategy == 'regimes' and tb.get('regime') == 'forced' and tb['data'] == 'Z') else 0.8
         rec = {'task': j['task'], 'job': j['id'], 'arm': j['arm'], 'attempt': 1, 'role': 'основной',
                'outcome': 'годный', 'final': 'годный',
-               'answer': {'invariant': answer(strategy, tb, insts[key], k), 'confidence': 0.8},
+               'answer': {'invariant': answer(strategy, tb, insts[key], k), 'confidence': conf},
                'usage': {'inp': 1000, 'out': 100, 'cost_usd': 0.001}, 'thinking_tokens': 50}
         if strategy == 'lossy' and k == 3:
             rec.update(outcome='сбой ответа', final='потерян', answer=None, reason='заглушка: потерян')
@@ -95,7 +97,9 @@ EXPECT = {
 EXPECT_REG = lambda d: (d['tests']['third_outcome_rare_false_consensus']
                         and d['tests_forced']['P1']['rejected_holm'] and d['tests_forced']['P2']['rejected_holm']
                         and d['regime_cmp']['rejected_holm'] and d['summary']['ZSF']['FC'] == d['summary']['ZSF']['n_tables']
-                        and d['summary']['ZNF']['FC'] == 0 and d['holm_family']['m'] == 6)
+                        and d['summary']['ZNF']['FC'] == 0 and d['holm_family']['m'] == 6
+                        and d['summary']['ZSF']['FC_conf'] == 0
+                        and d['conf_rule_forced']['verdict'] == 'порог уверенности снимает ложное согласие')
 
 
 def main():
