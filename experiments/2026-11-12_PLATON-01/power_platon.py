@@ -81,10 +81,10 @@ def main():
         res['crit_P1_alpha_0.05'][n] = crit_p1(n, 0.05)
         # третий исход: при скольких ложных согласиях верхняя граница ещё < 0,15
         kmax = max([k for k in range(n + 1) if A.cp_upper_one_sided(k, n) < A.EQUIV_UPPER], default=-1)
-        res['third_outcome'][n] = {'max_FC_allowed': kmax,
-                                   'P_reach_if_p_0': 1.0 if kmax >= 0 else 0.0,
-                                   'P_reach_if_p_0.02_both': float(sum(A.binom_sf(0, n, 0.02) - A.binom_sf(kmax + 1, n, 0.02)
-                                                                       for _ in [0])) ** 2 if kmax >= 0 else 0.0}
+        # вероятность дойти до третьего исхода, если истинная доля ложного согласия p в обеих ячейках Z
+        # (ячейки независимы): P(X ≤ kmax | n, p)²
+        reach = {f'P_reach_if_p_{p}_both': (A.binom_cdf(kmax, n, p) ** 2 if kmax >= 0 else 0.0) for p in (0.0, 0.02, 0.05)}
+        res['third_outcome'][n] = {'max_FC_allowed': kmax, **reach}
         res['false_level'][n] = false_level_mc(n)
         for ps in PS:
             for pn in PN:
