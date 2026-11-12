@@ -6,7 +6,9 @@
 
 Для каждой таблицы (экземпляр × ячейка):
   - утверждения голов (итоговые записи журнала run_sealed2: роль «основной», final годный | потерян);
-  - для годного выражения: R на показанных строках, R на новых строках in и out, «держится» (оба < TAU);
+  - для годного выражения: R на строках, которые видела голова, R на новых строках in и out, «держится» (оба < TAU);
+  - равносильность — на объединении строк четырёх голов ячейки (вариант b) или на общей таблице (вариант a);
+    постоянная утверждения — медиана по строкам самой головы;
   - граф равносильности, наибольшая клика; согласие K = клика ≥ 3; представитель клики — член с наименьшим R
     на показанных строках; ложное согласие FC = K и представитель не держится; верное TC = K и держится;
   - согласие на «НЕТ» — ≥ 3 ответов НЕТ (отдельно, в K не входит);
@@ -133,13 +135,18 @@ def fnum(x):
 
 def analyze_table(tb, inst, finals, heads):
     data, names = tb['data'], tb['names']
-    idents, _, shown, mp = W.table_view(inst, data, names)
+    idents, _, _, mp = W.table_view(inst, data, names)
+    own = [W.table_view(inst, data, names, k)[2] for k in range(heads)]      # строки, которые видела голова k
+    if inst['variant'] == 'b':
+        union = [r for rows_k in own for r in rows_k]                          # объединение строк ячейки
+    else:
+        union = own[0]                                                         # вариант a: одна таблица
     hin = W.rename_rows(inst['hold'][data]['in'], mp)
     hout = W.rename_rows(inst['hold'][data]['out'], mp)
-    canon = C.Claim(W.inv_in_names(inst, names), idents, shown, f"canon|{tb['table']}")
     claims, rows = [], []
     for k in range(1, heads + 1):
         jid = f"{tb['table']}|h{k}"
+        shown = own[k - 1]
         rec = finals.get(jid)
         row = {'head': f'h{k}', 'job': jid}
         if rec is None:
@@ -162,7 +169,8 @@ def analyze_table(tb, inst, finals, heads):
             row.update(expr=cl.expr, deps=cl.deps, c=cl.c,
                        R_shown=fnum(C.R_measure(cl.f, shown, idents, seed=f'shown|{jid}')),
                        R_in=fnum(h['R_in']), R_out=fnum(h['R_out']), holds=h['holds'])
-            ok, r21, r12 = C.agree(canon, cl, shown, f"canon|{jid}")
+            canon = C.Claim(W.inv_in_names(inst, names), idents, shown, f"canon|{jid}")   # постоянная — по строкам головы
+            ok, r21, r12 = C.agree(canon, cl, union, f"canon|{jid}")
             row.update(is_canonical=bool(ok))
         claims.append(cl); rows.append(row)
     # граф равносильности
@@ -170,7 +178,7 @@ def analyze_table(tb, inst, finals, heads):
     valid_idx = [i for i, cl in enumerate(claims) if cl is not None and cl.valid]
     for ia, i in enumerate(valid_idx):
         for j in valid_idx[ia + 1:]:
-            ok, r21, r12 = C.agree(claims[i], claims[j], shown, f"pair|{tb['table']}|{i}|{j}")
+            ok, r21, r12 = C.agree(claims[i], claims[j], union, f"pair|{tb['table']}|{i}|{j}")
             pairs.append({'a': i, 'b': j, 'agree': bool(ok), 'R21': fnum(r21), 'R12': fnum(r12)})
             if ok:
                 edges.add((i, j)); edges.add((j, i))
@@ -190,7 +198,7 @@ def analyze_table(tb, inst, finals, heads):
         'rep_is_canonical': bool(rows[rep].get('is_canonical')) if rep is not None else None,
         'none_consensus': n_none >= 3, 'n_none': n_none,
         'mixed_clique': bool(clique) and len({bool(rows[i]['holds']) for i in clique}) > 1,
-        'canonical_valid': canon.valid,
+        'variant': inst['variant'],
     }
     return out
 
@@ -306,9 +314,9 @@ def main():
     insts = {}
     res_tables = []
     for tb in tables:
-        key = (tb['seed'], tb['law'])
+        key = (tb['seed'], tb['law'], tb.get('variant', 'a'))
         if key not in insts:
-            insts[key] = W.make_instance(tb['seed'], tb['law'])
+            insts[key] = W.make_instance(tb['seed'], tb['law'], heads=None if key[2] == 'a' else tb.get('heads', a.heads))
         res_tables.append(analyze_table(tb, insts[key], finals, a.heads))
     by_cell = {}
     by_cell_inst = {c: {} for c in ('TS', 'TN', 'ZS', 'ZN')}

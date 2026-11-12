@@ -3,11 +3,13 @@
 """PLATON-01: промпты и задания голов для tools/run_sealed2.py.
 
   python3 platon_jobs.py build --seeds SEEDS.json --heads 4 --out DIR [--cells TS,TN,ZS,ZN]
-      SEEDS.json: [{"seed": 1001, "law": "fall"}, ...]. Пишет DIR/jobs.jsonl (задача = экземпляр I<зерно>,
+      SEEDS.json: [{"seed": 1001, "law": "fall"}, ...]. --variant b (по умолчанию): у каждой головы свои строки;
+      a — одна таблица на все головы (пилот 90002–90011). Пишет DIR/jobs.jsonl (задача = экземпляр I<зерно>,
       id = I<зерно>|<ячейка>|h<k>, рука = ячейка), DIR/tables.json (метаданные таблиц: закон, ячейка, имена, sha256 промпта;
       правды в промптах нет) и DIR/prompts.sha256.
   python3 platon_jobs.py show --seed 1001 --law fall --cell ZS   — печатает промпт.
-Ячейка = данные (T | Z) + имена (S | N). Четыре головы одной таблицы получают один и тот же промпт.
+Ячейка = данные (T | Z) + имена (S | N). В варианте a четыре головы ячейки получают один промпт, в варианте b — свои
+строки той же системы (тот же закон, те же постоянные, тот же порядок столбцов и те же имена).
 """
 import argparse
 import hashlib
@@ -44,9 +46,9 @@ TASK = """Найди величину, которая сохраняется: в
 CELLS = ['TS', 'TN', 'ZS', 'ZN']
 
 
-def prompt_for(inst, cell):
+def prompt_for(inst, cell, head=0):
     data, names = cell[0], cell[1]
-    idents, desc, rows, _ = W.table_view(inst, data, names)
+    idents, desc, rows, _ = W.table_view(inst, data, names, head)
     if names == 'S':
         cols = '\n'.join(f'- {c} — {d}' for c, d in zip(idents, desc))
     else:
@@ -61,21 +63,22 @@ def sha(text):
     return hashlib.sha256(text.encode('utf-8')).hexdigest()
 
 
-def build(seeds, heads, out, cells=CELLS):
+def build(seeds, heads, out, cells=CELLS, variant='b'):
+    """variant 'a' — одна таблица на все головы (пилот 90002–90011); 'b' — у каждой головы свои строки."""
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
     jobs, tables, shas = [], [], []
     for ent in seeds:
-        inst = W.make_instance(ent['seed'], ent['law'])
+        inst = W.make_instance(ent['seed'], ent['law'], heads=None if variant == 'a' else heads)
         for cell in cells:
-            pr = prompt_for(inst, cell)
             tid = f"I{ent['seed']}|{cell}"
             idents, _, _, _ = W.table_view(inst, cell[0], cell[1])
+            prs = [prompt_for(inst, cell, k) for k in range(heads)]
             tables.append({'table': tid, 'task': f"I{ent['seed']}", 'seed': ent['seed'], 'law': ent['law'],
-                           'cell': cell, 'data': cell[0], 'names': cell[1], 'idents': idents,
-                           'prompt_sha256': sha(pr), 'z_tries': inst['z_tries']})
-            shas.append(f'{sha(pr)}  {tid}')
-            for k in range(1, heads + 1):
+                           'cell': cell, 'data': cell[0], 'names': cell[1], 'idents': idents, 'variant': variant,
+                           'heads': heads, 'prompt_sha256': [sha(pr) for pr in prs], 'z_tries': inst['z_tries']})
+            for k, pr in enumerate(prs, 1):
+                shas.append(f'{sha(pr)}  {tid}|h{k}')
                 jobs.append({'task': f"I{ent['seed']}", 'id': f'{tid}|h{k}', 'arm': cell, 'prompt': pr, 'schema': SCHEMA})
     (out / 'jobs.jsonl').write_text(''.join(json.dumps(j, ensure_ascii=False) + '\n' for j in jobs), encoding='utf-8')
     (out / 'tables.json').write_text(json.dumps(tables, ensure_ascii=False, indent=1), encoding='utf-8')
@@ -91,17 +94,20 @@ def main():
     b.add_argument('--heads', type=int, default=4)
     b.add_argument('--out', required=True)
     b.add_argument('--cells', default=','.join(CELLS))
+    b.add_argument('--variant', choices=['a', 'b'], default='b')
     s = sub.add_parser('show')
     s.add_argument('--seed', type=int, required=True)
     s.add_argument('--law', required=True)
     s.add_argument('--cell', required=True)
+    s.add_argument('--head', type=int, default=0)
+    s.add_argument('--variant', choices=['a', 'b'], default='b')
     a = ap.parse_args()
     if a.cmd == 'build':
         seeds = json.loads(Path(a.seeds).read_text(encoding='utf-8'))
-        jobs, tables = build(seeds, a.heads, a.out, a.cells.split(','))
+        jobs, tables = build(seeds, a.heads, a.out, a.cells.split(','), a.variant)
         print(f'заданий {len(jobs)}, таблиц {len(tables)} → {a.out}')
     else:
-        print(prompt_for(W.make_instance(a.seed, a.law), a.cell))
+        print(prompt_for(W.make_instance(a.seed, a.law, heads=None if a.variant == 'a' else 4), a.cell, a.head))
 
 
 if __name__ == '__main__':

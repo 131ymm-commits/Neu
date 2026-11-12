@@ -92,7 +92,7 @@ def test_law(law, seed):
     inst = W.make_instance(seed, law)
     p = inst['params']; cols = inst['cols']
     # 1. правда вторым способом
-    rT = [abs(residual(law, p, x)) for x in inst['shown']['T']]
+    rT = [abs(residual(law, p, x)) for x in inst['shown']['T'][0]]
     check(max(rT) < 0.02, f'{law}/{seed}: невязка показанных строк T {max(rT):.4f} ≥ 0,02')
     for part in ('in', 'out'):
         rh = [abs(residual(law, p, x)) for x in inst['hold']['T'][part]]
@@ -104,7 +104,7 @@ def test_law(law, seed):
     rng = p['rng']
     outside = [any(not (rng[k][0] <= x[k] <= rng[k][1]) for k in W.LAWS[law]['free']) for x in inst['hold']['T']['out']]
     check(all(outside), f'{law}/{seed}: строки out внутри показанного диапазона')
-    rZ = [abs(residual(law, p, x)) for x in inst['shown']['Z']]
+    rZ = [abs(residual(law, p, x)) for x in inst['shown']['Z'][0]]
     # связь в Z разрушена: типичная невязка в Z много больше ошибки округления показанных строк T
     check(np.median(rZ) > 5 * max(rT), f'{law}/{seed}: в Z медиана невязки {np.median(rZ):.4f} ≤ 5 × макс. невязки T {max(rT):.4f}')
     stats = {}
@@ -114,7 +114,7 @@ def test_law(law, seed):
         idents = [mp[c] for c in inst['order']]
         ren = lambda e: W.re_names(e, mp) if hasattr(W, 're_names') else _ren(e, mp)
         for data in ('T', 'Z'):
-            shown = W.rename_rows(inst['shown'][data], mp)
+            shown = W.rename_rows(inst['shown'][data][0], mp)
             hin = W.rename_rows(inst['hold'][data]['in'], mp)
             hout = W.rename_rows(inst['hold'][data]['out'], mp)
             eq, wrong = forms(law, p)
@@ -204,7 +204,7 @@ def test_z_false_claims():
     """В Z: одинаковые ложные утверждения согласуются; разные — нет (случайные пары выражений)."""
     inst = W.make_instance(3, 'gas')
     cols = inst['cols']; idents = [c for c in inst['order']]
-    shown = inst['shown']['Z']
+    shown = inst['shown']['Z'][0]
     a = C.Claim('P*V/T', idents, shown, 'z1'); b = C.Claim('P*V/T', idents, shown, 'z2')
     ok, *_ = C.agree(a, b, shown, 'zz1'); check(ok, 'Z: одинаковые ложные утверждения не согласованы')
     c = C.Claim('T/(V*P)', idents, shown, 'z3')
@@ -220,6 +220,33 @@ def test_z_false_claims():
     return n_ok, n
 
 
+def test_variant_b(law, seed, heads=4):
+    """Вариант b: у каждой головы свои строки той же системы; закон держится в каждой T, разрушен в каждой Z;
+    таблицы голов разные; канонические утверждения голов согласуются на объединении строк (и в T, и в Z)."""
+    inst = W.make_instance(seed, law, heads=heads)
+    p = inst['params']
+    check(inst['variant'] == 'b' and len(inst['shown']['T']) == heads, f'{law}/{seed}: вариант b — не {heads} таблиц')
+    sigs = set()
+    for k in range(heads):
+        rT = [abs(residual(law, p, x)) for x in inst['shown']['T'][k]]
+        rZ = [abs(residual(law, p, x)) for x in inst['shown']['Z'][k]]
+        check(max(rT) < 0.02, f'{law}/{seed}/b{k}: невязка T {max(rT):.4f}')
+        check(np.median(rZ) > 5 * max(rT), f'{law}/{seed}/b{k}: Z не разрушена ({np.median(rZ):.4f})')
+        sigs.add(tuple(sorted(tuple(sorted(r.items())) for r in inst['shown']['T'][k])))
+    check(len(sigs) == heads, f'{law}/{seed}: таблицы голов совпадают')
+    for names in ('S', 'N'):
+        for data in ('T', 'Z'):
+            idents = W.table_view(inst, data, names)[0]
+            own = [W.table_view(inst, data, names, k)[2] for k in range(heads)]
+            union = [r for t in own for r in t]
+            inv = W.inv_in_names(inst, names)
+            cl = [C.Claim(inv, idents, own[k], f'vb|{law}|{seed}|{names}{data}|{k}') for k in range(heads)]
+            for i in range(heads):
+                for j in range(i + 1, heads):
+                    ok, r21, r12 = C.agree(cl[i], cl[j], union, f'vb|{law}|{seed}|{names}{data}|{i}|{j}')
+                    check(ok, f'{law}/{seed}/{names}{data}/b: канонические утверждения голов {i},{j} не согласованы ({r21:.3f}, {r12:.3f})')
+
+
 if __name__ == '__main__':
     k = int(sys.argv[1]) if len(sys.argv) > 1 else 3
     test_parse()
@@ -230,6 +257,9 @@ if __name__ == '__main__':
             st = test_law(law, 70000 + 100 * W.LAW_ORDER.index(law) + s)   # зёрна тестов: 70000+ (вне пилота и теста)
             for kk, v in st.items():
                 agg.setdefault(kk, []).extend(v)
+    for law in W.LAW_ORDER:
+        for s_ in range(max(1, k // 2)):
+            test_variant_b(law, 75000 + 100 * W.LAW_ORDER.index(law) + s_)
     print('сводка:')
     for kk in sorted(agg):
         v = np.array(agg[kk], dtype=float)

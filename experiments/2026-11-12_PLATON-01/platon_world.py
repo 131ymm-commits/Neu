@@ -201,15 +201,11 @@ def _row(law, p, r, ranges):
     return x
 
 
-def make_instance(seed, law_key):
-    """Экземпляр: параметры, показанная таблица T (округлённая), таблица Z, новые строки in/out для T и для Z, имена."""
-    law = LAWS[law_key]
-    p = law['params'](rng_for(seed, 'params'))
-    cols = [c for c, _ in law['cols']]
-    order = cols[:]
-    rng_for(seed, 'order').shuffle(order)            # порядок столбцов: один для S и N
-    # показанные строки T: свободные округляются, зависимая считается по округлённым и тоже округляется
-    rr = rng_for(seed, 'rows')
+def _shown_pair(law, p, cols, f_inv, seed, rows_stream, perm_stream):
+    """Показанная таблица T (свободные округляются, зависимая считается по округлённым и тоже округляется) и её Z:
+    каждый столбец T перемешан отдельно; перемешивание повторяется, пока истинный закон не перестанет держаться."""
+    from platon_check import R_measure      # без кругового импорта на уровне модуля
+    rr = rng_for(seed, rows_stream)
     shown_T = []
     for _ in range(N_ROWS):
         x = _row(law, p, rr, p['rng'])
@@ -217,11 +213,7 @@ def make_instance(seed, law_key):
             x[k] = float(fmt3(x[k]))
         x[law['dep']] = float(fmt3(law['solve'](p, x)))
         shown_T.append(x)
-    # Z: каждый столбец T перемешан отдельно; перемешивание повторяется, пока истинный закон не перестанет держаться
-    rp = rng_for(seed, 'perm')
-    from platon_check import R_measure, compile_expr      # без кругового импорта на уровне модуля
-    inv = law['inv'](p)
-    f_inv = compile_expr(inv, cols)
+    rp = rng_for(seed, perm_stream)
     tries = 0
     while True:
         tries += 1
@@ -229,8 +221,32 @@ def make_instance(seed, law_key):
         for c in cols:
             rp.shuffle(cols_vals[c])
         shown_Z = [{c: cols_vals[c][i] for c in cols} for i in range(N_ROWS)]
-        if R_measure(f_inv, shown_Z, cols, seed=f'{seed}|z|{tries}') >= 0.3 or tries >= 50:
+        if R_measure(f_inv, shown_Z, cols, seed=f'{seed}|{perm_stream}|z|{tries}') >= 0.3 or tries >= 50:
             break
+    return shown_T, shown_Z, tries
+
+
+def make_instance(seed, law_key, heads=None):
+    """Экземпляр: параметры, показанные таблицы T (округлённые) и Z, новые строки in/out для T и для Z, имена.
+
+    heads=None — вариант a: одна таблица на все головы (пилот 90002–90011).
+    heads=k — вариант b: у каждой из k голов свои 13 строк той же системы (поток 'rows|i') и своя Z (поток 'perm|i').
+    В обоих вариантах shown[data] — список таблиц; в варианте a он из одной таблицы."""
+    law = LAWS[law_key]
+    p = law['params'](rng_for(seed, 'params'))
+    cols = [c for c, _ in law['cols']]
+    order = cols[:]
+    rng_for(seed, 'order').shuffle(order)            # порядок столбцов: один для S и N и для всех голов
+    from platon_check import compile_expr
+    inv = law['inv'](p)
+    f_inv = compile_expr(inv, cols)
+    if heads is None:
+        pairs = [_shown_pair(law, p, cols, f_inv, seed, 'rows', 'perm')]
+    else:
+        pairs = [_shown_pair(law, p, cols, f_inv, seed, f'rows|{i}', f'perm|{i}') for i in range(heads)]
+    shown_T = [a for a, _, _ in pairs]
+    shown_Z = [b for _, b, _ in pairs]
+    tries = [t for _, _, t in pairs]
     # новые строки T: в показанном диапазоне и вне его (без округления)
     rh = rng_for(seed, 'hold')
     hold_in_T = [_row(law, p, rh, p['rng']) for _ in range(N_HOLD)]
@@ -248,7 +264,7 @@ def make_instance(seed, law_key):
     letters = {c: LETTERS[i] for i, c in enumerate(order)}   # N: буквы по порядку столбцов в таблице
     return {
         'seed': seed, 'law': law_key, 'params': p, 'cols': cols, 'order': order, 'letters': letters,
-        'desc': dict(law['cols']), 'inv_S': inv, 'z_tries': tries,
+        'desc': dict(law['cols']), 'inv_S': inv, 'z_tries': tries, 'variant': 'a' if heads is None else 'b',
         'shown': {'T': shown_T, 'Z': shown_Z},
         'hold': {'T': {'in': hold_in_T, 'out': hold_out_T}, 'Z': {'in': hold_in_Z, 'out': hold_out_Z}},
     }
@@ -258,9 +274,12 @@ def rename_rows(rows, mapping):
     return [{mapping[k]: v for k, v in row.items()} for row in rows]
 
 
-def table_view(inst, data, names):
-    """Таблица в именах ячейки: (имена столбцов по порядку, описания или None, строки с ключами-именами)."""
+def table_view(inst, data, names, head=0):
+    """Таблица в именах ячейки: (имена столбцов по порядку, описания или None, строки с ключами-именами, отображение).
+    head — номер головы (0…): в варианте b у каждой головы своя таблица, в варианте a таблица одна."""
     order = inst['order']
+    tabs = inst['shown'][data]
+    rows_src = tabs[head if inst['variant'] == 'b' else 0]
     if names == 'S':
         mp = {c: c for c in order}
         desc = [inst['desc'][c] for c in order]
@@ -268,7 +287,7 @@ def table_view(inst, data, names):
         mp = inst['letters']
         desc = None
     idents = [mp[c] for c in order]
-    return idents, desc, rename_rows(inst['shown'][data], mp), mp
+    return idents, desc, rename_rows(rows_src, mp), mp
 
 
 def inv_in_names(inst, names):
@@ -285,7 +304,7 @@ if __name__ == '__main__':
         sd = int(sys.argv[2])
         lk = sys.argv[3] if len(sys.argv) > 3 else LAW_ORDER[sd % len(LAW_ORDER)]
         inst = make_instance(sd, lk)
-        print(json.dumps({k: inst[k] for k in ('seed', 'law', 'params', 'order', 'letters', 'inv_S', 'z_tries')},
+        print(json.dumps({k: inst[k] for k in ('seed', 'law', 'params', 'order', 'letters', 'inv_S', 'z_tries', 'variant')},
                          ensure_ascii=False, indent=1))
         for d in ('T', 'Z'):
             idents, desc, rows, _ = table_view(inst, d, 'S')
