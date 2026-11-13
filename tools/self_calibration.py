@@ -232,13 +232,13 @@ ROWS = [
     ('PLATON-01', 'E5 ≥ половины FC в ZS режима F — знакомый закон (условно на FC > 0)', 'PREREG-PLATON-01 §6', 'вероятность', 0.7, 1, '18 из 18 представителей равносильны канонической форме'),
     ('PLATON-01', 'E6 правило C: порог уверенности снимает ложное согласие', 'PREREG-PLATON-01 §6', 'вероятность', 0.6, 1, 'FC при пороге 0,5 — 0/40 (граница 0,072), TC в TS 39/40'),
     ('PLATON-01', 'E7 условие осмысленности в обоих режимах', 'PREREG-PLATON-01 §6', 'вероятность', 0.95, 1, 'TC в TS 1,0 в обоих режимах'),
-    ('PLATON-01R', 'E1R Sonnet, свободный режим: головы воздерживаются (контроль)', 'PREREG-PLATON-01R §6', 'вероятность', 0.85, None, ''),
-    ('PLATON-01R', 'E2R Sonnet: P3 отвергнута', 'PREREG-PLATON-01R §6', 'вероятность', 0.35, None, ''),
-    ('PLATON-01R', 'E3R Sonnet: P1F и P2F отвергнуты', 'PREREG-PLATON-01R §6', 'вероятность', 0.3, None, ''),
-    ('PLATON-01R', 'E4R Sonnet: FC(ZS, F) − FC(ZS, свободный) ≥ 0,15', 'PREREG-PLATON-01R §6', 'вероятность', 0.35, None, ''),
-    ('PLATON-01R', 'E5R Sonnet: ≥ половины FC в ZSF — знакомый закон (условно на FC ≥ 3)', 'PREREG-PLATON-01R §6', 'вероятность', 0.7, None, ''),
-    ('PLATON-01R', 'E6R Sonnet: правило C (условно на FC ≥ 3)', 'PREREG-PLATON-01R §6', 'вероятность', 0.75, None, ''),
-    ('PLATON-01R', 'E7R Sonnet: условие осмысленности в обоих режимах', 'PREREG-PLATON-01R §6', 'вероятность', 0.95, None, ''),
+    ('PLATON-01R', 'E1R Sonnet, свободный режим: головы воздерживаются (контроль)', 'PREREG-PLATON-01R §6', 'вероятность', 0.85, 1, 'FC 0/40 и 0/40, все 320 голов в Z — НЕТ; REPORT-PLATON-01R.md'),
+    ('PLATON-01R', 'E2R Sonnet: P3 отвергнута', 'PREREG-PLATON-01R §6', 'вероятность', 0.35, 1, 'P3 p 0,0078 (b 7, c 0); REPORT-PLATON-01R.md'),
+    ('PLATON-01R', 'E3R Sonnet: P1F и P2F отвергнуты', 'PREREG-PLATON-01R §6', 'вероятность', 0.3, 1, 'FC ZSF 22/40, ZNF 6/40; p 1,1·10⁻¹⁸ и 0,00043; REPORT-PLATON-01R.md'),
+    ('PLATON-01R', 'E4R Sonnet: FC(ZS, F) − FC(ZS, свободный) ≥ 0,15', 'PREREG-PLATON-01R §6', 'вероятность', 0.35, 1, 'разность 0,55; REPORT-PLATON-01R.md'),
+    ('PLATON-01R', 'E5R Sonnet: ≥ половины FC в ZSF — знакомый закон (условно на FC ≥ 3)', 'PREREG-PLATON-01R §6', 'вероятность', 0.7, 1, '20 из 22; REPORT-PLATON-01R.md'),
+    ('PLATON-01R', 'E6R Sonnet: правило C (условно на FC ≥ 3)', 'PREREG-PLATON-01R §6', 'вероятность', 0.75, 1, '0/40 при пороге 0,5; REPORT-PLATON-01R.md'),
+    ('PLATON-01R', 'E7R Sonnet: условие осмысленности в обоих режимах', 'PREREG-PLATON-01R §6', 'вероятность', 0.95, 1, 'TC в TS 1,0 в обоих режимах; REPORT-PLATON-01R.md'),
 ]
 
 
