@@ -657,3 +657,9 @@
 {"arm": "TSF", "at": "2026-11-13T17:03:56+00:00", "attempt": 1, "event": "вызов", "job": "I37005F|TS|h1", "role": "основной", "task": "I37005", "поток": "I37005F_TS_h1-67258cb4.a001.osn.jsonl.gz"}
 {"arm": "TSF", "at": "2026-11-13T17:04:00+00:00", "attempt": 1, "event": "вызов", "job": "I37005F|TS|h2", "role": "основной", "task": "I37005", "поток": "I37005F_TS_h2-625a72a4.a001.osn.jsonl.gz"}
 {"arm": "TSF", "at": "2026-11-13T17:04:00+00:00", "attempt": 1, "event": "вызов", "job": "I37006F|TS|h4", "role": "основной", "task": "I37006", "поток": "I37006F_TS_h4-2280fc66.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T17:04:08+00:00", "attempt": 1, "event": "вызов", "job": "I37006|TN|h2", "role": "основной", "task": "I37006", "поток": "I37006_TN_h2-eebb189c.a001.osn.jsonl.gz"}
+{"arm": "TS", "at": "2026-11-13T17:04:08+00:00", "attempt": 1, "event": "вызов", "job": "I37006|TS|h3", "role": "основной", "task": "I37006", "поток": "I37006_TS_h3-cb8b0ea9.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T17:04:12+00:00", "attempt": 1, "event": "вызов", "job": "I37006|TN|h1", "role": "основной", "task": "I37006", "поток": "I37006_TN_h1-aa510ca2.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T17:04:14+00:00", "attempt": 1, "event": "вызов", "job": "I37006|TN|h4", "role": "основной", "task": "I37006", "поток": "I37006_TN_h4-d57b00c5.a001.osn.jsonl.gz"}
+{"arm": "TS", "at": "2026-11-13T17:04:15+00:00", "attempt": 1, "event": "вызов", "job": "I37006|TS|h1", "role": "основной", "task": "I37006", "поток": "I37006_TS_h1-5772312e.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T17:04:16+00:00", "attempt": 1, "event": "вызов", "job": "I37006|TN|h3", "role": "основной", "task": "I37006", "поток": "I37006_TN_h3-f22fb083.a001.osn.jsonl.gz"}
