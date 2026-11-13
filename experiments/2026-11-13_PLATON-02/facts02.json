@@ -1,0 +1,1115 @@
+{
+ "source": "run/results_platon02.json",
+ "cells": {
+  "M_free_A": {
+   "n": 42,
+   "TC_Y": 30,
+   "TC_rate": 0.714,
+   "TC_ci95": [
+    0.554,
+    0.843
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.084
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.084
+   ],
+   "FC_X_upper95": 0.069,
+   "rare": true,
+   "heads": 168,
+   "categories": {
+    "Y": 128,
+    "X": 0,
+    "иное": 0,
+    "НЕТ": 40
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 8,
+   "lost": 0
+  },
+  "MN_free_A": {
+   "n": 42,
+   "TC_Y": 26,
+   "TC_rate": 0.619,
+   "TC_ci95": [
+    0.456,
+    0.764
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.084
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.084
+   ],
+   "FC_X_upper95": 0.069,
+   "rare": true,
+   "heads": 168,
+   "categories": {
+    "Y": 117,
+    "X": 0,
+    "иное": 0,
+    "НЕТ": 51
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 9,
+   "lost": 0
+  },
+  "M_forced_A": {
+   "n": 42,
+   "TC_Y": 40,
+   "TC_rate": 0.952,
+   "TC_ci95": [
+    0.838,
+    0.994
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.084
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.084
+   ],
+   "FC_X_upper95": 0.069,
+   "rare": true,
+   "heads": 168,
+   "categories": {
+    "Y": 158,
+    "X": 8,
+    "иное": 2,
+    "НЕТ": 0
+   },
+   "X_share_heads": 0.048,
+   "X_share_ci95": [
+    0.012,
+    0.089
+   ],
+   "none_consensus": 0,
+   "lost": 0
+  },
+  "MN_forced_A": {
+   "n": 42,
+   "TC_Y": 32,
+   "TC_rate": 0.762,
+   "TC_ci95": [
+    0.605,
+    0.879
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.084
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.084
+   ],
+   "FC_X_upper95": 0.069,
+   "rare": true,
+   "heads": 168,
+   "categories": {
+    "Y": 138,
+    "X": 0,
+    "иное": 30,
+    "НЕТ": 0
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 0,
+   "lost": 0
+  },
+  "M_free_B": {
+   "n": 12,
+   "TC_Y": 12,
+   "TC_rate": 1.0,
+   "TC_ci95": [
+    0.735,
+    1.0
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.265
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.265
+   ],
+   "FC_X_upper95": 0.221,
+   "rare": false,
+   "heads": 48,
+   "categories": {
+    "Y": 48,
+    "X": 0,
+    "иное": 0,
+    "НЕТ": 0
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 0,
+   "lost": 0
+  },
+  "MN_free_B": {
+   "n": 12,
+   "TC_Y": 12,
+   "TC_rate": 1.0,
+   "TC_ci95": [
+    0.735,
+    1.0
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.265
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.265
+   ],
+   "FC_X_upper95": 0.221,
+   "rare": false,
+   "heads": 48,
+   "categories": {
+    "Y": 47,
+    "X": 0,
+    "иное": 0,
+    "НЕТ": 1
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 0,
+   "lost": 0
+  },
+  "M_forced_B": {
+   "n": 12,
+   "TC_Y": 12,
+   "TC_rate": 1.0,
+   "TC_ci95": [
+    0.735,
+    1.0
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.265
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.265
+   ],
+   "FC_X_upper95": 0.221,
+   "rare": false,
+   "heads": 48,
+   "categories": {
+    "Y": 48,
+    "X": 0,
+    "иное": 0,
+    "НЕТ": 0
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 0,
+   "lost": 0
+  },
+  "MN_forced_B": {
+   "n": 12,
+   "TC_Y": 12,
+   "TC_rate": 1.0,
+   "TC_ci95": [
+    0.735,
+    1.0
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.265
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.265
+   ],
+   "FC_X_upper95": 0.221,
+   "rare": false,
+   "heads": 48,
+   "categories": {
+    "Y": 48,
+    "X": 0,
+    "иное": 0,
+    "НЕТ": 0
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 0,
+   "lost": 0
+  },
+  "M_free": {
+   "n": 54,
+   "TC_Y": 42,
+   "TC_rate": 0.778,
+   "TC_ci95": [
+    0.644,
+    0.88
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.066
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.066
+   ],
+   "FC_X_upper95": 0.054,
+   "rare": true,
+   "heads": 216,
+   "categories": {
+    "Y": 176,
+    "X": 0,
+    "иное": 0,
+    "НЕТ": 40
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 8,
+   "lost": 0
+  },
+  "MN_free": {
+   "n": 54,
+   "TC_Y": 38,
+   "TC_rate": 0.704,
+   "TC_ci95": [
+    0.564,
+    0.82
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.066
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.066
+   ],
+   "FC_X_upper95": 0.054,
+   "rare": true,
+   "heads": 216,
+   "categories": {
+    "Y": 164,
+    "X": 0,
+    "иное": 0,
+    "НЕТ": 52
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 9,
+   "lost": 0
+  },
+  "M_forced": {
+   "n": 54,
+   "TC_Y": 52,
+   "TC_rate": 0.963,
+   "TC_ci95": [
+    0.873,
+    0.995
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.066
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.066
+   ],
+   "FC_X_upper95": 0.054,
+   "rare": true,
+   "heads": 216,
+   "categories": {
+    "Y": 206,
+    "X": 8,
+    "иное": 2,
+    "НЕТ": 0
+   },
+   "X_share_heads": 0.037,
+   "X_share_ci95": [
+    0.009,
+    0.069
+   ],
+   "none_consensus": 0,
+   "lost": 0
+  },
+  "MN_forced": {
+   "n": 54,
+   "TC_Y": 44,
+   "TC_rate": 0.815,
+   "TC_ci95": [
+    0.686,
+    0.907
+   ],
+   "FC_any": 0,
+   "FC_any_ci95": [
+    0.0,
+    0.066
+   ],
+   "FC_X": 0,
+   "FC_X_ci95": [
+    0.0,
+    0.066
+   ],
+   "FC_X_upper95": 0.054,
+   "rare": true,
+   "heads": 216,
+   "categories": {
+    "Y": 186,
+    "X": 0,
+    "иное": 30,
+    "НЕТ": 0
+   },
+   "X_share_heads": 0.0,
+   "X_share_ci95": [
+    0.0,
+    0.0
+   ],
+   "none_consensus": 0,
+   "lost": 0
+  }
+ },
+ "tests": {
+  "P1A": {
+   "k": 0,
+   "n": 42,
+   "p": 1.0,
+   "rejected": false
+  },
+  "P2A": {
+   "k": 0,
+   "n": 42,
+   "p": 1.0,
+   "rejected": false
+  },
+  "rare_A_both": true,
+  "valid_A": true,
+  "lost_bad_cells": [],
+  "verdict": "гипотеза опровергнута узко: при видимой Y той же формы (слой A) имена не тянут согласие к X",
+  "verdict_P2A": "P2A не отвергнута",
+  "P3_descr": {
+   "free_A": {
+    "b_MN_only": 4,
+    "c_M_only": 8,
+    "p_one": 0.93,
+    "p_two": 0.39,
+    "diff": -0.095,
+    "ci": [
+     -0.262,
+     0.071
+    ]
+   },
+   "forced_A": {
+    "b_MN_only": 0,
+    "c_M_only": 8,
+    "p_one": 1.0,
+    "p_two": 0.0078,
+    "diff": -0.19,
+    "ci": [
+     -0.31,
+     -0.071
+    ]
+   },
+   "free_B": {
+    "b_MN_only": 0,
+    "c_M_only": 0,
+    "p_one": 1.0,
+    "p_two": 1.0,
+    "diff": 0.0,
+    "ci": [
+     0.0,
+     0.0
+    ]
+   },
+   "forced_B": {
+    "b_MN_only": 0,
+    "c_M_only": 0,
+    "p_one": 1.0,
+    "p_two": 1.0,
+    "diff": 0.0,
+    "ci": [
+     0.0,
+     0.0
+    ]
+   },
+   "free": {
+    "b_MN_only": 4,
+    "c_M_only": 8,
+    "p_one": 0.93,
+    "p_two": 0.39,
+    "diff": -0.074,
+    "ci": [
+     -0.204,
+     0.056
+    ]
+   },
+   "forced": {
+    "b_MN_only": 0,
+    "c_M_only": 8,
+    "p_one": 1.0,
+    "p_two": 0.0078,
+    "diff": -0.148,
+    "ci": [
+     -0.259,
+     -0.056
+    ]
+   }
+  }
+ },
+ "by_law": {
+  "coulomb_m": {
+   "layer": "A",
+   "M_free": {
+    "n": 6,
+    "TC_Y": 1,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 17
+   },
+   "MN_free": {
+    "n": 6,
+    "TC_Y": 1,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 20
+   },
+   "M_forced": {
+    "n": 6,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 5,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 6,
+    "TC_Y": 1,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "energy_m": {
+   "layer": "B",
+   "M_free": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_free": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "M_forced": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "fall_m": {
+   "layer": "A",
+   "M_free": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 1
+   },
+   "MN_free": {
+    "n": 6,
+    "TC_Y": 5,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 2
+   },
+   "M_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "gas_m": {
+   "layer": "A",
+   "M_free": {
+    "n": 6,
+    "TC_Y": 5,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 4
+   },
+   "MN_free": {
+    "n": 6,
+    "TC_Y": 0,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 16
+   },
+   "M_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 6,
+    "TC_Y": 1,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "kepler_m": {
+   "layer": "A",
+   "M_free": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_free": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 1
+   },
+   "M_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "kinetic_m": {
+   "layer": "A",
+   "M_free": {
+    "n": 6,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 5
+   },
+   "MN_free": {
+    "n": 6,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 6
+   },
+   "M_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 1,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "lens_m": {
+   "layer": "B",
+   "M_free": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_free": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "M_forced": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "ohm_m": {
+   "layer": "A",
+   "M_free": {
+    "n": 6,
+    "TC_Y": 2,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 13
+   },
+   "MN_free": {
+    "n": 6,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 5
+   },
+   "M_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 2,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "pendulum_m": {
+   "layer": "A",
+   "M_free": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_free": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 1
+   },
+   "M_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 6,
+    "TC_Y": 6,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  },
+  "spring_m": {
+   "layer": "B",
+   "M_free": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_free": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 1
+   },
+   "M_forced": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   },
+   "MN_forced": {
+    "n": 4,
+    "TC_Y": 4,
+    "FC_X": 0,
+    "FC_any": 0,
+    "X_heads": 0,
+    "NONE_heads": 0
+   }
+  }
+ },
+ "x_claims": [
+  {
+   "law": "coulomb_m",
+   "layer": "A",
+   "cell": "TS",
+   "regime": "forced",
+   "seed": 37002,
+   "raw": "F*r**2/(q1*q2)",
+   "confidence": 0.02
+  },
+  {
+   "law": "coulomb_m",
+   "layer": "A",
+   "cell": "TS",
+   "regime": "forced",
+   "seed": 37002,
+   "raw": "F*r**2/(q1*q2)",
+   "confidence": 0.01
+  },
+  {
+   "law": "coulomb_m",
+   "layer": "A",
+   "cell": "TS",
+   "regime": "forced",
+   "seed": 37003,
+   "raw": "F*r**2/(q1*q2)",
+   "confidence": 0.02
+  },
+  {
+   "law": "coulomb_m",
+   "layer": "A",
+   "cell": "TS",
+   "regime": "forced",
+   "seed": 37003,
+   "raw": "F*r**2/(q1*q2)",
+   "confidence": 0.02
+  },
+  {
+   "law": "coulomb_m",
+   "layer": "A",
+   "cell": "TS",
+   "regime": "forced",
+   "seed": 37004,
+   "raw": "F*r**2/(q1*q2)",
+   "confidence": 0.02
+  },
+  {
+   "law": "ohm_m",
+   "layer": "A",
+   "cell": "TS",
+   "regime": "forced",
+   "seed": 38005,
+   "raw": "I*R/U",
+   "confidence": 0.02
+  },
+  {
+   "law": "ohm_m",
+   "layer": "A",
+   "cell": "TS",
+   "regime": "forced",
+   "seed": 38006,
+   "raw": "U/(R*I)",
+   "confidence": 0.02
+  },
+  {
+   "law": "kinetic_m",
+   "layer": "A",
+   "cell": "TS",
+   "regime": "forced",
+   "seed": 39006,
+   "raw": "E / (m * v**2)",
+   "confidence": 0.02
+  }
+ ],
+ "conf_by_category": {
+  "Y_free": {
+   "n": 340,
+   "mean": 0.841
+  },
+  "Y_forced": {
+   "n": 392,
+   "mean": 0.728
+  },
+  "X_free": {
+   "n": 0,
+   "mean": null
+  },
+  "X_forced": {
+   "n": 8,
+   "mean": 0.019
+  },
+  "иное_free": {
+   "n": 0,
+   "mean": null
+  },
+  "иное_forced": {
+   "n": 32,
+   "mean": 0.024
+  }
+ },
+ "other_kinds": {
+  "EXPR": 32
+ },
+ "fc_not_x": [],
+ "expectations": {
+  "E1": 0,
+  "E2": 0,
+  "E3A": 1,
+  "E3B": 1,
+  "E4": 0,
+  "E5": 1,
+  "E6": 1
+ },
+ "expectations_brier": {
+  "n": 7,
+  "brier": 0.022,
+  "mean_p": 0.503,
+  "hits": 4
+ },
+ "weights_bits": {
+  "hypothesis": -2.575,
+  "narrow_claim": 2.575
+ },
+ "power": {
+  "P1A_half": 0.43015,
+  "frechet_5pct": 0.297972781307545
+ },
+ "ioi": {
+  "M_free_A": {
+   "ignorance": 0.286,
+   "deception": 0.0
+  },
+  "MN_free_A": {
+   "ignorance": 0.381,
+   "deception": 0.0
+  },
+  "M_forced_A": {
+   "ignorance": 0.048,
+   "deception": 0.0
+  },
+  "MN_forced_A": {
+   "ignorance": 0.238,
+   "deception": 0.0
+  },
+  "M_free_B": {
+   "ignorance": 0.0,
+   "deception": 0.0
+  },
+  "MN_free_B": {
+   "ignorance": 0.0,
+   "deception": 0.0
+  },
+  "M_forced_B": {
+   "ignorance": 0.0,
+   "deception": 0.0
+  },
+  "MN_forced_B": {
+   "ignorance": 0.0,
+   "deception": 0.0
+  },
+  "M_free": {
+   "ignorance": 0.222,
+   "deception": 0.0
+  },
+  "MN_free": {
+   "ignorance": 0.296,
+   "deception": 0.0
+  },
+  "M_forced": {
+   "ignorance": 0.037,
+   "deception": 0.0
+  },
+  "MN_forced": {
+   "ignorance": 0.185,
+   "deception": 0.0
+  }
+ },
+ "x_heads_per_table": {
+  "I37002F|TS": 2,
+  "I37003F|TS": 2,
+  "I37004F|TS": 1,
+  "I38005F|TS": 1,
+  "I38006F|TS": 1,
+  "I39006F|TS": 1
+ },
+ "x_heads_max_in_table": 2,
+ "x_heads_total": 8,
+ "none_heads": {
+  "M_free_A": 40,
+  "MN_free_A": 51,
+  "M_forced_A": 0,
+  "MN_forced_A": 0,
+  "M_free_B": 0,
+  "MN_free_B": 1,
+  "M_forced_B": 0,
+  "MN_forced_B": 0,
+  "M_free": 40,
+  "MN_free": 52,
+  "M_forced": 0,
+  "MN_forced": 0
+ },
+ "totals": {
+  "calls": 864,
+  "lost": 0,
+  "started": "2026-11-13T16:34:40+00:00",
+  "finished": "2026-11-13T17:14:54+00:00",
+  "out_total": 2062854,
+  "cost_usd": 1.596,
+  "out_per_call": 2388,
+  "out_mean_by_cell": {
+   "TN": 2270,
+   "TNF": 2363,
+   "TS": 2313,
+   "TSF": 2603
+  }
+ },
+ "parse_errors": [],
+ "layers": {
+  "A": [
+   "coulomb_m",
+   "fall_m",
+   "gas_m",
+   "kepler_m",
+   "kinetic_m",
+   "ohm_m",
+   "pendulum_m"
+  ],
+  "B": [
+   "energy_m",
+   "lens_m",
+   "spring_m"
+  ]
+ },
+ "lost_share": 0.0,
+ "audit": [
+  {
+   "journal": "experiments/2026-11-13_PLATON-02/run/journal",
+   "calls": 864,
+   "home": "/home/user/neu_heads/platon02/home",
+   "work_dir": "/home/user/neu_heads/platon02/work",
+   "git_instructions_off": true,
+   "git_snapshot_possible": false,
+   "tools": [
+    "StructuredOutput"
+   ],
+   "mcp": [],
+   "model": {
+    "claude-haiku-5-5": 864
+   }
+  }
+ ]
+}

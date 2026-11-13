@@ -1,0 +1,42 @@
+[
+{
+"seed": 95001,
+"law": "fall_m"
+},
+{
+"seed": 96001,
+"law": "pendulum_m"
+},
+{
+"seed": 97001,
+"law": "kepler_m"
+},
+{
+"seed": 98001,
+"law": "gas_m"
+},
+{
+"seed": 99001,
+"law": "lens_m"
+},
+{
+"seed": 100001,
+"law": "spring_m"
+},
+{
+"seed": 101001,
+"law": "energy_m"
+},
+{
+"seed": 102001,
+"law": "coulomb_m"
+},
+{
+"seed": 103001,
+"law": "ohm_m"
+},
+{
+"seed": 104001,
+"law": "kinetic_m"
+}
+]
