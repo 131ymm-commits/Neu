@@ -7,6 +7,8 @@
 входа даёт сходство даром). Режимы и шаги — ARMS из exp_self_02 (SELF-02): богатый = lin2_small, ленивый =
 lin2_lazy. Обучение — полный градиентный спуск на ½·MSE, как в exp_self_02.train_curve.
 
+Условия: q ∈ {0, 1} × {богатый, ленивый} с 52 помехами; q0_d64 — q = 0, богатый, 52 + 2 помехи (вход 64, как при
+q = 1); описательно — 0 и 20 помех при q = 1 в обоих режимах.
 Блок = 4 сети с разными выборками мира (data_seed), инициализацией (init_seed = data_seed + 777, как в
 SELF-02) и шириной (WIDTHS), обученные одновременно; общий зонд — отдельная выборка мира (probe_seed).
 Меры на зонде: линейная CKA скрытых представлений между парами (6 пар), начальная линия — CKA на шаге 0;
@@ -61,8 +63,11 @@ def prep_scalers(seed, q):
     return (Xs[:N_TR], Xs[N_TR:], Ys[:N_TR], Ys[N_TR:], Ps[:N_TR], Ps[N_TR:]), sx, sy
 
 
-def nuis(seed, n, d):
-    return np.random.default_rng(seed + 20_000).standard_normal((n, d)) if d else np.zeros((n, 0))
+def nuis(seed, n, d, extra=0):
+    """d помех с зерна seed + 20000 и extra добавочных с отдельного зерна seed + 30000 (совет 48, п. «в»):
+    у условия q0_d64 первые 52 помехи те же, что у q = 0, — план парный."""
+    main = np.random.default_rng(seed + 20_000).standard_normal((n, d)) if d else np.zeros((n, 0))
+    return np.hstack([main, np.random.default_rng(seed + 30_000).standard_normal((n, extra))]) if extra else main
 
 
 def whitener(Xtr):
@@ -73,17 +78,17 @@ def whitener(Xtr):
     return Xtr.mean(0), V[:, keep] / np.sqrt(ev[keep])
 
 
-def run_data(seed, q, d_nuis):
+def run_data(seed, q, d_nuis, extra=0):
     (Xtr, Xte, Ytr, Yte, Ptr, Pte), sx, sy = prep_scalers(seed, q)
-    Nz = nuis(seed, N_TR + N_TE, d_nuis)
+    Nz = nuis(seed, N_TR + N_TE, d_nuis, extra)
     Xtr, Xte = np.hstack([Xtr, Nz[:N_TR]]), np.hstack([Xte, Nz[N_TR:]])
     mu, Wh = whitener(Xtr)
     return dict(Xw=(Xtr - mu) @ Wh, Xtew=(Xte - mu) @ Wh, Y=Ytr, Ptr=Ptr, Pte=Pte, sx=sx, sy=sy, mu=mu, Wh=Wh)
 
 
-def probe_raw(probe_seed, q, d_nuis):
+def probe_raw(probe_seed, q, d_nuis, extra=0):
     X, _, P = s1.simulate(probe_seed, q)
-    return X[N_TR:], P[N_TR:], nuis(probe_seed, N_TR + N_TE, d_nuis)[N_TR:]
+    return X[N_TR:], P[N_TR:], nuis(probe_seed, N_TR + N_TE, d_nuis, extra)[N_TR:]
 
 
 def to_run(dr, Xp_raw, Np):
@@ -121,14 +126,14 @@ def checkpoints(steps):
                   | set(range(600, steps + 1, 25)) | {steps})
 
 
-def train_group(base, b, q, regime, d_nuis, self_curve=False):
+def train_group(base, b, q, regime, d_nuis, extra=0, self_curve=False):
     """Четыре сети блока b одновременно. self_curve — кривая R² на своём тесте (для сверки с SELF-02)."""
     model, steps, lr, init = REGIMES[regime]
     data, inits, pseed = block_seeds(base, b)
-    Xp_raw, Pp_raw, Np = probe_raw(pseed, q, d_nuis)
+    Xp_raw, Pp_raw, Np = probe_raw(pseed, q, d_nuis, extra)
     nets = []
     for r in range(4):
-        dr = run_data(data[r], q, d_nuis)
+        dr = run_data(data[r], q, d_nuis, extra)
         n, d = dr['Xw'].shape
         h = WIDTHS[r]
         rng = np.random.default_rng(inits[r])
@@ -168,13 +173,13 @@ def train_group(base, b, q, regime, d_nuis, self_curve=False):
         if t in cps:
             H = snap(t)
     mkT = [mknn(H[i][:N_KNN], H[j][:N_KNN]) for i, j in pairs]
-    g = np.random.default_rng(base + 100 * b + 99 + int(q * 10) + (0 if regime == 'rich' else 5))
+    g = np.random.default_rng([base + 100 * b + 99, int(q * 10), 0 if regime == 'rich' else 1, d_nuis, extra])
     perm = []
     for i, j in pairs:                                    # перестановочный нуль на последнем шаге, половина B
         A, B = H[i][HALF:], H[j][HALF:]
         null = [cka(A, B[g.permutation(len(B))]) for _ in range(N_PERM)]
         perm.append([float(np.mean(null)), float(np.std(null)), float(max(null))])
-    out = dict(base=base, block=b, q=q, regime=regime, d_nuis=d_nuis, data_seeds=data, init_seeds=inits, probe_seed=pseed,
+    out = dict(base=base, block=b, q=q, regime=regime, d_nuis=d_nuis, extra=extra, data_seeds=data, init_seeds=inits, probe_seed=pseed,
                widths=WIDTHS, d_in=[nt['d'] for nt in nets], ref=[nt['ref'] for nt in nets], pairs=pairs,
                mknn0=mk0, mknnT=mkT, perm=perm,
                theory=[s2.theory(s, q) for s in data], **rec)
@@ -184,9 +189,10 @@ def train_group(base, b, q, regime, d_nuis, self_curve=False):
 
 
 def jobs(base, n_blocks, with_control):
-    J = [(base, b, q, rg, D_NUIS) for b in range(n_blocks) for q in QS for rg in REGIMES]
-    if with_control:                                     # контроль метода: без помех, q = 1
-        J += [(base, b, 1.0, rg, 0) for b in range(n_blocks) for rg in REGIMES]
+    J = [(base, b, q, rg, D_NUIS, 0) for b in range(n_blocks) for q in QS for rg in REGIMES]
+    J += [(base, b, 0.0, 'rich', D_NUIS, 2) for b in range(n_blocks)]      # q0_d64: q = 0, вход 64 (совет 48, п. «в»)
+    if with_control:                                     # описательно: развёртка помех 0 и 20 при q = 1 (совет 48, п. «ж»)
+        J += [(base, b, 1.0, rg, nz, 0) for nz in (0, 20) for b in range(n_blocks) for rg in REGIMES]
     return J
 
 
@@ -195,7 +201,7 @@ def summary_line(r):
     bh = np.array(r['behav']).mean(1)
     st = r['step']
     i50 = next((k for k, v in enumerate(ck) if v >= ck[0] + 0.5 * (ck[-1] - ck[0])), None)
-    return (f"b{r['block']} q={r['q']} {r['regime']:4s} nuis={r['d_nuis']:2d}  CKA {ck[0]:.3f}→{ck[-1]:.3f}  "
+    return (f"b{r['block']} q={r['q']} {r['regime']:4s} nuis={r['d_nuis']:2d}+{r['extra']}  CKA {ck[0]:.3f}→{ck[-1]:.3f}  "
             f"mkNN {np.mean(r['mknn0']):.3f}→{np.mean(r['mknnT']):.3f}  поведение {bh[-1]:.3f}  "
             f"t½(CKA) {st[i50] if i50 is not None else '—'}  нуль {np.mean([p[0] for p in r['perm']]):.4f}")
 

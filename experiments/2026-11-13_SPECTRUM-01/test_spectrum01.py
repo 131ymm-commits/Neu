@@ -63,6 +63,23 @@ def t_mknn():
     check(v < 0.05, f'mkNN независимых ≈ k/n ({v:.3f}; k/n = {S.K_NN / 1000:.3f})')
 
 
+def t_streams():
+    """Совет 48, п. «в»: потоки случайных чисел не пересекаются. Для зерна выборки s: s (мир), s + 10000 (маска q),
+    s + 20000 (помехи), s + 30000 (добавочные помехи q0_d64), s + 777 (инициализация); для зерна зонда — первые четыре."""
+    used = {}
+    bases = [(S.TEST_BASE, S.N_BLOCKS), (S.PILOT_BASE, 2), (S.PILOT_BASE + 5000, 1)]
+    for base, nb in bases:
+        for b in range(nb):
+            data, inits, pseed = S.block_seeds(base, b)
+            for sd in data + [pseed]:
+                for off, tag in ((0, 'мир'), (10_000, 'маска'), (20_000, 'помехи'), (30_000, 'доб. помехи')):
+                    used.setdefault(sd + off, []).append((tag, sd))
+            for si in inits:
+                used.setdefault(si, []).append(('инициализация', si - 777))
+    clash = {k: v for k, v in used.items() if len(v) > 1}
+    check(not clash, f'потоки случайных чисел не пересекаются ({len(used)} потоков; пересечений {len(clash)})')
+
+
 def t_seeds():
     test = {s for b in range(S.N_BLOCKS) for s in S.block_seeds(S.TEST_BASE, b)[0] + [S.block_seeds(S.TEST_BASE, b)[2]]}
     pil = {s for b in range(2) for s in S.block_seeds(S.PILOT_BASE, b)[0] + [S.block_seeds(S.PILOT_BASE, b)[2]]}
@@ -72,6 +89,6 @@ def t_seeds():
 
 
 if __name__ == '__main__':
-    t_world(); t_cka(); t_mknn(); t_seeds(); t_self02()
+    t_world(); t_cka(); t_mknn(); t_seeds(); t_streams(); t_self02()
     print('ПРОВАЛОВ:', len(FAIL))
     sys.exit(1 if FAIL else 0)

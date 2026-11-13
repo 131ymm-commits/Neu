@@ -6,7 +6,8 @@
   "cka_seeds_init": "abs:\"kernel alignment\" AND (abs:seeds OR abs:initializations) AND abs:representations",
   "convergent_learning": "abs:\"convergent learning\" OR ti:\"different neural networks learn the same representations\"",
   "rich_lazy_title": "ti:\"rich and lazy\" OR ti:\"lazy and rich\"",
-  "feature_learning_alignment_init": "abs:\"feature learning\" AND abs:\"representational alignment\" AND abs:initialization"
+  "feature_learning_alignment_init": "abs:\"feature learning\" AND abs:\"representational alignment\" AND abs:initialization",
+  "silent_alignment": "ti:\"silent alignment\""
  },
  "results": {
   "lazy_rich_repr": [
@@ -482,6 +483,32 @@
     "abstract": "Biological and artificial neural networks develop internal representations that enable them to perform complex tasks. In artificial networks, the effectiveness of these models relies on their ability to build task specific representation, a process influenced by interactions among datasets, architectures, initialization strategies, and optimization algorithms. Prior studies highlight that different initializations can place networks in either a lazy regime, where representations remain static, or a rich/feature learning regime, where representations evolve dynamically. Here, we examine how initialization influences learning dynamics in deep linear neural networks, deriving exact solutions for lambda-balanced initializations-defined by the relative scale of weights across layers. These solutions capture the evolution of representations and the Neural Tangent Kernel across the spectrum from the rich to the lazy regimes. Our findings deepen the theoretical understanding of the impact of weight initialization on learning regimes, with implications for continual learning, reversal learning, and transfer learning, relevant to both neuroscience and practical applications."
    }
   ],
-  "feature_learning_alignment_init": []
+  "feature_learning_alignment_init": [],
+  "silent_alignment": [
+   {
+    "id": "2111.00034v2",
+    "title": "Neural Networks as Kernel Learners: The Silent Alignment Effect",
+    "published": "2021-10-29",
+    "authors": [
+     "Alexander Atanasov",
+     "Blake Bordelon",
+     "Cengiz Pehlevan"
+    ],
+    "abstract": "Neural networks in the lazy training regime converge to kernel machines. Can neural networks in the rich feature learning regime learn a kernel machine with a data-dependent kernel? We demonstrate that this can indeed happen due to a phenomenon we term silent alignment, which requires that the tangent kernel of a network evolves in eigenstructure while small and before the loss appreciably decreases, and grows only in overall scale afterwards. We show that such an effect takes place in homogenous neural networks with small initialization and whitened data. We provide an analytical treatment of this effect in the linear network case. In general, we find that the kernel develops a low-rank contribution in the early phase of training, and then evolves in overall scale, yielding a function equivalent to a kernel regression solution with the final network's tangent kernel. The early spectral learning of the kernel depends on the depth. We also demonstrate that non-whitened data can weaken the silent alignment effect.",
+    "comment": "29 pages, 15 figures. Added additional experiments and expanded the derivations in the appendix"
+   },
+   {
+    "id": "2610.29864v1",
+    "title": "Silent Alignment in Two-Layer Linear Networks: A High-Dimensional Perspective",
+    "published": "2026-10-21",
+    "authors": [
+     "Simon Martin",
+     "Francis Bach",
+     "Giulio Biroli"
+    ],
+    "abstract": "We study gradient flow in a two-layer linear network in the high-dimensional regime where the input, inner and output dimensions diverge proportionally. Under whitened inputs and isotropic imbalance, we combine a closed-form solution of the dynamics with prior random matrix theory results to derive a high-dimensional limit for the dynamics. Our method yields exact asymptotic spectral distributions for the weight matrices at all times and characterizes the evolution of the learned subspace. In the small-initialization limit, we identify a silent alignment phenomenon: the singular directions of the network align on an order-one timescale, while the singular values and empirical loss remain at their initial values. Visible learning occurs later, on a logarithmic timescale, as singular values progressively escape zero and the loss decreases. This phase is characterized by a saddle-to-saddle dynamics, which becomes a continuous process of spectral learning in the high-dimensional limit.",
+    "comment": null
+   }
+  ]
  }
 }
