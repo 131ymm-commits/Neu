@@ -474,5 +474,7 @@
   "n": 7,
   "brier": 0.216,
   "mean_p": 0.607
- }
+ },
+ "C070_joint_power_product": 0.4621,
+ "C070_joint_bits_approx": 3.21
 }
