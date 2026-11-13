@@ -1,0 +1,16 @@
+{"at": "2026-11-13T05:01:17+00:00", "binary_sha256": "27122ca7b624f537546fbef35b80c66370d974ff258f3d9b10ac50bb8771f262", "config_sha256": "afd38e3277fe59d86f792a6a28d4a8ae3ce62ccde54260c1765ab2187e366fa9", "event": "старт"}
+{"at": "2026-11-13T05:01:17+00:00", "event": "план", "заданий_в_плане": 64, "задач": 2}
+{"arm": "TS", "at": "2026-11-13T05:01:17+00:00", "attempt": 1, "event": "вызов", "job": "I90040|TS|h1", "role": "основной", "task": "I90040", "поток": "I90040_TS_h1-6c1b6d95.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T05:01:17+00:00", "attempt": 1, "event": "вызов", "job": "I90040|TN|h4", "role": "основной", "task": "I90040", "поток": "I90040_TN_h4-9f3503d9.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T05:01:17+00:00", "attempt": 1, "event": "вызов", "job": "I90040F|TN|h4", "role": "основной", "task": "I90040", "поток": "I90040F_TN_h4-e78ea5a5.a001.osn.jsonl.gz"}
+{"arm": "TS", "at": "2026-11-13T05:01:17+00:00", "attempt": 1, "event": "вызов", "job": "I90040|TS|h3", "role": "основной", "task": "I90040", "поток": "I90040_TS_h3-59bfd755.a001.osn.jsonl.gz"}
+{"arm": "TS", "at": "2026-11-13T05:01:20+00:00", "attempt": 1, "event": "вызов", "job": "I90040|TS|h4", "role": "основной", "task": "I90040", "поток": "I90040_TS_h4-81d0319b.a001.osn.jsonl.gz"}
+{"arm": "ZS", "at": "2026-11-13T05:01:20+00:00", "attempt": 1, "event": "вызов", "job": "I90040|ZS|h1", "role": "основной", "task": "I90040", "поток": "I90040_ZS_h1-16425715.a001.osn.jsonl.gz"}
+{"arm": "ZSF", "at": "2026-11-13T05:01:22+00:00", "attempt": 1, "event": "вызов", "job": "I90040F|ZS|h3", "role": "основной", "task": "I90040", "поток": "I90040F_ZS_h3-c82af59d.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T05:01:23+00:00", "attempt": 1, "event": "вызов", "job": "I90040F|TN|h2", "role": "основной", "task": "I90040", "поток": "I90040F_TN_h2-6944a880.a001.osn.jsonl.gz"}
+{"arm": "ZN", "at": "2026-11-13T05:01:23+00:00", "attempt": 1, "event": "вызов", "job": "I90040|ZN|h4", "role": "основной", "task": "I90040", "поток": "I90040_ZN_h4-9f3bfd40.a001.osn.jsonl.gz"}
+{"arm": "ZN", "at": "2026-11-13T05:01:28+00:00", "attempt": 1, "event": "вызов", "job": "I90040|ZN|h1", "role": "основной", "task": "I90040", "поток": "I90040_ZN_h1-cf742dcb.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T05:01:28+00:00", "attempt": 1, "event": "вызов", "job": "I90040F|TN|h1", "role": "основной", "task": "I90040", "поток": "I90040F_TN_h1-d86b01b8.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T05:01:29+00:00", "attempt": 1, "event": "вызов", "job": "I90040F|TN|h3", "role": "основной", "task": "I90040", "поток": "I90040F_TN_h3-eb4692e3.a001.osn.jsonl.gz"}
+{"arm": "ZS", "at": "2026-11-13T05:01:31+00:00", "attempt": 1, "event": "вызов", "job": "I90040|ZS|h4", "role": "основной", "task": "I90040", "поток": "I90040_ZS_h4-1296d2de.a001.osn.jsonl.gz"}
+{"arm": "TSF", "at": "2026-11-13T05:01:31+00:00", "attempt": 1, "event": "вызов", "job": "I90040F|TS|h3", "role": "основной", "task": "I90040", "поток": "I90040F_TS_h3-a8250e7e.a001.osn.jsonl.gz"}
