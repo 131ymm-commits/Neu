@@ -1,0 +1,3672 @@
+{
+ "params": {
+  "TAU": 0.1,
+  "TAU_AGREE": 0.1,
+  "P0": 0.05,
+  "ALPHA": 0.05,
+  "POS_CONTROL": 0.3,
+  "EQUIV_UPPER": 0.15,
+  "heads": 4,
+  "n_rows": 13,
+  "n_hold": 400
+ },
+ "heads_total": 64,
+ "heads_lost": 0,
+ "lost_flag": false,
+ "summary": {
+  "TN": {
+   "n_tables": 2,
+   "K": 2,
+   "FC": 0,
+   "TC": 2,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "TC_rate": 1.0,
+   "TC_ci95": [
+    0.1581138830084189,
+    1.0
+   ],
+   "K_rate": 1.0,
+   "FC_conf": 0,
+   "FC_conf_rate": 0.0,
+   "FC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf_upper95_one_sided": 0.7763932022500206,
+   "TC_conf": 2,
+   "TC_conf_rate": 1.0,
+   "TC_conf_ci95": [
+    0.1581138830084189,
+    1.0
+   ],
+   "FC_conf005": 0,
+   "TC_conf005": 2,
+   "conf_missing_claims": 0,
+   "clique_ties": 0,
+   "clique_ties_K": 0,
+   "K_all_members_hold": 2,
+   "z_flagged_tables": 0,
+   "lost_heads": 0,
+   "lost_share": 0.0,
+   "lost_over_5pct": false,
+   "none_share_mean": 0.0,
+   "none_consensus": 0,
+   "rep_canonical_among_K": 2,
+   "mixed_cliques": 0,
+   "heads_total": 8,
+   "head_kinds": {
+    "EXPR": 8
+   },
+   "claims": 8,
+   "claim_hold_rate": 1.0,
+   "claim_canonical_rate": 1.0,
+   "conf_mean_claims": 0.7475,
+   "conf_mean_holding": 0.7475,
+   "conf_mean_failing": null,
+   "overconfidence_claims": -0.25249999999999995,
+   "pair_agree_rate": 1.0,
+   "pairs": 12,
+   "out_tokens_mean": 749.25,
+   "out_tokens_total": 5994,
+   "inp_tokens_mean": 3316.75,
+   "cost_usd_total": 0.138988
+  },
+  "TNF": {
+   "n_tables": 2,
+   "K": 2,
+   "FC": 0,
+   "TC": 2,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "TC_rate": 1.0,
+   "TC_ci95": [
+    0.1581138830084189,
+    1.0
+   ],
+   "K_rate": 1.0,
+   "FC_conf": 0,
+   "FC_conf_rate": 0.0,
+   "FC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf_upper95_one_sided": 0.7763932022500206,
+   "TC_conf": 2,
+   "TC_conf_rate": 1.0,
+   "TC_conf_ci95": [
+    0.1581138830084189,
+    1.0
+   ],
+   "FC_conf005": 0,
+   "TC_conf005": 2,
+   "conf_missing_claims": 0,
+   "clique_ties": 0,
+   "clique_ties_K": 0,
+   "K_all_members_hold": 1,
+   "z_flagged_tables": 0,
+   "lost_heads": 0,
+   "lost_share": 0.0,
+   "lost_over_5pct": false,
+   "none_share_mean": 0.0,
+   "none_consensus": 0,
+   "rep_canonical_among_K": 2,
+   "mixed_cliques": 1,
+   "heads_total": 8,
+   "head_kinds": {
+    "EXPR": 8
+   },
+   "claims": 8,
+   "claim_hold_rate": 0.875,
+   "claim_canonical_rate": 1.0,
+   "conf_mean_claims": 0.74875,
+   "conf_mean_holding": 0.8271428571428572,
+   "conf_mean_failing": 0.2,
+   "overconfidence_claims": -0.12624999999999997,
+   "pair_agree_rate": 1.0,
+   "pairs": 12,
+   "out_tokens_mean": 450.5,
+   "out_tokens_total": 3604,
+   "inp_tokens_mean": 3329.5,
+   "cost_usd_total": 0.11887800000000001
+  },
+  "TS": {
+   "n_tables": 2,
+   "K": 2,
+   "FC": 0,
+   "TC": 2,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "TC_rate": 1.0,
+   "TC_ci95": [
+    0.1581138830084189,
+    1.0
+   ],
+   "K_rate": 1.0,
+   "FC_conf": 0,
+   "FC_conf_rate": 0.0,
+   "FC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf_upper95_one_sided": 0.7763932022500206,
+   "TC_conf": 2,
+   "TC_conf_rate": 1.0,
+   "TC_conf_ci95": [
+    0.1581138830084189,
+    1.0
+   ],
+   "FC_conf005": 0,
+   "TC_conf005": 2,
+   "conf_missing_claims": 0,
+   "clique_ties": 0,
+   "clique_ties_K": 0,
+   "K_all_members_hold": 2,
+   "z_flagged_tables": 0,
+   "lost_heads": 0,
+   "lost_share": 0.0,
+   "lost_over_5pct": false,
+   "none_share_mean": 0.0,
+   "none_consensus": 0,
+   "rep_canonical_among_K": 2,
+   "mixed_cliques": 0,
+   "heads_total": 8,
+   "head_kinds": {
+    "EXPR": 8
+   },
+   "claims": 8,
+   "claim_hold_rate": 1.0,
+   "claim_canonical_rate": 1.0,
+   "conf_mean_claims": 0.92875,
+   "conf_mean_holding": 0.92875,
+   "conf_mean_failing": null,
+   "overconfidence_claims": -0.07125000000000004,
+   "pair_agree_rate": 1.0,
+   "pairs": 12,
+   "out_tokens_mean": 343.875,
+   "out_tokens_total": 2751,
+   "inp_tokens_mean": 3349.25,
+   "cost_usd_total": 0.114362
+  },
+  "TSF": {
+   "n_tables": 2,
+   "K": 2,
+   "FC": 0,
+   "TC": 2,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "TC_rate": 1.0,
+   "TC_ci95": [
+    0.1581138830084189,
+    1.0
+   ],
+   "K_rate": 1.0,
+   "FC_conf": 0,
+   "FC_conf_rate": 0.0,
+   "FC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf_upper95_one_sided": 0.7763932022500206,
+   "TC_conf": 2,
+   "TC_conf_rate": 1.0,
+   "TC_conf_ci95": [
+    0.1581138830084189,
+    1.0
+   ],
+   "FC_conf005": 0,
+   "TC_conf005": 2,
+   "conf_missing_claims": 0,
+   "clique_ties": 0,
+   "clique_ties_K": 0,
+   "K_all_members_hold": 2,
+   "z_flagged_tables": 0,
+   "lost_heads": 0,
+   "lost_share": 0.0,
+   "lost_over_5pct": false,
+   "none_share_mean": 0.0,
+   "none_consensus": 0,
+   "rep_canonical_among_K": 2,
+   "mixed_cliques": 0,
+   "heads_total": 8,
+   "head_kinds": {
+    "EXPR": 8
+   },
+   "claims": 8,
+   "claim_hold_rate": 1.0,
+   "claim_canonical_rate": 1.0,
+   "conf_mean_claims": 0.94625,
+   "conf_mean_holding": 0.94625,
+   "conf_mean_failing": null,
+   "overconfidence_claims": -0.053749999999999964,
+   "pair_agree_rate": 1.0,
+   "pairs": 12,
+   "out_tokens_mean": 254.875,
+   "out_tokens_total": 2039,
+   "inp_tokens_mean": 3358.75,
+   "cost_usd_total": 0.10078200000000001
+  },
+  "ZN": {
+   "n_tables": 2,
+   "K": 0,
+   "FC": 0,
+   "TC": 0,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "TC_rate": 0.0,
+   "TC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "K_rate": 0.0,
+   "FC_conf": 0,
+   "FC_conf_rate": 0.0,
+   "FC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf_upper95_one_sided": 0.7763932022500206,
+   "TC_conf": 0,
+   "TC_conf_rate": 0.0,
+   "TC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf005": 0,
+   "TC_conf005": 0,
+   "conf_missing_claims": 0,
+   "clique_ties": 0,
+   "clique_ties_K": 0,
+   "K_all_members_hold": 0,
+   "z_flagged_tables": 0,
+   "lost_heads": 0,
+   "lost_share": 0.0,
+   "lost_over_5pct": false,
+   "none_share_mean": 1.0,
+   "none_consensus": 2,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "heads_total": 8,
+   "head_kinds": {
+    "NONE": 8
+   },
+   "claims": 0,
+   "claim_hold_rate": null,
+   "claim_canonical_rate": null,
+   "conf_mean_claims": null,
+   "conf_mean_holding": null,
+   "conf_mean_failing": null,
+   "overconfidence_claims": null,
+   "pair_agree_rate": null,
+   "pairs": 0,
+   "out_tokens_mean": 559.0,
+   "out_tokens_total": 4472,
+   "inp_tokens_mean": 3315.25,
+   "cost_usd_total": 0.12372
+  },
+  "ZNF": {
+   "n_tables": 2,
+   "K": 0,
+   "FC": 0,
+   "TC": 0,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "TC_rate": 0.0,
+   "TC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "K_rate": 0.0,
+   "FC_conf": 0,
+   "FC_conf_rate": 0.0,
+   "FC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf_upper95_one_sided": 0.7763932022500206,
+   "TC_conf": 0,
+   "TC_conf_rate": 0.0,
+   "TC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf005": 0,
+   "TC_conf005": 0,
+   "conf_missing_claims": 0,
+   "clique_ties": 0,
+   "clique_ties_K": 0,
+   "K_all_members_hold": 0,
+   "z_flagged_tables": 0,
+   "lost_heads": 0,
+   "lost_share": 0.0,
+   "lost_over_5pct": false,
+   "none_share_mean": 0.0,
+   "none_consensus": 0,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "heads_total": 8,
+   "head_kinds": {
+    "EXPR": 8
+   },
+   "claims": 8,
+   "claim_hold_rate": 0.0,
+   "claim_canonical_rate": 0.125,
+   "conf_mean_claims": 0.035,
+   "conf_mean_holding": null,
+   "conf_mean_failing": 0.035,
+   "overconfidence_claims": 0.035,
+   "pair_agree_rate": 0.08333333333333333,
+   "pairs": 12,
+   "out_tokens_mean": 780.375,
+   "out_tokens_total": 6243,
+   "inp_tokens_mean": 3327.5,
+   "cost_usd_total": 0.141822
+  },
+  "ZS": {
+   "n_tables": 2,
+   "K": 0,
+   "FC": 0,
+   "TC": 0,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "TC_rate": 0.0,
+   "TC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "K_rate": 0.0,
+   "FC_conf": 0,
+   "FC_conf_rate": 0.0,
+   "FC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf_upper95_one_sided": 0.7763932022500206,
+   "TC_conf": 0,
+   "TC_conf_rate": 0.0,
+   "TC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf005": 0,
+   "TC_conf005": 0,
+   "conf_missing_claims": 0,
+   "clique_ties": 0,
+   "clique_ties_K": 0,
+   "K_all_members_hold": 0,
+   "z_flagged_tables": 0,
+   "lost_heads": 0,
+   "lost_share": 0.0,
+   "lost_over_5pct": false,
+   "none_share_mean": 1.0,
+   "none_consensus": 2,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "heads_total": 8,
+   "head_kinds": {
+    "NONE": 8
+   },
+   "claims": 0,
+   "claim_hold_rate": null,
+   "claim_canonical_rate": null,
+   "conf_mean_claims": null,
+   "conf_mean_holding": null,
+   "conf_mean_failing": null,
+   "overconfidence_claims": null,
+   "pair_agree_rate": null,
+   "pairs": 0,
+   "out_tokens_mean": 393.875,
+   "out_tokens_total": 3151,
+   "inp_tokens_mean": 3350.75,
+   "cost_usd_total": 0.111646
+  },
+  "ZSF": {
+   "n_tables": 2,
+   "K": 0,
+   "FC": 0,
+   "TC": 0,
+   "FC_rate": 0.0,
+   "FC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "TC_rate": 0.0,
+   "TC_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "K_rate": 0.0,
+   "FC_conf": 0,
+   "FC_conf_rate": 0.0,
+   "FC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf_upper95_one_sided": 0.7763932022500206,
+   "TC_conf": 0,
+   "TC_conf_rate": 0.0,
+   "TC_conf_ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "FC_conf005": 0,
+   "TC_conf005": 0,
+   "conf_missing_claims": 0,
+   "clique_ties": 0,
+   "clique_ties_K": 0,
+   "K_all_members_hold": 0,
+   "z_flagged_tables": 0,
+   "lost_heads": 0,
+   "lost_share": 0.0,
+   "lost_over_5pct": false,
+   "none_share_mean": 0.0,
+   "none_consensus": 0,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "heads_total": 8,
+   "head_kinds": {
+    "EXPR": 8
+   },
+   "claims": 8,
+   "claim_hold_rate": 0.0,
+   "claim_canonical_rate": 0.5,
+   "conf_mean_claims": 0.061250000000000006,
+   "conf_mean_holding": null,
+   "conf_mean_failing": 0.061250000000000006,
+   "overconfidence_claims": 0.061250000000000006,
+   "pair_agree_rate": 0.16666666666666666,
+   "pairs": 12,
+   "out_tokens_mean": 1011.25,
+   "out_tokens_total": 8090,
+   "inp_tokens_mean": 3360.25,
+   "cost_usd_total": 0.16134
+  }
+ },
+ "by_law": {
+  "energy": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "TSF": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TNF": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZSF": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZNF": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "ohm": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "TSF": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TNF": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZSF": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZNF": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  }
+ },
+ "by_ncols": {
+  "2": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "TSF": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TNF": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZSF": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZNF": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "3-4": {
+   "TS": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TN": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZS": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZN": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "TSF": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "TNF": {
+    "n": 1,
+    "K": 1,
+    "FC": 0,
+    "TC": 1
+   },
+   "ZSF": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   },
+   "ZNF": {
+    "n": 1,
+    "K": 0,
+    "FC": 0,
+    "TC": 0
+   }
+  }
+ },
+ "holm_family": {
+  "p_values": {
+   "P3": 1.0,
+   "P1F": 1.0,
+   "P2F": 1.0
+  },
+  "rejected": {
+   "P3": false,
+   "P1F": false,
+   "P2F": false
+  },
+  "family_alpha": 0.05,
+  "m": 3
+ },
+ "tests": {
+  "regime": "free",
+  "n_instances": 2,
+  "instances": [
+   90040,
+   90041
+  ],
+  "P1": {
+   "k": 0,
+   "n": 2,
+   "p0": 0.05,
+   "p_one_sided": 1.0,
+   "p_worst_losses": 1.0,
+   "rejected_holm": null,
+   "FC_ZS": 0.0,
+   "ci95": [
+    0.0,
+    0.8418861169915808
+   ],
+   "note": "без мощности (power_platon.json, посчитано до теста по долям пилотов); ни подтверждение, ни отсутствие эффекта из них не выводится"
+  },
+  "P2": {
+   "b_ZS_only": 0,
+   "c_ZN_only": 0,
+   "p_one_sided": 1.0,
+   "p_worst_losses": 1.0,
+   "rejected_holm": null,
+   "FC_ZN": 0.0,
+   "ci95_ZN": [
+    0.0,
+    0.8418861169915808
+   ],
+   "diff_FC_ZS_minus_ZN": 0.0,
+   "diff_ci95_boot": [
+    0.0,
+    0.0
+   ],
+   "diff_ci95_boot_by_law": [
+    0.0,
+    0.0
+   ],
+   "note": "без мощности (power_platon.json, посчитано до теста по долям пилотов); ни подтверждение, ни отсутствие эффекта из них не выводится"
+  },
+  "P3": {
+   "b_TS_only": 0,
+   "c_TN_only": 0,
+   "p_one_sided": 1.0,
+   "p_worst_losses": 1.0,
+   "rejected_holm": false,
+   "TC_TS": 1.0,
+   "TC_TN": 1.0,
+   "diff_TC_TS_minus_TN": 0.0,
+   "diff_ci95_boot": [
+    0.0,
+    0.0
+   ],
+   "diff_ci95_boot_by_law": [
+    0.0,
+    0.0
+   ],
+   "verdict": "не показано"
+  },
+  "refusal_Z_minus_T": {
+   "S": {
+    "mean_Z_minus_T": 1.0,
+    "ci95_boot": [
+     1.0,
+     1.0
+    ],
+    "ci95_boot_by_law": [
+     1.0,
+     1.0
+    ],
+    "NONE_Z": 1.0,
+    "NONE_T": 0.0,
+    "discriminating_lower_ge_0.5": true
+   },
+   "N": {
+    "mean_Z_minus_T": 1.0,
+    "ci95_boot": [
+     1.0,
+     1.0
+    ],
+    "ci95_boot_by_law": [
+     1.0,
+     1.0
+    ],
+    "NONE_Z": 1.0,
+    "NONE_T": 0.0,
+    "discriminating_lower_ge_0.5": true
+   }
+  },
+  "positive_control_TC_TS": 1.0,
+  "positive_control_TC_TN": 1.0,
+  "valid": true,
+  "lost_over_5pct_cells": {
+   "TS": false,
+   "TN": false,
+   "ZS": false,
+   "ZN": false
+  },
+  "lost_fisher_two_sided": {
+   "ZS_vs_ZN": 1.0,
+   "TS_vs_TN": 1.0
+  },
+  "equivalence_upper95_ZS": 0.7763932022500206,
+  "equivalence_upper95_ZN": 0.7763932022500206,
+  "third_outcome_rare_false_consensus": false,
+  "LR_S": null,
+  "LR_S_ci95_boot": [
+   NaN,
+   NaN
+  ],
+  "LR_N": null,
+  "LR_N_ci95_boot": [
+   NaN,
+   NaN
+  ],
+  "K_T_minus_K_Z_S": 1.0,
+  "K_T_minus_K_Z_S_ci95_boot": [
+   1.0,
+   1.0
+  ],
+  "K_T_minus_K_Z_N": 1.0,
+  "K_T_minus_K_Z_N_ci95_boot": [
+   1.0,
+   1.0
+  ],
+  "boot": {
+   "B": 10000,
+   "seed_label": "sha256('boot|<метка>') и sha256('bootlaw|<метка>'), C.gen"
+  },
+  "verdict": "ложное согласие не редко (P1, P2 описательно, без мощности) (контроль, описательно): отказ при S — различающий, при N — различающий; ложное согласие ZS 0/2, ZN 0/2",
+  "IOI_TS": {
+   "ignorance": 0.0,
+   "deception": 0.0,
+   "ioi": 0.0
+  },
+  "IOI_TN": {
+   "ignorance": 0.0,
+   "deception": 0.0,
+   "ioi": 0.0
+  },
+  "deception_Z": {
+   "S": 0.0,
+   "N": 0.0
+  }
+ },
+ "tests_forced": {
+  "regime": "forced",
+  "n_instances": 2,
+  "instances": [
+   90040,
+   90041
+  ],
+  "P1": {
+   "k": 0,
+   "n": 2,
+   "p0": 0.05,
+   "p_one_sided": 1.0,
+   "p_worst_losses": 1.0,
+   "rejected_holm": false,
+   "FC_ZS": 0.0,
+   "ci95": [
+    0.0,
+    0.8418861169915808
+   ]
+  },
+  "P2": {
+   "b_ZS_only": 0,
+   "c_ZN_only": 0,
+   "p_one_sided": 1.0,
+   "p_worst_losses": 1.0,
+   "rejected_holm": false,
+   "FC_ZN": 0.0,
+   "ci95_ZN": [
+    0.0,
+    0.8418861169915808
+   ],
+   "diff_FC_ZS_minus_ZN": 0.0,
+   "diff_ci95_boot": [
+    0.0,
+    0.0
+   ],
+   "diff_ci95_boot_by_law": [
+    0.0,
+    0.0
+   ],
+   "label": "мера чтения имён"
+  },
+  "P3": {
+   "b_TS_only": 0,
+   "c_TN_only": 0,
+   "p_one_sided": 1.0,
+   "p_worst_losses": 1.0,
+   "rejected_holm": null,
+   "TC_TS": 1.0,
+   "TC_TN": 1.0,
+   "diff_TC_TS_minus_TN": 0.0,
+   "diff_ci95_boot": [
+    0.0,
+    0.0
+   ],
+   "diff_ci95_boot_by_law": [
+    0.0,
+    0.0
+   ],
+   "verdict": "описательно (в режиме F P3 не проверяется)"
+  },
+  "refusal_Z_minus_T": {
+   "S": {
+    "mean_Z_minus_T": 0.0,
+    "ci95_boot": [
+     0.0,
+     0.0
+    ],
+    "ci95_boot_by_law": [
+     0.0,
+     0.0
+    ],
+    "NONE_Z": 0.0,
+    "NONE_T": 0.0,
+    "discriminating_lower_ge_0.5": false
+   },
+   "N": {
+    "mean_Z_minus_T": 0.0,
+    "ci95_boot": [
+     0.0,
+     0.0
+    ],
+    "ci95_boot_by_law": [
+     0.0,
+     0.0
+    ],
+    "NONE_Z": 0.0,
+    "NONE_T": 0.0,
+    "discriminating_lower_ge_0.5": false
+   }
+  },
+  "positive_control_TC_TS": 1.0,
+  "positive_control_TC_TN": 1.0,
+  "valid": true,
+  "lost_over_5pct_cells": {
+   "TS": false,
+   "TN": false,
+   "ZS": false,
+   "ZN": false
+  },
+  "lost_fisher_two_sided": {
+   "ZS_vs_ZN": 1.0,
+   "TS_vs_TN": 1.0
+  },
+  "equivalence_upper95_ZS": 0.7763932022500206,
+  "equivalence_upper95_ZN": 0.7763932022500206,
+  "third_outcome_rare_false_consensus": false,
+  "LR_S": null,
+  "LR_S_ci95_boot": [
+   NaN,
+   NaN
+  ],
+  "LR_N": null,
+  "LR_N_ci95_boot": [
+   NaN,
+   NaN
+  ],
+  "K_T_minus_K_Z_S": 1.0,
+  "K_T_minus_K_Z_S_ci95_boot": [
+   1.0,
+   1.0
+  ],
+  "K_T_minus_K_Z_N": 1.0,
+  "K_T_minus_K_Z_N_ci95_boot": [
+   1.0,
+   1.0
+  ],
+  "boot": {
+   "B": 10000,
+   "seed_label": "sha256('boot|<метка>') и sha256('bootlaw|<метка>'), C.gen"
+  },
+  "verdict": "не показано (ни гипотеза, ни третий исход)",
+  "IOI_TS": {
+   "ignorance": 0.0,
+   "deception": 0.0,
+   "ioi": 0.0
+  },
+  "IOI_TN": {
+   "ignorance": 0.0,
+   "deception": 0.0,
+   "ioi": 0.0
+  },
+  "deception_Z": {
+   "S": 0.0,
+   "N": 0.0
+  }
+ },
+ "regime_cmp": {
+  "n": 2,
+  "FC_ZS_forced": 0.0,
+  "FC_ZS_free": 0.0,
+  "b_forced_only": 0,
+  "c_free_only": 0,
+  "p_one_sided_mcnemar": 1.0,
+  "diff_ci95_boot": [
+   0.0,
+   0.0
+  ],
+  "rejected_holm": null,
+  "verdict": "описательно: проверка вмешательства, следствие запрета НЕТ и P1F (решения нет)"
+ },
+ "conf_rule_forced": {
+  "FC_conf_ZS": 0,
+  "n": 2,
+  "upper95_one_sided": 0.7763932022500206,
+  "TC_conf_TS": 1.0,
+  "gate": 0.5,
+  "verdict": "не показано",
+  "sensitivity_gate_0.05": {
+   "FC_conf_ZS": 0,
+   "upper95_one_sided": 0.7763932022500206,
+   "TC_conf_TS": 1.0,
+   "verdict": "не показано"
+  },
+  "label": "гипотеза из пилота F; проверяет, что уверенность заменяет НЕТ; независимым оценщиком не является; нужен повтор на новых зёрнах"
+ },
+ "tables": [
+  {
+   "table": "I90040|TS",
+   "seed": 90040,
+   "law": "energy",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90040|TS|h1",
+     "final": "годный",
+     "out_tokens": 320,
+     "inp_tokens": 3309,
+     "cost_usd": 0.016432000000000002,
+     "thinking_tokens": 229,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 184.536,
+     "R_shown": 0.02156035062880832,
+     "R_in": 5.029232843633314e-16,
+     "R_out": 3.901253391648562e-15,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90040|TS|h2",
+     "final": "годный",
+     "out_tokens": 370,
+     "inp_tokens": 3299,
+     "cost_usd": 0.01351,
+     "thinking_tokens": 279,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.85,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 184.5621,
+     "R_shown": 0.013985341621193267,
+     "R_in": 4.918374184018579e-16,
+     "R_out": 3.953224038279483e-15,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90040|TS|h3",
+     "final": "годный",
+     "out_tokens": 294,
+     "inp_tokens": 3311,
+     "cost_usd": 0.01618,
+     "thinking_tokens": 203,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 184.47289999999998,
+     "R_shown": 0.010724137246731233,
+     "R_in": 4.851383289466817e-16,
+     "R_out": 3.869241113731504e-15,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90040|TS|h4",
+     "final": "годный",
+     "out_tokens": 248,
+     "inp_tokens": 3307,
+     "cost_usd": 0.012322,
+     "thinking_tokens": 157,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 184.47140000000002,
+     "R_shown": 0.007015098722415952,
+     "R_in": 4.879179571557911e-16,
+     "R_out": 3.8690298373475385e-15,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 4.652218835030004e-16,
+     "R12": 9.304437670060008e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 9.449444518716507e-16,
+     "R12": 9.449444518716507e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 9.749080155655494e-16,
+     "R12": 9.749080155655494e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 1.0764693230929773e-15,
+     "R12": 1.0764693230929773e-15
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 9.675306667909815e-16,
+     "R12": 9.675306667909815e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 9.595438508094919e-16,
+     "R12": 4.797719254047459e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h4",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "clique_conf_mean": 0.91,
+   "K_conf": true,
+   "FC_conf": false,
+   "TC_conf": true,
+   "FC_conf005": false,
+   "TC_conf005": true,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": true,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "free"
+  },
+  {
+   "table": "I90040|TN",
+   "seed": 90040,
+   "law": "energy",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90040|TN|h1",
+     "final": "годный",
+     "out_tokens": 985,
+     "inp_tokens": 3272,
+     "cost_usd": 0.019552,
+     "thinking_tokens": 896,
+     "raw": "b**2 + 19.7*a",
+     "confidence": 0.6,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2 + 19.7*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 369.765,
+     "R_shown": 0.023479359363430204,
+     "R_in": 0.003359676092827132,
+     "R_out": 0.003302014851872261,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90040|TN|h2",
+     "final": "годный",
+     "out_tokens": 1848,
+     "inp_tokens": 3278,
+     "cost_usd": 0.028206000000000002,
+     "thinking_tokens": 1759,
+     "raw": "b**2 + 19.5*a",
+     "confidence": 0.6,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2 + 19.5*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 367.86,
+     "R_shown": 0.007984112831320533,
+     "R_in": 0.004967739236027718,
+     "R_out": 0.005017213943347396,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90040|TN|h3",
+     "final": "годный",
+     "out_tokens": 1083,
+     "inp_tokens": 3268,
+     "cost_usd": 0.020516,
+     "thinking_tokens": 994,
+     "raw": "b**2 + 19.5*a",
+     "confidence": 0.5,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2 + 19.5*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 368.19000000000005,
+     "R_shown": 0.010972758933257332,
+     "R_in": 0.004928649723477179,
+     "R_out": 0.0049559821646930355,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90040|TN|h4",
+     "final": "годный",
+     "out_tokens": 1005,
+     "inp_tokens": 3280,
+     "cost_usd": 0.019784,
+     "thinking_tokens": 916,
+     "raw": "b**2 + 19.6*a",
+     "confidence": 0.6,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2 + 19.6*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 368.784,
+     "R_shown": 0.008575863262624554,
+     "R_in": 0.0008206927634162678,
+     "R_out": 0.0008545473282552165,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 0.007887131147250075,
+     "R12": 0.007858073792850724
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 0.007369063525978017,
+     "R12": 0.007408000221923926
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 0.004911173315926862,
+     "R12": 0.004907177441341764
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 9.820851038087509e-16,
+     "R12": 9.820851038087509e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 0.003538751913741272,
+     "R12": 0.0035433650396088767
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 0.004323541366510623,
+     "R12": 0.004332089393281172
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "clique_conf_mean": 0.575,
+   "K_conf": true,
+   "FC_conf": false,
+   "TC_conf": true,
+   "FC_conf005": false,
+   "TC_conf005": true,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": true,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "free"
+  },
+  {
+   "table": "I90040|ZS",
+   "seed": 90040,
+   "law": "energy",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90040|ZS|h1",
+     "final": "годный",
+     "out_tokens": 225,
+     "inp_tokens": 3311,
+     "cost_usd": 0.012108,
+     "thinking_tokens": 142,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90040|ZS|h2",
+     "final": "годный",
+     "out_tokens": 294,
+     "inp_tokens": 3305,
+     "cost_usd": 0.012774,
+     "thinking_tokens": 211,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90040|ZS|h3",
+     "final": "годный",
+     "out_tokens": 343,
+     "inp_tokens": 3303,
+     "cost_usd": 0.013256,
+     "thinking_tokens": 260,
+     "raw": "НЕТ",
+     "confidence": 0.93,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90040|ZS|h4",
+     "final": "годный",
+     "out_tokens": 287,
+     "inp_tokens": 3305,
+     "cost_usd": 0.012704,
+     "thinking_tokens": 204,
+     "raw": "НЕТ",
+     "confidence": 0.9,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "clique_conf_mean": null,
+   "K_conf": false,
+   "FC_conf": false,
+   "TC_conf": false,
+   "FC_conf005": false,
+   "TC_conf005": false,
+   "n_max_cliques": 0,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 1.0,
+   "z_flag": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "free"
+  },
+  {
+   "table": "I90040|ZN",
+   "seed": 90040,
+   "law": "energy",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90040|ZN|h1",
+     "final": "годный",
+     "out_tokens": 238,
+     "inp_tokens": 3272,
+     "cost_usd": 0.012082,
+     "thinking_tokens": 155,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90040|ZN|h2",
+     "final": "годный",
+     "out_tokens": 597,
+     "inp_tokens": 3274,
+     "cost_usd": 0.01568,
+     "thinking_tokens": 514,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90040|ZN|h3",
+     "final": "годный",
+     "out_tokens": 421,
+     "inp_tokens": 3272,
+     "cost_usd": 0.013912,
+     "thinking_tokens": 338,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90040|ZN|h4",
+     "final": "годный",
+     "out_tokens": 540,
+     "inp_tokens": 3274,
+     "cost_usd": 0.01511,
+     "thinking_tokens": 242,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "clique_conf_mean": null,
+   "K_conf": false,
+   "FC_conf": false,
+   "TC_conf": false,
+   "FC_conf005": false,
+   "TC_conf005": false,
+   "n_max_cliques": 0,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 1.0,
+   "z_flag": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "free"
+  },
+  {
+   "table": "I90040F|TS",
+   "seed": 90040,
+   "law": "energy",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90040F|TS|h1",
+     "final": "годный",
+     "out_tokens": 228,
+     "inp_tokens": 3319,
+     "cost_usd": 0.01217,
+     "thinking_tokens": 139,
+     "raw": "v**2 + 19.6*h",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 19.6*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 368.85,
+     "R_shown": 0.021125461935075703,
+     "R_in": 0.0008234016150692851,
+     "R_out": 0.0008423732838232999,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90040F|TS|h2",
+     "final": "годный",
+     "out_tokens": 334,
+     "inp_tokens": 3305,
+     "cost_usd": 0.013174000000000002,
+     "thinking_tokens": 243,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 184.5621,
+     "R_shown": 0.013447714326495297,
+     "R_in": 5.012864370289413e-16,
+     "R_out": 3.844968135913798e-15,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90040F|TS|h3",
+     "final": "годный",
+     "out_tokens": 238,
+     "inp_tokens": 3315,
+     "cost_usd": 0.012254,
+     "thinking_tokens": 147,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 184.47289999999998,
+     "R_shown": 0.010724137246731233,
+     "R_in": 4.989552514722172e-16,
+     "R_out": 3.9402557995043025e-15,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90040F|TS|h4",
+     "final": "годный",
+     "out_tokens": 240,
+     "inp_tokens": 3315,
+     "cost_usd": 0.012274,
+     "thinking_tokens": 149,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 184.47140000000002,
+     "R_shown": 0.006990568808348329,
+     "R_in": 4.976154874478153e-16,
+     "R_out": 3.835156910618019e-15,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 0.0008031288137833965,
+     "R12": 0.0008031750048054546
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 0.0008379011870644496,
+     "R12": 0.0008380887775108592
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 0.000737352180547819,
+     "R12": 0.0007374737304641627
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 4.3907532905962867e-16,
+     "R12": 8.7815065811925735e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 1.0197929180730175e-15,
+     "R12": 1.0197929180730175e-15
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 9.600842223175109e-16,
+     "R12": 9.600842223175109e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h4",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "clique_conf_mean": 0.9225000000000001,
+   "K_conf": true,
+   "FC_conf": false,
+   "TC_conf": true,
+   "FC_conf005": false,
+   "TC_conf005": true,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": true,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "forced"
+  },
+  {
+   "table": "I90040F|TN",
+   "seed": 90040,
+   "law": "energy",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90040F|TN|h1",
+     "final": "годный",
+     "out_tokens": 477,
+     "inp_tokens": 3284,
+     "cost_usd": 0.01452,
+     "thinking_tokens": 390,
+     "raw": "b**2 + 20*a",
+     "confidence": 0.6,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2 + 20*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 371.25,
+     "R_shown": 0.014758561398480762,
+     "R_in": 0.015180342878366827,
+     "R_out": 0.015751670976928877,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90040F|TN|h2",
+     "final": "годный",
+     "out_tokens": 479,
+     "inp_tokens": 3284,
+     "cost_usd": 0.01454,
+     "thinking_tokens": 390,
+     "raw": "b**2 + 19.5*a",
+     "confidence": 0.6,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2 + 19.5*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 367.86,
+     "R_shown": 0.00809400550556731,
+     "R_in": 0.004897289819111027,
+     "R_out": 0.005087231082964633,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90040F|TN|h3",
+     "final": "годный",
+     "out_tokens": 1017,
+     "inp_tokens": 3288,
+     "cost_usd": 0.019936,
+     "thinking_tokens": 931,
+     "raw": "b + 0.7*a",
+     "confidence": 0.2,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b + 0.7*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 19.856,
+     "R_shown": 0.06632653061224533,
+     "R_in": 0.07181939225030223,
+     "R_out": 0.17235629036642652,
+     "holds": false,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90040F|TN|h4",
+     "final": "годный",
+     "out_tokens": 496,
+     "inp_tokens": 3290,
+     "cost_usd": 0.018116,
+     "thinking_tokens": 407,
+     "raw": "b**2 + 19.65*a",
+     "confidence": 0.8,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2 + 19.65*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 369.181,
+     "R_shown": 0.005690080200446111,
+     "R_in": 0.0012036154730441144,
+     "R_out": 0.0012619436965202262,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 0.02533176560419913,
+     "R12": 0.025180782197732947
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 0.05834710722494613,
+     "R12": 0.058910716532044376
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 0.017081858278225556,
+     "R12": 0.016941400656778263
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 0.07667961642159589,
+     "R12": 0.07593868125147141
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 0.005883397543329841,
+     "R12": 0.0058733313030822736
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 0.06853370459539296,
+     "R12": 0.06733586376962569
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h4",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "clique_conf_mean": 0.55,
+   "K_conf": true,
+   "FC_conf": false,
+   "TC_conf": true,
+   "FC_conf005": false,
+   "TC_conf005": true,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": true,
+   "variant": "b",
+   "regime": "forced"
+  },
+  {
+   "table": "I90040F|ZS",
+   "seed": 90040,
+   "law": "energy",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90040F|ZS|h1",
+     "final": "годный",
+     "out_tokens": 576,
+     "inp_tokens": 3319,
+     "cost_usd": 0.01565,
+     "thinking_tokens": 487,
+     "raw": "v**2 + 19.6*h",
+     "confidence": 0.05,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 19.6*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 373.418,
+     "R_shown": 0.7000612298451757,
+     "R_in": 1.0003345779706925,
+     "R_out": 1.0281065757559813,
+     "holds": false,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90040F|ZS|h2",
+     "final": "годный",
+     "out_tokens": 525,
+     "inp_tokens": 3313,
+     "cost_usd": 0.015116,
+     "thinking_tokens": 434,
+     "raw": "v**2/2 + 9.81*h",
+     "confidence": 0.1,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2/2 + 9.81*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 184.67345,
+     "R_shown": 0.5332714836337262,
+     "R_in": 1.0153459445417232,
+     "R_out": 1.0431104033198275,
+     "holds": false,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90040F|ZS|h3",
+     "final": "годный",
+     "out_tokens": 839,
+     "inp_tokens": 3309,
+     "cost_usd": 0.01824,
+     "thinking_tokens": 752,
+     "raw": "v**2 + 2*h",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v**2 + 2*h",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 261.90000000000003,
+     "R_shown": 1.0335327455919399,
+     "R_in": 1.0436472001542583,
+     "R_out": 1.1004852006223327,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h4",
+     "job": "I90040F|ZS|h4",
+     "final": "годный",
+     "out_tokens": 790,
+     "inp_tokens": 3319,
+     "cost_usd": 0.01779,
+     "thinking_tokens": 514,
+     "raw": "v*h**0.1",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "v*h**0.1",
+     "deps": [
+      "h",
+      "v"
+     ],
+     "c": 17.061696675013795,
+     "R_shown": 1.002700949253237,
+     "R_in": 1.0194369520568436,
+     "R_out": 0.9802883851134843,
+     "holds": false,
+     "is_canonical": false
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 0.0008180375263879797,
+     "R12": 0.0007980134947516073
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": false,
+     "R21": 1.1813636255449724,
+     "R12": 1.030057335410992
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": false,
+     "R21": 0.5503369575661429,
+     "R12": 0.5610075827277063
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": false,
+     "R21": 0.7261192385814662,
+     "R12": 0.6145822341385611
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": false,
+     "R21": 0.7711732691406399,
+     "R12": 0.7586763307908266
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": false,
+     "R21": 0.320203656262162,
+     "R12": 0.259998871932937
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2"
+   ],
+   "clique_size": 2,
+   "K": false,
+   "rep": "h2",
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "clique_conf_mean": 0.07500000000000001,
+   "K_conf": false,
+   "FC_conf": false,
+   "TC_conf": false,
+   "FC_conf005": false,
+   "TC_conf005": false,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "forced"
+  },
+  {
+   "table": "I90040F|ZN",
+   "seed": 90040,
+   "law": "energy",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 2,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90040F|ZN|h1",
+     "final": "годный",
+     "out_tokens": 586,
+     "inp_tokens": 3288,
+     "cost_usd": 0.015626,
+     "thinking_tokens": 500,
+     "raw": "b + 0.01*a",
+     "confidence": 0.05,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b + 0.01*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 16.5495,
+     "R_shown": 0.9806945523133258,
+     "R_in": 0.999792255040217,
+     "R_out": 1.0200179996503513,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h2",
+     "job": "I90040F|ZN|h2",
+     "final": "годный",
+     "out_tokens": 892,
+     "inp_tokens": 3290,
+     "cost_usd": 0.018694000000000002,
+     "thinking_tokens": 805,
+     "raw": "b**2 + 3*a",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b**2 + 3*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 265.71999999999997,
+     "R_shown": 0.9000338104361539,
+     "R_in": 1.0362017396107974,
+     "R_out": 1.0786561199229026,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h3",
+     "job": "I90040F|ZN|h3",
+     "final": "годный",
+     "out_tokens": 729,
+     "inp_tokens": 3286,
+     "cost_usd": 0.017048,
+     "thinking_tokens": 643,
+     "raw": "b + 0.3*a",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b + 0.3*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 18.026,
+     "R_shown": 1.12124060150376,
+     "R_in": 1.0366018720298311,
+     "R_out": 1.0291663204600343,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h4",
+     "job": "I90040F|ZN|h4",
+     "final": "годный",
+     "out_tokens": 635,
+     "inp_tokens": 3278,
+     "cost_usd": 0.016076,
+     "thinking_tokens": 549,
+     "raw": "b + 0.1*a",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "b + 0.1*a",
+     "deps": [
+      "a",
+      "b"
+     ],
+     "c": 15.075,
+     "R_shown": 1.0131654264453351,
+     "R_in": 1.0395214376779462,
+     "R_out": 1.0594508337038915,
+     "holds": false,
+     "is_canonical": false
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": false,
+     "R21": 0.1652817252060817,
+     "R12": 0.1597999162240272
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": false,
+     "R21": 0.5320225352065246,
+     "R12": 0.5258129068784018
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": false,
+     "R21": 0.16005986360944974,
+     "R12": 0.15421974578795475
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": false,
+     "R21": 0.4168408374802094,
+     "R12": 0.4405804159898502
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 0.00748574115773806,
+     "R12": 0.0069800922592670065
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": false,
+     "R21": 0.37564096262429425,
+     "R12": 0.3741294754274474
+    }
+   ],
+   "clique": [
+    "h2",
+    "h4"
+   ],
+   "clique_size": 2,
+   "K": false,
+   "rep": "h2",
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "clique_conf_mean": 0.03,
+   "K_conf": false,
+   "FC_conf": false,
+   "TC_conf": false,
+   "FC_conf005": false,
+   "TC_conf005": false,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": false,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "forced"
+  },
+  {
+   "table": "I90041|TS",
+   "seed": 90041,
+   "law": "ohm",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90041|TS|h1",
+     "final": "годный",
+     "out_tokens": 371,
+     "inp_tokens": 3393,
+     "cost_usd": 0.013896000000000002,
+     "thinking_tokens": 286,
+     "raw": "U/(R*I)",
+     "confidence": 0.97,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.9997861420017109,
+     "R_shown": 0.0012503383993589905,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90041|TS|h2",
+     "final": "годный",
+     "out_tokens": 398,
+     "inp_tokens": 3389,
+     "cost_usd": 0.01415,
+     "thinking_tokens": 313,
+     "raw": "U/(I*R)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(I*R)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.9992103015358831,
+     "R_shown": 0.0005087488862715681,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90041|TS|h3",
+     "final": "годный",
+     "out_tokens": 415,
+     "inp_tokens": 3391,
+     "cost_usd": 0.014328,
+     "thinking_tokens": 330,
+     "raw": "U/(R*I)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.9998278014550778,
+     "R_shown": 0.0010521497964079683,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90041|TS|h4",
+     "final": "годный",
+     "out_tokens": 335,
+     "inp_tokens": 3395,
+     "cost_usd": 0.013544,
+     "thinking_tokens": 250,
+     "raw": "U/(R*I)",
+     "confidence": 0.96,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.9997586789395664,
+     "R_shown": 0.0012985355621108394,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 2.2466844355356416e-16,
+     "R12": 2.2466844355356416e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 2.9775960465358515e-16,
+     "R12": 2.9775960465358515e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 2.328216899801244e-16,
+     "R12": 2.328216899801244e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 2.082688491796678e-16,
+     "R12": 2.776917989062237e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 2.1674500068713062e-16,
+     "R12": 2.1674500068713062e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 2.325222905830898e-16,
+     "R12": 2.325222905830898e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "clique_conf_mean": 0.9475,
+   "K_conf": true,
+   "FC_conf": false,
+   "TC_conf": true,
+   "FC_conf005": false,
+   "TC_conf005": true,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": true,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "free"
+  },
+  {
+   "table": "I90041|TN",
+   "seed": 90041,
+   "law": "ohm",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90041|TN|h1",
+     "final": "годный",
+     "out_tokens": 289,
+     "inp_tokens": 3359,
+     "cost_usd": 0.01294,
+     "thinking_tokens": 204,
+     "raw": "a/(b*c)",
+     "confidence": 0.95,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.9997861420017109,
+     "R_shown": 0.001188536847647347,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90041|TN|h2",
+     "final": "годный",
+     "out_tokens": 259,
+     "inp_tokens": 3359,
+     "cost_usd": 0.01264,
+     "thinking_tokens": 174,
+     "raw": "a/(b*c)",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.9992103015358831,
+     "R_shown": 0.0005133715678789623,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90041|TN|h3",
+     "final": "годный",
+     "out_tokens": 248,
+     "inp_tokens": 3355,
+     "cost_usd": 0.012514,
+     "thinking_tokens": 163,
+     "raw": "a/(b*c)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.9998278014550778,
+     "R_shown": 0.0010266948316077606,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90041|TN|h4",
+     "final": "годный",
+     "out_tokens": 277,
+     "inp_tokens": 3363,
+     "cost_usd": 0.012836,
+     "thinking_tokens": 192,
+     "raw": "a/(b*c)",
+     "confidence": 0.9,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.9997586789395664,
+     "R_shown": 0.0012768804391128507,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 2.3637582576705163e-16,
+     "R12": 3.151677676894022e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 2.340562138816755e-16,
+     "R12": 2.340562138816755e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 2.7848555725029015e-16,
+     "R12": 2.088641679377176e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 2.287986383172791e-16,
+     "R12": 2.287986383172791e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 3.16059414799737e-16,
+     "R12": 2.370445610998028e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 2.2610109008955614e-16,
+     "R12": 2.2610109008955614e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "clique_conf_mean": 0.92,
+   "K_conf": true,
+   "FC_conf": false,
+   "TC_conf": true,
+   "FC_conf005": false,
+   "TC_conf005": true,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": true,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "free"
+  },
+  {
+   "table": "I90041|ZS",
+   "seed": 90041,
+   "law": "ohm",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90041|ZS|h1",
+     "final": "годный",
+     "out_tokens": 483,
+     "inp_tokens": 3401,
+     "cost_usd": 0.015047999999999999,
+     "thinking_tokens": 400,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90041|ZS|h2",
+     "final": "годный",
+     "out_tokens": 522,
+     "inp_tokens": 3395,
+     "cost_usd": 0.015414,
+     "thinking_tokens": 439,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90041|ZS|h3",
+     "final": "годный",
+     "out_tokens": 386,
+     "inp_tokens": 3395,
+     "cost_usd": 0.014054,
+     "thinking_tokens": 303,
+     "raw": "НЕТ",
+     "confidence": 0.85,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90041|ZS|h4",
+     "final": "годный",
+     "out_tokens": 611,
+     "inp_tokens": 3391,
+     "cost_usd": 0.016288,
+     "thinking_tokens": 528,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "clique_conf_mean": null,
+   "K_conf": false,
+   "FC_conf": false,
+   "TC_conf": false,
+   "FC_conf005": false,
+   "TC_conf005": false,
+   "n_max_cliques": 0,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 1.0,
+   "z_flag": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "free"
+  },
+  {
+   "table": "I90041|ZN",
+   "seed": 90041,
+   "law": "ohm",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90041|ZN|h1",
+     "final": "годный",
+     "out_tokens": 578,
+     "inp_tokens": 3353,
+     "cost_usd": 0.015806,
+     "thinking_tokens": 495,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h2",
+     "job": "I90041|ZN|h2",
+     "final": "годный",
+     "out_tokens": 598,
+     "inp_tokens": 3353,
+     "cost_usd": 0.016006,
+     "thinking_tokens": 515,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h3",
+     "job": "I90041|ZN|h3",
+     "final": "годный",
+     "out_tokens": 806,
+     "inp_tokens": 3363,
+     "cost_usd": 0.018126,
+     "thinking_tokens": 559,
+     "raw": "НЕТ",
+     "confidence": 0.7,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    },
+    {
+     "head": "h4",
+     "job": "I90041|ZN|h4",
+     "final": "годный",
+     "out_tokens": 694,
+     "inp_tokens": 3361,
+     "cost_usd": 0.016998,
+     "thinking_tokens": 611,
+     "raw": "НЕТ",
+     "confidence": 0.8,
+     "kind": "NONE",
+     "flags": [],
+     "err": null
+    }
+   ],
+   "pairs": [],
+   "clique": [],
+   "clique_size": 0,
+   "K": false,
+   "rep": null,
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "clique_conf_mean": null,
+   "K_conf": false,
+   "FC_conf": false,
+   "TC_conf": false,
+   "FC_conf005": false,
+   "TC_conf005": false,
+   "n_max_cliques": 0,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 1.0,
+   "z_flag": false,
+   "rep_is_canonical": null,
+   "none_consensus": true,
+   "n_none": 4,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "free"
+  },
+  {
+   "table": "I90041F|TS",
+   "seed": 90041,
+   "law": "ohm",
+   "cell": "TS",
+   "data": "T",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90041F|TS|h1",
+     "final": "годный",
+     "out_tokens": 172,
+     "inp_tokens": 3399,
+     "cost_usd": 0.011930000000000001,
+     "thinking_tokens": 87,
+     "raw": "U/(R*I)",
+     "confidence": 0.97,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.9997861420017109,
+     "R_shown": 0.001237324853334398,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90041F|TS|h2",
+     "final": "годный",
+     "out_tokens": 256,
+     "inp_tokens": 3405,
+     "cost_usd": 0.012794,
+     "thinking_tokens": 171,
+     "raw": "U/(R*I)",
+     "confidence": 0.97,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.9992103015358831,
+     "R_shown": 0.000504903188723929,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90041F|TS|h3",
+     "final": "годный",
+     "out_tokens": 198,
+     "inp_tokens": 3401,
+     "cost_usd": 0.012198,
+     "thinking_tokens": 113,
+     "raw": "U/(R*I)",
+     "confidence": 0.97,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.9998278014550778,
+     "R_shown": 0.001047816253940268,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90041F|TS|h4",
+     "final": "годный",
+     "out_tokens": 373,
+     "inp_tokens": 3411,
+     "cost_usd": 0.013988,
+     "thinking_tokens": 288,
+     "raw": "U/(R*I)",
+     "confidence": 0.97,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.9997586789395664,
+     "R_shown": 0.0013462271848036726,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 2.220873397036841e-16,
+     "R12": 2.220873397036841e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 2.1705489249698771e-16,
+     "R12": 2.1705489249698771e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 3.37359842533645e-16,
+     "R12": 2.530198819002338e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 2.332595699938862e-16,
+     "R12": 2.332595699938862e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 2.8529404221416277e-16,
+     "R12": 2.1397053166062205e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 2.174206793942408e-16,
+     "R12": 2.174206793942408e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "clique_conf_mean": 0.97,
+   "K_conf": true,
+   "FC_conf": false,
+   "TC_conf": true,
+   "FC_conf005": false,
+   "TC_conf005": true,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": true,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "forced"
+  },
+  {
+   "table": "I90041F|TN",
+   "seed": 90041,
+   "law": "ohm",
+   "cell": "TN",
+   "data": "T",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90041F|TN|h1",
+     "final": "годный",
+     "out_tokens": 264,
+     "inp_tokens": 3363,
+     "cost_usd": 0.012706,
+     "thinking_tokens": 179,
+     "raw": "a/(b*c)",
+     "confidence": 0.95,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.9997861420017109,
+     "R_shown": 0.0012024893217879309,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90041F|TN|h2",
+     "final": "годный",
+     "out_tokens": 287,
+     "inp_tokens": 3371,
+     "cost_usd": 0.012968,
+     "thinking_tokens": 202,
+     "raw": "a/(b*c)",
+     "confidence": 0.93,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.9992103015358831,
+     "R_shown": 0.000502208211875775,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h3",
+     "job": "I90041F|TN|h3",
+     "final": "годный",
+     "out_tokens": 311,
+     "inp_tokens": 3373,
+     "cost_usd": 0.013216000000000002,
+     "thinking_tokens": 226,
+     "raw": "a/(b*c)",
+     "confidence": 0.95,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.9998278014550778,
+     "R_shown": 0.0010351299733161595,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90041F|TN|h4",
+     "final": "годный",
+     "out_tokens": 273,
+     "inp_tokens": 3383,
+     "cost_usd": 0.012876000000000002,
+     "thinking_tokens": 188,
+     "raw": "a/(b*c)",
+     "confidence": 0.96,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.9997586789395664,
+     "R_shown": 0.0013271715857050336,
+     "R_in": 0.0,
+     "R_out": 0.0,
+     "holds": true,
+     "is_canonical": true
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": true,
+     "R21": 3.238676673018621e-16,
+     "R12": 3.238676673018621e-16
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 2.325485005794392e-16,
+     "R12": 2.325485005794392e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": true,
+     "R21": 2.753124300211295e-16,
+     "R12": 2.753124300211295e-16
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": true,
+     "R21": 2.243584360465661e-16,
+     "R12": 1.4957229069771073e-16
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": true,
+     "R21": 3.4225933318325835e-16,
+     "R12": 2.5669449988744376e-16
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": true,
+     "R21": 3.1493417623604545e-16,
+     "R12": 2.362006321770341e-16
+    }
+   ],
+   "clique": [
+    "h1",
+    "h2",
+    "h3",
+    "h4"
+   ],
+   "clique_size": 4,
+   "K": true,
+   "rep": "h2",
+   "rep_holds": true,
+   "FC": false,
+   "TC": true,
+   "clique_conf_mean": 0.9475,
+   "K_conf": true,
+   "FC_conf": false,
+   "TC_conf": true,
+   "FC_conf005": false,
+   "TC_conf005": true,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": true,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "forced"
+  },
+  {
+   "table": "I90041F|ZS",
+   "seed": 90041,
+   "law": "ohm",
+   "cell": "ZS",
+   "data": "Z",
+   "names": "S",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90041F|ZS|h1",
+     "final": "годный",
+     "out_tokens": 1487,
+     "inp_tokens": 3407,
+     "cost_usd": 0.025112000000000002,
+     "thinking_tokens": 1278,
+     "raw": "U/(I*R)",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(I*R)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 0.8483308756906568,
+     "R_shown": 0.8437223370379665,
+     "R_in": 0.9045689737777435,
+     "R_out": 0.8411617483708037,
+     "holds": false,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90041F|ZS|h2",
+     "final": "годный",
+     "out_tokens": 1316,
+     "inp_tokens": 3399,
+     "cost_usd": 0.02337,
+     "thinking_tokens": 1235,
+     "raw": "U*I",
+     "confidence": 0.05,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U*I",
+     "deps": [
+      "U",
+      "I"
+     ],
+     "c": 43.26299999999999,
+     "R_shown": 0.3561245722694025,
+     "R_in": 1.0715951543801583,
+     "R_out": 1.1180905256511893,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h3",
+     "job": "I90041F|ZS|h3",
+     "final": "годный",
+     "out_tokens": 1001,
+     "inp_tokens": 3411,
+     "cost_usd": 0.020268,
+     "thinking_tokens": 671,
+     "raw": "U/(R*I)",
+     "confidence": 0.15,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "U/(R*I)",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 1.0128605411834672,
+     "R_shown": 0.5487264567768778,
+     "R_in": 0.9350260526310461,
+     "R_out": 0.8473857265214421,
+     "holds": false,
+     "is_canonical": true
+    },
+    {
+     "head": "h4",
+     "job": "I90041F|ZS|h4",
+     "final": "годный",
+     "out_tokens": 1556,
+     "inp_tokens": 3405,
+     "cost_usd": 0.025794000000000004,
+     "thinking_tokens": 1469,
+     "raw": "I*R/U**0.8",
+     "confidence": 0.05,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "I*R/U**0.8",
+     "deps": [
+      "U",
+      "R",
+      "I"
+     ],
+     "c": 1.2343979348824483,
+     "R_shown": 1.0691206940492495,
+     "R_in": 0.9305451903599612,
+     "R_out": 1.10105878760848,
+     "holds": false,
+     "is_canonical": false
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": false,
+     "R21": 1.137048553073586,
+     "R12": 1.5307875199054168
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": true,
+     "R21": 1.9311373724872405e-16,
+     "R12": 2.574849829982987e-16
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": false,
+     "R21": 0.1615349587387144,
+     "R12": 0.22787444378324212
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": false,
+     "R21": 1.657002241651894,
+     "R12": 1.1565057081147054
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": false,
+     "R21": 1.6531614379592332,
+     "R12": 1.835597283696709
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": false,
+     "R21": 0.11925779424686689,
+     "R12": 0.29738524809436057
+    }
+   ],
+   "clique": [
+    "h1",
+    "h3"
+   ],
+   "clique_size": 2,
+   "K": false,
+   "rep": "h3",
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "clique_conf_mean": 0.09,
+   "K_conf": false,
+   "FC_conf": false,
+   "TC_conf": false,
+   "FC_conf005": false,
+   "TC_conf005": false,
+   "n_max_cliques": 1,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "forced"
+  },
+  {
+   "table": "I90041F|ZN",
+   "seed": 90041,
+   "law": "ohm",
+   "cell": "ZN",
+   "data": "Z",
+   "names": "N",
+   "n_cols": 3,
+   "heads": [
+    {
+     "head": "h1",
+     "job": "I90041F|ZN|h1",
+     "final": "годный",
+     "out_tokens": 962,
+     "inp_tokens": 3365,
+     "cost_usd": 0.019694,
+     "thinking_tokens": 877,
+     "raw": "a/(b*c)",
+     "confidence": 0.05,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "a/(b*c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.8483308756906568,
+     "R_shown": 0.8655287738879024,
+     "R_in": 0.94173468623677,
+     "R_out": 0.8419313049052066,
+     "holds": false,
+     "is_canonical": true
+    },
+    {
+     "head": "h2",
+     "job": "I90041F|ZN|h2",
+     "final": "годный",
+     "out_tokens": 858,
+     "inp_tokens": 3367,
+     "cost_usd": 0.018662,
+     "thinking_tokens": 771,
+     "raw": "c*b/(a+b)",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "c*b/(a+b)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 0.44950000000000007,
+     "R_shown": 1.0730933011983015,
+     "R_in": 0.96736740894979,
+     "R_out": 1.0343715881083018,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h3",
+     "job": "I90041F|ZN|h3",
+     "final": "годный",
+     "out_tokens": 804,
+     "inp_tokens": 3373,
+     "cost_usd": 0.018146000000000002,
+     "thinking_tokens": 714,
+     "raw": "(a + b) / (1 + c)",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "(a + b) / (1 + c)",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 46.65561083471531,
+     "R_shown": 0.8668414470995462,
+     "R_in": 0.9718494031717759,
+     "R_out": 1.0296043996642585,
+     "holds": false,
+     "is_canonical": false
+    },
+    {
+     "head": "h4",
+     "job": "I90041F|ZN|h4",
+     "final": "годный",
+     "out_tokens": 777,
+     "inp_tokens": 3373,
+     "cost_usd": 0.017876,
+     "thinking_tokens": 682,
+     "raw": "c*(a+b)/(a*b)**0.5",
+     "confidence": 0.03,
+     "kind": "EXPR",
+     "flags": [],
+     "err": null,
+     "expr": "c*(a+b)/(a*b)**0.5",
+     "deps": [
+      "a",
+      "b",
+      "c"
+     ],
+     "c": 1.4360737092539415,
+     "R_shown": 0.9996883002487722,
+     "R_in": 1.0057940665404521,
+     "R_out": 0.9884153004920971,
+     "holds": false,
+     "is_canonical": false
+    }
+   ],
+   "pairs": [
+    {
+     "a": 0,
+     "b": 1,
+     "agree": false,
+     "R21": 0.6668847150627134,
+     "R12": 0.5100244732617505
+    },
+    {
+     "a": 0,
+     "b": 2,
+     "agree": false,
+     "R21": 1.0461286493085105,
+     "R12": 1.1651572251159095
+    },
+    {
+     "a": 0,
+     "b": 3,
+     "agree": false,
+     "R21": 0.8497408990373676,
+     "R12": 1.7371457576060236
+    },
+    {
+     "a": 1,
+     "b": 2,
+     "agree": false,
+     "R21": 1.065456150699199,
+     "R12": 1.324936389788411
+    },
+    {
+     "a": 1,
+     "b": 3,
+     "agree": false,
+     "R21": 0.8105670799381332,
+     "R12": 0.6279037626523527
+    },
+    {
+     "a": 2,
+     "b": 3,
+     "agree": false,
+     "R21": 1.182489413938198,
+     "R12": 1.051447401685108
+    }
+   ],
+   "clique": [
+    "h1"
+   ],
+   "clique_size": 1,
+   "K": false,
+   "rep": "h1",
+   "rep_holds": false,
+   "FC": false,
+   "TC": false,
+   "clique_conf_mean": 0.05,
+   "K_conf": false,
+   "FC_conf": false,
+   "TC_conf": false,
+   "FC_conf005": false,
+   "TC_conf005": false,
+   "n_max_cliques": 4,
+   "clique_tie": false,
+   "clique_tie_K": false,
+   "clique_all_hold": false,
+   "n_lost": 0,
+   "n_none_share": 0.0,
+   "z_flag": false,
+   "rep_is_canonical": true,
+   "none_consensus": false,
+   "n_none": 0,
+   "mixed_clique": false,
+   "variant": "b",
+   "regime": "forced"
+  }
+ ]
+}

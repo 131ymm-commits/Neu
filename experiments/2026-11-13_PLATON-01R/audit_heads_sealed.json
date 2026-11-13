@@ -1,0 +1,17 @@
+[
+ {
+  "journal": "experiments/2026-11-13_PLATON-01R/run/journal",
+  "calls": 1280,
+  "home": "/home/user/neu_heads/platon01r/home",
+  "work_dir": "/home/user/neu_heads/platon01r/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-sonnet-5-5": 1280
+  }
+ }
+]

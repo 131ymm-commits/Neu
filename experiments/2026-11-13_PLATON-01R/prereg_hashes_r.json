@@ -1,0 +1,17 @@
+{
+ "files": {
+  "../2026-11-12_PLATON-01/platon_world.py": "52101fd96a81787fceb246caf9f27c7e6bab7e6eef2b0f1459d3da3dd743cc1c",
+  "../2026-11-12_PLATON-01/platon_check.py": "e818639cdb20042b2c46bf00ffa41c8bfd0312b29c09d27a53aedffebd77cf4b",
+  "../2026-11-12_PLATON-01/platon_jobs.py": "9f4e3337c5a439f8a947251b7951ab8d8cf1747fd7603ba45589d57eab5fb4ca",
+  "../2026-11-12_PLATON-01/platon_analyze.py": "87a0157d7cb4a33d694a7165184f984ffe0da3ca4fc41b5bdacf7b1127e47ded",
+  "../2026-11-12_PLATON-01/power_platon.py": "08c161bd7a8f46e45a3282a41bc2c5c8f1690aa2506d00a1bb776b7089c578d4",
+  "run_platon_r.sh": "a43e82d9bed9f17b5c4ab5f9e9bd160681b8e9d377ce78ca9394628afa304799",
+  "prereg_hashes_r.py": "f813d5e5c8425f4c4c8f470ffdbc351173f921ee3432fa7d95ab989f3e85a64c",
+  "power_r.py": "9d60f4943a5fa3997a94f66e8fabb4a19000c00dcd021309e62bb8ac6f28cfd6",
+  "power_r.json": "551f3efe1915a14977b80aeaed7e1243799bf3357c6827316fc39189a2bf1023",
+  "replication_r.py": "2f610cc2d13386c6752b6813972e1398356d4ef2168fd50ba64bc41317402c47",
+  "cfg_platon_sonnet.json": "271132be1850a39a2eba941ad74e69fc5e8b32264a6a86b9f892f25536f48a3b",
+  "seeds_test_r.json": "b74d5703e606520080f73dfc9d5146c0fd3c49cfb47910d73c228c2a3dbc63be",
+  "../../tools/run_sealed2.py": "1dc321f47f2be32c30ad625c14b651a0e22307a48fd9e8f42b1c3f68e727b3e8"
+ }
+}

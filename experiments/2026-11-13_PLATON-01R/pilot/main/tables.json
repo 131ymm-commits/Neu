@@ -1,0 +1,570 @@
+[
+ {
+  "table": "I90040|TS",
+  "task": "I90040",
+  "seed": 90040,
+  "law": "energy",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "462701efebdd83c981153c1c809b662402073c0b67f37004c42a05f148ea88df",
+   "493914cc7575cf653549e5449bb3da2867f3b67a7220ac12593404449244646a",
+   "a02207534b6593941435ec0a42945c297a86a05a1868abe9ee2a012e1f9e3248",
+   "c70adda4b32868f31bff9805c541cd1812ca61c4416cd378a765ab72283ba7ed"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90040|TN",
+  "task": "I90040",
+  "seed": 90040,
+  "law": "energy",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "144a13df975613e9a856db147de2fbe8d8d66f2ff12b7d453a17cf53c7f3fe0c",
+   "9a088b6222a62f2a292b074c6d855a1b033e1bd45ef362cc8cf1f7fc12a28643",
+   "94f9e405c814b2983d8006c0e6a101d41c921360cb8bfdef86c93146165b2e87",
+   "9ae4cd6e855c8fdcdc6b52c25a30a7f73cc9302e202942f9af73244046f402cf"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90040|ZS",
+  "task": "I90040",
+  "seed": 90040,
+  "law": "energy",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "0b14535e4ce535c703c567f4032418a477628a2ec6980eeb2675510cd6589c40",
+   "550253e1a6b6d18006e279bf01f5a4d501fd988c410c63b8cee1a7c8c04c8fd0",
+   "a899e7ee03698cb6abd692b444cfcd5d2957881b590616f4b80f8e96bd0cfba6",
+   "ff6953b70320e4259d560d4c2a119fe8343e01772111eb4fda2562bc3f32f524"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90040|ZN",
+  "task": "I90040",
+  "seed": 90040,
+  "law": "energy",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "35d5115c8f85a1a576a7e599c50180a6f5f7792b62cc741a0f666cf45f74b2ce",
+   "773f73f2e1bc7f8c8101d5a013fdf64e9f3dce280b83a630570f9ca9c1869029",
+   "6d0668b772192c8f4d7da29a695942410914f786fa427a24c670e2507cfabe0d",
+   "12fc77faa996da361e1252a5bda50180045c42fc135509ffe1e30c87d532bb01"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90040F|TS",
+  "task": "I90040",
+  "seed": 90040,
+  "law": "energy",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "253f9f04cf5f7931b2c381a6dcbcaee088fa300e1de7b22e0cc8066e9a02a4db",
+   "0605904a65c864dd3900de0b8830d6c039c97e058a82f783561d02e2084b1ffe",
+   "867459641c987804a775df15dbb11bc5200449a2fb4ad8f6f7ceba5b6036c03b",
+   "a62121aabb5a49f04d120e957fbecc517e732453b2851b75c27b4135dd7e6eb0"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90040F|TN",
+  "task": "I90040",
+  "seed": 90040,
+  "law": "energy",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "ae992eec6c1a59a374541a5f010feedf5c1b3d5a329eb24532e37fcbb3620598",
+   "126286d95921f4068e76de40586acf8f1cd1447f41576aa5abecb0e26bd5fa79",
+   "ff21ccf447a5b4abfc499116aa65ae2b4effa54f7d8fd730d2a4f0ad19e244c6",
+   "ff7be1aef39273d3c208699081f1a3ac149b5d7fa0c1f82993bd1efbcdc721e8"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90040F|ZS",
+  "task": "I90040",
+  "seed": 90040,
+  "law": "energy",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "ed5c2b840eada25760b280851061ac802207ffa3378f79dfdbf866e4b27b0389",
+   "c38791dd40b39eb1daa29655240496b8753fd86139dc540a6080a8bb2e8f4641",
+   "72563e9633d462819c1121c367a802c96a91dd9a4b72cd7c8b50800890f69134",
+   "acd7f3a2b0b0b4a0dbb2d2ef2c09f4c06c5d36d982711aedc46bce7621de7185"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90040F|ZN",
+  "task": "I90040",
+  "seed": 90040,
+  "law": "energy",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "5041fd9afb7abe0472e5737d739d04a5c017d860fbe3030cd7ab29eac9b18ea8",
+   "c569dd83799fbeb3e6ed61fab337f75ff83d014d33ff2b20f1f23ea9b6fb2c7b",
+   "dc39ede6fb6f2efd3c8e1821a3131d0c4d837946d101ada28dc3a43e1d495127",
+   "f9cf9d44c62714ebf9cfc49c287906c490b22d7490a2b8f6a5f8d55f68502c81"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90041|TS",
+  "task": "I90041",
+  "seed": 90041,
+  "law": "ohm",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "U",
+   "R",
+   "I"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "58312a94428f92471179e38fc66971204e66dd889ff58e769e60eb21a39b2d25",
+   "38321ccd5b039e3070303e8abcfdbabd1d79d528d0ffbb8f3af9a946a7d4e6d7",
+   "87cf125f0dbb5a816fd6d2833601f545c70ea082c343582201a8f2560b5d4f8d",
+   "1345fe696ccb3907b6e264514cc8c2282fe6745574247958fdddf97f14cee8e3"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90041|TN",
+  "task": "I90041",
+  "seed": 90041,
+  "law": "ohm",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "2ebf945d33d4eca4146aa2df8ade006fe6a6bf0d333b7c0c34f3c7b147c74277",
+   "174fe60f0ca7c8b624d9a07fe4320ace9f29dc3abdf230d2264e1e729612a952",
+   "941e85d73fef63a74c6c21be0d42be41a1774fd278c66f478f3130cabb3a7ddb",
+   "b1a67c052444d05e0388011b9b78857b0336c5e115162efbd050a6c84a538f70"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90041|ZS",
+  "task": "I90041",
+  "seed": 90041,
+  "law": "ohm",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "U",
+   "R",
+   "I"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "78eb255782b5e9b3f71142c3bb1c09fb88d18bb1df7528331ea49df0bdc72c44",
+   "a80b76136f6bf6c43619869d9450357b3dc0c79884adc49c90a7b8d0fefccc29",
+   "010b5d2c03194bebf8d5c9372bb822e9996850cc5b118e751e81df7d59fc5d36",
+   "5af1c8d29e37b09cd936b65c6576529830d8544f28160a200529f10690ffa4f9"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90041|ZN",
+  "task": "I90041",
+  "seed": 90041,
+  "law": "ohm",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "56bf8246e7c46538be9236c8ce4319ec0dbcb533e7f4ec669e0869aa3fe8af83",
+   "2af50d0f709f4f389dafc3ffdb59e9c95fdc1e2b5bca6aa769666589e466be1e",
+   "5daa46efce2d34d5c0321025309320755c2f5df46e5402bd4ce2e61a26f8c3e4",
+   "8c66ae72597cb8234a97d693048b3e9b632fc3472e785b4465a91e589ba24dc2"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90041F|TS",
+  "task": "I90041",
+  "seed": 90041,
+  "law": "ohm",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "U",
+   "R",
+   "I"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "fbe23202863acea4d712d43ea9460840237bfde9491d775e809aea8675feb189",
+   "fba2a97a2ca44bd7d1b67164919776eff8a11a04300e1147695748a95c2faf84",
+   "190d44ebfc9f5676e66af60dfd5c06dc2312c77522d716c82344e116b7576308",
+   "af811de5c17b88b4b969990e8be88bec2e980bbd6dfcaf540c183e42797d33c6"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90041F|TN",
+  "task": "I90041",
+  "seed": 90041,
+  "law": "ohm",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "7f4310418c7055792a384096726a70f427f96c50720c58830799e64a1be8ab8a",
+   "c2cf9b665d2189127bea0fbdc987e4b81803c1f6bd6aa6670ffb34a4d01bad23",
+   "163439e3bbbdb1ea7524cd241f36f444cc703e4d7725f8f3e061f11dabea081d",
+   "c9fd4a814b491a535238926e73764a2b1656ad22e87a050972aaf3ebf9363ce9"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90041F|ZS",
+  "task": "I90041",
+  "seed": 90041,
+  "law": "ohm",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "U",
+   "R",
+   "I"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "aa49c12ed87edb81be3c12545943507c5d586a805ea2aeac75f604d74f49ddf3",
+   "073024019368dc1e21fb8e885f606cb5f1343829645419bf95c74a54b082d666",
+   "93ca6380c4d57e7e416f50158f72fbe0b16327c7279ad6cb1f2fb925f8bd0c3e",
+   "ca3a448ed5dfb4c459c92c1652f6476147c24b68a71ae497995cb058700c5482"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I90041F|ZN",
+  "task": "I90041",
+  "seed": 90041,
+  "law": "ohm",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "6f0d37a04d6361e0d1ee3b51c1cf9ea7ea935208d7212baa21c3d1a133727971",
+   "eb2a19731018c552da7b5e02f92ca1c335edecf314a0603b86b34c9d5e66e9d4",
+   "4abd761cf406ea790033946245fcdf5dd92ac0c1d7af701cb1aefdbfae75866e",
+   "414ea25f01970a4123774d711fb729c1447d0d9a6969847245d8bd0c84a9c263"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ }
+]
