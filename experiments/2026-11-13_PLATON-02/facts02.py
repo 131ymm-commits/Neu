@@ -66,6 +66,11 @@ exp = {'E1': None if und or not T['valid_A'] else int(T['P1A']['rejected']),
        'E5': int(T['valid_A']),
        'E6': int(mA['TC_Y'] >= mnA['TC_Y'])}
 
+PROB = {'E1': 0.07, 'E2': 0.03, 'E3A': 0.8, 'E3B': 0.9, 'E4': 0.07, 'E5': 0.95, 'E6': 0.7}   # PREREG §8
+ev = [(PROB[k], o) for k, o in exp.items() if o is not None]
+brier = {'n': len(ev), 'brier': r3(sum((p - o) ** 2 for p, o in ev) / len(ev)) if ev else None,
+         'mean_p': r3(sum(p for p, _ in ev) / len(ev)) if ev else None, 'hits': sum(o for _, o in ev)}
+
 # вес опоры (PREREG §7)
 wb = pw['weights_bits']
 v = T['verdict']
@@ -90,10 +95,20 @@ totals = {'calls': d['heads_total'], 'lost': d['heads_lost'], 'started': min(st)
           'out_mean_by_cell': {c: round(Sm[c]['out_tokens_mean']) for c in Sm if Sm[c]['out_tokens_mean'] is not None}}
 parse = [{'table': t['table'], 'raw': h.get('raw'), 'kind': h.get('kind')} for t in tabs for h in t['heads']
          if h.get('kind') in ('PARSE_ERR', 'TRIVIAL', 'INVALID')]
+# производные (описательно): незнание = 1 − доля TC_Y, самообман = доля FC; головы вида X по таблицам
+ioi = {k: {'ignorance': r3(1 - v['TC_Y'] / v['n']), 'deception': r3(v['FC_any'] / v['n'])} for k, v in S.items()}
+x_per_table = {}
+for t in tabs:
+    nx = sum(1 for h in t['heads'] if h.get('category') == 'X')
+    if nx:
+        x_per_table[t['table']] = nx
+none_heads = {k: v['categories']['НЕТ'] for k, v in S.items()}
 aud_p = os.path.join(HERE, 'audit_heads_sealed.json')
 out = {'source': os.path.relpath(src, HERE), 'cells': cells, 'tests': tests, 'by_law': by_law, 'x_claims': x_claims,
-       'conf_by_category': conf_by_cat, 'other_kinds': other_kinds, 'fc_not_x': fc_non_x, 'expectations': exp, 'weights_bits': weight,
+       'conf_by_category': conf_by_cat, 'other_kinds': other_kinds, 'fc_not_x': fc_non_x, 'expectations': exp, 'expectations_brier': brier, 'weights_bits': weight,
        'power': {'P1A_half': pw['family']['вдвое слабее']['P1A'], 'frechet_5pct': pw['rare_reach_both_frechet']['0.05']},
+       'ioi': ioi, 'x_heads_per_table': x_per_table, 'x_heads_max_in_table': max(x_per_table.values()) if x_per_table else 0,
+       'x_heads_total': len(x_claims), 'none_heads': none_heads,
        'totals': totals, 'parse_errors': parse, 'layers': P['layers'], 'lost_share': r3(P['lost_share']),
        'audit': json.load(open(aud_p, encoding='utf-8')) if os.path.exists(aud_p) and 'run' in src else None}
 json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

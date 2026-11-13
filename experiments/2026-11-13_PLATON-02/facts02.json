@@ -974,6 +974,12 @@
   "E5": 1,
   "E6": 1
  },
+ "expectations_brier": {
+  "n": 7,
+  "brier": 0.022,
+  "mean_p": 0.503,
+  "hits": 4
+ },
  "weights_bits": {
   "hypothesis": -2.575,
   "narrow_claim": 2.575
@@ -981,6 +987,80 @@
  "power": {
   "P1A_half": 0.43015,
   "frechet_5pct": 0.297972781307545
+ },
+ "ioi": {
+  "M_free_A": {
+   "ignorance": 0.286,
+   "deception": 0.0
+  },
+  "MN_free_A": {
+   "ignorance": 0.381,
+   "deception": 0.0
+  },
+  "M_forced_A": {
+   "ignorance": 0.048,
+   "deception": 0.0
+  },
+  "MN_forced_A": {
+   "ignorance": 0.238,
+   "deception": 0.0
+  },
+  "M_free_B": {
+   "ignorance": 0.0,
+   "deception": 0.0
+  },
+  "MN_free_B": {
+   "ignorance": 0.0,
+   "deception": 0.0
+  },
+  "M_forced_B": {
+   "ignorance": 0.0,
+   "deception": 0.0
+  },
+  "MN_forced_B": {
+   "ignorance": 0.0,
+   "deception": 0.0
+  },
+  "M_free": {
+   "ignorance": 0.222,
+   "deception": 0.0
+  },
+  "MN_free": {
+   "ignorance": 0.296,
+   "deception": 0.0
+  },
+  "M_forced": {
+   "ignorance": 0.037,
+   "deception": 0.0
+  },
+  "MN_forced": {
+   "ignorance": 0.185,
+   "deception": 0.0
+  }
+ },
+ "x_heads_per_table": {
+  "I37002F|TS": 2,
+  "I37003F|TS": 2,
+  "I37004F|TS": 1,
+  "I38005F|TS": 1,
+  "I38006F|TS": 1,
+  "I39006F|TS": 1
+ },
+ "x_heads_max_in_table": 2,
+ "x_heads_total": 8,
+ "none_heads": {
+  "M_free_A": 40,
+  "MN_free_A": 51,
+  "M_forced_A": 0,
+  "MN_forced_A": 0,
+  "M_free_B": 0,
+  "MN_free_B": 1,
+  "M_forced_B": 0,
+  "MN_forced_B": 0,
+  "M_free": 40,
+  "MN_free": 52,
+  "M_forced": 0,
+  "MN_forced": 0
  },
  "totals": {
   "calls": 864,
