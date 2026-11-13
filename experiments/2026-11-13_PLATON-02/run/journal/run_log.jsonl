@@ -706,3 +706,10 @@
 {"arm": "TS", "at": "2026-11-13T17:06:24+00:00", "attempt": 1, "event": "вызов", "job": "I38002|TS|h4", "role": "основной", "task": "I38002", "поток": "I38002_TS_h4-1c81a7b2.a001.osn.jsonl.gz"}
 {"arm": "TSF", "at": "2026-11-13T17:06:26+00:00", "attempt": 1, "event": "вызов", "job": "I38003F|TS|h3", "role": "основной", "task": "I38003", "поток": "I38003F_TS_h3-49d3feac.a001.osn.jsonl.gz"}
 {"arm": "TSF", "at": "2026-11-13T17:06:29+00:00", "attempt": 1, "event": "вызов", "job": "I38003F|TS|h4", "role": "основной", "task": "I38003", "поток": "I38003F_TS_h4-7f8e8e2c.a001.osn.jsonl.gz"}
+{"arm": "TS", "at": "2026-11-13T17:06:37+00:00", "attempt": 1, "event": "вызов", "job": "I38003|TS|h2", "role": "основной", "task": "I38003", "поток": "I38003_TS_h2-26ebe987.a001.osn.jsonl.gz"}
+{"arm": "TS", "at": "2026-11-13T17:06:37+00:00", "attempt": 1, "event": "вызов", "job": "I38003|TS|h3", "role": "основной", "task": "I38003", "поток": "I38003_TS_h3-325df798.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T17:06:38+00:00", "attempt": 1, "event": "вызов", "job": "I38003|TN|h1", "role": "основной", "task": "I38003", "поток": "I38003_TN_h1-4e4f2e89.a001.osn.jsonl.gz"}
+{"arm": "TSF", "at": "2026-11-13T17:06:43+00:00", "attempt": 1, "event": "вызов", "job": "I38003F|TS|h1", "role": "основной", "task": "I38003", "поток": "I38003F_TS_h1-8bae68dc.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T17:06:43+00:00", "attempt": 1, "event": "вызов", "job": "I38003F|TN|h4", "role": "основной", "task": "I38003", "поток": "I38003F_TN_h4-075d2af0.a001.osn.jsonl.gz"}
+{"arm": "TSF", "at": "2026-11-13T17:06:48+00:00", "attempt": 1, "event": "вызов", "job": "I38003F|TS|h2", "role": "основной", "task": "I38003", "поток": "I38003F_TS_h2-1b6ce877.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T17:06:48+00:00", "attempt": 1, "event": "вызов", "job": "I38003F|TN|h1", "role": "основной", "task": "I38003", "поток": "I38003F_TN_h1-747796b3.a001.osn.jsonl.gz"}
