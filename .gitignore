@@ -11,3 +11,4 @@ experiments/2026-10-29_SELECT-01C/jobs/test_jobs.jsonl
 experiments/2026-11-12_PLATON-01/dry/jobs*/jobs.jsonl
 experiments/2026-11-12_PLATON-01/dry/*/journal/
 experiments/2026-11-12_PLATON-01/run/jobs.jsonl
+experiments/2026-11-13_PLATON-01R/run/jobs.jsonl
