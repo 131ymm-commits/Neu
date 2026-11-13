@@ -39,7 +39,28 @@ def test(law, seed):
     return out
 
 
+LAYER_A = {'fall_m', 'pendulum_m', 'kepler_m', 'gas_m', 'coulomb_m', 'ohm_m', 'kinetic_m'}   # совет 46, п. б
+
+
+def test_layers():
+    """Совет 46 (инженер): правило слоёв кодом даёт 7 законов в слое A и 3 в слое B; зёрна теста — 6 на закон слоя A
+    (42 экземпляра) и 4 на закон слоя B (12), все в мире PLATON-02."""
+    import json, os
+    import platon02_run as R
+    got = {law: R.layer_of(law) for law in M.MIMIC_ORDER}
+    check({l for l, v in got.items() if v == 'A'} == LAYER_A, f'слои не совпали с советом 46: {got}')
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'seeds_test.json')
+    if os.path.exists(p):
+        cnt = {}
+        for e in json.load(open(p, encoding='utf-8')):
+            cnt[e['law']] = cnt.get(e['law'], 0) + 1
+        want = {law: (6 if law in LAYER_A else 4) for law in M.MIMIC_ORDER}
+        check(cnt == want, f'зёрна теста по законам {cnt} ≠ {want}')
+        print('  слои:', {L: sorted(l for l, v in got.items() if v == L) for L in 'AB'}, '| зёрен:', sum(cnt.values()))
+
+
 if __name__ == '__main__':
+    test_layers()
     k = int(sys.argv[1]) if len(sys.argv) > 1 else 3
     mins = {}
     for law in M.MIMIC_ORDER:

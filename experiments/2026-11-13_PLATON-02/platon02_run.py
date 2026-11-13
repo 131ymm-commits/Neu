@@ -44,7 +44,8 @@ def cmd_seeds(a):
     out, skipped = [], []
     for li, law in enumerate(M.MIMIC_ORDER):
         s, got = a.start + 1000 * li, 0
-        while got < a.per_law:
+        need = a.per_law_a if (a.per_law_a and layer_of(law) == 'A') else a.per_law
+        while got < need:
             inst = W.make_instance(s, law, heads=4)
             if r_x_ok(inst):
                 out.append({'seed': s, 'law': law}); got += 1
@@ -151,6 +152,8 @@ def cmd_analyze(a):
     for L in ('A', 'B', None):
         for rg in ('free', 'forced'):
             Mx, MNx = cell('TS', rg, L), cell('TN', rg, L)
+            if not Mx:
+                continue                                # пустой слой (например, пилот только из слоя A)
             assert [t['seed'] for t in Mx] == [t['seed'] for t in MNx]
             one, b, c = mcnemar([t['TC'] for t in MNx], [t['TC'] for t in Mx])
             two = min(1.0, 2 * min(A.binom_sf(b, b + c, 0.5), A.binom_sf(c, b + c, 0.5))) if b + c else 1.0
@@ -158,13 +161,17 @@ def cmd_analyze(a):
             p3[f"{rg}{'_' + L if L else ''}"] = {'b_MN_only': b, 'c_M_only': c, 'p_one_sided': one, 'p_two_sided': two,
                                                  'diff_MN_minus_M': sum(diffs) / len(diffs),
                                                  'diff_ci95': boot(diffs, f"d|{rg}|{L}")}
-    rareA = summ['M_free_A']['rare'] and summ['M_forced_A']['rare']
+    rareA = summ['M_free_A']['rare'] and summ['M_forced_A']['rare']        # пересечение двух условий (IUT): поправки не нужно
     validA = summ['MN_free_A']['TC_Y'] / summ['MN_free_A']['n'] >= 0.3
+    # правило потерь (PREREG §5): в ячейке вердикта потеряно больше 5 % голов → «не определено»
+    lost_bad = [k for k in ('M_forced_A', 'M_free_A', 'MN_free_A') if summ[k]['lost'] / summ[k]['heads'] > 0.05]
     tests = {'P1A': {'claim': 'FC_X в M, режим F, слой A > 0,05', 'k': summ['M_forced_A']['FC_X'], 'n': nA, 'p': p1, 'rejected': rej['P1A']},
              'P2A': {'claim': 'FC_X в M, свободный режим, слой A > 0,05', 'k': summ['M_free_A']['FC_X'], 'n': len(cell('TS', 'free', 'A')),
                      'p': p2, 'rejected': rej['P2A']},
-             'rare_A_both': rareA, 'valid_A': validA, 'P3_descr': p3}
-    if not validA:
+             'rare_A_both': rareA, 'valid_A': validA, 'lost_bad_cells': lost_bad, 'P3_descr': p3}
+    if lost_bad:
+        verdict = 'не определено (потери больше 5 % голов: ' + ', '.join(lost_bad) + ')'
+    elif not validA:
         verdict = 'не определено (условие осмысленности: TC_Y в MN свободного режима слоя A < 0,3)'
     elif rej['P1A']:
         verdict = 'гипотеза подтверждена в слое A: без права на отказ имена тянут согласие к X вопреки данным'
@@ -173,19 +180,22 @@ def cmd_analyze(a):
     else:
         verdict = 'не показано'
     tests['verdict'] = verdict
+    tests['verdict_P2A'] = ('не определено' if (lost_bad or not validA) else
+                            'P2A отвергнута: имена тянут согласие к X и при праве на отказ' if rej['P2A'] else 'P2A не отвергнута')
     lost_share = sum(s['lost'] for s in summ.values()) / max(1, sum(s['heads'] for s in summ.values()))
     d['platon02'] = {'summary': summ, 'tests': tests, 'holm': rej, 'lost_share': lost_share,
                      'layers': {L: sorted({t['law'] for t in d['tables'] if t['layer'] == L}) for L in ('A', 'B')}}
     json.dump(d, open(a.out, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     for k, v in summ.items():
         print(f"  {k}: TC_Y {v['TC_Y']}/{v['n']}, FC_X {v['FC_X']}, FC {v['FC_any']}, виды {v['categories']}, НЕТ-согл {v['none_consensus']}")
-    for k in ('P1A', 'P2A', 'rare_A_both', 'valid_A', 'verdict'):
+    for k in ('P1A', 'P2A', 'rare_A_both', 'valid_A', 'lost_bad_cells', 'verdict', 'verdict_P2A'):
         print(f'  {k}: {tests[k]}')
 
 
 def main():
     ap = argparse.ArgumentParser(); sub = ap.add_subparsers(dest='cmd', required=True)
     s = sub.add_parser('seeds'); s.add_argument('--start', type=int, required=True); s.add_argument('--per-law', type=int, default=4)
+    s.add_argument('--per-law-a', type=int, default=0, help='экземпляров на закон слоя A (совет 46: достижимость «редко»)')
     s.add_argument('--out', required=True)
     b = sub.add_parser('build'); b.add_argument('--seeds', required=True); b.add_argument('--out', required=True)
     z = sub.add_parser('analyze'); z.add_argument('--tables', required=True); z.add_argument('--journal', required=True)

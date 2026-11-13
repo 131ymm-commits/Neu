@@ -6,7 +6,7 @@ import hashlib, json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__)); P1 = os.path.join(HERE, '..', '2026-11-12_PLATON-01')
 SHARED = ['platon_world.py', 'platon_check.py', 'platon_jobs.py', 'platon_analyze.py']
 OWN = ['platon02_world.py', 'platon02_run.py', 'test_platon02.py', 'dry_platon02.py', 'run_platon02.sh', 'prereg_hashes02.py',
-       'cfg_platon02_haiku.json', 'seeds_test.json', 'power02.py', 'power02.json']
+       'cfg_platon02_haiku.json', 'seeds_test.json', 'seeds_test_skipped.json', 'power02.py', 'power02.json']
 sha = lambda p: hashlib.sha256(open(p, 'rb').read()).hexdigest()
 
 

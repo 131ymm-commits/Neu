@@ -1,0 +1,19 @@
+{
+ "files": {
+  "../2026-11-12_PLATON-01/platon_world.py": "52101fd96a81787fceb246caf9f27c7e6bab7e6eef2b0f1459d3da3dd743cc1c",
+  "../2026-11-12_PLATON-01/platon_check.py": "e818639cdb20042b2c46bf00ffa41c8bfd0312b29c09d27a53aedffebd77cf4b",
+  "../2026-11-12_PLATON-01/platon_jobs.py": "9f4e3337c5a439f8a947251b7951ab8d8cf1747fd7603ba45589d57eab5fb4ca",
+  "../2026-11-12_PLATON-01/platon_analyze.py": "87a0157d7cb4a33d694a7165184f984ffe0da3ca4fc41b5bdacf7b1127e47ded",
+  "platon02_world.py": "c516533047b56c5be722ede84e91669900a8a603becd1def18df3fc4f3052f4b",
+  "platon02_run.py": "389126ccb38285dc103bd01655e5ffdebdc51ce1adf2a9fd06aad4e638c9b479",
+  "test_platon02.py": "4ef6393bbd49d041b40c62c27f05dc4f00e9c8429b50cf12433e59569a95df7c",
+  "dry_platon02.py": "755f3bbb4aee017a36dca202eba0836b168ebfeb8a233fd808c78ed08f6db06d",
+  "run_platon02.sh": "7b987757c4636c66ca9469529fd74651827b85af8a74ea4f3fe458d8e3c446f4",
+  "prereg_hashes02.py": "dc753b20166ba0a24505c28012447b9f3432ab7c01c08bcfd47288c853d8a748",
+  "cfg_platon02_haiku.json": "124989e45ef1a4b6a06a976306e7cf77af5733b92eaff18d468973f24b43315c",
+  "seeds_test.json": "7e2ae1eedbaef2722d91758b5738d6714117ed72e77cb0abebc8cafd9f18482b",
+  "seeds_test_skipped.json": "884bf7b48d689f218cf1b5efbeaaa0b4fb7920bd95e4ff52f7fff6d9a0bd206d",
+  "power02.py": "99bfd8864936ed6dd9526bf0c746ba10b54d715e4ed6d144de491fb5231bb690",
+  "power02.json": "99939b36dc694f1e70c8b9e2e47f2a391bf45e7a3b5c26685a3ea9f9e8cfc139"
+ }
+}

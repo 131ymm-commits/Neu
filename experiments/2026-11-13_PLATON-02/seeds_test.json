@@ -16,6 +16,14 @@
 "law": "fall_m"
 },
 {
+"seed": 30005,
+"law": "fall_m"
+},
+{
+"seed": 30006,
+"law": "fall_m"
+},
+{
 "seed": 31001,
 "law": "pendulum_m"
 },
@@ -29,6 +37,14 @@
 },
 {
 "seed": 31008,
+"law": "pendulum_m"
+},
+{
+"seed": 31009,
+"law": "pendulum_m"
+},
+{
+"seed": 31010,
 "law": "pendulum_m"
 },
 {
@@ -48,6 +64,14 @@
 "law": "kepler_m"
 },
 {
+"seed": 32005,
+"law": "kepler_m"
+},
+{
+"seed": 32006,
+"law": "kepler_m"
+},
+{
 "seed": 33001,
 "law": "gas_m"
 },
@@ -61,6 +85,14 @@
 },
 {
 "seed": 33004,
+"law": "gas_m"
+},
+{
+"seed": 33005,
+"law": "gas_m"
+},
+{
+"seed": 33006,
 "law": "gas_m"
 },
 {
@@ -128,6 +160,14 @@
 "law": "coulomb_m"
 },
 {
+"seed": 37005,
+"law": "coulomb_m"
+},
+{
+"seed": 37006,
+"law": "coulomb_m"
+},
+{
 "seed": 38001,
 "law": "ohm_m"
 },
@@ -144,6 +184,14 @@
 "law": "ohm_m"
 },
 {
+"seed": 38005,
+"law": "ohm_m"
+},
+{
+"seed": 38006,
+"law": "ohm_m"
+},
+{
 "seed": 39001,
 "law": "kinetic_m"
 },
@@ -157,6 +205,14 @@
 },
 {
 "seed": 39004,
+"law": "kinetic_m"
+},
+{
+"seed": 39005,
+"law": "kinetic_m"
+},
+{
+"seed": 39006,
 "law": "kinetic_m"
 }
 ]

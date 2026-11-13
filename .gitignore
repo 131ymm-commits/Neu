@@ -15,3 +15,6 @@ experiments/2026-11-13_PLATON-01R/run/jobs.jsonl
 experiments/2026-11-13_PLATON-02/run/jobs.jsonl
 experiments/2026-11-13_PLATON-02/dry/jobs/jobs.jsonl
 experiments/2026-11-13_PLATON-02/dry/*/journal/
+experiments/2026-11-13_PLATON-02/dry/*/jobs/jobs.jsonl
+experiments/2026-11-13_PLATON-02/dry/*/*/journal/
+experiments/2026-11-13_PLATON-02/dry/*/*/dry_out.json

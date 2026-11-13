@@ -19,7 +19,7 @@ case "${1:-}" in
     python3 prereg_hashes02.py --verify; cd "$ROOT"
     python3 tools/run_sealed2.py run --jobs experiments/2026-11-13_PLATON-02/run/jobs.jsonl --seed 30001 \
       --journal experiments/2026-11-13_PLATON-02/run/journal --streams /home/user/neu_heads/platon02/streams_test \
-      --config experiments/2026-11-13_PLATON-02/cfg_platon02_haiku.json --parallel 4 --max-calls 660 ${STOP_AFTER:+--stop-after $STOP_AFTER} ;;
+      --config experiments/2026-11-13_PLATON-02/cfg_platon02_haiku.json --parallel 4 --max-calls 880 ${STOP_AFTER:+--stop-after $STOP_AFTER} ;;
   analyze)
     python3 prereg_hashes02.py --verify; python3 platon02_run.py analyze --tables run/tables.json --journal run/journal --out run/results_platon02.json ;;
   audit)
