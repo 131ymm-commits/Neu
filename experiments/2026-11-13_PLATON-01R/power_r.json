@@ -10,24 +10,40 @@
    "P3": 0.56175,
    "P1F": 0.9797,
    "P2F": 0.47165
+  },
+  "по пилоту Sonnet": {
+   "P3": 0.01475,
+   "P1F": 0.0133,
+   "P2F": 0.0133
   }
  },
  "bounds": {
   "0.0": {
    "max_allowed": 2,
-   "free_both_cells": 1.0,
-   "rule_C_one_cell": 1.0
+   "one_cell": 1.0,
+   "free_both_cells_frechet_lower": 1.0,
+   "rule_C": 1.0,
+   "P_TC_conf_TSF_ok": 1.0
   },
   "0.02": {
    "max_allowed": 2,
-   "free_both_cells": 0.910745309067075,
-   "rule_C_one_cell": 0.9543297695592834
+   "one_cell": 0.9543297695592834,
+   "free_both_cells_frechet_lower": 0.9086595391185668,
+   "rule_C": 0.9543297695592834,
+   "P_TC_conf_TSF_ok": 1.0
   },
   "0.05": {
    "max_allowed": 2,
-   "free_both_cells": 0.45797128987605035,
-   "rule_C_one_cell": 0.6767357607486473
+   "one_cell": 0.6767357607486473,
+   "free_both_cells_frechet_lower": 0.35347152149729455,
+   "rule_C": 0.6767357607486473,
+   "P_TC_conf_TSF_ok": 1.0
   }
  },
- "weights_rule": "проверки — «вдвое слабее»; исходы-границы — p = 0,05"
+ "weights_rule": "повторилось: проверки — «вдвое слабее», исходы-границы — доля 5 %; не повторилось: мощность «по пилоту Sonnet»",
+ "bounds_false_level_at_0.15_one_cell": 0.04859866569285576,
+ "mc": {
+  "reps": 20000,
+  "seed_family": 606
+ }
 }

@@ -9,6 +9,7 @@ P1="$HERE/../2026-11-12_PLATON-01"
 cd "$HERE"
 case "${1:-}" in
   pilot)
+    python3 -c "import prereg_hashes_r as P, sys; sys.exit(0 if P.check() else 1)"   # совет 44, п. е: сверка и в пилоте
     python3 "$P1/platon_jobs.py" build --seeds pilot/seeds_pilot_r.json --heads 4 --out pilot/main --variant b --regimes free,forced
     cd "$ROOT"
     python3 tools/run_sealed2.py run --jobs experiments/2026-11-13_PLATON-01R/pilot/main/jobs.jsonl --seed 90040 \
@@ -24,7 +25,7 @@ case "${1:-}" in
     cd "$ROOT"
     python3 tools/run_sealed2.py run --jobs experiments/2026-11-13_PLATON-01R/run/jobs.jsonl --seed 20001 \
       --journal experiments/2026-11-13_PLATON-01R/run/journal --streams /home/user/neu_heads/platon01r/streams_test \
-      --config experiments/2026-11-13_PLATON-01R/cfg_platon_sonnet.json --parallel 4 --max-calls 1300
+      --config experiments/2026-11-13_PLATON-01R/cfg_platon_sonnet.json --parallel 4 --max-calls 1300 ${STOP_AFTER:+--stop-after $STOP_AFTER}
     ;;
   analyze)
     python3 prereg_hashes_r.py --verify

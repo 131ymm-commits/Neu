@@ -6,8 +6,8 @@
 import hashlib, json, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 P1 = os.path.join(HERE, '..', '2026-11-12_PLATON-01')
-SHARED = ['platon_world.py', 'platon_check.py', 'platon_jobs.py', 'platon_analyze.py']
-OWN = ['run_platon_r.sh', 'prereg_hashes_r.py', 'power_r.py', 'cfg_platon_sonnet.json', 'seeds_test_r.json']
+SHARED = ['platon_world.py', 'platon_check.py', 'platon_jobs.py', 'platon_analyze.py', 'power_platon.py']   # power_platon — совет 44, п. а
+OWN = ['run_platon_r.sh', 'prereg_hashes_r.py', 'power_r.py', 'power_r.json', 'replication_r.py', 'cfg_platon_sonnet.json', 'seeds_test_r.json']
 TOOLS = ['../../tools/run_sealed2.py']
 
 
