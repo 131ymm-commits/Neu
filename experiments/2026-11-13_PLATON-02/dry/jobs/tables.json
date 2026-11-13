@@ -1,0 +1,2842 @@
+[
+ {
+  "table": "I85001|TS",
+  "task": "I85001",
+  "seed": 85001,
+  "law": "fall_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "t",
+   "h"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "1acc1bfaef6d797e2ed97d4decab6dd5c3da0acec118691a57c1505e7ff37818",
+   "bf7ca99542e591667a592caa7143a134df4c8f7f0b4a15a4659ba7e5961c541d",
+   "1ab6edd91e4cbd7b5aefbc4eff0db89fce4683934fb74ba363353ba29949b36d",
+   "ab4f40fbc90be03e5b0a889f85140cff266513caa0e403131e2bf661c2b73233"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85001|TN",
+  "task": "I85001",
+  "seed": 85001,
+  "law": "fall_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "d550d6d272546c6fa5ca00eec73ef92d34a26d09a0fe09017b6f73190cda2247",
+   "2efce6ad25523958ba548b95ff69943859609ad12830ddddfe513162ef9af13a",
+   "ed7a31c618579a1bd504b4c5ba56bfd9e28dc65beb10d789d730b4804a84ae08",
+   "9d2bcc062963928dbce35723a37f134fb6806cb15fb7f7d59b4e3dc310a7a3bb"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85001F|TS",
+  "task": "I85001",
+  "seed": 85001,
+  "law": "fall_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "t",
+   "h"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "bf539028413f2106a4b3c381d8852a903eaeb2d3ed7634f2ecdfad0798264869",
+   "5aa0a63a54d5d08f7cae70719732cc08422070c76630145d00aa55a87f8a7ef7",
+   "a6f654fb93a2e2120e2418d417b54f32b3fe553bfb1bdc06779225419f4636dc",
+   "19dc4e9aabe66ecb62f2b7086e36e4a0be905f4bd6dbe29a0ca58c9d1cf47a18"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85001F|TN",
+  "task": "I85001",
+  "seed": 85001,
+  "law": "fall_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "4392ad856366ce2de60dbd56d151a13ab8d4e522e980d0e1c32338d47403372a",
+   "862471fcd9c4cca8b9d8442d7c3f3bc9452cb48712e4121d818ef13febc8e1b1",
+   "9c1bf0f550b63421874f5085a8fc6d44abf90df0780c4ddbc27d4eb72b9e0cdf",
+   "72daea7eccbca2fcfab54111925fb7d3ff87a6b774458c09a1eb60d881f7019a"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85002|TS",
+  "task": "I85002",
+  "seed": 85002,
+  "law": "pendulum_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "T",
+   "L"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "c966218a2e5310083207b35986ad5f085d967463470ca899e523048de892359b",
+   "8449638090a2cdceaaf98233f13aeda9f8da6c7b8a883f62d8dc52955d7d180f",
+   "8f42530480a9a693ea585d0ca6c8f09aaf9cdaa5fdc1aebaa0502fef16651742",
+   "a41acca2153c78b34a29f704b9b5be79206f15ce698fd855fe52df2e70e3c9b9"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85002|TN",
+  "task": "I85002",
+  "seed": 85002,
+  "law": "pendulum_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "2c07d86f00ad90b0c2e04d44ee68875d1b5798edf0a7dbf8c746d8f5521b6f06",
+   "1bb0f2a01ffc4a991a28b5eca8439657ca3b76baf5051117368c695b04044c81",
+   "c202ce992127604ff4215016d93318836fd9ce1899a7efa7a8e740232b9f99b9",
+   "e8838c19c34f4ecdc02259cc7223e075478006b7d5c2a9ac56ca7beaa03ffc6f"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85002F|TS",
+  "task": "I85002",
+  "seed": 85002,
+  "law": "pendulum_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "T",
+   "L"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "7c36d313bf069c9a3fb73e9be519d30fe4b8c067a1b0d12839925dd3c52943e6",
+   "9e0c0a325415fb7375ded1cfba9cfb99770ecc9284457caf076fd2ad9ab6798d",
+   "4c64476ba7e52399a1b54c8984f60390c220b37367c1228e1630d7e585055cc4",
+   "9b258cbb24b54fbf3745a1db1510a167c2246b1e03e572e0f4e79df4a734ad57"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85002F|TN",
+  "task": "I85002",
+  "seed": 85002,
+  "law": "pendulum_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "9622207971a676abbe17e7e874ca6e83e1d916fd8f38a54656dd69bd35825052",
+   "e237e9a4a2b79d50698685e0b3fa274a76e9226ff55dbbb7ea0130edf7f63a78",
+   "8019bd5673976acdb9c7c9f89d27e338e809f32366eeca6564ca9a42887e2e54",
+   "17440eb22f0e2a55ef3322ce0c2339278b7b8e67ca34e8a785c084a66267c85b"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85003|TS",
+  "task": "I85003",
+  "seed": 85003,
+  "law": "kepler_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "T",
+   "a"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "af4c843510cb56611f6114beccf96c2a1c6f5ff3dfc3387a1888563301ba3d63",
+   "52f46d0048986e0c66bdf7e8e45c7e8e61300040152ccc93eace3137655eb04e",
+   "6bfdc105f64f273f2a2d154292077f9b06152114018bd6cd5f38aaccfd646089",
+   "720de92510a90bc2ef0c57da6a4deb363696c939adda945aff608f3394865b41"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85003|TN",
+  "task": "I85003",
+  "seed": 85003,
+  "law": "kepler_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "367c6e86c1e136f5693194c26a6a6304e543e03ffcba05238fcb21d9b95f5250",
+   "861c6e344d9a6574eff45964e63d2699ebe031909e11f11275f70fd2427a1308",
+   "6796735954b369dd08b3813e0265a582b9567860ecbbcced2d12611154787467",
+   "1701ec787402ff82cad1a958e8a6d0c45a30d9a4f3b322b487e70cd051b74a62"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85003F|TS",
+  "task": "I85003",
+  "seed": 85003,
+  "law": "kepler_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "T",
+   "a"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "22ddba68a7acf9b2def369142765986f7524ae85d6b35343672f1aded810e09f",
+   "cda8df2ceba6365918c24d5fa859ff6a238021ff18e733ba46bafd069252b672",
+   "ae6bfd2a3c9489834428d9b632fb01aaf9c667f502976b7850b5408ec01dee42",
+   "92211ea5c7ebcc8481e7d67d7a416c59e504b98f91061b5f500c3be56241b4ed"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85003F|TN",
+  "task": "I85003",
+  "seed": 85003,
+  "law": "kepler_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "c69491d139d027ecbc9b9a37f59e7c6b4eac5547bf55a50d96e19f24c580d4bb",
+   "ef9a98c6f8419873604ca8874ea93b1c807ecc069703a99377d1fc696d59f360",
+   "607039e593f39c24e35658f0da179eee0d623e1f36f7d72d8828337fec95173a",
+   "6594a773af2f5195aff7c08325df64590eb3d89a200671046591c17973180e0a"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85004|TS",
+  "task": "I85004",
+  "seed": 85004,
+  "law": "gas_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "P",
+   "V",
+   "T"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "f875a5dd2bead44432acde8daeaaaf1f6f126e86f6d9273edf5863fa1e0389e5",
+   "26f292b435f832546193b6c335b358f44dc7995a6747abb567df4fc82d5c4532",
+   "d73aeb37a6c0e2d47754473ba8d6266532204ef7eefd8ee140e98d83a271d134",
+   "37823d73970a3bc55e66fb97d86a635c803b3f0dfe717d5dce2756cc5ef2a513"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85004|TN",
+  "task": "I85004",
+  "seed": 85004,
+  "law": "gas_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "92ebc4c39bdb1cf8ce80513d6f346ddcb8b6edd97a51e97c423e02a69e62d98a",
+   "a76380341354e95717e6de5b243fafd3590595741ee0f6d8a305b8e388dbdd5b",
+   "805d477ea7326990b8c0854373785617fa355e00fdc63f30fa161a5a49982604",
+   "1a3d20d6c781e6870de9e07bbe43be523a2407ea2aea5fddd342185d530c6c66"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85004F|TS",
+  "task": "I85004",
+  "seed": 85004,
+  "law": "gas_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "P",
+   "V",
+   "T"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "b59fe9b497616896055be3363c56d604e673710f1d81a54d928f5b5cca871b3e",
+   "78f2b579de290c6c2b3438915b2a61d94266cb6eb6277bbd7286cc79011ec59c",
+   "6849fef32cab5b1a81615912cbf4aaf43b12cb14e5dd17391314d5d9eaff98e2",
+   "cf9e578c85cd7de6d6cc3b4fc671cdcac941d2e2eb4f3fca758ff7c755a397d3"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85004F|TN",
+  "task": "I85004",
+  "seed": 85004,
+  "law": "gas_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "7e2033456ac347e54970cca3956f2f3a6e537475ff1b45c4ad8256e5427bcb79",
+   "34f1487cf90f4fc3cbfb3463f0269821be5fcee59cdd31707eae0dbb2e532beb",
+   "0d1139bb74f4a4f4af7f727602c23d87f193e04a2d7cf4ae6e006033db172d17",
+   "70256f2fb333b30bc14e049c30b50ea14ed1acfa60688de001e618398c66a21e"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85005|TS",
+  "task": "I85005",
+  "seed": 85005,
+  "law": "lens_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "d1",
+   "d2"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "1543e67b7a4016b11b7d28839c40ac70030d4340c12465654632dc33e19f7176",
+   "9e51ff27f5c109e96f6f843a30382b766e0fd99cc0b453dbe74d9e0ee06479db",
+   "9b5108f5aee5d8567fc8ac9e01d2f9e5577a80bb577fb1383a665f1e16f7f66c",
+   "1eb6075f16d4dd5d1306d52b7fc50a6a6cac81d666b732ee39ea975a89475a14"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85005|TN",
+  "task": "I85005",
+  "seed": 85005,
+  "law": "lens_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "4a56925fb2f134135b2d264d27433fab9d694fabc579588bf1c5c8387c0e7209",
+   "b4aa835b3ccbbf26875228f179791fc87f147d239c7a17d16a71c044e9751e33",
+   "864844b3156157920a0f5f61f9b2e4714d1a86d1d8e84471017c60beb10f0640",
+   "807001d3ce145c8458f01a2766f5727eeb7bb26ab1382c2a69bfc9d8d35bdcd5"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85005F|TS",
+  "task": "I85005",
+  "seed": 85005,
+  "law": "lens_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "d1",
+   "d2"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "0842fa0aef46a31a3852eaa4ae9230315381528dcff024341ac673081da6c483",
+   "0bd896d895c89fddf178b27210cffa311ffbb2f9b4253d0f8dd99296c75b948c",
+   "022289a4925b053f1ecd26614dcc0a37e6a3e6ff93a968ec36ed0e51d24d0a8a",
+   "c666fec6cd901a7cc8aac9b468771171e6f60128c893b25bdf9467c40ea431b0"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85005F|TN",
+  "task": "I85005",
+  "seed": 85005,
+  "law": "lens_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "5c7aaab26e702381576e1a2ccfaeae4af199d3fc3f0f177b1bc9693affd161d4",
+   "eab361f6eca151baf6e878d02294d480e29b0e8daa05da2afeeb8a96baa0110d",
+   "8683be3095abdba3dcf50d2e89145e5b2f7a118422d6efe83c3af2688adc1bb3",
+   "47e38936823e69251c931062e910406b9e2db57183f717c950e1b65f3f5cb0a5"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85006|TS",
+  "task": "I85006",
+  "seed": 85006,
+  "law": "spring_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "x"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "1f314611efc2cd78c9adf6aa4ea28c8fca6ea207c0262cbc46f701e03958e405",
+   "e0fc2a9b52e01071988633d1ab077d77e6b240d4b3564821ef627801a1aad50b",
+   "d49058879e70cebde23c764c014041b08d01a1b0c85fc4993b903eca0915e469",
+   "b38dfbc37dd001a511129d39dbfa6d6ae3f436fa6cf01efa21a8a8205398e6f3"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85006|TN",
+  "task": "I85006",
+  "seed": 85006,
+  "law": "spring_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "95c2d2611bb8f58f2721447a39f5250e2ecaed27b48f62b486a72f2ff7eef46e",
+   "20e19ff3d5414c26a20d7fb1a206ee6bbf6df0388a78f1cd32ea11e6becfb36f",
+   "f7f764095fc79ce96be612bb5b19ae5441e5aeb3dfc793f8ac67d3553a3bdcd4",
+   "cb72ea02b755ac9b50385e6ab5eb4288fb70ad629bebce6c3ca9cfaf45443d71"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85006F|TS",
+  "task": "I85006",
+  "seed": 85006,
+  "law": "spring_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "x"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "a0e76f88c9584501907a3f9a71df865e92f2efda4a2de056160a48d0c7087fa0",
+   "0b2aacdd3b52bc1858308fdd594dd1eb8f32767580776a9e530d86d1d6446c48",
+   "abb1b864a0a67865eb328e6cbc6bc1572321f14c249e5abdf233dc313579c9b2",
+   "e517ae8915d633f2b6b35726785a203e37cee52547c1b9c89954d9c4ead35a6f"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85006F|TN",
+  "task": "I85006",
+  "seed": 85006,
+  "law": "spring_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "abdaa36d50ef6bbed3df43321d2726dcdfc014444f91f60bcaed5451bfce9884",
+   "c7813d0295707631c0de2dc377bdb24dbbdcc48aafd40b67cbacae22ac5f6682",
+   "05ff6c83a4ea5381e163b94df632645d07414c73943ac89aa4e497a4049d3c6e",
+   "450ddf5f8fbc6a5d2f3fd0d34d4ddd2db194007a2c0b8db22d9ea376af450165"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85007|TS",
+  "task": "I85007",
+  "seed": 85007,
+  "law": "energy_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "924150e8bf2a25c8f3125d05995b5082eb9f0c42464f01f21fa15b82223f894c",
+   "5a5fc3e1ca7629c3ad4e0e7bc2bb9a73c6f139abe6ff90565350c60eeb499332",
+   "91ca551fe5213915bdbc08a8cf7cb006a6f736bfd4b9e29a151049516ff55b0a",
+   "6cd2321ea43e3bf3da1a6ed962e2cdd53c1bc5f0d6002d57ca31b66217cc8a03"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85007|TN",
+  "task": "I85007",
+  "seed": 85007,
+  "law": "energy_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "05aa9bcc3f51dc8bdd973ee9cbce0b01c03fb65f12de21cb78c93a8f4f9b372b",
+   "2ac3ad971d45a8c81c9425b03f33eaf908253df0c6178be02963d74fccb4cc11",
+   "c990935194826c06947c6fdeea4d3bab0fb5396402ca76f0989c2aabc32ee857",
+   "cb0b1243d5cdc0418c410d805bb70d28f0d16d257f2f5cebfd6ff741cea0493a"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85007F|TS",
+  "task": "I85007",
+  "seed": 85007,
+  "law": "energy_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "dd734d6d951a606e81e0cca641b6703242fc91eacdedd537de8dad2e9bb22e87",
+   "4d7e413b45844d1e168967efddac8ec7fd5b587cfd767a5e3d31df434372bdec",
+   "49f9374d64c2d82181bf1ba1ceb17dc888131d45fb2708c7cc413f442a3e926a",
+   "77802e70b4c9800417aea4e8ec1643575644f122b8354b2c38e308d71376d9f6"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85007F|TN",
+  "task": "I85007",
+  "seed": 85007,
+  "law": "energy_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "27bbe497d22460c83bc21631c788d7ce9d32c64be3ebac17b967680dd4343b48",
+   "266e20eee239f3e2ff1b4208c6b751c76cd953afb8ccd3d49c9cacc7c431f325",
+   "438c30d65a8d651aa78eb841fac03d22e16d4bfa7be4bb6887efee04e5000309",
+   "272afcdbcc24b97b2940fa47253b0a52e15150006c432d89b28b7e6f281d25ef"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85008|TS",
+  "task": "I85008",
+  "seed": 85008,
+  "law": "coulomb_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "q1",
+   "q2",
+   "F",
+   "r"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "e70d325db23db2d0b31821e7362042deb041f400fda94378a53c432681e50305",
+   "3a51ad15e134b988a3965df2aeda1bb566e2d6c4b21f430aa74b8617a9e1c9ce",
+   "025359a5dac2f979f63bee8d5e0b947b53f3bf4b6aa28436618201a7e72b3d0a",
+   "057dc5510552f224de348d134757a40764497b48be13bcf0a1ce365cddcd0497"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85008|TN",
+  "task": "I85008",
+  "seed": 85008,
+  "law": "coulomb_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "a171bcfbf01a4627b464dbbc898254696dcf048b349f8ecc006c7f72ea862623",
+   "a54e35e976d59f3eedcfd1fb91dee5b5f6cd04d5b431a8c123121d4458f9ff90",
+   "e5cb19ed8b42eeec84a3a19041fc3b5efe1dd474f2cc1b8e70fb1580079f6d0a",
+   "540368e1c219e9b4653dde9be630d051568b5d393d641d38ded8464ef194e4fd"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85008F|TS",
+  "task": "I85008",
+  "seed": 85008,
+  "law": "coulomb_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "q1",
+   "q2",
+   "F",
+   "r"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "99fa9e155a1117108c9eb445e219469e7cd2657a261fed90a83e5cf8399d1d10",
+   "cd0d5c7d69e45b373c26502335684c74a26a45c3b1366477684c44a90603f9ea",
+   "c56270ae07a715e7b619ba46c479d99891aed08eeaf56a9575b7fa652502e504",
+   "3f47827126b9e63bffde09f9beb60773664e915b6f40a7fe67ac3b66cf26d2ff"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85008F|TN",
+  "task": "I85008",
+  "seed": 85008,
+  "law": "coulomb_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "c9019e625e1223d2e9988cb37b9bf9a8f042829358b80e9e43260e398e4a24f5",
+   "92b912081840cbf2e306b7c42fdb2a6419165062ab1266c5186198294b68a58e",
+   "cfc3b747b01b208f9e522833a246af56d61c930934cf1d1319e7d08cc8f825b6",
+   "5f9ac9b066d4552aeaa035567c6fcd088afaced4e0f48612fef1a65c86813988"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85009|TS",
+  "task": "I85009",
+  "seed": 85009,
+  "law": "ohm_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "I",
+   "U",
+   "R"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "41f3c606b64334adcc730cfb1f2c05ad93f09c2417e35e2d060bc9c9dc5ed88b",
+   "f83057af0dea3f6412017ffd6521edaca042013fa16aca71eaf8ae2e3131d1cb",
+   "379d77f27e716418538225d3dab1f912fcf8930df121ef32c72054a6433ae1d9",
+   "a0ff6f4c513af59f298a7b879322fb3a24cb73170f3963b918402f0d67b759f7"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85009|TN",
+  "task": "I85009",
+  "seed": 85009,
+  "law": "ohm_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "3961e699076f149596a945aa05ad41fdfc1490b16da962841d97348992b4004c",
+   "72f5b894e85a727283e05449cdecd23d41582a03a7ed634236cbd85e1acb7baa",
+   "b89b5f22b1043e9d882b73af9f294a8080741f10d2a93563a2757d8fa43e3e43",
+   "a4e9df6b7f7878b2bc327876c5310b3d8ba3b47bc54c8f62d4a8e7d5b86d5539"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85009F|TS",
+  "task": "I85009",
+  "seed": 85009,
+  "law": "ohm_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "I",
+   "U",
+   "R"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "87a22c44bb44e40f60e821eb3cf234515d4f45b9d8ae4c96891612f7bced8832",
+   "32e47445b391d9fb877bd7b7783c09877058e3f97feda946bfc12b50353911df",
+   "523a9a67c4ac0aab9b17db70781dfa63927fe654336965c4b5d31e318dfad041",
+   "a903e0cf2d220cb8a166eedafdff7562a59d15e2cbae83678f7ac53831042938"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85009F|TN",
+  "task": "I85009",
+  "seed": 85009,
+  "law": "ohm_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "69e336197f63eb6a1e9e6ca218f1789e5bc09fcacedca97aa091a76b165b4a0f",
+   "4a518070574deb777e84f2084789a712a5b194ba2f6dbc893d26a614ede4804a",
+   "160430f51eb7879399693f0e9f89e9146f4bc22855bf551312650d011cb93bdf",
+   "f40baf2224797ca720e2d18360a92bfa8ad307e4a765d65d0ddbb4121b76398c"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85010|TS",
+  "task": "I85010",
+  "seed": 85010,
+  "law": "kinetic_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "m",
+   "E",
+   "v"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "b68948d2bce57dda23a4bfb231b79178435836eb316ae7a82fa82c4e126fbc63",
+   "f16a4d96ab3f548cf9e8ed344ed3e12884fd333088ffa05b319b18e899c37d76",
+   "6086285f3b8a21769e688ca68a4f7a300b1f26c01deec05d7d742526c9d6ae0a",
+   "dc6b4b5966d003a89b6da963a3c7685f179b6607bfff662ab390771d0e3bb296"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85010|TN",
+  "task": "I85010",
+  "seed": 85010,
+  "law": "kinetic_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "1a4a4b979e8488bfb28f17b1071fda7a1e5d9280034b57b683445136ba574fb2",
+   "d3521b956b2788659f437e701399b5ea31e07ec3e3d76b9ebdba3a8db5dcb201",
+   "af285018120a3e5efd315bc4c4038e5d724c94cc19454c22b6e139e1c5f84c44",
+   "6d0cf2d43da40e461ccbc898d47a76feb4f3e1562eefac55da5a775cd600c251"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85010F|TS",
+  "task": "I85010",
+  "seed": 85010,
+  "law": "kinetic_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "m",
+   "E",
+   "v"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "70c3ea56b63fb3cc5f870532283f714c4a98b3d721df666e0ac45a2bb050f48c",
+   "1e78d9599cba5a000dbad182e2c9d33d6f9b7c3191e1e68eefd993757913d48d",
+   "6ea6f3afbab74314737fb167e082a901e1c278f815550a280632fbdf2cf34163",
+   "8f6fc22f7135b178765674a834b834b88edb9af43edc9d11fb07d3f8ae1de2b9"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85010F|TN",
+  "task": "I85010",
+  "seed": 85010,
+  "law": "kinetic_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "26c7c93236a4d5158ee137e711db29599577f7e1896c5fa3bf78c71843f14369",
+   "39f67afb99c11055c1fa0f935bc2fc6f43c8b67c2a63c098609d4511ac48273a",
+   "23cb5ffd5ac29a7939bc52b9f5f646ac035f2a2be9076c6eea9f0d0a27087a82",
+   "d391426fb1c744f29dde2be3de3877e2195473aace3a8ef951e2767d72cf6c09"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85011|TS",
+  "task": "I85011",
+  "seed": 85011,
+  "law": "fall_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "t"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "cc82530304f45a23deb4fcf93885a9b0c04f14ee5812a03bf84e58863ac4e345",
+   "5246762e4b06205115cc30a25ecce08991117796877d27b54c8868fce3189812",
+   "ab6d9e94e9c8ac8d62cdcb6659f322d80569f301b009585b1b4afb56dc349f54",
+   "47d3a074dde56ff99e9f8bce75a515c9c8072149a876368b85b0bbfac01672e7"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85011|TN",
+  "task": "I85011",
+  "seed": 85011,
+  "law": "fall_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "38d12215d1d790ef7685670c9fb3e3b1585805eb9321e880a8346b6b7616a0e2",
+   "588f6bf2780b5b1de5309c3f112ddc4f7a141ae63514d37d49a9f36a174b732c",
+   "c51fcc5d1c9605a2b73babbe207bdb8d97ffbdaa000c659995992f1b45c1a887",
+   "9326f3bb00cdfa125df2ec1f40f39c4eb8215db032075682ee22bea2bb63c84f"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85011F|TS",
+  "task": "I85011",
+  "seed": 85011,
+  "law": "fall_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "t"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "a57ecd45b14a95b793bd1948f4477b8dd5b588af5ea2f758949391cae4bef5d9",
+   "350d63dc068d5ac7830c56624a2762ef77a89abe87650d6750dd4e5902b62c4c",
+   "adff8450ea4ead14af31697369f1e0729277d096e2469efd3cf144a502b2321b",
+   "4ce64283510295e78d1f8155111924c4b3e745c4148045590003129d9f621311"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85011F|TN",
+  "task": "I85011",
+  "seed": 85011,
+  "law": "fall_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "b4c4de48a326d087b0f876f4b211e5be6d93425f8a4ef637d262baab13a0fcf2",
+   "f543e418e8b59f696ba2c2ec4156487c19ea969ba6a3e5e61dbfd634614c49c0",
+   "ed7de42a18edfd74f141e6d4265e40bb66d316960fd26e6e8233301789179b35",
+   "60d817f486fa62b2cdb75d3955cd86c0c4c503f609393623e5a84a1dbfd3384c"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85012|TS",
+  "task": "I85012",
+  "seed": 85012,
+  "law": "pendulum_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "L",
+   "T"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "f3e19eca5366523be0389be17efb5880c5cd20d92cb22fbd4174982afccf543d",
+   "17723701adb57e41a1ee680d632b346e116afd4f3280b6c9ce908e59f88f70b2",
+   "08e274d23b550e0ec295fc6eb90ecdbfaab80c51a763cc04d6a26618630c76a4",
+   "44dcc6d07f76e2a66aaff6e8d1482c54eafcf99a193b003aa77ace4b6c76f747"
+  ],
+  "z_tries": [
+   1,
+   1,
+   2,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85012|TN",
+  "task": "I85012",
+  "seed": 85012,
+  "law": "pendulum_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "19c1f82ac52dcb26757c52dd0dcf0513bb27503249559cb6c34e9ebe1290a7d0",
+   "7c1d9717a456e6708e301b6e37b8d755dc7f49bd02e5af3d21781de5ad7863ca",
+   "f650a2bfbc43151645cfa2adea676daf8ee99ed4744e911e45cef38df1248392",
+   "508e65a08f431de8625bc185da7c12535adb192897d55c364d7513672c55c922"
+  ],
+  "z_tries": [
+   1,
+   1,
+   2,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85012F|TS",
+  "task": "I85012",
+  "seed": 85012,
+  "law": "pendulum_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "L",
+   "T"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "a32b7bffc8e235738b56f579975105e36dccb0df52f621902c7ab3380fd4cabe",
+   "75545cea0d9f5f3dc0853fc807d0154895a6b71957313600a82e65793dc63184",
+   "96610c92a46ce6232c59b56404a700958f66c165b61ce1aab305fcd0da647acd",
+   "8b9c458e5468e5d7c508271adeec7c32f9988960b29a822e9f5922b26e2ca322"
+  ],
+  "z_tries": [
+   1,
+   1,
+   2,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85012F|TN",
+  "task": "I85012",
+  "seed": 85012,
+  "law": "pendulum_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "9cd7f2a96a76a01739bd5082f91df99b1b19a3ffd7a794ed523bffe3964da7c8",
+   "3f452fa4c6ff36f9ebbafcb49c11e17723381133ac378594bbf0abc04ef99b5e",
+   "38c8b5f13943b33a383d358a474983015d76b0a791af525b015db335b434d1cd",
+   "208c6a92e256b662490ba97e529659bc5d9277fd42daec1416fdf600440a0c35"
+  ],
+  "z_tries": [
+   1,
+   1,
+   2,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85013|TS",
+  "task": "I85013",
+  "seed": 85013,
+  "law": "kepler_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "a",
+   "T"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "b8d9dc0a2b0cb3f08499a1fdb201f55b4f0aa83e374051d426df6c0068e10e98",
+   "c595454d02d94b8cc994dfcd380ccb7916e76ccdf22a0c8aad4c00f102a1869b",
+   "964f50bba2d96c68ceef888ec562a20cd5c11359876f5a13ebfe2eb15a0eaf58",
+   "fea5d1e2a1936a3fe04d0ad9c44f25ac1d5744ea356b351438d1f920824e1d74"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85013|TN",
+  "task": "I85013",
+  "seed": 85013,
+  "law": "kepler_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "64cad39d12778f1a33523cf26740c58098a5c92dc645c0edeaab8e1c8a70607a",
+   "22b9161f6aeda7d5963878b4f3f1b59db84c0fe3c09e6843614b5ceda71666bb",
+   "163526af00a790bf09eb6ebee7c33007cf5fc1b494115d8cb309a9c75a659962",
+   "8f89d70bd387d384ec32ccad5c84504ab4038a1e1ea90d4d8dff9fbfb250b1c2"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85013F|TS",
+  "task": "I85013",
+  "seed": 85013,
+  "law": "kepler_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "a",
+   "T"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "fe6c583a0151acd119aa9784f33a8668842a456f7aa6d0a5ed30594a28c03695",
+   "096b20d0c98414273b1b2b8ef3feefc9a773c16b7ba89948589bbfd9e3c016f8",
+   "e09fc141231353a52b58fa334da81caed3368accf92719296cee7a1f814b8666",
+   "adfd41ac87e1a38f9b87d6ac44dc2f85a7fb37c30584db7e905c25f5706846f0"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85013F|TN",
+  "task": "I85013",
+  "seed": 85013,
+  "law": "kepler_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "8776e3a855a0b48b7c47474d3edfd605ae8a27e14f4a68378dc72f313e5c93dc",
+   "0ecca0db426dcbdd72a91835aff04742bc2d7fe75d45b8f82095df010fb46b00",
+   "3bf9373859e53a17c5c8be161043a13aeb5b8e0c87df24ba36ee81685ff886fb",
+   "b14c57cbf973d1e2859fad4e8d83d117b6c54b8cdf1486dd10a32c53dc45530c"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85014|TS",
+  "task": "I85014",
+  "seed": 85014,
+  "law": "gas_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "P",
+   "V",
+   "T"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "6bf852cd40827292cc3540692fe1ab9eed6a6bf8cf537dac7c224d06a9f264d5",
+   "e003a1115df0314995f031250172b11dae1ac92187b60937500ff7d7ab700888",
+   "64e599edb596c5609b2c5b043ebf1e6e6537ad280b757ba16d63e54bdc828884",
+   "3c93404eabeced84ca749af240bff8df38e12dcac59f86818b3a193a8290ef00"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85014|TN",
+  "task": "I85014",
+  "seed": 85014,
+  "law": "gas_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "1a3f2e2d96ac0672fbefcf5741b989c6e7112d2383adbfc3d7616c5043da2542",
+   "1254974118a31d336b4ea84d1f5f78c570dfc5c3f3683dcdd47719607d230f18",
+   "4b3feba0aa20eb5376d69c458a1300603353aa680a7def7ac23abfa0e5e04db9",
+   "20471c46bd9c03946f00b60ea9e2b479cdbef329fef7c9dfcaeff23177f3a458"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85014F|TS",
+  "task": "I85014",
+  "seed": 85014,
+  "law": "gas_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "P",
+   "V",
+   "T"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "132af0dbc8f8db9305186c059b1478cea03e9e2736b6d3264d0815848f29c6de",
+   "15304b02e6a0892b2c89a9cf7d833a9daf48f392d59a32ad97223f5e3377107b",
+   "82da77edb64254d85cc88cb4b60fc420d483ef09e11c3ba0ee7a8bb1bd0aad88",
+   "c575f10df920956fa2b1883b771fc3bab3f4f644ab788c6cb3596f0771621a1a"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85014F|TN",
+  "task": "I85014",
+  "seed": 85014,
+  "law": "gas_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "c0150fbf560885dcf00d4907fe361b673929947af931d914d76e04bf2e7fb75d",
+   "974af4be049c4ae05c4bbea92cedbef27ede107c2e141d0cea6eead8a668b3c9",
+   "a1bd8e72acd6f89a7f498b272eb1471aa29c5801ddb291d31af164dc0998a5d9",
+   "2077f12d10d416db8a4f2981cf31f2d36174552a054c2b65d231b9e78434d362"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85015|TS",
+  "task": "I85015",
+  "seed": 85015,
+  "law": "lens_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "d2",
+   "d1"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "d9a920100d42bafce528bbb310cce0f021deeb0ed43317c4e6e35b27da4e904b",
+   "05c7f0d0613750ea6881ba30e0d1509434e7e060c3829e3cb3b2a5df573440f4",
+   "7f691b733256a0aad6ad950d08a3a560c78ab27346f4431ba1c961d8db20636e",
+   "bcf110325b9fad0841d885d56371937733813dc67909d6cf37e8a379091797eb"
+  ],
+  "z_tries": [
+   2,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85015|TN",
+  "task": "I85015",
+  "seed": 85015,
+  "law": "lens_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "d9c48a09ef2d03771933e8796dacb0b78f9f8a7347728f624339e235aba4416b",
+   "98f74437424407d4ea714929509714dca3e16a4da7ba0c245e4518e467cb995d",
+   "d7298a05caa56ad4a0a219a10f23ae2040d0c9de4aadd2d7b5820906b950bb26",
+   "502601fbb4b4f57498150f34bf3ae0a6fb8c86214c2d994dab34546b9547ab93"
+  ],
+  "z_tries": [
+   2,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85015F|TS",
+  "task": "I85015",
+  "seed": 85015,
+  "law": "lens_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "d2",
+   "d1"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "8dcded2bb575e65b732581f8c661d8c348f691bf26a94469a648dade2f32c24e",
+   "714cac2494740f1b88bace0e97d5dfa78651e1b1e7bc498e7c5b9654a367e736",
+   "ba9b3ac0b6cad6c91a1fb15b499c8f7090d7b3a7d03c215803e477ef38815601",
+   "ed1fbc42631fca64d528cb3b69bab75ef9823fd1b172f97ba3d8499d7ee56a9c"
+  ],
+  "z_tries": [
+   2,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85015F|TN",
+  "task": "I85015",
+  "seed": 85015,
+  "law": "lens_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "c1b335c2089150f27063825dc8ca1046b820fd5cb56874bf4e88a338183a379c",
+   "d1faef3f7b51784754e7206b807b0604e6fcdca85fde396d2b363ee35c7fb17b",
+   "2004326ca3cf6d733958576640282e2ec252a1df741610a786dc5daf82cb142c",
+   "b01d49e1a5046d69bbc6633dabda06966da876cb44baffd2861d24d0ed373295"
+  ],
+  "z_tries": [
+   2,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85016|TS",
+  "task": "I85016",
+  "seed": 85016,
+  "law": "spring_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "x"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "943e0524243c626f9734091ec7c2ccc388b4f8ed059d8666ae65d8e446b9fb6f",
+   "4ff0a23eb4777a76cf71c707d604b3afc10da062d0964f45c2ee39b0bafbdcd6",
+   "0577bf989fddc8ebb824a56901eb6c1a7fdabdadca5985320be4b26628390b41",
+   "1ccae838cb60fcaa01964e1441b05db17099e9655d5d6d56ad12934e09419694"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   2
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85016|TN",
+  "task": "I85016",
+  "seed": 85016,
+  "law": "spring_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "1a7a934a469bb8d2af76ad32103fae97c8daca0cd0ded4b0762f0a83abc8e414",
+   "d83cb41e90925c2d150d3a41fe3fb6e9eb50b61cf914280bd03b344abb057712",
+   "286216eafe877e839575871c65470076c7766ba0ef097ff70124894726fbf453",
+   "bd46e09e714a620befe8af7d9cf64f46c452aef17ed6564b3a71d08f2a28e4b8"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   2
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85016F|TS",
+  "task": "I85016",
+  "seed": 85016,
+  "law": "spring_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "x"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "3189450bfa09b5ed71af4c4d7292899ed9907c004f0c74334667fead7a708004",
+   "4e4f7a3036b5b2270418d4e2bf68878acee688fce36b39cdd111c5578ed19334",
+   "b058cf17b954383a89181eef92cee0a7ef2b7293d30c0b247157e50e023bb465",
+   "495a2ce07d5da36b235ce993bfd7761cec37ecf65bc71616b1d0fbcdab99156d"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   2
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85016F|TN",
+  "task": "I85016",
+  "seed": 85016,
+  "law": "spring_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "db9bc72ebe283e42185cea0f82538501c0fca0404c6da934ee15721049506880",
+   "a2e86f38e29585f7b7df1dbb00e675ab978cd939ce2241740f2c6ec53948d083",
+   "e5169847df5fcc1bb1ced5239df4f502f1fbd2e48e02fc3cf6a5912e7d6e89bf",
+   "e5eac5a11827bed60fd32a98f0fa710d01da3af1b9d8862a43155a45e42e7600"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   2
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85017|TS",
+  "task": "I85017",
+  "seed": 85017,
+  "law": "energy_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "h"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "e4c6eda682b4af188efaedb0f5685fb10090126a700ccd3d1a6f151308fb6677",
+   "d4f82ee3831a921ac1a7d66f04eb1bd29825b1a909fede287989e832d318b003",
+   "fe2576f444ef05e790d881354f0f58b6d4f4038ac3d9b1c90b8ca4e725823628",
+   "4302cc64c19b503972da08a597718a0fc867568f1cc2089f3b98cb32faeb84ca"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85017|TN",
+  "task": "I85017",
+  "seed": 85017,
+  "law": "energy_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "1f225e573be30d9d7af9de5f8d26324c93e6ef7c1e898b5d64b8c5ee7a1b4ad6",
+   "93e2e722d1257b8433674689c0d21929248a8e2c254e4eae9c70ab8774edeb35",
+   "152f91bcc808861efeb9b98c0728306017ffd7c95a4e62442a956092caad39b8",
+   "3148828858e2d6b5da3e7afb5b6bd76e84eb0e99130dc91019dc033471ce4862"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85017F|TS",
+  "task": "I85017",
+  "seed": 85017,
+  "law": "energy_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "h"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "f367e1e2b545bd87b2f6791f72f7681e62ea0189b7f5e9c058f6faa8e267fd29",
+   "7d2eaa8a56999c840cc560fa96d38712718472d557dd807094f4cbc477d7213b",
+   "3bbc4c0c2aed4e49ec651d0b55c9a3408b963b34b7ffcf6a0ba8c770d80d880e",
+   "ee2a43718e3fba60eaf49846ea240a148f493e1c39f13556a28e8d98aa2ba8ac"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85017F|TN",
+  "task": "I85017",
+  "seed": 85017,
+  "law": "energy_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "4bce77268179855167a79d0db5870d46f4bc2a3b0f1cbff4f3e160a9ab6c3dea",
+   "c8e987c008ef0249e43938b4133903bad0099d0ff5580f60ddfb36079309ca93",
+   "5b3688347d3b229db30ce649921270b79dd20e0da755ea973fba9fb098cc01d9",
+   "340c5b896ef9438f9828fc719104230b8e3edd3748a6077897559136c8aae215"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85018|TS",
+  "task": "I85018",
+  "seed": 85018,
+  "law": "coulomb_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "q1",
+   "F",
+   "q2",
+   "r"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "0e9f507f6c9db156a0337b18e8bd5e9aa38bc84adbdc25b08bc33f8ec30b40a4",
+   "5767a1ec2121ec58bc225996c5c160e96d28444c4917a8f39ca4578de88e839d",
+   "b658209db40831fef15468e9e082e0b6ac1579644dc0830451594860402c7dba",
+   "96d053ffbe12f0c7b519aabc01537f500155607e34b8799188965e564458e325"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85018|TN",
+  "task": "I85018",
+  "seed": 85018,
+  "law": "coulomb_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "45b9992180f8ba777d12abd63d321b915724a7c762a2c938972b5b68cc116fea",
+   "341cd2bf05fe778e1e7fc65a087690c779a291048d865f888bcdd5b2e8250171",
+   "b795c2e798b2f78ec4e19b85a5239b7a03d36ed79c955097efec340023be422b",
+   "185179069b27c9425e66a266c7e9ed8407c84a99222a301338b511a6a65f8be7"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85018F|TS",
+  "task": "I85018",
+  "seed": 85018,
+  "law": "coulomb_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "q1",
+   "F",
+   "q2",
+   "r"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "a3b257e0a7b8a6ee485cefec709263f7cd54d8f55e20ba0dd7ce32d290f6a7b1",
+   "5716307a917c13b5a499ee6fef71a4b277a8a6ecb40e277535f1a25903694926",
+   "551f46c4746072ac04ee804a8eff9459ab8b18262699d14ebe4751ad8df78d0f",
+   "d8eea87745f8b120ec058a8601711326f368313898a0b6ae21d311593c8abbc6"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85018F|TN",
+  "task": "I85018",
+  "seed": 85018,
+  "law": "coulomb_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c",
+   "d"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "201c39e9ac7f1b282f8c7b716e92e93ad9c8b6ae086b6c1ab230af1e3c12b883",
+   "99d1181a0e6920145152da988dbb9a82921c2f2411db13f3ebe23482bd78dcce",
+   "4a44a60bbbed2dc60eea4d7c5ecd079e58e54ebdc16eae1e7b5434210d4ed66e",
+   "185df31baa0519ee925e3ea0fdfb7119009642bafcb9571aaf0d5f10646728d5"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85019|TS",
+  "task": "I85019",
+  "seed": 85019,
+  "law": "ohm_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "I",
+   "R",
+   "U"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "8c618e4505e8175c75b15c2e9d312e8702c8acf4043a0464fa87e636e3be7ee2",
+   "d11f75e5d36192758ac00076d59031f9f087efde0fbcb6b1f57951b631da953a",
+   "7ecc6897c504570574d27e8c424ebd4077af197a05548dcb49afcba05cc6b8f8",
+   "05a77b4fdea859f11048799f65ea254974127c4a8d784beaaae5b3d278ee180a"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85019|TN",
+  "task": "I85019",
+  "seed": 85019,
+  "law": "ohm_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "42b6a9c415f7afc078529628b3175133846a0c81399e13a29ee322d8e98a2657",
+   "7901a8c18354a85f0e1252fb1cfb4525cb8e6f4f013d8d6744cd843737940169",
+   "c4d3f7927d13e6ce6da11c9cc77127450067f9a073a7da0d1bdd0656a0947e1d",
+   "064587e3e7ce8c2dd5b226ca238255e2caa836544e3c8116be11368fd02b85ce"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85019F|TS",
+  "task": "I85019",
+  "seed": 85019,
+  "law": "ohm_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "I",
+   "R",
+   "U"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "c6e0eb88bf86329f6401aaba5b8133b21cefdbaff7a2cbd38c0955d6666198e7",
+   "6c0b630167a16b89d07d33f8585c68ed7d78414d632534efffb2b66d96094c37",
+   "7c5730a97feb8d15273d597849e4db957aad26857f4902d10299d3d08942efef",
+   "f38314825f13274804c928312eb3a79f1fc11870fd1ec09df8e609ac044baa64"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85019F|TN",
+  "task": "I85019",
+  "seed": 85019,
+  "law": "ohm_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "1bd4aded168f8383f194a3d69a955b0ff1a82f6549e6f1f7ba2096a8ffdf1e9e",
+   "f00e2e1becd40f5107d004f9357a93cbdc59f4c6c29950254a591737238a10ef",
+   "b09494fa56f98d1b093320aaa1d2c1d0a4f02c6f785c6e3514afbe1cd7847e62",
+   "3a0686f4610aa12945712e17023d588a6b3fb2fb266b62eeabfd25cda2fa2d51"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85020|TS",
+  "task": "I85020",
+  "seed": 85020,
+  "law": "kinetic_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "E",
+   "m"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "729a1fef07f9abf6cbcb724cf82854c2d8186c1440d7a3874414a39a50866a20",
+   "ed44ed2492d4b35aeacb8c8eb84665872abca269d79fe73bf90fb3eae4479d9e",
+   "325263175227e640a39af3037e22d03b99c35a98821a3c092cdaa04663f4fa5e",
+   "8e2ec32c41ad46b91d35906189cb7cf2f54a46ef7170788a9dc526adf444b7aa"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85020|TN",
+  "task": "I85020",
+  "seed": 85020,
+  "law": "kinetic_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "free",
+  "heads": 4,
+  "prompt_sha256": [
+   "0aa8cb435453f42881d63d432667728ee771f41056e5bf7c14cab7c7b4d9347e",
+   "025617ad6cbaafc2f7399a5d42dfcb68f597326512b00fc09c7011a81500ac01",
+   "42112397f4168915172ff15f69aacc986f36c62a4930318acea3b89a6150c850",
+   "67786704635bb5c001acf18657a71e22c4dad3f32571de3089dca735158940be"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85020F|TS",
+  "task": "I85020",
+  "seed": 85020,
+  "law": "kinetic_m",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "v",
+   "E",
+   "m"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "0d84ee7897a28d4548f4d42069e6e38fa06179f3f146bd8df278ebb1c5a8c24e",
+   "ac14a8908c759bcdc1be4d1cd7d98d94c0e0c703914594a3b777091db060c8da",
+   "4f21ba6f1b9c2a548c92c7566aacaa5a732ee0fe419c0ae3b1d33b50ef454e2f",
+   "46824b94341c5c18ba988dc77a9c1f0934a928ce9f88070d6e95f12fef6f496e"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ },
+ {
+  "table": "I85020F|TN",
+  "task": "I85020",
+  "seed": 85020,
+  "law": "kinetic_m",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b",
+   "c"
+  ],
+  "variant": "b",
+  "regime": "forced",
+  "heads": 4,
+  "prompt_sha256": [
+   "a02e9eda8c72e177ceced4ec71b568a2387cf97dda9fc3ddd86e1d8272489b26",
+   "f8a42b879a0e56e31b2a34f6bbad9bd0cad51bcf23c38c05c19a2aa4b86e2bff",
+   "85536e968d5dd451bcbb46472f756c9ec3ffb3a16a80413e8b8e910580d54c98",
+   "35085e90fc5c8aa0afcf5260e10f0e6f3aa7b4ec5f15581f66186be0a083ad17"
+  ],
+  "z_tries": [
+   1,
+   1,
+   1,
+   1
+  ],
+  "z_ok": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "z_flag": false
+ }
+]
