@@ -242,3 +242,8 @@
 {"arm": "TSF", "at": "2026-11-13T16:43:32+00:00", "attempt": 1, "event": "вызов", "job": "I32003F|TS|h4", "role": "основной", "task": "I32003", "поток": "I32003F_TS_h4-f99072a6.a001.osn.jsonl.gz"}
 {"arm": "TN", "at": "2026-11-13T16:43:35+00:00", "attempt": 1, "event": "вызов", "job": "I32004|TN|h3", "role": "основной", "task": "I32004", "поток": "I32004_TN_h3-1ac7e0e9.a001.osn.jsonl.gz"}
 {"arm": "TS", "at": "2026-11-13T16:43:36+00:00", "attempt": 1, "event": "вызов", "job": "I32004|TS|h3", "role": "основной", "task": "I32004", "поток": "I32004_TS_h3-d1f406a1.a001.osn.jsonl.gz"}
+{"arm": "TS", "at": "2026-11-13T16:43:38+00:00", "attempt": 1, "event": "вызов", "job": "I32004|TS|h2", "role": "основной", "task": "I32004", "поток": "I32004_TS_h2-25ff1917.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T16:43:38+00:00", "attempt": 1, "event": "вызов", "job": "I32004F|TN|h4", "role": "основной", "task": "I32004", "поток": "I32004F_TN_h4-b831a499.a001.osn.jsonl.gz"}
+{"arm": "TSF", "at": "2026-11-13T16:43:42+00:00", "attempt": 1, "event": "вызов", "job": "I32004F|TS|h3", "role": "основной", "task": "I32004", "поток": "I32004F_TS_h3-196716e2.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T16:43:44+00:00", "attempt": 1, "event": "вызов", "job": "I32004|TN|h2", "role": "основной", "task": "I32004", "поток": "I32004_TN_h2-d52de10b.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T16:43:46+00:00", "attempt": 1, "event": "вызов", "job": "I32004|TN|h1", "role": "основной", "task": "I32004", "поток": "I32004_TN_h1-606fedc5.a001.osn.jsonl.gz"}
