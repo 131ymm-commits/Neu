@@ -8,6 +8,11 @@ case "${1:-}" in
     cd "$ROOT"; python3 tools/run_sealed2.py run --jobs experiments/2026-11-13_PLATON-02/pilot/main/jobs.jsonl --seed 99001 \
       --journal experiments/2026-11-13_PLATON-02/pilot/main/journal --streams /home/user/neu_heads/platon02/streams_pilot \
       --config experiments/2026-11-13_PLATON-02/cfg_platon02_haiku.json --parallel 4 --max-calls 70 ;;
+  pilot2)
+    python3 platon02_run.py build --seeds pilot/seeds_pilot2.json --out pilot/main2
+    cd "$ROOT"; python3 tools/run_sealed2.py run --jobs experiments/2026-11-13_PLATON-02/pilot/main2/jobs.jsonl --seed 95001 \
+      --journal experiments/2026-11-13_PLATON-02/pilot/main2/journal --streams /home/user/neu_heads/platon02/streams_pilot2 \
+      --config experiments/2026-11-13_PLATON-02/cfg_platon02_haiku.json --parallel 4 --max-calls 70 ;;
   build)
     python3 prereg_hashes02.py --verify; python3 platon02_run.py build --seeds seeds_test.json --out run ;;
   run)
