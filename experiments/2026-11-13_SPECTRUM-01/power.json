@@ -1,0 +1,14 @@
+{
+ "false_level_9of10": 0.0107421875,
+ "power": {
+  "по пилоту": 0.9957337997571686,
+  "вдвое слабее": 0.7360989291000002
+ },
+ "P3_median_in_interval_mc": 1.0,
+ "weights_bits": {
+  "confirm": 6.098539958913476,
+  "confirm_P3": 6.098539958913476,
+  "disconfirm": -7.857251060353904
+ },
+ "series_false_level_bonferroni_5_rules": 0.0537109375
+}
