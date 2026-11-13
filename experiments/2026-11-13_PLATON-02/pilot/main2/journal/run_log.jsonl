@@ -31,3 +31,11 @@
 {"arm": "TN", "at": "2026-11-13T16:20:17+00:00", "attempt": 1, "event": "вызов", "job": "I97001|TN|h1", "role": "основной", "task": "I97001", "поток": "I97001_TN_h1-e3c55f8b.a001.osn.jsonl.gz"}
 {"arm": "TN", "at": "2026-11-13T16:20:17+00:00", "attempt": 1, "event": "вызов", "job": "I97001|TN|h2", "role": "основной", "task": "I97001", "поток": "I97001_TN_h2-8848a998.a001.osn.jsonl.gz"}
 {"arm": "TS", "at": "2026-11-13T16:20:23+00:00", "attempt": 1, "event": "вызов", "job": "I97001|TS|h2", "role": "основной", "task": "I97001", "поток": "I97001_TS_h2-78bcff8f.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T16:20:24+00:00", "attempt": 1, "event": "вызов", "job": "I97001F|TN|h4", "role": "основной", "task": "I97001", "поток": "I97001F_TN_h4-fd14b9cd.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T16:20:25+00:00", "attempt": 1, "event": "вызов", "job": "I98001F|TN|h4", "role": "основной", "task": "I98001", "поток": "I98001F_TN_h4-99351aa3.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T16:20:26+00:00", "attempt": 1, "event": "вызов", "job": "I98001|TN|h2", "role": "основной", "task": "I98001", "поток": "I98001_TN_h2-43f3b305.a001.osn.jsonl.gz"}
+{"arm": "TS", "at": "2026-11-13T16:20:30+00:00", "attempt": 1, "event": "вызов", "job": "I98001|TS|h1", "role": "основной", "task": "I98001", "поток": "I98001_TS_h1-4b24a8e6.a001.osn.jsonl.gz"}
+{"arm": "TSF", "at": "2026-11-13T16:20:30+00:00", "attempt": 1, "event": "вызов", "job": "I98001F|TS|h3", "role": "основной", "task": "I98001", "поток": "I98001F_TS_h3-8ceb3d7e.a001.osn.jsonl.gz"}
+{"arm": "TNF", "at": "2026-11-13T16:20:36+00:00", "attempt": 1, "event": "вызов", "job": "I98001F|TN|h3", "role": "основной", "task": "I98001", "поток": "I98001F_TN_h3-c108955a.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T16:20:41+00:00", "attempt": 1, "event": "вызов", "job": "I98001|TN|h3", "role": "основной", "task": "I98001", "поток": "I98001_TN_h3-0348e233.a001.osn.jsonl.gz"}
+{"arm": "TN", "at": "2026-11-13T16:20:49+00:00", "attempt": 1, "event": "вызов", "job": "I98001|TN|h1", "role": "основной", "task": "I98001", "поток": "I98001_TN_h1-950b0d9e.a001.osn.jsonl.gz"}
