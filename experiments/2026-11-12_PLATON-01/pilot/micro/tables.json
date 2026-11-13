@@ -1,0 +1,62 @@
+[
+ {
+  "table": "I90001|TS",
+  "task": "I90001",
+  "seed": 90001,
+  "law": "energy",
+  "cell": "TS",
+  "data": "T",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "prompt_sha256": "7e78b3d441368a65f555dd518a179817399872b2e6269222e689bb1b97de5dbc",
+  "z_tries": 1
+ },
+ {
+  "table": "I90001|TN",
+  "task": "I90001",
+  "seed": 90001,
+  "law": "energy",
+  "cell": "TN",
+  "data": "T",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "16c0f6660eee49b11d6e9850b78bc82567103c2e7ff53c1e3a8131c28d79a962",
+  "z_tries": 1
+ },
+ {
+  "table": "I90001|ZS",
+  "task": "I90001",
+  "seed": 90001,
+  "law": "energy",
+  "cell": "ZS",
+  "data": "Z",
+  "names": "S",
+  "idents": [
+   "h",
+   "v"
+  ],
+  "prompt_sha256": "a244abef5e5a793b750f9cc7a4cbfe6711139bae12c0661c42cbcaf883a80a29",
+  "z_tries": 1
+ },
+ {
+  "table": "I90001|ZN",
+  "task": "I90001",
+  "seed": 90001,
+  "law": "energy",
+  "cell": "ZN",
+  "data": "Z",
+  "names": "N",
+  "idents": [
+   "a",
+   "b"
+  ],
+  "prompt_sha256": "93f8bf3b7cfc38fcf458aa9a7e6b941b2ee405497d4ea1d0c2f4755b5f8ee59c",
+  "z_tries": 1
+ }
+]

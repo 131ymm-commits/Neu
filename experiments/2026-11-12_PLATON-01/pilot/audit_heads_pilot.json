@@ -1,0 +1,32 @@
+[
+ {
+  "journal": "experiments/2026-11-12_PLATON-01/pilot/micro/journal",
+  "calls": 4,
+  "home": "/home/user/neu_heads/platon01/home",
+  "work_dir": "/home/user/neu_heads/platon01/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-haiku-5-5": 4
+  }
+ },
+ {
+  "journal": "experiments/2026-11-12_PLATON-01/pilot/main/journal",
+  "calls": 160,
+  "home": "/home/user/neu_heads/platon01/home",
+  "work_dir": "/home/user/neu_heads/platon01/work",
+  "git_instructions_off": true,
+  "git_snapshot_possible": false,
+  "tools": [
+   "StructuredOutput"
+  ],
+  "mcp": [],
+  "model": {
+   "claude-haiku-5-5": 160
+  }
+ }
+]

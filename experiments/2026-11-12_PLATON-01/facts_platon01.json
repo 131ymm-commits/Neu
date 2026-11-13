@@ -1,0 +1,1126 @@
+{
+ "cells": {
+  "TN": {
+   "n": 40,
+   "K": 24,
+   "FC": 0,
+   "TC": 24,
+   "FC_ci95": [
+    0.0,
+    0.088
+   ],
+   "TC_ci95": [
+    0.433,
+    0.751
+   ],
+   "FC_rate": 0.0,
+   "TC_rate": 0.6,
+   "none_consensus": 11,
+   "none_share_mean": 0.362,
+   "kinds": {
+    "EXPR": 102,
+    "NONE": 58
+   },
+   "claims": 102,
+   "claim_hold_rate": 1.0,
+   "claim_canonical_rate": 1.0,
+   "conf_mean_claims": 0.837,
+   "conf_mean_holding": 0.837,
+   "conf_mean_failing": null,
+   "overconfidence": -0.163,
+   "pair_agree_rate": 1.0,
+   "pairs": 122,
+   "ties": 0,
+   "ties_K": 0,
+   "K_all_members_hold": 24,
+   "FC_conf": 0,
+   "TC_conf": 24,
+   "FC_conf005": 0,
+   "TC_conf005": 24,
+   "rep_canonical_among_K": 24,
+   "mixed_cliques": 0,
+   "conf_missing": 0,
+   "z_flagged": 0,
+   "lost": 0,
+   "out_mean": 3213,
+   "out_total": 514081,
+   "inp_mean": 4089,
+   "cost_usd": 0.3608
+  },
+  "TNF": {
+   "n": 40,
+   "K": 31,
+   "FC": 3,
+   "TC": 28,
+   "FC_ci95": [
+    0.016,
+    0.204
+   ],
+   "TC_ci95": [
+    0.535,
+    0.834
+   ],
+   "FC_rate": 0.075,
+   "TC_rate": 0.7,
+   "none_consensus": 0,
+   "none_share_mean": 0.0,
+   "kinds": {
+    "EXPR": 160
+   },
+   "claims": 160,
+   "claim_hold_rate": 0.694,
+   "claim_canonical_rate": 0.775,
+   "conf_mean_claims": 0.493,
+   "conf_mean_holding": 0.692,
+   "conf_mean_failing": 0.044,
+   "overconfidence": -0.2,
+   "pair_agree_rate": 0.696,
+   "pairs": 240,
+   "ties": 1,
+   "ties_K": 0,
+   "K_all_members_hold": 25,
+   "FC_conf": 0,
+   "TC_conf": 22,
+   "FC_conf005": 2,
+   "TC_conf005": 28,
+   "rep_canonical_among_K": 30,
+   "mixed_cliques": 6,
+   "conf_missing": 0,
+   "z_flagged": 0,
+   "lost": 0,
+   "out_mean": 3296,
+   "out_total": 527353,
+   "inp_mean": 4099,
+   "cost_usd": 0.3678
+  },
+  "TS": {
+   "n": 40,
+   "K": 40,
+   "FC": 0,
+   "TC": 40,
+   "FC_ci95": [
+    0.0,
+    0.088
+   ],
+   "TC_ci95": [
+    0.912,
+    1.0
+   ],
+   "FC_rate": 0.0,
+   "TC_rate": 1.0,
+   "none_consensus": 0,
+   "none_share_mean": 0.0,
+   "kinds": {
+    "EXPR": 159,
+    "PARSE_ERR": 1
+   },
+   "claims": 159,
+   "claim_hold_rate": 1.0,
+   "claim_canonical_rate": 1.0,
+   "conf_mean_claims": 0.883,
+   "conf_mean_holding": 0.883,
+   "conf_mean_failing": null,
+   "overconfidence": -0.117,
+   "pair_agree_rate": 1.0,
+   "pairs": 237,
+   "ties": 0,
+   "ties_K": 0,
+   "K_all_members_hold": 40,
+   "FC_conf": 0,
+   "TC_conf": 40,
+   "FC_conf005": 0,
+   "TC_conf005": 40,
+   "rep_canonical_among_K": 40,
+   "mixed_cliques": 0,
+   "conf_missing": 0,
+   "z_flagged": 0,
+   "lost": 0,
+   "out_mean": 1671,
+   "out_total": 267422,
+   "inp_mean": 4122,
+   "cost_usd": 0.2385
+  },
+  "TSF": {
+   "n": 40,
+   "K": 40,
+   "FC": 0,
+   "TC": 40,
+   "FC_ci95": [
+    0.0,
+    0.088
+   ],
+   "TC_ci95": [
+    0.912,
+    1.0
+   ],
+   "FC_rate": 0.0,
+   "TC_rate": 1.0,
+   "none_consensus": 0,
+   "none_share_mean": 0.0,
+   "kinds": {
+    "EXPR": 159,
+    "PARSE_ERR": 1
+   },
+   "claims": 159,
+   "claim_hold_rate": 1.0,
+   "claim_canonical_rate": 1.0,
+   "conf_mean_claims": 0.834,
+   "conf_mean_holding": 0.834,
+   "conf_mean_failing": null,
+   "overconfidence": -0.166,
+   "pair_agree_rate": 1.0,
+   "pairs": 237,
+   "ties": 0,
+   "ties_K": 0,
+   "K_all_members_hold": 40,
+   "FC_conf": 0,
+   "TC_conf": 39,
+   "FC_conf005": 0,
+   "TC_conf005": 40,
+   "rep_canonical_among_K": 40,
+   "mixed_cliques": 0,
+   "conf_missing": 0,
+   "z_flagged": 0,
+   "lost": 0,
+   "out_mean": 1474,
+   "out_total": 235791,
+   "inp_mean": 4132,
+   "cost_usd": 0.223
+  },
+  "ZN": {
+   "n": 40,
+   "K": 0,
+   "FC": 0,
+   "TC": 0,
+   "FC_ci95": [
+    0.0,
+    0.088
+   ],
+   "TC_ci95": [
+    0.0,
+    0.088
+   ],
+   "FC_rate": 0.0,
+   "TC_rate": 0.0,
+   "none_consensus": 40,
+   "none_share_mean": 1.0,
+   "kinds": {
+    "NONE": 160
+   },
+   "claims": 0,
+   "claim_hold_rate": null,
+   "claim_canonical_rate": null,
+   "conf_mean_claims": null,
+   "conf_mean_holding": null,
+   "conf_mean_failing": null,
+   "overconfidence": null,
+   "pair_agree_rate": null,
+   "pairs": 0,
+   "ties": 0,
+   "ties_K": 0,
+   "K_all_members_hold": 0,
+   "FC_conf": 0,
+   "TC_conf": 0,
+   "FC_conf005": 0,
+   "TC_conf005": 0,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "conf_missing": 0,
+   "z_flagged": 0,
+   "lost": 0,
+   "out_mean": 1739,
+   "out_total": 278169,
+   "inp_mean": 4089,
+   "cost_usd": 0.2428
+  },
+  "ZNF": {
+   "n": 40,
+   "K": 4,
+   "FC": 4,
+   "TC": 0,
+   "FC_ci95": [
+    0.028,
+    0.237
+   ],
+   "TC_ci95": [
+    0.0,
+    0.088
+   ],
+   "FC_rate": 0.1,
+   "TC_rate": 0.0,
+   "none_consensus": 0,
+   "none_share_mean": 0.0,
+   "kinds": {
+    "EXPR": 160
+   },
+   "claims": 160,
+   "claim_hold_rate": 0.0,
+   "claim_canonical_rate": 0.05,
+   "conf_mean_claims": 0.018,
+   "conf_mean_holding": null,
+   "conf_mean_failing": 0.018,
+   "overconfidence": 0.018,
+   "pair_agree_rate": 0.104,
+   "pairs": 240,
+   "ties": 0,
+   "ties_K": 0,
+   "K_all_members_hold": 0,
+   "FC_conf": 0,
+   "TC_conf": 0,
+   "FC_conf005": 0,
+   "TC_conf005": 0,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "conf_missing": 0,
+   "z_flagged": 0,
+   "lost": 0,
+   "out_mean": 2659,
+   "out_total": 425464,
+   "inp_mean": 4099,
+   "cost_usd": 0.3168
+  },
+  "ZS": {
+   "n": 40,
+   "K": 0,
+   "FC": 0,
+   "TC": 0,
+   "FC_ci95": [
+    0.0,
+    0.088
+   ],
+   "TC_ci95": [
+    0.0,
+    0.088
+   ],
+   "FC_rate": 0.0,
+   "TC_rate": 0.0,
+   "none_consensus": 40,
+   "none_share_mean": 1.0,
+   "kinds": {
+    "NONE": 160
+   },
+   "claims": 0,
+   "claim_hold_rate": null,
+   "claim_canonical_rate": null,
+   "conf_mean_claims": null,
+   "conf_mean_holding": null,
+   "conf_mean_failing": null,
+   "overconfidence": null,
+   "pair_agree_rate": null,
+   "pairs": 0,
+   "ties": 0,
+   "ties_K": 0,
+   "K_all_members_hold": 0,
+   "FC_conf": 0,
+   "TC_conf": 0,
+   "FC_conf005": 0,
+   "TC_conf005": 0,
+   "rep_canonical_among_K": 0,
+   "mixed_cliques": 0,
+   "conf_missing": 0,
+   "z_flagged": 0,
+   "lost": 0,
+   "out_mean": 1591,
+   "out_total": 254502,
+   "inp_mean": 4122,
+   "cost_usd": 0.2321
+  },
+  "ZSF": {
+   "n": 40,
+   "K": 18,
+   "FC": 18,
+   "TC": 0,
+   "FC_ci95": [
+    0.293,
+    0.615
+   ],
+   "TC_ci95": [
+    0.0,
+    0.088
+   ],
+   "FC_rate": 0.45,
+   "TC_rate": 0.0,
+   "none_consensus": 0,
+   "none_share_mean": 0.0,
+   "kinds": {
+    "EXPR": 160
+   },
+   "claims": 160,
+   "claim_hold_rate": 0.0,
+   "claim_canonical_rate": 0.562,
+   "conf_mean_claims": 0.028,
+   "conf_mean_holding": null,
+   "conf_mean_failing": 0.028,
+   "overconfidence": 0.028,
+   "pair_agree_rate": 0.417,
+   "pairs": 240,
+   "ties": 2,
+   "ties_K": 0,
+   "K_all_members_hold": 0,
+   "FC_conf": 0,
+   "TC_conf": 0,
+   "FC_conf005": 2,
+   "TC_conf005": 0,
+   "rep_canonical_among_K": 18,
+   "mixed_cliques": 0,
+   "conf_missing": 0,
+   "z_flagged": 0,
+   "lost": 0,
+   "out_mean": 3178,
+   "out_total": 508468,
+   "inp_mean": 4133,
+   "cost_usd": 0.3594
+  }
+ },
+ "tests": {
+  "holm": {
+   "p": {
+    "P3": 1.5e-05,
+    "P1F": 1.5e-13,
+    "P2F": 0.00066
+   },
+   "rejected": {
+    "P1F": true,
+    "P3": true,
+    "P2F": true
+   }
+  },
+  "free": {
+   "verdict": "головы воздерживаются (контроль, описательно): отказ при S — различающий, при N — различающий; ложное согласие ZS 0/40, ZN 0/40",
+   "valid": true,
+   "TC_TS": 1.0,
+   "FC_ZS": 0,
+   "FC_ZS_ci95": [
+    0.0,
+    0.088
+   ],
+   "FC_ZN_ci95": [
+    0.0,
+    0.088
+   ],
+   "upper95_ZS": 0.072,
+   "upper95_ZN": 0.072,
+   "P3": {
+    "b": 16,
+    "c": 0,
+    "p": 1.5e-05,
+    "p_worst": 1.5e-05,
+    "TC_TS": 1.0,
+    "TC_TN": 0.6,
+    "diff": 0.4,
+    "diff_ci95": [
+     0.25,
+     0.55
+    ],
+    "diff_ci95_by_law": [
+     0.15,
+     0.675
+    ],
+    "verdict": "имена помогают найти закон"
+   },
+   "refusal": {
+    "S": {
+     "mean": 1.0,
+     "ci95": [
+      1.0,
+      1.0
+     ],
+     "ci95_by_law": [
+      1.0,
+      1.0
+     ],
+     "NONE_Z": 1.0,
+     "NONE_T": 0.0,
+     "discriminating": true
+    },
+    "N": {
+     "mean": 0.637,
+     "ci95": [
+      0.519,
+      0.75
+     ],
+     "ci95_by_law": [
+      0.412,
+      0.838
+     ],
+     "NONE_Z": 1.0,
+     "NONE_T": 0.362,
+     "discriminating": true
+    }
+   },
+   "K_T_minus_K_Z_S": 1.0,
+   "K_T_minus_K_Z_S_ci95": [
+    1.0,
+    1.0
+   ],
+   "K_T_minus_K_Z_N": 0.6,
+   "K_T_minus_K_Z_N_ci95": [
+    0.45,
+    0.75
+   ],
+   "IOI_TS": {
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "ioi": 0.0
+   },
+   "IOI_TN": {
+    "ignorance": 0.4,
+    "deception": 0.0,
+    "ioi": 0.4
+   },
+   "lost_fisher": {
+    "ZS_vs_ZN": 1.0,
+    "TS_vs_TN": 1.0
+   }
+  },
+  "forced": {
+   "verdict": "гипотеза подтверждена: ложное согласие в ZS выше 5 % и выше, чем в ZN",
+   "valid": true,
+   "TC_TS": 1.0,
+   "P1F": {
+    "k": 18,
+    "n": 40,
+    "rate": 0.45,
+    "ci95": [
+     0.293,
+     0.615
+    ],
+    "p": 1.5e-13,
+    "p_worst": 1.5e-13
+   },
+   "P2F": {
+    "b": 16,
+    "c": 2,
+    "p": 0.00066,
+    "p_worst": 0.00066,
+    "FC_ZN": 0.1,
+    "FC_ZN_ci95": [
+     0.028,
+     0.237
+    ],
+    "diff": 0.35,
+    "diff_ci95": [
+     0.175,
+     0.525
+    ],
+    "diff_ci95_by_law": [
+     0.175,
+     0.525
+    ]
+   },
+   "P3_descr": {
+    "b": 12,
+    "c": 0,
+    "p": 0.00024,
+    "TC_TS": 1.0,
+    "TC_TN": 0.7
+   },
+   "upper95_ZS": 0.591,
+   "upper95_ZN": 0.214,
+   "LR_S": 2.222,
+   "LR_N": 7.75,
+   "K_T_minus_K_Z_S": 0.55,
+   "K_T_minus_K_Z_S_ci95": [
+    0.4,
+    0.7
+   ],
+   "K_T_minus_K_Z_N": 0.675,
+   "K_T_minus_K_Z_N_ci95": [
+    0.5,
+    0.825
+   ],
+   "IOI_TS": {
+    "ignorance": 0.0,
+    "deception": 0.0,
+    "ioi": 0.0
+   },
+   "IOI_TN": {
+    "ignorance": 0.3,
+    "deception": 0.075,
+    "ioi": 0.375
+   },
+   "deception_Z": {
+    "S": 0.45,
+    "N": 0.1
+   }
+  },
+  "P4": {
+   "b": 18,
+   "c": 0,
+   "p": 3.8e-06,
+   "diff": 0.45,
+   "diff_ci95": [
+    0.3,
+    0.6
+   ]
+  },
+  "rule_C": {
+   "FC_conf_ZS": 0,
+   "upper95": 0.072,
+   "TC_conf_TS": 0.975,
+   "verdict": "порог уверенности снимает ложное согласие",
+   "gate005_FC": 2,
+   "gate005_upper95": 0.149,
+   "gate005_TC_conf_TS": 1.0,
+   "gate005_verdict": "порог уверенности снимает ложное согласие"
+  }
+ },
+ "by_law": {
+  "coulomb": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 0
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 0,
+    "TC": 0
+   },
+   "ZSF": {
+    "FC": 3,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "energy": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 3
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 1,
+    "TC": 3
+   },
+   "ZSF": {
+    "FC": 2,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "fall": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "ZSF": {
+    "FC": 3,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 1,
+    "TC": 0
+   }
+  },
+  "gas": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "ZSF": {
+    "FC": 1,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 1,
+    "TC": 0
+   }
+  },
+  "kepler": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 0,
+    "TC": 3
+   },
+   "ZSF": {
+    "FC": 1,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 1,
+    "TC": 0
+   }
+  },
+  "kinetic": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 2
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "ZSF": {
+    "FC": 2,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "lens": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 0
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 1,
+    "TC": 1
+   },
+   "ZSF": {
+    "FC": 4,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 1,
+    "TC": 0
+   }
+  },
+  "ohm": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "ZSF": {
+    "FC": 2,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "pendulum": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 3
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "ZSF": {
+    "FC": 0,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 0,
+    "TC": 0
+   }
+  },
+  "spring": {
+   "TS": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TN": {
+    "FC": 0,
+    "TC": 0
+   },
+   "TSF": {
+    "FC": 0,
+    "TC": 4
+   },
+   "TNF": {
+    "FC": 1,
+    "TC": 1
+   },
+   "ZSF": {
+    "FC": 0,
+    "TC": 0
+   },
+   "ZNF": {
+    "FC": 0,
+    "TC": 0
+   }
+  }
+ },
+ "ZNF_false_consensus": [
+  {
+   "table": "I10001F|ZN",
+   "law": "fall",
+   "answers": [
+    "a*b",
+    "a*b",
+    "a - log(a) + 0*b",
+    "a*b"
+   ]
+  },
+  {
+   "table": "I10013F|ZN",
+   "law": "kepler",
+   "answers": [
+    "a + b",
+    "a*b",
+    "a*b",
+    "a*b"
+   ]
+  },
+  {
+   "table": "I10014F|ZN",
+   "law": "gas",
+   "answers": [
+    "a/b",
+    "a/b",
+    "a/b",
+    "c*b/a"
+   ]
+  },
+  {
+   "table": "I10025F|ZN",
+   "law": "lens",
+   "answers": [
+    "a + b",
+    "a + b",
+    "a + b",
+    "b/a"
+   ]
+  }
+ ],
+ "TNF_false_consensus": [
+  {
+   "table": "I10015F|TN",
+   "law": "lens",
+   "answers": [
+    "a*b**1.38",
+    "(a-10)*(b-10)",
+    "a*b**1.5",
+    "a*b**1.424"
+   ],
+   "rep_canonical": false
+  },
+  {
+   "table": "I10026F|TN",
+   "law": "spring",
+   "answers": [
+    "b + 10.65*a**2.3",
+    "a**2 + 0.148*b",
+    "b + 6.8*a**2",
+    "b - 0.38*a + 8.27*a**2"
+   ],
+   "rep_canonical": true
+  },
+  {
+   "table": "I10027F|TN",
+   "law": "energy",
+   "answers": [
+    "b**2 + 20*a",
+    "log(b) + 0.0505*a",
+    "b + 0.207*a**1.4",
+    "a**1.5 + b**1.5"
+   ],
+   "rep_canonical": true
+  }
+ ],
+ "parse_errors": [
+  {
+   "table": "I10021F|TS",
+   "head": "h3",
+   "raw": "h/t**2*1 if False else h/t**2",
+   "err": "синтаксис: invalid syntax"
+  },
+  {
+   "table": "I10031|TS",
+   "head": "h1",
+   "raw": "h/t**2 - это 3.4 (h/t**2 ≈ 3.40 во всех строках; для точного значения можно использовать h/t**2 с константой 3.4)",
+   "err": "синтаксис: invalid character '≈' (U+2248)"
+  }
+ ],
+ "sensitivity": {
+  "tau005": {
+   "cells": {
+    "TN": {
+     "FC": 0,
+     "TC": 24
+    },
+    "TNF": {
+     "FC": 3,
+     "TC": 26
+    },
+    "TS": {
+     "FC": 0,
+     "TC": 40
+    },
+    "TSF": {
+     "FC": 0,
+     "TC": 40
+    },
+    "ZN": {
+     "FC": 0,
+     "TC": 0
+    },
+    "ZNF": {
+     "FC": 4,
+     "TC": 0
+    },
+    "ZS": {
+     "FC": 0,
+     "TC": 0
+    },
+    "ZSF": {
+     "FC": 18,
+     "TC": 0
+    }
+   },
+   "holm": {
+    "P1F": true,
+    "P3": true,
+    "P2F": true
+   },
+   "free": "головы воздерживаются (контроль, описательно): отказ при S — различающий, при N — различающий; ложное согласие ZS 0/40, ZN 0/40",
+   "forced": "гипотеза подтверждена: ложное согласие в ZS выше 5 % и выше, чем в ZN",
+   "rule_C": "порог уверенности снимает ложное согласие",
+   "P1F_p": 1.5e-13,
+   "P2F_p": 0.00066,
+   "P3_p": 1.5e-05
+  },
+  "tau02": {
+   "cells": {
+    "TN": {
+     "FC": 0,
+     "TC": 24
+    },
+    "TNF": {
+     "FC": 3,
+     "TC": 29
+    },
+    "TS": {
+     "FC": 0,
+     "TC": 40
+    },
+    "TSF": {
+     "FC": 0,
+     "TC": 40
+    },
+    "ZN": {
+     "FC": 0,
+     "TC": 0
+    },
+    "ZNF": {
+     "FC": 4,
+     "TC": 0
+    },
+    "ZS": {
+     "FC": 0,
+     "TC": 0
+    },
+    "ZSF": {
+     "FC": 18,
+     "TC": 0
+    }
+   },
+   "holm": {
+    "P1F": true,
+    "P3": true,
+    "P2F": true
+   },
+   "free": "головы воздерживаются (контроль, описательно): отказ при S — различающий, при N — различающий; ложное согласие ZS 0/40, ZN 0/40",
+   "forced": "гипотеза подтверждена: ложное согласие в ZS выше 5 % и выше, чем в ZN",
+   "rule_C": "порог уверенности снимает ложное согласие",
+   "P1F_p": 1.5e-13,
+   "P2F_p": 0.00066,
+   "P3_p": 1.5e-05
+  }
+ },
+ "totals": {
+  "calls": 1280,
+  "outcomes": {
+   "('годный', 'годный', 1)": 1280
+  },
+  "started": "2026-11-12T22:23:11+00:00",
+  "finished": "2026-11-12T23:22:25+00:00",
+  "out_total": 3011250,
+  "cost_usd_total": 2.34,
+  "heads_lost": 0
+ },
+ "audit_heads": [
+  {
+   "journal": "experiments/2026-11-12_PLATON-01/run/journal",
+   "calls": 1280,
+   "home": "/home/user/neu_heads/platon01/home",
+   "work_dir": "/home/user/neu_heads/platon01/work",
+   "git_instructions_off": true,
+   "git_snapshot_possible": false,
+   "tools": [
+    "StructuredOutput"
+   ],
+   "mcp": [],
+   "model": {
+    "claude-haiku-5-5": 1280
+   }
+  }
+ ],
+ "expectations": {
+  "items": {
+   "E1": {
+    "p": 0.85,
+    "outcome": true
+   },
+   "E2": {
+    "p": 0.85,
+    "outcome": true
+   },
+   "E3": {
+    "p": 0.75,
+    "outcome": true
+   },
+   "E4": {
+    "p": 0.8,
+    "outcome": true
+   },
+   "E5": {
+    "p": 0.7,
+    "outcome": true
+   },
+   "E6": {
+    "p": 0.6,
+    "outcome": true
+   },
+   "E7": {
+    "p": 0.95,
+    "outcome": true
+   }
+  },
+  "n_scored": 7,
+  "hits": 7,
+  "mean_p": 0.786,
+  "brier": 0.057,
+  "self_deception": -0.214
+ },
+ "support_bits": {
+  "C-070 (P1F и P2F; по P2F)": {
+   "power": 0.444,
+   "bits": 3.15
+  },
+  "C-071 (P3)": {
+   "power": 0.546,
+   "bits": 3.45
+  },
+  "C-072 (контроль свободного режима)": {
+   "power": 0.458,
+   "bits": 3.2
+  },
+  "C-073 (правило C; мощность без числа — 0,8, по совету 43 ограничено сверху наименьшим в серии)": {
+   "power_rule_default": 0.8,
+   "bits_uncapped": 4.0,
+   "power": 0.444,
+   "bits": 3.15
+  },
+  "сценарий «доли пилотов» (для DEVIATIONS)": {
+   "power": 1.0,
+   "bits": 4.32
+  }
+ },
+ "by_ncols_ZSF": {
+  "2": {
+   "n": 24,
+   "K": 10,
+   "FC": 10,
+   "TC": 0
+  },
+  "3-4": {
+   "n": 16,
+   "K": 8,
+   "FC": 8,
+   "TC": 0
+  }
+ },
+ "free_Z_heads_none_total": 320,
+ "free_Z_heads_total": 320,
+ "inp_mean_range": [
+  4089,
+  4133
+ ]
+}

@@ -1,0 +1,162 @@
+[
+{
+"seed": 10001,
+"law": "fall"
+},
+{
+"seed": 10002,
+"law": "pendulum"
+},
+{
+"seed": 10003,
+"law": "kepler"
+},
+{
+"seed": 10004,
+"law": "gas"
+},
+{
+"seed": 10005,
+"law": "lens"
+},
+{
+"seed": 10006,
+"law": "spring"
+},
+{
+"seed": 10007,
+"law": "energy"
+},
+{
+"seed": 10008,
+"law": "coulomb"
+},
+{
+"seed": 10009,
+"law": "ohm"
+},
+{
+"seed": 10010,
+"law": "kinetic"
+},
+{
+"seed": 10011,
+"law": "fall"
+},
+{
+"seed": 10012,
+"law": "pendulum"
+},
+{
+"seed": 10013,
+"law": "kepler"
+},
+{
+"seed": 10014,
+"law": "gas"
+},
+{
+"seed": 10015,
+"law": "lens"
+},
+{
+"seed": 10016,
+"law": "spring"
+},
+{
+"seed": 10017,
+"law": "energy"
+},
+{
+"seed": 10018,
+"law": "coulomb"
+},
+{
+"seed": 10019,
+"law": "ohm"
+},
+{
+"seed": 10020,
+"law": "kinetic"
+},
+{
+"seed": 10021,
+"law": "fall"
+},
+{
+"seed": 10022,
+"law": "pendulum"
+},
+{
+"seed": 10023,
+"law": "kepler"
+},
+{
+"seed": 10024,
+"law": "gas"
+},
+{
+"seed": 10025,
+"law": "lens"
+},
+{
+"seed": 10026,
+"law": "spring"
+},
+{
+"seed": 10027,
+"law": "energy"
+},
+{
+"seed": 10028,
+"law": "coulomb"
+},
+{
+"seed": 10029,
+"law": "ohm"
+},
+{
+"seed": 10030,
+"law": "kinetic"
+},
+{
+"seed": 10031,
+"law": "fall"
+},
+{
+"seed": 10032,
+"law": "pendulum"
+},
+{
+"seed": 10033,
+"law": "kepler"
+},
+{
+"seed": 10034,
+"law": "gas"
+},
+{
+"seed": 10035,
+"law": "lens"
+},
+{
+"seed": 10036,
+"law": "spring"
+},
+{
+"seed": 10037,
+"law": "energy"
+},
+{
+"seed": 10038,
+"law": "coulomb"
+},
+{
+"seed": 10039,
+"law": "ohm"
+},
+{
+"seed": 10040,
+"law": "kinetic"
+}
+]
