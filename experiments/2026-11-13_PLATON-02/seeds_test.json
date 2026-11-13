@@ -1,0 +1,162 @@
+[
+{
+"seed": 30001,
+"law": "fall_m"
+},
+{
+"seed": 30002,
+"law": "fall_m"
+},
+{
+"seed": 30003,
+"law": "fall_m"
+},
+{
+"seed": 30004,
+"law": "fall_m"
+},
+{
+"seed": 31001,
+"law": "pendulum_m"
+},
+{
+"seed": 31005,
+"law": "pendulum_m"
+},
+{
+"seed": 31006,
+"law": "pendulum_m"
+},
+{
+"seed": 31008,
+"law": "pendulum_m"
+},
+{
+"seed": 32001,
+"law": "kepler_m"
+},
+{
+"seed": 32002,
+"law": "kepler_m"
+},
+{
+"seed": 32003,
+"law": "kepler_m"
+},
+{
+"seed": 32004,
+"law": "kepler_m"
+},
+{
+"seed": 33001,
+"law": "gas_m"
+},
+{
+"seed": 33002,
+"law": "gas_m"
+},
+{
+"seed": 33003,
+"law": "gas_m"
+},
+{
+"seed": 33004,
+"law": "gas_m"
+},
+{
+"seed": 34001,
+"law": "lens_m"
+},
+{
+"seed": 34002,
+"law": "lens_m"
+},
+{
+"seed": 34003,
+"law": "lens_m"
+},
+{
+"seed": 34004,
+"law": "lens_m"
+},
+{
+"seed": 35001,
+"law": "spring_m"
+},
+{
+"seed": 35002,
+"law": "spring_m"
+},
+{
+"seed": 35003,
+"law": "spring_m"
+},
+{
+"seed": 35004,
+"law": "spring_m"
+},
+{
+"seed": 36001,
+"law": "energy_m"
+},
+{
+"seed": 36002,
+"law": "energy_m"
+},
+{
+"seed": 36003,
+"law": "energy_m"
+},
+{
+"seed": 36004,
+"law": "energy_m"
+},
+{
+"seed": 37001,
+"law": "coulomb_m"
+},
+{
+"seed": 37002,
+"law": "coulomb_m"
+},
+{
+"seed": 37003,
+"law": "coulomb_m"
+},
+{
+"seed": 37004,
+"law": "coulomb_m"
+},
+{
+"seed": 38001,
+"law": "ohm_m"
+},
+{
+"seed": 38002,
+"law": "ohm_m"
+},
+{
+"seed": 38003,
+"law": "ohm_m"
+},
+{
+"seed": 38004,
+"law": "ohm_m"
+},
+{
+"seed": 39001,
+"law": "kinetic_m"
+},
+{
+"seed": 39002,
+"law": "kinetic_m"
+},
+{
+"seed": 39003,
+"law": "kinetic_m"
+},
+{
+"seed": 39004,
+"law": "kinetic_m"
+}
+]
