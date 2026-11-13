@@ -1,0 +1,487 @@
+{
+ "fetched_utc": "2026-11-13T22:55:28Z",
+ "queries": {
+  "lazy_rich_repr": "abs:lazy AND abs:rich AND abs:representation AND (abs:similarity OR abs:alignment)",
+  "deep_linear_repr_sim": "abs:\"deep linear\" AND (abs:\"representational similarity\" OR abs:\"representation similarity\" OR abs:CKA)",
+  "cka_seeds_init": "abs:\"kernel alignment\" AND (abs:seeds OR abs:initializations) AND abs:representations",
+  "convergent_learning": "abs:\"convergent learning\" OR ti:\"different neural networks learn the same representations\"",
+  "rich_lazy_title": "ti:\"rich and lazy\" OR ti:\"lazy and rich\"",
+  "feature_learning_alignment_init": "abs:\"feature learning\" AND abs:\"representational alignment\" AND abs:initialization"
+ },
+ "results": {
+  "lazy_rich_repr": [
+   {
+    "id": "2603.28764v2",
+    "title": "Geometry-aware similarity metrics for neural representations on Riemannian and statistical manifolds",
+    "published": "2026-03-30",
+    "authors": [
+     "N Alex Cayco-Gajic",
+     "Arthur Pellegrino"
+    ],
+    "abstract": "Similarity measures such as centred kernel alignment (CKA) or representational similarity analysis (RSA) are widely used to compare the representational geometries employed by different neural networks to solve the same task. Yet, because existing methods compare the extrinsic geometry of representations in state space, rather than their intrinsic geometry, they may fail to capture subtle yet crucial distinctions between fundamentally different computations. Here, we introduce metric similarity analysis (MSA), a novel method which leverages tools from Riemannian geometry to compare the intrinsic geometry of neural representations under the manifold hypothesis. We show that MSA can be used to (i) disentangle neural computations of deep networks in rich vs. lazy learning regimes, (ii) compare the dynamics of recurrent neural networks and state-space models, and (iii) investigate the statistical manifolds of diffusion models. Overall, we introduce a mathematically grounded and broadly applicable framework to understand the mechanisms behind neural computations by contrasting their intrinsic geometries."
+   },
+   {
+    "id": "2410.04264v3",
+    "title": "Decoupling Dynamical Richness from Representation Learning: Towards Practical Measurement",
+    "published": "2024-10-05",
+    "authors": [
+     "Yoonsoo Nam",
+     "Nayara Fonseca",
+     "Seok Hyeong Lee",
+     "Chris Mingard",
+     "Niclas Goring",
+     "Ouns El Harzli",
+     "Abdurrahman Hadi Erturk",
+     "Soufiane Hayou",
+     "Ard A. Louis"
+    ],
+    "abstract": "Dynamic feature transformation (the rich regime) does not always align with predictive performance (better representation), yet accuracy is often used as a proxy for richness, limiting analysis of their relationship. We propose a computationally efficient, performance-independent metric of richness grounded in the low-rank bias of rich dynamics, which recovers neural collapse as a special case. The metric is empirically more stable than existing alternatives and captures known lazy-torich transitions (e.g., grokking) without relying on accuracy. We further use it to examine how training factors (e.g., learning rate) relate to richness, confirming recognized assumptions and highlighting new observations (e.g., batch normalization promotes rich dynamics). An eigendecomposition-based visualization is also introduced to support interpretability, together providing a diagnostic tool for studying the relationship between training factors, dynamics, and representations."
+   },
+   {
+    "id": "2210.02157v2",
+    "title": "The Influence of Learning Rule on Representation Dynamics in Wide Neural Networks",
+    "published": "2022-10-05",
+    "authors": [
+     "Blake Bordelon",
+     "Cengiz Pehlevan"
+    ],
+    "abstract": "It is unclear how changing the learning rule of a deep neural network alters its learning dynamics and representations. To gain insight into the relationship between learned features, function approximation, and the learning rule, we analyze infinite-width deep networks trained with gradient descent (GD) and biologically-plausible alternatives including feedback alignment (FA), direct feedback alignment (DFA), and error modulated Hebbian learning (Hebb), as well as gated linear networks (GLN). We show that, for each of these learning rules, the evolution of the output function at infinite width is governed by a time varying effective neural tangent kernel (eNTK). In the lazy training limit, this eNTK is static and does not evolve, while in the rich mean-field regime this kernel's evolution can be determined self-consistently with dynamical mean field theory (DMFT). This DMFT enables comparisons of the feature and prediction dynamics induced by each of these learning rules. In the lazy limit, we find that DFA and Hebb can only learn using the last layer features, while full FA can utilize earlier layers with a scale determined by the initial correlation between feedforward and feedback weight matrices. In the rich regime, DFA and FA utilize a temporally evolving and depth-dependent NTK. Counterintuitively, we find that FA networks trained in the rich regime exhibit more feature learning if initialized with smaller correlation between the forward and backward pass weights. GLNs admit a very simple formula for their lazy limit kernel and preserve conditional Gaussianity of their preactivations under gating functions. Error modulated Hebb rules show very small task-relevant alignment of their kernels and perform most task relevant learning in the last layer."
+   },
+   {
+    "id": "2606.17889v1",
+    "title": "Dimensionality Controls When Modularity Helps in Continual Learning",
+    "published": "2026-06-16",
+    "authors": [
+     "Kathrin Korte",
+     "Christian Medeiros Adriano",
+     "Joachim Winther Pedersen",
+     "Eleni Nisioti",
+     "Sebastian Risi"
+    ],
+    "abstract": "Compositional learning systems must balance plasticity, the ability to acquire new knowledge, with stability, the preservation of previously learned components, especially when tasks share structure and risk interference. We study how modular architecture, task similarity, and representational dimensionality jointly shape compositional continual learning in a sequential A-B-A paradigm, comparing a task-partitioned recurrent network to a single-network baseline while inducing high- and low-dimensional regimes via weight-scale manipulations. In a high-dimensional \"lazy\" regime, both architectures achieve similar performance and internal geometry, suggesting that explicit modular structure has little impact when representations are weakly constrained. In a lower-dimensional \"rich\" regime, modularity becomes decisive: the modular network develops graded task-specific subspaces that overlap for similar tasks, partially align for moderately dissimilar tasks, and separate for dissimilar tasks, yielding a more compositional and interpretable organization than the single network. These findings identify the representational regime induced by initialization scale, which co-varies with representational dimensionality, as a key factor governing when compositional, modular structure is functionally beneficial in continual learning, and support viewing safety and robustness as problems of adaptive allocation of representational subspaces rather than fixed separation versus sharing."
+   },
+   {
+    "id": "2402.09142v2",
+    "title": "When Representations Align: Universality in Representation Learning Dynamics",
+    "published": "2024-02-14",
+    "authors": [
+     "Loek van Rossem",
+     "Andrew M. Saxe"
+    ],
+    "abstract": "Deep neural networks come in many sizes and architectures. The choice of architecture, in conjunction with the dataset and learning algorithm, is commonly understood to affect the learned neural representations. Yet, recent results have shown that different architectures learn representations with striking qualitative similarities. Here we derive an effective theory of representation learning under the assumption that the encoding map from input to hidden representation and the decoding map from representation to output are arbitrary smooth functions. This theory schematizes representation learning dynamics in the regime of complex, large architectures, where hidden representations are not strongly constrained by the parametrization. We show through experiments that the effective theory describes aspects of representation learning dynamics across a range of deep networks with different activation functions and architectures, and exhibits phenomena similar to the \"rich\" and \"lazy\" regime. While many network behaviors depend quantitatively on architecture, our findings point to certain behaviors that are widely conserved once models are sufficiently flexible."
+   },
+   {
+    "id": "2504.01875v4",
+    "title": "AYLA: Architecting a loss landscape in shallow neural networks to accelerate feature recovery",
+    "published": "2025-04-02",
+    "authors": [
+     "Behnam Gheshlaghi",
+     "Shahin Atakishiyev"
+    ],
+    "abstract": "Feature learning in shallow neural networks exhibits rich yet fragile dynamics, including prolonged plateaus, abrupt phase transitions, and sensitivity to optimization hyperparameters. While recent theoretical work has characterized these behaviors through the geometry of loss landscapes, saddle escape mechanisms, and emergent scaling laws, practical methods for actively shaping these dynamics remain limited. In this paper, we introduce AYLA, a principled loss reparameterization framework that dynamically modulates gradient magnitudes during training without altering the location of stationary points or optimal solutions. AYLA applies a smooth, sigmoid-controlled power-law transformation to empirical loss, yielding a state-dependent effective learning rate that accelerates descent in flat or saddle-dominated regions while stabilizing late-stage optimization. Crucially, AYLA preserves all critical points of the original objective, acting solely as a monotone transformation that reshapes optimization trajectories rather than objectives. We evaluate AYLA in controlled teacher student settings using two-layer tanh networks trained on synthetic Gaussian data. Across stochastic gradient descent and multiple loss-exponent schedules, AYLA consistently improves feature recovery. This evidence is observed in terms of weight alignment, per-neuron cosine similarity, hidden-activation correlation, and spectral properties of learned representations, while AYLA maintains competitive or faster loss convergence. Spectral analyses further demonstrate that AYLA mitigates rank collapse and promotes richer internal representations, signaling a transition from lazy to active feature-learning regimes. AYLA offers a lightweight, theoretically grounded way to improve shallow-network optimization, especially in resource-limited or noise-sensitive settings."
+   },
+   {
+    "id": "2310.08513v2",
+    "title": "How connectivity structure shapes rich and lazy learning in neural circuits",
+    "published": "2023-10-12",
+    "authors": [
+     "Yuhan Helena Liu",
+     "Aristide Baratin",
+     "Jonathan Cornford",
+     "Stefan Mihalas",
+     "Eric Shea-Brown",
+     "Guillaume Lajoie"
+    ],
+    "abstract": "In theoretical neuroscience, recent work leverages deep learning tools to explore how some network attributes critically influence its learning dynamics. Notably, initial weight distributions with small (resp. large) variance may yield a rich (resp. lazy) regime, where significant (resp. minor) changes to network states and representation are observed over the course of learning. However, in biology, neural circuit connectivity could exhibit a low-rank structure and therefore differs markedly from the random initializations generally used for these studies. As such, here we investigate how the structure of the initial weights -- in particular their effective rank -- influences the network learning regime. Through both empirical and theoretical analyses, we discover that high-rank initializations typically yield smaller network changes indicative of lazier learning, a finding we also confirm with experimentally-driven initial connectivity in recurrent neural networks. Conversely, low-rank initialization biases learning towards richer learning. Importantly, however, as an exception to this rule, we find lazier learning can still occur with a low-rank initialization that aligns with task and data statistics. Our research highlights the pivotal role of initial weight structures in shaping learning regimes, with implications for metabolic costs of plasticity and risks of catastrophic forgetting."
+   },
+   {
+    "id": "2410.04642v3",
+    "title": "The Optimization Landscape of SGD Across the Feature Learning Strength",
+    "published": "2024-10-06",
+    "authors": [
+     "Alexander Atanasov",
+     "Alexandru Meterez",
+     "James B. Simon",
+     "Cengiz Pehlevan"
+    ],
+    "abstract": "We consider neural networks (NNs) where the final layer is down-scaled by a fixed hyperparameter $γ$. Recent work has identified $γ$ as controlling the strength of feature learning. As $γ$ increases, network evolution changes from \"lazy\" kernel dynamics to \"rich\" feature-learning dynamics, with a host of associated benefits including improved performance on common tasks. In this work, we conduct a thorough empirical investigation of the effect of scaling $γ$ across a variety of models and datasets in the online training setting. We first examine the interaction of $γ$ with the learning rate $η$, identifying several scaling regimes in the $γ$-$η$ plane which we explain theoretically using a simple model. We find that the optimal learning rate $η^*$ scales non-trivially with $γ$. In particular, $η^* \\propto γ^2$ when $γ\\ll 1$ and $η^* \\propto γ^{2/L}$ when $γ\\gg 1$ for a feed-forward network of depth $L$. Using this optimal learning rate scaling, we proceed with an empirical study of the under-explored \"ultra-rich\" $γ\\gg 1$ regime. We find that networks in this regime display characteristic loss curves, starting with a long plateau followed by a drop-off, sometimes followed by one or more additional staircase steps. We find networks of different large $γ$ values optimize along similar trajectories up to a reparameterization of time. We further find that optimal online performance is often found at large $γ$ and could be missed if this hyperparameter is not tuned. Our findings indicate that analytical study of the large-$γ$ limit may yield useful insights into the dynamics of representation learning in performant models."
+   }
+  ],
+  "deep_linear_repr_sim": [],
+  "cka_seeds_init": [
+   {
+    "id": "2511.01023v1",
+    "title": "Seed-Induced Uniqueness in Transformer Models: Subspace Alignment Governs Subliminal Transfer",
+    "published": "2025-11-02",
+    "authors": [
+     "Ayşe Selin Okatan",
+     "Mustafa İlhan Akbaş",
+     "Laxima Niure Kandel",
+     "Berker Peköz"
+    ],
+    "abstract": "We analyze subliminal transfer in Transformer models, where a teacher embeds hidden traits that can be linearly decoded by a student without degrading main-task performance. Prior work often attributes transferability to global representational similarity, typically quantified with Centered Kernel Alignment (CKA). Using synthetic corpora with disentangled public and private labels, we distill students under matched and independent random initializations. We find that transfer strength hinges on alignment within a trait-discriminative subspace: same-seed students inherit this alignment and show higher leakage {τ\\approx} 0.24, whereas different-seed students -- despite global CKA > 0.9 -- exhibit substantially reduced excess accuracy {τ\\approx} 0.12 - 0.13. We formalize this with subspace-level CKA diagnostic and residualized probes, showing that leakage tracks alignment within the trait-discriminative subspace rather than global representational similarity. Security controls (projection penalty, adversarial reversal, right-for-the-wrong-reasons regularization) reduce leakage in same-base models without impairing public-task fidelity. These results establish seed-induced uniqueness as a resilience property and argue for subspace-aware diagnostics for secure multi-model deployments."
+   },
+   {
+    "id": "2110.00672v1",
+    "title": "Low Frequency Names Exhibit Bias and Overfitting in Contextualizing Language Models",
+    "published": "2021-10-01",
+    "authors": [
+     "Robert Wolfe",
+     "Aylin Caliskan"
+    ],
+    "abstract": "We use a dataset of U.S. first names with labels based on predominant gender and racial group to examine the effect of training corpus frequency on tokenization, contextualization, similarity to initial representation, and bias in BERT, GPT-2, T5, and XLNet. We show that predominantly female and non-white names are less frequent in the training corpora of these four language models. We find that infrequent names are more self-similar across contexts, with Spearman's r between frequency and self-similarity as low as -.763. Infrequent names are also less similar to initial representation, with Spearman's r between frequency and linear centered kernel alignment (CKA) similarity to initial representation as high as .702. Moreover, we find Spearman's r between racial bias and name frequency in BERT of .492, indicating that lower-frequency minority group names are more associated with unpleasantness. Representations of infrequent names undergo more processing, but are more self-similar, indicating that models rely on less context-informed representations of uncommon and minority names which are overfit to a lower number of observed contexts."
+   },
+   {
+    "id": "1905.00414v4",
+    "title": "Similarity of Neural Network Representations Revisited",
+    "published": "2019-05-01",
+    "authors": [
+     "Simon Kornblith",
+     "Mohammad Norouzi",
+     "Honglak Lee",
+     "Geoffrey Hinton"
+    ],
+    "abstract": "Recent work has sought to understand the behavior of neural networks by comparing representations between layers and between different trained models. We examine methods for comparing neural network representations based on canonical correlation analysis (CCA). We show that CCA belongs to a family of statistics for measuring multivariate similarity, but that neither CCA nor any other statistic that is invariant to invertible linear transformation can measure meaningful similarities between representations of higher dimension than the number of data points. We introduce a similarity index that measures the relationship between representational similarity matrices and does not suffer from this limitation. This similarity index is equivalent to centered kernel alignment (CKA) and is also closely connected to CCA. Unlike CCA, CKA can reliably identify correspondences between representations in networks trained from different initializations."
+   },
+   {
+    "id": "2108.01661v2",
+    "title": "Grounding Representation Similarity with Statistical Testing",
+    "published": "2021-08-03",
+    "authors": [
+     "Frances Ding",
+     "Jean-Stanislas Denain",
+     "Jacob Steinhardt"
+    ],
+    "abstract": "To understand neural network behavior, recent works quantitatively compare different networks' learned representations using canonical correlation analysis (CCA), centered kernel alignment (CKA), and other dissimilarity measures. Unfortunately, these widely used measures often disagree on fundamental observations, such as whether deep networks differing only in random initialization learn similar representations. These disagreements raise the question: which, if any, of these dissimilarity measures should we believe? We provide a framework to ground this question through a concrete test: measures should have sensitivity to changes that affect functional behavior, and specificity against changes that do not. We quantify this through a variety of functional behaviors including probing accuracy and robustness to distribution shift, and examine changes such as varying random initialization and deleting principal components. We find that current metrics exhibit different weaknesses, note that a classical baseline performs surprisingly well, and highlight settings where all metrics appear to fail, thus providing a challenge set for further improvement."
+   },
+   {
+    "id": "2401.05224v2",
+    "title": "Do Vision and Language Encoders Represent the World Similarly?",
+    "published": "2024-01-10",
+    "authors": [
+     "Mayug Maniparambil",
+     "Raiymbek Akshulakov",
+     "Yasser Abdelaziz Dahou Djilali",
+     "Sanath Narayan",
+     "Mohamed El Amine Seddik",
+     "Karttikeya Mangalam",
+     "Noel E. O'Connor"
+    ],
+    "abstract": "Aligned text-image encoders such as CLIP have become the de facto model for vision-language tasks. Furthermore, modality-specific encoders achieve impressive performances in their respective domains. This raises a central question: does an alignment exist between uni-modal vision and language encoders since they fundamentally represent the same physical world? Analyzing the latent spaces structure of vision and language models on image-caption benchmarks using the Centered Kernel Alignment (CKA), we find that the representation spaces of unaligned and aligned encoders are semantically similar. In the absence of statistical similarity in aligned encoders like CLIP, we show that a possible matching of unaligned encoders exists without any training. We frame this as a seeded graph-matching problem exploiting the semantic similarity between graphs and propose two methods - a Fast Quadratic Assignment Problem optimization, and a novel localized CKA metric-based matching/retrieval. We demonstrate the effectiveness of this on several downstream tasks including cross-lingual, cross-domain caption matching and image classification. Code available at github.com/mayug/0-shot-llm-vision."
+   },
+   {
+    "id": "2609.05070v1",
+    "title": "MultiAttenGastro: Multi-Dimensional Attention Augmentation for Gastrointestinal Endoscopy Classification",
+    "published": "2026-09-04",
+    "authors": [
+     "Sadhana Devarajan",
+     "Praveen Kumar Chandaliya",
+     "Dhruvin Jashvant Kumar Shah",
+     "Kishor Upla",
+     "Kiran Raja"
+    ],
+    "abstract": "Automated gastrointestinal (GI) endoscopy classification requires models that generalize across diverse modalities and class distributions, often far from natural-image pretraining. We propose MultiAttenGastro, a plug-and-play attention framework with parallel 1-D channel, 2-D spatial, and 3-D contextual heads, and present the first systematic cross-dataset evaluation across eight CNN and transformer backbones on five public GI datasets (80 backbone--dataset runs). We find that attention effectiveness is not universal but tracks the representational gap between ImageNet features and the target distribution: MultiAttenGastro improves 6 of 8 backbones on Kvasir-Capsule (14-class WCE, large gap; best macro F1 98.33\\%), is uniformly negative on the small-gap Kvasir-v2 benchmark (0/8), and shows mixed outcomes on datasets with intermediate gap. Five-seed ablation on the strongest case (Kvasir-Capsule, ConvNeXt-Tiny) shows this improvement is directionally consistent, but not statistically decisive (paired $t$: $p=0.47$; Wilcoxon: $p=0.63$), and that individual attention heads are not uniformly beneficial in isolation only their combination yields a positive mean effect. Centered Kernel Alignment (CKA) analysis links this pattern to representational redundancy: low inter-head CKA under large domain gaps coincides with the framework's only consistent gains, while high redundancy under small gaps coincides with its losses. We report these results, including the non-significant margins, as evidence for when and why multi-dimensional attention helps GI endoscopy classification, rather than as a claim that MultiAttenGastro is a strictly superior architectural choice."
+   },
+   {
+    "id": "2411.08687v2",
+    "title": "Diagnosing Neural Convergence with Topological Alignment Spectra",
+    "published": "2024-11-13",
+    "authors": [
+     "Tiago F. Tavares",
+     "Fabio Ayres",
+     "Paris Smaragdis"
+    ],
+    "abstract": "Representational similarity in neural networks is inherently scale-dependent, yet widely used metrics such as Centered Kernel Alignment (CKA) and Procrustes analysis provide only global scalar estimates. These scalars often fail to distinguish micro-scale geometric jitter (local noise) from macro-scale semantic reorganization, compressing multi-scale structural relationships into a single uninformative value. We introduce the Topological Alignment Spectrum (TAS), a multi-scale diagnostic tool that sweeps normalized mean Jaccard similarity over varying neighborhood sizes. By normalizing the metric over an analytically-derived expected range (from expected overlap under randomness to perfect alignment), TAS yields a dimension-invariant metric over a spectrum of scales, where one indicates perfect structural alignment, zero reflects chance-level agreement, and negative values signal active anti-alignment at specific scales. Experiments on synthetic point clouds demonstrate that TAS allows the recognition of distinct types of alignment perturbation: local jitter harms fine-grained neighborhoods but preserves cluster-level structure, while cluster-center shuffling preserves local similarity but disrupts global alignment -- phenomena that remain invisible or conflated under global, single-scalar metrics. Applying TAS to the MultiBERTs collection reveals that fine-tuning induces comprehensive topological reorganization across scales, challenging the view of task adaptation as merely conservative or localized. While models from different random seeds remain locally divergent, semantic clusters emerge as the dominant scale of alignment. TAS thus offers a granular, topology-aware alternative for diagnosing convergence and representational stability in deep networks."
+   },
+   {
+    "id": "2607.04432v1",
+    "title": "Covert Trait Propagation Is Representation Alignment: Mechanistic Evidence from Hidden-Channel Distillation",
+    "published": "2026-07-05",
+    "authors": [
+     "Kargi Chauhan",
+     "Aditya Shah"
+    ],
+    "abstract": "A student model trained on pure uniform noise can still inherit its teacher's digit-classification ability, provided the two share initialization. Previous work proves this transfer is guaranteed when the teacher's learning rate is small enough, but does not explain where in the network the channel lives or what sets its capacity. Working in an MLP distillation setting on MNIST, we show these channels are not purely informational: geometric alignment gates access to the information the channel carries. Shared initialization makes the output projection W_2 a common coordinate key, and KL gradients reshape the student's input projection W_0 until its hidden representations align with the teacher's. We call this covert trait propagation (CTP). Five experiments support this mechanism: channel closure tracks weight drift, not teacher accuracy; freezing W_0 destroys transfer while freezing W_2 leaves it intact; multi-teacher ensembles cancel out despite each teacher carrying comparable label information; and linear centered kernel alignment (CKA) tracks student accuracy at r=0.98 across a continuous initialization sweep. Applying the same geometric lens to cross-token behavioral entanglement (CTBE) in instruction-tuned LLMs, we find the effect appears to be activated by alignment training, acting on an inherited substrate, and that the standard log-ratio metric produces an apparent frequency bias that is largely a circularity artifact."
+   },
+   {
+    "id": "2510.08852v1",
+    "title": "On the Alignment Between Supervised and Self-Supervised Contrastive Learning",
+    "published": "2025-10-09",
+    "authors": [
+     "Achleshwar Luthra",
+     "Priyadarsi Mishra",
+     "Tomer Galanti"
+    ],
+    "abstract": "Self-supervised contrastive learning (CL) has achieved remarkable empirical success, often producing representations that rival supervised pre-training on downstream tasks. Recent theory explains this by showing that the CL loss closely approximates a supervised surrogate, Negatives-Only Supervised Contrastive Learning (NSCL) loss, as the number of classes grows. Yet this loss-level similarity leaves an open question: {\\em Do CL and NSCL also remain aligned at the representation level throughout training, not just in their objectives?} We address this by analyzing the representation alignment of CL and NSCL models trained under shared randomness (same initialization, batches, and augmentations). First, we show that their induced representations remain similar: specifically, we prove that the similarity matrices of CL and NSCL stay close under realistic conditions. Our bounds provide high-probability guarantees on alignment metrics such as centered kernel alignment (CKA) and representational similarity analysis (RSA), and they clarify how alignment improves with more classes, higher temperatures, and its dependence on batch size. In contrast, we demonstrate that parameter-space coupling is inherently unstable: divergence between CL and NSCL weights can grow exponentially with training time. Finally, we validate these predictions empirically, showing that CL-NSCL alignment strengthens with scale and temperature, and that NSCL tracks CL more closely than other supervised objectives. This positions NSCL as a principled bridge between self-supervised and supervised learning. Our code and project page are available at [\\href{https://github.com/DLFundamentals/understanding_ssl_v2}{code}, \\href{https://dlfundamentals.github.io/cl-nscl-representation-alignment/}{project page}]."
+   },
+   {
+    "id": "2608.16347v2",
+    "title": "Architecture-Dependent Causal Transfer of Activation States Across Large Language Models",
+    "published": "2026-08-17",
+    "authors": [
+     "Fernando Cardenas Piepereit"
+    ],
+    "abstract": "Direct communication between AI systems relies on natural language as an intermediate layer, incurring encoding/decoding overhead, token cost, and latency. We ask whether internal activation states can instead be transferred causally between different large language model (LLM) architectures via a learned projection, evaluated at three levels: representational similarity, cross-model retrieval from projected states, and end-to-end causal transfer via activation injection during generation. Using four architecturally diverse open-weight models (Qwen2-0.5B, Phi-3-mini, Mistral-7B, FLAN-T5-base), we find that representational alignment in trained models exceeds a random-initialization null baseline and is best captured by a rank-based metric (mutual k-nearest-neighbour alignment), more robust to activation-magnitude outliers than centered kernel alignment (CKA) or Procrustes analysis. A learned projection network retrieves the correct target-model representation from a held-out set well above chance for the three causal decoder-only model pairs (45-50% top-1 accuracy vs. 5% chance) but at chance level for the encoder-based FLAN-T5. Injecting projected activations into a target model during generation produces a statistically significant, pre-registered causal effect on retrieval-based output similarity for only one of the three decoder-only pairs (Qwen2-0.5B to Phi-3-mini: 23.3% vs. 0.0% under negative control, p=0.047, FDR-corrected); the two pairs targeting Mistral-7B show no such effect despite comparable representational alignment at the hidden-state level. We interpret these results as evidence for causal transfer of the representational vehicle, not of meaning, and conclude that end-to-end activation-state transfer between LLMs, as currently implemented, is architecture-dependent rather than universal."
+   },
+   {
+    "id": "2512.00482v3",
+    "title": "Probing Layer-Wise Robustness and Sensitivity of Speech Enhancement Models",
+    "published": "2025-11-29",
+    "authors": [
+     "Yair Amar",
+     "Amir Ivry",
+     "Israel Cohen"
+    ],
+    "abstract": "Speech enhancement (SE) models advance rapidly, yet how input degradation affects their internal representations remains underexplored. We introduce a probing framework to characterize how internal representations in SE models behave under controlled input degradation. We probe three SE models across controlled levels of signal-to-noise ratio (SNR) and reverberation, quantified by $C_{50}$, measuring layer-wise similarity to clean references with Centered Kernel Alignment (CKA) and summarizing each layer by a linear fit against degradation level: the intercept measures robustness, whereas the slope measures sensitivity. All three models are sharply non-uniform across depth, but they organize that non-uniformity differently. MUSE and MP-SENet grow more sensitive with depth, the sharpest transitions falling at MUSE's skip-connection junctions, where encoder information is reintegrated; Demucs inverts the trend. A randomly initialized model shows a near-flat profile, with slopes one to two orders of magnitude smaller, and the profile forms during fine-tuning, indicating that it is induced by the enhancement objective rather than a particular model design. Because CKA saturates at the clean reference, intercept and slope are partly coupled; we derive the identity relating them and report a \\emph{saturation spread} statistic that indicates when their relationship is informative. Together, these results characterize where SE models are most sensitive to degradation. An exploratory analysis of whether residual variation tracks output-level quality, after controlling for SNR, shows that the speaker, rather than the utterance, must be treated as the sampling unit. Code and precomputed analysis artifacts for the main sweeps are publicly available."
+   }
+  ],
+  "convergent_learning": [
+   {
+    "id": "1511.07543v3",
+    "title": "Convergent Learning: Do different neural networks learn the same representations?",
+    "published": "2015-11-24",
+    "authors": [
+     "Yixuan Li",
+     "Jason Yosinski",
+     "Jeff Clune",
+     "Hod Lipson",
+     "John Hopcroft"
+    ],
+    "abstract": "Recent success in training deep neural networks have prompted active investigation into the features learned on their intermediate layers. Such research is difficult because it requires making sense of non-linear computations performed by millions of parameters, but valuable because it increases our ability to understand current models and create improved versions of them. In this paper we investigate the extent to which neural networks exhibit what we call convergent learning, which is when the representations learned by multiple nets converge to a set of features which are either individually similar between networks or where subsets of features span similar low-dimensional spaces. We propose a specific method of probing representations: training multiple networks and then comparing and contrasting their individual, learned representations at the level of neurons or groups of neurons. We begin research into this question using three techniques to approximately align different neural networks on a feature level: a bipartite matching approach that makes one-to-one assignments between neurons, a sparse prediction approach that finds one-to-many mappings, and a spectral clustering approach that finds many-to-many mappings. This initial investigation reveals a few previously unknown properties of neural networks, and we argue that future research into the question of convergent learning will yield many more. The insights described here include (1) that some features are learned reliably in multiple networks, yet other features are not consistently learned; (2) that units learn to span low-dimensional subspaces and, while these subspaces are common to multiple networks, the specific basis vectors learned are not; (3) that the representation codes show evidence of being a mix between a local code and slightly, but not fully, distributed codes across multiple units."
+   },
+   {
+    "id": "1810.11750v2",
+    "title": "Towards Understanding Learning Representations: To What Extent Do Different Neural Networks Learn the Same Representation",
+    "published": "2018-10-28",
+    "authors": [
+     "Liwei Wang",
+     "Lunjia Hu",
+     "Jiayuan Gu",
+     "Yue Wu",
+     "Zhiqiang Hu",
+     "Kun He",
+     "John Hopcroft"
+    ],
+    "abstract": "It is widely believed that learning good representations is one of the main reasons for the success of deep neural networks. Although highly intuitive, there is a lack of theory and systematic approach quantitatively characterizing what representations do deep neural networks learn. In this work, we move a tiny step towards a theory and better understanding of the representations. Specifically, we study a simpler problem: How similar are the representations learned by two networks with identical architecture but trained from different initializations. We develop a rigorous theory based on the neuron activation subspace match model. The theory gives a complete characterization of the structure of neuron activation subspace matches, where the core concepts are maximum match and simple match which describe the overall and the finest similarity between sets of neurons in two networks respectively. We also propose efficient algorithms to find the maximum match and simple matches. Finally, we conduct extensive experiments using our algorithms. Experimental results suggest that, surprisingly, representations learned by the same convolutional layers of networks trained from different initializations are not as similar as prevalently expected, at least in terms of subspace match."
+   },
+   {
+    "id": "2512.14418v2",
+    "title": "Dual-Axis RCCL: Representation-Complete Convergent Learning for Organic Chemical Space",
+    "published": "2025-12-16",
+    "authors": [
+     "Dejun Hu",
+     "Zhiming Li",
+     "Jia-Rui Shen",
+     "Jia-Ning Tu",
+     "Zi-Hao Ye",
+     "Junliang Zhang"
+    ],
+    "abstract": "Machine learning is profoundly reshaping molecular and materials modeling; however, given the vast scale of chemical space (10^30-10^60), it remains an open scientific question whether models can achieve convergent learning across this space. We introduce a Dual-Axis Representation-Complete Convergent Learning (RCCL) strategy, enabled by a molecular representation that integrates graph convolutional network (GCN) encoding of local valence environments, grounded in modern valence bond theory, together with no-bridge graph (NBG) encoding of ring/cage topologies, providing a quantitative measure of chemical-space coverage. This framework formalizes representation completeness, establishing a principled basis for constructing datasets that support convergent learning for large models. Guided by this RCCL framework, we develop the FD25 dataset, systematically covering 13,302 local valence units and 165,726 ring/cage topologies, achieving near-complete combinatorial coverage of organic molecules with H/C/N/O/F elements. Graph neural networks trained on FD25 exhibit representation-complete convergent learning and strong out-of-distribution generalization, with an overall prediction error of approximately 1.0 kcal/mol MAE across external benchmarks. Our results establish a quantitative link between molecular representation, structural completeness, and model generalization, providing a foundation for interpretable, transferable, and data-efficient molecular intelligence."
+   },
+   {
+    "id": "2502.18710v3",
+    "title": "Bridging Critical Gaps in Convergent Learning: How Representational Alignment Evolves Across Layers, Training, and Distribution Shifts",
+    "published": "2025-02-26",
+    "authors": [
+     "Chaitanya Kapoor",
+     "Sudhanshu Srivastava",
+     "Meenakshi Khosla"
+    ],
+    "abstract": "Understanding convergent learning -- the degree to which independently trained neural systems -- whether multiple artificial networks or brains and models -- arrive at similar internal representations -- is crucial for both neuroscience and AI. Yet, the literature remains narrow in scope -- typically examining just a handful of models with one dataset, relying on one alignment metric, and evaluating networks at a single post-training checkpoint. We present a large-scale audit of convergent learning, spanning dozens of vision models and thousands of layer-pair comparisons, to close these long-standing gaps. First, we pit three alignment families against one another -- linear regression (affine-invariant), orthogonal Procrustes (rotation-/reflection-invariant), and permutation/soft-matching (unit-order-invariant). We find that orthogonal transformations align representations nearly as effectively as more flexible linear ones, and although permutation scores are lower, they significantly exceed chance, indicating a privileged representational basis. Tracking convergence throughout training further shows that nearly all eventual alignment crystallizes within the first epoch -- well before accuracy plateaus -- indicating it is largely driven by shared input statistics and architectural biases, not by the final task solution. Finally, when models are challenged with a battery of out-of-distribution images, early layers remain tightly aligned, whereas deeper layers diverge in proportion to the distribution shift. These findings fill critical gaps in our understanding of representational convergence, with implications for neuroscience and AI."
+   },
+   {
+    "id": "1412.0543v1",
+    "title": "Game-theoretical control with continuous action sets",
+    "published": "2014-12-01",
+    "authors": [
+     "Steven Perkins",
+     "Panayotis Mertikopoulos",
+     "David S. Leslie"
+    ],
+    "abstract": "Motivated by the recent applications of game-theoretical learning techniques to the design of distributed control systems, we study a class of control problems that can be formulated as potential games with continuous action sets, and we propose an actor-critic reinforcement learning algorithm that provably converges to equilibrium in this class of problems. The method employed is to analyse the learning process under study through a mean-field dynamical system that evolves in an infinite-dimensional function space (the space of probability distributions over the players' continuous controls). To do so, we extend the theory of finite-dimensional two-timescale stochastic approximation to an infinite-dimensional, Banach space setting, and we prove that the continuous dynamics of the process converge to equilibrium in the case of potential games. These results combine to give a provably-convergent learning algorithm in which players do not need to keep track of the controls selected by the other agents."
+   },
+   {
+    "id": "1912.09150v1",
+    "title": "An Adaptive and Fast Convergent Approach to Differentially Private Deep Learning",
+    "published": "2019-12-19",
+    "authors": [
+     "Zhiying Xu",
+     "Shuyu Shi",
+     "Alex X. Liu",
+     "Jun Zhao",
+     "Lin Chen"
+    ],
+    "abstract": "With the advent of the era of big data, deep learning has become a prevalent building block in a variety of machine learning or data mining tasks, such as signal processing, network modeling and traffic analysis, to name a few. The massive user data crowdsourced plays a crucial role in the success of deep learning models. However, it has been shown that user data may be inferred from trained neural models and thereby exposed to potential adversaries, which raises information security and privacy concerns. To address this issue, recent studies leverage the technique of differential privacy to design private-preserving deep learning algorithms. Albeit successful at privacy protection, differential privacy degrades the performance of neural models. In this paper, we develop ADADP, an adaptive and fast convergent learning algorithm with a provable privacy guarantee. ADADP significantly reduces the privacy cost by improving the convergence speed with an adaptive learning rate and mitigates the negative effect of differential privacy upon the model accuracy by introducing adaptive noise. The performance of ADADP is evaluated on real-world datasets. Experiment results show that it outperforms state-of-the-art differentially private approaches in terms of both privacy cost and model accuracy."
+   },
+   {
+    "id": "1108.4135v2",
+    "title": "Complex-Valued Autoencoders",
+    "published": "2011-08-20",
+    "authors": [
+     "Pierre Baldi",
+     "Zhiqin Lu"
+    ],
+    "abstract": "Autoencoders are unsupervised machine learning circuits whose learning goal is to minimize a distortion measure between inputs and outputs. Linear autoencoders can be defined over any field and only real-valued linear autoencoder have been studied so far. Here we study complex-valued linear autoencoders where the components of the training vectors and adjustable matrices are defined over the complex field with the $L_2$ norm. We provide simpler and more general proofs that unify the real-valued and complex-valued cases, showing that in both cases the landscape of the error function is invariant under certain groups of transformations. The landscape has no local minima, a family of global minima associated with Principal Component Analysis, and many families of saddle points associated with orthogonal projections onto sub-space spanned by sub-optimal subsets of eigenvectors of the covariance matrix. The theory yields several iterative, convergent, learning algorithms, a clear understanding of the generalization properties of the trained autoencoders, and can equally be applied to the hetero-associative case when external targets are provided. Partial results on deep architecture as well as the differential geometry of autoencoders are also presented. The general framework described here is useful to classify autoencoders and identify general common properties that ought to be investigated for each class, illuminating some of the connections between information theory, unsupervised learning, clustering, Hebbian learning, and autoencoders."
+   },
+   {
+    "id": "2403.04057v2",
+    "title": "To Spend or to Gain: Online Learning in Repeated Karma Auctions",
+    "published": "2024-03-06",
+    "authors": [
+     "Damien Berriaud",
+     "Ezzat Elokda",
+     "Devansh Jalota",
+     "Emilio Frazzoli",
+     "Marco Pavone",
+     "Florian Dörfler"
+    ],
+    "abstract": "Recent years have seen a surge of artificial currency-based mechanisms in contexts where monetary instruments are deemed unfair or inappropriate, e.g., in allocating food donations to food banks, course seats to students, and, more recently, even for traffic congestion management. Yet the applicability of these mechanisms remains limited in repeated auction settings, as it is challenging for users to learn how to bid an artificial currency that has no value outside the auctions. Indeed, users must jointly learn the value of the currency in addition to how to spend it optimally. Moreover, in the prominent class of karma mechanisms, in which artificial karma payments are redistributed to users at each time step, users do not only spend karma to obtain public resources but also gain karma for yielding them. For this novel class of karma auctions, we propose an adaptive karma pacing strategy that learns to bid optimally, and show that this strategy a) is asymptotically optimal for a single user bidding against competing bids drawn from a stationary distribution; b) leads to convergent learning dynamics when all users adopt it; and c) constitutes an approximate Nash equilibrium as the number of users grows. Our results require a novel analysis in comparison to adaptive pacing strategies in monetary auctions, since we depart from the classical assumption that the currency has known value outside the auctions, and consider that the currency is both spent and gained through the redistribution of payments."
+   },
+   {
+    "id": "2007.03458v2",
+    "title": "Fictitious Play for Mean Field Games: Continuous Time Analysis and Applications",
+    "published": "2020-07-05",
+    "authors": [
+     "Sarah Perrin",
+     "Julien Perolat",
+     "Mathieu Laurière",
+     "Matthieu Geist",
+     "Romuald Elie",
+     "Olivier Pietquin"
+    ],
+    "abstract": "In this paper, we deepen the analysis of continuous time Fictitious Play learning algorithm to the consideration of various finite state Mean Field Game settings (finite horizon, $γ$-discounted), allowing in particular for the introduction of an additional common noise. We first present a theoretical convergence analysis of the continuous time Fictitious Play process and prove that the induced exploitability decreases at a rate $O(\\frac{1}{t})$. Such analysis emphasizes the use of exploitability as a relevant metric for evaluating the convergence towards a Nash equilibrium in the context of Mean Field Games. These theoretical contributions are supported by numerical experiments provided in either model-based or model-free settings. We provide hereby for the first time converging learning dynamics for Mean Field Games in the presence of common noise."
+   },
+   {
+    "id": "2611.13218v1",
+    "title": "Wrong the Same Way: Cross-Prompt Sharing Both Suppresses and Amplifies Reward Hacking in RLVR",
+    "published": "2026-11-09",
+    "authors": [
+     "Michael Li",
+     "Rohan Pandey",
+     "Ray Chen"
+    ],
+    "abstract": "Two accounts of how reinforcement learning with verifiable rewards (RLVR) interacts with an imperfect verifier coexist: in one, reward hacking is inherited from the base model; in the other, RL amplifies it. We study both in a controlled environment small enough to compute the entire response distribution exactly. We vary the universality of a leak, or the fraction of prompts that accept the same wrong response, and the verifier's static false-positive rate. At its KL-regularized optimum, RLVR acts as a filter that reweights the accepted set without altering its composition, so the hack rate is inherited exactly. Taking that as a null model, a known decomposition writes the drift from it as a sum over prompts of covariances between reward and the empirical tangent kernel. The terms from other prompts vanish without parameter sharing. With sharing, every prompt that accepts a wrong answer pushes it up and every prompt that rejects it pushes it down through the baseline, in proportion to the model's probability of producing it there. A shared-parameter policy thus drives a leak that few prompts accept below the base rate and amplifies one that most prompts accept. At every convergent learning rate under Adam, SGD, and sampled GRPO, hacking ends higher at high universality than at low, but whether either end crosses the base rate depends on the step size. Independent per-prompt copies remove the dependence. The direction of this push depends on neither the verifier's error rate nor universality alone, but on how much of the model's kernel-weighted probability of a wrong answer falls on prompts that accept it, which frozen base model controls support. Verifier fixes should target the mistakes the model repeats across prompts: two patches that remove equally many errors differ by up to 38 points of true accuracy. We propose this alignment as a hypothesis for why earlier studies disagree."
+   },
+   {
+    "id": "1709.07758v1",
+    "title": "Improving Language Modelling with Noise-contrastive estimation",
+    "published": "2017-09-22",
+    "authors": [
+     "Farhana Ferdousi Liza",
+     "Marek Grzes"
+    ],
+    "abstract": "Neural language models do not scale well when the vocabulary is large. Noise-contrastive estimation (NCE) is a sampling-based method that allows for fast learning with large vocabularies. Although NCE has shown promising performance in neural machine translation, it was considered to be an unsuccessful approach for language modelling. A sufficient investigation of the hyperparameters in the NCE-based neural language models was also missing. In this paper, we showed that NCE can be a successful approach in neural language modelling when the hyperparameters of a neural network are tuned appropriately. We introduced the 'search-then-converge' learning rate schedule for NCE and designed a heuristic that specifies how to use this schedule. The impact of the other important hyperparameters, such as the dropout rate and the weight initialisation range, was also demonstrated. We showed that appropriate tuning of NCE-based neural language models outperforms the state-of-the-art single-model methods on a popular benchmark."
+   },
+   {
+    "id": "2504.13241v6",
+    "title": "Recursive Deep Inverse Reinforcement Learning",
+    "published": "2025-04-17",
+    "authors": [
+     "Paul Ghanem",
+     "Owen Howell",
+     "Michael Potter",
+     "Pau Closas",
+     "Alireza Ramezani",
+     "Deniz Erdogmus",
+     "Tales Imbiriba"
+    ],
+    "abstract": "Inferring an adversary's goals from exhibited behavior is crucial for counterplanning and non-cooperative multi-agent systems in domains like cybersecurity, military, and strategy games. Deep Inverse Reinforcement Learning (IRL) methods based on maximum entropy principles show promise in recovering adversaries goals but are typically offline, require large batch sizes with gradient descent, and rely on first-order updates, limiting their applicability in real-time scenarios. We propose an online Recursive Deep Inverse Reinforcement Learning (RDIRL) approach to recover the cost function governing the adversary actions and goals. Specifically, we minimize an upper bound on the standard Guided Cost Learning (GCL) objective using sequential second-order Newton updates, akin to the Extended Kalman Filter (EKF), leading to a fast (in terms of convergence) learning algorithm. We demonstrate that RDIRL is able to recover cost and reward functions of expert agents in standard and adversarial benchmark tasks. Experiments on benchmark tasks show that our proposed approach outperforms several leading IRL algorithms."
+   },
+   {
+    "id": "2408.12804v2",
+    "title": "Universal dimensions of visual representation",
+    "published": "2024-08-23",
+    "authors": [
+     "Zirui Chen",
+     "Michael F. Bonner"
+    ],
+    "abstract": "Do neural network models of vision learn brain-aligned representations because they share architectural constraints and task objectives with biological vision or because they learn universal features of natural image processing? We characterized the universality of hundreds of thousands of representational dimensions from visual neural networks with varied construction. We found that networks with varied architectures and task objectives learn to represent natural images using a shared set of latent dimensions, despite appearing highly distinct at a surface level. Next, by comparing these networks with human brain representations measured with fMRI, we found that the most brain-aligned representations in neural networks are those that are universal and independent of a network's specific characteristics. Remarkably, each network can be reduced to fewer than ten of its most universal dimensions with little impact on its representational similarity to the human brain. These results suggest that the underlying similarities between artificial and biological vision are primarily governed by a core set of universal image representations that are convergently learned by diverse systems."
+   },
+   {
+    "id": "2604.02707v1",
+    "title": "A Rapid Instrument Exchange System for Humanoid Robots in Minimally Invasive Surgery",
+    "published": "2026-04-03",
+    "authors": [
+     "Bingcong Zhang",
+     "Yihang Lyv",
+     "Lianbo Ma",
+     "Yushi He",
+     "Pengfei Wei",
+     "Xingchi Liu",
+     "Jinhua Li",
+     "Jianchang Zhao",
+     "Lizhi Pan"
+    ],
+    "abstract": "Humanoid robot technologies have demonstrated immense potential for minimally invasive surgery (MIS). Unlike dedicated multi-arm surgical platforms, the inherent dual-arm configuration of humanoid robots necessitates an efficient instrument exchange capability to perform complex procedures, mimicking the natural workflow where surgeons manually switch instruments. To address this, this paper proposes an immersive teleoperated rapid instrument exchange system. The system utilizes a low-latency mechanism based on single-axis compliant docking and environmental constraint release. Integrated with real-time first-person view (FPV) perception via a head-mounted display (HMD), this framework significantly reduces operational complexity and cognitive load during the docking process. Comparative evaluations between experts and novices demonstrate high operational robustness and a rapidly converging learning curve; novice performance in instrument attachment and detachment improved substantially after brief training. While long-distance spatial alignment still presents challenges in time cost and collaborative stability, this study successfully validates the technical feasibility of humanoid robots executing stable instrument exchanges within constrained clinical environments."
+   },
+   {
+    "id": "2311.08972v2",
+    "title": "Unsupervised approaches based on optimal transport and convex analysis for inverse problems in imaging",
+    "published": "2023-11-15",
+    "authors": [
+     "Marcello Carioni",
+     "Subhadip Mukherjee",
+     "Hong Ye Tan",
+     "Junqi Tang"
+    ],
+    "abstract": "Unsupervised deep learning approaches have recently become one of the crucial research areas in imaging owing to their ability to learn expressive and powerful reconstruction operators even when paired high-quality training data is scarcely available. In this chapter, we review theoretically principled unsupervised learning schemes for solving imaging inverse problems, with a particular focus on methods rooted in optimal transport and convex analysis. We begin by reviewing the optimal transport-based unsupervised approaches such as the cycle-consistency-based models and learned adversarial regularization methods, which have clear probabilistic interpretations. Subsequently, we give an overview of a recent line of works on provably convergent learned optimization algorithms applied to accelerate the solution of imaging inverse problems, alongside their dedicated unsupervised training schemes. We also survey a number of provably convergent plug-and-play algorithms (based on gradient-step deep denoisers), which are among the most important and widely applied unsupervised approaches for imaging problems. At the end of this survey, we provide an overview of a few related unsupervised learning frameworks that complement our focused schemes. Together with a detailed survey, we provide an overview of the key mathematical results that underlie the methods reviewed in the chapter to keep our discussion self-contained."
+   }
+  ],
+  "rich_lazy_title": [
+   {
+    "id": "2310.06110v3",
+    "title": "Grokking as the Transition from Lazy to Rich Training Dynamics",
+    "published": "2023-10-09",
+    "authors": [
+     "Tanishq Kumar",
+     "Blake Bordelon",
+     "Samuel J. Gershman",
+     "Cengiz Pehlevan"
+    ],
+    "abstract": "We propose that the grokking phenomenon, where the train loss of a neural network decreases much earlier than its test loss, can arise due to a neural network transitioning from lazy training dynamics to a rich, feature learning regime. To illustrate this mechanism, we study the simple setting of vanilla gradient descent on a polynomial regression problem with a two layer neural network which exhibits grokking without regularization in a way that cannot be explained by existing theories. We identify sufficient statistics for the test loss of such a network, and tracking these over training reveals that grokking arises in this setting when the network first attempts to fit a kernel regression solution with its initial features, followed by late-time feature learning where a generalizing solution is identified after train loss is already low. We find that the key determinants of grokking are the rate of feature learning -- which can be controlled precisely by parameters that scale the network output -- and the alignment of the initial features with the target function $y(x)$. We argue this delayed generalization arises when (1) the top eigenvectors of the initial neural tangent kernel and the task labels $y(x)$ are misaligned, but (2) the dataset size is large enough so that it is possible for the network to generalize eventually, but not so large that train loss perfectly tracks test loss at all epochs, and (3) the network begins training in the lazy regime so does not learn features immediately. We conclude with evidence that this transition from lazy (linear model) to rich training (feature learning) can control grokking in more general settings, like on MNIST, one-layer Transformers, and student-teacher networks."
+   },
+   {
+    "id": "2212.12147v1",
+    "title": "The Onset of Variance-Limited Behavior for Networks in the Lazy and Rich Regimes",
+    "published": "2022-12-23",
+    "authors": [
+     "Alexander Atanasov",
+     "Blake Bordelon",
+     "Sabarish Sainathan",
+     "Cengiz Pehlevan"
+    ],
+    "abstract": "For small training set sizes $P$, the generalization error of wide neural networks is well-approximated by the error of an infinite width neural network (NN), either in the kernel or mean-field/feature-learning regime. However, after a critical sample size $P^*$, we empirically find the finite-width network generalization becomes worse than that of the infinite width network. In this work, we empirically study the transition from infinite-width behavior to this variance limited regime as a function of sample size $P$ and network width $N$. We find that finite-size effects can become relevant for very small dataset sizes on the order of $P^* \\sim \\sqrt{N}$ for polynomial regression with ReLU networks. We discuss the source of these effects using an argument based on the variance of the NN's final neural tangent kernel (NTK). This transition can be pushed to larger $P$ by enhancing feature learning or by ensemble averaging the networks. We find that the learning curve for regression with the final NTK is an accurate approximation of the NN learning curve. Using this, we provide a toy model which also exhibits $P^* \\sim \\sqrt{N}$ scaling and has $P$-dependent benefits from feature learning."
+   },
+   {
+    "id": "2310.08513v2",
+    "title": "How connectivity structure shapes rich and lazy learning in neural circuits",
+    "published": "2023-10-12",
+    "authors": [
+     "Yuhan Helena Liu",
+     "Aristide Baratin",
+     "Jonathan Cornford",
+     "Stefan Mihalas",
+     "Eric Shea-Brown",
+     "Guillaume Lajoie"
+    ],
+    "abstract": "In theoretical neuroscience, recent work leverages deep learning tools to explore how some network attributes critically influence its learning dynamics. Notably, initial weight distributions with small (resp. large) variance may yield a rich (resp. lazy) regime, where significant (resp. minor) changes to network states and representation are observed over the course of learning. However, in biology, neural circuit connectivity could exhibit a low-rank structure and therefore differs markedly from the random initializations generally used for these studies. As such, here we investigate how the structure of the initial weights -- in particular their effective rank -- influences the network learning regime. Through both empirical and theoretical analyses, we discover that high-rank initializations typically yield smaller network changes indicative of lazier learning, a finding we also confirm with experimentally-driven initial connectivity in recurrent neural networks. Conversely, low-rank initialization biases learning towards richer learning. Importantly, however, as an exception to this rule, we find lazier learning can still occur with a low-rank initialization that aligns with task and data statistics. Our research highlights the pivotal role of initial weight structures in shaping learning regimes, with implications for metabolic costs of plasticity and risks of catastrophic forgetting."
+   },
+   {
+    "id": "2409.14623v2",
+    "title": "From Lazy to Rich: Exact Learning Dynamics in Deep Linear Networks",
+    "published": "2024-09-22",
+    "authors": [
+     "Clémentine C. J. Dominé",
+     "Nicolas Anguita",
+     "Alexandra M. Proca",
+     "Lukas Braun",
+     "Daniel Kunin",
+     "Pedro A. M. Mediano",
+     "Andrew M. Saxe"
+    ],
+    "abstract": "Biological and artificial neural networks develop internal representations that enable them to perform complex tasks. In artificial networks, the effectiveness of these models relies on their ability to build task specific representation, a process influenced by interactions among datasets, architectures, initialization strategies, and optimization algorithms. Prior studies highlight that different initializations can place networks in either a lazy regime, where representations remain static, or a rich/feature learning regime, where representations evolve dynamically. Here, we examine how initialization influences learning dynamics in deep linear neural networks, deriving exact solutions for lambda-balanced initializations-defined by the relative scale of weights across layers. These solutions capture the evolution of representations and the Neural Tangent Kernel across the spectrum from the rich to the lazy regimes. Our findings deepen the theoretical understanding of the impact of weight initialization on learning regimes, with implications for continual learning, reversal learning, and transfer learning, relevant to both neuroscience and practical applications."
+   }
+  ],
+  "feature_learning_alignment_init": []
+ }
+}
