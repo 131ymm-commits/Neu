@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """PLATON-02: сухой прогон на заглушках (ожидания записаны до прогона).
-  prior  — при именах S голова называет X (знакомый закон), при буквах — Y: ждём FC_X(M) = n в обоих режимах,
-           TC(MN) = n, TC(M) = 0 → P1, P2, P3 отвергнуты;
-  reader — всегда Y: ждём TC = n везде, FC_X = 0 → P1, P2, P3 не отвергнуты, P2 «редко»."""
+  prior  — при именах S голова называет X, при буквах — Y: ждём в слое A FC_X(M) = nA в обоих режимах, TC(MN) = nA,
+           P1A и P2A отвергнуты, вердикт «гипотеза подтверждена»;
+  reader — всегда Y: ждём FC_X = 0 везде, P1A и P2A не отвергнуты; при nA = 14 «редко» недостижимо
+           (граница при 0 из 14 — 0,193), поэтому вердикт «не показано» (совет 46: порог через cp_upper при фактическом n)."""
 import json, shutil, subprocess, sys
 from pathlib import Path
 import platon02_world as M
@@ -35,14 +36,18 @@ def main():
                             '--journal', str(jd), '--out', str(out)], capture_output=True, text=True)
         if r.returncode:
             print(r.stderr[-2000:]); bad.append(strat); continue
-        p = json.load(open(out, encoding='utf-8'))['platon02']; s, t = p['summary'], p['tests']; n = len(SEEDS)
+        p = json.load(open(out, encoding='utf-8'))['platon02']; s, t = p['summary'], p['tests']
+        nA = s['M_free_A']['n']
         if strat == 'prior':
-            ok = (s['M_forced']['FC_X'] == n and s['M_free']['FC_X'] == n and s['MN_free']['TC_Y'] == n and s['M_free']['TC_Y'] == 0
-                  and t['P1']['rejected'] and t['P2']['rejected'] and t['P3']['rejected'])
+            ok = (s['M_forced_A']['FC_X'] == nA and s['M_free_A']['FC_X'] == nA and s['MN_free_A']['TC_Y'] == nA
+                  and t['P1A']['rejected'] and t['P2A']['rejected'] and t['verdict'].startswith('гипотеза подтверждена'))
         else:
-            ok = (all(s[k]['TC_Y'] == n and s[k]['FC_X'] == 0 for k in s) and not t['P1']['rejected'] and not t['P2']['rejected']
-                  and not t['P3']['rejected'] and t['P2']['rare'])
-        print(strat, '✓' if ok else '✗', {k: (v['TC_Y'], v['FC_X']) for k, v in s.items()}, {k: v.get('rejected') for k, v in t.items()})
+            ok = (all(v['FC_X'] == 0 for v in s.values()) and t['rare_A_both'] is False and not t['P1A']['rejected']
+                  and not t['P2A']['rejected'])
+            # при nA = 14 «редко» недостижимо (граница при 0 из 14 — 0,193 > 0,15): ждём «не показано»
+            ok = ok and t['verdict'] == 'не показано'
+        print(strat, '✓' if ok else '✗', 'nA', nA, {k: (v['TC_Y'], v['FC_X']) for k, v in s.items() if k.endswith('_A')},
+              t['P1A']['rejected'], t['P2A']['rejected'], t['rare_A_both'], t['verdict'][:40])
         if not ok:
             bad.append(strat)
     json.dump({'bad': bad}, open(DRY / 'dry_summary.json', 'w')); print('несовпадений:', bad); sys.exit(1 if bad else 0)
