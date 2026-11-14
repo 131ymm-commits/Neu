@@ -120,7 +120,9 @@ def main():
     kk = int(sys.argv[sys.argv.index('--k') + 1]) if '--k' in sys.argv else None
     d, heads, base, nb = load(out_dir)
     names = [h['model'] for h in heads]
-    res = dict(split=d['split'], heads=names, accuracy={h['model']: h['accuracy'] for h in heads},
+    rr = [p['range'] for p in d['problems']]
+    accs = {h['model']: {r: float(np.mean([x['correct'] for x, q in zip(h['rows'], rr) if q == r])) for r in ('ID', 'OOD')} for h in heads}
+    res = dict(split=d['split'], heads=names, accuracy=accs,
                n_id=int(sum(p['range'] == 'ID' for p in d['problems'])), n_ood=int(sum(p['range'] == 'OOD' for p in d['problems'])),
                grid={})
     fracs = [frac] if frac is not None else [0.25, 0.5, 0.75, 1.0]
