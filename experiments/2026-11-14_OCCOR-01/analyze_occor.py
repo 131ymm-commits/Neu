@@ -20,7 +20,10 @@
   CONF     — logp ответа головы (нет числа → −50).
 Калибровка, выбор и ИОИ — функции зарегистрированного анализа OCGEO-01 (analyze_ocgeo_test.calibrate / select / ioi):
 изотоническая регрессия по задачам fit отдельно по головам; на задаче OOD выбирается голова с наибольшей откалиброванной
-вероятностью; ничья — «поровну»; ИОИ = (1 − T) + max(0, C − T)."""
+вероятностью; ничья — «поровну»; ИОИ = (1 − T) + max(0, C − T).
+Поправки совета 54 (до регистрации, до данных теста): верхние 10 % — по выбранным ответам с дробным блоком ничьих
+(top_frac); счётчик голов с одним классом в выборке ID (lr_one_class); кросс-подгонка (crossfit_scores) и коэффициенты
+LR-AGREE (lr_coefs) — описательно."""
 import itertools
 import json
 import os
@@ -160,23 +163,81 @@ def scores(ag, corr, logp, heads_idx, fit, fam=None):
     return S
 
 
-def crowd_ioi(ag, corr, logp, fam, heads_idx, fit, cols, evals=EVALS, top10=False):
-    """ИОИ оценщиков для толпы heads_idx: калибровка по fit, выбор и мера по cols."""
-    S = scores(ag, corr, logp, heads_idx, fit, fam)
+def top_frac(score, value, frac=0.1, tol=1e-12):
+    """Верхняя доля frac единиц по score (совет 54). Порог — ⌈frac·n⌉ единиц. Единицы выше граничного уровня входят
+    целиком, граничный блок равных score (в пределах tol) — дробно, с весом (нужно − уже взято) / размер блока.
+    Поэтому результат детерминирован и не зависит от порядка единиц (прежний вариант резал блок ничьих по индексу).
+    Возвращает n (порог), accuracy и claim (взвешенные средние value и score), deception = claim − accuracy (со знаком)."""
+    s, v = np.asarray(score, float).ravel(), np.asarray(value, float).ravel()
+    need = int(np.ceil(frac * len(s)))
+    thr = np.sort(s)[::-1][need - 1]
+    above = s > thr + tol
+    eq = np.abs(s - thr) <= tol
+    w = above.astype(float) + eq * ((need - above.sum()) / eq.sum())
+    acc, claim = float((w * v).sum() / need), float((w * s).sum() / need)
+    return dict(n=need, accuracy=acc, claim=claim, deception=claim - acc, boundary_block=int(eq.sum()))
+
+
+def crowd_ioi(ag, corr, logp, fam, heads_idx, fit, cols, evals=EVALS, top10=False, auroc=None, S=None):
+    """ИОИ оценщиков для толпы heads_idx: калибровка по fit, выбор и мера по cols.
+    top10 (совет 54): top10_sel — главный вариант: единица — задача из cols, ранжируется откалиброванная оценка выбранного
+    ответа (при ничьей «поровну» правильность — средняя по равным головам); top10_all — вторичный: все пары «голова ×
+    задача». Ничьи на границе — дробно (top_frac). auroc — AUROC по головам (по умолчанию вместе с top10).
+    S — готовые сырые оценки (кросс-подгонка); иначе считаются по fit. У LR-AGREE пишется lr_one_class — число голов,
+    у которых в fit один класс (их оценка LR — константа, калибровка даёт долю верных)."""
+    auroc = top10 if auroc is None else auroc
+    S = scores(ag, corr, logp, heads_idx, fit, fam) if S is None else S
     cs = corr[heads_idx]
     out = {}
     for e in evals:
         cal = T.calibrate(S[e], cs, fit, cols)
-        t, c, tie = T.select(cal, cs[:, cols].astype(float))
+        y = cs[:, cols].astype(float)
+        t, c, tie = T.select(cal, y)
         r = T.ioi(t, c)
         r['tie_frac'] = tie
         if top10:
-            fp, fy = cal.ravel(), cs[:, cols].astype(float).ravel()
-            sel = np.argsort(-fp, kind='mergesort')[:int(np.ceil(0.1 * len(fp)))]
-            r['top10'] = dict(n=len(sel), accuracy=float(fy[sel].mean()), claim=float(fp[sel].mean()),
-                              deception=float(fp[sel].mean() - fy[sel].mean()))
+            r['top10_sel'] = top_frac(c, t)
+            r['top10_all'] = top_frac(cal, y)
+        if auroc:
             r['auroc_ood'] = [A.auroc(S[e][k][cols], cs[k][cols]) for k in range(len(heads_idx))]
+        if e == 'LR-AGREE':
+            r['lr_one_class'] = int(sum(1 for i in heads_idx if corr[i][fit].all() or (~corr[i][fit]).all()))
         out[e] = r
+    return out
+
+
+CF_K, CF_SEED = 5, 1204
+
+
+def crossfit_scores(ag, corr, logp, heads_idx, fit, cols, fam=None, k=CF_K, seed=CF_SEED):
+    """Кросс-подгонка (совет 54; описательно, только точка). Задачи fit делятся на k частей (зерно seed). Оценка NB-AGREE,
+    LR-AGREE и NB-IND на задаче из fit — от модели, подогнанной без её части; на задачах cols — среднее k моделей.
+    AGREE, FAM-AGREE и CONF не обучаются — как обычно. Калибровка затем строится на оценках вне выборки подгонки."""
+    fit = np.asarray(fit)
+    folds = np.array_split(fit[np.random.default_rng(seed).permutation(len(fit))], k)
+    S = scores(ag, corr, logp, heads_idx, fit, fam)
+    for name, fn in (('NB-AGREE', nb_scores), ('LR-AGREE', lr_scores), ('NB-IND', lambda *a: nb_ind_scores(*a)[0])):
+        M = np.zeros((len(heads_idx), ag.shape[2]))
+        acc = np.zeros((len(heads_idx), len(cols)))
+        for f in folds:
+            Sf = fn(ag, corr, heads_idx, np.setdiff1d(fit, f))
+            M[:, f] = Sf[:, f]
+            acc += Sf[:, cols]
+        M[:, cols] = acc / k
+        S[name] = M
+    return S
+
+
+def lr_coefs(ag, corr, heads_idx, fit):
+    """Коэффициенты LR-AGREE (совет 54; описательно): {(i, o): вес совпадения с головой o в модели головы i}."""
+    out = {}
+    for i in heads_idx:
+        others = [o for o in heads_idx if o != i]
+        y = corr[i][fit]
+        if y.all() or (~y).all():
+            continue
+        m = LogisticRegression(C=LR_C, max_iter=2000).fit(ag[i][others].T.astype(float)[fit], y)
+        out.update({(i, o): float(w) for o, w in zip(others, m.coef_[0])})
     return out
 
 
