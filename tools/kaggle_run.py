@@ -72,8 +72,9 @@ def status(k, user, slug):
     req = S.ApiGetKernelSessionStatusRequest()
     req.user_name, req.kernel_slug = user, slug
     r = k.kernels.kernels_api_client.get_kernel_session_status(req)
-    d = r.to_dict() if hasattr(r, 'to_dict') else {}
-    return str(d.get('status', '')).lower(), d.get('failureMessage')
+    # статус — из поля, а не из to_dict(): to_dict() опускает значение 0 перечисления (QUEUED), и статус был пустым (14.11.2026)
+    st = getattr(r, 'status', None)
+    return (st.name if hasattr(st, 'name') else str(st or '')).lower(), (getattr(r, 'failure_message', None) or None)
 
 
 def cmd_wait(a):
