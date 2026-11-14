@@ -1,0 +1,339 @@
+{
+ "verdict": "P1: опровергнуто; P3: не решено",
+ "verdicts": {
+  "P1": "опровергнуто",
+  "P3": "не решено"
+ },
+ "method_ok": true,
+ "n_id": 2245,
+ "n_ood": 3424,
+ "run_seconds": 1477,
+ "info": {
+  "split": "test",
+  "python": "3.13.16",
+  "torch": "2.11.0+cu130",
+  "transformers": "5.20.2",
+  "device": "cuda",
+  "gpu": "Tesla T4"
+ },
+ "accuracy": {
+  "pythia-1.4b": {
+   "ID": 0.483,
+   "OOD": 0.183
+  },
+  "pythia-1.4b-deduped": {
+   "ID": 0.19,
+   "OOD": 0.057
+  },
+  "pythia-2.8b": {
+   "ID": 0.853,
+   "OOD": 0.689
+  },
+  "pythia-2.8b-deduped": {
+   "ID": 0.843,
+   "OOD": 0.712
+  },
+  "pythia-6.9b": {
+   "ID": 0.669,
+   "OOD": 0.581
+  }
+ },
+ "evaluators": {
+  "GEO": {
+   "T": 0.68,
+   "C": 0.866,
+   "ignorance": 0.32,
+   "deception": 0.186,
+   "ioi": 0.506,
+   "tie_frac": 0.002
+  },
+  "AGREE": {
+   "T": 0.721,
+   "C": 0.817,
+   "ignorance": 0.279,
+   "deception": 0.096,
+   "ioi": 0.375,
+   "tie_frac": 0.0
+  },
+  "CONF": {
+   "T": 0.726,
+   "C": 0.848,
+   "ignorance": 0.274,
+   "deception": 0.122,
+   "ioi": 0.396,
+   "tie_frac": 0.03
+  },
+  "GEO0": {
+   "T": 0.699,
+   "C": 0.861,
+   "ignorance": 0.301,
+   "deception": 0.162,
+   "ioi": 0.463,
+   "tie_frac": 0.0
+  },
+  "INPUT": {
+   "T": 0.695,
+   "C": 0.854,
+   "ignorance": 0.305,
+   "deception": 0.159,
+   "ioi": 0.464,
+   "tie_frac": 0.002
+  }
+ },
+ "P1": {
+  "delta": 0.131,
+  "ci99": [
+   0.092,
+   0.179
+  ]
+ },
+ "P3": {
+  "delta": 0.018,
+  "ci99": [
+   -0.0003,
+   0.0365
+  ],
+  "per_head": [
+   -0.054,
+   0.058,
+   -0.014,
+   0.062,
+   0.038
+  ]
+ },
+ "P2_descr": {
+  "delta": -0.021,
+  "ci99": [
+   -0.059,
+   0.015
+  ]
+ },
+ "geo_minus_input": {
+  "delta": 0.041,
+  "ci99": [
+   -0.014,
+   0.097
+  ]
+ },
+ "auroc_ood": {
+  "GEO": [
+   0.607,
+   0.614,
+   0.574,
+   0.612,
+   0.623
+  ],
+  "AGREE": [
+   0.95,
+   0.97,
+   0.791,
+   0.779,
+   0.868
+  ],
+  "CONF": [
+   0.712,
+   0.703,
+   0.771,
+   0.795,
+   0.728
+  ],
+  "GEO0": [
+   0.661,
+   0.556,
+   0.588,
+   0.55,
+   0.585
+  ],
+  "INPUT": [
+   0.608,
+   0.532,
+   0.601,
+   0.654,
+   0.619
+  ]
+ },
+ "auroc_ood_range": {
+  "GEO": [
+   0.574,
+   0.623
+  ],
+  "AGREE": [
+   0.779,
+   0.97
+  ],
+  "CONF": [
+   0.703,
+   0.795
+  ],
+  "GEO0": [
+   0.55,
+   0.661
+  ],
+  "INPUT": [
+   0.532,
+   0.654
+  ]
+ },
+ "top10": {
+  "GEO": {
+   "n": 1712,
+   "accuracy": 0.803,
+   "claim": 0.959,
+   "deception": 0.157
+  },
+  "AGREE": {
+   "n": 1712,
+   "accuracy": 0.963,
+   "claim": 0.989,
+   "deception": 0.026
+  },
+  "CONF": {
+   "n": 1712,
+   "accuracy": 0.956,
+   "claim": 0.987,
+   "deception": 0.031
+  },
+  "GEO0": {
+   "n": 1712,
+   "accuracy": 0.765,
+   "claim": 0.935,
+   "deception": 0.17
+  },
+  "INPUT": {
+   "n": 1712,
+   "accuracy": 0.841,
+   "claim": 0.959,
+   "deception": 0.119
+  }
+ },
+ "no_twins": {
+  "GEO": 0.517,
+  "AGREE": 0.43,
+  "CONF": 0.395,
+  "GEO0": 0.46,
+  "INPUT": 0.479
+ },
+ "subset_curve": {
+  "2": {
+   "GEO": 0.552,
+   "AGREE": 0.491,
+   "CONF": 0.45,
+   "GEO0": 0.513,
+   "INPUT": 0.498
+  },
+  "3": {
+   "GEO": 0.51,
+   "AGREE": 0.428,
+   "CONF": 0.393,
+   "GEO0": 0.457,
+   "INPUT": 0.455
+  },
+  "4": {
+   "GEO": 0.493,
+   "AGREE": 0.399,
+   "CONF": 0.387,
+   "GEO0": 0.455,
+   "INPUT": 0.456
+  },
+  "5": {
+   "GEO": 0.506,
+   "AGREE": 0.375,
+   "CONF": 0.396,
+   "GEO0": 0.463,
+   "INPUT": 0.464
+  }
+ },
+ "grid": {
+  "geo_ioi_range": [
+   0.475,
+   0.534
+  ],
+  "auroc_diff_range": [
+   0.011,
+   0.063
+  ]
+ },
+ "tie_by_id": {
+  "GEO": 0.505,
+  "AGREE": 0.375,
+  "CONF": 0.395,
+  "GEO0": 0.463,
+  "INPUT": 0.465
+ },
+ "best_head_no_evaluator": {
+  "head": "pythia-2.8b",
+  "T": 0.689,
+  "C": 0.853,
+  "ioi": 0.476,
+  "deception": 0.164
+ },
+ "any_head_correct_ood": 0.889,
+ "pilot": {
+  "P1_delta": 0.069,
+  "P3_delta": 0.054,
+  "geo_ioi": 0.441,
+  "agree_ioi": 0.371
+ },
+ "expectations": {
+  "E1": 1,
+  "E2": 1,
+  "E3": 0,
+  "E4": 1,
+  "E5": 1,
+  "E6": 1,
+  "E7": 1,
+  "E8": 1
+ },
+ "brier": 0.1447,
+ "weight_bits": {
+  "P1": 6.54,
+  "P3": 0.0
+ },
+ "power": {
+  "P1": {
+   "по пилоту": 0.9916807766651231,
+   "осторожный": 0.46386574350627346
+  },
+  "P3": {
+   "по пилоту": 0.9999999876882919,
+   "осторожный": 0.9331872016099217
+  }
+ },
+ "constants": {
+  "registration": "1b43fe66",
+  "draft": "5d62c897",
+  "council_lenses": 52,
+  "kaggle_slug": "neu-ocgeo-test",
+  "geo_f": 0.25,
+  "geo_k": 50,
+  "boot": 4000,
+  "false_level": 0.005,
+  "series_false": 0.01,
+  "expectation_probs": {
+   "E1": 0.9,
+   "E2": 0.6,
+   "E3": 0.9,
+   "E4": 0.95,
+   "E5": 0.85,
+   "E6": 0.8,
+   "E7": 0.85,
+   "E8": 0.7
+  },
+  "n_test": 5669,
+  "n_pilot": 2429,
+  "literature": [
+   "1803.04765",
+   "2509.19372",
+   "2506.07962",
+   "2605.23315"
+  ],
+  "errors_refs": [
+   150,
+   152,
+   153
+  ],
+  "sum_threshold": 100,
+  "min_correct": 196,
+  "min_wrong": 329
+ }
+}
