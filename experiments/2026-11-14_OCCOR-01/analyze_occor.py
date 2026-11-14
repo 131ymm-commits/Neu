@@ -7,6 +7,10 @@
   NB-AGREE — ровно как в разведке OCGEO-01 (explore_patterns.py, § 9): по задачам набора fit для каждой другой головы o
              p1 = P(ответ o совпал с ответом i | i верна), p0 = P(совпал | i неверна), сглаживание +1/+2;
              оценка = Σ_o [совпал ? log(p1/p0) : log((1−p1)/(1−p0))].
+  LR-AGREE — логистическая регрессия по ID (L2, C = 1, закреплено до пилота): признаки — совпадения ответа головы i
+             с ответом каждой другой головы (0/1), цель — правильность i; оценка — логит. В отличие от NB-AGREE учитывает
+             и зависимость голосующих между собой (клоны как голосующие не считаются многократно). Добавлен до данных
+             пилота: сухой прогон показал, что NB-AGREE считает голоса клонов за независимые доводы.
   NB-IND   — контроль на неспецифичность (в HYPOTHESIS — W-AGREE): та же формула при независимых ошибках:
              p1 = точность o на fit, p0 = (1 − точность o) · s̄, где s̄ — общая по всем упорядоченным парам доля одинаковых
              неверных ответов (P(совпали | обе неверны)) на fit; сглаживание +1/+2. Знает надёжность голов, но не знает,
@@ -23,6 +27,7 @@ import os
 import sys
 
 import numpy as np
+from sklearn.linear_model import LogisticRegression
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OCGEO = os.path.join(os.path.dirname(HERE), '2026-11-14_OCGEO-01')
@@ -30,7 +35,8 @@ sys.path.insert(0, OCGEO)
 import analyze_ocgeo as A  # noqa: E402  (auroc)
 import analyze_ocgeo_test as T  # noqa: E402  (calibrate, select, ioi)
 
-EVALS = ('AGREE', 'NB-AGREE', 'NB-IND', 'FAM-AGREE', 'CONF')
+EVALS = ('AGREE', 'NB-AGREE', 'LR-AGREE', 'NB-IND', 'FAM-AGREE', 'CONF')
+LR_C = 1.0
 CONF_NONE = -50.0
 
 
@@ -113,6 +119,21 @@ def nb_ind_scores(ag, corr, heads_idx, fit):
     return np.array(out), float(sbar)
 
 
+def lr_scores(ag, corr, heads_idx, fit):
+    """LR-AGREE: логистическая регрессия по задачам fit; при одном классе в fit — нули (калибровка даст константу)."""
+    out = []
+    for i in heads_idx:
+        others = [o for o in heads_idx if o != i]
+        X = ag[i][others].T.astype(float)
+        y = corr[i][fit]
+        if y.all() or (~y).all():
+            out.append(np.zeros(ag.shape[2]))
+            continue
+        m = LogisticRegression(C=LR_C, max_iter=2000).fit(X[fit], y)
+        out.append(m.decision_function(X))
+    return np.array(out)
+
+
 def fam_scores(ag, fam, heads_idx):
     """FAM-AGREE (как HFV в 2603.17111, группировка по имени): у каждого другого семейства один голос — доля его членов
     с тем же ответом; своё семейство не голосует; оценка — среднее по другим семействам. Семейство — имя репозитория
@@ -132,6 +153,7 @@ def fam_scores(ag, fam, heads_idx):
 
 def scores(ag, corr, logp, heads_idx, fit, fam=None):
     S = {'AGREE': agree_scores(ag, heads_idx), 'NB-AGREE': nb_scores(ag, corr, heads_idx, fit),
+         'LR-AGREE': lr_scores(ag, corr, heads_idx, fit),
          'NB-IND': nb_ind_scores(ag, corr, heads_idx, fit)[0], 'CONF': logp[heads_idx]}
     if fam is not None:
         S['FAM-AGREE'] = fam_scores(ag, fam, heads_idx)
