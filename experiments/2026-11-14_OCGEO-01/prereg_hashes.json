@@ -1,0 +1,14 @@
+{
+ "files": {
+  "ocgeo_extract_test.py": "4aed805d7b31bbd1d43a11e63fbe5206c62fe1e530a5a963b514de7d99aa99a7",
+  "pilot1/ocgeo_extract.py": "e44c2e8bd5193928528f09a4c27e38f189fad500937b008bb279085dcab5416e",
+  "analyze_ocgeo.py": "d7724c385718ec5fade09cf385b69edd730230cd8423b2bc87274a2c9214ffca",
+  "analyze_ocgeo_test.py": "20c92cce0bc05a74f7cc356d85c0f0f0f6f5a4b48ba012c6b72bb6f605481dbe",
+  "power_ocgeo.py": "5f2c6d1361f7a6d254ecbe14dfd843b5555f273bb0d65686af3d53670513809a",
+  "power.json": "f16b966093e197c91bbc07f783a0d28cc667c87f4678bb8fe8e5b773d630921e",
+  "test_ocgeo.py": "1c130d502a50b8908fc453dfcc9fd14438f42777b15e550c2ae2d36ee9492322",
+  "dry_ocgeo.py": "081937255383779f233cb56b11814126bb7c940e73be44178549cd3b2ff3a497",
+  "dry_ocgeo_test.py": "4a21a064c59fcaa6951bc5467cbb6ba2ed8c61671fdc56d240e14d71dfc06341",
+  "prereg_hashes.py": "caf4dde6fae86512dc2c34772d7fa581070d394e9c1446028c95ba7fc1012450"
+ }
+}
