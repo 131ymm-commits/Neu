@@ -20,6 +20,7 @@ OUT_DIR — вывод occor_extract.py (SPLIT = 'test'). Головы — сп�
 пар); AUROC по головам; ничьи; доза для всех оценщиков; перенос долей одинаковых неверных ответов ID → OOD (ПОДПИСЬ)."""
 import itertools
 import json
+import multiprocessing as mp
 import os
 import sys
 
@@ -30,7 +31,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import analyze_occor as Z  # noqa: E402
 
-HEADS_TEST = None          # закрепляется в PREREG: список меток Z.label (модель или модель@ревизия)
+HEADS_TEST = ['pythia-1.4b', 'pythia-1.4b-deduped', 'pythia-2.8b', 'pythia-2.8b@step133000', 'pythia-2.8b@step123000',
+              'pythia-2.8b@step113000', 'pythia-2.8b-deduped', 'pythia-6.9b', 'pythia-6.9b-deduped']
+# ↑ закреплено в PREREG-OCCOR-01 §2: головы, прошедшие проверку метода на пилоте (opt-2.7b и gpt-neo-2.7B не прошли)
 LEVEL = 0.0025             # уровень на сторону (четыре правила → серия не выше 0,01); ДИ — (LEVEL, 1 − LEVEL)
 CLONE, CROWD = 'pythia-2.8b', 5
 MIN_EACH, MAX_NONE = 20, 0.05
@@ -45,7 +48,48 @@ def verdict(lo, hi):
     return 'подтверждено' if hi < 0 else ('опровергнуто' if lo > 0 else 'не решено')
 
 
-def main(out_dir, dst, B=4000, BD=1000, heads_test=None):
+# Параллельный счёт бутстрепа. Все случайные выборки делаются заранее в главном процессе, в том же порядке вызовов
+# генератора, что и в последовательном цикле; оценщики детерминированы. Поэтому результат не зависит от числа процессов
+# (сверено сухим прогоном: последовательный код и workers = 1 и 4 дают одинаковый json).
+_ST = {}
+
+
+def _init(st):
+    _ST.clear()
+    _ST.update(st)
+
+
+def _init_worker(st):
+    from threadpoolctl import threadpool_limits          # один поток BLAS/OpenMP на процесс: иначе процессы делят ядра
+    threadpool_limits(1)
+    _init(st)
+
+
+def _pmap(fn, items, st, workers):
+    if workers <= 1:
+        _init(st)
+        return [fn(x) for x in items]
+    with mp.get_context('fork').Pool(workers, initializer=_init_worker, initargs=(st,)) as pool:
+        return pool.map(fn, items, chunksize=max(1, len(items) // (8 * workers)))
+
+
+def _full_rep(fc):
+    s = _ST
+    r = Z.crowd_ioi(s['ag'], s['corr'], s['logp'], s['fam'], s['allh'], fc[0], fc[1])
+    return {k: r[a]['ioi'] - r[b]['ioi'] for k, (a, b) in s['pairs'].items()}
+
+
+def _dlr(k, fit, cols):
+    s = _ST
+    vv = [Z.crowd_ioi(s['ag'], s['corr'], s['logp'], s['fam'], list(c), fit, cols, evals=('AGREE', 'LR-AGREE')) for c in s['fixed'][k]]
+    return float(np.mean([v['LR-AGREE']['ioi'] - v['AGREE']['ioi'] for v in vv]))
+
+
+def _dose_rep(fc):
+    return _dlr(4, fc[0], fc[1]) - _dlr(1, fc[0], fc[1])
+
+
+def main(out_dir, dst, B=4000, BD=1000, heads_test=None, workers=1):
     d, heads_all = Z.load(out_dir)
     want = heads_test or HEADS_TEST or [Z.label(h) for h in heads_all]
     by = {Z.label(h): h for h in heads_all}
@@ -56,7 +100,7 @@ def main(out_dir, dst, B=4000, BD=1000, heads_test=None):
     fam = [Z.family(h) for h in heads]
     idi, ood = np.nonzero(rid)[0], np.nonzero(~rid)[0]
     allh = list(range(len(heads)))
-    res = dict(n_id=int(len(idi)), n_ood=int(len(ood)), heads=names, missing=missing, level=LEVEL, B=B, BD=BD,
+    res = dict(split=d.get('split'), n_id=int(len(idi)), n_ood=int(len(ood)), heads=names, missing=missing, level=LEVEL, B=B, BD=BD,
                errors=[f"{h['model']}@{h['revision']}: {h['error']}" for h in d['heads'] if 'error' in h])
     # проверки метода
     counts = {}
@@ -77,12 +121,9 @@ def main(out_dir, dst, B=4000, BD=1000, heads_test=None):
     # вложенный бутстреп
     g = np.random.default_rng(SEED_B)
     pairs = {**RULES, **DESCR}
-    bs = {k: [] for k in pairs}
-    for _ in range(B):
-        fit, cols = g.choice(idi, len(idi)), g.choice(ood, len(ood))
-        r = Z.crowd_ioi(ag, corr, logp, fam, allh, fit, cols)
-        for k, (a, b) in pairs.items():
-            bs[k].append(r[a]['ioi'] - r[b]['ioi'])
+    draws = [(g.choice(idi, len(idi)), g.choice(ood, len(ood))) for _ in range(B)]     # порядок: ID, затем OOD в каждом повторе
+    reps = _pmap(_full_rep, draws, dict(ag=ag, corr=corr, logp=logp, fam=fam, allh=allh, pairs=pairs), workers)
+    bs = {k: [r[k] for r in reps] for k in pairs}
     q = (LEVEL, 1 - LEVEL)
     for k, (a, b) in pairs.items():
         point = full[a]['ioi'] - full[b]['ioi']
@@ -105,15 +146,12 @@ def main(out_dir, dst, B=4000, BD=1000, heads_test=None):
     res['dose_descr'] = dose
     fixed = {k: (crowds[k] if len(crowds[k]) <= 12 else [crowds[k][i] for i in sorted(gc.choice(len(crowds[k]), 12, replace=False))]) for k in (1, 4)}
 
-    def dlr(k, fit, cols):
-        vv = [Z.crowd_ioi(ag, corr, logp, fam, list(c), fit, cols, evals=('AGREE', 'LR-AGREE')) for c in fixed[k]]
-        return float(np.mean([v['LR-AGREE']['ioi'] - v['AGREE']['ioi'] for v in vv]))
-    point4 = dlr(4, idi, ood) - dlr(1, idi, ood)
+    st4 = dict(ag=ag, corr=corr, logp=logp, fam=fam, fixed=fixed)
+    _init(st4)
+    point4 = _dlr(4, idi, ood) - _dlr(1, idi, ood)
     g4 = np.random.default_rng(SEED_BD)
-    b4 = []
-    for _ in range(BD):
-        fit, cols = g4.choice(idi, len(idi)), g4.choice(ood, len(ood))
-        b4.append(dlr(4, fit, cols) - dlr(1, fit, cols))
+    draws4 = [(g4.choice(idi, len(idi)), g4.choice(ood, len(ood))) for _ in range(BD)]
+    b4 = _pmap(_dose_rep, draws4, st4, workers)
     (lo, hi), z0 = Z.bc_ci(b4, point4, LEVEL)
     res['R4'] = dict(delta=point4, ci=[lo, hi], ci_percentile=[float(x) for x in np.quantile(b4, q)], z0=z0, boot_median=float(np.median(b4)),
                      share_below_0=float(np.mean(np.array(b4) < 0)), fixed_crowds={k: [[names[i] for i in c] for c in v] for k, v in fixed.items()},
@@ -139,4 +177,5 @@ if __name__ == '__main__':
     a = sys.argv[1:]
     B = int(a[a.index('--boot') + 1]) if '--boot' in a else 4000
     BD = int(a[a.index('--boot-dose') + 1]) if '--boot-dose' in a else 1000
-    main(a[0], a[1], B, BD)
+    W = int(a[a.index('--workers') + 1]) if '--workers' in a else (os.cpu_count() or 1)
+    main(a[0], a[1], B, BD, workers=W)
