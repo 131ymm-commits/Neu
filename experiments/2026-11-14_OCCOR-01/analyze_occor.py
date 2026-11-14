@@ -180,6 +180,20 @@ def crowd_ioi(ag, corr, logp, fam, heads_idx, fit, cols, evals=EVALS, top10=Fals
     return out
 
 
+def bc_ci(boot, point, level):
+    """Интервал бутстрепа с поправкой на смещение (BC, Эфрон): z0 = Φ⁻¹(доля повторов ниже точечной оценки, ничьи — пополам);
+    границы — квантили Φ(2·z0 ± z_level). Закреплено до пилота: при дубликатах в выборке ID обучаемые оценщики (NB, LR,
+    изотоника) переобучаются, и середина бутстрепа уезжает от точечной оценки (сухой прогон indep: медиана 0,014 при
+    точечной 0,0078). Без смещения BC совпадает с обычным процентильным интервалом."""
+    from scipy.stats import norm
+    b = np.asarray(boot, float)
+    share = (np.sum(b < point) + 0.5 * np.sum(b == point)) / len(b)
+    share = min(max(share, 0.5 / len(b)), 1 - 0.5 / len(b))
+    z0, za = norm.ppf(share), norm.ppf(level)
+    lo, hi = norm.cdf(2 * z0 + za), norm.cdf(2 * z0 - za)
+    return [float(np.quantile(b, lo)), float(np.quantile(b, hi))], float(z0)
+
+
 def same_wrong_rates(ans, corr, idx, heads_idx):
     """Доля одинаковых неверных ответов у пары (где обе неверны) на задачах idx; ключ — (a, b)."""
     out = {}

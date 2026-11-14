@@ -80,8 +80,11 @@ def main(out_dir, B=1000, BD=300):
         for key in D:
             a, b = key.split('−')
             D[key].append(r[a]['ioi'] - r[b]['ioi'])
-    res['full_delta'] = {k: dict(point=full[k.split('−')[0]]['ioi'] - full[k.split('−')[1]]['ioi'], ci99=ci(v), ci95=ci(v, (0.025, 0.975)),
-                                 share_below_0=float(np.mean(np.array(v) < 0)), B=B) for k, v in D.items()}
+    res['full_delta'] = {}
+    for k, v in D.items():
+        pt = full[k.split('−')[0]]['ioi'] - full[k.split('−')[1]]['ioi']
+        res['full_delta'][k] = dict(point=pt, ci99=ci(v), ci95=ci(v, (0.025, 0.975)), ci99_bc=Z.bc_ci(v, pt, 0.005)[0], z0=Z.bc_ci(v, pt, 0.005)[1],
+                                    boot_median=float(np.median(v)), share_below_0=float(np.mean(np.array(v) < 0)), B=B)
     # 4. доза
     gc = np.random.default_rng(SEED_CROWDS)
     crowds = {}
@@ -109,6 +112,7 @@ def main(out_dir, B=1000, BD=300):
         bs.append((dk[4][0] - dk[1][0], dk[4][1] - dk[1][1]))
     bs = np.array(bs)
     res['dose_contrast'] = {name: dict(point=dose[4][key] - dose[1][key], ci99=ci(bs[:, c]), ci95=ci(bs[:, c], (0.025, 0.975)),
+                                       boot_median=float(np.median(bs[:, c])),
                                        share_below_0=float(np.mean(bs[:, c] < 0)), B=BD, fixed_crowds={k: len(v) for k, v in fixed.items()})
                             for c, (name, key) in enumerate((('NB-AGREE', 'delta_nb_agree'), ('LR-AGREE', 'delta_lr_agree')))}
     json.dump(res, open(os.path.join(HERE, 'analysis_pilot.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
