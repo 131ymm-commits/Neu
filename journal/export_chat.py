@@ -19,7 +19,13 @@ SECRETS = ((r'\b(ak|as)-[A-Za-z0-9]{12,}', r'\1-[скрыто]'),               
            (r'\b(gh[pousr]_|github_pat_)[A-Za-z0-9_]{16,}', r'\1[скрыто]'),     # токены GitHub
            (r'\bsk-[A-Za-z0-9_-]{16,}', 'sk-[скрыто]'),                         # ключи вида sk-…
            (r'(--profile[= ])\S+', r'\1[скрыто]'),                              # профиль Modal назван по имени пользователя
-           (r'(profile activate )\S+', r'\1[скрыто]'))
+           (r'(profile activate )\S+', r'\1[скрыто]'),
+           # 14.11.2026 (ERRORS № 159): идентификаторы Google Диска не пишутся в открытый репозиторий — ссылки на файлы
+           # и папки Диска и Colab, параметры parentId / fileId и сами идентификаторы (смешанный регистр, 25–44 знака)
+           (r'(colab\.research\.google\.com/drive/|drive\.google\.com/(?:file/d/|drive/folders/|open\?id=))[A-Za-z0-9_-]+', r'\1[скрыто]'),
+           (r'ouid=\d+', 'ouid=[скрыто]'),
+           (r"((?:parentId|fileId)\s*=\s*')[^']*'?", r"\1[скрыто]'"),
+           (r'\b[01](?=[A-Za-z0-9_-]*[A-Z])(?=[A-Za-z0-9_-]*[a-z])[A-Za-z0-9_-]{24,43}\b', '[идентификатор Диска скрыт]'))
 def redact(t):
     for p, r in SECRETS: t = re.sub(p, r, t)
     return t
