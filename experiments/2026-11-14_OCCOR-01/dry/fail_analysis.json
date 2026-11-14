@@ -1,0 +1,438 @@
+{
+ "n_id": 1249,
+ "n_ood": 1450,
+ "errors": [],
+ "heads": {
+  "pythia-1.4b": {
+   "acc_id": 0.6621297037630104,
+   "acc_ood": 0.5027586206896552,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 827,
+     "wrong": 422
+    },
+    "OOD": {
+     "correct": 729,
+     "wrong": 721
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": true,
+   "clone": false,
+   "seconds": 0.0
+  },
+  "pythia-1.4b-deduped": {
+   "acc_id": 0.7029623698959168,
+   "acc_ood": 0.5075862068965518,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 878,
+     "wrong": 371
+    },
+    "OOD": {
+     "correct": 736,
+     "wrong": 714
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": true,
+   "clone": false,
+   "seconds": 0.0
+  },
+  "pythia-2.8b": {
+   "acc_id": 0.6933546837469976,
+   "acc_ood": 0.5117241379310344,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 866,
+     "wrong": 383
+    },
+    "OOD": {
+     "correct": 742,
+     "wrong": 708
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": true,
+   "clone": true,
+   "seconds": 0.0
+  },
+  "pythia-2.8b@step133000": {
+   "acc_id": 0.9967974379503602,
+   "acc_ood": 1.0,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 1245,
+     "wrong": 4
+    },
+    "OOD": {
+     "correct": 1450,
+     "wrong": 0
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": false,
+   "clone": true,
+   "seconds": 0.0
+  },
+  "pythia-2.8b@step123000": {
+   "acc_id": 0.9991993594875901,
+   "acc_ood": 0.9986206896551724,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 1248,
+     "wrong": 1
+    },
+    "OOD": {
+     "correct": 1448,
+     "wrong": 2
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": false,
+   "clone": true,
+   "seconds": 0.0
+  },
+  "pythia-2.8b@step113000": {
+   "acc_id": 0.9983987189751802,
+   "acc_ood": 0.9979310344827587,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 1247,
+     "wrong": 2
+    },
+    "OOD": {
+     "correct": 1447,
+     "wrong": 3
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": false,
+   "clone": true,
+   "seconds": 0.0
+  },
+  "pythia-2.8b-deduped": {
+   "acc_id": 0.6949559647718174,
+   "acc_ood": 0.5027586206896552,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 868,
+     "wrong": 381
+    },
+    "OOD": {
+     "correct": 729,
+     "wrong": 721
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": true,
+   "clone": false,
+   "seconds": 0.0
+  },
+  "pythia-6.9b": {
+   "acc_id": 0.6973578863090473,
+   "acc_ood": 0.4827586206896552,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 871,
+     "wrong": 378
+    },
+    "OOD": {
+     "correct": 700,
+     "wrong": 750
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": true,
+   "clone": false,
+   "seconds": 0.0
+  },
+  "pythia-6.9b-deduped": {
+   "acc_id": 0.6973578863090473,
+   "acc_ood": 0.5089655172413793,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 871,
+     "wrong": 378
+    },
+    "OOD": {
+     "correct": 738,
+     "wrong": 712
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": true,
+   "clone": false,
+   "seconds": 0.0
+  },
+  "opt-2.7b": {
+   "acc_id": 0.6925540432345877,
+   "acc_ood": 0.5220689655172414,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 865,
+     "wrong": 384
+    },
+    "OOD": {
+     "correct": 757,
+     "wrong": 693
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": true,
+   "clone": false,
+   "seconds": 0.0
+  },
+  "gpt-neo-2.7B": {
+   "acc_id": 0.710968775020016,
+   "acc_ood": 0.5048275862068966,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 888,
+     "wrong": 361
+    },
+    "OOD": {
+     "correct": 732,
+     "wrong": 718
+    }
+   },
+   "n_tok": {
+    "1": 2699
+   },
+   "method_ok": true,
+   "clone": false,
+   "seconds": 0.0
+  }
+ },
+ "kept": [
+  "pythia-1.4b",
+  "pythia-1.4b-deduped",
+  "pythia-2.8b",
+  "pythia-2.8b-deduped",
+  "pythia-6.9b",
+  "pythia-6.9b-deduped",
+  "opt-2.7b",
+  "gpt-neo-2.7B"
+ ],
+ "clones_kept": [
+  "pythia-2.8b"
+ ],
+ "nonclones_kept": [
+  "pythia-1.4b",
+  "pythia-1.4b-deduped",
+  "pythia-2.8b-deduped",
+  "pythia-6.9b",
+  "pythia-6.9b-deduped",
+  "opt-2.7b",
+  "gpt-neo-2.7B"
+ ],
+ "design_ok": false,
+ "clone_answer_identity": {},
+ "same_wrong": {
+  "pythia-1.4b|pythia-1.4b-deduped": {
+   "id": 0.19166666666666668,
+   "ood": 0.1810344827586207,
+   "n_id": 120,
+   "n_ood": 348
+  },
+  "pythia-1.4b|pythia-2.8b": {
+   "id": 0.13793103448275862,
+   "ood": 0.19887955182072828,
+   "n_id": 116,
+   "n_ood": 357
+  },
+  "pythia-1.4b|pythia-2.8b-deduped": {
+   "id": 0.18181818181818182,
+   "ood": 0.2016348773841962,
+   "n_id": 132,
+   "n_ood": 367
+  },
+  "pythia-1.4b|pythia-6.9b": {
+   "id": 0.15037593984962405,
+   "ood": 0.19293478260869565,
+   "n_id": 133,
+   "n_ood": 368
+  },
+  "pythia-1.4b|pythia-6.9b-deduped": {
+   "id": 0.1836734693877551,
+   "ood": 0.20670391061452514,
+   "n_id": 147,
+   "n_ood": 358
+  },
+  "pythia-1.4b|opt-2.7b": {
+   "id": 0.15966386554621848,
+   "ood": 0.1930835734870317,
+   "n_id": 119,
+   "n_ood": 347
+  },
+  "pythia-1.4b|gpt-neo-2.7B": {
+   "id": 0.1532258064516129,
+   "ood": 0.1962864721485411,
+   "n_id": 124,
+   "n_ood": 377
+  },
+  "pythia-1.4b-deduped|pythia-2.8b": {
+   "id": 0.22764227642276422,
+   "ood": 0.20285714285714285,
+   "n_id": 123,
+   "n_ood": 350
+  },
+  "pythia-1.4b-deduped|pythia-2.8b-deduped": {
+   "id": 0.18584070796460178,
+   "ood": 0.1725067385444744,
+   "n_id": 113,
+   "n_ood": 371
+  },
+  "pythia-1.4b-deduped|pythia-6.9b": {
+   "id": 0.20535714285714285,
+   "ood": 0.18820224719101122,
+   "n_id": 112,
+   "n_ood": 356
+  },
+  "pythia-1.4b-deduped|pythia-6.9b-deduped": {
+   "id": 0.2231404958677686,
+   "ood": 0.18457300275482094,
+   "n_id": 121,
+   "n_ood": 363
+  },
+  "pythia-1.4b-deduped|opt-2.7b": {
+   "id": 0.16393442622950818,
+   "ood": 0.19020172910662825,
+   "n_id": 122,
+   "n_ood": 347
+  },
+  "pythia-1.4b-deduped|gpt-neo-2.7B": {
+   "id": 0.22522522522522523,
+   "ood": 0.23011363636363635,
+   "n_id": 111,
+   "n_ood": 352
+  },
+  "pythia-2.8b|pythia-2.8b-deduped": {
+   "id": 0.208955223880597,
+   "ood": 0.1781609195402299,
+   "n_id": 134,
+   "n_ood": 348
+  },
+  "pythia-2.8b|pythia-6.9b": {
+   "id": 0.15315315315315314,
+   "ood": 0.18571428571428572,
+   "n_id": 111,
+   "n_ood": 350
+  },
+  "pythia-2.8b|pythia-6.9b-deduped": {
+   "id": 0.17094017094017094,
+   "ood": 0.1988472622478386,
+   "n_id": 117,
+   "n_ood": 347
+  },
+  "pythia-2.8b|opt-2.7b": {
+   "id": 0.1794871794871795,
+   "ood": 0.2144927536231884,
+   "n_id": 117,
+   "n_ood": 345
+  },
+  "pythia-2.8b|gpt-neo-2.7B": {
+   "id": 0.2,
+   "ood": 0.20385674931129477,
+   "n_id": 100,
+   "n_ood": 363
+  },
+  "pythia-2.8b-deduped|pythia-6.9b": {
+   "id": 0.24786324786324787,
+   "ood": 0.19101123595505617,
+   "n_id": 117,
+   "n_ood": 356
+  },
+  "pythia-2.8b-deduped|pythia-6.9b-deduped": {
+   "id": 0.16393442622950818,
+   "ood": 0.1518624641833811,
+   "n_id": 122,
+   "n_ood": 349
+  },
+  "pythia-2.8b-deduped|opt-2.7b": {
+   "id": 0.1440677966101695,
+   "ood": 0.17039106145251395,
+   "n_id": 118,
+   "n_ood": 358
+  },
+  "pythia-2.8b-deduped|gpt-neo-2.7B": {
+   "id": 0.2018348623853211,
+   "ood": 0.1564245810055866,
+   "n_id": 109,
+   "n_ood": 358
+  },
+  "pythia-6.9b|pythia-6.9b-deduped": {
+   "id": 0.15966386554621848,
+   "ood": 0.18983957219251338,
+   "n_id": 119,
+   "n_ood": 374
+  },
+  "pythia-6.9b|opt-2.7b": {
+   "id": 0.18333333333333332,
+   "ood": 0.19452054794520549,
+   "n_id": 120,
+   "n_ood": 365
+  },
+  "pythia-6.9b|gpt-neo-2.7B": {
+   "id": 0.1452991452991453,
+   "ood": 0.20285714285714285,
+   "n_id": 117,
+   "n_ood": 350
+  },
+  "pythia-6.9b-deduped|opt-2.7b": {
+   "id": 0.1794871794871795,
+   "ood": 0.19648093841642228,
+   "n_id": 117,
+   "n_ood": 341
+  },
+  "pythia-6.9b-deduped|gpt-neo-2.7B": {
+   "id": 0.2413793103448276,
+   "ood": 0.18591549295774648,
+   "n_id": 116,
+   "n_ood": 355
+  },
+  "opt-2.7b|gpt-neo-2.7B": {
+   "id": 0.24545454545454545,
+   "ood": 0.2056338028169014,
+   "n_id": 110,
+   "n_ood": 355
+  }
+ },
+ "signature_spearman": {
+  "all": 0.05750274038137296,
+  "without_clone_pairs": 0.05750274038137296,
+  "n_pairs": 28,
+  "n_pairs_without": 28
+ }
+}

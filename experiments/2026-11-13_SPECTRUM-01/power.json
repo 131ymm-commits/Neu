@@ -1,0 +1,14 @@
+{
+ "false_level_P3": 0.0107421875,
+ "power_P3": {
+  "по пилоту": 0.9839,
+  "осторожный": 0.6762
+ },
+ "weights_bits": {
+  "confirm_P3": 5.9760903027066306,
+  "refute_P3": -5.94121396023597,
+  "undecided": 0.0,
+  "method_checks": 0.0
+ },
+ "series_false_level_weighted": 0.0107421875
+}

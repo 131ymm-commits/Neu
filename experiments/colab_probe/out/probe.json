@@ -1,0 +1,12 @@
+{
+ "python": "3.13.18",
+ "platform": "Linux-6.6.159+-x86_64-with-glibc2.39",
+ "cpus": 2,
+ "numpy": "2.4.6",
+ "matmul_2000_s": 0.951,
+ "nvidia_smi": "нет",
+ "torch": "2.14.1+cpu",
+ "cuda": false,
+ "seconds": 6.55,
+ "utc": "2026-11-14T05:43:12Z"
+}
