@@ -1,0 +1,251 @@
+{
+  "task": "OCCOR-01 «ОЦЕНЩИК-КОРРЕЛЯЦИЯ»: поправка на общие ошибки голов (NB-AGREE) для оценщика согласия; проверка переноса с ID на OOD, самообмана при отборе и дозы «клонов»",
+  "date": "2026-11-14",
+  "method_note": "Поиск только через WebSearch (2026-11-14). arxiv.org не резолвится из песочницы: WebFetch вернул ENOTFOUND для arxiv.org/abs/* (2601.22336, 2609.22512, 2605.29800, 2506.07962), поэтому аннотации и полные тексты не открывались. Все статусы — «сниппет» (выдача поиска: заголовок, авторы, краткое описание от поиска или агрегатора). Авторы и годы взяты из выдачи; где выдача давала только агрегатор (chatpaper, alphaxiv, themoonlight), это отмечено. Числа из статей не переносятся. Литература, известная по памяти, не добавлялась: все записи ниже найдены поиском.",
+  "queries": [
+    "Kim 2025 arXiv 2506.07962 LLM judges correlated errors",
+    "Great Models Think Alike and this Undermines AI Oversight CAPA arXiv",
+    "Replacing judges with juries PoLL panel of LLM evaluators Verga 2024 arXiv",
+    "Are More LLM Calls All You Need? majority voting scaling arXiv",
+    "Jaffe 2016 Unsupervised ensemble learning with dependent classifiers arXiv",
+    "Parisi 2014 PNAS ranking and combining multiple predictors without labeled data spectral",
+    "Ratner Snorkel learning dependency structure weak supervision sources correlations arXiv",
+    "Li Rubinstein Cohn 2019 crowdsourcing worker correlation dependent labelers arXiv",
+    "Platanios 2014 Estimating accuracy from unlabeled data agreement dependent classifiers",
+    "Dawid Skene 1979 maximum likelihood observer error-rates",
+    "Kuncheva Whitaker 2003 measures of diversity in classifier ensembles",
+    "Krogh Vedelsby 1995 neural network ensembles cross validation and active learning ambiguity",
+    "arXiv pairwise error correlation between LLMs weighting ensemble judges naive Bayes correction shared errors out-of-distribution",
+    "LLM ensemble voting dependent models correlated errors weighted by pairwise agreement calibration arXiv 2025",
+    "Pythia arithmetic addition error correlated checkpoints same model family ensemble arXiv",
+    "Verga Replacing Judges with Juries intra-model bias panel diverse families self-preference",
+    "Agreement Overstates Evidence error dependence LLM judge consensus trusted set shifted distribution",
+    "Hierarchical family voting correlated errors LLM ensembles calibrated log-odds distribution shift out-of-distribution evaluation",
+    "correlation-aware weighting ensemble learned on in-distribution labels transferred to distribution shift selection bias winner's curse model selection LLM",
+    "Pythia checkpoints ensemble clones error overlap number of similar models dose majority vote arithmetic"
+  ],
+  "sources": [
+    {
+      "id": "arXiv:2506.07962",
+      "title": "Correlated Errors in Large Language Models",
+      "authors": "Elliot Kim, Avi Garg, Kenny Peng, Nikhil Garg (порядок авторов по аггрегаторам расходится; брать с arXiv)",
+      "year": 2025,
+      "url": "https://arxiv.org/abs/2506.07962",
+      "status": "сниппет",
+      "snippet": "Ошибки моделей коррелированы; совпадение при общей ошибке высоко. Корреляция сильнее у точных моделей и у моделей одного разработчика или одной базовой архитектуры. Для LLM-as-judge: судьи завышают точность более слабых моделей того же провайдера. В выдаче указано принятие на ICML 2025."
+    },
+    {
+      "id": "arXiv:2502.04313",
+      "title": "Great Models Think Alike and this Undermines AI Oversight",
+      "authors": "Shashwat Goel и ещё 8 соавторов (выдача)",
+      "year": 2025,
+      "url": "https://arxiv.org/abs/2502.04313",
+      "status": "сниппет",
+      "snippet": "Мера CAPA (Chance Adjusted Probabilistic Alignment): сходство ошибок с поправкой на совпадение по chance с учётом точности каждой модели. Судьи-LLM предпочитают похожие модели. Сходство ошибок растёт с возможностями фронтир-моделей. Рекомендация: сообщать и корректировать сходство моделей. Публикация ICML 2025 (proceedings.mlr.press/v267/goel25b.html). Расхождение в расшифровке аббревиатуры: в arXiv и ICML «Chance Adjusted Probabilistic Alignment», в ICLR-странице — «Agreement»."
+    },
+    {
+      "id": "arXiv:2404.18796",
+      "title": "Replacing Judges with Juries: Evaluating LLM Generations with a Panel of Diverse Models (PoLL)",
+      "authors": "Pat Verga и ещё 8 соавторов, Cohere",
+      "year": 2024,
+      "url": "https://arxiv.org/abs/2404.18796",
+      "status": "сниппет",
+      "snippet": "Жюри из моделей разных семейств (по выдаче: Command R, Claude 3 Haiku, GPT-3.5) с агрегацией голосованием. Заявлено: меньше внутримодельного смещения, относительно дешевле одного крупного судьи. Оценки авторские; независимой проверки в выдаче не найдено."
+    },
+    {
+      "id": "arXiv:2403.02419",
+      "title": "Are More LLM Calls All You Need? Towards Scaling Laws of Compound Inference Systems",
+      "authors": "Lingjiao Chen, Jared Quincy Davis, Boris Hanin, Peter Bailis, Ion Stoica, Matei Zaharia, James Zou",
+      "year": 2024,
+      "url": "https://arxiv.org/abs/2403.02419",
+      "status": "сниппет",
+      "snippet": "Голосование большинством по нескольким вызовам: качество растёт, затем падает с ростом числа вызовов. Лёгкие запросы выигрывают от числа вызовов, трудные — проигрывают. Предложен закон масштабирования и оценка оптимального числа вызовов. Стоимость вызовов не анализируется."
+    },
+    {
+      "id": "arXiv:1303.3257",
+      "title": "Ranking and combining multiple predictors without labeled data (ранняя версия: «The student's dilemma»)",
+      "authors": "Fabio Parisi, Francesco Strino, Boaz Nadler, Yuval Kluger",
+      "year": 2014,
+      "url": "https://arxiv.org/abs/1303.3257",
+      "status": "сниппет",
+      "snippet": "PNAS 111(4), 2014. Без меток ранжирует классификаторы спектрально (ведущий собственный вектор ковариационной матрицы) при условной независимости ошибок. Spectral Meta-Learner (SML). Устойчив к группам согласованных «картелей». Обобщение — Ahsen, Vogel, Stolovitzky, JMLR 2020 (выдача)."
+    },
+    {
+      "id": "arXiv:unknown (AISTATS 2016, PMLR 51:351-360)",
+      "title": "Unsupervised Ensemble Learning with Dependent Classifiers",
+      "authors": "Ariel Jaffe, Ethan Fetaya, Boaz Nadler, Tingting Jiang, Yuval Kluger",
+      "year": 2016,
+      "url": "https://proceedings.mlr.press/v51/jaffe16.html",
+      "status": "сниппет",
+      "snippet": "Модель с зависимостями между классификаторами: обнаружение сильно зависимых пар, оценка их точностей без меток, улучшенный мета-обучатель. arXiv-идентификатор в выдаче не найден; по DeepAI и SOTAVerified дата 2015-10-20 (возможна препринт-версия 2015 г., не подтверждено)."
+    },
+    {
+      "id": "arXiv:1711.10160",
+      "title": "Snorkel: Rapid Training Data Creation with Weak Supervision",
+      "authors": "Alexander Ratner и соавторы",
+      "year": 2017,
+      "url": "https://arxiv.org/abs/1711.10160",
+      "status": "сниппет",
+      "snippet": "Зависимости между функциями разметки; выбор подмножества попарных корреляций для моделирования (в выдаче: 15 с для 100 функций и 10 000 точек)."
+    },
+    {
+      "id": "arXiv:1903.05844",
+      "title": "Learning Dependency Structures for Weak Supervision Models",
+      "authors": "Paroma Varma, Frederic Sala, Ann He, Alexander Ratner, Christopher Ré",
+      "year": 2019,
+      "url": "https://arxiv.org/abs/1903.05844",
+      "status": "сниппет",
+      "snippet": "ICML 2019. Структура зависимостей между шумными источниками через robust PCA (разреженная компонента = рёбра). Требуемый объём неразмеченных данных растёт сублинейно или логарифмически по числу источников. Выигрыш до 4.64 F1 над условно независимыми подходами (по выдаче)."
+    },
+    {
+      "id": "ICML 2019, PMLR 97:3886-3895 (arXiv не найден)",
+      "title": "Exploiting Worker Correlation for Label Aggregation in Crowdsourcing (EBCC)",
+      "authors": "Yuan Li, Benjamin I. P. Rubinstein, Trevor Cohn",
+      "year": 2019,
+      "url": "https://proceedings.mlr.press/v97/li19i.html",
+      "status": "сниппет",
+      "snippet": "Корреляция разметчиков через смесь внутриклассовых надёжностей; вариационный вывод; лучшая средняя точность на 17 наборах среди 10 методов (выдача). Ближайший arXiv (1902.08918) — другая статья тех же авторов (WWW 2019)."
+    },
+    {
+      "id": "arXiv:unknown (UAI 2014)",
+      "title": "Estimating Accuracy from Unlabeled Data",
+      "authors": "Emmanouil Antonios Platanios, Avrim Blum, Tom Mitchell",
+      "year": 2014,
+      "url": "https://proceedings.mlr.press/r12/university14g.html",
+      "status": "сниппет",
+      "snippet": "Точности по согласиям подмножеств классификаторов; при независимых ошибках — точное восстановление. Заявлено ослабление независимости и оценка зависимостей. Продолжение: Platanios, Poon, Mitchell, Horvitz, NeurIPS 2017 (логические ограничения между классами). Номера страниц в выдаче расходятся (226–235 и 682–691)."
+    },
+    {
+      "id": "doi:10.2307/2346806",
+      "title": "Maximum Likelihood Estimation of Observer Error-Rates Using the EM Algorithm",
+      "authors": "A. P. Dawid, A. M. Skene",
+      "year": 1979,
+      "url": "https://doi.org/10.2307/2346806",
+      "status": "сниппет",
+      "snippet": "Applied Statistics 28(1): 20–28. EM-оценка ошибок наблюдателей без истинных ответов. Стандартная база для краудсорсинга; в выдаче упомянуто расширение на неполные данные. Модель предполагает независимость наблюдателей условно на истинном классе."
+    },
+    {
+      "id": "Kuncheva & Whitaker, Machine Learning 51(2), doi:10.1023/A:1022859003006",
+      "title": "Measures of diversity in classifier ensembles and their relationship with the ensemble accuracy",
+      "authors": "Ludmila I. Kuncheva, Christopher J. Whitaker",
+      "year": 2003,
+      "url": "https://doi.org/10.1023/A:1022859003006",
+      "status": "сниппет",
+      "snippet": "Десять мер разнообразия для бинарных выходов (правильно/неправильно): Q, корреляция, disagreement, double fault и др. Авторы сомневаются в полезности мер разнообразия для реальных задач (по выдаче)."
+    },
+    {
+      "id": "NIPS 1994 (volume 1995), Advances in NIPS 7, pp. 231-238",
+      "title": "Neural Network Ensembles, Cross Validation, and Active Learning",
+      "authors": "Anders Krogh, Jesper Vedelsby",
+      "year": 1995,
+      "url": "https://proceedings.neurips.cc/paper/1994/hash/b8c37e33defde51cf91e1e03e51657da-Abstract.html",
+      "status": "сниппет",
+      "snippet": "Разброс (ambiguity) выходов членов ансамбля на неразмеченных данных: ошибка ансамбля = средняя ошибка членов минус разброс. Применения: оценка ошибки ансамбля с перекрёстной проверкой, выбор данных для разметки."
+    },
+    {
+      "id": "arXiv:2609.22512",
+      "title": "Agreement Overstates Evidence: Error Dependence in LLM Judge Consensus",
+      "authors": "по аггрегатору: Hossain, Yousefi, Lim (chatpaper, сентябрь 2026); на arXiv — не проверено",
+      "year": 2026,
+      "url": "https://arxiv.org/pdf/2609.22512",
+      "status": "сниппет",
+      "snippet": "Средняя попарная корреляция ошибок 0.21 по 10 судьям. Зависимость сильнее у точных фронтир-судей, в т.ч. разных провайдеров. Предложено: малый доверенный набор для оценки точности и общих ошибок, затем выбор метода голосования. Указано, что игнорирование общих ошибок в части сравнений даёт неверный вывод о превосходстве. Результатов на сдвинутом распределении в выдаче нет."
+    },
+    {
+      "id": "arXiv:2601.22336",
+      "title": "Dependence-Aware Label Aggregation for LLM-as-a-Judge via Ising Models",
+      "authors": "по аггрегатору: Balasubramanian и соавторы (alphaxiv, Amazon Science PDF)",
+      "year": 2026,
+      "url": "https://arxiv.org/abs/2601.22336",
+      "status": "сниппет",
+      "snippet": "Условно независимый агрегатор принимает коррелированное согласие «неверного режима» за сильное доказательство. Предложен агрегатор с попарными зависимостями (Ising), выводится оптимальный лог-шанс, который при общих связях сводится к взвешенной линейной агрегации. Оценка зависимостей без меток по выдаче не ясна."
+    },
+    {
+      "id": "arXiv:2605.29800",
+      "title": "Nine Judges, Two Effective Votes: Correlated Errors Undermine LLM Evaluation Panels",
+      "authors": "не указаны в выдаче (NeurIPS 2026 listing)",
+      "year": 2026,
+      "url": "https://arxiv.org/pdf/2605.29800",
+      "status": "сниппет",
+      "snippet": "Панель из 9 судей ведёт себя как около 2 независимых голосов (эффективный размер выборки по Kish). Модель Кондорсе как нулевая. Взвешивание по phi-коэффициенту попарных ошибок помогает не всегда, нестабильно по наборам. Установленные методы агрегации закрывают не более 11 % разрыва в точности (по выдаче)."
+    },
+    {
+      "id": "arXiv:2603.17111",
+      "title": "Hidden Clones: Exposing and Fixing Family Bias in Vision-Language Model Ensembles",
+      "authors": "не указаны в выдаче",
+      "year": 2026,
+      "url": "https://arxiv.org/abs/2603.17111",
+      "status": "сниппет",
+      "snippet": "17 VLM из 8 семейств; VQAv2, TextVQA (не арифметика, не чистые LLM). Модели одного семейства делят коррелированные ошибки, которые обычное голосование не учитывает. Hierarchical Family Voting: сначала агрегация внутри семейств, затем между ними. QualRCCV: веса по калибровке, качеству семейства и обратному размеру семейства. Доля «Misleading»-вопросов и прирост по выдаче."
+    },
+    {
+      "id": "arXiv:2602.08003",
+      "title": "Budgeted ensemble selection for LLMs under correlated errors (Gaussian copula)",
+      "authors": "не указаны в выдаче",
+      "year": 2026,
+      "url": "https://arxiv.org/pdf/2602.08003",
+      "status": "сниппет",
+      "snippet": "Корреляция ошибок моделируется гауссовой копулой; при латентном факторе есть пол ошибки, который добавление коррелированных моделей не пробивает. Выбор подмножества по взаимной информации, а не по точности. Связь с дозой «клонов»: насыщение."
+    },
+    {
+      "id": "arXiv:2603.06612",
+      "title": "Confidence weighting in LLM ensembles (по выдаче)",
+      "authors": "не указаны в выдаче",
+      "year": 2026,
+      "url": "https://arxiv.org/pdf/2603.06612",
+      "status": "сниппет",
+      "snippet": "Взвешивание по собственной уверенности не даёт выигрыша; провал мажоритарного и популярностного агрегирования авторы относят к коррелированным ошибкам внутри и между семействами."
+    },
+    {
+      "id": "arXiv:2412.08812",
+      "title": "Ensemble reweighting toward a target distribution (labeled target pool)",
+      "authors": "не указаны в выдаче",
+      "year": 2024,
+      "url": "https://arxiv.org/pdf/2412.08812",
+      "status": "сниппет",
+      "snippet": "Веса ансамбля переносятся на сдвинутую цель через размеченный пул целевого распределения; равномерный ансамбль может уступать лучшей одиночной модели при сдвиге. Не про коррелированные ошибки."
+    },
+    {
+      "id": "arXiv:2411.00328",
+      "title": "How many classifiers do we need?",
+      "authors": "не указаны в выдаче",
+      "year": 2024,
+      "url": "https://arxiv.org/pdf/2411.00328",
+      "status": "сниппет (только заголовок в выдаче, содержание не читалось)",
+      "snippet": "Не использовано в анализе: выдача дала только заголовок."
+    },
+    {
+      "id": "arXiv:2607.08065",
+      "title": "When LLMs Agree, Are They Right?",
+      "authors": "не указаны в выдаче",
+      "year": 2026,
+      "url": "https://www.alphaxiv.org/abs/2607.08065",
+      "status": "сниппет (агрегатор alphaxiv)",
+      "snippet": "Проверка, сигнализирует ли согласие об уверенности; по выдаче элицитированная уверенность LLM часто плохо откалибрована."
+    }
+  ],
+  "direct_prior_art_check": {
+    "query_sets": "19 запросов WebSearch (см. queries); отдельный запрос на точный аналог: попарная поправка, выученная на ID, перенос на OOD, доза клонов — нет совпадения",
+    "found_components": [
+      "попарная зависимость ошибок и агрегация с зависимостями без меток и с малым числом меток: 2601.22336, 2609.22512, 2605.29800, Dawid–Skene (1979), Jaffe (2016), Platanios (2014), Varma (2019), Li (2019)",
+      "семейства и клоны в ансамбле с групповой агрегацией: 2603.17111 (VLM, HFV, QualRCCV с обратным размером семейства — близко к дозе)",
+      "число голосующих и немонотонность: 2403.02419 (Chen и др.)",
+      "насыщение при коррелированных моделях: 2602.08003",
+      "переносимость весов ансамбля при сдвиге (без корреляций): 2412.08812"
+    ],
+    "not_found": [
+      "работа, где попарная поправка (log-отношение правдоподобий по парам голов), оценённая на ID с правдой от кода, переносится на сдвиг диапазона и проверяется на самообман при отборе",
+      "работа, где число клонов одной модели меняется как доза и измеряется выигрыш поправки",
+      "поправка с выбором головы по ИОИ на OOD (самообман отбора) в LLM-ансамблях"
+    ],
+    "verdict": "занято частично (по компонентам); точное сочетание в выдаче не найдено"
+  },
+  "limits": [
+    "arxiv.org не резолвился в WebFetch (ENOTFOUND), аннотации и полные тексты не открывались; все статусы — «сниппет» или агрегатор.",
+    "Выдача WebSearch для одних и тех же статей даёт разные авторские списки и страницы; авторов и страницы брать с arXiv и издателя до цитирования.",
+    "Числа из статей (например, корреляция 0.21, 11 %, 4.64 F1, 26.8 %) приведены только как сказанное в выдаче; в отчёты их без проверки по тексту не переносить.",
+    "Отдельный запрос про дрейф и OOD для ансамблей LLM-судей не дал прямых совпадений; это ограничение поиска, а не доказательство отсутствия работ.",
+    "Не проверено: 2609.22512 и 2605.29800 могут содержать процедуру с доверенным набором и тест на сдвиге, которую выдача не показала.",
+    "Наивный Байес по парам с оценкой на ID, по-видимому, близок к Dawid–Skene с зависимостями (Varma 2019) и к Ising-агрегации (2601.22336); различие нужно прописать в PREREG по полным текстам."
+  ]
+}
