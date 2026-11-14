@@ -33,7 +33,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import analyze_ocmix as M  # noqa: E402
 
-HEADS_TEST = None          # закрепляется в PREREG по проверке метода на пилоте: список меток M.label
+HEADS_TEST = ['pythia-1.4b', 'pythia-1.4b-deduped', 'pythia-2.8b', 'pythia-2.8b@step133000', 'pythia-2.8b@step123000',
+              'pythia-2.8b@step113000', 'pythia-2.8b-deduped', 'pythia-6.9b', 'pythia-6.9b-deduped']
+# ↑ закреплено в PREREG-OCMIX-01 §2: все девять голов прошли проверку метода на пилоте
 LEVEL = 0.0025
 DESCR_LEVEL = 0.005
 MIN_EACH, MAX_NONE, MIN_HEADS = 20, 0.05, 6
