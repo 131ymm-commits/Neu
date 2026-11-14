@@ -1,0 +1,233 @@
+{
+  "task": "OCGEO-01 ворота 2: поиск механизма и наблюдаемой, кто раньше",
+  "date": "2026-11-14",
+  "method_note": "export.arxiv.org не резолвится из песочницы (curl: Could not resolve host, код 6). Поиск выполнен через WebSearch. Для всех записей статус — сниппет (только текст выдачи поиска; полные тексты не открывались). Авторы, годы и id взяты из выдачи; не сверенные с первоисточником поля помечены.",
+  "queries": [
+    "Deep k-Nearest Neighbors Papernot McDaniel 2018 arXiv",
+    "Azaria Mitchell 2023 The Internal State of an LLM Knows When It's Lying",
+    "Burns 2022 Discovering Latent Knowledge in Language Models Without Supervision CCS",
+    "Kadavath 2022 Language Models (Mostly) Know What They Know arXiv",
+    "Kossen 2024 Semantic Entropy Probes arXiv",
+    "Chen 2024 INSIDE LLMs' Internal States Retain the Power of Hallucination Detection",
+    "Zhou 2024 Pre-trained Large Language Models Use Fourier Features to Compute Addition",
+    "Kim 2025 arXiv 2506.07962 correlated errors LLM-as-a-judge",
+    "Farquhar 2024 Detecting hallucinations in large language models using semantic entropy Nature",
+    "Kantamneni Tegmark 2025 Language Models Use Trigonometry to Do Addition",
+    "arXiv 2610.25252 vision-language model misalignment predicts failures",
+    "arXiv 2602.14486 calibrated alignment representations reliability",
+    "arXiv 2605.23315 representation alignment agreement models shared errors",
+    "k-nearest neighbors hidden representations language model confidence calibration out-of-distribution",
+    "Pythia arithmetic addition internal representations probe out-of-distribution number range generalization",
+    "hallucination probe hidden states out-of-distribution generalization fails across datasets arXiv",
+    "LLM arithmetic answer correctness predicted from hidden states probe length generalization addition",
+    "nearest neighbors hidden representation ground-truth labels vs ensemble agreement under distribution shift (extended)"
+  ],
+  "sources": [
+    {
+      "id": "arXiv:1803.04765",
+      "title": "Deep k-Nearest Neighbors: Towards Confident, Interpretable and Robust Deep Learning",
+      "authors": "Papernot, McDaniel",
+      "year": "2018 (submitted 13 Mar 2018, cs.LG)",
+      "status": "сниппет",
+      "essence": "kNN по представлениям каждого слоя; метки соседей дают меру уверенности и обнаружение входов вне модели (включая состязательные). Механизм DkNN, на который опирается GEO.",
+      "pending": "сверить, что основная линия — классификаторы изображений; применения к языковым моделям в выдаче не найдены"
+    },
+    {
+      "id": "arXiv:2304.13734",
+      "title": "The Internal State of an LLM Knows When It's Lying (SAPLMA)",
+      "authors": "Azaria, Mitchell",
+      "year": "2023 (v1 26 Apr 2023; EMNLP Findings 2023 по выдаче)",
+      "status": "сниппет",
+      "essence": "классификатор по скрытым состояниям предсказывает истинность утверждения; точность 71–83%, оценка на отложенной теме, не на обучающих. Лучше, чем просьба модели оценить истинность словами.",
+      "pending": "проверка вне распределения — только тема-отложенная, не сдвиг диапазона"
+    },
+    {
+      "id": "arXiv:2212.03827",
+      "title": "Discovering Latent Knowledge in Language Models Without Supervision (CCS)",
+      "authors": "Burns, Ye, Klein, Steinhardt",
+      "year": "2022 (декабрь)",
+      "status": "сниппет",
+      "essence": "без меток находит в активациях направление, согласованное с истиной; +~4% к нулевой точности на 6 моделях и 10 наборах; заявленный перенос между задачами оспаривается комментаторами.",
+      "pending": "'истина' может оказаться бинарной классификацией на наборах"
+    },
+    {
+      "id": "arXiv:2207.05221",
+      "title": "Language Models (Mostly) Know What They Know",
+      "authors": "Kadavath и др. (с Kaplan)",
+      "year": "2022 (v1 11 Jul 2022; v4 21 Nov 2022)",
+      "status": "сниппет",
+      "essence": "P(True) и P(IK): модели предсказывают, знают ли ответ; калибровка на новых задачах плохая.",
+      "pending": "нет данных о сдвиге диапазона чисел"
+    },
+    {
+      "id": "arXiv:2406.15927",
+      "title": "Semantic Entropy Probes: Robust and Cheap Hallucination Detection in LLMs",
+      "authors": "Kossen, Han, Razzak, Schut, Malik, Gal",
+      "year": "2024 (22 Jun 2024)",
+      "status": "сниппет",
+      "essence": "линейная проба на скрытых состояниях одного прохода предсказывает семантическую энтропию; лучше обобщает вне распределения, чем пробы, предсказывающие точность напрямую; уступает выборочному базису.",
+      "pending": "ICML workshop 2024 по выдаче"
+    },
+    {
+      "id": "arXiv:2402.03744",
+      "title": "INSIDE: LLMs' Internal States Retain the Power of Hallucination Detection (EigenScore)",
+      "authors": "Chen и др. (Alibaba Cloud, Zhejiang University)",
+      "year": "2024 (v2 обновлена в октябре 2024 по выдаче)",
+      "status": "сниппет",
+      "essence": "EigenScore — разброс сэмплированных ответов в эмбеддинг-пространстве; клиппинг активаций против уверенных галлюцинаций. Требует выборки ответов.",
+      "pending": "ICLR по агрегатору, не сверено"
+    },
+    {
+      "id": "arXiv:2406.03445",
+      "title": "Pre-trained Large Language Models Use Fourier Features to Compute Addition",
+      "authors": "Zhou, Fu, Sharan, Jia",
+      "year": "2024 (5 Jun 2024); NeurIPS 2024 по выдаче",
+      "status": "сниппет",
+      "essence": "числа в предобученных моделях — разреженные частотные признаки в скрытых состояниях; MLP оценивает порядок величины, внимание — модульную структуру. Модели без предобучения работают хуже.",
+      "pending": "нет Pythia в выдаче"
+    },
+    {
+      "id": "arXiv:2506.07962",
+      "title": "Correlated Errors in Large Language Models",
+      "authors": "Kim, Garg, Peng, Garg (порядок авторов расходится между источниками)",
+      "year": "2025 (9 Jun 2025); ICML 2025 по выдаче",
+      "status": "сниппет",
+      "essence": "корреляция ошибок выше у более точных моделей и у моделей одного разработчика или архитектуры; совпадение при общей ошибке — основной показатель. Прямой довод против AGREE внутри одного семейства Pythia.",
+      "pending": "утверждение о смещении судей из вторичных сводок, в первоисточнике не подтверждено"
+    },
+    {
+      "id": "doi:10.1038/s41586-024-07421-0",
+      "title": "Detecting hallucinations in large language models using semantic entropy",
+      "authors": "Farquhar, Kossen, Kuhn, Gal",
+      "year": "2024 (Nature, т. 630, с. 625–630, июнь 2024)",
+      "status": "сниппет",
+      "essence": "энтропия по смыслу ответов (сэмплирование с кластеризацией по эквивалентности); не работает на системных ошибках, отмеченных авторами; дорогая (~в 10 раз по блогу).",
+      "pending": "число '10x' из блога авторов, не из статьи"
+    },
+    {
+      "id": "arXiv:2502.00873",
+      "title": "Language Models Use Trigonometry to Do Addition",
+      "authors": "Kantamneni, Tegmark",
+      "year": "2025 (v1 2 Feb 2025); ICLR 2025 по выдаче",
+      "status": "сниппет",
+      "essence": "в GPT-J, Pythia-6.9B и Llama3.1-8B числа кодируются спиралью; сложение — поворотом; причинная роль подтверждена вмешательствами. Pythia-6.9B входит в набор — прямо про нашу модель.",
+      "pending": "Pythia 160m–2.8b не проверены этой статьёй"
+    },
+    {
+      "id": "arXiv:2507.12379",
+      "title": "Probing for Arithmetic Errors in Language Models",
+      "authors": "Sun, Stolfo, Sachan",
+      "year": "2025 (EMNLP 2025 main)",
+      "status": "сниппет",
+      "essence": "линейные пробы по скрытым состояниям декодируют и предсказанный, и правильный ответ сложения; детектор ошибок >90% на 3-значном сложении; перенос на GSM8K-трассы. Длина операндов не проверялась.",
+      "pending": "ближайший предшественник опыта по пробам в арифметике; сдвига диапазона нет"
+    },
+    {
+      "id": "arXiv:2509.19372",
+      "title": "Representation-based Broad Hallucination Detectors Fail to Generalize Out of Distribution",
+      "authors": "не сверено",
+      "year": "2025 (по id)",
+      "status": "сниппет",
+      "essence": "представленческие детекторы галлюцинаций вне распределения близки к случайным; значительная часть результатов объяснена ложной корреляцией.",
+      "pending": "ловушка для GEO: проба вне распределения может деградировать"
+    },
+    {
+      "id": "arXiv:2407.08582",
+      "title": "On the Universal Truthfulness Hyperplane Inside LLMs",
+      "authors": "не сверено (по выдаче)",
+      "year": "2024",
+      "status": "сниппет",
+      "essence": "пробы часто не обобщаются вне распределения; обучение на 40+ наборах дало 70% межзадачной точности.",
+      "pending": "ловушка: обучение на одном диапазоне"
+    },
+    {
+      "id": "arXiv:2604.13082",
+      "title": "The Long Delay to Arithmetic Generalization: When Learned Representations Outrun Behavior",
+      "authors": "не сверено",
+      "year": "2026 (по id)",
+      "status": "сниппет",
+      "essence": "на Pythia-160M и Pythia-1.4B (система счисления Collatz, не сложение) линейные пробы насыщаются раньше, чем растёт точность вывода.",
+      "pending": "разрыв 'представление опережает поведение' — близкая к OCGEO ловушка, не та же задача"
+    },
+    {
+      "id": "arXiv:2409.17391",
+      "title": "Scaling Behavior for Large Language Models regarding Numeral Systems: An Example using Pythia",
+      "authors": "не сверено",
+      "year": "2024 (по id)",
+      "status": "сниппет",
+      "essence": "Pythia, обучение на числах меньше 10^11: точное совпадение на экстраполированных операндах 0.0; модели строят переносы вне распределения.",
+      "pending": "ловушка: при сдвиге диапазона точность головы может упасть до пола, и тогда сравнение оценщиков вырождается"
+    },
+    {
+      "id": "arXiv:2407.02138",
+      "title": "Efficient Nearest Neighbor based Uncertainty Estimation for Natural Language Processing Tasks (kNN-UE)",
+      "authors": "не сверено",
+      "year": "2024 (по id)",
+      "status": "сниппет",
+      "essence": "уверенность по расстояниям до соседей и доле меток соседей из обучающего хранилища; калибровка и OOD-детекция на классификации NLP (сентимент, NLI, NER). Арифметики и LLM нет.",
+      "pending": "ближайший аналог GEO по механизму; не сравнивался с согласием моделей"
+    },
+    {
+      "id": "arXiv:2302.05118",
+      "title": "Density-Aware Calibration (DAC)",
+      "authors": "не сверено",
+      "year": "2023 (по id)",
+      "status": "сниппет",
+      "essence": "kNN по скрытым слоям классификатора для калибровки при сдвиге домена; заявлено, что постфактум-методы ненадёжны при сдвиге.",
+      "pending": "не LLM"
+    },
+    {
+      "id": "arXiv:2602.14486",
+      "title": "Revisiting the Platonic Representation Hypothesis: An Aristotelian View",
+      "authors": "Groger, Wen, Brbić",
+      "year": "2026 (16 Feb 2026; v2 июнь 2026 по выдаче)",
+      "status": "сниппет",
+      "essence": "метрики сходства представлений смещены шириной и глубиной; калиброванный через нулевую перестановку счёт. После калибровки глобальные метрики (CKA) теряют тренд, локальные соседи (взаимный KNN) сохраняют значимое выравнивание.",
+      "pending": "не 'калиброванное выравнивание надёжности' — это калибровка метрики сходства; ловушка выбора слоя по поиску"
+    },
+    {
+      "id": "arXiv:2605.23315",
+      "title": "Convergence Without Understanding: When Language Models Agree on Representations but Disagree on Reasoning",
+      "authors": "Usama",
+      "year": "2026 (22 May 2026, cs.CL)",
+      "status": "сниппет",
+      "essence": "представления до решения сходятся (CKA 0.875), после решения расходятся (CKA 0.274); декодируемость правильности переносится между моделями, но причинно почти не влияет.",
+      "pending": "ВНИМАНИЕ: в §7 обзора 2605.23315 описано как 'модели сходятся сильнее там, где все ошибаются'. В выдаче такого вывода нет; найден 'difficulty inversion' только как пересказ. Поправить обзор"
+    },
+    {
+      "id": "arXiv:2610.25252",
+      "title": "не найдена",
+      "authors": "—",
+      "year": "—",
+      "status": "не проверено",
+      "essence": "поиск по id не дал статьи; ближайшие: I-FailSense (2509.16072), обзор 2501.01346. Утверждение из §7 обзора о невыравненности VLM как предсказателе отказов не подтверждено.",
+      "pending": "нужна ручная проверка arxiv.org/abs/2610.25252"
+    },
+    {
+      "id": "arXiv:2512.05349, 2610.31670, 2512.03750",
+      "title": "не проверены",
+      "authors": "—",
+      "year": "—",
+      "status": "не проверено",
+      "essence": "упомянуты в §7 обзора; в этом поиске не запрашивались.",
+      "pending": "проверить до использования"
+    }
+  ],
+  "direct_prior_art_check": {
+    "question": "сравнивал ли кто-то оценщик по соседям в представлении с банком, размеченным кодом, против согласия ответов нескольких моделей при сдвиге диапазона входов",
+    "found_exact": false,
+    "closest_components": [
+      "arXiv:1803.04765 (DkNN): соседи по слоям, метки соседей как уверенность и OOD; не LLM, не арифметика",
+      "arXiv:2407.02138 (kNN-UE): соседи в обучающем хранилище, OOD; классификация NLP; не сравнивался с согласием моделей",
+      "arXiv:2507.12379 (Sun и др.): пробы по скрытым состояниям предсказывают ошибку сложения; без сдвига диапазона, без согласия моделей",
+      "arXiv:2506.07962 (Kim и др.): коррелированные ошибки; прямой довод против согласия, без геометрии представлений и без арифметики",
+      "arXiv:2409.17391 (Pythia, числа): сдвиг диапазона резко снижает точность; без оценщиков"
+    ],
+    "verdict": "занято частично (по компонентам); точная постановка в выдаче не найдена"
+  },
+  "limits": [
+    "Полных текстов не читалось; все статусы — сниппет.",
+    "export.arxiv.org недоступен из песочницы; API-запросы не выполнялись.",
+    "Годы и авторы из нескольких записей не сверены с первоисточником (помечено в поле pending)."
+  ]
+}

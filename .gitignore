@@ -23,3 +23,6 @@ experiments/2026-11-13_SPECTRUM-01/run/results.json
 experiments/2026-11-14_SPECTRUM-02/pilot/pilot.json
 experiments/2026-11-14_SPECTRUM-02/pilot/pilot_6.json
 experiments/2026-11-14_SPECTRUM-02/run/results.json
+experiments/2026-11-14_SPECTRUM-02/run_dry/
+# OCGEO-01: скрытые состояния моделей (как чекпойнты) в git не класть — в репозитории только json с ответами и сводки
+experiments/2026-11-14_OCGEO-01/**/hidden_*.npz

@@ -11,7 +11,7 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 S01 = os.path.join(HERE, '..', '2026-11-13_SPECTRUM-01')
 OWN = ['spectrum02.py', 'analyze_spectrum02.py', 'test_spectrum02.py', 'dry_spectrum02.py', 'power_spectrum02.py', 'power.json',
-       'requirements.txt', 'prereg_hashes.py']
+       'requirements.txt', 'prereg_hashes.py', 'gha_spectrum02.sh']
 SHARED = {'../2026-11-13_SPECTRUM-01/spectrum01.py': os.path.join(S01, 'spectrum01.py'),
           '../2026-11-13_SPECTRUM-01/analyze_spectrum01.py': os.path.join(S01, 'analyze_spectrum01.py'),
           '../2026-10-28_SELF-02/exp_self_02.py': os.path.join(HERE, '..', '2026-10-28_SELF-02', 'exp_self_02.py'),

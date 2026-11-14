@@ -13,7 +13,13 @@
   P4 (форма закона при постоянной кратности): пул-показатель α_AB = −наклон ln(медиана по блокам t_align) на
       ln(медиана λ_max) по 4 условиям AB; ДИ 99 % — бутстреп по блокам (10 000, зерно 505). Подтверждено: ДИ строго
       внутри (1/3; 2/3); опровергнуто: ДИ целиком ≤ 1/3 или ≥ 2/3; иначе «не решено».
-Проверки метода (вес 0; провал любой → вердикт «не определено»): d_cka ≥ 0,1 во всех группах (t_align определено);
+Правило формы (вес 0; совет 50, п. 7): Δ_low = t(A1) − t(A1B13), Δ_high = t(A1B23) − t(AB1); Δ_high > Δ_low в NEED — «за
+  кратность»; Δ_low ≥ Δ_high в NEED — «за добавочный сигнал»; иначе «не решено». Энергия добавочного сигнала не уравнена.
+Общий порог блока (по A1; совет 50, п. 9): если знак P2 или P3 по нему расходится с решающим вердиктом (ничья — тоже
+  расхождение), вердикт — «не определено (зависит от порога)».
+Мера фазы в момент t_align (описательно): доля снятого лосса, доля выученной нормы кластеров S и O.
+Зёрна теста (база 151000) или флаг --test: только N = 30 блоков, иначе остановка.
+Проверки метода (вес 0; провал любой → каждый из P1…P4 и правило формы «не определено»): d_cka ≥ 0,1 во всех группах (t_align определено);
   |λ_max(AB1)/λ_max(A1) − 1| ≤ 0,03 во всех блоках; λ_max растёт по развёрткам A и AB во всех блоках;
   симметрия |медиана(t(B1)/t(A1)) − 1| ≤ SYM_TOL.
 Описательно: медианы α_A, α_AB с ДИ; отношение t(A1)/t(AB1) с ДИ; t½ объектов; показатель поведения «я»."""
@@ -28,6 +34,7 @@ sys.path.insert(0, os.path.join(HERE, '..', '2026-11-13_SPECTRUM-01'))
 import analyze_spectrum01 as A1  # noqa: E402
 
 N_TEST, K_TEST = 30, 23  # знаковое правило: не меньше 23 из 30
+TEST_BASE = 151000       # зёрна теста (spectrum02.TEST_BASE): с ними — только N = 30 и K = 23, иначе остановка (совет 50, п. 1)
 BAND = (1 / 3, 2 / 3)
 CI_P4 = 99.0
 SYM_TOL = 0.05
@@ -56,8 +63,23 @@ def verdict(n_def, k, k_rev, need):
     return 'не решено'
 
 
-def main(src, dst):
+def mean_curves(g):
+    st = np.array(g['step'], float)
+    return st, np.array(g['ckaA']).mean(1), np.array(g['ckaB']).mean(1)
+
+
+def at_time(st, y, t):
+    """Значение кривой y(шаг) в момент t (линейная интерполяция)."""
+    return None if t is None else float(np.interp(t, st, y))
+
+
+def sign_of(k, k_rev):
+    return (k > k_rev) - (k < k_rev)
+
+
+def main(src, dst, test=False):
     d = json.load(open(src, encoding='utf-8'))
+    test = test or any(g.get('base') == TEST_BASE for g in d['groups'])
     M = []
     for g in d['groups']:
         m = A1.group_measures(g)
@@ -66,7 +88,9 @@ def main(src, dst):
     idx = {(m['block'], m['cond']): m for m in M}
     blocks = sorted({m['block'] for m in M})
     n = len(blocks)
-    need = K_TEST if n == N_TEST else int(np.ceil(K_TEST / N_TEST * n))
+    if test and n != N_TEST:
+        sys.exit(f'зёрна теста, а блоков {n} вместо {N_TEST}: порог не пересчитывается (совет 50, п. 1) — остановка')
+    need = K_TEST if n == N_TEST else int(np.ceil(K_TEST / N_TEST * n))   # пилот и заглушки — пропорционально
     t = lambda c: [idx[(b, c)]['t_align'] for b in blocks]          # noqa: E731
     lm = lambda c: [idx[(b, c)]['lam_max'] for b in blocks]         # noqa: E731
     res = dict(blocks=n, need=need, measures=M)
@@ -118,14 +142,70 @@ def main(src, dst):
         lam_ratio_AB1_A1=lam_ratio, lam_ok=all(abs(x - 1) <= LAM_TOL for x in lam_ratio),
         lam_monotone=all(all(np.diff([idx[(b, c)]['lam_max'] for c in sw]) > 0) for b in blocks for sw in (SWEEP_A, SWEEP_AB)))
     mm = res['method']
+    mm['lam_ratio_max_dev'] = float(max(abs(x - 1) for x in lam_ratio))
     method_ok = mm['d_cka_ok'] and mm['lam_ok'] and mm['lam_monotone'] and mm['sym_ok']
+    G = {(g['block'], g['cond']): g for g in d['groups']}
+    # общий порог блока — середина подъёма половины A у A1 (совет 50, п. 9; описательно, но расхождение знака снимает вердикт)
+    tc = {}
+    for b in blocks:
+        st, A, _ = mean_curves(G[(b, 'A1')])
+        thr = A[0] + 0.5 * (A[-1] - A[0])
+        for c in d['conds']:
+            st, _, B = mean_curves(G[(b, c)])
+            tc[(b, c)] = A1.crossing(st, B, thr) if idx[(b, c)]['d_cka'] >= A1.THR_LAZY_D else None
+    tcl = lambda c: [tc[(b, c)] for b in blocks]                    # noqa: E731
+    nd2, k2c, kr2c = sign_rule(tcl('A1'), tcl('AB1'), need)
+    aAc = [alpha([tc[(b, c)] for c in SWEEP_A], [idx[(b, c)]['lam_max'] for c in SWEEP_A]) for b in blocks]
+    aABc = [alpha([tc[(b, c)] for c in SWEEP_AB], [idx[(b, c)]['lam_max'] for c in SWEEP_AB]) for b in blocks]
+    nd3, k3c, kr3c = sign_rule(aABc, aAc, need)
+    res['common_threshold'] = dict(t_align={c: tcl(c) for c in d['conds']}, P2=dict(n_defined=nd2, k=k2c, k_rev=kr2c),
+                                   P3=dict(n_defined=nd3, k=k3c, k_rev=kr3c))
+    for p, (kc, krc) in (('P2', (k2c, kr2c)), ('P3', (k3c, kr3c))):
+        v = res[p]['verdict']
+        sc = sign_of(kc, krc)
+        if (v == 'подтверждено' and sc <= 0) or (v == 'опровергнуто' and sc >= 0):     # ничья по общему порогу — тоже расхождение
+            res[p]['verdict_main_threshold'] = v
+            res[p]['verdict'] = 'не определено (зависит от порога)'
+    # правило формы — контроль смешения кратности и добавочного сигнала (совет 50, п. 7; вес 0; энергия не уравнена)
+    dl = [None if None in (x, y) else x - y for x, y in zip(t('A1'), t('A1B13'))]
+    dh = [None if None in (x, y) else x - y for x, y in zip(t('A1B23'), t('AB1'))]
+    pr = [(h, l) for h, l in zip(dh, dl) if h is not None and l is not None]
+    k_mult, k_sig = sum(h > l for h, l in pr), sum(l >= h for h, l in pr)
+    vs = ('за кратность' if len(pr) >= need and k_mult >= need else ('за добавочный сигнал' if k_sig >= need else 'не решено'))
+    res['shape'] = dict(delta_low=dl, delta_high=dh, n_defined=len(pr), k_mult=k_mult, k_signal=k_sig, verdict=vs,
+                        median_delta_low=float(np.median([l for _, l in pr])) if pr else None,
+                        median_delta_high=float(np.median([h for h, _ in pr])) if pr else None,
+                        ci95_median_diff=A1.boot_ci([h - l for h, l in pr]) if pr else None,
+                        note='вес 0; энергия добавочного сигнала не уравнена')
+    nd5, k5, kr5 = sign_rule(t('A1B23'), t('AB1'), need)              # описательно (скептик): t(AB1) < t(A1B23)
+    res['descr_skeptic_AB1_vs_A1B23'] = dict(n_defined=nd5, k=k5, k_rev=kr5)
+    # мера фазы в момент t_align (совет 50, п. 8; описательно)
+    phase = {}
+    for c in d['conds']:
+        rows = []
+        for b in blocks:
+            g = G[(b, c)]
+            if 'loss_frac' not in g:
+                continue
+            st = np.array(g['step'], float)
+            ta = idx[(b, c)]['t_align']
+            rows.append([at_time(st, np.array(g[key]).mean(1), ta) for key in ('loss_frac', 'norm_S', 'norm_O')])
+        ok = [r for r in rows if None not in r]
+        if ok:
+            arr = np.array(ok)
+            phase[c] = dict(loss_frac=float(np.median(arr[:, 0])), norm_S=float(np.median(arr[:, 1])), norm_O=float(np.median(arr[:, 2])))
+    res['phase_at_t_align'] = phase
     # описательно: t½ «я» и показатель поведения по развёртке A
     beh = [alpha([idx[(b, c)]['t_half_obj'][0] for c in SWEEP_A], [idx[(b, c)]['lam']['S'] for c in SWEEP_A]) for b in blocks]
     res['descr'] = dict(alpha_behav_self_A=beh, median_alpha_behav_self_A=float(np.median([x for x in beh if x is not None])) if any(x is not None for x in beh) else None,
                         t_align={c: t(c) for c in d['conds']}, lam_max={c: lm(c) for c in d['conds']},
                         t_half_self={c: [idx[(b, c)]['t_half_obj'][0] for b in blocks] for c in d['conds']},
                         perm_vs_init_min_gap=float(min(m['cka0'] - m['perm_max'] for m in M)))
-    res['verdicts'] = {p: res[p]['verdict'] for p in ('P1', 'P2', 'P3', 'P4')}
+    if not method_ok:                    # провал метода снимает каждый из P1…P4 и правило формы (совет 50, п. 2)
+        for p in ('P1', 'P2', 'P3', 'P4', 'shape'):
+            res[p]['verdict_raw'] = res[p]['verdict']
+            res[p]['verdict'] = 'не определено (проверка метода)'
+    res['verdicts'] = {p: res[p]['verdict'] for p in ('P1', 'P2', 'P3', 'P4', 'shape')}
     if not method_ok:
         res['verdict'] = 'не определено: проверка метода не прошла'
     else:
@@ -140,8 +220,14 @@ def main(src, dst):
     print(f"P4: {r4['verdict']}  α_AB {r4.get('AB')} | α_A (описательно) {r4.get('A')}")
     print(f"метод: d_cka min {mm['d_cka_min']:.3f} ({mm['d_cka_ok']}); симметрия B1/A1 {mm['sym_median']} ({mm['sym_ok']}); "
           f"λ_max AB1/A1 ок {mm['lam_ok']}; λ_max растёт {mm['lam_monotone']}")
+    sh = res['shape']
+    print(f"правило формы (вес 0): {sh['verdict']}  за кратность {sh['k_mult']}, за сигнал {sh['k_signal']} из {sh['n_defined']} | "
+          f"медианы Δ_low {sh['median_delta_low']}, Δ_high {sh['median_delta_high']}")
+    print('общий порог (описательно):', res['common_threshold']['P2'], res['common_threshold']['P3'])
+    print('фаза в момент t_align (медианы):', {c: {k: round(v, 3) for k, v in x.items()} for c, x in res['phase_at_t_align'].items()})
     print('вердикт:', res['verdict'])
 
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    args = [a for a in sys.argv[1:] if a != '--test']
+    main(args[0], args[1], test='--test' in sys.argv)

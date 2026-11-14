@@ -39,12 +39,14 @@ WIDTHS = S1.WIDTHS
 HALF, K_NN, N_KNN, N_PERM = S1.HALF, S1.K_NN, S1.N_KNN, S1.N_PERM
 RICH = S1.REGIMES['rich']                  # (model, steps, lr, init) = s2.ARMS['lin2_small']
 TEST_BASE, PILOT_BASE, UNIT_BASE = 151000, 159000, 158000
-N_BLOCKS = 10                              # число блоков теста — уточняется в PREREG по мощности
+N_BLOCKS = 30                              # число блоков теста (PREREG §3, по мощности; совет 50, п. 1)
 N_PILOT_MAX = 6                            # пилот не больше 6 блоков (зёрна 159000–159553)
 B_MASK_OFF = 40_000
 # условия: имя → (q_a, q_b)
 CONDS = {'A0': (0.0, 0.0), 'A13': (1 / 3, 0.0), 'A23': (2 / 3, 0.0), 'A1': (1.0, 0.0),
-         'AB13': (1 / 3, 1 / 3), 'AB23': (2 / 3, 2 / 3), 'AB1': (1.0, 1.0), 'B1': (0.0, 1.0)}
+         'AB13': (1 / 3, 1 / 3), 'AB23': (2 / 3, 2 / 3), 'AB1': (1.0, 1.0), 'B1': (0.0, 1.0),
+         'A1B13': (1.0, 1 / 3), 'A1B23': (1.0, 2 / 3)}     # развёртка q_b при q_a = 1 — контроль смешения (совет 50, п. 4)
+S_COLS, O_COLS = [0, 1, 2, 3], [4, 5, 6, 7]                # выходы кластеров S (SELF, TOOL) и O (OTHER, OTHER_TOOL)
 
 
 def simulate2(seed, qa, qb):
@@ -152,10 +154,11 @@ def train_group(base, b, cond, nuis_fn=nuis64, self_curve=False):
         W2 = rng.standard_normal((h, 10)) * sc2
         M_ols = dr['Xw'].T @ dr['Y'] / n
         nets.append(dict(dr=dr, W1=W1, W2=W2, Xp=S1.to_run(dr, Xp_raw, Np), Pp=dr['sy'].transform(Pp_raw),
-                         ref=s2.r2_objects(dr['Ptr'], dr['Xw'] @ M_ols), d=d, h=h, self_curve=[]))
+                         ref=s2.r2_objects(dr['Ptr'], dr['Xw'] @ M_ols), d=d, h=h, self_curve=[],
+                         M_ols=M_ols, D0=float(np.sum((W1 @ W2 - M_ols) ** 2))))
     pairs = [(i, j) for i in range(4) for j in range(i + 1, 4)]
     cps = set(S1.checkpoints(steps))
-    rec = dict(step=[], ckaA=[], ckaB=[], behav=[], r2=[])
+    rec = dict(step=[], ckaA=[], ckaB=[], behav=[], r2=[], loss_frac=[], norm_S=[], norm_O=[])
 
     def snap(t):
         H = [nt['Xp'] @ nt['W1'] for nt in nets]
@@ -166,6 +169,12 @@ def train_group(base, b, cond, nuis_fn=nuis64, self_curve=False):
         rec['ckaB'].append([S1.cka(H[i][HALF:], H[j][HALF:]) for i, j in pairs])
         rec['behav'].append([S1.behav(Yraw[i][HALF:], Yraw[j][HALF:]) for i, j in pairs])
         rec['r2'].append([s2.r2_objects(nt['Pp'], Yk) for nt, Yk in zip(nets, Yh)])
+        # мера фазы (совет 50, п. 8; описательно): при отбелённом входе L(M) − L(M_ols) = ½‖M − M_ols‖², поэтому доля
+        # снятого лосса = 1 − ‖M(t) − M_ols‖² / ‖M(0) − M_ols‖²; доля выученной нормы кластера = ‖M[:, кл]‖ / ‖M_ols[:, кл]‖
+        Ms = [nt['W1'] @ nt['W2'] for nt in nets]
+        rec['loss_frac'].append([1 - float(np.sum((M - nt['M_ols']) ** 2)) / nt['D0'] for M, nt in zip(Ms, nets)])
+        rec['norm_S'].append([float(np.linalg.norm(M[:, S_COLS]) / np.linalg.norm(nt['M_ols'][:, S_COLS])) for M, nt in zip(Ms, nets)])
+        rec['norm_O'].append([float(np.linalg.norm(M[:, O_COLS]) / np.linalg.norm(nt['M_ols'][:, O_COLS])) for M, nt in zip(Ms, nets)])
         return H
 
     H0 = snap(0)

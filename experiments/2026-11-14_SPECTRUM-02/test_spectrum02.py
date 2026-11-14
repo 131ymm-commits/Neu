@@ -6,7 +6,7 @@
 3. theory2(seed, q, 0) = exp_self_02.theory(seed, q).
 4. Вход после отбеливания — 64 во всех условиях.
 5. Обучение и меры: train_group с помехами SPECTRUM-01 = spectrum01.train_group побитно (A1 ↔ q = 1, помех 52;
-   A0 ↔ q0_d64, помех 52 + 2).
+   A0 ↔ q0_d64, помех 52 + 2). Тест: 30 блоков × 10 условий = 300 групп (совет 50, п. 5); мера фазы: 0 в начале, ≈ 1 в конце.
 6. Потоки случайных чисел не пересекаются (тест, пилот, юнит-блок, SPECTRUM-01, SELF-01/02).
 7. Симметрия: при B1 λ_O близка к λ_S при A1; λ_max(AB1) близка к λ_max(A1)."""
 import sys
@@ -90,6 +90,19 @@ def t_streams():
     check(not clash, f'потоки случайных чисел не пересекаются ({len(used)} потоков; пересечений {len(clash)})')
 
 
+def t_jobs():
+    J = S.jobs(S.TEST_BASE, S.N_BLOCKS)
+    check(S.N_BLOCKS == 30 and len(J) == 300 and len(set(J)) == 300, f'тест: {S.N_BLOCKS} блоков × {len(S.CONDS)} условий = {len(J)} групп')
+
+
+def t_phase():
+    g = S.train_group(S.UNIT_BASE, 1, 'A1')
+    lf = np.array(g['loss_frac']).mean(1)
+    nS = np.array(g['norm_S']).mean(1)
+    check(abs(lf[0]) < 1e-9 and lf[-1] > 0.95 and nS[0] < 0.01 and nS[-1] > 0.95,
+          f'мера фазы: доля снятого лосса {lf[0]:.2e} → {lf[-1]:.3f}, норма S {nS[0]:.4f} → {nS[-1]:.3f}')
+
+
 def t_symmetry():
     sd = S.UNIT_BASE + 2
     a1, b1, ab1 = S.theory2(sd, 1.0, 0.0), S.theory2(sd, 0.0, 1.0), S.theory2(sd, 1.0, 1.0)
@@ -99,6 +112,6 @@ def t_symmetry():
 
 
 if __name__ == '__main__':
-    t_world(); t_theory(); t_dims(); t_streams(); t_symmetry(); t_train()
+    t_world(); t_theory(); t_dims(); t_streams(); t_jobs(); t_symmetry(); t_phase(); t_train()
     print('ПРОВАЛОВ:', len(FAIL))
     sys.exit(1 if FAIL else 0)
