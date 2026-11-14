@@ -25,7 +25,7 @@ import time
 
 SPLIT = 'pilot'                      # 'pilot' или 'test' — меняется только эта строка
 T0 = time.time()
-OUT = '/kaggle/working' if os.path.isdir('/kaggle/working') else os.path.abspath(f'{SPLIT}_out')
+OUT = '/kaggle/working' if os.path.isdir('/kaggle/working') else os.path.abspath(f'{SPLIT}_out')    # Colab: /content/<SPLIT>_out
 os.makedirs(OUT, exist_ok=True)
 
 
@@ -89,13 +89,16 @@ def answer_logp(tok, ids, lp_rows):
 
 
 def load(name, rev):
+    """Веса грузятся сразу на видеокарту (device_map): у бесплатного Colab около 12 ГБ памяти, а pythia-6.9b — 13,8 ГБ."""
     kw = dict(revision=rev, torch_dtype=torch.float16)
+    if DEV != 'cuda':
+        return GPTNeoXForCausalLM.from_pretrained(f'EleutherAI/{name}', **kw).eval(), 'cpu'
     try:
-        return GPTNeoXForCausalLM.from_pretrained(f'EleutherAI/{name}', **kw).to(DEV).eval(), 'gpu'
+        return GPTNeoXForCausalLM.from_pretrained(f'EleutherAI/{name}', device_map={'': 0}, **kw).eval(), 'gpu'
     except torch.cuda.OutOfMemoryError:
         gc.collect(); torch.cuda.empty_cache()
         return GPTNeoXForCausalLM.from_pretrained(f'EleutherAI/{name}', device_map='auto',
-                                                  max_memory={0: '13GiB', 'cpu': '26GiB'}, **kw).eval(), 'gpu+cpu'
+                                                  max_memory={0: '13GiB', 'cpu': '10GiB'}, **kw).eval(), 'gpu+cpu'
 
 
 def run(name, rev):
