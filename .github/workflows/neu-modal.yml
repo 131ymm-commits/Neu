@@ -1,7 +1,10 @@
 # Прогоны Neu на Modal — ТОЛЬКО бесплатные кредиты (слово автора 14.11.2026: «давай модал но там только бесплатные прогоны»).
 # Задания modal_jobs/*.py запускаются из раннера GitHub командой `modal run <файл> --out modal_out/<имя>`;
-# результаты коммитятся в ту же ветку. Ключи Modal — секреты репозитория MODAL_TOKEN_ID и MODAL_TOKEN_SECRET
-# (добавляет автор в настройках GitHub; в коде и в чате их нет). Без ключей workflow ничего не делает.
+# результаты коммитятся в ту же ветку. Ключи Modal — секреты репозитория (добавляет автор в настройках GitHub;
+# в коде и в чате их нет). Без ключей workflow ничего не делает. Два способа:
+#   1) один секрет MODAL — вся строка, которую показывает Modal при создании токена
+#      («modal token set --token-id ak-… --token-secret as-… …»); части ak-… и as-… workflow находит сам (с 14.11.2026);
+#   2) два секрета MODAL_TOKEN_ID (ak-…) и MODAL_TOKEN_SECRET (as-…).
 # Только бесплатно: у аккаунта Modal нет способа оплаты (когда кредиты кончаются, задания останавливаются — по выдаче
 # поиска, docs/MODAL.md); плюс пределы времени: 60 мин на workflow, свой timeout у каждой функции.
 name: neu-modal
@@ -17,17 +20,27 @@ jobs:
   run:
     runs-on: ubuntu-latest
     timeout-minutes: 60
-    env:
-      MODAL_TOKEN_ID: ${{ secrets.MODAL_TOKEN_ID }}
-      MODAL_TOKEN_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
     steps:
       - name: Ключи Modal на месте?
         id: keys
+        env:
+          S_LINE: ${{ secrets.MODAL }}
+          S_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          S_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
         run: |
-          if [ -z "$MODAL_TOKEN_ID" ] || [ -z "$MODAL_TOKEN_SECRET" ]; then
-            echo "нет ключей Modal в секретах репозитория — пропуск"; echo "ok=0" >> "$GITHUB_OUTPUT"
+          id="$S_ID"; sec="$S_SECRET"; src="MODAL_TOKEN_ID и MODAL_TOKEN_SECRET"
+          if [ -n "$S_LINE" ]; then
+            id=$(printf '%s' "$S_LINE" | grep -oE 'ak-[A-Za-z0-9]+' | head -n1 || true)
+            sec=$(printf '%s' "$S_LINE" | grep -oE 'as-[A-Za-z0-9]+' | head -n1 || true)
+            src="MODAL"
+          fi
+          if [ -z "$id" ] || [ -z "$sec" ]; then
+            echo "нет ключей Modal в секретах репозитория (или в секрете MODAL нет частей ak-… и as-…) — пропуск"
+            echo "ok=0" >> "$GITHUB_OUTPUT"
           else
-            echo "ok=1" >> "$GITHUB_OUTPUT"
+            echo "::add-mask::$id"; echo "::add-mask::$sec"
+            echo "MODAL_TOKEN_ID=$id" >> "$GITHUB_ENV"; echo "MODAL_TOKEN_SECRET=$sec" >> "$GITHUB_ENV"
+            echo "ключи найдены (секрет $src)"; echo "ok=1" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/checkout@v4
         if: steps.keys.outputs.ok == '1'

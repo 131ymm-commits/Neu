@@ -12,6 +12,17 @@ def clean(t):
     t = re.sub(r'<command-[a-z-]+>.*?</command-[a-z-]+>', '', t, flags=re.S)
     t = re.sub(r'<local-command-[a-z-]+>.*?</local-command-[a-z-]+>', '', t, flags=re.S)
     return t.strip()
+# Ключи и имена профилей не попадают в выгрузку: репозиторий открытый. 14.11.2026 автор вставил в чат строку токена Modal
+# (ERRORS № 147). Правило по форме ключа, без самих значений; применяется ко всей выгрузке, включая сводки сжатия.
+SECRETS = ((r'\b(ak|as)-[A-Za-z0-9]{12,}', r'\1-[скрыто]'),                    # токен Modal: id ak-…, секрет as-…
+           (r'KGAT_[A-Za-z0-9]+', 'KGAT_[скрыто]'),                             # ключ API Kaggle
+           (r'\b(gh[pousr]_|github_pat_)[A-Za-z0-9_]{16,}', r'\1[скрыто]'),     # токены GitHub
+           (r'\bsk-[A-Za-z0-9_-]{16,}', 'sk-[скрыто]'),                         # ключи вида sk-…
+           (r'(--profile[= ])\S+', r'\1[скрыто]'),                              # профиль Modal назван по имени пользователя
+           (r'(profile activate )\S+', r'\1[скрыто]'))
+def redact(t):
+    for p, r in SECRETS: t = re.sub(p, r, t)
+    return t
 ENV = (("This session's worker process was restarted", 'перезапуск рабочего процесса сессии'),   # 09.11.2026: прежде шли как «Человек»
        ('Another Claude session sent a message', 'сообщение другой сессии или отчёт подагента'))
 def env_event(txt):
@@ -65,5 +76,5 @@ for line in open(src):
                 inp = x.get('input', {})
                 d = inp.get('description') or inp.get('subject') or inp.get('query') or inp.get('file_path') or inp.get('name') or ''
                 out.append(f'- _действие: {x.get("name")} — {str(d)[:160]}_\n')
-open(dst, 'w').write(''.join(out))
+open(dst, 'w').write(redact(''.join(out)))
 print(len(out), 'blocks')
