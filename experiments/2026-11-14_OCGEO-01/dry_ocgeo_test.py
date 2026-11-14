@@ -6,7 +6,8 @@
                 P1 «подтверждено», P3 «подтверждено», проверка метода пройдена;
   agree_wins  — те же точности; общих неверных ответов нет (AGREE надёжен); соседи случайные (как у step0) →
                 P1 «опровергнуто», P3 «не решено», проверка метода пройдена;
-  method_fail — головы с точностью до 0,95 (в ID меньше 20 неверных) → каждый из P1–P3 «не определено (проверка метода)»."""
+  method_fail — головы с точностью до 0,95 (в ID меньше 20 неверных) → P1 и P3 «не определено (проверка метода)».
+После совета 52 правило P2 стало описательным; бутстреп в сухом прогоне — 300 повторов (логика правил та же)."""
 import json
 import os
 import subprocess
@@ -66,19 +67,19 @@ def main():
     U = 'не определено (проверка метода)'
     sc = {'geo_wins': ([0.45, 0.5, 0.55, 0.6, 0.65], 0.7, True, {'P1': 'подтверждено', 'P3': 'подтверждено'}, True),
           'agree_wins': ([0.45, 0.5, 0.55, 0.6, 0.65], 0.0, False, {'P1': 'опровергнуто', 'P3': 'не решено'}, True),
-          'method_fail': ([0.6, 0.7, 0.8, 0.9, 0.95], 0.3, True, {'P1': U, 'P2': U, 'P3': U}, False)}
+          'method_fail': ([0.6, 0.7, 0.8, 0.9, 0.95], 0.3, True, {'P1': U, 'P3': U}, False)}
     bad = []
     for k, (acc, shared, inf, want, method) in sc.items():
         out = os.path.join(DRY, f'test_{k}')
         build(out, acc, shared, inf, seed=len(k))
         dst = os.path.join(DRY, f'test_{k}_an.json')
-        r = subprocess.run([sys.executable, os.path.join(HERE, 'analyze_ocgeo_test.py'), out, dst], capture_output=True, text=True)
+        r = subprocess.run([sys.executable, os.path.join(HERE, 'analyze_ocgeo_test.py'), out, dst, '--boot', '300'], capture_output=True, text=True)
         if r.returncode:
             print(k, 'ошибка:', r.stderr[-1500:]); bad.append(k); continue
         a = json.load(open(dst))
         got = {p: a['verdicts'][p] for p in want}
         ok = got == want and a['method']['ok'] == method
-        print(k, '✓' if ok else '✗', got, '| метод', a['method']['ok'], '| Δ1 %.3f Δ3 %.3f' % (a['P1']['delta'], a['P3']['delta']))
+        print(k, '✓' if ok else '✗', got, '| метод', a['method']['ok'], '| Δ1 %.3f Δ3 %s' % (a['P1']['delta'], a['P3']['delta']))
         if not ok:
             bad.append(k)
     json.dump({'bad': bad}, open(os.path.join(DRY, 'dry_test_summary.json'), 'w'))
