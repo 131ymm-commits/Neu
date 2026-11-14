@@ -243,6 +243,16 @@
    "INPUT": 0.464
   }
  },
+ "grid_vs_baseline": {
+  "baseline": 0.47553,
+  "best": [
+   0.47547,
+   "f1.0_k50"
+  ],
+  "worse_than_baseline": 15,
+  "chosen_rank": 9,
+  "best_minus_baseline": -6.3e-05
+ },
  "grid": {
   "geo_ioi_range": [
    0.475,
