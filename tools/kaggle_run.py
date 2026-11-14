@@ -7,7 +7,7 @@
 Имя пользователя Kaggle в репозиторий не пишется: оно берётся из ответа API во время работы.
 
   python3 tools/kaggle_run.py quota                                   квоты ускорителей
-  python3 tools/kaggle_run.py push SCRIPT.py --slug neu-x [--gpu] [--internet] [--timeout-s N]
+  python3 tools/kaggle_run.py push SCRIPT.py --slug neu-x [--gpu] [--internet] [--timeout-s N] [--machine NvidiaTeslaP100]
   python3 tools/kaggle_run.py wait --slug neu-x [--every 30] [--limit-s 7200]
   python3 tools/kaggle_run.py output --slug neu-x --to DIR             скачать вывод последней версии
 Ноутбуки создаются закрытыми (is_private), тип — скрипт Python.
@@ -63,6 +63,8 @@ def cmd_push(a):
         req.enable_internet = bool(a.internet)
         if a.timeout_s:
             req.session_timeout_seconds = a.timeout_s
+        if a.machine:                                   # NvidiaTeslaT4 | NvidiaTeslaP100 | Tpu1VmV38 (kagglesdk, 14.11.2026)
+            req.machine_shape = a.machine
         r = k.kernels.kernels_api_client.save_kernel(req)
         d = r.to_dict() if hasattr(r, 'to_dict') else {}
         print('отправлено:', a.slug, '| версия', d.get('versionNumber'), '| ошибка' if d.get('error') else '', d.get('error') or '')
@@ -124,6 +126,7 @@ def main():
     p = sub.add_parser('push'); p.add_argument('script'); p.add_argument('--slug', required=True)
     p.add_argument('--gpu', action='store_true'); p.add_argument('--internet', action='store_true')
     p.add_argument('--timeout-s', type=int, default=0)
+    p.add_argument('--machine', default='', help='NvidiaTeslaT4 | NvidiaTeslaP100 | Tpu1VmV38')
     w = sub.add_parser('wait'); w.add_argument('--slug', required=True); w.add_argument('--every', type=int, default=30)
     w.add_argument('--limit-s', type=int, default=7200)
     o = sub.add_parser('output'); o.add_argument('--slug', required=True); o.add_argument('--to', required=True)
