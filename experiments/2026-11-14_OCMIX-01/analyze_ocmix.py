@@ -68,11 +68,33 @@ def scores(ag, corr, logp, heads_idx, fit, evals=EVALS):
     return S
 
 
-def crowd(ag, corr, logp, heads_idx, fit, cols, evals=EVALS, top10=True, auroc=False):
+CF_K, CF_SEED = 5, 1304
+
+
+def crossfit_scores(ag, corr, logp, heads_idx, fit, cols, k=CF_K, seed=CF_SEED):
+    """Кросс-подгонка (описательно, только точка; как в OCCOR-01): задачи fit делятся на k частей (зерно seed). Оценка
+    LR-AGREE и MIX-LR на задаче из fit — от модели, подогнанной без её части; на задачах cols — среднее k моделей.
+    AGREE, CONF и VETO не обучаются — как обычно. Калибровка затем строится на оценках вне выборки подгонки."""
+    fit = np.asarray(fit)
+    folds = np.array_split(fit[np.random.default_rng(seed).permutation(len(fit))], k)
+    S = scores(ag, corr, logp, heads_idx, fit)
+    for name, fn in (('LR-AGREE', lambda f: Z.lr_scores(ag, corr, heads_idx, f)), ('MIX-LR', lambda f: mixlr_scores(ag, corr, logp, heads_idx, f))):
+        Mx = np.zeros((len(heads_idx), ag.shape[2]))
+        acc = np.zeros((len(heads_idx), len(cols)))
+        for f in folds:
+            Sf = fn(np.setdiff1d(fit, f))
+            Mx[:, f] = Sf[:, f]
+            acc += Sf[:, cols]
+        Mx[:, cols] = acc / k
+        S[name] = Mx
+    return S
+
+
+def crowd(ag, corr, logp, heads_idx, fit, cols, evals=EVALS, top10=True, auroc=False, S=None):
     """ИОИ и верхушка оценщиков для толпы heads_idx: калибровка по fit, выбор и мера по cols (код OCCOR-01 по готовым S).
     У VETO — selected_supported: доля задач cols, где выбранный ответ поддержан другой головой (при ничьей — доля среди
     равных). У LR-AGREE и MIX-LR — lr_one_class (число голов с одним классом в fit)."""
-    S = scores(ag, corr, logp, heads_idx, fit, evals)
+    S = scores(ag, corr, logp, heads_idx, fit, evals) if S is None else S
     r = Z.crowd_ioi(ag, corr, logp, None, heads_idx, fit, cols, evals=evals, top10=top10, auroc=auroc, S=S)
     n1 = int(sum(1 for i in heads_idx if corr[i][fit].all() or (~corr[i][fit]).all()))
     for e in ('LR-AGREE', 'MIX-LR'):
