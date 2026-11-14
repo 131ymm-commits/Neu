@@ -256,6 +256,14 @@
  },
  "groups": 90,
  "blocks": 10,
+ "posthoc_exponent": {
+  "note": "пост-хок по совету 49, вердикт не меняет: α = ln(медиана отношения)/ln(медиана теории²)",
+  "alpha": 0.316,
+  "alpha_from_ci": [
+   0.265,
+   0.401
+  ]
+ },
  "constants": {
   "registration": "2e0295ca",
   "draft": "03015542",

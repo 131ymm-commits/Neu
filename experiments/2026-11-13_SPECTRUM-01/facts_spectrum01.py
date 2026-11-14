@@ -53,6 +53,9 @@ out = dict(verdict=r['verdict'], P3=dict(t1_range=[r3(min(p3['t_align_q1'])), r3
            t_half_self=dict(q1=sorted({m['t_half_obj'][0] for m in sel('rich', 1.0, 52, 0)}), q0_d64=sorted({m['t_half_obj'][0] for m in ms})),
            t_align_at0_any=r['descr']['t_align_at0_any'], cells=cells, expectations=exp, brier=round(brier, 4),
            weight_bits=round(w, 2), power=pw, groups=len(M), blocks=r['blocks'],
+           posthoc_exponent=dict(note='пост-хок по совету 49, вердикт не меняет: α = ln(медиана отношения)/ln(медиана теории²)',
+                                 alpha=r3(np.log(p3['median_ratio']) / np.log(np.median(p3['theory']) ** 2)),
+                                 alpha_from_ci=[r3(np.log(x) / np.log(np.median(p3['theory']) ** 2)) for x in p3['ci95_median_ratio']]),
            constants=dict(registration='2e0295ca', draft='03015542', literature=['2111.00034', '2610.29864', '2409.14623'],
                           probe_points=4000, widths=[32, 48, 64, 96], tol_ok=0.10, tol_bad=0.25, ratio_interval=[1.05, 1.40],
                           expectation_probs=P, run_seconds=1869))
