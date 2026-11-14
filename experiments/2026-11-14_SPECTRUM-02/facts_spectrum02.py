@@ -42,6 +42,8 @@ out = dict(
     skeptic_AB1_lt_A1B23=r['descr_skeptic_AB1_vs_A1B23'],
     phase_max=dict(loss_frac=r3(max(v['loss_frac'] for v in phase.values())), norm_S=r3(max(v['norm_S'] for v in phase.values())),
                    norm_O=r3(max(v['norm_O'] for v in phase.values()))),
+    phase_loss_frac_range4=[round(min(v['loss_frac'] for v in phase.values()), 4), round(max(v['loss_frac'] for v in phase.values()), 4)],
+    phase_loss_frac_by_cond4={c: round(v['loss_frac'], 4) for c, v in phase.items()},
     method=dict(d_cka_min=r3(mm['d_cka_min']), sym_median=r3(mm['sym_median']), sym_ci=ci(mm['sym_ci95']), sym_range=rng(mm['sym_ratio_B1_A1']),
                 lam_ratio_max_dev=round(mm['lam_ratio_max_dev'], 4), lam_monotone=mm['lam_monotone'],
                 perm_gap_min=r3(r['descr']['perm_vs_init_min_gap'])),
@@ -51,7 +53,7 @@ out = dict(
     expectations=exp, brier=round(brier, 4), weight_bits={k: round(v, 2) for k, v in bits.items()},
     pilot=dict(alpha_A_pooled=r3(json.load(open(os.path.join(HERE, 'pilot', 'pilot_6_analysis.json'), encoding='utf-8'))['P4']['A']['alpha'])),
     constants=dict(registration='d04db806', draft='b37180aa', council_lenses=50, gha_run=43570576546, run_seconds=round(secs),
-                   literature=['2610.29864', '2111.00034'], probe_points=4000,
+                   literature=['2610.29864', '2111.00034'], probe_points=4000, errors_refs=[149, 150, 152],
                    n_blocks=30, k_sign=23, band=[round(1 / 3, 3), round(2 / 3, 3)], ci_p4=99, expectation_probs=P,
                    false_sign=r3(pw['false_level']['P1']), series_false=round(pw['series_false_level_weighted'], 4)))
 json.dump(out, open(os.path.join(HERE, 'facts_spectrum02.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
