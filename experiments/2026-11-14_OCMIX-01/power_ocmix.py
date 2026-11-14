@@ -31,13 +31,13 @@ def main(n_test_ood=3409):
     scale = sqrt(n_p / n_t)
     z99, zr = 2.576, z_of(R.LEVEL)
     out = dict(n_pilot_ood=n_p, n_test_ood=n_t, level=R.LEVEL, z=zr, series_false_level=3 * R.LEVEL,
-               note='нормальное приближение по ДИ 99 % пилота (процентильный); эффект ужат вдвое')
+               note='нормальное приближение по ДИ 99 % пилота (процентильный); эффект ужат вдвое; mde_power08 — минимальный обнаружимый эффект при мощности 0,8 (совет 56, описательно)')
     for k, src in (('R1', 'H1'), ('R2', 'H2'), ('R3', 'H3')):
         s = a['deltas'][src]
         d, (lo, hi) = s['point'], s['ci99']
         se = (hi - lo) / (2 * z99) * scale
         p_full, p_half = Phi(abs(d) / se - zr), Phi(abs(d) / 2 / se - zr)
-        out[k] = dict(delta_pilot=d, ci99_pilot=[lo, hi], se_test=se, expected_sign='минус' if d < 0 else 'плюс',
+        out[k] = dict(delta_pilot=d, ci99_pilot=[lo, hi], se_test=se, expected_sign='минус' if d < 0 else 'плюс', mde_power08=(zr + 0.8416) * se,
                       power={'по пилоту': p_full, 'ужатый вдвое': p_half}, weight_bits=log2(max(p_half, 1e-3) / R.LEVEL))
     json.dump(out, open(os.path.join(HERE, 'power.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print(json.dumps(out, ensure_ascii=False, indent=1))

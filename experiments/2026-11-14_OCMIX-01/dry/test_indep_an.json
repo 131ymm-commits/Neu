@@ -126,6 +126,53 @@
    "ood": 0.4933065595716198
   }
  },
+ "head_counts": {
+  "pythia-1.4b": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 375
+  },
+  "pythia-1.4b-deduped": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 366
+  },
+  "pythia-2.8b": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 384
+  },
+  "pythia-2.8b@step133000": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 322
+  },
+  "pythia-2.8b@step123000": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 369
+  },
+  "pythia-2.8b@step113000": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 370
+  },
+  "pythia-2.8b-deduped": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 339
+  },
+  "pythia-6.9b": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 354
+  },
+  "pythia-6.9b-deduped": {
+   "no_number": 0,
+   "nonfinite_logp": 0,
+   "unsupported_id": 321
+  }
+ },
  "evaluators": {
   "AGREE": {
    "T": 0.9742302543507363,
@@ -527,6 +574,10 @@
   "boot_median": -0.011195652392468058,
   "share_below_0": 1.0,
   "level": 0.005
+ },
+ "support_other_lineage_descr": {
+  "VETO": 0.9380484902573255,
+  "CONF": 0.9365610590510188
  },
  "crossfit_descr": {
   "k": 5,
