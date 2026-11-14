@@ -28,3 +28,5 @@ experiments/2026-11-14_SPECTRUM-02/run_dry/
 experiments/2026-11-14_OCGEO-01/**/hidden_*.npz
 experiments/2026-11-14_OCGEO-01/dry/stub/
 experiments/2026-11-14_OCGEO-01/dry/test_*/
+# OCCOR-01: заглушки сухого прогона воспроизводятся кодом (dry_occor.py, зёрна закреплены)
+experiments/2026-11-14_OCCOR-01/dry/*/answers.json
