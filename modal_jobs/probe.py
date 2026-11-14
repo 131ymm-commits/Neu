@@ -1,5 +1,6 @@
 """Проба Modal для Neu: несколько секунд процессора и видеокарты T4 (из бесплатных кредитов). Без личных данных.
-Запуск — workflow neu-modal: `modal run modal_jobs/probe.py --out modal_out/probe`."""
+Запуск — workflow neu-modal: `modal run modal_jobs/probe.py --out modal_out/probe`.
+Запуск 2 (14.11.2026) — проверка ключей Modal, добавленных автором в секреты репозитория."""
 import json
 import os
 
