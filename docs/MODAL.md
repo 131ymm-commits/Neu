@@ -30,3 +30,9 @@
 - [Modal: Continuous deployment](https://modal.com/docs/guide/continuous-deployment) — токен как секрет GitHub Actions, переменные MODAL_TOKEN_ID и MODAL_TOKEN_SECRET.
 - [Modal: Run CI on Modal](https://modal.com/docs/examples/ci-on-modal).
 - [Modal free tier 2026 (сторонний обзор)](https://aicreditmart.com/ai-credits-providers/modal-free-tier-how-to-get-30-month-in-compute-credits-2026/) — без способа оплаты задания останавливаются; не сверено с документацией Modal.
+
+## Проверки
+- **Запуск 1, 14.11.2026, 05:56 UTC** (коммит 89fc6e59): ключей ещё не было, workflow пропустил прогон, как и задумано.
+- **Запуск 2, 14.11.2026, 06:14 UTC** (коммит cf174985, [run 43565326108](https://github.com/131ymm-commits/Neu/actions/runs/43565326108)). Автор попросил проверить после добавления ключей.
+  - В журнале задания оба значения пустые: `MODAL_TOKEN_ID:` и `MODAL_TOKEN_SECRET:`. Будь секрет на месте, вместо значения стояло бы `***`.
+  - Значит, секретов Actions репозитория с этими именами нет. Прогон пропущен, кредиты Modal не тратились.
