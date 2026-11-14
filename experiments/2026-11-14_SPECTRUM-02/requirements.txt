@@ -1,0 +1,5 @@
+# версии — как в SPECTRUM-01 и SELF-02 (установлены в контейнере тем же номером); GitHub Actions ставит их же
+numpy==2.5.3
+scikit-learn==1.9.1
+scipy==1.18.1
+joblib==1.6.0

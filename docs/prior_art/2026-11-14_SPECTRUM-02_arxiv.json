@@ -1,0 +1,570 @@
+{
+ "fetched_utc": "2026-11-14T06:45:00Z",
+ "method": "arXiv API, https://export.arxiv.org/api/query (через прокси); запросы поиска и выборка по id. Только аннотации (полный текст не открывался). Веб-поиск не использовался.",
+ "queries": {
+  "silent_alignment_abs": "abs:\"silent alignment\" AND abs:kernel",
+  "saddle_to_saddle": "ti:\"saddle-to-saddle\" OR ti:\"saddle to saddle\"",
+  "saxe_exact_solutions": "ti:\"exact solutions to the nonlinear dynamics of learning in deep linear\"",
+  "saxe_semantic_dev": "ti:\"mathematical theory of semantic development\"",
+  "deep_linear_small_init_saddle": "abs:\"deep linear\" AND abs:\"small initialization\" AND (abs:saddle OR abs:plateau)",
+  "stepwise_ssl": "ti:\"stepwise nature\" OR ti:\"stepwise\" AND abs:\"self-supervised\"",
+  "gidel_implicit_discrete": "ti:\"implicit regularization of discrete gradient dynamics in deep linear\"",
+  "deep_linear_degenerate_sv": "abs:\"deep linear\" AND (abs:\"degenerate\" OR abs:\"repeated\" OR abs:\"equal singular values\") AND (abs:dynamics OR abs:learning)",
+  "cka_training_dynamics_spectrum": "(abs:CKA OR abs:\"centered kernel alignment\") AND abs:\"training dynamics\" AND (abs:spectrum OR abs:eigen*)",
+  "rep_sim_over_training_time": "abs:\"representational similarity\" AND abs:\"over training\" AND (abs:\"data spectrum\" OR abs:\"covariance spectrum\" OR abs:\"eigenspectrum\")",
+  "linear_net_time_alignment": "abs:\"linear network\" AND (abs:\"alignment\" OR abs:\"similarity\") AND (abs:\"time\" OR abs:\"timescale\") AND abs:\"singular\"",
+  "mode_learning_time_log": "abs:\"learning time\" AND abs:\"singular value\" AND (abs:\"log\" OR abs:logarithmic) AND abs:\"deep linear\"",
+  "two_networks_same_task_linear": "abs:\"independently trained\" AND abs:\"deep linear\" AND (abs:representations OR abs:features)",
+  "bordelon_pehlevan_dmft": "ti:\"dynamical mean field\" AND abs:\"representation\" AND abs:\"deep linear\"",
+  "dominé_lazy_rich_linear": "ti:\"lazy\" AND ti:\"rich\" AND abs:\"deep linear\"",
+  "jacot_saddle_small_init": "ti:\"saddle-to-saddle dynamics in deep linear networks\"",
+  "gidel_2019_discrete": "ti:\"implicit regularization of discrete gradient dynamics\"",
+  "gidel_2019_alt": "au:Gidel AND au:Bach AND au:\"Lacoste-Julien\" AND abs:\"deep linear\"",
+  "cka_seeds_over_training": "(abs:CKA OR abs:\"representational similarity\" OR abs:\"representation similarity\") AND (abs:\"training time\" OR abs:\"during training\" OR abs:\"throughout training\") AND (abs:\"spectrum\" OR abs:\"eigenvalues\" OR abs:\"covariance\")",
+  "cka_linear_theory": "(abs:CKA OR abs:\"centered kernel alignment\") AND abs:\"linear\" AND (abs:\"theory\" OR abs:\"analytic\") AND abs:\"deep\"",
+  "convergence_similarity_time": "abs:\"similarity across seeds\" AND (abs:\"training\" OR abs:\"time\")",
+  "silent_alignment_linear_deep": "(abs:\"silent alignment\" OR abs:\"kernel alignment\") AND abs:\"deep linear\"",
+  "multi_spike_simultaneous_learning": "abs:\"deep linear\" AND (abs:\"simultaneous\" OR abs:\"multiple modes\" OR abs:\"several modes\") AND (abs:\"learning time\" OR abs:\"timescale\" OR abs:\"time scale\")",
+  "sing_mode_timescale_exact": "abs:\"singular modes\" AND abs:\"learning time\" AND abs:\"deep linear\"",
+  "rep_sim_linear_teacher_student": "(abs:\"representational similarity\" OR abs:CKA) AND abs:\"teacher\" AND (abs:\"linear\" OR abs:\"gaussian\") AND abs:\"training dynamics\"",
+  "alignment_time_spectrum_theory": "abs:\"alignment\" AND abs:\"spectrum\" AND abs:\"gradient flow\" AND (abs:\"two-layer\" OR abs:\"deep linear\") AND (abs:\"time\")",
+  "isotropic_init_saddle_escape_ties": "abs:\"small initialization\" AND abs:\"gradient flow\" AND (abs:\"degenerate\" OR abs:\"tied\" OR abs:\"multiplicity\") AND abs:\"saddle\""
+ },
+ "results_by_query": {
+  "silent_alignment_abs": [
+   {
+    "id": "2111.00034v2",
+    "title": "Neural Networks as Kernel Learners: The Silent Alignment Effect",
+    "published": "2021-10-29",
+    "authors": [
+     "Alexander Atanasov",
+     "Blake Bordelon",
+     "Cengiz Pehlevan"
+    ],
+    "abstract_head": "Neural networks in the lazy training regime converge to kernel machines. Can neural networks in the rich feature learning regime learn a kernel machine with a data-dependent kernel? We demonstrate that this can indeed happen due to a phenomenon we term silent alignment, which requires that the tangent kernel of a network evolves in eigenstructure while small and before the loss appreciably decreas"
+   }
+  ],
+  "saddle_to_saddle": [
+   {
+    "id": "2304.00488v2",
+    "title": "Saddle-to-Saddle Dynamics in Diagonal Linear Networks",
+    "published": "2023-04-02",
+    "authors": [
+     "Scott Pesme",
+     "Nicolas Flammarion"
+    ],
+    "abstract_head": "In this paper we fully describe the trajectory of gradient flow over diagonal linear networks in the limit of vanishing initialisation. We show that the limiting flow successively jumps from a saddle of the training loss to another until reaching the minimum $\\ell_1$-norm solution. This saddle-to-saddle dynamics translates to an incremental learning process as each saddle corresponds to the minimi"
+   },
+   {
+    "id": "1712.03212v1",
+    "title": "Homoclinic saddle to saddle-focus transitions in 4D systems",
+    "published": "2017-12-08",
+    "authors": [
+     "Manu Kalia",
+     "Yuri A. Kuznetsov",
+     "Hil G. E. Meijer"
+    ],
+    "abstract_head": "A saddle to saddle-focus homoclinic transition when the stable leading eigenspace is 3-dimensional (called the 3DL bifurcation) is analyzed. Here a pair of complex eigenvalues and a real eigenvalue exchange their position relative to the imaginary axis, giving rise to a 3-dimensional stable leading eigenspace. This transition is different from the standard Belyakov bifurcation, where a double real"
+   },
+   {
+    "id": "1103.4900v1",
+    "title": "Saddle-point-Saddle-focus singular cycles and existence of horseshoes",
+    "published": "2011-03-25",
+    "authors": [
+     "xiao-song Yang"
+    ],
+    "abstract_head": "In this paper we study a type of two singular point singular cycle where one heteroclinic orbit is the transversal intersection of the 2-dimensional stable manifold of one singular point and the 2-dimensional unstable manifold of other singular point. We show that this kind of singular cycle can give rise to a new mechanism of creation of chaos in 3-dimensional vector fields."
+   },
+   {
+    "id": "2604.06366v1",
+    "title": "Stochastic Gradient Descent in the Saddle-to-Saddle Regime of Deep Linear Networks",
+    "published": "2026-04-07",
+    "authors": [
+     "Guillaume Corlouer",
+     "Avi Semler",
+     "Alexander Strang",
+     "Alexander Gietelink Oldenziel"
+    ],
+    "abstract_head": "Deep linear networks (DLNs) are used as an analytically tractable model of the training dynamics of deep neural networks. While gradient descent in DLNs is known to exhibit saddle-to-saddle dynamics, the impact of stochastic gradient descent (SGD) noise on this regime remains poorly understood. We investigate the dynamics of SGD during training of DLNs in the saddle-to-saddle regime. We model the "
+   },
+   {
+    "id": "2512.20607v2",
+    "title": "Saddle-to-Saddle Dynamics Explains A Simplicity Bias Across Neural Network Architectures",
+    "published": "2025-12-23",
+    "authors": [
+     "Yedi Zhang",
+     "Andrew Saxe",
+     "Peter E. Latham"
+    ],
+    "abstract_head": "Neural networks trained with gradient descent often learn solutions of increasing complexity over time, a phenomenon known as simplicity bias. Despite being widely observed across architectures, existing theoretical treatments lack a unifying framework. We present a theoretical framework that explains a simplicity bias arising from saddle-to-saddle learning dynamics for a general class of neural n"
+   },
+   {
+    "id": "2309.13959v1",
+    "title": "Appearance of discrete Lorenz attractors in the transitions from saddle to saddle-focus",
+    "published": "2023-09-25",
+    "authors": [
+     "Ivan Ovsyannikov"
+    ],
+    "abstract_head": "Triply degenerate fixed points appear in global bifurcations -- homoclinic and heteroclinic tangencies. In order to get Lorenz-like attractors, the dynamics of the first return map along the homoclinic or heteroclinic cycle should be effectively at least three-dimensional, i.e. there should not exist lower-dimensional invariant manifolds. This can be achieved by adding some special conditions, glo"
+   },
+   {
+    "id": "2302.11055v2",
+    "title": "SGD learning on neural networks: leap complexity and saddle-to-saddle dynamics",
+    "published": "2023-02-21",
+    "authors": [
+     "Emmanuel Abbe",
+     "Enric Boix-Adsera",
+     "Theodor Misiakiewicz"
+    ],
+    "abstract_head": "We investigate the time complexity of SGD learning on fully-connected neural networks with isotropic data. We put forward a complexity measure -- the leap -- which measures how \"hierarchical\" target functions are. For $d$-dimensional uniform Boolean or isotropic Gaussian data, our main conjecture states that the time complexity to learn a function $f$ with low-dimensional support is $\\tildeΘ(d^{\\m"
+   },
+   {
+    "id": "2606.30509v2",
+    "title": "Muon learns balanced solutions in matrix factorization without slow saddle-to-saddle dynamics",
+    "published": "2026-06-29",
+    "authors": [
+     "Mark Rhee",
+     "Jamie Simon",
+     "Dhruva Karkada"
+    ],
+    "abstract_head": "Matrix factorization (i.e., problems of the form $\\min_{\\mathbf{P},\\mathbf{Q}} \\|\\mathbf{M}^\\star - \\mathbf{P}^\\top\\mathbf{Q}\\|_\\mathrm{F}^2$) is a minimal learning problem that exhibits both nonlinear parameter dynamics and representation learning. In this setting, we study how parameter trajectories under the Muon optimizer differ from those of gradient descent. We identify three main dynamical "
+   }
+  ],
+  "saxe_exact_solutions": [
+   {
+    "id": "1312.6120v3",
+    "title": "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+    "published": "2013-12-20",
+    "authors": [
+     "Andrew M. Saxe",
+     "James L. McClelland",
+     "Surya Ganguli"
+    ],
+    "abstract_head": "Despite the widespread practical success of deep learning methods, our theoretical understanding of the dynamics of learning in deep neural networks remains quite sparse. We attempt to bridge the gap between the theory and practice of deep learning by systematically analyzing learning dynamics for the restricted case of deep linear neural networks. Despite the linearity of their input-output map, "
+   }
+  ],
+  "saxe_semantic_dev": [
+   {
+    "id": "1810.10531v1",
+    "title": "A mathematical theory of semantic development in deep neural networks",
+    "published": "2018-10-23",
+    "authors": [
+     "Andrew M. Saxe",
+     "James L. McClelland",
+     "Surya Ganguli"
+    ],
+    "abstract_head": "An extensive body of empirical research has revealed remarkable regularities in the acquisition, organization, deployment, and neural representation of human semantic knowledge, thereby raising a fundamental conceptual question: what are the theoretical principles governing the ability of neural networks to acquire, organize, and deploy abstract knowledge by integrating across many individual expe"
+   }
+  ],
+  "deep_linear_small_init_saddle": [
+   {
+    "id": "2605.01288v4",
+    "title": "A Theory of Saddle Escape in Deep Nonlinear Networks",
+    "published": "2026-05-02",
+    "authors": [
+     "Divit Rawal",
+     "Michael R. DeWeese"
+    ],
+    "abstract_head": "In deep networks with small initialization, training can exhibit long plateaus separated by sharp feature-acquisition transitions. Whereas shallow nonlinear networks and deep linear networks are well studied, extending these analyses to deep nonlinear networks remains challenging. We derive exact scalar and matrix identities for the imbalance of layer weight norms, holding for any smooth activatio"
+   }
+  ],
+  "stepwise_ssl": [
+   {
+    "id": "2303.15438v2",
+    "title": "On the Stepwise Nature of Self-Supervised Learning",
+    "published": "2023-03-27",
+    "authors": [
+     "James B. Simon",
+     "Maksis Knutins",
+     "Liu Ziyin",
+     "Daniel Geisz",
+     "Abraham J. Fetterman",
+     "Joshua Albrecht"
+    ],
+    "abstract_head": "We present a simple picture of the training process of joint embedding self-supervised learning methods. We find that these methods learn their high-dimensional embeddings one dimension at a time in a sequence of discrete, well-separated steps. We arrive at this conclusion via the study of a linearized model of Barlow Twins applicable to the case in which the trained network is infinitely wide. We"
+   },
+   {
+    "id": "2606.10621v2",
+    "title": "STORM: Stepwise Token Optimization with Reward-Guided Beam Search",
+    "published": "2026-06-09",
+    "authors": [
+     "Arthur Satouf",
+     "Giulio D'Erasmo",
+     "Yuxuan Zong",
+     "Habiboulaye Amadou Boubacar",
+     "Pablo Piantanida",
+     "Benjamin Piwowarski"
+    ],
+    "abstract_head": "Modern retrieval increasingly relies on dense and learned-sparse neural models that are effective but require encoding the entire corpus into a specialized index, rebuilt whenever the model changes. Lexical retrievers like BM25 stay efficient and transparent on a standard inverted index that need not change as models evolve, but suffer from vocabulary mismatch. LLM query rewriting can help, yet pr"
+   },
+   {
+    "id": "2503.17363v1",
+    "title": "Dancing with Critiques: Enhancing LLM Reasoning with Stepwise Natural Language Self-Critique",
+    "published": "2025-03-21",
+    "authors": [
+     "Yansi Li",
+     "Jiahao Xu",
+     "Tian Liang",
+     "Xingyu Chen",
+     "Zhiwei He",
+     "Qiuzhi Liu",
+     "Rui Wang",
+     "Zhuosheng Zhang",
+     "Zhaopeng Tu",
+     "Haitao Mi",
+     "Dong Yu"
+    ],
+    "abstract_head": "Enhancing the reasoning capabilities of large language models (LLMs), particularly for complex tasks requiring multi-step logical deductions, remains a significant challenge. Traditional inference time scaling methods utilize scalar reward signals from process reward models to evaluate candidate reasoning steps, but these scalar rewards lack the nuanced qualitative information essential for unders"
+   }
+  ],
+  "gidel_implicit_discrete": [],
+  "deep_linear_degenerate_sv": [
+   {
+    "id": "2502.02531v3",
+    "title": "Deep Linear Network Training Dynamics from Random Initialization: Data, Width, Depth, and Hyperparameter Transfer",
+    "published": "2025-02-04",
+    "authors": [
+     "Blake Bordelon",
+     "Cengiz Pehlevan"
+    ],
+    "abstract_head": "We theoretically characterize gradient descent dynamics in deep linear networks trained at large width from random initialization and on large quantities of random data. Our theory captures the ``wider is better\" effect of mean-field/maximum-update parameterized networks as well as hyperparameter transfer effects, which can be contrasted with the neural-tangent parameterization where optimal learn"
+   },
+   {
+    "id": "2609.13057v1",
+    "title": "Benign Loss Landscapes Can Coexist with Worst-Case Hardness",
+    "published": "2026-09-11",
+    "authors": [
+     "Zach Furman",
+     "Stephan Wäldchen",
+     "Yangda Bei",
+     "Liam Hodgkinson"
+    ],
+    "abstract_head": "Deep neural networks are expressive enough to contain worst-case targets that can be evaluated in polynomial time but cannot be learned in polynomial time by gradient descent. For practical tasks they nonetheless learn well, raising the question of what non-generic structure of real-world targets enables this. Existing surrogate models cannot pose this question because they either lack hard-to-lea"
+   },
+   {
+    "id": "2306.00342v1",
+    "title": "Combining Explicit and Implicit Regularization for Efficient Learning in Deep Networks",
+    "published": "2023-06-01",
+    "authors": [
+     "Dan Zhao"
+    ],
+    "abstract_head": "Works on implicit regularization have studied gradient trajectories during the optimization process to explain why deep networks favor certain kinds of solutions over others. In deep linear networks, it has been shown that gradient descent implicitly regularizes toward low-rank solutions on matrix completion/factorization tasks. Adding depth not only improves performance on these tasks but also ac"
+   },
+   {
+    "id": "2408.11979v2",
+    "title": "Only Strict Saddles in the Energy Landscape of Predictive Coding Networks?",
+    "published": "2024-08-21",
+    "authors": [
+     "Francesco Innocenti",
+     "El Mehdi Achour",
+     "Ryan Singh",
+     "Christopher L. Buckley"
+    ],
+    "abstract_head": "Predictive coding (PC) is an energy-based learning algorithm that performs iterative inference over network activities before updating weights. Recent work suggests that PC can converge in fewer learning steps than backpropagation thanks to its inference procedure. However, these advantages are not always observed, and the impact of PC inference on learning is not theoretically well understood. He"
+   },
+   {
+    "id": "2011.12547v2",
+    "title": "Implicit bias of deep linear networks in the large learning rate phase",
+    "published": "2020-11-25",
+    "authors": [
+     "Wei Huang",
+     "Weitao Du",
+     "Richard Yi Da Xu",
+     "Chunrui Liu"
+    ],
+    "abstract_head": "Most theoretical studies explaining the regularization effect in deep learning have only focused on gradient descent with a sufficient small learning rate or even gradient flow (infinitesimal learning rate). Such researches, however, have neglected a reasonably large learning rate applied in most practical applications. In this work, we characterize the implicit bias effect of deep linear networks"
+   },
+   {
+    "id": "2601.01679v2",
+    "title": "Simplex Deep Linear Discriminant Analysis",
+    "published": "2026-01-04",
+    "authors": [
+     "Maxat Tezekbayev",
+     "Arman Bolatov",
+     "Zhenisbek Assylbekov"
+    ],
+    "abstract_head": "We revisit Deep Linear Discriminant Analysis (Deep LDA) from a likelihood-based perspective. While classical LDA is a simple Gaussian model with linear decision boundaries, attaching an LDA head to a neural encoder raises the question of how to train the resulting deep classifier by maximum likelihood estimation (MLE). We first show that end-to-end MLE training of an unconstrained Deep LDA model i"
+   }
+  ],
+  "cka_training_dynamics_spectrum": [],
+  "rep_sim_over_training_time": [],
+  "linear_net_time_alignment": [
+   {
+    "id": "2610.29864v1",
+    "title": "Silent Alignment in Two-Layer Linear Networks: A High-Dimensional Perspective",
+    "published": "2026-10-21",
+    "authors": [
+     "Simon Martin",
+     "Francis Bach",
+     "Giulio Biroli"
+    ],
+    "abstract_head": "We study gradient flow in a two-layer linear network in the high-dimensional regime where the input, inner and output dimensions diverge proportionally. Under whitened inputs and isotropic imbalance, we combine a closed-form solution of the dynamics with prior random matrix theory results to derive a high-dimensional limit for the dynamics. Our method yields exact asymptotic spectral distributions"
+   },
+   {
+    "id": "2405.17580v2",
+    "title": "Mixed Dynamics In Linear Networks: Unifying the Lazy and Active Regimes",
+    "published": "2024-05-27",
+    "authors": [
+     "Zhenfeng Tu",
+     "Santiago Aranguri",
+     "Arthur Jacot"
+    ],
+    "abstract_head": "The training dynamics of linear networks are well studied in two distinct setups: the lazy regime and balanced/active regime, depending on the initialization and width of the network. We provide a surprisingly simple unifying formula for the evolution of the learned matrix that contains as special cases both lazy and balanced regimes but also a mixed regime in between the two. In the mixed regime,"
+   },
+   {
+    "id": "1308.0870v1",
+    "title": "On Interference Networks over Finite Fields",
+    "published": "2013-08-05",
+    "authors": [
+     "Song-Nam Hong",
+     "Giuseppe Caire"
+    ],
+    "abstract_head": "We present a framework to study linear deterministic interference networks over finite fields. Unlike the popular linear deterministic models introduced to study Gaussian networks, we consider networks where the channel coefficients are general scalars over some extension field $\\FF_{p^m}$ (scalar $m$-th extension-field models), $m \\times m$ diagonal matrices over $\\FF_p$ ($m$-symbol extension gro"
+   },
+   {
+    "id": "2506.06489v4",
+    "title": "Alternating Gradient Flows: A Theory of Feature Learning in Two-layer Neural Networks",
+    "published": "2025-06-06",
+    "authors": [
+     "Daniel Kunin",
+     "Giovanni Luca Marchetti",
+     "Feng Chen",
+     "Dhruva Karkada",
+     "James B. Simon",
+     "Michael R. DeWeese",
+     "Surya Ganguli",
+     "Nina Miolane"
+    ],
+    "abstract_head": "What features neural networks learn, and how, remains an open question. In this paper, we introduce Alternating Gradient Flows (AGF), an algorithmic framework that describes the dynamics of feature learning in two-layer networks trained from small initialization. Prior works have shown that gradient flow in this regime exhibits a staircase-like loss curve, alternating between plateaus where neuron"
+   },
+   {
+    "id": "2405.13456v2",
+    "title": "Deep linear networks for regression are implicitly regularized towards flat minima",
+    "published": "2024-05-22",
+    "authors": [
+     "Pierre Marion",
+     "Lénaïc Chizat"
+    ],
+    "abstract_head": "The largest eigenvalue of the Hessian, or sharpness, of neural networks is a key quantity to understand their optimization dynamics. In this paper, we study the sharpness of deep linear networks for univariate regression. Minimizers can have arbitrarily large sharpness, but not an arbitrarily small one. Indeed, we show a lower bound on the sharpness of minimizers, which grows linearly with depth. "
+   }
+  ],
+  "mode_learning_time_log": [],
+  "two_networks_same_task_linear": [],
+  "bordelon_pehlevan_dmft": [],
+  "dominé_lazy_rich_linear": [
+   {
+    "id": "2409.14623v2",
+    "title": "From Lazy to Rich: Exact Learning Dynamics in Deep Linear Networks",
+    "published": "2024-09-22",
+    "authors": [
+     "Clémentine C. J. Dominé",
+     "Nicolas Anguita",
+     "Alexandra M. Proca",
+     "Lukas Braun",
+     "Daniel Kunin",
+     "Pedro A. M. Mediano",
+     "Andrew M. Saxe"
+    ],
+    "abstract_head": "Biological and artificial neural networks develop internal representations that enable them to perform complex tasks. In artificial networks, the effectiveness of these models relies on their ability to build task specific representation, a process influenced by interactions among datasets, architectures, initialization strategies, and optimization algorithms. Prior studies highlight that differen"
+   }
+  ],
+  "jacot_saddle_small_init": [
+   {
+    "id": "2106.15933v2",
+    "title": "Saddle-to-Saddle Dynamics in Deep Linear Networks: Small Initialization Training, Symmetry, and Sparsity",
+    "published": "2021-06-30",
+    "authors": [
+     "Arthur Jacot",
+     "François Ged",
+     "Berfin Şimşek",
+     "Clément Hongler",
+     "Franck Gabriel"
+    ],
+    "abstract_head": "The dynamics of Deep Linear Networks (DLNs) is dramatically affected by the variance $σ^2$ of the parameters at initialization $θ_0$. For DLNs of width $w$, we show a phase transition w.r.t. the scaling $γ$ of the variance $σ^2=w^{-γ}$ as $w\\to\\infty$: for large variance ($γ<1$), $θ_0$ is very close to a global minimum but far from any saddle point, and for small variance ($γ>1$), $θ_0$ is close t"
+   }
+  ],
+  "gidel_2019_discrete": [
+   {
+    "id": "1904.13262v2",
+    "title": "Implicit Regularization of Discrete Gradient Dynamics in Linear Neural Networks",
+    "published": "2019-04-30",
+    "authors": [
+     "Gauthier Gidel",
+     "Francis Bach",
+     "Simon Lacoste-Julien"
+    ],
+    "abstract_head": "When optimizing over-parameterized models, such as deep neural networks, a large set of parameters can achieve zero training error. In such cases, the choice of the optimization algorithm and its respective hyper-parameters introduces biases that will lead to convergence to specific minimizers of the objective. Consequently, this choice can be considered as an implicit regularization for the train"
+   }
+  ],
+  "gidel_2019_alt": [],
+  "cka_seeds_over_training": [
+   {
+    "id": "2607.02386v1",
+    "title": "Transformer Geometry Observatory TGO-II: Representational Similarity Observatory",
+    "published": "2026-07-02",
+    "authors": [
+     "Kaustubh Kapil",
+     "Kishor P. Upla"
+    ],
+    "abstract_head": "While Vision Transformers have achieved remarkable success across computer vision and language applications, the geometric evolution of their internal representations throughout training remains insufficiently understood. Existing analyses primarily focus on attention mechanisms and downstream performance, leaving the evolution of representation geometry largely unexplored. In this work, we presen"
+   },
+   {
+    "id": "2609.32380v2",
+    "title": "Traceprop: Training Data Attribution in a Single Pass",
+    "published": "2026-09-26",
+    "authors": [
+     "Amit Nautiyal"
+    ],
+    "abstract_head": "Data attribution tools used in practice, TRAK, LoGRA/LogIX, and EK-FAC, run after training: they recompute per-sample gradients in a separate pass over the training set, and curvature-aware variants need a further pass to estimate covariance. Traceprop records projected per-sample gradients and K-FAC covariance statistics inside the training backward pass itself. On Pythia-1B LoRA fine-tunes on an"
+   },
+   {
+    "id": "2605.16351v2",
+    "title": "PALM: Physically-Anchored Latent-timescale Mamba for Stable Representations under Distribution Shift",
+    "published": "2026-05-08",
+    "authors": [
+     "Sangyoon Bae",
+     "Shinjae Yoo",
+     "Jiook Cha"
+    ],
+    "abstract_head": "Scientific foundation models are built to reuse representations across datasets and acquisition protocols, yet their representations degrade under distribution shift. We trace one source of this failure to selective state-space models (SSMs). Their memory depends on the step Delta and the state matrix A only through their product, so data do not identify the physical timescale of memory, and under"
+   }
+  ],
+  "cka_linear_theory": [
+   {
+    "id": "2411.08739v3",
+    "title": "Bayesian Comparisons Between Representations",
+    "published": "2024-11-13",
+    "authors": [
+     "Heiko H. Schütt"
+    ],
+    "abstract_head": "Which neural networks are similar is a fundamental question for both machine learning and neuroscience. Here, it is proposed to base comparisons on the predictive distributions of linear readouts from intermediate representations. In Bayesian statistics, the prior predictive distribution is a full description of the inductive bias and generalization of a model, making it a great basis for comparis"
+   }
+  ],
+  "convergence_similarity_time": [],
+  "silent_alignment_linear_deep": [
+   {
+    "id": "2105.14301v2",
+    "title": "A Theory of Neural Tangent Kernel Alignment and Its Influence on Training",
+    "published": "2021-05-29",
+    "authors": [
+     "Haozhe Shan",
+     "Blake Bordelon"
+    ],
+    "abstract_head": "The training dynamics and generalization properties of neural networks (NN) can be precisely characterized in function space via the neural tangent kernel (NTK). Structural changes to the NTK during training reflect feature learning and underlie the superior performance of networks outside of the static kernel regime. In this work, we seek to theoretically understand kernel alignment, a prominent "
+   }
+  ],
+  "multi_spike_simultaneous_learning": [],
+  "sing_mode_timescale_exact": [],
+  "rep_sim_linear_teacher_student": [],
+  "alignment_time_spectrum_theory": [],
+  "isotropic_init_saddle_escape_ties": []
+ },
+ "fetched_by_id": {
+  "2610.29864v1": {
+   "id": "2610.29864v1",
+   "title": "Silent Alignment in Two-Layer Linear Networks: A High-Dimensional Perspective",
+   "published": "2026-10-21",
+   "authors": [
+    "Simon Martin",
+    "Francis Bach",
+    "Giulio Biroli"
+   ],
+   "abstract": "We study gradient flow in a two-layer linear network in the high-dimensional regime where the input, inner and output dimensions diverge proportionally. Under whitened inputs and isotropic imbalance, we combine a closed-form solution of the dynamics with prior random matrix theory results to derive a high-dimensional limit for the dynamics. Our method yields exact asymptotic spectral distributions for the weight matrices at all times and characterizes the evolution of the learned subspace. In the small-initialization limit, we identify a silent alignment phenomenon: the singular directions of the network align on an order-one timescale, while the singular values and empirical loss remain at their initial values. Visible learning occurs later, on a logarithmic timescale, as singular values progressively escape zero and the loss decreases. This phase is characterized by a saddle-to-saddle dynamics, which becomes a continuous process of spectral learning in the high-dimensional limit."
+  },
+  "2502.18710v3": {
+   "id": "2502.18710v3",
+   "title": "Bridging Critical Gaps in Convergent Learning: How Representational Alignment Evolves Across Layers, Training, and Distribution Shifts",
+   "published": "2025-02-26",
+   "authors": [
+    "Chaitanya Kapoor",
+    "Sudhanshu Srivastava",
+    "Meenakshi Khosla"
+   ],
+   "abstract": "Understanding convergent learning -- the degree to which independently trained neural systems -- whether multiple artificial networks or brains and models -- arrive at similar internal representations -- is crucial for both neuroscience and AI. Yet, the literature remains narrow in scope -- typically examining just a handful of models with one dataset, relying on one alignment metric, and evaluating networks at a single post-training checkpoint. We present a large-scale audit of convergent learning, spanning dozens of vision models and thousands of layer-pair comparisons, to close these long-standing gaps. First, we pit three alignment families against one another -- linear regression (affine-invariant), orthogonal Procrustes (rotation-/reflection-invariant), and permutation/soft-matching (unit-order-invariant). We find that orthogonal transformations align representations nearly as effectively as more flexible linear ones, and although permutation scores are lower, they significantly exceed chance, indicating a privileged representational basis. Tracking convergence throughout training further shows that nearly all eventual alignment crystallizes within the first epoch -- well before accuracy plateaus -- indicating it is largely driven by shared input statistics and architectural biases, not by the final task solution. Finally, when models are challenged with a battery of out-of-distribution images, early layers remain tightly aligned, whereas deeper layers diverge in proportion to the distribution shift. These findings fill critical gaps in our understanding of representational convergence, with implications for neuroscience and AI."
+  },
+  "2106.15933v2": {
+   "id": "2106.15933v2",
+   "title": "Saddle-to-Saddle Dynamics in Deep Linear Networks: Small Initialization Training, Symmetry, and Sparsity",
+   "published": "2021-06-30",
+   "authors": [
+    "Arthur Jacot",
+    "François Ged",
+    "Berfin Şimşek",
+    "Clément Hongler",
+    "Franck Gabriel"
+   ],
+   "abstract": "The dynamics of Deep Linear Networks (DLNs) is dramatically affected by the variance $σ^2$ of the parameters at initialization $θ_0$. For DLNs of width $w$, we show a phase transition w.r.t. the scaling $γ$ of the variance $σ^2=w^{-γ}$ as $w\\to\\infty$: for large variance ($γ<1$), $θ_0$ is very close to a global minimum but far from any saddle point, and for small variance ($γ>1$), $θ_0$ is close to a saddle point and far from any global minimum. While the first case corresponds to the well-studied NTK regime, the second case is less understood. This motivates the study of the case $γ\\to +\\infty$, where we conjecture a Saddle-to-Saddle dynamics: throughout training, gradient descent visits the neighborhoods of a sequence of saddles, each corresponding to linear maps of increasing rank, until reaching a sparse global minimum. We support this conjecture with a theorem for the dynamics between the first two saddles, as well as some numerical experiments."
+  },
+  "2409.14623v2": {
+   "id": "2409.14623v2",
+   "title": "From Lazy to Rich: Exact Learning Dynamics in Deep Linear Networks",
+   "published": "2024-09-22",
+   "authors": [
+    "Clémentine C. J. Dominé",
+    "Nicolas Anguita",
+    "Alexandra M. Proca",
+    "Lukas Braun",
+    "Daniel Kunin",
+    "Pedro A. M. Mediano",
+    "Andrew M. Saxe"
+   ],
+   "abstract": "Biological and artificial neural networks develop internal representations that enable them to perform complex tasks. In artificial networks, the effectiveness of these models relies on their ability to build task specific representation, a process influenced by interactions among datasets, architectures, initialization strategies, and optimization algorithms. Prior studies highlight that different initializations can place networks in either a lazy regime, where representations remain static, or a rich/feature learning regime, where representations evolve dynamically. Here, we examine how initialization influences learning dynamics in deep linear neural networks, deriving exact solutions for lambda-balanced initializations-defined by the relative scale of weights across layers. These solutions capture the evolution of representations and the Neural Tangent Kernel across the spectrum from the rich to the lazy regimes. Our findings deepen the theoretical understanding of the impact of weight initialization on learning regimes, with implications for continual learning, reversal learning, and transfer learning, relevant to both neuroscience and practical applications."
+  },
+  "1312.6120v3": {
+   "id": "1312.6120v3",
+   "title": "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+   "published": "2013-12-20",
+   "authors": [
+    "Andrew M. Saxe",
+    "James L. McClelland",
+    "Surya Ganguli"
+   ],
+   "abstract": "Despite the widespread practical success of deep learning methods, our theoretical understanding of the dynamics of learning in deep neural networks remains quite sparse. We attempt to bridge the gap between the theory and practice of deep learning by systematically analyzing learning dynamics for the restricted case of deep linear neural networks. Despite the linearity of their input-output map, such networks have nonlinear gradient descent dynamics on weights that change with the addition of each new hidden layer. We show that deep linear networks exhibit nonlinear learning phenomena similar to those seen in simulations of nonlinear networks, including long plateaus followed by rapid transitions to lower error solutions, and faster convergence from greedy unsupervised pretraining initial conditions than from random initial conditions. We provide an analytical description of these phenomena by finding new exact solutions to the nonlinear dynamics of deep learning. Our theoretical analysis also reveals the surprising finding that as the depth of a network approaches infinity, learning speed can nevertheless remain finite: for a special class of initial conditions on the weights, very deep networks incur only a finite, depth independent, delay in learning speed relative to shallow networks. We show that, under certain conditions on the training data, unsupervised pretraining can find this special class of initial conditions, while scaled random Gaussian initializations cannot. We further exhibit a new class of random orthogonal initial conditions on weights that, like unsupervised pre-training, enjoys depth independent learning times. We further show that these initial conditions also lead to faithful propagation of gradients even in deep nonlinear networks, as long as they operate in a special regime known as the edge of chaos."
+  },
+  "2111.00034v2": {
+   "id": "2111.00034v2",
+   "title": "Neural Networks as Kernel Learners: The Silent Alignment Effect",
+   "published": "2021-10-29",
+   "authors": [
+    "Alexander Atanasov",
+    "Blake Bordelon",
+    "Cengiz Pehlevan"
+   ],
+   "abstract": "Neural networks in the lazy training regime converge to kernel machines. Can neural networks in the rich feature learning regime learn a kernel machine with a data-dependent kernel? We demonstrate that this can indeed happen due to a phenomenon we term silent alignment, which requires that the tangent kernel of a network evolves in eigenstructure while small and before the loss appreciably decreases, and grows only in overall scale afterwards. We show that such an effect takes place in homogenous neural networks with small initialization and whitened data. We provide an analytical treatment of this effect in the linear network case. In general, we find that the kernel develops a low-rank contribution in the early phase of training, and then evolves in overall scale, yielding a function equivalent to a kernel regression solution with the final network's tangent kernel. The early spectral learning of the kernel depends on the depth. We also demonstrate that non-whitened data can weaken the silent alignment effect."
+  },
+  "2108.01661v2": {
+   "id": "2108.01661v2",
+   "title": "Grounding Representation Similarity with Statistical Testing",
+   "published": "2021-08-03",
+   "authors": [
+    "Frances Ding",
+    "Jean-Stanislas Denain",
+    "Jacob Steinhardt"
+   ],
+   "abstract": "To understand neural network behavior, recent works quantitatively compare different networks' learned representations using canonical correlation analysis (CCA), centered kernel alignment (CKA), and other dissimilarity measures. Unfortunately, these widely used measures often disagree on fundamental observations, such as whether deep networks differing only in random initialization learn similar representations. These disagreements raise the question: which, if any, of these dissimilarity measures should we believe? We provide a framework to ground this question through a concrete test: measures should have sensitivity to changes that affect functional behavior, and specificity against changes that do not. We quantify this through a variety of functional behaviors including probing accuracy and robustness to distribution shift, and examine changes such as varying random initialization and deleting principal components. We find that current metrics exhibit different weaknesses, note that a classical baseline performs surprisingly well, and highlight settings where all metrics appear to fail, thus providing a challenge set for further improvement."
+  }
+ },
+ "reading_status": {
+  "2610.29864v1": "аннотация",
+  "2111.00034v2": "аннотация",
+  "2106.15933v2": "аннотация",
+  "2304.00488v2": "аннотация",
+  "2302.11055v2": "аннотация",
+  "2512.20607v2": "аннотация",
+  "2303.15438v2": "аннотация",
+  "2405.17580v2": "аннотация",
+  "2502.02531v3": "аннотация",
+  "1312.6120v3": "аннотация",
+  "1904.13262v2": "аннотация",
+  "2409.14623v2": "аннотация",
+  "2502.18710v3": "аннотация",
+  "2108.01661v2": "аннотация",
+  "2105.14301v2": "аннотация",
+  "2605.01288v4": "аннотация (сниппет-выдача)"
+ },
+ "notes": [
+  "Запрос 'cka_training_dynamics_spectrum', 'rep_sim_over_training_time', 'mode_learning_time_log', 'bordelon_pehlevan_dmft', 'two_networks_same_task_linear' и др. дали 0 результатов: прямого совпадения 'кратность старших мод + CKA между сетями + время' не найдено.",
+  "Формула Сакса (время моды ~ (1/s) ln(s/m0)) в аннотациях не видна: её источник — по памяти, не сверено.",
+  "Данные id 2502.18710 — версия v3 в выдаче по id."
+ ]
+}

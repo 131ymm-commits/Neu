@@ -19,3 +19,7 @@ experiments/2026-11-13_PLATON-02/dry/*/jobs/jobs.jsonl
 experiments/2026-11-13_PLATON-02/dry/*/*/journal/
 experiments/2026-11-13_PLATON-02/dry/*/*/dry_out.json
 experiments/2026-11-13_SPECTRUM-01/run/results.json
+# SPECTRUM-02: сырые json пилота и прогона — в git только сжатые (.json.gz) и sha256
+experiments/2026-11-14_SPECTRUM-02/pilot/pilot.json
+experiments/2026-11-14_SPECTRUM-02/pilot/pilot_6.json
+experiments/2026-11-14_SPECTRUM-02/run/results.json

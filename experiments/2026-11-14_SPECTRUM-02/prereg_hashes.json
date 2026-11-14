@@ -1,0 +1,16 @@
+{
+ "files": {
+  "../2026-11-13_SPECTRUM-01/spectrum01.py": "4c92c18d85b37b47cb07f7360089a0a351ef3c50a9f61fee7c2eef87ff8031d2",
+  "../2026-11-13_SPECTRUM-01/analyze_spectrum01.py": "b9b76e51e335a16e829a2775a70dcf2df04e7ffd892d0ef79c6662246a9cd73c",
+  "../2026-10-28_SELF-02/exp_self_02.py": "011999160014582594df583688c257415947e6234d17ef4c6006eaa87df1d86b",
+  "../2026-10-27_SELF-01/exp_self_01.py": "9e78b7f01d8d64ccaa1d8dad0b6f2cc6fabbc94101127d7b8cf3f86c424b9422",
+  "spectrum02.py": "e9b9f1dc3770e9368a7e9f323f4f6ab7fb6938e8f33e3d534d1509f20a31959b",
+  "analyze_spectrum02.py": "ea80547090e925e8bac18b03ec0f93eb9911c9335deef1739a5f06d9d94d0406",
+  "test_spectrum02.py": "3699f0463688289d39f7561895c9c54fecc50fd18b409fc1e0f0172e60c1be7b",
+  "dry_spectrum02.py": "5fcdc1233af2c4bc3ce50aa48a906f43e7a21fe6bead867f29cb594d963701de",
+  "power_spectrum02.py": "5437e8f061fb819e6e4444e81a7dd54e19f3bc2d0fe36d0782b5a13f3ac4a243",
+  "power.json": "c2e207e06fb52648b18504a2ecedb620148aee19c02d761846990656e45de729",
+  "requirements.txt": "35fabba872f313dd9ac8deea07daaf231f6046183735a4d28f41a0923bf116ed",
+  "prereg_hashes.py": "797f1da4b50a8f82e1380682ec6887946097d0b75e26ca0ce322bceac33b0940"
+ }
+}
