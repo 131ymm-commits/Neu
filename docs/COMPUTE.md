@@ -102,3 +102,9 @@ Google выпустил официальную консольную програ
 - Oracle: [InfoQ: Oracle cloud free tier limits](https://infoq.com/news/2026/07/oracle-cloud-free-tier-limits/); [Always Free Resources](https://docs.oracle.com/iaas/Content/FreeTier/resourceref.htm).
 - GitLab: [Compute minutes](https://docs.gitlab.com/ee/ci/pipelines/cicd_minutes). Azure: [Concurrent jobs](https://learn.microsoft.com/azure/devops/pipelines/licensing/concurrent-jobs).
 
+### Решение автора 15.11.2026: «да, разрешаю оба»
+- **Параллельные прогоны** — новый workflow `.github/workflows/neu-par.yml`, задания `gha_par/<имя>.sh`: каждое изменённое задание — на своём раннере, до 20 одновременно, очередь — по имени задания.
+- `neu-run.yml` не менялся: его хеш входит в регистрацию OCPOST-01.
+- **Ключ API Anthropic** — секрет репозитория `ANTHROPIC_API_KEY`, передаётся только заданиям `gha_par/`.
+- Проверка — задания `gha_par/par_probe.sh` и `gha_par/api_probe.sh`. Второе смотрит только список моделей, без трат токенов.
+
