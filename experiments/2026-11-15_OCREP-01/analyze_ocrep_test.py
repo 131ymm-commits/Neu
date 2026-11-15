@@ -70,9 +70,16 @@ def prior_effects():
     return out
 
 
-def prior_descr(ci, prior):
-    """Эффект x < 0 исключён, если нижняя граница ДИ выше x."""
-    return {name: dict(effect=x, excluded=bool(ci[0] > x)) for name, x in prior.items()}
+def prior_descr(e, prior):
+    """Эффект x < 0 исключён, если нижняя граница ДИ выше x. Главное — по ДИ BC правила; рядом (описательно) — по
+    процентильному ДИ и по ДИ BC каждой половины повторов: при z0 далеко от 0 нижняя граница BC держится на единицах
+    повторов (хвосты). Разные ответы половин — пометка unstable."""
+    out = {}
+    for name, x in prior.items():
+        hv = [bool(h[0] > x) for h in e['tails']['halves']]
+        out[name] = dict(effect=x, excluded=bool(e['ci'][0] > x), excluded_percentile=bool(e['ci_percentile'][0] > x), excluded_halves=hv,
+                         unstable=bool(hv[0] != hv[1]))
+    return out
 
 
 def verdict(lo, hi):
@@ -185,7 +192,7 @@ def main(out_dir, dst, B=10000, heads_test=None, r3_active=None, workers=1):
     same_all = (A_[:, ood] == A_[0, ood][None, :]).all(0) & (A_[0, ood] >= 0)
     res['all_wrong_ood_descr'] = dict(all_wrong=float(wrong_all.mean()), all_wrong_same=float((wrong_all & same_all).mean()))
     pe = prior_effects()
-    res['prior_effect_descr'] = {k: prior_descr(res[k]['ci'], pe[k]) for k in pe}
+    res['prior_effect_descr'] = {k: prior_descr(res[k], pe[k]) for k in pe}
     res['verdicts'] = {k: res[k]['verdict'] for k in rules}
     res['verdict'] = '; '.join(f'{k}: {v}' for k, v in res['verdicts'].items())
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

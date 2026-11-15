@@ -50,5 +50,15 @@ check('условие R3: 0,2 и 0,9 → да; 0,2 и 0,5 → нет; 0,1 и 0,9
       P.gate(0.2, 0.9) and not P.gate(0.2, 0.5) and not P.gate(0.1, 0.9) and not P.gate(0.15, 0.9))
 Scf = Q.crossfit_scores(ag, corr, logp, fam, hi, fit, cols)
 check('кросс-подгонка: все восемь оценщиков, оценки конечны', set(Scf) >= set(Q.EVALS) and all(np.isfinite(Scf[e]).all() for e in Q.EVALS))
+import analyze_ocrep_test as R  # noqa: E402
+e_ = dict(ci=[-0.05, 0.03], ci_percentile=[-0.03, 0.05], tails=dict(halves=[[-0.06, 0.03], [-0.04, 0.03]]))
+pd_ = R.prior_descr(e_, {'a': -0.08, 'b': -0.045})
+check('описательно: −0,08 исключён везде; −0,045 — не по BC, да по процентильному, половины расходятся',
+      pd_['a'] == dict(effect=-0.08, excluded=True, excluded_percentile=True, excluded_halves=[True, True], unstable=False)
+      and pd_['b'] == dict(effect=-0.045, excluded=False, excluded_percentile=True, excluded_halves=[False, True], unstable=True))
+pe_ = R.prior_effects()
+check('прежние эффекты: половина наименьшего = max/2 (R1 — от OCMIX-01 R3, R2 — от OCCOR-01 R3)',
+      pe_['R1']['половина наименьшего'] == pe_['R1']['OCMIX-01 R3'] / 2 and pe_['R2']['половина наименьшего'] == pe_['R2']['OCCOR-01 R3'] / 2
+      and all(v < 0 for d_ in pe_.values() for v in d_.values()))
 print('провалов:', bad)
 sys.exit(1 if bad else 0)

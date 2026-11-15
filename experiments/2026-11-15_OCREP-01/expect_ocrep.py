@@ -3,7 +3,10 @@
 """OCREP-01: основа ожиданий PREREG §7 → expectations.json (до данных теста).
 Предсказательное распределение разности на тесте по пилоту: нормальное, центр — точка пилота, разброс —
 √(SE_теста² + SE_пилота²), где SE_пилота = SE_теста / √(n_OOD пилота / n_OOD теста) (power.json). Порог — z · SE_теста.
-P(подтверждено) = P(Δ̂ < −z·SE), P(опровергнуто) = P(Δ̂ > z·SE), P(эффект x исключён) = P(Δ̂ − z·SE > x)."""
+P(подтверждено) = P(Δ̂ < −z·SE), P(опровергнуто) = P(Δ̂ > z·SE), P(эффект x исключён) = P(Δ̂ − z·SE > x).
+Второй вариант (bc) — границы как у ДИ BC правил на ответах пилота (pilot/analysis_test_rules_on_pilot.json, 10000 повторов):
+расстояния от точки до нижней и до верхней границы, умноженные на √(n_OOD пилота / n_OOD теста). Он учитывает асимметрию BC
+(z0 далеко от 0): P(подтверждено) = P(Δ̂ + верх < 0), P(опровергнуто) = P(Δ̂ − низ > 0), P(x исключён) = P(Δ̂ − низ > x)."""
 import json
 import os
 from math import erf, sqrt
@@ -14,6 +17,7 @@ Phi = lambda z: 0.5 * (1 + erf(z / sqrt(2)))          # noqa: E731
 
 def main():
     p = json.load(open(os.path.join(HERE, 'power.json'), encoding='utf-8'))
+    ch = json.load(open(os.path.join(HERE, 'pilot', 'analysis_test_rules_on_pilot.json'), encoding='utf-8'))
     scale = sqrt(p['n_pilot_ood'] / p['n_test_ood'])
     z = p['z']
     out = dict(note='предсказательное распределение по пилоту; нормальное приближение; поправка к прежним тестам — в PREREG §7')
@@ -25,6 +29,10 @@ def main():
         out[k] = dict(delta_pilot=d, se_test=se, se_pilot=se / scale, sd_pred=sd, threshold=th,
                       p_confirm=Phi((-th - d) / sd), p_refute=1 - Phi((th - d) / sd),
                       p_excluded={name: 1 - Phi((v['effect'] + th - d) / sd) for name, v in s['power_prior_descr'].items()})
+        c = ch[k]
+        lo_d, hi_d = (c['delta'] - c['ci'][0]) * scale, (c['ci'][1] - c['delta']) * scale
+        out[k]['bc'] = dict(z0_pilot=c['z0'], lower_dist=lo_d, upper_dist=hi_d, p_confirm=Phi((-hi_d - d) / sd), p_refute=1 - Phi((lo_d - d) / sd),
+                            p_excluded={name: 1 - Phi((v['effect'] + lo_d - d) / sd) for name, v in s['power_prior_descr'].items()})
     json.dump(out, open(os.path.join(HERE, 'expectations.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print(json.dumps(out, ensure_ascii=False, indent=1))
     return out
