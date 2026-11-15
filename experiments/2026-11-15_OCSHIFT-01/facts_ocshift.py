@@ -102,6 +102,25 @@ def main(src='gha_out/ocshift_test/analysis.json', dst=None):
         out['other_side'][k] = dict(threshold=thr, power_half=pwr, expectation_id=name, expectation=e_, capped=cap,
                                     weight_bits=log2(cap / r['level']) if cap > r['level'] else 0.0,
                                     note='сторона, противоположная ожидаемому знаку; посчитано после данных по формуле PREREG §6, без предохранителя')
+    # Совет 61 (после данных; описательно): знаковый счёт по средам как по выборке и «режим низкой точности».
+    from math import comb
+    out['sign_test'] = {}
+    for k in ('R1', 'R2', 'R3'):
+        lo_ = r[k]['leave_one_range_out']
+        a_, m_ = lo_['n_same_sign'], lo_['n']
+        tail = sum(comb(m_, j) for j in range(max(a_, m_ - a_), m_ + 1)) / 2 ** m_
+        out['sign_test'][k] = dict(n_same_sign=a_, n=m_, p_two_sided=min(1.0, 2 * tail))
+    allq = list(EV) + ['ONE-BEST']
+    T_ = {e: out['mean'][e]['T'] for e in allq}
+    dc_ = {e: out['mean'][e]['dec'] for e in allq}
+    out['regime'] = dict(T_min=min(T_.values()), T_max=max(T_.values()), ign_min=1 - max(T_.values()), ign_max=1 - min(T_.values()),
+                         ign_spread=max(T_.values()) - min(T_.values()), dec_min=min(dc_.values()), dec_max=max(dc_.values()),
+                         dec_spread=max(dc_.values()) - min(dc_.values()), T_one_best=T_['ONE-BEST'],
+                         note='средние по средам у восьми оценщиков и ONE-BEST; самообман здесь — разность средних C − T')
+    for k in ('R1', 'R2', 'R3'):                                              # где точка относительно трёх интервалов (совет 61, правка 1)
+        pt_ = r[k]['delta']
+        out['bias'][k]['point_inside'] = {key: bool(r[k][key][0] <= pt_ <= r[k][key][1]) for key in ('ci', 'ci_percentile', 'ci_basic')}
+        out['bias'][k]['shift_in_sd'] = r[k]['boot_shift'] / r[k]['boot_sd']
     base = float(np.log2(0.54 / 0.46))
     out['support_bits'] = dict(base_hypothesis_neu=base)
     out['analysis_seconds'] = r.get('seconds')
