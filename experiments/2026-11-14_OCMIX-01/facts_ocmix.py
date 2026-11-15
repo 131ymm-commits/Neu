@@ -30,6 +30,14 @@ out['support_bits'] = dict(base_hypothesis_neu=base, R3_weight=pw['R3']['weight_
 out['auroc_mean'] = {e: float(np.mean(v['auroc_ood'])) for e, v in E.items()}
 out['unsupported_id_total'] = int(sum(v['unsupported_id'] for v in r['head_counts'].values()))
 out['expectations_prereg'] = dict(source='PREREG-OCMIX-01 §7 (копия таблицы)', E1=0.01, E2=0.002, E3=0.35, E4=0.95, E5=0.85, E6=0.90, E7=0.90)
+sup_any, sup_other = E['VETO']['selected_supported'], r['support_other_lineage_descr']['VETO']
+out['veto_support_split'] = dict(any=sup_any, other_lineage=sup_other, only_relatives=sup_any - sup_other, none=1 - sup_any,
+                                 note='совет 57: only_relatives — поддержка была, но только от родственных голов (свои чекпойнты или своя пара с deduped); none — поддержки не было')
+ex = out['expectations_prereg']
+oc_ = dict(E1=0, E2=0, E3=1, E4=1, E5=1, E6=1, E7=1)                  # исходы по REPORT-OCMIX-01 §3
+br = lambda ks: float(np.mean([(ex[k] - oc_[k]) ** 2 for k in ks]))  # noqa: E731
+out['brier_ocmix'] = dict(all_7=br(['E1', 'E2', 'E3', 'E4', 'E5', 'E6', 'E7']), without_post_pilot=br(['E1', 'E2', 'E3', 'E4', 'E6']),
+                          note='совет 57: без помеченных «после пилота» E5 и E7')
 out['n_test'] = r['n_id'] + r['n_ood']
 out['rule_ci_coverage'] = 1 - 2 * r['level']
 out['mde_power08'] = {k: pw[k]['mde_power08'] for k in ('R1', 'R2', 'R3')}
