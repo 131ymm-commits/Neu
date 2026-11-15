@@ -1,0 +1,13 @@
+{
+ "source": "PREREG-OCINT-01 §4, §6, §7 (коммит c5bb6b32)",
+ "weight_bits": {
+  "B2": 8.459431618637296,
+  "B1": 0.0,
+  "A": 0.0
+ },
+ "forecast_seconds": {
+  "worlds": 7740,
+  "quarters_worlds": 1150,
+  "real": 3700
+ }
+}
