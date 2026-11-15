@@ -456,6 +456,21 @@
   "boot_median": 0.003082271178398821,
   "share_below_0": 0.3333333333333333,
   "level": 0.0025,
+  "n_out": {
+   "bc": [
+    1,
+    6
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   false
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 1 повт.)",
   "tails": {
    "n_below_lo": 1,
    "n_above_hi": 6,
@@ -469,6 +484,16 @@
      0.012548534127861336
     ]
    ],
+   "halves_percentile": [
+    [
+     -0.012700681234903448,
+     0.02602197280924127
+    ],
+    [
+     -0.006774959293047138,
+     0.023594185305660886
+    ]
+   ],
    "verdict_halves": [
     "не решено",
     "не решено"
@@ -476,6 +501,8 @@
    "unstable": false
   },
   "monte_carlo_note": "",
+  "verdict_bc": "не решено",
+  "verdict_percentile": "не решено",
   "verdict": "не решено"
  },
  "R2": {
@@ -492,6 +519,21 @@
   "boot_median": -0.0011341334541061232,
   "share_below_0": 0.6,
   "level": 0.0025,
+  "n_out": {
+   "bc": [
+    1,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 1 повт.); граница BC не определена (верхняя: за ней 1 повт.)",
   "tails": {
    "n_below_lo": 1,
    "n_above_hi": 1,
@@ -505,6 +547,16 @@
      0.013317645640701009
     ]
    ],
+   "halves_percentile": [
+    [
+     -0.021515044318518615,
+     0.018672471923866528
+    ],
+    [
+     -0.018209754818742055,
+     0.014285422462689802
+    ]
+   ],
    "verdict_halves": [
     "не решено",
     "не решено"
@@ -512,6 +564,8 @@
    "unstable": false
   },
   "monte_carlo_note": "",
+  "verdict_bc": "не решено",
+  "verdict_percentile": "не решено",
   "verdict": "не решено"
  },
  "descr_NB−AGREE": {
@@ -527,7 +581,22 @@
   "z0": -0.29673783825989797,
   "boot_median": 0.004784684480676149,
   "share_below_0": 0.3,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    1,
+    2
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 1 повт.); граница BC не определена (верхняя: за ней 2 повт.)"
  },
  "descr_FAM−AGREE": {
   "delta": 0.08440348343297288,
@@ -542,7 +611,22 @@
   "z0": 0.5244005127080407,
   "boot_median": 0.07747955165161452,
   "share_below_0": 0.0,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    4,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 4 повт.); граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "descr_MIX−LR": {
   "delta": -0.05542525100272233,
@@ -557,7 +641,22 @@
   "z0": -0.38532046640756773,
   "boot_median": -0.05105982542458076,
   "share_below_0": 1.0,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    1,
+    3
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 1 повт.); граница BC не определена (верхняя: за ней 3 повт.)"
  },
  "descr_CONF−LR": {
   "delta": -0.027892654679706697,
@@ -572,7 +671,22 @@
   "z0": 0.43072729929545744,
   "boot_median": -0.034091280327768425,
   "share_below_0": 0.9666666666666667,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    3,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 3 повт.); граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "descr_R1_dT": {
   "delta": 0.002875905797101397,
@@ -587,7 +701,22 @@
   "z0": 0.6744897501960817,
   "boot_median": -0.0028542044082124907,
   "share_below_0": 0.65,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    7,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   false,
+   true
+  ],
+  "bc_note": "граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "descr_R1_dC": {
   "delta": 0.01638325971075083,
@@ -602,7 +731,22 @@
   "z0": -0.2533471031357997,
   "boot_median": 0.02055818763309586,
   "share_below_0": 0.05,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    1,
+    2
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 1 повт.); граница BC не определена (верхняя: за ней 2 повт.)"
  },
  "descr_R2_dT": {
   "delta": 0.002730331262939867,
@@ -617,7 +761,22 @@
   "z0": 0.2533471031357997,
   "boot_median": 0.0012473580917873317,
   "share_below_0": 0.38333333333333336,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    2,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 2 повт.); граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "descr_R2_dC": {
   "delta": 0.0023669352909081454,
@@ -632,7 +791,22 @@
   "z0": -0.16789400478810546,
   "boot_median": 0.004238430962103468,
   "share_below_0": 0.3333333333333333,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    1,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 1 повт.); граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "descr_AGREEtop−CONFtop": {
   "delta": 0.0014277315864619222,
@@ -647,7 +821,22 @@
   "z0": 1.1107716166367854,
   "boot_median": -0.008499390183837274,
   "share_below_0": 0.8333333333333334,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    22,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   false,
+   true
+  ],
+  "bc_note": "граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "descr_LRtop−CONFtop": {
   "delta": 0.028139124989268294,
@@ -662,7 +851,22 @@
   "z0": -0.12566134685507402,
   "boot_median": 0.031542713955284185,
   "share_below_0": 0.016666666666666666,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    1,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 1 повт.); граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "descr_VETOtop−CONFtop": {
   "delta": 0.0197561703665301,
@@ -677,7 +881,22 @@
   "z0": 0.5244005127080407,
   "boot_median": 0.015917858353131198,
   "share_below_0": 0.05,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    4,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   true,
+   true
+  ],
+  "bc_note": "граница BC не определена (нижняя: за ней 4 повт.); граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "descr_R3_descr": {
   "delta": -0.008382954622738192,
@@ -692,7 +911,22 @@
   "z0": 0.6744897501960817,
   "boot_median": -0.014151410443160761,
   "share_below_0": 0.9,
-  "level": 0.005
+  "level": 0.005,
+  "n_out": {
+   "bc": [
+    7,
+    1
+   ],
+   "percentile": [
+    1,
+    1
+   ]
+  },
+  "bc_undetermined": [
+   false,
+   true
+  ],
+  "bc_note": "граница BC не определена (верхняя: за ней 1 повт.)"
  },
  "support_other_lineage_descr": {
   "VETO": 0.9312726449275361
@@ -893,55 +1127,60 @@
   "R1": {
    "OCCOR-01 R1": {
     "effect": -0.12010719892126176,
-    "excluded": true,
+    "status": "исключён",
+    "excluded_bc": true,
     "excluded_percentile": true,
     "excluded_halves": [
      true,
      true
     ],
-    "unstable": false
+    "halves_agree": true
    },
    "OCMIX-01 R3": {
     "effect": -0.08079813413880677,
-    "excluded": true,
+    "status": "исключён",
+    "excluded_bc": true,
     "excluded_percentile": true,
     "excluded_halves": [
      true,
      true
     ],
-    "unstable": false
+    "halves_agree": true
    },
    "половина наименьшего": {
     "effect": -0.04039906706940338,
-    "excluded": true,
+    "status": "исключён",
+    "excluded_bc": true,
     "excluded_percentile": true,
     "excluded_halves": [
      true,
      true
     ],
-    "unstable": false
+    "halves_agree": true
    }
   },
   "R2": {
    "OCCOR-01 R3": {
     "effect": -0.07694571065123035,
-    "excluded": true,
+    "status": "исключён",
+    "excluded_bc": true,
     "excluded_percentile": true,
     "excluded_halves": [
      true,
      true
     ],
-    "unstable": false
+    "halves_agree": true
    },
    "половина наименьшего": {
     "effect": -0.038472855325615174,
-    "excluded": true,
+    "status": "исключён",
+    "excluded_bc": true,
     "excluded_percentile": true,
     "excluded_halves": [
      true,
      true
     ],
-    "unstable": false
+    "halves_agree": true
    }
   }
  },
