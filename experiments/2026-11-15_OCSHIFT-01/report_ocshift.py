@@ -13,7 +13,7 @@ ROOT = os.path.dirname(os.path.dirname(X))
 a = sys.argv[1:]
 J = lambda p: json.load(open(p if os.path.isabs(p) else os.path.join(ROOT, p), encoding='utf-8'))  # noqa: E731
 r = J(a[0] if a else 'gha_out/ocshift_test/analysis.json')
-fa = J(a[1] if len(a) > 1 else os.path.join(X, 'run', 'facts_ocshift.json'))
+fa = J(a[1] if len(a) > 1 else 'gha_out/ocshift_facts/facts_ocshift.json')
 pw = J('gha_out/ocshift_chain/power.json')
 OUT = a[2] if len(a) > 2 else os.path.join(X, 'REPORT-OCSHIFT-01.md')
 EV = ('AGREE', 'NB-AGREE', 'LR-AGREE', 'NB-IND', 'FAM-AGREE', 'CONF', 'VETO', 'MIX-LR')
@@ -30,6 +30,16 @@ def n(x, d=3, sign=False):
 
 def ci(e, d=4, key='ci'):
     return f"[{n(e[key][0], d, True)}; {n(e[key][1], d, True)}]"
+
+
+def zero(e):
+    """Пометка описательной записи: все ли три интервала по одну сторону нуля."""
+    los, his = [e[k][0] for k in ('ci', 'ci_percentile', 'ci_basic')], [e[k][1] for k in ('ci', 'ci_percentile', 'ci_basic')]
+    return '' if (max(his) < 0 or min(los) > 0) else '°'
+
+
+def cz(e, d=4):
+    return ci(e, d) + zero(e)
 
 
 def reading(k):
@@ -51,18 +61,30 @@ w = L.append
 w('# OCSHIFT-01 «ОЦЕНЩИК-СДВИГИ» — отчёт (15.11.2026)')
 w('')
 w('Главный вопрос Neu — оценщик, который не обманывается под давлением отбора. OCSHIFT-01 спрашивал на десяти свежих средах (диапазоны a ∈ [X00, X99], X = 4…8, по две подсказки; те же девять голов Pythia): лучше ли одна лучшая голова, чем лучший из восьми оценщиков толпы; даёт ли сам отбор между головами самообман без сдвига; что лучше — CONF или LR-AGREE.')
-w('- **Предрегистрация — коммит REGHASH** (`PREREG-OCSHIFT-01.md`; совет 60 — три линзы).')
+w('- **Предрегистрация — коммит 2721a7fa** (`PREREG-OCSHIFT-01.md`; совет 60 — три линзы).')
 w(f"- **Прогон** — Kaggle, Tesla T4 × 2, извлечение {n(fa.get('extraction_seconds', 0), 1)} с (`run/out/kaggle_log.json`); {fa['n_problems']['all']} задач: {fa['n_problems']['id']} ID и {fa['n_problems']['ood']} OOD в {fa['n_envs']} средах.")
-w(f"  - Сырой вывод закоммичен до анализа (RAWHASH). Анализ — GitHub Actions, {n(fa['analysis_seconds'], 0)} с, {r['B']} повторов; хеши сверены в том же задании.")
-w('- **Числа** — из `gha_out/ocshift_test/analysis.json`; производные — из `run/facts_ocshift.json` (`facts_ocshift.py`). Отчёт собирает `report_ocshift.py`.')
+w(f"  - Сырой вывод закоммичен до анализа (коммит 45500072287f). Анализ — GitHub Actions, {n(fa['analysis_seconds'], 0)} с, {r['B']} повторов; хеши сверены в том же задании.")
+w('- **Числа** — из `gha_out/ocshift_test/analysis.json`; производные — из `gha_out/ocshift_facts/facts_ocshift.json` (`facts_ocshift.py`, тоже GitHub Actions). Отчёт собирает `report_ocshift.py`.')
+w('  - `ledger.py audit` по `analysis.json`, `facts_ocshift.json`, `power.json`, `analysis_pilot.json` и журналу Kaggle — «не найдено» 0. Большинство чисел аудит считает неинформативными (они встречаются в данных слишком часто), поэтому ключевые числа сверены отдельно по ключам json: `check_report_ocshift.py`, все совпали.')
 w('')
 w('## Итог')
 w(f"**Вердикт кода — «{r['verdict']}».** " + ('Проверки метода пройдены' if r['method']['ok'] else 'ПРОВЕРКИ МЕТОДА НЕ ПРОЙДЕНЫ')
   + f": годных сред {nv} из {fa['n_envs']}, сверка цепочки — " + ('прошла' if r['check_ok'] else 'НЕ ПРОШЛА') + '.')
+di, dd, sd = D('D1: разность незнания'), D('D1: разность самообмана'), fa['selection_deception']
+lo1 = R1['leave_one_range_out']
+flip = [g for g, v in lo1['mean_without'].items() if v * R1['delta'] <= 0]
+w('')
+w('**Коротко.**')
+w(f"- **Отбор головы по наибольшей заявке (CONF) завышает заявку уже на ID, без сдвига, — подтверждено (R2).** При кросс-подгонке заявка выбранной головы выше её точности на {n(-R2['delta'])}; знак тот же в {R2['leave_one_range_out']['n_same_sign']} средах из {nv}. У одной лучшей головы, где выбора по задаче нет, — {n(sd['one_best_id'])}.")
+w(f"- **Одна лучшая голова против толпы — не решено (R1).** В среднем ONE-BEST лучше лучшего из восьми на {n(-R1['delta'])} ИОИ, но вывод даёт только один интервал из трёх, а знак держится на одном диапазоне: без X = {', '.join(flip)} среднее меняет знак. Описательно разность состоит из двух частей разного знака: толпа точнее на {n(di['delta'])}, одна голова честнее на {n(-dd['delta'])}.")
+w(f"- **CONF лучше LR-AGREE на этих десяти средах — подтверждено (R3):** {n(R3['delta'], 4, True)} ИОИ, знак тот же в {R3['leave_one_range_out']['n_same_sign']} средах из {nv}. На трёх прежних сдвигах знак был обратным ({n(pw['R3']['effect'], 4, True)}). Различие между средами подтверждено (R4).")
+w(f"- **Строгая ветвь** (п. 4 решения совета 60 дословно): R2 — «{R2['verdict_strict']}», R3 — «{R3['verdict_strict']}». У обоих граница BC за разрешением повторов; главный вердикт вынесен по трём интервалам (PREREG §5).")
+w('')
+w('**По правилам.**')
 w(f"- **R1 (одна голова против толпы) — «{reading('R1')}».** Среднее по средам [ИОИ(ONE-BEST) − ИОИ лучшего из восьми]: {n(R1['delta'], 4, True)}, ДИ BC 99,5 % {ci(R1)}, процентильный {ci(R1, key='ci_percentile')}, обратный {ci(R1, key='ci_basic')}.")
 w(f"  - Средний ИОИ: ONE-BEST {n(M['ONE-BEST']['ioi'])}, лучший из восьми задним числом {n(M['MIN8']['ioi'])}. По точкам ONE-BEST лучше в {cnt['one_beats_min8']} средах из {nv}.")
 w(f"- **R2 (самообман от отбора без сдвига) — «{reading('R2')}».** Среднее по средам [T − C у CONF на ID, кросс-подгонка]: {n(R2['delta'], 4, True)}, ДИ BC {ci(R2)}, процентильный {ci(R2, key='ci_percentile')}, обратный {ci(R2, key='ci_basic')}.")
-w(f"  - Вторым способом, без бутстрепа: {n(R2['normal_descr']['mean'], 4, True)} при стандартной ошибке {n(R2['normal_descr']['se'], 4)} (описательно).")
+w(f"  - Нормальное приближение той же точки, без бутстрепа: {n(R2['normal_descr']['mean'], 4, True)} при стандартной ошибке {n(R2['normal_descr']['se'], 4)} (описательно).")
 w(f"- **R3 (CONF против LR-AGREE, слово автора) — «{reading('R3')}».** Среднее по средам [ИОИ(CONF) − ИОИ(LR-AGREE)]: {n(R3['delta'], 4, True)}, ДИ BC {ci(R3)}, процентильный {ci(R3, key='ci_percentile')}, обратный {ci(R3, key='ci_basic')}. По точкам CONF лучше в {cnt['conf_beats_lr']} средах из {nv}.")
 w(f"- **R4 (различие R3 между средами) — «{reading('R4')}».** Q = {n(R4['Q'], 2)} при {R4['df']} степенях свободы; p по χ² — {R4['p_chi2']:.1e}, по бутстрепу — {R4['p_boot']:.1e}.".replace('e-0', '·10⁻').replace('e-', '·10⁻'))
 w('')
@@ -120,20 +142,22 @@ txt = {'E1': 'R1 подтверждено', 'E2': 'R1 опровергнуто',
        'E6': 'R4 подтверждено', 'E7': 'проверки метода опыта пройдены', 'E8': 'ONE-BEST — pythia-2.8b-deduped не меньше чем в 8 средах'}
 for k in txt:
     w(f"| {k} | {txt[k]} | {n(fa['expectations_prereg'][k], 2)} | {'да' if fa['expectations_outcome'][k] else 'нет'} |")
-w(f"- Брайер этих восьми ставок — {n(fa['brier_ocshift'], 3)}.")
+w(f"- Брайер этих восьми ставок — {n(fa['brier_ocshift'], 3)}. Ожидания пересмотрены до прогона (PREREG §7, ERRORS № 165); по значениям черновика Брайер был бы {n(fa['brier_ocshift_draft'], 3)}.")
+w('- Главный промах — E4: подтверждение R3 в сторону CONF я считал маловероятным (0,11), потому что на трёх прежних сдвигах в среднем лучше была LR-AGREE.')
 w('')
-w('## 4. Описательно (вес 0, без вердикта; интервалы уровня 0,005 на сторону; в скобках — BC)')
+w('## 4. Описательно (вес 0, без вердикта; интервалы уровня 0,005 на сторону)')
+w('В скобках — интервал BC. Значок ° стоит там, где хотя бы один из трёх интервалов (BC, процентильный, обратный) не исключает ноль; без значка — все три по одну сторону нуля.')
 w(f"- Описательных сравнений с интервалом — {fa['descr_count']}, по 0,005 на сторону, без поправки; общий ложный уровень серии — до {n(fa['descr_family_level_bonferroni'], 2)} (Бонферрони, оценка).")
-w('- **ONE-BEST против каждого из восьми** (среднее по средам, ИОИ; минус — ONE-BEST лучше): ' + '; '.join(f"{e} {n(D(f'ONE-BEST − {e}')['delta'], 4, True)} {ci(D(f'ONE-BEST − {e}'))}" for e in EV) + '.')
-w(f"- **Брайер выбранной заявки** (ИОИ не штрафует заниженную заявку): ONE-BEST {n(M['ONE-BEST']['brier'])}, лучший из восьми {n(M['MIN8']['brier'])}; разность {n(D('Брайер ONE-BEST − MIN8')['delta'], 4, True)} {ci(D('Брайер ONE-BEST − MIN8'))}.")
-w(f"- **Точность выбора:** ONE-BEST {n(M['ONE-BEST']['T'])}; LR-AGREE {n(M['LR-AGREE']['T'])} (разность {n(D('T ONE-BEST − T LR-AGREE')['delta'], 4, True)} {ci(D('T ONE-BEST − T LR-AGREE'))}); CONF {n(M['CONF']['T'])} (разность {n(D('T ONE-BEST − T CONF')['delta'], 4, True)} {ci(D('T ONE-BEST − T CONF'))}).")
+w('- **ONE-BEST против каждого из восьми** (среднее по средам, ИОИ; минус — ONE-BEST лучше): ' + '; '.join(f"{e} {n(D(f'ONE-BEST − {e}')['delta'], 4, True)} {cz(D(f'ONE-BEST − {e}'))}" for e in EV) + '.')
+w(f"- **Брайер выбранной заявки** (ИОИ не штрафует заниженную заявку): ONE-BEST {n(M['ONE-BEST']['brier'])}, лучший из восьми {n(M['MIN8']['brier'])}; разность {n(D('Брайер ONE-BEST − MIN8')['delta'], 4, True)} {cz(D('Брайер ONE-BEST − MIN8'))}.")
+w(f"- **Точность выбора:** ONE-BEST {n(M['ONE-BEST']['T'])}; LR-AGREE {n(M['LR-AGREE']['T'])} (разность {n(D('T ONE-BEST − T LR-AGREE')['delta'], 4, True)} {cz(D('T ONE-BEST − T LR-AGREE'))}); CONF {n(M['CONF']['T'])} (разность {n(D('T ONE-BEST − T CONF')['delta'], 4, True)} {cz(D('T ONE-BEST − T CONF'))}).")
 sw = fa['switch']
 w('- **Где выбор отходит от ответа ONE-BEST** (среднее по средам: доля задач; точность выбранного там; точность ONE-BEST там): ' + '; '.join(f"{e} — {n(sw[e]['switch'])}; {n(sw[e]['T_selected_on_switch'])}; {n(sw[e]['T_one_best_on_switch'])}" for e in ('LR-AGREE', 'CONF', 'AGREE')) + '.')
 sd = fa['selection_deception']
-w('- **Самообман от отбора на ID** (C − T, кросс-подгонка, только точка) и самообман вне диапазона: ' + '; '.join(f"{e} {n(sd['id_crossfit'][e], 3, True)} / {n(sd['ood'][e], 3, True)}" for e in EV) + f". У ONE-BEST на ID (отбор головы): {n(sd['one_best_id'], 3, True)}; разность с CONF {n(D('wc CONF − wc ONE-BEST')['delta'], 4, True)} {ci(D('wc CONF − wc ONE-BEST'))}.")
-w(f"- **Контроль AGREE той же среды для R3** (совет 59): CONF − AGREE {n(D('CONF − AGREE')['delta'], 4, True)} {ci(D('CONF − AGREE'))}; LR-AGREE − AGREE {n(D('LR-AGREE − AGREE')['delta'], 4, True)} {ci(D('LR-AGREE − AGREE'))}; LR-AGREE − NB-IND {n(D('LR-AGREE − NB-IND')['delta'], 4, True)} {ci(D('LR-AGREE − NB-IND'))}.")
-w(f"- **Вторая калибровка после отбора (POST-IN):** CONF {n(D('POST-IN CONF − CONF')['delta'], 4, True)} {ci(D('POST-IN CONF − CONF'))}; LR-AGREE {n(D('POST-IN LR-AGREE − LR-AGREE')['delta'], 4, True)} {ci(D('POST-IN LR-AGREE − LR-AGREE'))}; POST-IN CONF против ONE-BEST {n(D('POST-IN CONF − ONE-BEST')['delta'], 4, True)} {ci(D('POST-IN CONF − ONE-BEST'))}.")
-w(f"- **Слияния:** FUSE-MIN против ONE-BEST — ИОИ {n(D('FUSE-MIN − ONE-BEST')['delta'], 4, True)} {ci(D('FUSE-MIN − ONE-BEST'))}, Брайер {n(D('Брайер FUSE-MIN − ONE-BEST')['delta'], 4, True)} {ci(D('Брайер FUSE-MIN − ONE-BEST'))}; ONE-BEST с заявкой min(CONF, LR-AGREE) против ONE-BEST — ИОИ {n(D('ONE-BEST+MIN − ONE-BEST')['delta'], 4, True)} {ci(D('ONE-BEST+MIN − ONE-BEST'))}, Брайер {n(D('Брайер ONE-BEST+MIN − ONE-BEST')['delta'], 4, True)} {ci(D('Брайер ONE-BEST+MIN − ONE-BEST'))}.")
+w('- **Самообман от отбора на ID** (C − T, кросс-подгонка, только точка) и самообман вне диапазона: ' + '; '.join(f"{e} {n(sd['id_crossfit'][e], 3, True)} / {n(sd['ood'][e], 3, True)}" for e in EV) + f". У ONE-BEST на ID (отбор головы): {n(sd['one_best_id'], 3, True)}; разность с CONF {n(D('wc CONF − wc ONE-BEST')['delta'], 4, True)} {cz(D('wc CONF − wc ONE-BEST'))}.")
+w(f"- **Контроль AGREE той же среды для R3** (совет 59): CONF − AGREE {n(D('CONF − AGREE')['delta'], 4, True)} {cz(D('CONF − AGREE'))}; LR-AGREE − AGREE {n(D('LR-AGREE − AGREE')['delta'], 4, True)} {cz(D('LR-AGREE − AGREE'))}; LR-AGREE − NB-IND {n(D('LR-AGREE − NB-IND')['delta'], 4, True)} {cz(D('LR-AGREE − NB-IND'))}.")
+w(f"- **Вторая калибровка после отбора (POST-IN):** CONF {n(D('POST-IN CONF − CONF')['delta'], 4, True)} {cz(D('POST-IN CONF − CONF'))}; LR-AGREE {n(D('POST-IN LR-AGREE − LR-AGREE')['delta'], 4, True)} {cz(D('POST-IN LR-AGREE − LR-AGREE'))}; POST-IN CONF против ONE-BEST {n(D('POST-IN CONF − ONE-BEST')['delta'], 4, True)} {cz(D('POST-IN CONF − ONE-BEST'))}.")
+w(f"- **Слияния:** FUSE-MIN против ONE-BEST — ИОИ {n(D('FUSE-MIN − ONE-BEST')['delta'], 4, True)} {cz(D('FUSE-MIN − ONE-BEST'))}, Брайер {n(D('Брайер FUSE-MIN − ONE-BEST')['delta'], 4, True)} {cz(D('Брайер FUSE-MIN − ONE-BEST'))}; ONE-BEST с заявкой min(CONF, LR-AGREE) против ONE-BEST — ИОИ {n(D('ONE-BEST+MIN − ONE-BEST')['delta'], 4, True)} {cz(D('ONE-BEST+MIN − ONE-BEST'))}, Брайер {n(D('Брайер ONE-BEST+MIN − ONE-BEST')['delta'], 4, True)} {cz(D('Брайер ONE-BEST+MIN − ONE-BEST'))}.")
 t10 = fa['top10']
 w('- **Верхние 10 % по заявке** (самообман, среднее по средам, точки): ' + '; '.join(f"{e} {n(t10[e], 3, True)}" for e in ('ONE-BEST', 'CONF', 'LR-AGREE', 'AGREE', 'VETO', 'MIX-LR')) + '.')
 if 'without_best' in fa:
@@ -148,20 +172,48 @@ if dec:
     w('- **Диапазон и подсказка** (дисперсия точек: между подсказками внутри диапазона / между средними диапазонов): ' + '; '.join(f"{k} — {n(v['var_prompt_within_range'], 5)} / {n(v['var_range_means'], 5)}" for k, v in dec.items()) + '.')
 w('')
 w('## 5. Для главного вопроса (оценщик)')
-w('ДОПИСАТЬ ПОСЛЕ ДАННЫХ')
+w('Главный вопрос Neu — оценщик, который не обманывается под давлением отбора. Опыт даёт о нём четыре вещи; первая — по правилу, остальные — описательно.')
+w(f"1. **Давление отбора измерено без сдвига (R2, подтверждено).** На ID, где калибровка честная по построению, выбор головы с наибольшей заявкой завышает заявку на {n(-R2['delta'])}. Описательно (только точки) то же у всех восьми оценщиков: от {n(min(sd['id_crossfit'].values()))} до {n(max(sd['id_crossfit'].values()))}. У ONE-BEST — {n(sd['one_best_id'])}.")
+w(f"2. **Вне диапазона самообман толпы в несколько раз выше, чем у одной головы** (C − T, среднее по средам, точки): ONE-BEST {n(M['ONE-BEST']['dec'], 3, True)}; CONF {n(M['CONF']['dec'], 3, True)}; MIX-LR {n(M['MIX-LR']['dec'], 3, True)}; LR-AGREE {n(M['LR-AGREE']['dec'], 3, True)}; AGREE {n(M['AGREE']['dec'], 3, True)}.")
+w(f"   - Разность CONF и ONE-BEST по самообману вне диапазона — {n(M['CONF']['dec'] - M['ONE-BEST']['dec'])}; самообман от отбора у CONF на ID — {n(-R2['delta'])}. Числа близки; причина не проверялась.")
+w(f"3. **Отбор покупает точность.** Точность выбранного ответа: CONF {n(M['CONF']['T'])}, MIX-LR {n(M['MIX-LR']['T'])}, ONE-BEST {n(M['ONE-BEST']['T'])}; разность ONE-BEST − CONF {n(D('T ONE-BEST − T CONF')['delta'], 4, True)} (BC {ci(D('T ONE-BEST − T CONF'))}, процентильный {ci(D('T ONE-BEST − T CONF'), key='ci_percentile')}, обратный {ci(D('T ONE-BEST − T CONF'), key='ci_basic')}). Оракул (верна хоть одна голова) — {n(fa['mean_oracle'])}: запас для выбора есть.")
+w(f"   - ИОИ складывает незнание и самообман. У толпы первое меньше, второе больше, поэтому R1 и вышел около нуля: {n(R1['delta'], 4, True)} против {n(pw['R1']['effect'], 4, True)} на трёх готовых сдвигах.")
+w(f"   - Это согласуется со встречной гипотезой интуита из совета 60 (в трудном режиме D1 ближе к нулю), но не проверяет её: сравниваются разные среды, а правило о режиме заранее не записывалось.")
+w(f"4. **Что может убрать самообман отбора, не теряя точности (кандидаты, не выводы).**")
+w(f"   - Вторая калибровка после отбора (POST-IN CONF): ИОИ {n(M['POST-IN CONF']['ioi'])} против {n(M['CONF']['ioi'])} у CONF (разность {n(D('POST-IN CONF − CONF')['delta'], 4, True)}, BC {ci(D('POST-IN CONF − CONF'))}); против ONE-BEST {n(D('POST-IN CONF − ONE-BEST')['delta'], 4, True)} — ноль не исключён.")
+w(f"   - Меньшая из двух заявок (FUSE-MIN): ИОИ {n(M['FUSE-MIN']['ioi'])}, ниже ONE-BEST на {n(-D('FUSE-MIN − ONE-BEST')['delta'], 4)} (BC {ci(D('FUSE-MIN − ONE-BEST'))}, процентильный {ci(D('FUSE-MIN − ONE-BEST'), key='ci_percentile')}, обратный {ci(D('FUSE-MIN − ONE-BEST'), key='ci_basic')}). Но по Брайеру она не лучше: {n(D('Брайер FUSE-MIN − ONE-BEST')['delta'], 4, True)}. ИОИ не штрафует заниженную заявку, поэтому это не вывод.")
+w(f"- **О прежних утверждениях.** Контроль AGREE тех же сред: LR-AGREE − AGREE {n(D('LR-AGREE − AGREE')['delta'], 4, True)}, CONF − AGREE {n(D('CONF − AGREE')['delta'], 4, True)}; LR-AGREE − NB-IND {n(D('LR-AGREE − NB-IND')['delta'], 4, True)}. Направление C-086 и C-087 на свежих средах то же; это описательно и без базы ONE-BEST (ERRORS № 163).")
 w('')
 w('## 6. Ограничения')
 w('- Одна задача (сложение), те же девять голов Pythia; свежие — диапазоны и подсказки. Вывод — про эти десять сред.')
 w('- Свежие среды — другой режим, чем три готовых сдвига: головы намного слабее. Основание гипотезы и мощность взяты с готовых сдвигов.')
 w('- R1 несимметричен: «подтверждено» — против лучшего задним числом (консервативно); «опровергнуто» — только с проверкой после отбора.')
 w('- ИОИ не штрафует заниженную заявку; рядом — Брайер (описательно).')
-w('- Бутстреп завышает самообман от отбора (R2); рядом — оценка без бутстрепа.')
+w('- Бутстреп завышает самообман от отбора (R2): повторы смещены относительно точки (z₀ около +3). Поэтому в правиле есть нормальная граница, а строгая ветвь даёт «не решено».')
+w('- Описательных сравнений много, и они без поправки: это карта для следующих правил, а не выводы.')
+w('- В четырёх средах из десяти лучшая на ID голова не была лучшей вне диапазона: ONE-BEST — это тоже выбор, только по другому признаку.')
 w('- Литература: все источники — «сниппет»; близкий вывод о маршрутизаторах между моделями уже высказан другими.')
 w('')
 w('## 7. Вес опоры (PREREG §6; правило записано до данных)')
-w('ДОПИСАТЬ ПОСЛЕ ДАННЫХ')
+os_ = fa['other_side']['R3']
+w('Вес = log₂(min(мощность, ожидание из §7) / 0,0025). Мощность перенесена с трёх готовых сдвигов, где режим другой, поэтому ожидание — её потолок. Данные, породившие гипотезу, опорой не считаются.')
 w('')
-w('## 8. Отклонения')
-w('ДОПИСАТЬ ПОСЛЕ ДАННЫХ')
+w('| Правило | Исход | Мощность при эффекте вдвое | Ожидание | Вес, бит |')
+w('|---|---|---|---|---|')
+w(f"| R1 | «{reading('R1')}» | {n(pw['R1']['reading_power'])} | E1 = {n(pw['R1']['expectation'], 2)} | 0 |")
+w(f"| R2 | «{reading('R2')}» | {n(pw['R2']['reading_power'])} | E3 = {n(pw['R2']['expectation'], 2)} | {n(pw['R2']['weight_bits'], 2, True)} |")
+w(f"| R3 | «{reading('R3')}» — сторона, обратная ожидаемому знаку | {n(os_['power_half'])} | E4 = {n(os_['expectation'], 2)} | {n(os_['weight_bits'], 2, True)} |")
+w(f"| R4 | «{reading('R4')}» | {n(pw['R4']['reading_power'])} | E6 = {n(pw['R4']['expectation'], 2)} | {n(pw['R4']['weight_bits'], 2, True)} |")
+w('')
+w(f"- **R3.** В таблице PREREG §6 мощность и вес были только для ожидаемого знака (LR-AGREE лучше). Подтвердилась другая сторона. Её вес посчитан после данных по той же формуле и на тех же зарегистрированных числах: мощность {n(os_['power_half'])}, потолок — ожидание E4 = {n(os_['expectation'], 2)}. Это отклонение № 2 (§8).")
+w(f"- **R1.** Мощность {n(pw['R1']['reading_power'])} не ниже 0,05, поэтому исход читается как «не решено», а не «не проверено». Наименьший обнаружимый эффект — {n(pw['R1']['mde_power08'])}; точка на свежих средах — {n(abs(R1['delta']))}.")
+w('- По строгой ветви R2 и R3 не решены; вес по ней — 0 бит. В реестр идёт главный вердикт с этой пометкой.')
+w('- Статус «установлено» опыт дать не может: нужен повтор с контролем на неспецифичность.')
+w('')
+w('## 8. Отклонения (`DEVIATIONS.md`)')
+w(f"1. Извлечение шло {n(fa.get('extraction_seconds', 0), 1)} с при прогнозе 3151 с; анализ — {n(fa['analysis_seconds'], 1)} с (прогноз — от полутора до двух с половиной часов). На вердикты не влияет.")
+w('2. Вес стороны «подтверждено» у R3 посчитан после данных (§7): в PREREG §6 таблица была только для ожидаемого знака.')
+w('3. Производные числа отчёта (`facts_ocshift.py`) собраны отдельным заданием GitHub Actions; в порядке PREREG §10 этого шага не было. Сборщик не входит в хеши; он дополнен после регистрации (поля новых правил — до данных, вес другой стороны — после).')
+w('4. Других отклонений нет: код анализа и сценарий сверены по хешам в том же задании («совпало»); сырой вывод закоммичен до анализа и до анализа не разбирался.')
 open(OUT, 'w', encoding='utf-8').write('\n'.join(L) + '\n')
 print('\n'.join(L))
