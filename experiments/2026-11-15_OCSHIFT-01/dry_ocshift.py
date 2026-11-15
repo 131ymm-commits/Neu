@@ -8,7 +8,7 @@
              Согласие находит верный ответ → толпа сильнее одной головы → R1 «опровергнуто»; среды одинаковы → R4 «не решено».
   one      — одна сильная голова (ID 0,75, OOD 0,70); остальные на ID хороши (0,60), вне диапазона ломаются (0,15),
              ошибаются одинаково и уверенно → выбор уходит к сломанным → R1 «подтверждено».
-  fail     — как crowd, но в трёх средах у четырёх голов вне диапазона почти нет верных ответов → эти среды негодны
+  fail     — как crowd, но в трёх средах у четырёх голов на ID почти нет верных ответов → эти среды негодны
              (годных 7 из 10 < 8) → все правила «не определено (проверка метода)».
   badcheck — как crowd, но в блоке сверки изменён один ответ → сверка не проходит → все правила «не определено».
 Блок сверки берётся из закоммиченного вывода пилота OCREP-01 (первые 96 задач), поэтому в crowd, one и fail сверка проходит."""
@@ -69,7 +69,7 @@ def build(kind, seed):
                                             0.0 if strong else 0.8, not strong)
             else:
                 broken = kind == 'fail' and j <= 3 and k < 4                 # среды 1–3 (после блока сверки), четыре головы
-                cols[e['name']] = head_cols(g, e['problems'], 0.75, 0.005 if broken else 0.60, common[e['name']], 0.0, False)
+                cols[e['name']] = head_cols(g, e['problems'], 0.005 if broken else 0.75, 0.60, common[e['name']], 0.0, False)
         heads.append(dict(model=repo.split('/')[-1], repo=repo, revision=rev, where='stub', worker=0, seconds=0.0, seconds_env={}, cols=cols))
     return dict(info=dict(mode='test', stub=kind), mode='test', design=dict(stub=kind), envs=envs, heads=heads, seconds=0.0)
 

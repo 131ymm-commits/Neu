@@ -1,5 +1,6 @@
 #!/bin/bash
 # OCSHIFT-01: разбор пилота (только проверка цепочки и прогноз проверки метода — HYPOTHESIS). GitHub Actions.
+# Повтор 15.11.2026: прогноз проверки метода — только по ID.
 set -euo pipefail
 OUT="$1"
 E=experiments/2026-11-15_OCSHIFT-01

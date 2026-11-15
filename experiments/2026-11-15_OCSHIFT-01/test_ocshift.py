@@ -98,12 +98,30 @@ fo = st['fold_of'][fit]
 check('части кросс-подгонки: 5 частей по исходным задачам ID, копии задачи — в одной части, у OOD части нет',
       sorted(set(st['fold_of'][idi])) == [0, 1, 2, 3, 4] and (st['fold_of'][ood] == -1).all()
       and all(not (set(fit[fo != k]) & set(fit[fo == k])) for k in range(5)))
-tt_, cc_ = [], []
+tt_, cc_, tb_, cb_ = [], [], [], []
 for k in range(5):
     tr, te = idi[st['fold_of'][idi] != k], idi[st['fold_of'][idi] == k]
-    t_, c_, _ = S.select(T.calibrate(st['logp'][st['keep']], cs, tr, te), cs[:, te].astype(float))
+    ck_ = T.calibrate(st['logp'][st['keep']], cs, tr, te)
+    t_, c_, _ = S.select(ck_, cs[:, te].astype(float))
     tt_.append(t_); cc_.append(c_)
+    hk_ = int(np.argmax(cs[:, tr].mean(1)))
+    tb_.append(cs[hk_, te].astype(float)); cb_.append(ck_[hk_])
 check('wc CONF = T − C на ID с кросс-подгонкой (пересчёт вторым способом)', abs(pt['wc CONF'] - (np.concatenate(tt_).mean() - np.concatenate(cc_).mean())) < 1e-12)
+check('wc ONE-BEST — то же для головы, лучшей на обучающих частях', abs(pt['wc ONE-BEST'] - (np.concatenate(tb_).mean() - np.concatenate(cb_).mean())) < 1e-12)
+e2 = dict(meta=e['meta'], problems=e['problems'], heads=[dict(h, rows=[dict(r) for r in h['rows']]) for h in e['heads']])
+for j_, (r_, p_) in enumerate(zip(e2['heads'][0]['rows'], e2['problems'])):       # голова 0: вне диапазона все ответы неверны
+    if p_['range'] == 'OOD':
+        r_['answer'], r_['correct'] = p_['sum'] + 1, False
+n_ok = 0
+for r_, p_ in zip(e2['heads'][1]['rows'], e2['problems']):                         # голова 1: на ID только 10 верных
+    if p_['range'] == 'ID':
+        good = n_ok < 10
+        n_ok += 1
+        r_['answer'], r_['correct'] = (p_['sum'], True) if good else (p_['sum'] + 1, False)
+st2, info2 = S.prepare(e2, 7)
+m2 = info2['method']
+check('проверка метода — только по ID: голова без верных ответов вне диапазона проходит; голова с 10 верными на ID — нет',
+      m2[info2['names'][0]]['ok'] and m2[info2['names'][0]]['ood_correct'] == 0 and not m2[info2['names'][1]]['ok'] and info2['keep'][0] == 0 and 1 not in info2['keep'])
 pt2 = S.core(st, idi, ood)
 check('core детерминирован', all(pt[k] == pt2[k] for k in pt))
 
@@ -120,5 +138,10 @@ check('Q — по формуле Кохрена', abs(h0['Q'] - (w * (pts_ - (w 
 check('val: разность по словарю; у R2 вычитаемого нет', A.val({'a': 3.0, 'b': 1.0}, ('a', 'b')) == 2.0 and A.val({'a': 3.0}, ('a', None)) == 3.0)
 check('правила: R1 — ONE-BEST против MIN8, R2 — wc CONF, R3 — CONF против LR-AGREE',
       A.RULES == {'R1': ('ioi ONE-BEST', 'ioi MIN8'), 'R2': ('wc CONF', None), 'R3': ('ioi CONF', 'ioi LR-AGREE')})
+b8 = {f'e{k}': gg.normal(0.0, 0.01, 4000) for k in range(8)}
+m0 = A.max_t({e: 0.02 for e in b8}, b8)                     # восемь разностей по +2 ст. отклонения: по отдельности «значимы» на 0,025, после отбора — нет
+m1 = A.max_t(dict({e: 0.0 for e in b8}, e3=0.06), b8)       # одна разность +6 ст. отклонений
+check('max-T: восемь разностей по +2σ не значимы после отбора; одна +6σ — значима, и названа она',
+      not m0['significant'] and m0['crit'] > 2.8 and m1['significant'] and m1['best'] == 'e3' and m1['p'] < 0.0025)
 print('провалов:', bad)
 sys.exit(1 if bad else 0)

@@ -14,6 +14,9 @@ SPEC — 'new:КАТАЛОГ' (answers.json вида ocshift_extract.py, MODE = 
 копии задачи в выборке остаются в одной части.
 Правила (уровень LEVEL на сторону; вердикт — по ДИ BC и процентильному вместе, analyze_ocrep_test.verdict_conj):
   R1: D1 = среднее [ИОИ(ONE-BEST) − наименьший ИОИ среди восьми оценщиков толпы]. Подтверждено — верхняя граница < 0.
+      Опровергнуто — нижняя граница > 0 И проверка, верная после отбора (max-T по восьми фиксированным оценщикам, уровень
+      LEVEL): лучший задним числом оценщик выбран по тем же данным, и без этой проверки «опровергнуто» было бы завышено.
+      Если нижняя граница > 0, а max-T не значим — «не решено (фора отбора)».
   R2: D2 = среднее [T − C у CONF на ID с кросс-подгонкой]. Подтверждено — верхняя граница < 0.
   R3: D3 = среднее [ИОИ(CONF) − ИОИ(LR-AGREE)]. Подтверждено — верхняя < 0 (CONF лучше); опровергнуто — нижняя > 0.
   R4: неоднородность D3 по средам: Q = Σ w (D3 − среднее с весами w)², w = 1 / s² (s — ст. отклонение бутстрепа среды).
@@ -51,7 +54,8 @@ DESCR = dict({f'ONE-BEST − {e}': ('ioi ONE-BEST', f'ioi {e}') for e in EV},
                 'POST-IN CONF − CONF': ('ioi POST-IN CONF', 'ioi CONF'), 'POST-IN CONF − ONE-BEST': ('ioi POST-IN CONF', 'ioi ONE-BEST'),
                 'POST-IN LR-AGREE − LR-AGREE': ('ioi POST-IN LR-AGREE', 'ioi LR-AGREE'), 'FUSE-MIN − ONE-BEST': ('ioi FUSE-MIN', 'ioi ONE-BEST'),
                 'Брайер FUSE-MIN − ONE-BEST': ('brier FUSE-MIN', 'brier ONE-BEST'), 'ONE-BEST+MIN − ONE-BEST': ('ioi ONE-BEST+MIN', 'ioi ONE-BEST'),
-                'Брайер ONE-BEST+MIN − ONE-BEST': ('brier ONE-BEST+MIN', 'brier ONE-BEST')})
+                'Брайер ONE-BEST+MIN − ONE-BEST': ('brier ONE-BEST+MIN', 'brier ONE-BEST'),
+                'wc ONE-BEST': ('wc ONE-BEST', None), 'wc CONF − wc ONE-BEST': ('wc CONF', 'wc ONE-BEST')})
 U = 'не определено (проверка метода)'
 UL = 'не решено (LR: один класс в выборке ID больше чем в 1 % повторов)'
 
@@ -100,6 +104,19 @@ def heterogeneity(pt, bt):
     Qb = (w[:, None] * (b0 - mw[None, :]) ** 2).sum(0)
     return dict(Q=Q, df=m - 1, mean_weighted=mean_w, sd_env=[float(x) for x in s], p_chi2=float(chi2.sf(Q, m - 1)),
                 p_boot=float((1 + (Qb >= Q).sum()) / (B + 1)), q_boot_q9975=float(np.quantile(Qb, 1 - LEVEL)))
+
+
+def max_t(points, boots, level=LEVEL):
+    """Проверка, верная после отбора: есть ли среди фиксированных оценщиков такой, у кого средний ИОИ ниже, чем у ONE-BEST.
+    points[e], boots[e] — точка и повторы средней по средам разности ИОИ(ONE-BEST) − ИОИ(e). Статистика — наибольшее
+    t = разность / ст. отклонение бутстрепа; нулевое распределение — наибольшее по оценщикам центрированное t повторов."""
+    es = list(points)
+    sd = {e: float(np.std(boots[e], ddof=1)) for e in es}
+    t = {e: float(points[e] / max(sd[e], 1e-12)) for e in es}
+    null = np.max([(np.asarray(boots[e]) - np.mean(boots[e])) / max(sd[e], 1e-12) for e in es], 0)
+    best = max(es, key=lambda e: t[e])
+    crit = float(np.quantile(null, 1 - level))
+    return dict(t=t, best=best, t_max=t[best], crit=crit, p=float((1 + (null >= t[best]).sum()) / (len(null) + 1)), significant=bool(t[best] > crit))
 
 
 def main(dst, specs, B=10000, workers=1):
@@ -169,6 +186,13 @@ def main(dst, specs, B=10000, workers=1):
         e['verdict'] = U if not method_ok else (UL if (lr_bad and k != 'R2') else v)
         e['by_env'] = {n: float(val(pts[n], pair)) for n in valid}
         res[k] = e
+    # R1, сторона «опровергнуто»: проверка, верная после отбора
+    fx_pt = {x: float(np.mean([val(pts[n], ('ioi ONE-BEST', f'ioi {x}')) for n in valid])) for x in EV}
+    fx_bt = {x: np.mean([val(boots[n], ('ioi ONE-BEST', f'ioi {x}')) for n in valid], 0) for x in EV}
+    mt = max_t(fx_pt, fx_bt)
+    res['R1']['max_t'] = mt
+    if method_ok and not lr_bad and res['R1']['verdict'] == 'опровергнуто' and not mt['significant']:
+        res['R1']['verdict'] = 'не решено (фора отбора)'
     h = heterogeneity([val(pts[n], RULES['R3']) for n in valid], [val(boots[n], RULES['R3']) for n in valid]) if m >= 2 else None
     if h is not None:
         h['verdict_raw'] = 'подтверждено' if (h['p_chi2'] < LEVEL and h['p_boot'] < LEVEL) else 'не решено'

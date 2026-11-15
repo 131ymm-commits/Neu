@@ -12,6 +12,7 @@ core(st, fit, cols) — все числа одного набора (точка 
      POST-IN CONF / POST-IN LR-AGREE — вторая калибровка после отбора по fit, in-sample (описательно);
   'ioi MIN8', 'brier MIN8' — наименьшее среди восьми (лучший задним числом);
   'wc CONF' — T − C у CONF на fit с кросс-подгонкой по частям исходных задач (самообман от отбора без сдвига; < 0 — завышение);
+  'wc ONE-BEST' — то же у ONE-BEST (голова выбирается по обучающим частям; описательно);
   'lr_one_class' — число голов с одним классом в fit."""
 import json
 import os
@@ -110,7 +111,9 @@ def prepare(env, seed_cv):
         cnt = dict(id_correct=int(corr[k][rid].sum()), id_wrong=int((~corr[k][rid]).sum()),
                    ood_correct=int(corr[k][~rid].sum()), ood_wrong=int((~corr[k][~rid]).sum()))
         none = float(np.mean([a is None for a in ans[k]]))
-        mc[names[k]] = dict(**cnt, none_frac=none, ok=bool(min(cnt.values()) >= MIN_EACH and none <= MAX_NONE))
+        # Проверка метода — только по ID (правда ID оценщикам доступна); счёт по OOD записывается, но состав толпы не решает:
+        # иначе правда OOD протекала бы в состав толпы (PREREG §9).
+        mc[names[k]] = dict(**cnt, none_frac=none, ok=bool(min(cnt['id_correct'], cnt['id_wrong']) >= MIN_EACH and none <= MAX_NONE))
     keep = [k for k in range(len(heads)) if mc[names[k]]['ok']]
     fold_of = np.full(len(rid), -1)
     perm = np.random.default_rng(seed_cv).permutation(len(idi))
@@ -147,13 +150,18 @@ def core(st, fit, cols):
         ti, ci, _ = select(T.calibrate(S[e], cs, fit, fit), y_f)
         put(f'POST-IN {e}', meas(sel[e][0], iso_fit(ci, ti).predict(sel[e][1])))
     fo = st['fold_of'][fit]
-    tt, cc = [], []
+    tt, cc, tb, cb = [], [], [], []
     for k in range(K_CV):
         tr, te = fit[fo != k], fit[fo == k]
-        t, c, _ = select(T.calibrate(S['CONF'], cs, tr, te), cs[:, te].astype(float))
+        ck = T.calibrate(S['CONF'], cs, tr, te)
+        t, c, _ = select(ck, cs[:, te].astype(float))
         tt.append(t)
         cc.append(c)
+        hk = int(np.argmax(cs[:, tr].mean(1)))                              # ONE-BEST по обучающим частям: у неё тоже есть отбор — головы
+        tb.append(cs[hk, te].astype(float))
+        cb.append(ck[hk])
     out['wc CONF'] = float(np.mean(np.concatenate(tt)) - np.mean(np.concatenate(cc)))
+    out['wc ONE-BEST'] = float(np.mean(np.concatenate(tb)) - np.mean(np.concatenate(cb)))
     out['lr_one_class'] = float(sum(1 for i in keep if st['corr'][i][fit].all() or (~st['corr'][i][fit]).all()))
     return out
 
@@ -169,7 +177,9 @@ def extras(st, info):
     hb = int(np.argmax(acc_id))
     A_ = np.array([[-1 if x is None else x for x in info['ans'][k]] for k in keep])
     same_bh = (A_[:, ood] == A_[hb, ood][None, :]) & (A_[:, ood] >= 0)
+    co_hb = T.calibrate(st['logp'][keep], cs, idi, ood)[hb]
     res = dict(accuracy={kn[k]: dict(id=float(acc_id[k]), ood=float(acc_ood[k])) for k in range(len(keep))},
+               one_best_top10=Z.top_frac(co_hb, y_o[hb]),
                one_best=dict(head=kn[hb], acc_id=float(acc_id[hb]), acc_ood=float(acc_ood[hb]), best_ood_head=kn[int(np.argmax(acc_ood))],
                              best_ood_acc=float(acc_ood.max())),
                oracle=dict(id=float(cs[:, idi].any(0).mean()), ood=float(cs[:, ood].any(0).mean())), evaluators={})

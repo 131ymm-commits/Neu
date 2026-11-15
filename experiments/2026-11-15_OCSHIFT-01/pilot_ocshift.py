@@ -5,7 +5,8 @@
   1. Цепочка: две видеокарты отработали; блок сверки совпал с выводом пилота OCREP-01 (ответы и logp); время по головам
      и прогноз времени теста.
   2. Прогноз проверки метода: точность голов на свежих диапазонах (подсказка пилота, 300 задач на диапазон) и ожидаемое
-     число верных и неверных ответов в среде теста (порог 20; запас — 30).
+     число верных и неверных ответов на ID в среде теста (порог 20; запас — 30). Проверка метода — только по ID
+     (PREREG §9); ожидаемое число по OOD записывается для сведения.
 Сравнения оценщиков на пилоте не считаются."""
 import json
 import os
@@ -55,9 +56,10 @@ def main(pilot_dir, out_dir):
             a_id, a_ood = float(corr[k][rid].mean()), float(corr[k][~rid].mean())
             exp = dict(id_correct=a_id * n_test[x]['id'], id_wrong=(1 - a_id) * n_test[x]['id'],
                        ood_correct=a_ood * n_test[x]['ood'], ood_wrong=(1 - a_ood) * n_test[x]['ood'])
-            lo = min(exp.values())
+            lo = min(exp['id_correct'], exp['id_wrong'])
             r['heads'][Q.label(h)] = dict(acc_id=a_id, acc_ood=a_ood, none_frac=float(np.mean([v is None for v in ans[k]])),
-                                          expected_min_count=lo, forecast_ok=bool(lo >= 20), forecast_margin=bool(lo >= 30))
+                                          expected_min_count=lo, expected_min_count_ood=min(exp['ood_correct'], exp['ood_wrong']),
+                                          forecast_ok=bool(lo >= 20), forecast_margin=bool(lo >= 30))
             worst[Q.label(h)] = min(worst.get(Q.label(h), 1e9), lo)
         r['forecast_pass'] = int(sum(v['forecast_ok'] for v in r['heads'].values()))
         r['best_head_id'] = max(r['heads'], key=lambda q: r['heads'][q]['acc_id'])
@@ -78,7 +80,7 @@ def main(pilot_dir, out_dir):
         print(f"{name}: ID {r['n_id']}, OOD {r['n_ood']}; пройдут проверку метода по прогнозу: {r['forecast_pass']} из {len(r['heads'])}; "
               f"лучшая на ID — {r['best_head_id']}, лучшая на OOD — {r['best_head_ood']}")
         for hn, v in r['heads'].items():
-            print(f"    {hn:26s} ID {v['acc_id']:.3f} OOD {v['acc_ood']:.3f} | наименьшее ожидаемое число {v['expected_min_count']:.0f} "
+            print(f"    {hn:26s} ID {v['acc_id']:.3f} OOD {v['acc_ood']:.3f} | наименьшее ожидаемое число на ID {v['expected_min_count']:.0f} "
                   f"{'' if v['forecast_ok'] else '— НЕ ПРОЙДЁТ'}")
     print('итог прогноза:', res['forecast'])
     return res
