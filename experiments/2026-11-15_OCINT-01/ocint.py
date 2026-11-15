@@ -274,6 +274,15 @@ def rules_worlds(res):
 
 
 # ───────────── настоящие среды
+def limit_fit(curve, point, fractions=FRACTIONS):
+    """Описательно: θ(m) = a + b·(n / m) по точкам долей ID и полной выборке (метод наименьших квадратов); a — оценка предела
+    при бесконечной калибровке. Возвращает a, b и долю точки, которая остаётся в пределе (a / точка)."""
+    x = np.array([1.0 / q for q in fractions] + [1.0])
+    y = np.array([curve[str(q)] for q in fractions] + [point])
+    b, a = np.polyfit(x, y, 1)
+    return dict(limit=float(a), slope=float(b), share_left=(float(a / point) if abs(point) > 1e-12 else None))
+
+
 def val(d, pair):
     return d[pair[0]] - (d[pair[1]] if pair[1] else 0.0)
 
@@ -329,6 +338,7 @@ def real(dst, specs, B_boot=2000, B_half=10000, B_curve=400, B_q=200, workers=4)
                                     shift_boot_in_sd=sb / float(b.std(ddof=1)), shift_half_in_sd=sh / float(h.std(ddof=1)),
                                     sd_ratio_boot_to_half=float(b.std(ddof=1) / h.std(ddof=1)),
                                     curve={str(q): curve[q][n_] for q in FRACTIONS},
+                                    limit=limit_fit({str(q): curve[q][n_] for q in FRACTIONS}, p0),
                                     running=dict(boot={str(m): float(b[:m].mean() - p0) for m in (len(b) // 4, len(b) // 2, len(b))},
                                                  half={str(m): float(h[:m].mean() - p0) for m in (len(h) // 4, len(h) // 2, len(h))}),
                                     quarters=dict(var_true=float(np.var([x[n_] for x in qf], ddof=1)), var_half=float(np.mean([x[n_] for x in qvh])),
