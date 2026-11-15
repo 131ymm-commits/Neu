@@ -85,6 +85,23 @@ def main(src='gha_out/ocshift_test/analysis.json', dst=None):
     out['same_sign'] = {k: dict(n=r[k]['leave_one_range_out']['n_same_sign'], of=r[k]['leave_one_range_out']['n'], holds=r[k]['leave_one_range_out']['holds'])
                         for k in ('R1', 'R2', 'R3')}
     out['bias'] = {k: dict(z0=r[k]['z0'], shift=r[k]['boot_shift'], bc_undetermined=r[k]['bc_undetermined']) for k in ('R1', 'R2', 'R3')}
+    # Вес стороны, для которой в таблице PREREG §6 мощности не было (добавлено ПОСЛЕ данных теста; DEVIATIONS): у R1–R3 таблица
+    # дана для ожидаемого знака. Для другой стороны — та же формула на тех же зарегистрированных числах power.json:
+    # порог — дальняя граница этой стороны в единицах SE цепочки, эффект — та же половина по модулю; потолок — ожидание из §7.
+    from math import erf, log2, sqrt
+    phi = lambda z: 0.5 * (1 + erf(z / sqrt(2)))                                # noqa: E731
+    other = {'R1': ('E2', EXPECT['E2']), 'R2': (None, None), 'R3': ('E4', EXPECT['E4'])}
+    out['other_side'] = {}
+    for k in ('R1', 'R2', 'R3'):
+        s_ = pw[k]
+        kk = s_['chain']['lower_k'] if s_['effect'] < 0 else s_['chain']['upper_k']   # сторона, противоположная ожидаемому знаку
+        thr = kk * s_['se_mean']
+        pwr = phi((abs(s_['effect_half']) - thr) / s_['se_mean'])
+        name, e_ = other[k]
+        cap = min(pwr, e_) if e_ is not None else pwr
+        out['other_side'][k] = dict(threshold=thr, power_half=pwr, expectation_id=name, expectation=e_, capped=cap,
+                                    weight_bits=log2(cap / r['level']) if cap > r['level'] else 0.0,
+                                    note='сторона, противоположная ожидаемому знаку; посчитано после данных по формуле PREREG §6, без предохранителя')
     base = float(np.log2(0.54 / 0.46))
     out['support_bits'] = dict(base_hypothesis_neu=base)
     out['analysis_seconds'] = r.get('seconds')
