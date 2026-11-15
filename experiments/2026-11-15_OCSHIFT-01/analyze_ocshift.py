@@ -181,7 +181,8 @@ def extras(st, info):
     res = dict(accuracy={kn[k]: dict(id=float(acc_id[k]), ood=float(acc_ood[k])) for k in range(len(keep))},
                one_best_top10=Z.top_frac(co_hb, y_o[hb]),
                one_best=dict(head=kn[hb], acc_id=float(acc_id[hb]), acc_ood=float(acc_ood[hb]), best_ood_head=kn[int(np.argmax(acc_ood))],
-                             best_ood_acc=float(acc_ood.max())),
+                             best_ood_acc=float(acc_ood.max()),
+                             id_gap=float(np.sort(acc_id)[-1] - np.sort(acc_id)[-2])),      # отрыв лучшей головы от второй на ID
                oracle=dict(id=float(cs[:, idi].any(0).mean()), ood=float(cs[:, ood].any(0).mean())), evaluators={})
     S = Q.scores(st['ag'], st['corr'], st['logp'], keep, idi, st['fam'], EVALS)
     cv_t, cv_c = {e: np.zeros(len(idi)) for e in EVALS}, {e: np.zeros(len(idi)) for e in EVALS}

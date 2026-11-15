@@ -22,9 +22,11 @@ SPEC — 'new:КАТАЛОГ' (answers.json вида ocshift_extract.py, MODE = 
   R4: неоднородность D3 по средам: Q = Σ w (D3 − среднее с весами w)², w = 1 / s² (s — ст. отклонение бутстрепа среды).
       Подтверждено — p < LEVEL и по бутстрепу с центрированием (нулевая гипотеза: одна общая разность), и по χ²(m − 1).
 Защита LR: в какой-то среде повторов с одним классом у головы в выборке ID больше 1 % — R1, R3, R4 «не решено».
+Предохранитель знака (R1–R3): «подтверждено» требует точечной оценки < 0, «опровергнуто» — > 0; иначе «не решено (точка и ДИ расходятся)».
 Описательно (вес 0; ДИ BC 99 %): ONE-BEST против каждого из восьми; Брайер; контроль AGREE; POST-IN; FUSE-MIN;
 ONE-BEST+MIN; таблицы по средам; разложение различий «диапазон — подсказка»; extras по средам (только точка);
-R2 вторым способом — среднее по задачам ID и нормальное приближение, без бутстрепа (R2.normal_descr)."""
+R2 вторым способом — среднее по задачам ID и нормальное приближение, без бутстрепа (R2.normal_descr);
+связь D1 среды с отрывом лучшей головы от второй на ID (ранговая корреляция по средам; dominance_descr)."""
 import json
 import multiprocessing as mp
 import os
@@ -32,7 +34,7 @@ import sys
 import time
 
 import numpy as np
-from scipy.stats import chi2
+from scipy.stats import chi2, spearmanr
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
@@ -105,6 +107,14 @@ def heterogeneity(pt, bt):
     Qb = (w[:, None] * (b0 - mw[None, :]) ** 2).sum(0)
     return dict(Q=Q, df=m - 1, mean_weighted=mean_w, sd_env=[float(x) for x in s], p_chi2=float(chi2.sf(Q, m - 1)),
                 p_boot=float((1 + (Qb >= Q).sum()) / (B + 1)), q_boot_q9975=float(np.quantile(Qb, 1 - LEVEL)))
+
+
+def sign_guard(v, point):
+    """Предохранитель: вывод выносится, только если знак точечной оценки совпадает со стороной ДИ. При сильном смещении
+    бутстрепа оба ДИ могут лечь по другую сторону нуля, чем сама оценка; такой исход — «не решено (точка и ДИ расходятся)»."""
+    if (v == 'подтверждено' and not point < 0) or (v == 'опровергнуто' and not point > 0):
+        return 'не решено (точка и ДИ расходятся)'
+    return v
 
 
 def max_t(points, boots, level=LEVEL):
@@ -183,7 +193,7 @@ def main(dst, specs, B=10000, workers=1):
         e['tails'] = R.tails(bt, pt, LEVEL)
         e['monte_carlo_note'] = 'граница по Монте-Карло неустойчива' if e['tails']['unstable'] else ''
         e['verdict_bc'], e['verdict_percentile'] = R.verdict(*e['ci']), R.verdict(*e['ci_percentile'])
-        v = R.verdict_conj(e['ci'], e['ci_percentile'])
+        v = sign_guard(R.verdict_conj(e['ci'], e['ci_percentile']), pt)
         e['verdict'] = U if not method_ok else (UL if (lr_bad and k != 'R2') else v)
         e['by_env'] = {n: float(val(pts[n], pair)) for n in valid}
         res[k] = e
@@ -220,6 +230,14 @@ def main(dst, specs, B=10000, workers=1):
                 dec[k] = dict(var_prompt_within_range=within, var_range_means=between, var_range_component=between - within / 2,
                               n_ranges=len(full))
         res['range_prompt_decomposition_descr'] = dec
+    # Когда толпа не помогает (описательно, задано до данных теста): связь D1 среды с отрывом лучшей головы от второй на ID.
+    # Ожидаемый знак — минус: чем сильнее одна голова выделяется на ID, тем больше её преимущество над толпой.
+    if m >= 4:
+        gap = [res['envs'][n]['extras']['one_best']['id_gap'] for n in valid]
+        d1 = [val(pts[n], RULES['R1']) for n in valid]
+        rho = spearmanr(gap, d1)
+        res['dominance_descr'] = dict(spearman=float(rho[0]), p=float(rho[1]), n=m, id_gap={n: g_ for n, g_ in zip(valid, gap)},
+                                      note='n мало; описательно, без вердикта')
     res['verdicts'] = {k: res[k]['verdict'] for k in ('R1', 'R2', 'R3', 'R4')}
     res['verdict'] = '; '.join(f'{k}: {v}' for k, v in res['verdicts'].items())
     res['seconds'] = round(time.time() - t00, 1)
