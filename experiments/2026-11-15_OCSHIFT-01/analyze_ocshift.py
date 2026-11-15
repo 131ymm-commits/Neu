@@ -11,6 +11,8 @@ core(st, fit, cols) — все числа одного набора (точка 
      FUSE-MIN         — заявка головы — меньшая из заявок CONF и LR-AGREE, выбор — по ней (описательно);
      POST-IN CONF / POST-IN LR-AGREE — вторая калибровка после отбора по fit, in-sample (описательно);
   'ioi MIN8', 'brier MIN8' — наименьшее среди восьми (лучший задним числом);
+  'ign X', 'dec X' (X — ONE-BEST и MIN8) — части ИОИ: незнание 1 − T и самообман max(0, C − T); у MIN8 — того оценщика,
+     чей ИОИ наименьший (описательное разложение D1, совет 60);
   'wc CONF' — T − C у CONF на fit с кросс-подгонкой по частям исходных задач (самообман от отбора без сдвига; < 0 — завышение);
   'wc ONE-BEST' — то же у ONE-BEST (голова выбирается по обучающим частям; описательно);
   'lr_one_class' — число голов с одним классом в fit."""
@@ -140,9 +142,15 @@ def core(st, fit, cols):
         t, c, _ = select(cal[e], y_c)
         sel[e] = (t, c)
         put(e, meas(t, c))
-    out['ioi MIN8'] = min(out[f'ioi {e}'] for e in EVALS)
+    best8 = min(EVALS, key=lambda e: out[f'ioi {e}'])                      # лучший задним числом; при равенстве — первый по порядку EVALS
+    out['ioi MIN8'] = out[f'ioi {best8}']
     out['brier MIN8'] = min(out[f'brier {e}'] for e in EVALS)
     put('ONE-BEST', meas(y_c[hb], cal['CONF'][hb]))
+    # Разложение ИОИ на незнание (1 − T) и самообман max(0, C − T) — у ONE-BEST и у лучшего задним числом оценщика (совет 60):
+    # 'ign X' + 'dec X' = 'ioi X' точно, поэтому D1 = разность незнания + разность самообмана.
+    for name, src in (('ONE-BEST', 'ONE-BEST'), ('MIN8', best8)):
+        out[f'ign {name}'] = 1 - out[f'T {src}']
+        out[f'dec {name}'] = max(0.0, out[f'C {src}'] - out[f'T {src}'])
     put('ONE-BEST+MIN', meas(y_c[hb], np.minimum(cal['CONF'][hb], cal['LR-AGREE'][hb])))
     t, c, _ = select(np.minimum(cal['CONF'], cal['LR-AGREE']), y_c)
     put('FUSE-MIN', meas(t, c))
