@@ -99,9 +99,38 @@ lf = O.limit_fit({'0.25': -0.05 - 0.02 * 4, '0.5': -0.05 - 0.02 * 2, '0.75': -0.
 check('предел по закону a + b·(n/m): для точной кривой a = −0,05, b = −0,02, доля в пределе 0,05 / 0,07',
       abs(lf['limit'] + 0.05) < 1e-12 and abs(lf['slope'] + 0.02) < 1e-12 and abs(lf['share_left'] - 0.05 / 0.07) < 1e-12)
 
+# совет 62: правда не попадает в интервалы; ветвь по границам Клоппера — Пирсона; «не различимы»
+import inspect  # noqa: E402
+import re  # noqa: E402
+src = inspect.getsource(O.worlds)
+calls = re.findall(r'methods\(([^)]*)\)', src)
+check('methods() не получает правду: в подписи нет θ, в вызовах из worlds нет th и THM',
+      list(inspect.signature(O.methods).parameters) == ['point', 'rb', 'rh', 'alpha'] and len(calls) == 2
+      and all('th' not in c.replace('alpha', '') and 'THM' not in c for c in calls))
+fk = fake([0.6, 0.5, 0.7, 0.92, 0.93, 0.95, 0.96], [0.1, 0.05, 0.3, 0.88, 0.9, 0.95, 0.97], [3, 3, 3, 3.3, 3.4, 3.5, 3.6])
+fk['coverage']['0.9']['mean_of_worlds'] = {m: {s_: dict(covered=int(round(v * 60)), n=60, coverage=v, width_in_sd=3.3) for s_ in O.STATS}
+                                            for m, v in zip(O.METHODS, [0.1, 0.05, 0.3, 0.88, 0.9, 0.95, 0.97])}
+fk['coverage']['0.9']['one_env'] = {m: {s_: dict(covered=int(round(v * 600)), n=600, coverage=v, width_in_sd=wd) for s_ in O.STATS}
+                                     for m, v, wd in zip(O.METHODS, [0.6, 0.5, 0.7, 0.88, 0.93, 0.95, 0.96], [3, 3, 3, 3.3, 3.4, 3.5, 3.6])}
+# покрытие M4 в одной среде 0,88: основное правило его пропускает (0,88 ≥ 0,88), а нижняя граница КП 0,838 — нет (счёт ocint.cp;
+# первая версия случая с 0,92 была посчитана в уме и неверна: там граница 0,884)
+gw = np.random.default_rng(9)
+base = gw.normal(3.3, 0.2, 600)
+fk['width_avg_0.9'] = np.column_stack([base] * 3 + [base, base + 0.1 + gw.normal(0, 0.01, 600), base + 0.2, base + 0.3]).tolist()
+rc = O.rules_worlds(fk)['choice']
+check('выбор: основное правило — M4 (самый узкий годный); ветвь КП: у M4 нижняя граница в одной среде не выше 0,85 → выбирает M5; «выбор неустойчив»; M4 и M5 различимы (разность 0,1 при ст. ош. 0,0004)',
+      rc['chosen'] == O.METHODS[3] and rc['chosen_cp'] == O.METHODS[4] and rc['stability'] == 'выбор неустойчив к ошибке Монте-Карло'
+      and rc['nearest']['other'] == O.METHODS[4] and not rc['nearest']['indistinguishable'])
+fk['width_avg_0.9'] = np.column_stack([base] * 4 + [base + gw.normal(0, 0.5, 600)] + [base] * 2).tolist()
+check('«не различимы»: ширины M4 и M5 по опытам почти равны (разность меньше 2 ст. ош.)', O.rules_worlds(fk)['choice']['nearest']['indistinguishable'])
+
 # 5. Сквозной прогон: миры (крошечные числа) и настоящие среды на заглушке
 with tempfile.TemporaryDirectory() as tmp:
     w = O.worlds(os.path.join(tmp, 'w.json'), meta=O.META_PILOT + 1, n_worlds=2, n_exp=3, n_truth=6, B=8, workers=1)
+    check('миры: файл хода счёта по мирам записан', json.load(open(os.path.join(tmp, 'w.json.progress.json')))['done'][-1]['world'] == 1)
+    qw = O.quarters_worlds(os.path.join(tmp, 'q.json'), meta=O.META_PILOT + 2, worlds_idx=(0,), n_samples=2, B=4, n_truth=4, workers=1)
+    check('четверти в мирах: сквозной прогон даёт отношения для всех статистик REAL', set(qw['by_world']['0']) == set(O.REAL)
+          and all(np.isfinite(v['ratio_quarter_half']) for v in qw['by_world']['0'].values()))
     check('миры: сквозной прогон даёт покрытия всех способов и статистик при двух номиналах и правила',
           set(w['coverage']) == {'0.9', '0.98'} and all(len(w['coverage']['0.9'][k]) == 7 for k in ('one_env', 'mean_of_worlds'))
           and set(w['rules']) == {'B1', 'B2', 'choice'} and w['coverage']['0.9']['one_env'][O.METHODS[0]][O.STATS[0]]['n'] == 6)

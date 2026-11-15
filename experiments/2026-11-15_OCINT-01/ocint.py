@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """OCINT-01 «ОЦЕНЩИК-ИНТЕРВАЛ»: какой способ строить интервал для статистик оценщика не обманывается сам.
   python3 ocint.py worlds RESULT.json [--meta SEED] [--worlds 10] [--exp 100] [--truth 2000] [--boot 300] [--workers 4]
+  python3 ocint.py quarters RESULT.json [--meta SEED] [--worlds 2] [--samples 10] [--boot 100] [--truth 200] [--workers 4]
   python3 ocint.py real   RESULT.json [--boot 2000] [--half 10000] [--curve 400] [--quarter 200] [--workers 4] SPEC [SPEC ...]
 Статистики и оценщики — зарегистрированный код OCSHIFT-01 (analyze_ocshift: select, meas, iso_fit, core; analyze_ocrep.scores).
 
@@ -67,7 +68,7 @@ def agree(ans):
     return ag
 
 
-def draw(par, g, n_id=N_ID, n_ood=N_OOD):
+def draw(par, g, n_id=N_ID, n_ood=N_OOD, keep=None):
     """Одна выборка мира: st (как analyze_ocshift.prepare), индексы ID и OOD. Головы связаны общей трудностью задачи и семьёй."""
     n = n_id + n_ood
     rid = np.zeros(n, bool)
@@ -84,7 +85,8 @@ def draw(par, g, n_id=N_ID, n_ood=N_OOD):
     wrong = np.where(g.random((H, n)) < par['p_common'], (truth + g.choice(OFFS, n))[None, :], truth[None, :] + g.choice(OFFS, (H, n)))
     ans = np.where(corr, truth[None, :], wrong)
     idi, ood = np.nonzero(rid)[0], np.nonzero(~rid)[0]
-    keep = [h for h in range(H) if min(corr[h, idi].sum(), (~corr[h, idi]).sum()) >= S.MIN_EACH]
+    if keep is None:
+        keep = [h for h in range(H) if min(corr[h, idi].sum(), (~corr[h, idi]).sum()) >= S.MIN_EACH]
     fold_of = np.full(n, -1)
     perm = g.permutation(n_id)
     for f in range(S.K_CV):
@@ -185,7 +187,12 @@ def worlds(dst, meta=META_TEST, n_worlds=10, n_exp=100, n_truth=2000, B=300, wor
     tr = np.array(_pool(_truth, [(k, i) for k in range(n_worlds) for i in range(n_truth)], cfg, workers)).reshape(n_worlds, n_truth, len(STATS))
     th, sdt = tr.mean(1), tr.std(1, ddof=1)                           # правда θ(n) и истинный разброс статистики в мире
     print(f'правда: {n_worlds} миров по {n_truth} выборок, {time.time() - t0:.0f} с', flush=True)
-    ex = _pool(_exp, [(k, i) for k in range(n_worlds) for i in range(n_exp)], cfg, workers)
+    ex, prog = [], dict(done=[], note='ход счёта по мирам; разбор частичного вывода запрещён (PREREG §10)')
+    for k in range(n_worlds):                                         # по мирам: при обрыве задания виден ход счёта
+        ex += _pool(_exp, [(k, i) for i in range(n_exp)], cfg, workers)
+        prog['done'].append(dict(world=k, seconds=round(time.time() - t0, 1)))
+        json.dump(prog, open(dst + '.progress.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        print(f'мир {k}: {n_exp} опытов, {time.time() - t0:.0f} с', flush=True)
     P = np.array([e[0] for e in ex]).reshape(n_worlds, n_exp, len(STATS))
     RB = np.array([e[1] for e in ex]).reshape(n_worlds, n_exp, B, len(STATS))
     RH = np.array([e[2] for e in ex]).reshape(n_worlds, n_exp, B, len(STATS))
@@ -219,6 +226,8 @@ def worlds(dst, meta=META_TEST, n_worlds=10, n_exp=100, n_truth=2000, B=300, wor
                 iv = methods(PM[j, s], RBM[j, :, s], RHM[j, :, s], a)
                 mean[j, :, s] = (iv[:, 0] <= THM[s]) & (THM[s] <= iv[:, 1])
                 widm[j, :, s] = (iv[:, 1] - iv[:, 0]) / sdm[s]
+        if nom == 0.90:
+            width_avg_09 = [[float(x) for x in row] for row in wid.mean(-1).reshape(-1, len(METHODS))]
         cov[str(nom)] = dict(
             one_env={m: {st_: dict(covered=int(one[:, :, mi, si].sum()), n=n_worlds * n_exp, coverage=float(one[:, :, mi, si].mean()),
                                    by_world=[float(x) for x in one[:, :, mi, si].mean(1)], width_in_sd=float(wid[:, :, mi, si].mean()))
@@ -226,6 +235,7 @@ def worlds(dst, meta=META_TEST, n_worlds=10, n_exp=100, n_truth=2000, B=300, wor
             mean_of_worlds={m: {st_: dict(covered=int(mean[:, mi, si].sum()), n=n_exp, coverage=float(mean[:, mi, si].mean()),
                                           width_in_sd=float(widm[:, mi, si].mean())) for si, st_ in enumerate(STATS)} for mi, m in enumerate(METHODS)})
     res['coverage'] = cov
+    res['width_avg_0.9'] = width_avg_09                               # ширина опыта, средняя по пяти статистикам: (опыты × способы)
     # сдвиг и разброс повторов против правды
     sb, sh = RB.std(2, ddof=1), RH.std(2, ddof=1)
     res['replicates'] = {st_: dict(
@@ -265,12 +275,95 @@ def rules_worlds(res):
         mean = [c['mean_of_worlds'][m][s]['coverage'] for s in STATS]
         elig[m] = dict(min_one_env=min(one), min_mean=min(mean), eligible=bool(min(one) >= 0.88 and min(mean) >= 0.85),
                        width_in_sd=float(np.mean([c['one_env'][m][s]['width_in_sd'] for s in STATS])))
-    ok = [m for m in METHODS[3:] if elig[m]['eligible']]
-    best = None
-    if ok:
+    def pick(ok):
+        if not ok:
+            return None
         wmin = min(elig[m]['width_in_sd'] for m in ok)
-        best = METHODS[6] if (METHODS[6] in ok and elig[METHODS[6]]['width_in_sd'] <= wmin + 1e-12) else min(ok, key=lambda m: elig[m]['width_in_sd'])
-    return dict(B1=r1, B2=r2, choice=dict(candidates=elig, chosen=best, note='годен: покрытие в одной среде не ниже 0,88 и среднего по мирам не ниже 0,85 для всех пяти статистик; из годных — самый узкий'))
+        return METHODS[6] if (METHODS[6] in ok and elig[METHODS[6]]['width_in_sd'] <= wmin + 1e-12) else min(ok, key=lambda m: elig[m]['width_in_sd'])
+    best = pick([m for m in METHODS[3:] if elig[m]['eligible']])
+    # ветвь совета 62 (после пилота, описательно): годен, если в одной среде нижняя граница КП выше 0,85, а для среднего
+    # по мирам верхняя граница КП выше 0,85 — у всех пяти статистик; уровень 0,0025
+    for m in METHODS[3:]:
+        lo1 = min(cp(c['one_env'][m][s]['covered'], c['one_env'][m][s]['n'], LEVEL, 'lo') for s in STATS)
+        hi2 = min(cp(c['mean_of_worlds'][m][s]['covered'], c['mean_of_worlds'][m][s]['n'], LEVEL, 'hi') for s in STATS)
+        elig[m].update(cp_lower_one_env_min=lo1, cp_upper_mean_min=hi2, eligible_cp=bool(lo1 > 0.85 and hi2 > 0.85))
+    best_cp = pick([m for m in METHODS[3:] if elig[m]['eligible_cp']])
+    stab = 'устойчив' if best == best_cp else 'выбор неустойчив к ошибке Монте-Карло'
+    # «не различимы»: выбранный и следующий по ширине годный — парная разность ширины опыта, меньше 2 ст. ош. Монте-Карло
+    close = None
+    wa = np.asarray(res.get('width_avg_0.9', []), float)
+    ok = sorted([m for m in METHODS[3:] if elig[m]['eligible']], key=lambda m: elig[m]['width_in_sd'])
+    if best is not None and len(ok) > 1 and wa.size:
+        other = [m for m in ok if m != best][0]
+        d = wa[:, METHODS.index(best)] - wa[:, METHODS.index(other)]
+        se = float(d.std(ddof=1) / np.sqrt(len(d)))
+        close = dict(other=other, diff=float(d.mean()), se=se, indistinguishable=bool(abs(d.mean()) < 2 * se))
+    return dict(B1=r1, B2=r2, choice=dict(candidates=elig, chosen=best, chosen_cp=best_cp, stability=stab, nearest=close,
+                                          note='основное правило — записанное до данных (точечные доли: 0,88 в одной среде и 0,85 для среднего по мирам; самый узкий; при равенстве M7); ветвь по границам Клоппера — Пирсона добавлена после пилота (совет 62), вердикт даёт основное правило'))
+
+
+# ───────────── ветвь «четверти в мирах» (совет 62, описательно)
+def _real_stats(st, fit, cols):
+    pt = S.core(st, fit, cols)
+    return np.array([val(pt, p) for p in REAL.values()])
+
+
+def _qw_truth(a):
+    k, i, quarter = a
+    g = np.random.default_rng([_W['meta'], 3, k, i, int(quarter)])
+    n_id, n_ood = (N_ID // 4, N_OOD // 4) if quarter else (N_ID, N_OOD)
+    st, idi, ood = draw(_W['pars'][k], g, n_id, n_ood, keep=_W['keep'][k])
+    return _real_stats(st, idi, ood)
+
+
+def _qw_sample(a):
+    k, i = a
+    g = np.random.default_rng([_W['meta'], 4, k, i])
+    st, idi, ood = draw(_W['pars'][k], g, keep=_W['keep'][k])
+    B = _W['B']
+    out = dict(full_half=np.var([_real_stats(st, half(g, idi), half(g, ood)) for _ in range(B)], 0, ddof=1),
+               full_boot=np.var([_real_stats(st, g.choice(idi, len(idi)), g.choice(ood, len(ood))) for _ in range(B)], 0, ddof=1))
+    pi, po = g.permutation(idi), g.permutation(ood)
+    qv, qh, qb = [], [], []
+    for q in range(4):
+        fi, co = pi[q::4], po[q::4]
+        qv.append(_real_stats(st, fi, co))
+        qh.append(np.var([_real_stats(st, half(g, fi), half(g, co)) for _ in range(B)], 0, ddof=1))
+        qb.append(np.var([_real_stats(st, g.choice(fi, len(fi)), g.choice(co, len(co))) for _ in range(B)], 0, ddof=1))
+    out.update(between=np.var(qv, 0, ddof=1), quarter_half=np.mean(qh, 0), quarter_boot=np.mean(qb, 0))
+    return out
+
+
+def quarters_worlds(dst, meta=META_TEST, worlds_idx=(0, 1), n_samples=10, B=100, n_truth=200, workers=4):
+    """Как проверка ширины на четвертях настоящих сред, но с правдой: дисперсия статистик REAL при n и при n/4 — по n_truth
+    независимым выборкам мира; предсказание — по повторам внутри выборки (полной и четверти). Состав толпы закреплён
+    по большой выборке мира (как в настоящих средах — по полной среде)."""
+    t0 = time.time()
+    pars = {k: world_params(k, meta) for k in worlds_idx}
+    keep = {}
+    for k in worlds_idx:
+        st, _, _ = draw(pars[k], np.random.default_rng([meta, 5, k]), n_id=4 * N_ID, n_ood=10)
+        keep[k] = st['keep']
+    cfg = dict(meta=meta, pars=pars, keep=keep, B=B)
+    names = list(REAL)
+    res = dict(meta=meta, worlds=list(worlds_idx), n_samples=n_samples, B=B, n_truth=n_truth, stats=names, keep={str(k): v for k, v in keep.items()}, by_world={})
+    for k in worlds_idx:
+        tn = np.array(_pool(_qw_truth, [(k, i, False) for i in range(n_truth)], cfg, workers))
+        tq = np.array(_pool(_qw_truth, [(k, i, True) for i in range(n_truth)], cfg, workers))
+        sm = _pool(_qw_sample, [(k, i) for i in range(n_samples)], cfg, workers)
+        vn, vq = tn.var(0, ddof=1), tq.var(0, ddof=1)
+        mean = {key: np.mean([x[key] for x in sm], 0) for key in sm[0]}
+        res['by_world'][str(k)] = {nm: dict(var_true_n=float(vn[j]), var_true_quarter=float(vq[j]),
+                                            ratio_full_half=float(mean['full_half'][j] / vn[j]), ratio_full_boot=float(mean['full_boot'][j] / vn[j]),
+                                            ratio_quarter_half=float(mean['quarter_half'][j] / vq[j]), ratio_quarter_boot=float(mean['quarter_boot'][j] / vq[j]),
+                                            ratio_between=float(mean['between'][j] / vq[j]),
+                                            ratio_as_in_real_half=float(mean['quarter_half'][j] / mean['between'][j]),
+                                            ratio_as_in_real_boot=float(mean['quarter_boot'][j] / mean['between'][j]))
+                                    for j, nm in enumerate(names)}
+        print(f'четверти в мирах: мир {k}, {time.time() - t0:.0f} с', flush=True)
+    res['seconds'] = round(time.time() - t0, 1)
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    return res
 
 
 # ───────────── настоящие среды
@@ -390,13 +483,15 @@ if __name__ == '__main__':
 
     def opt(name, default):
         return int(a[a.index(name) + 1]) if name in a else default
-    flags = ('--meta', '--worlds', '--exp', '--truth', '--boot', '--half', '--curve', '--quarter', '--workers')
+    flags = ('--meta', '--worlds', '--exp', '--truth', '--boot', '--half', '--curve', '--quarter', '--workers', '--samples')
     skip = set()
     for f in flags:
         if f in a:
             skip |= {a.index(f), a.index(f) + 1}
     pos = [x for i, x in enumerate(a) if i not in skip]
-    if pos[0] == 'worlds':
+    if pos[0] == 'quarters':
+        quarters_worlds(pos[1], opt('--meta', META_TEST), tuple(range(opt('--worlds', 2))), opt('--samples', 10), opt('--boot', 100), opt('--truth', 200), opt('--workers', 4))
+    elif pos[0] == 'worlds':
         worlds(pos[1], opt('--meta', META_TEST), opt('--worlds', 10), opt('--exp', 100), opt('--truth', 2000), opt('--boot', 300), opt('--workers', 4))
     else:
         real(pos[1], pos[2:], opt('--boot', 2000), opt('--half', 10000), opt('--curve', 400), opt('--quarter', 200), opt('--workers', 4))

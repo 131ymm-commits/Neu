@@ -9,7 +9,7 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OWN = ['ocint.py', 'test_ocint.py', 'prereg_hashes.py', 'gha_job_ocint_worlds.sh', 'gha_job_ocint_real.sh',
+OWN = ['ocint.py', 'test_ocint.py', 'prereg_hashes.py', 'expect_ocint.py', 'gha_job_ocint_worlds.sh', 'gha_job_ocint_real.sh',
        '../../gha_jobs/ocint_worlds.sh', '../../gha_jobs/ocint_real.sh', '../../.github/workflows/neu-run.yml',
        '../2026-11-15_OCSHIFT-01/analyze_ocshift.py', '../2026-11-15_OCSHIFT-01/analyze_ocshift_test.py', '../2026-11-15_OCSHIFT-01/dry_ocshift.py',
        '../2026-11-15_OCSHIFT-01/ocshift_extract.py', '../2026-11-15_OCREP-01/analyze_ocrep.py', '../2026-11-15_OCREP-01/analyze_ocrep_test.py',
