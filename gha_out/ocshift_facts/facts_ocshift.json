@@ -539,7 +539,13 @@
    "bc_undetermined": [
     false,
     true
-   ]
+   ],
+   "point_inside": {
+    "ci": true,
+    "ci_percentile": true,
+    "ci_basic": true
+   },
+   "shift_in_sd": -0.931496320848496
   },
   "R2": {
    "z0": 2.9677379253417944,
@@ -547,7 +553,13 @@
    "bc_undetermined": [
     false,
     true
-   ]
+   ],
+   "point_inside": {
+    "ci": false,
+    "ci_percentile": false,
+    "ci_basic": false
+   },
+   "shift_in_sd": -2.893614325079181
   },
   "R3": {
    "z0": 0.5018116747749065,
@@ -555,7 +567,13 @@
    "bc_undetermined": [
     false,
     true
-   ]
+   ],
+   "point_inside": {
+    "ci": true,
+    "ci_percentile": true,
+    "ci_basic": true
+   },
+   "shift_in_sd": -0.4912709173110989
   }
  },
  "other_side": {
@@ -586,6 +604,35 @@
    "weight_bits": 5.459431618637297,
    "note": "сторона, противоположная ожидаемому знаку; посчитано после данных по формуле PREREG §6, без предохранителя"
   }
+ },
+ "sign_test": {
+  "R1": {
+   "n_same_sign": 7,
+   "n": 10,
+   "p_two_sided": 0.34375
+  },
+  "R2": {
+   "n_same_sign": 10,
+   "n": 10,
+   "p_two_sided": 0.001953125
+  },
+  "R3": {
+   "n_same_sign": 8,
+   "n": 10,
+   "p_two_sided": 0.109375
+  }
+ },
+ "regime": {
+  "T_min": 0.21058721532279953,
+  "T_max": 0.255548308821982,
+  "ign_min": 0.744451691178018,
+  "ign_max": 0.7894127846772004,
+  "ign_spread": 0.04496109349918245,
+  "dec_min": 0.04226731577826917,
+  "dec_max": 0.22797625970853305,
+  "dec_spread": 0.18570894393026388,
+  "T_one_best": 0.21502738153200437,
+  "note": "средние по средам у восьми оценщиков и ONE-BEST; самообман здесь — разность средних C − T"
  },
  "support_bits": {
   "base_hypothesis_neu": 0.2313255461064558
