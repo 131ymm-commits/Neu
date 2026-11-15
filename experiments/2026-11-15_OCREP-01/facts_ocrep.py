@@ -74,6 +74,18 @@ def main(src='run/analysis.json'):
     out['lower_dist_posthoc'] = {k: dict(test=r[k]['delta'] - r[k]['ci'][0], predicted=pw[k]['conj']['lower'], z0_test=r[k]['z0'],
                                          z0_pilot_chain=pw[k]['conj']['z0_pilot_chain'], bc_lower_quantile_pilot=pw[k]['conj']['bc_quantiles'][0])
                                  for k in ('R1', 'R2')}
+    # Совет 59 (пост-хок к отчёту, вердикт не меняет): время извлечения из журнала Kaggle; число описательных сравнений и
+    # общий ложный уровень их серии (Бонферрони, оценка сверху); мощность C-087 в OCCOR-01 (возможное завышение прежних эффектов).
+    kl = os.path.join(os.path.dirname(src if os.path.isabs(src) else os.path.join(HERE, src)), 'out', 'kaggle_log.json')
+    if os.path.isfile(kl):
+        m = [re.search(r'\[\s*([\d.]+)\s*с\]\s*готово', e['data']) for e in json.load(open(kl, encoding='utf-8')) if e['stream_name'] == 'stdout']
+        m = [x for x in m if x]
+        if m:
+            out['extraction_seconds'] = float(m[-1].group(1))
+    nd = [k for k, v in r.items() if k.startswith('descr_') and isinstance(v, dict) and 'ci' in v]
+    out['descr_count'] = len(nd)
+    out['descr_family_level_bonferroni'] = len(nd) * 2 * r['descr_level']
+    out['occor_c087_power_half'] = ocpw['R3']['power']['ужатый вдвое']
     out['expectations_prereg'] = dict(source='PREREG-OCREP-01 §7 (копия таблицы)', E1=0.04, E2=0.04, E3=0.02, E4=0.06, E5=0.97, E6=0.93, E7=0.45,
                                       E8=0.90, E9=0.85, E10=0.04)
     oc_ = dict(E1=int(r['R1']['verdict'] == 'подтверждено'), E2=int(r['R1']['verdict'] == 'опровергнуто'), E3=int(r['R2']['verdict'] == 'подтверждено'),

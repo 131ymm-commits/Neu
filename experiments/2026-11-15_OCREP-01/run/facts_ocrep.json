@@ -315,6 +315,10 @@
    "bc_lower_quantile_pilot": 3.3121263042557025e-05
   }
  },
+ "extraction_seconds": 1956.8,
+ "descr_count": 12,
+ "descr_family_level_bonferroni": 0.12,
+ "occor_c087_power_half": 0.18202005314908304,
  "expectations_prereg": {
   "source": "PREREG-OCREP-01 §7 (копия таблицы)",
   "E1": 0.04,
