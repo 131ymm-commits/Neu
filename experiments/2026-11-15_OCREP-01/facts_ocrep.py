@@ -56,6 +56,34 @@ def main(src='run/analysis.json'):
                                c086_before=base + ocpw['R1']['weight_bits'] + ompw['R3']['weight_bits'])
     out['power_reading'] = {k: pw[k]['reading_power'] for k in ('R1', 'R2')}
     out['mde_conj'] = {k: dict(confirm=pw[k]['conj']['mde_confirm_power08'], refute=pw[k]['conj']['mde_refute_power08']) for k in ('R1', 'R2')}
+    # Пост-хок (дописано после данных теста; вердикт не меняет; DEVIATIONS.md): ИОИ, самообман и точность выбора оценщиков
+    # по трём сдвигам — какой оценщик лучший и скромнее ли LR-AGREE, как в OCCOR-01 и OCMIX-01.
+    ev = ('AGREE', 'LR-AGREE', 'NB-IND', 'CONF', 'VETO', 'MIX-LR')
+    out['cross_shift_posthoc'] = {name: {e: dict(ioi=a_['evaluators'][e]['ioi'], deception=a_['evaluators'][e]['deception'], T=a_['evaluators'][e]['T'])
+                                         for e in ev if e in a_['evaluators']} for name, a_ in (('OCCOR-01', oc), ('OCMIX-01', om), ('OCREP-01', r))}
+    out['best_ioi_posthoc'] = {name: min(v, key=lambda e: v[e]['ioi']) for name, v in out['cross_shift_posthoc'].items()}
+    ans = os.path.join(os.path.dirname(src if os.path.isabs(src) else os.path.join(HERE, src)), 'out', 'answers.json')
+    if os.path.isfile(ans):
+        out['task'] = json.load(open(ans, encoding='utf-8'))['task']      # границы задачи и зёрна — из вывода извлечения
+    import re
+    lg = os.path.join(os.path.dirname(src if os.path.isabs(src) else os.path.join(HERE, src)), 'analysis.log')
+    if os.path.isfile(lg):
+        m = re.search(r'real\s+(\d+)m([\d.]+)s', open(lg, encoding='utf-8').read())
+        if m:
+            out['analysis_seconds'] = int(m.group(1)) * 60 + float(m.group(2))
+    out['lower_dist_posthoc'] = {k: dict(test=r[k]['delta'] - r[k]['ci'][0], predicted=pw[k]['conj']['lower'], z0_test=r[k]['z0'],
+                                         z0_pilot_chain=pw[k]['conj']['z0_pilot_chain'], bc_lower_quantile_pilot=pw[k]['conj']['bc_quantiles'][0])
+                                 for k in ('R1', 'R2')}
+    out['expectations_prereg'] = dict(source='PREREG-OCREP-01 §7 (копия таблицы)', E1=0.04, E2=0.04, E3=0.02, E4=0.06, E5=0.97, E6=0.93, E7=0.45,
+                                      E8=0.90, E9=0.85, E10=0.04)
+    oc_ = dict(E1=int(r['R1']['verdict'] == 'подтверждено'), E2=int(r['R1']['verdict'] == 'опровергнуто'), E3=int(r['R2']['verdict'] == 'подтверждено'),
+               E4=int(r['R2']['verdict'] == 'опровергнуто'), E5=int(r['method']['ok']),
+               E6=int(r['prior_effect_descr']['R1']['OCMIX-01 R3']['status'] == 'исключён'),
+               E7=int(r['prior_effect_descr']['R1']['половина наименьшего']['status'] == 'исключён'),
+               E8=int(top['AGREE'] < 0.10), E9=int(E['VETO']['selected_supported'] >= 0.95), E10=int(r['R1']['verdict'] == 'не решено (только BC)'))
+    out['expectations_outcome'] = oc_
+    ex = out['expectations_prereg']
+    out['brier_ocrep'] = float(np.mean([(ex[k] - oc_[k]) ** 2 for k in oc_]))
     dst = os.path.join(os.path.dirname(src if os.path.isabs(src) else os.path.join(HERE, src)), 'facts_ocrep.json')
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print(json.dumps(out, ensure_ascii=False, indent=1))
