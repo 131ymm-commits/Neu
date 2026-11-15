@@ -16,7 +16,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 J = lambda p: json.load(open(p if os.path.isabs(p) else os.path.join(ROOT, p), encoding='utf-8'))  # noqa: E731
 EV = ('AGREE', 'NB-AGREE', 'LR-AGREE', 'NB-IND', 'FAM-AGREE', 'CONF', 'VETO', 'MIX-LR')
-EXPECT = dict(E1=0.0, E2=0.0, E3=0.0, E4=0.0, E5=0.0, E6=0.0, E7=0.0, E8=0.0)       # вероятности — из PREREG §7 (заполняются при регистрации)
+EXPECT = dict(E1=0.45, E2=0.08, E3=0.93, E4=0.12, E5=0.30, E6=0.55, E7=0.90, E8=0.45)       # вероятности — копия таблицы PREREG §7
 
 
 def main(src='gha_out/ocshift_test/analysis.json', dst=None):
