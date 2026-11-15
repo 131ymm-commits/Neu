@@ -29,7 +29,7 @@
    ]
   },
   "check_ok": true,
-  "seconds": 24.8,
+  "seconds": 23.9,
   "R1": {
    "delta": 0.4471800605214035,
    "ci": [
@@ -67,7 +67,7 @@
    ]
   },
   "check_ok": true,
-  "seconds": 25.1,
+  "seconds": 25.2,
   "R1": {
    "delta": -0.7119736966062991,
    "ci": [
@@ -105,7 +105,7 @@
    ]
   },
   "check_ok": true,
-  "seconds": 16.9,
+  "seconds": 16.7,
   "R1": {
    "delta": 0.4573578710627676,
    "ci": [
@@ -146,7 +146,7 @@
    ]
   },
   "check_ok": false,
-  "seconds": 24.4,
+  "seconds": 23.3,
   "R1": {
    "delta": 0.4276457832444125,
    "ci": [

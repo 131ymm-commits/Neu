@@ -1,0 +1,648 @@
+{
+ "info": {
+  "mode": "pilot",
+  "python": "3.13.16",
+  "torch": "2.11.0+cu130",
+  "transformers": "5.20.2",
+  "n_gpu": 2,
+  "disk_free_gb": 966.9,
+  "cpus": 4,
+  "workers": [
+   {
+    "worker": 0,
+    "device": "cuda",
+    "gpu": "Tesla T4"
+   },
+   {
+    "worker": 1,
+    "device": "cuda",
+    "gpu": "Tesla T4"
+   }
+  ],
+  "exit_codes": [
+   0,
+   0
+  ]
+ },
+ "seconds": 594.8,
+ "n_problems": {
+  "pilot": 1596,
+  "test": 22096
+ },
+ "head_errors": [],
+ "first_errors": [],
+ "check": {
+  "n": 96,
+  "same_problems": true,
+  "same_prompt": true,
+  "heads": {
+   "pythia-1.4b": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   },
+   "pythia-1.4b-deduped": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   },
+   "pythia-2.8b": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   },
+   "pythia-2.8b@step133000": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   },
+   "pythia-2.8b@step123000": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   },
+   "pythia-2.8b@step113000": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   },
+   "pythia-2.8b-deduped": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   },
+   "pythia-6.9b": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   },
+   "pythia-6.9b-deduped": {
+    "same_answer": 96,
+    "none_mismatch": 0,
+    "max_abs_dlogp": 0.0
+   }
+  },
+  "n_heads": 9,
+  "answers_equal": true,
+  "max_abs_dlogp": 0.0
+ },
+ "heads": {
+  "pythia-1.4b": {
+   "worker": 1,
+   "where": "gpu",
+   "seconds": 117.9,
+   "inference": 19.3,
+   "load": 98.60000000000001,
+   "forecast_test": 365.8010025062657
+  },
+  "pythia-1.4b-deduped": {
+   "worker": 1,
+   "where": "gpu",
+   "seconds": 48.7,
+   "inference": 13.9,
+   "load": 34.800000000000004,
+   "forecast_test": 227.24010025062657
+  },
+  "pythia-2.8b": {
+   "worker": 0,
+   "where": "gpu",
+   "seconds": 91.4,
+   "inference": 32.5,
+   "load": 58.900000000000006,
+   "forecast_test": 508.8498746867168
+  },
+  "pythia-2.8b@step133000": {
+   "worker": 0,
+   "where": "gpu",
+   "seconds": 141.1,
+   "inference": 30.7,
+   "load": 110.39999999999999,
+   "forecast_test": 535.4295739348371
+  },
+  "pythia-2.8b@step123000": {
+   "worker": 0,
+   "where": "gpu",
+   "seconds": 63.9,
+   "inference": 31.3,
+   "load": 32.599999999999994,
+   "forecast_test": 465.93634085213034
+  },
+  "pythia-2.8b@step113000": {
+   "worker": 1,
+   "where": "gpu",
+   "seconds": 61.3,
+   "inference": 26.1,
+   "load": 35.199999999999996,
+   "forecast_test": 396.5443609022556
+  },
+  "pythia-2.8b-deduped": {
+   "worker": 1,
+   "where": "gpu",
+   "seconds": 86.4,
+   "inference": 26.5,
+   "load": 59.900000000000006,
+   "forecast_test": 426.78220551378445
+  },
+  "pythia-6.9b": {
+   "worker": 0,
+   "where": "gpu",
+   "seconds": 229.6,
+   "inference": 109.89999999999999,
+   "load": 119.7,
+   "forecast_test": 1641.2228070175438
+  },
+  "pythia-6.9b-deduped": {
+   "worker": 1,
+   "where": "gpu",
+   "seconds": 251.9,
+   "inference": 106.4,
+   "load": 145.5,
+   "forecast_test": 1618.5666666666668
+  }
+ },
+ "envs": {
+  "X4_p9": {
+   "X": 4,
+   "prompt_head": "448+70=518\n471+27=498\n445+61=506\n400+86=486\n",
+   "n_id": 131,
+   "n_ood": 169,
+   "heads": {
+    "pythia-1.4b": {
+     "acc_id": 0.15267175572519084,
+     "acc_ood": 0.011834319526627219,
+     "none_frac": 0.0,
+     "expected_min_count": 151.98473282442748,
+     "expected_min_count_ood": 14.254437869822485,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-1.4b-deduped": {
+     "acc_id": 0.030534351145038167,
+     "acc_ood": 0.01775147928994083,
+     "none_frac": 0.0,
+     "expected_min_count": 30.396946564885496,
+     "expected_min_count_ood": 21.38165680473373,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b": {
+     "acc_id": 0.32061068702290074,
+     "acc_ood": 0.21893491124260356,
+     "none_frac": 0.0,
+     "expected_min_count": 319.16793893129767,
+     "expected_min_count_ood": 263.70710059171597,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step133000": {
+     "acc_id": 0.31297709923664124,
+     "acc_ood": 0.11242603550295859,
+     "none_frac": 0.0,
+     "expected_min_count": 311.5687022900764,
+     "expected_min_count_ood": 135.4171597633136,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step123000": {
+     "acc_id": 0.22900763358778625,
+     "acc_ood": 0.23668639053254437,
+     "none_frac": 0.0,
+     "expected_min_count": 227.9770992366412,
+     "expected_min_count_ood": 285.0887573964497,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step113000": {
+     "acc_id": 0.25190839694656486,
+     "acc_ood": 0.17159763313609466,
+     "none_frac": 0.0,
+     "expected_min_count": 250.77480916030532,
+     "expected_min_count_ood": 206.68934911242602,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b-deduped": {
+     "acc_id": 0.40458015267175573,
+     "acc_ood": 0.33727810650887574,
+     "none_frac": 0.0,
+     "expected_min_count": 402.75954198473283,
+     "expected_min_count_ood": 406.25147928994085,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b": {
+     "acc_id": 0.2748091603053435,
+     "acc_ood": 0.2958579881656805,
+     "none_frac": 0.0,
+     "expected_min_count": 273.5725190839695,
+     "expected_min_count_ood": 356.36094674556216,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b-deduped": {
+     "acc_id": 0.29770992366412213,
+     "acc_ood": 0.28994082840236685,
+     "none_frac": 0.0,
+     "expected_min_count": 296.3702290076336,
+     "expected_min_count_ood": 349.23372781065086,
+     "forecast_ok": true,
+     "forecast_margin": true
+    }
+   },
+   "forecast_pass": 9,
+   "best_head_id": "pythia-2.8b-deduped",
+   "best_head_ood": "pythia-2.8b-deduped"
+  },
+  "X5_p9": {
+   "X": 5,
+   "prompt_head": "556+41=597\n581+16=597\n598+67=665\n597+12=609\n",
+   "n_id": 119,
+   "n_ood": 181,
+   "heads": {
+    "pythia-1.4b": {
+     "acc_id": 0.058823529411764705,
+     "acc_ood": 0.055248618784530384,
+     "none_frac": 0.0,
+     "expected_min_count": 59.3235294117647,
+     "expected_min_count_ood": 65.82872928176795,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-1.4b-deduped": {
+     "acc_id": 0.025210084033613446,
+     "acc_ood": 0.027624309392265192,
+     "none_frac": 0.0,
+     "expected_min_count": 25.42436974789916,
+     "expected_min_count_ood": 32.914364640883974,
+     "forecast_ok": true,
+     "forecast_margin": false
+    },
+    "pythia-2.8b": {
+     "acc_id": 0.33613445378151263,
+     "acc_ood": 0.08287292817679558,
+     "none_frac": 0.0,
+     "expected_min_count": 338.9915966386555,
+     "expected_min_count_ood": 98.74309392265192,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step133000": {
+     "acc_id": 0.2605042016806723,
+     "acc_ood": 0.022099447513812154,
+     "none_frac": 0.0,
+     "expected_min_count": 262.718487394958,
+     "expected_min_count_ood": 26.33149171270718,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step123000": {
+     "acc_id": 0.226890756302521,
+     "acc_ood": 0.055248618784530384,
+     "none_frac": 0.0,
+     "expected_min_count": 228.81932773109244,
+     "expected_min_count_ood": 65.82872928176795,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step113000": {
+     "acc_id": 0.1092436974789916,
+     "acc_ood": 0.027624309392265192,
+     "none_frac": 0.0,
+     "expected_min_count": 110.17226890756302,
+     "expected_min_count_ood": 32.914364640883974,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b-deduped": {
+     "acc_id": 0.36134453781512604,
+     "acc_ood": 0.12154696132596685,
+     "none_frac": 0.0,
+     "expected_min_count": 364.4159663865546,
+     "expected_min_count_ood": 144.8232044198895,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b": {
+     "acc_id": 0.24369747899159663,
+     "acc_ood": 0.13259668508287292,
+     "none_frac": 0.0,
+     "expected_min_count": 245.7689075630252,
+     "expected_min_count_ood": 157.9889502762431,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b-deduped": {
+     "acc_id": 0.25210084033613445,
+     "acc_ood": 0.19889502762430938,
+     "none_frac": 0.0,
+     "expected_min_count": 254.24369747899158,
+     "expected_min_count_ood": 236.98342541436463,
+     "forecast_ok": true,
+     "forecast_margin": true
+    }
+   },
+   "forecast_pass": 9,
+   "best_head_id": "pythia-2.8b-deduped",
+   "best_head_ood": "pythia-6.9b-deduped"
+  },
+  "X6_p9": {
+   "X": 6,
+   "prompt_head": "618+51=669\n688+41=729\n623+12=635\n652+79=731\n",
+   "n_id": 124,
+   "n_ood": 176,
+   "heads": {
+    "pythia-1.4b": {
+     "acc_id": 0.008064516129032258,
+     "acc_ood": 0.022727272727272728,
+     "none_frac": 0.0,
+     "expected_min_count": 8.153225806451612,
+     "expected_min_count_ood": 27.022727272727273,
+     "forecast_ok": false,
+     "forecast_margin": false
+    },
+    "pythia-1.4b-deduped": {
+     "acc_id": 0.0,
+     "acc_ood": 0.011363636363636364,
+     "none_frac": 0.0,
+     "expected_min_count": 0.0,
+     "expected_min_count_ood": 13.511363636363637,
+     "forecast_ok": false,
+     "forecast_margin": false
+    },
+    "pythia-2.8b": {
+     "acc_id": 0.3709677419354839,
+     "acc_ood": 0.21022727272727273,
+     "none_frac": 0.0,
+     "expected_min_count": 375.0483870967742,
+     "expected_min_count_ood": 249.96022727272728,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step133000": {
+     "acc_id": 0.29838709677419356,
+     "acc_ood": 0.13636363636363635,
+     "none_frac": 0.0,
+     "expected_min_count": 301.6693548387097,
+     "expected_min_count_ood": 162.13636363636363,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step123000": {
+     "acc_id": 0.24193548387096775,
+     "acc_ood": 0.1534090909090909,
+     "none_frac": 0.0,
+     "expected_min_count": 244.59677419354838,
+     "expected_min_count_ood": 182.4034090909091,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step113000": {
+     "acc_id": 0.2661290322580645,
+     "acc_ood": 0.10795454545454546,
+     "none_frac": 0.0,
+     "expected_min_count": 269.05645161290323,
+     "expected_min_count_ood": 128.35795454545456,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b-deduped": {
+     "acc_id": 0.4838709677419355,
+     "acc_ood": 0.2897727272727273,
+     "none_frac": 0.0,
+     "expected_min_count": 489.19354838709677,
+     "expected_min_count_ood": 344.53977272727275,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b": {
+     "acc_id": 0.2661290322580645,
+     "acc_ood": 0.10227272727272728,
+     "none_frac": 0.0,
+     "expected_min_count": 269.05645161290323,
+     "expected_min_count_ood": 121.60227272727273,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b-deduped": {
+     "acc_id": 0.18548387096774194,
+     "acc_ood": 0.19318181818181818,
+     "none_frac": 0.0,
+     "expected_min_count": 187.5241935483871,
+     "expected_min_count_ood": 229.6931818181818,
+     "forecast_ok": true,
+     "forecast_margin": true
+    }
+   },
+   "forecast_pass": 7,
+   "best_head_id": "pythia-2.8b-deduped",
+   "best_head_ood": "pythia-2.8b-deduped"
+  },
+  "X7_p9": {
+   "X": 7,
+   "prompt_head": "719+47=766\n781+48=829\n785+81=866\n712+17=729\n",
+   "n_id": 133,
+   "n_ood": 167,
+   "heads": {
+    "pythia-1.4b": {
+     "acc_id": 0.08270676691729323,
+     "acc_ood": 0.041916167664670656,
+     "none_frac": 0.0,
+     "expected_min_count": 82.16917293233082,
+     "expected_min_count_ood": 50.57185628742515,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-1.4b-deduped": {
+     "acc_id": 0.03007518796992481,
+     "acc_ood": 0.011976047904191617,
+     "none_frac": 0.0,
+     "expected_min_count": 29.8796992481203,
+     "expected_min_count_ood": 14.449101796407186,
+     "forecast_ok": true,
+     "forecast_margin": false
+    },
+    "pythia-2.8b": {
+     "acc_id": 0.11278195488721804,
+     "acc_ood": 0.10778443113772455,
+     "none_frac": 0.0,
+     "expected_min_count": 112.04887218045113,
+     "expected_min_count_ood": 130.04191616766468,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step133000": {
+     "acc_id": 0.08270676691729323,
+     "acc_ood": 0.0718562874251497,
+     "none_frac": 0.0,
+     "expected_min_count": 82.16917293233082,
+     "expected_min_count_ood": 86.6946107784431,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step123000": {
+     "acc_id": 0.06766917293233082,
+     "acc_ood": 0.10179640718562874,
+     "none_frac": 0.0,
+     "expected_min_count": 67.22932330827068,
+     "expected_min_count_ood": 122.81736526946108,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step113000": {
+     "acc_id": 0.03759398496240601,
+     "acc_ood": 0.07784431137724551,
+     "none_frac": 0.0,
+     "expected_min_count": 37.349624060150376,
+     "expected_min_count_ood": 93.91916167664671,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b-deduped": {
+     "acc_id": 0.17293233082706766,
+     "acc_ood": 0.1437125748502994,
+     "none_frac": 0.0,
+     "expected_min_count": 171.8082706766917,
+     "expected_min_count_ood": 173.3892215568862,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b": {
+     "acc_id": 0.20300751879699247,
+     "acc_ood": 0.1317365269461078,
+     "none_frac": 0.0,
+     "expected_min_count": 201.68796992481202,
+     "expected_min_count_ood": 158.94011976047906,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b-deduped": {
+     "acc_id": 0.2857142857142857,
+     "acc_ood": 0.1497005988023952,
+     "none_frac": 0.0,
+     "expected_min_count": 283.85714285714283,
+     "expected_min_count_ood": 180.61377245508982,
+     "forecast_ok": true,
+     "forecast_margin": true
+    }
+   },
+   "forecast_pass": 9,
+   "best_head_id": "pythia-6.9b-deduped",
+   "best_head_ood": "pythia-6.9b-deduped"
+  },
+  "X8_p9": {
+   "X": 8,
+   "prompt_head": "877+68=945\n800+97=897\n898+32=930\n809+12=821\n",
+   "n_id": 146,
+   "n_ood": 154,
+   "heads": {
+    "pythia-1.4b": {
+     "acc_id": 0.04794520547945205,
+     "acc_ood": 0.012987012987012988,
+     "none_frac": 0.0,
+     "expected_min_count": 47.25,
+     "expected_min_count_ood": 15.772727272727273,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-1.4b-deduped": {
+     "acc_id": 0.0410958904109589,
+     "acc_ood": 0.012987012987012988,
+     "none_frac": 0.0,
+     "expected_min_count": 40.5,
+     "expected_min_count_ood": 15.772727272727273,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b": {
+     "acc_id": 0.5068493150684932,
+     "acc_ood": 0.2662337662337662,
+     "none_frac": 0.0,
+     "expected_min_count": 486.0,
+     "expected_min_count_ood": 323.34090909090907,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step133000": {
+     "acc_id": 0.3767123287671233,
+     "acc_ood": 0.22077922077922077,
+     "none_frac": 0.0,
+     "expected_min_count": 371.25,
+     "expected_min_count_ood": 268.1363636363636,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step123000": {
+     "acc_id": 0.363013698630137,
+     "acc_ood": 0.2012987012987013,
+     "none_frac": 0.0,
+     "expected_min_count": 357.75,
+     "expected_min_count_ood": 244.47727272727275,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b@step113000": {
+     "acc_id": 0.4246575342465753,
+     "acc_ood": 0.21428571428571427,
+     "none_frac": 0.0,
+     "expected_min_count": 418.5,
+     "expected_min_count_ood": 260.25,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-2.8b-deduped": {
+     "acc_id": 0.5136986301369864,
+     "acc_ood": 0.3246753246753247,
+     "none_frac": 0.0,
+     "expected_min_count": 479.24999999999994,
+     "expected_min_count_ood": 394.3181818181818,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b": {
+     "acc_id": 0.2808219178082192,
+     "acc_ood": 0.08441558441558442,
+     "none_frac": 0.0,
+     "expected_min_count": 276.75,
+     "expected_min_count_ood": 102.52272727272727,
+     "forecast_ok": true,
+     "forecast_margin": true
+    },
+    "pythia-6.9b-deduped": {
+     "acc_id": 0.3219178082191781,
+     "acc_ood": 0.12337662337662338,
+     "none_frac": 0.0,
+     "expected_min_count": 317.25,
+     "expected_min_count_ood": 149.8409090909091,
+     "forecast_ok": true,
+     "forecast_margin": true
+    }
+   },
+   "forecast_pass": 9,
+   "best_head_id": "pythia-2.8b-deduped",
+   "best_head_ood": "pythia-2.8b-deduped"
+  }
+ },
+ "forecast_test_seconds": {
+  "by_worker": {
+   "1": 3034.934335839599,
+   "0": 3151.438596491228
+  },
+  "wall": 3151.438596491228,
+  "scale": 13.844611528822055
+ },
+ "forecast": {
+  "min_pass": 7,
+  "worst_expected_count": {
+   "pythia-1.4b": 8.153225806451612,
+   "pythia-1.4b-deduped": 0.0,
+   "pythia-2.8b": 112.04887218045113,
+   "pythia-2.8b@step133000": 82.16917293233082,
+   "pythia-2.8b@step123000": 67.22932330827068,
+   "pythia-2.8b@step113000": 37.349624060150376,
+   "pythia-2.8b-deduped": 171.8082706766917,
+   "pythia-6.9b": 201.68796992481202,
+   "pythia-6.9b-deduped": 187.5241935483871
+  },
+  "ranges_below_6": 0
+ }
+}
