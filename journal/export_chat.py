@@ -30,7 +30,9 @@ def redact(t):
     for p, r in SECRETS: t = re.sub(p, r, t)
     return t
 ENV = (("This session's worker process was restarted", 'перезапуск рабочего процесса сессии'),   # 09.11.2026: прежде шли как «Человек»
-       ('Another Claude session sent a message', 'сообщение другой сессии или отчёт подагента'))
+       ('Another Claude session sent a message', 'сообщение другой сессии или отчёт подагента'),
+       ('<agent-message', 'отчёт подагента этой сессии'),                                   # 15.11.2026: шёл как «Человек» (ERRORS № 166)
+       ('[Request interrupted by user]', 'человек прервал ход Claude'))
 def env_event(txt):
     for head, label in ENV:
         if txt.startswith(head): return f'\n- _событие среды (не человек): {label}_\n'
