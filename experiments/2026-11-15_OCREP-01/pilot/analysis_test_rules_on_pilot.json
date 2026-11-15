@@ -893,25 +893,55 @@
   "R1": {
    "OCCOR-01 R1": {
     "effect": -0.12010719892126176,
-    "excluded": true
+    "excluded": true,
+    "excluded_percentile": true,
+    "excluded_halves": [
+     true,
+     true
+    ],
+    "unstable": false
    },
    "OCMIX-01 R3": {
     "effect": -0.08079813413880677,
-    "excluded": true
+    "excluded": true,
+    "excluded_percentile": true,
+    "excluded_halves": [
+     true,
+     true
+    ],
+    "unstable": false
    },
    "половина наименьшего": {
     "effect": -0.04039906706940338,
-    "excluded": false
+    "excluded": false,
+    "excluded_percentile": false,
+    "excluded_halves": [
+     false,
+     false
+    ],
+    "unstable": false
    }
   },
   "R2": {
    "OCCOR-01 R3": {
     "effect": -0.07694571065123035,
-    "excluded": true
+    "excluded": true,
+    "excluded_percentile": true,
+    "excluded_halves": [
+     true,
+     true
+    ],
+    "unstable": false
    },
    "половина наименьшего": {
     "effect": -0.038472855325615174,
-    "excluded": false
+    "excluded": false,
+    "excluded_percentile": true,
+    "excluded_halves": [
+     false,
+     false
+    ],
+    "unstable": false
    }
   }
  },

@@ -911,6 +911,62 @@
   "all_wrong": 0.01154891304347826,
   "all_wrong_same": 0.0
  },
+ "prior_effect_descr": {
+  "R1": {
+   "OCCOR-01 R1": {
+    "effect": -0.12010719892126176,
+    "excluded": false,
+    "excluded_percentile": false,
+    "excluded_halves": [
+     false,
+     false
+    ],
+    "unstable": false
+   },
+   "OCMIX-01 R3": {
+    "effect": -0.08079813413880677,
+    "excluded": false,
+    "excluded_percentile": false,
+    "excluded_halves": [
+     false,
+     false
+    ],
+    "unstable": false
+   },
+   "половина наименьшего": {
+    "effect": -0.04039906706940338,
+    "excluded": false,
+    "excluded_percentile": false,
+    "excluded_halves": [
+     false,
+     false
+    ],
+    "unstable": false
+   }
+  },
+  "R2": {
+   "OCCOR-01 R3": {
+    "effect": -0.07694571065123035,
+    "excluded": false,
+    "excluded_percentile": false,
+    "excluded_halves": [
+     false,
+     false
+    ],
+    "unstable": false
+   },
+   "половина наименьшего": {
+    "effect": -0.038472855325615174,
+    "excluded": false,
+    "excluded_percentile": false,
+    "excluded_halves": [
+     false,
+     false
+    ],
+    "unstable": false
+   }
+  }
+ },
  "verdicts": {
   "R1": "подтверждено",
   "R2": "подтверждено",
