@@ -17,6 +17,8 @@
      "подтверждено": 32
     }
    },
+   "power_confirm_tau_s": 0.9999999979500697,
+   "power_refute_tau_s": 1.1676362897766787e-17,
    "power_confirm_guard": 1.0,
    "power_refute_guard": 0.0
   },
@@ -32,6 +34,8 @@
      "подтверждено": 32
     }
    },
+   "power_confirm_tau_s": 0.9991115958986866,
+   "power_refute_tau_s": 2.671848533540309e-10,
    "power_confirm_guard": 0.9988,
    "power_refute_guard": 0.0
   },
@@ -47,6 +51,8 @@
      "не решено": 32
     }
    },
+   "power_confirm_tau_s": 0.20263751645077355,
+   "power_refute_tau_s": 0.09122347372209849,
    "power_confirm_guard": 0.19365,
    "power_refute_guard": 0.0895
   },
@@ -61,7 +67,9 @@
     "outcomes": {
      "подтверждено": 32
     }
-   }
+   },
+   "power_confirm_tau_s": 0.9945916182729814,
+   "power_refute_tau_s": 3.38339195331353e-11
   },
   "N": {
    "power_confirm_model": 1.0,
@@ -74,7 +82,9 @@
     "outcomes": {
      "подтверждено": 32
     }
-   }
+   },
+   "power_confirm_tau_s": 1.0,
+   "power_refute_tau_s": 4.3504014591521003e-107
   }
  },
  "tail": {
@@ -252,7 +262,7 @@
   "E2_P1_confirm": 0.9488599999999999,
   "E3_P2_confirm": 0.18396749999999998,
   "E4_P2_refute": 0.08502499999999999,
-  "E5_P3_confirm": 0.949857123879738,
+  "E5_P3_confirm": 0.9448620373593323,
   "E6_N_confirm": 0.95,
   "E7_T_confirm": 0.9999996500712726,
   "E7_T_confirm_posterior": 0.1815,

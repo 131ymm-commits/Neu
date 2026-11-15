@@ -157,6 +157,9 @@ check('wc FIXED, wc CONF, ИОИ и Брайер POST-CV, ИОИ FIXED = вто�
                                                                           abs(r1['ioi FIXED'] - nv['ioi_fixed'])) < 1e-12)
 check('ign + dec = ioi у CONF, POST-CV, ONE-BEST, FIXED; T у POST-CV = T у CONF (выбор не меняется)',
       all(abs(r1[f'ign {e}'] + r1[f'dec {e}'] - r1[f'ioi {e}']) < 1e-12 for e in ('CONF', 'POST-CV', 'ONE-BEST', 'FIXED')) and r1['T POST-CV'] == r1['T CONF'])
+tt_, cc_, _ = S.select(T.calibrate(st['logp'][st['keep']], st['corr'][st['keep']], fit_b, cols_b), st['corr'][st['keep']][:, cols_b].astype(float))
+sh = S.meas(tt_, np.clip(cc_ + nv['wc_conf'], 0.0, 1.0))
+check('SHIFT («тупое сжатие», совет 64): выбранная заявка CONF + wc CONF, обрезка в [0, 1] — вторым способом', abs(r1['ioi SHIFT'] - sh['ioi']) < 1e-12 and abs(r1['brier SHIFT'] - sh['brier']) < 1e-12)
 r3 = P.post_stats(st, fit_b, cols_b, None)
 check('без головы FIXED: ключи FIXED — nan, остальные ключи те же', set(r3) == set(r1) and np.isnan(r3['wc FIXED']) and np.isnan(r3['ioi FIXED'])
       and r3['wc POST'] == r1['wc POST'])
@@ -198,8 +201,18 @@ with tempfile.TemporaryDirectory() as tmp:
     v_bad = P.tail(os.path.join(tmp, 'b.json'), [part('p2.json', {'P2': 80})])['verdict']
     v_mid = P.tail(os.path.join(tmp, 'c.json'), [part('p3.json', {'P3': 30})])['verdict']
     two = P.tail(os.path.join(tmp, 'd.json'), [part('p4.json', {}, n=1000, first=0), part('p5.json', {}, n=1000, first=2)])
+    fnan = part('p6.json', {}, n=3000)                                   # совет 64, п. 1: NaN — промах на обе стороны, знаменатель полный
+    dn = json.load(open(fnan))
+    dn['worlds'][0]['truth']['P0'] = float('nan')                         # правда мира — не число: все 1500 опытов мира — промахи
+    dn['worlds'][1]['point'][0][P.TAIL_KEYS.index('P3')] = float('nan')   # один опыт с точкой не числом
+    json.dump(dn, open(fnan, 'w'))
+    tn = P.tail(os.path.join(tmp, 'e.json'), [fnan])
 check('Т: 8 промахов из 3000 — подтверждено; 80 — опровергнуто; 30 — не решено; части складываются по мирам',
       (v_ok, v_bad, v_mid) == ('подтверждено', 'опровергнуто', 'не решено') and two['n_worlds'] == 4 and two['stats']['P0']['n'] == 2000)
+check('Т: NaN — промах на обе стороны, знаменатель полный (мир с правдой NaN — 1500 промахов; опыт с точкой NaN — 1), вердикт — опровергнуто',
+      tn['stats']['P0']['n'] == 3000 and tn['stats']['P0']['miss_low'] == 1500 and tn['stats']['P0']['miss_high'] == 1500
+      and tn['stats']['P3']['n'] == 3000 and tn['stats']['P3']['miss_low'] == 1 and tn['stats']['P3']['miss_high'] == 1 and tn['stats']['P3']['n_nan'] == 1
+      and tn['verdict'] == 'опровергнуто')
 
 # 6. Сухой прогон: заглушка строится и читается, правда сходится, сверка цепочки проходит
 with tempfile.TemporaryDirectory() as tmp:

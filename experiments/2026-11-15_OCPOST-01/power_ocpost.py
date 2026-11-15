@@ -56,6 +56,9 @@ def main():
     for k, v in pe['power'].items():
         out['rules'][k] = dict(power_confirm_model=v['power_confirm'], power_refute_model=v['power_refute'], mu=v['mu'], tau=v['tau'], s_rms=v['s_rms'],
                                subsets=v.get('subsets'))
+        # совет 64, п. 6: τ по десяти средам обрезана по нулю (у P3 и N τ = 0) — мощность и при τ = s
+        cs_, rs_ = P.power_one(v['kind'], v['mu'], max(v['tau'], v['s_rms']), v['s_rms'], pe['m_new'])
+        out['rules'][k]['power_confirm_tau_s'], out['rules'][k]['power_refute_tau_s'] = cs_, rs_
         if v['kind'] == 'sign':                    # та же модель, но с предохранителем «без одного диапазона» (5 сред — 5 диапазонов)
             m = pe['m_new']
             d = g.normal(v['mu'], v['tau'], (R, m)) + g.normal(0, v['s_rms'], (R, m))
@@ -132,7 +135,7 @@ def main():
     out['expect'] = dict(
         E1_P0_confirm=P_METHOD * rp['P0']['power_confirm_guard'], E2_P1_confirm=P_METHOD * rp['P1']['power_confirm_guard'],
         E3_P2_confirm=P_METHOD * rp['P2']['power_confirm_guard'], E4_P2_refute=P_METHOD * rp['P2']['power_refute_guard'],
-        E5_P3_confirm=P_METHOD * rp['P3']['power_confirm_model'], E6_N_confirm=P_METHOD * rp['N']['power_confirm_model'],
+        E5_P3_confirm=P_METHOD * rp['P3']['power_confirm_tau_s'], E6_N_confirm=P_METHOD * rp['N']['power_confirm_tau_s'],   # совет 64, п. 6
         E7_T_confirm=out['tail']['student']['p_confirm_indep'], E7_T_confirm_posterior=out['tail']['posterior']['подтверждено'],
         E7_T_confirm_normal=out['tail']['normal']['p_confirm_indep'],
         E8_brier_worse=P_METHOD * worse, p_method=P_METHOD)

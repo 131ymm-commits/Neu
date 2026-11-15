@@ -16,6 +16,7 @@ SPEC — как в analyze_ocshift_test: 'new:КАТАЛОГ' (answers.json ви
   ONE-BEST  — голова с наибольшей точностью на ID, её собственная откалиброванная заявка;
   FIXED     — голова, закреплённая по имени до данных (pythia-2.8b-deduped; в мирах — голова 6), её заявка; отбора нет;
   POST-IN   — вторая калибровка по парам ID в выборке (описательно, как в OCSHIFT-01);
+  SHIFT     — «тупое сжатие» (совет 64, п. 8; описательно): выбранная заявка CONF плюс wc CONF той же выборки, обрезка в [0, 1];
   wc CONF   — T − C у CONF на ID с кросс-подгонкой (как в OCSHIFT-01); wc ONE-BEST — то же у ONE-BEST (описательно);
   wc POST   — T − C у POST-CV на ID с вложенной кросс-подгонкой: для внешней части k вторая калибровка учится на парах
               внутренних частей j ≠ k (головы откалиброваны по частям ∉ {k, j}) и применяется к выбранным заявкам части k
@@ -53,7 +54,7 @@ MIN_VALID_FRAC = 0.8
 CHECK_TOL = 1e-3
 FIXED_NAME, FIXED_WORLD = 'pythia-2.8b-deduped', 6
 TAIL_MAX = 0.0075                             # Т: доля односторонних промахов M4 при LEVEL — не выше втрое большей номинала
-EST = ('CONF', 'POST-CV', 'ONE-BEST', 'FIXED', 'POST-IN')
+EST = ('CONF', 'POST-CV', 'ONE-BEST', 'FIXED', 'POST-IN', 'SHIFT')
 RULES = {'P0': ('wc CONF', None, 'sign'), 'P1': ('ioi POST-CV', 'ioi CONF', 'sign'), 'P2': ('ioi POST-CV', 'ioi ONE-BEST', 'sign'),
          'P3': ('wc POST', None, 'equiv'), 'N': ('wc FIXED', None, 'equiv')}
 DESCR = {'Брайер POST-CV − ONE-BEST': ('brier POST-CV', 'brier ONE-BEST'), 'Брайер POST-CV − CONF': ('brier POST-CV', 'brier CONF'),
@@ -62,7 +63,9 @@ DESCR = {'Брайер POST-CV − ONE-BEST': ('brier POST-CV', 'brier ONE-BEST'
          'самообман ONE-BEST вне диапазона': ('dec ONE-BEST', None), 'самообман FIXED вне диапазона': ('dec FIXED', None),
          'POST-IN − POST-CV': ('ioi POST-IN', 'ioi POST-CV'), 'POST-CV − FIXED': ('ioi POST-CV', 'ioi FIXED'),
          'ONE-BEST − FIXED': ('ioi ONE-BEST', 'ioi FIXED'), 'wc ONE-BEST': ('wc ONE-BEST', None),
-         'wc POST − wc CONF': ('wc POST', 'wc CONF'), 'wc FIXED − wc ONE-BEST': ('wc FIXED', 'wc ONE-BEST')}
+         'wc POST − wc CONF': ('wc POST', 'wc CONF'), 'wc FIXED − wc ONE-BEST': ('wc FIXED', 'wc ONE-BEST'),
+         'POST-CV − SHIFT': ('ioi POST-CV', 'ioi SHIFT'), 'Брайер POST-CV − SHIFT': ('brier POST-CV', 'brier SHIFT'),
+         'SHIFT − CONF': ('ioi SHIFT', 'ioi CONF'), 'самообман SHIFT вне диапазона': ('dec SHIFT', None)}
 U = 'не определено (проверка метода)'
 UF = 'не определено (голова FIXED вне толпы в годной среде)'
 UN = 'не определено (отрицательный контроль N опровергнут)'
@@ -152,6 +155,7 @@ def post_stats(st, fit, cols, fx):
     cv_t, cv_c = np.concatenate(tt), np.concatenate(cc)
     put('POST-CV', t, iso_map(cv_c, cv_t, c))
     out['wc CONF'] = float(np.mean(cv_t) - np.mean(cv_c))
+    put('SHIFT', t, np.clip(c + out['wc CONF'], 0.0, 1.0))      # совет 64, п. 8: база «тупое сжатие», описательно
     out['wc ONE-BEST'] = float(np.mean(np.concatenate(tb)) - np.mean(np.concatenate(cb)))
     out['wc FIXED'] = float(np.mean(np.concatenate(tf)) - np.mean(np.concatenate(cf))) if fx is not None else float('nan')
     # вложенная кросс-подгонка: калибровка голов по частям ∉ {k, j} — одна на пару, предсказание сразу на части k и j
@@ -335,11 +339,36 @@ def test(dst, specs, B=10000, workers=1):
         res['P2']['brier_reading'] = dict(ci=iv, side=side,
                                           note=('по ИОИ лучше за счёт заниженных заявок, по Брайеру хуже'
                                                 if (res['P2']['verdict'] == 'подтверждено' and side == 'хуже') else ''))
+    # чтение P1 по Брайеру (совет 64, п. 8): вердикт не меняется
+    br1 = res.get('descr_Брайер POST-CV − CONF')
+    if br1 is not None:
+        iv, _ = m4(br1['delta'], np.mean([val(boots[n], DESCR['Брайер POST-CV − CONF']) for n in valid], 0), LEVEL)
+        res['P1']['brier_reading'] = dict(ci=iv, side='хуже' if iv[0] > 0 else ('лучше' if iv[1] < 0 else 'вывода нет'),
+                                          note=('по ИОИ лучше за счёт заниженных заявок, по Брайеру хуже'
+                                                if (res['P1']['verdict'] == 'подтверждено' and iv[0] > 0) else ''))
+    # чтение P2 по самообману вне диапазона (совет 64, п. 9): вердикт не меняется
+    dd = res.get('descr_P2: разность самообмана')
+    if dd is not None:
+        iv, _ = m4(dd['delta'], np.mean([val(boots[n], DESCR['P2: разность самообмана']) for n in valid], 0), LEVEL)
+        res['P2']['ood_deception_reading'] = dict(ci=iv, post_cv_higher=bool(iv[0] > 0),
+                                                  note=('выигрыш за счёт точности выбора, а не честности оценки вне диапазона'
+                                                        if (res['P2']['verdict'] == 'подтверждено' and iv[0] > 0) else ''))
+    res['P2']['note'] = '«не решено» — ожидаемый исход (мощность 0,19 по пилоту); отрицательным результатом не читается'
+    # N: голова FIXED и ONE-BEST (совет 64, п. 7; описательно)
+    same = [n for n in valid if res['envs'][n]['extras']['one_best_is_fixed']]
+    other = [n for n in valid if not res['envs'][n]['extras']['one_best_is_fixed']]
+    res['N']['fixed_split_descr'] = dict(share_one_best_is_fixed=len(same) / m, n_same=len(same), n_other=len(other),
+                                         wc_fixed_same=float(np.mean([pts[n]['wc FIXED'] for n in same])) if same else None,
+                                         wc_fixed_other=float(np.mean([pts[n]['wc FIXED'] for n in other])) if other else None,
+                                         note='N проверяет несмещённость T − C на одной заранее названной голове (частый победитель прошлых опытов), '
+                                              'а не отсутствие отбора вообще')
     # чтение P3 при P0 (записано до данных): без подтверждённого P0 нельзя сказать, что вторая калибровка что-то «сняла»
     res['P3']['reading'] = ('самообман на ID после второй калибровки — в полосе ±0,02; что он был, показывает P0'
                             if res['P0']['verdict'] == 'подтверждено' else 'P0 не подтверждено: «снят» не читается, только «в полосе»')
     if res['N']['verdict'] != 'подтверждено':
         res['P3']['reading'] += '; отрицательный контроль N не подтверждён: несмещённость счёта T − C без отбора не показана'
+    elif len(same) > m / 2:
+        res['P3']['reading'] += '; N подтверждён, но ONE-BEST = FIXED в большинстве сред: N не отделяет поправку от совпадения голов'
     d_ign, d_dec = res.get('descr_P2: разность незнания'), res.get('descr_P2: разность самообмана')
     if d_ign and d_dec:
         assert abs(d_ign['delta'] + d_dec['delta'] - res['P2']['delta']) < 1e-9, 'разложение P2 не сошлось'
@@ -511,7 +540,9 @@ def cp(x, n, level, side):
 
 
 def tail(dst, parts):
-    """Т: доли односторонних промахов M4 (уровень LEVEL на сторону) по всем опытам всех миров; правило — по границам
+    """Т: доли односторонних промахов M4 (уровень LEVEL на сторону) по всем опытам всех миров (опыт или мир с NaN — промах на обе
+    стороны, знаменатель — все опыты; совет 64, п. 1). Т проверяет M4 у статистики одной среды; среднее по пяти мирам — описательно.
+    Правило — по границам
     Клоппера — Пирсона: «подтверждено», если у каждой статистики P0–P3, N и каждой стороны верхняя граница (уровень LEVEL)
     < TAIL_MAX; «опровергнуто», если хоть у одной нижняя граница (уровень LEVEL / 10, поправка на 10 проверок) > TAIL_MAX."""
     W, metas = [], set()
@@ -531,17 +562,18 @@ def tail(dst, parts):
             P = np.array([p[si] for p in w['point']])
             SD = np.array([x[si] for x in w['boot_sd']])
             BM = np.array([x[si] for x in w['boot_mean']])
-            ok = np.isfinite(P) & np.isfinite(SD) & np.isfinite(th)
-            nan_n += int((~ok).sum())
-            P, SD, BM = P[ok], SD[ok], BM[ok]
-            lo, hi = P - Z * SD, P + Z * SD
-            a, b = int((th < lo).sum()), int((th > hi).sum())
+            ok = np.isfinite(P) & np.isfinite(SD) & bool(np.isfinite(th))
+            bad = int((~ok).sum())                                         # совет 64, п. 1: NaN — промах на обе стороны
+            nan_n += bad
+            lo, hi = P[ok] - Z * SD[ok], P[ok] + Z * SD[ok]
+            a, b = int((th < lo).sum()) + bad, int((th > hi).sum()) + bad
             lo_m += a
             hi_m += b
             nn += len(P)
-            per_world.append(dict(k=w['k'], miss_low=a, miss_high=b, n=int(len(P))))
-            shift.append(float(np.mean((BM - P) / np.maximum(SD, 1e-12))))
-            ratio.append(float(np.sqrt(np.mean(SD ** 2)) / max(w['sd_true'][s], 1e-12)))
+            per_world.append(dict(k=w['k'], miss_low=a, miss_high=b, n=int(len(P)), nan=bad))
+            if ok.any():
+                shift.append(float(np.mean((BM[ok] - P[ok]) / np.maximum(SD[ok], 1e-12))))
+                ratio.append(float(np.sqrt(np.mean(SD[ok] ** 2)) / max(w['sd_true'][s], 1e-12)))
         e = dict(n=nn, n_nan=nan_n, miss_low=lo_m, miss_high=hi_m, rate_low=lo_m / max(nn, 1), rate_high=hi_m / max(nn, 1),
                  upper_low=cp(lo_m, nn, LEVEL, 'hi'), upper_high=cp(hi_m, nn, LEVEL, 'hi'),
                  lower_low=cp(lo_m, nn, LEVEL / n_chk, 'lo'), lower_high=cp(hi_m, nn, LEVEL / n_chk, 'lo'),
@@ -565,18 +597,21 @@ def tail(dst, parts):
             for j in range(ne):
                 P = np.mean([w['point'][j][si] for w in G])
                 SD = np.sqrt(np.sum([w['boot_sd'][j][si] ** 2 for w in G])) / len(G)
-                if not (np.isfinite(P) and np.isfinite(SD)):
+                n += 1
+                if not (np.isfinite(P) and np.isfinite(SD) and np.isfinite(th)):   # NaN — промах на обе стороны
+                    a += 1
+                    b += 1
                     continue
                 a += int(th < P - Z * SD)
                 b += int(th > P + Z * SD)
-                n += 1
-        md[s] = dict(n=n, miss_low=a, miss_high=b)
+        md[s] = dict(n=n, miss_low=a, miss_high=b, rate_low=a / max(n, 1), rate_high=b / max(n, 1),
+                     upper_low=cp(a, n, LEVEL, 'hi') if n else None, upper_high=cp(b, n, LEVEL, 'hi') if n else None)
     out['mean_of_5_descr'] = md
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('Т:', out['verdict'])
     for s in TAIL_KEYS:
         e = out['stats'][s]
-        print(f"{s}: n {e['n']}, промахов снизу {e['miss_low']} (верх. гр. {e['upper_low']:.4f}), сверху {e['miss_high']} (верх. гр. {e['upper_high']:.4f}), "
+        print(f"{s}: n {e['n']} (NaN {e['n_nan']}), промахов снизу {e['miss_low']} (верх. гр. {e['upper_low']:.4f}), сверху {e['miss_high']} (верх. гр. {e['upper_high']:.4f}), "
               f"ст. откл. повторов / истинное {e['sd_ratio_mean']:.3f}, сдвиг {e['shift_in_sd_mean']:+.3f} ст. откл.")
     return out
 
