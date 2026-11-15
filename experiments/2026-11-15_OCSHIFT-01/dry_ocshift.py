@@ -93,7 +93,8 @@ def main(out_dir, B):
         r = json.load(open(dst, encoding='utf-8'))
         got = r['verdicts']
         okk = all(got[k] == v for k, v in EXPECT[kind].items())
-        summary[kind] = dict(verdicts=got, expected=EXPECT[kind], as_expected=okk, method=r['method'], check_ok=r['check_ok'], seconds=r.get('seconds'),
+        summary[kind] = dict(verdicts=got, verdicts_strict=r.get('verdicts_strict'), expected=EXPECT[kind], as_expected=okk, method=r['method'],
+                             check_ok=r['check_ok'], seconds=r.get('seconds'),
                              R1=None if 'R1' not in r else dict(delta=r['R1']['delta'], ci=r['R1']['ci']))
         if not okk:
             bad.append(kind)
