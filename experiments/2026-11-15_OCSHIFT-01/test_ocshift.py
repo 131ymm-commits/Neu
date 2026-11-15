@@ -122,6 +122,9 @@ st2, info2 = S.prepare(e2, 7)
 m2 = info2['method']
 check('проверка метода — только по ID: голова без верных ответов вне диапазона проходит; голова с 10 верными на ID — нет',
       m2[info2['names'][0]]['ok'] and m2[info2['names'][0]]['ood_correct'] == 0 and not m2[info2['names'][1]]['ok'] and info2['keep'][0] == 0 and 1 not in info2['keep'])
+ex = S.extras(st, info)
+check('R2 вторым способом: среднее по задачам ID равно wc CONF точки; ошибка — ст. отклонение / √n',
+      abs(ex['wc_conf_normal']['mean'] - pt['wc CONF']) < 1e-12 and ex['wc_conf_normal']['n'] == len(idi) and 0 < ex['wc_conf_normal']['se'] < 0.05)
 pt2 = S.core(st, idi, ood)
 check('core детерминирован', all(pt[k] == pt2[k] for k in pt))
 

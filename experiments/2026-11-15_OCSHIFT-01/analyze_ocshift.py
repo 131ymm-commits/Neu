@@ -192,6 +192,10 @@ def extras(st, info):
         for e in EVALS:
             t, c, _ = select(T.calibrate(Sk[e], cs, tr, te), cs[:, te].astype(float))
             cv_t[e][fo == k], cv_c[e][fo == k] = t, c
+    # R2 вторым способом, без бутстрепа: по задачам ID разность «точность выбранного − заявка» при кросс-подгонке (CONF);
+    # среднее и его стандартная ошибка по нормальному приближению (калибровки частей считаются заданными).
+    dcv = cv_t['CONF'] - cv_c['CONF']
+    res['wc_conf_normal'] = dict(mean=float(dcv.mean()), se=float(dcv.std(ddof=1) / np.sqrt(len(dcv))), n=int(len(dcv)))
     for e in EVALS:
         co = T.calibrate(S[e], cs, idi, ood)
         t, c, w = select(co, y_o)

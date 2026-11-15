@@ -23,7 +23,8 @@ SPEC — 'new:КАТАЛОГ' (answers.json вида ocshift_extract.py, MODE = 
       Подтверждено — p < LEVEL и по бутстрепу с центрированием (нулевая гипотеза: одна общая разность), и по χ²(m − 1).
 Защита LR: в какой-то среде повторов с одним классом у головы в выборке ID больше 1 % — R1, R3, R4 «не решено».
 Описательно (вес 0; ДИ BC 99 %): ONE-BEST против каждого из восьми; Брайер; контроль AGREE; POST-IN; FUSE-MIN;
-ONE-BEST+MIN; таблицы по средам; разложение различий «диапазон — подсказка»; extras по средам (только точка)."""
+ONE-BEST+MIN; таблицы по средам; разложение различий «диапазон — подсказка»; extras по средам (только точка);
+R2 вторым способом — среднее по задачам ID и нормальное приближение, без бутстрепа (R2.normal_descr)."""
 import json
 import multiprocessing as mp
 import os
@@ -199,6 +200,10 @@ def main(dst, specs, B=10000, workers=1):
         h['verdict'] = U if not method_ok else (UL if lr_bad else h['verdict_raw'])
         h['descr_R1'] = heterogeneity([val(pts[n], RULES['R1']) for n in valid], [val(boots[n], RULES['R1']) for n in valid])
     res['R4'] = h if h is not None else dict(verdict=U)
+    wn = [res['envs'][n]['extras']['wc_conf_normal'] for n in valid]       # R2 вторым способом (описательно): без бутстрепа
+    wm, ws = float(np.mean([w_['mean'] for w_ in wn])), float(np.sqrt(sum(w_['se'] ** 2 for w_ in wn)) / len(wn))
+    res['R2']['normal_descr'] = dict(mean=wm, se=ws, z=wm / max(ws, 1e-12), by_env={n: w_['mean'] for n, w_ in zip(valid, wn)},
+                                     note='нормальное приближение по задачам ID; среды независимы; на вердикт не влияет')
     for k, pair in DESCR.items():
         res[f'descr_{k}'] = dict(mean_entry(pair, DESCR_LEVEL)[0], by_env={n: float(val(pts[n], pair)) for n in valid})
     # разложение различий между средами: диапазон и подсказка (точки; только если у сред есть X и p)
