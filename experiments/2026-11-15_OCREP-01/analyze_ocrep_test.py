@@ -5,9 +5,10 @@ OUT_DIR — вывод ocrep_extract_test.py (SPLIT = 'test'). Головы — 
 пилоте). Оценщики — analyze_ocrep (код OCCOR-01 и OCMIX-01 без изменений).
 Бутстреп — вложенный: выборка задач ID с возвращением (переподгонка NB-AGREE, LR-AGREE, NB-IND, MIX-LR и калибровки), затем
 выборка задач OOD; B повторов (по умолчанию 10000), зерно 1401; выборки заранее, счёт в нескольких процессах (один поток
-BLAS на процесс), результат от числа процессов не зависит. Интервал — BC (процентильный — описательно).
+BLAS на процесс), результат от числа процессов не зависит. Интервал — BC; вердикт правил — по BC и процентильному вместе (совет 58).
 Правила (уровень — LEVEL на сторону; ложное «подтверждено» по серии — не выше LEVEL · число правил):
-  R1 (третий тест C-086): ИОИ(LR-AGREE) − ИОИ(AGREE). Подтверждено — верхняя граница ДИ < 0; опровергнуто — нижняя > 0.
+  R1 (третий тест C-086): ИОИ(LR-AGREE) − ИОИ(AGREE). Подтверждено — верхняя граница ДИ < 0; опровергнуто — нижняя > 0;
+     по совету 58 — только если это дают оба ДИ, BC и процентильный (verdict_conj; иначе «не решено (только BC)» и т. п.).
   R2 (контроль на неспецифичность): ИОИ(LR-AGREE) − ИОИ(NB-IND) — так же.
   R3 (вето; только если R3_ACTIVE — условие, закреплённое до пилота): самообман верхушки VETO − LR-AGREE — так же.
 Правило с мощностью меньше 0,05 (power.json) при «не решено» читается как «не проверено».
@@ -19,7 +20,7 @@ BLAS на процесс), результат от числа процессов
 Описательно (вес 0, без вердикта; ДИ BC 99 %): NB-AGREE, FAM-AGREE, MIX-LR, CONF против AGREE или LR-AGREE; разложение R1 и R2
 на ΔT и ΔC; верхушка (top10_sel) против CONF; R3 — описательно, если не включён; поддержка выбранного ответа VETO (любой
 головой, головой другой линии); кросс-подгонка (точка); доля задач OOD, где все головы неверны и согласны; счётчики по головам;
-исключает ли ДИ R1 и R2 (уровень правил) эффекты прежних тестов C-086 и C-087 и половину наименьшего из них (PREREG §5)."""
+исключает ли ДИ R1 и R2 (уровень правил, оба ДИ — совет 58) эффекты прежних тестов C-086 и C-087 и половину наименьшего (PREREG §5)."""
 import json
 import multiprocessing as mp
 import os
@@ -44,6 +45,7 @@ DESCR_LEVEL = 0.005
 MIN_EACH, MAX_NONE, MIN_HEADS = 20, 0.05, 6
 SEED_B = 1401
 LR_FAIL_MAX = 0.01
+MIN_OUT = 5                # совет 58: за границей BC меньше 5 повторов — метка «граница BC не определена»
 BOOT_EVALS = ('AGREE', 'NB-AGREE', 'LR-AGREE', 'NB-IND', 'FAM-AGREE', 'CONF', 'VETO', 'MIX-LR')
 ALL_RULES = {'R1': ('ioi', 'LR-AGREE', 'AGREE'), 'R2': ('ioi', 'LR-AGREE', 'NB-IND'), 'R3': ('top', 'VETO', 'LR-AGREE')}
 DESCR = {'NB−AGREE': ('ioi', 'NB-AGREE', 'AGREE'), 'FAM−AGREE': ('ioi', 'FAM-AGREE', 'AGREE'), 'MIX−LR': ('ioi', 'MIX-LR', 'LR-AGREE'),
@@ -66,19 +68,20 @@ def prior_effects():
         for name, d, rule in lst:
             v[name] = float(json.load(open(os.path.join(os.path.dirname(HERE), d, 'run', 'analysis.json'), encoding='utf-8'))[rule]['delta'])
         v['половина наименьшего'] = max(v.values()) / 2
+        assert all(x < 0 for x in v.values()), 'прежний эффект не отрицателен'   # совет 58
         out[k] = v
     return out
 
 
 def prior_descr(e, prior):
-    """Эффект x < 0 исключён, если нижняя граница ДИ выше x. Главное — по ДИ BC правила; рядом (описательно) — по
-    процентильному ДИ и по ДИ BC каждой половины повторов: при z0 далеко от 0 нижняя граница BC держится на единицах
-    повторов (хвосты). Разные ответы половин — пометка unstable."""
+    """Совет 58: эффект x < 0 «исключён», если нижняя граница выше x и у ДИ BC, и у процентильного ДИ (уровень правил);
+    ни у одного — «не исключён»; у одного — «неустойчиво». Строка устойчивости рядом — то же по каждой половине повторов."""
     out = {}
     for name, x in prior.items():
-        hv = [bool(h[0] > x) for h in e['tails']['halves']]
-        out[name] = dict(effect=x, excluded=bool(e['ci'][0] > x), excluded_percentile=bool(e['ci_percentile'][0] > x), excluded_halves=hv,
-                         unstable=bool(hv[0] != hv[1]))
+        bc, pc = bool(e['ci'][0] > x), bool(e['ci_percentile'][0] > x)
+        hv = [bool(h[0] > x and hp[0] > x) for h, hp in zip(e['tails']['halves'], e['tails']['halves_percentile'])]
+        status = 'исключён' if bc and pc else ('не исключён' if not (bc or pc) else 'неустойчиво')
+        out[name] = dict(effect=x, status=status, excluded_bc=bc, excluded_percentile=pc, excluded_halves=hv, halves_agree=bool(hv[0] == hv[1]))
     return out
 
 
@@ -86,11 +89,28 @@ def verdict(lo, hi):
     return 'подтверждено' if hi < 0 else ('опровергнуто' if lo > 0 else 'не решено')
 
 
+def verdict_conj(bc, pct):
+    """Совет 58: вывод выносится, только если его дают оба ДИ — BC и процентильный. Если только один —
+    «не решено (только BC)» или «не решено (только процентильный)». Конъюнкция может отменить вывод, но не создать."""
+    vb, vp = verdict(*bc), verdict(*pct)
+    if vb == vp:
+        return vb
+    if vp == 'не решено':
+        return 'не решено (только BC)'
+    if vb == 'не решено':
+        return 'не решено (только процентильный)'
+    return 'не решено (ДИ противоречат)'
+
+
 def ci_entry(boot, point, level):
     b = np.asarray(boot, float)
     (lo, hi), z0 = Q.bc_ci(b, point, level)
-    return dict(delta=float(point), ci=[lo, hi], ci_percentile=[float(x) for x in np.quantile(b, (level, 1 - level))], z0=z0,
-                boot_median=float(np.median(b)), share_below_0=float(np.mean(b < 0)), level=level)
+    pq = [float(x) for x in np.quantile(b, (level, 1 - level))]
+    n_out = dict(bc=[int((b < lo).sum()), int((b > hi).sum())], percentile=[int((b < pq[0]).sum()), int((b > pq[1]).sum())])
+    und = [n_out['bc'][0] < MIN_OUT, n_out['bc'][1] < MIN_OUT]      # совет 58: только метка, вердикт не меняет
+    note = '; '.join(f'граница BC не определена ({w}: за ней {n} повт.)' for w, n, u in zip(('нижняя', 'верхняя'), n_out['bc'], und) if u)
+    return dict(delta=float(point), ci=[lo, hi], ci_percentile=pq, z0=z0, boot_median=float(np.median(b)), share_below_0=float(np.mean(b < 0)),
+                level=level, n_out=n_out, bc_undetermined=und, bc_note=note)
 
 
 def tails(boot, point, level):
@@ -98,8 +118,10 @@ def tails(boot, point, level):
     (lo, hi), _ = Q.bc_ci(b, point, level)
     h = len(b) // 2
     halves = [Q.bc_ci(b[:h], point, level)[0], Q.bc_ci(b[h:], point, level)[0]]
-    vh = [verdict(*x) for x in halves]
-    return dict(n_below_lo=int((b < lo).sum()), n_above_hi=int((b > hi).sum()), halves=halves, verdict_halves=vh, unstable=bool(vh[0] != vh[1]))
+    halves_pct = [[float(x) for x in np.quantile(q, (level, 1 - level))] for q in (b[:h], b[h:])]
+    vh = [verdict_conj(x, y) for x, y in zip(halves, halves_pct)]
+    return dict(n_below_lo=int((b < lo).sum()), n_above_hi=int((b > hi).sum()), halves=halves, halves_percentile=halves_pct, verdict_halves=vh,
+                unstable=bool(vh[0] != vh[1]))
 
 
 _ST = {}
@@ -178,7 +200,8 @@ def main(out_dir, dst, B=10000, heads_test=None, r3_active=None, workers=1):
         if k in rules:
             e['tails'] = tails(bk, e['delta'], LEVEL)
             e['monte_carlo_note'] = 'граница по Монте-Карло неустойчива' if e['tails']['unstable'] else ''
-            e['verdict'] = U if not method_ok else (UL if lr_bad else verdict(*e['ci']))
+            e['verdict_bc'], e['verdict_percentile'] = verdict(*e['ci']), verdict(*e['ci_percentile'])
+            e['verdict'] = U if not method_ok else (UL if lr_bad else verdict_conj(e['ci'], e['ci_percentile']))
         res[k if k in rules else f'descr_{k}'] = e
     lin = [n.split('@')[0].replace('-deduped', '') for n in names]
     other = np.array([ag[k][[o for o in allh if lin[o] != lin[k]]].any(0) for k in allh])

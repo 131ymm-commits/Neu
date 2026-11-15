@@ -51,11 +51,27 @@ check('условие R3: 0,2 и 0,9 → да; 0,2 и 0,5 → нет; 0,1 и 0,9
 Scf = Q.crossfit_scores(ag, corr, logp, fam, hi, fit, cols)
 check('кросс-подгонка: все восемь оценщиков, оценки конечны', set(Scf) >= set(Q.EVALS) and all(np.isfinite(Scf[e]).all() for e in Q.EVALS))
 import analyze_ocrep_test as R  # noqa: E402
-e_ = dict(ci=[-0.05, 0.03], ci_percentile=[-0.03, 0.05], tails=dict(halves=[[-0.06, 0.03], [-0.04, 0.03]]))
-pd_ = R.prior_descr(e_, {'a': -0.08, 'b': -0.045})
-check('описательно: −0,08 исключён везде; −0,045 — не по BC, да по процентильному, половины расходятся',
-      pd_['a'] == dict(effect=-0.08, excluded=True, excluded_percentile=True, excluded_halves=[True, True], unstable=False)
-      and pd_['b'] == dict(effect=-0.045, excluded=False, excluded_percentile=True, excluded_halves=[False, True], unstable=True))
+e_ = dict(ci=[-0.05, 0.03], ci_percentile=[-0.03, 0.05],
+          tails=dict(halves=[[-0.06, 0.03], [-0.04, 0.03]], halves_percentile=[[-0.035, 0.05], [-0.025, 0.05]]))
+pd_ = R.prior_descr(e_, {'a': -0.08, 'b': -0.045, 'c': -0.01})
+check('описательно (совет 58): −0,08 — «исключён»; −0,045 — «неустойчиво» (BC нет, процентильный да), половины расходятся; −0,01 — «не исключён»',
+      pd_['a'] == dict(effect=-0.08, status='исключён', excluded_bc=True, excluded_percentile=True, excluded_halves=[True, True], halves_agree=True)
+      and pd_['b'] == dict(effect=-0.045, status='неустойчиво', excluded_bc=False, excluded_percentile=True, excluded_halves=[False, True],
+                           halves_agree=False)
+      and pd_['c']['status'] == 'не исключён')
+check('конъюнкция (совет 58): оба < 0 → подтверждено; только BC → «не решено (только BC)»; только процентильный → «… (только процентильный)»; '
+      'оба > 0 → опровергнуто; оба через 0 → не решено',
+      R.verdict_conj([-0.05, -0.01], [-0.06, -0.005]) == 'подтверждено'
+      and R.verdict_conj([-0.05, -0.01], [-0.04, 0.01]) == 'не решено (только BC)'
+      and R.verdict_conj([-0.01, 0.05], [0.001, 0.06]) == 'не решено (только процентильный)'
+      and R.verdict_conj([0.01, 0.05], [0.02, 0.06]) == 'опровергнуто'
+      and R.verdict_conj([-0.02, 0.02], [-0.03, 0.03]) == 'не решено')
+b_ = np.concatenate([np.linspace(0.0, 1.0, 1001), [-5.0]])
+ce_ = R.ci_entry(b_, 0.5, 0.0025)
+check('ci_entry: числа повторов за границами BC и процентильного ДИ записаны; при < 5 за границей — метка «граница BC не определена»',
+      set(ce_['n_out']) == {'bc', 'percentile'} and all(len(v) == 2 for v in ce_['n_out'].values())
+      and ce_['bc_undetermined'] == [ce_['n_out']['bc'][0] < 5, ce_['n_out']['bc'][1] < 5]
+      and (('не определена' in ce_['bc_note']) == any(ce_['bc_undetermined'])))
 pe_ = R.prior_effects()
 check('прежние эффекты: половина наименьшего = max/2 (R1 — от OCMIX-01 R3, R2 — от OCCOR-01 R3)',
       pe_['R1']['половина наименьшего'] == pe_['R1']['OCMIX-01 R3'] / 2 and pe_['R2']['половина наименьшего'] == pe_['R2']['OCCOR-01 R3'] / 2
