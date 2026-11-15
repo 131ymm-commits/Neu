@@ -4,7 +4,8 @@
 Нормальное приближение, как в OCCOR-01 и OCMIX-01: SE теста = ширина ДИ 99 % пилота / (2 · 2,576) · √(n_OOD пилота / n_OOD теста);
 эффект ужимается вдвое; мощность — Φ(|Δ|/2 / SE − z); вес — log₂(мощность / LEVEL); MDE при мощности 0,8 — (z + 0,8416) · SE.
 Условие R3 (HYPOTHESIS, закреплено до пилота; совет 57): самообман верхушки AGREE на пилоте > 0,15 И мощность R3 при эффекте
-вдвое ≥ 0,8 → r3_gate = True; иначе R3 снимается до регистрации и идёт описательно."""
+вдвое ≥ 0,8 → r3_gate = True; иначе R3 снимается до регистрации и идёт описательно.
+Описательно — мощность подтверждения R1 и R2 при эффектах прежних тестов (C-086, C-087) и при половине наименьшего из них."""
 import json
 import os
 import sys
@@ -44,6 +45,10 @@ def main(n_test_ood=3431):
         p_full, p_half = Phi(abs(d) / se - zr), Phi(abs(d) / 2 / se - zr)
         out[k] = dict(delta_pilot=d, ci99_pilot=[lo, hi], se_test=se, expected_sign='минус' if d < 0 else 'плюс', mde_power08=(zr + 0.8416) * se,
                       power={'по пилоту': p_full, 'ужатый вдвое': p_half}, weight_bits=log2(max(p_half, 1e-3) / R.LEVEL))
+    # Описательно (PREREG §6; вес и правила не меняет): мощность подтверждения при эффектах прежних тестов C-086 (R1) и C-087 (R2)
+    # и при половине наименьшего из них — числа из run/analysis.json тех опытов (analyze_ocrep_test.prior_effects).
+    for k, pe in R.prior_effects().items():
+        out[k]['power_prior_descr'] = {name: dict(effect=x, power=Phi(abs(x) / out[k]['se_test'] - zr)) for name, x in pe.items()}
     top = a['agree_top10_sel_deception']
     gate_ = gate(top, out['R3']['power']['ужатый вдвое'])
     out['r3_gate'] = dict(active=gate_, agree_top10_sel_deception_pilot=top, threshold_top=GATE_TOP, r3_power_half=out['R3']['power']['ужатый вдвое'],

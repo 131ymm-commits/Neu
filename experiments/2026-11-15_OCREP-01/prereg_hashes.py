@@ -9,7 +9,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OWN = ['ocrep_extract_test.py', 'ocrep_extract.py', 'analyze_ocrep.py', 'analyze_ocrep_test.py', 'pilot_ocrep.py', 'power_ocrep.py',
-       'power.json', 'test_ocrep.py', 'dry_ocrep.py', 'prereg_hashes.py',
+       'power.json', 'expect_ocrep.py', 'expectations.json', 'test_ocrep.py', 'dry_ocrep.py', 'prereg_hashes.py',
        '../2026-11-14_OCMIX-01/analyze_ocmix.py', '../2026-11-14_OCCOR-01/analyze_occor.py', '../2026-11-14_OCGEO-01/analyze_ocgeo.py',
        '../2026-11-14_OCGEO-01/analyze_ocgeo_test.py']
 sha = lambda p: hashlib.sha256(open(p, 'rb').read()).hexdigest()   # noqa: E731

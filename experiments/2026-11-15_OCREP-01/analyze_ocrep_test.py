@@ -18,7 +18,8 @@ BLAS на процесс), результат от числа процессов
 половины дают разный вердикт — пометка «граница по Монте-Карло неустойчива» (вердикт не меняет).
 Описательно (вес 0, без вердикта; ДИ BC 99 %): NB-AGREE, FAM-AGREE, MIX-LR, CONF против AGREE или LR-AGREE; разложение R1 и R2
 на ΔT и ΔC; верхушка (top10_sel) против CONF; R3 — описательно, если не включён; поддержка выбранного ответа VETO (любой
-головой, головой другой линии); кросс-подгонка (точка); доля задач OOD, где все головы неверны и согласны; счётчики по головам."""
+головой, головой другой линии); кросс-подгонка (точка); доля задач OOD, где все головы неверны и согласны; счётчики по головам;
+исключает ли ДИ R1 и R2 (уровень правил) эффекты прежних тестов C-086 и C-087 и половину наименьшего из них (PREREG §5)."""
 import json
 import multiprocessing as mp
 import os
@@ -30,8 +31,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import analyze_ocrep as Q  # noqa: E402
 
-HEADS_TEST = None          # закрепляется в PREREG по проверке метода на пилоте
-R3_ACTIVE = None           # закрепляется в PREREG по условию из HYPOTHESIS (power_ocrep.py: r3_gate)
+# Головы теста (PREREG-OCREP-01 §2) — все девять прошли проверку метода на пилоте OCREP-01.
+HEADS_TEST = ['pythia-1.4b', 'pythia-1.4b-deduped', 'pythia-2.8b', 'pythia-2.8b@step133000', 'pythia-2.8b@step123000',
+              'pythia-2.8b@step113000', 'pythia-2.8b-deduped', 'pythia-6.9b', 'pythia-6.9b-deduped']
+# Условие R3 (HYPOTHESIS) не выполнено: самообман верхушки AGREE на пилоте 0,046 ≤ 0,15 (power.json: r3_gate) → R3 описательно.
+R3_ACTIVE = False
+# Описательно (PREREG §5, до данных теста): исключает ли ДИ теста эффект прежних опытов. Числа — из их json.
+PRIOR = {'R1': [('OCCOR-01 R1', '2026-11-14_OCCOR-01', 'R1'), ('OCMIX-01 R3', '2026-11-14_OCMIX-01', 'R3')],
+         'R2': [('OCCOR-01 R3', '2026-11-14_OCCOR-01', 'R3')]}
 LEVEL = 0.0025
 DESCR_LEVEL = 0.005
 MIN_EACH, MAX_NONE, MIN_HEADS = 20, 0.05, 6
@@ -49,6 +56,23 @@ UL = 'не решено (LR: один класс в выборке ID больш
 
 def val(r, kind, e):
     return r[e]['top10_sel']['deception'] if kind == 'top' else r[e][kind]
+
+
+def prior_effects():
+    """Эффекты C-086 (R1) и C-087 (R2) прежних тестов — из run/analysis.json тех опытов; плюс половина наименьшего по модулю."""
+    out = {}
+    for k, lst in PRIOR.items():
+        v = {}
+        for name, d, rule in lst:
+            v[name] = float(json.load(open(os.path.join(os.path.dirname(HERE), d, 'run', 'analysis.json'), encoding='utf-8'))[rule]['delta'])
+        v['половина наименьшего'] = max(v.values()) / 2
+        out[k] = v
+    return out
+
+
+def prior_descr(ci, prior):
+    """Эффект x < 0 исключён, если нижняя граница ДИ выше x."""
+    return {name: dict(effect=x, excluded=bool(ci[0] > x)) for name, x in prior.items()}
 
 
 def verdict(lo, hi):
@@ -160,6 +184,8 @@ def main(out_dir, dst, B=10000, heads_test=None, r3_active=None, workers=1):
     wrong_all = (~corr[:, ood]).all(0)
     same_all = (A_[:, ood] == A_[0, ood][None, :]).all(0) & (A_[0, ood] >= 0)
     res['all_wrong_ood_descr'] = dict(all_wrong=float(wrong_all.mean()), all_wrong_same=float((wrong_all & same_all).mean()))
+    pe = prior_effects()
+    res['prior_effect_descr'] = {k: prior_descr(res[k]['ci'], pe[k]) for k in pe}
     res['verdicts'] = {k: res[k]['verdict'] for k in rules}
     res['verdict'] = '; '.join(f'{k}: {v}' for k, v in res['verdicts'].items())
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
