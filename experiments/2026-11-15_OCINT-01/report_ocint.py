@@ -81,11 +81,25 @@ add(f"- **Б1 — «{b1['verdict']}».** Процентильный интерв
 b2 = ru['B2']
 add(f"- **Б2 — «{b2['verdict']}».** Покрытие M7 в одной среде: " + '; '.join(f"{short(s)} {v['covered']} из {v['n']} ({n(v['coverage'], 3)}; нижняя граница {n(v['lower'], 3)})" for s, v in b2['by_stat'].items()) + '.')
 ch = ru['choice']
-add('- **Выбор способа:** ' + '; '.join(f"{short(m)} — наименьшее покрытие {n(v['min_one_env'], 3)} / {n(v['min_mean'], 3)}, ширина {n(v['width_in_sd'], 2)}" + (' (годен)' if v['eligible'] else '') for m, v in ch['candidates'].items())
+add('- **Выбор способа** (основное правило, записано до пилота): ' + '; '.join(f"{short(m)} — наименьшее покрытие {n(v['min_one_env'], 3)} в одной среде и {n(v['min_mean'], 3)} для среднего, ширина {n(v['width_in_sd'], 2)}" + (' — годен' if v['eligible'] else '') for m, v in ch['candidates'].items())
     + '. Выбран — ' + (f"«{ch['chosen']}»." if ch['chosen'] else 'нет.'))
+if 'chosen_cp' in ch:
+    add('  - Ветвь совета 62 (границы Клоппера — Пирсона): ' + '; '.join(f"{short(m)} — нижняя в одной среде {n(v['cp_lower_one_env_min'], 3)}, верхняя для среднего {n(v['cp_upper_mean_min'], 3)}" + (' — годен' if v['eligible_cp'] else '') for m, v in ch['candidates'].items())
+        + '. Выбран — ' + (f"«{ch['chosen_cp']}»" if ch['chosen_cp'] else 'нет') + f". Итог: {ch['stability']}.")
+    if ch.get('nearest'):
+        nr = ch['nearest']
+        add(f"  - Ширина выбранного и {short(nr['other'])}: разность {n(nr['diff'], 3, True)} ст. откл. при ст. ош. {n(nr['se'], 3)} — " + ('не различимы.' if nr['indistinguishable'] else 'различимы.'))
 add('')
 add('## 3. Ожидания (PREREG §7)')
-add('ДОПИСАТЬ ПОСЛЕ ДАННЫХ')
+EXP = [('E1', 'А подтверждено', 0.85, A_['verdict'] == 'подтверждено'), ('E2', 'А опровергнуто', 0.04, A_['verdict'] == 'опровергнуто'),
+       ('E3', 'Б1 подтверждено', 0.97, ru['B1']['verdict'] == 'подтверждено'), ('E4', 'Б2 подтверждено', 0.88, ru['B2']['verdict'] == 'подтверждено'),
+       ('E5', 'Б2 опровергнуто', 0.02, ru['B2']['verdict'] == 'опровергнуто'), ('E6', 'выбран M6', 0.17, (ch['chosen'] or '').startswith('M6')),
+       ('E7', 'выбран M7', 0.08, (ch['chosen'] or '').startswith('M7')), ('E8', 'годных способов нет', 0.52, ch['chosen'] is None)]
+add('| № | ожидание | вероятность | исход |')
+add('|---|---|---|---|')
+for k, t, p_, o in EXP:
+    add(f"| {k} | {t} | {n(p_, 2)} | {'да' if o else 'нет'} |")
+add(f"- Брайер этих восьми ставок — {n(float(np.mean([(p_ - o) ** 2 for _, _, p_, o in EXP])), 3)}.")
 add('')
 add('## 4. Описательно (вес 0, без вердикта)')
 add('**Покрытие при номинале 0,98** (одна среда / среднее по мирам):')
@@ -107,6 +121,12 @@ lim = {k: r['envs'][k]['stats']['R2 wc CONF'].get('limit') or O.limit_fit(r['env
 shares = [v['share_left'] for v in lim.values() if v['share_left'] is not None]
 add(f"- **Предел при бесконечной калибровке** (закон a + b·(n/m) по долям 1/4, 1/2, 3/4 и полной выборке; R2): доля самообмана от отбора, которая остаётся в пределе, — от {n(min(shares), 2)} до {n(max(shares), 2)}, медиана {n(float(np.median(shares)), 2)}.")
 add('- **Проверка ширины на четвертях** (предсказанная дисперсия к разбросу между четвертями; половинные / с возвращением): ' + '; '.join(f"{k} — {n(v['ratio_half'], 2)} / {n(v['ratio_boot'], 2)}" for k, v in r['quarters'].items()) + f" (степеней свободы — {r['quarters']['R2 wc CONF']['df']}).")
+qw_path = os.path.join(ROOT, 'gha_out', 'ocint_worlds', 'quarters_worlds.json')
+if os.path.isfile(qw_path) and not a:
+    qw = json.load(open(qw_path, encoding='utf-8'))
+    add('- **Четверти в мирах** (совет 62; правда — дисперсия по независимым выборкам мира; отношение предсказанной дисперсии к истинной, половинные / с возвращением; в последнем столбце — то же, что на четвертях настоящих сред):')
+    for k, byst in qw['by_world'].items():
+        add(f"  - мир {k}: " + '; '.join(f"{nm} — при n {n(v['ratio_full_half'], 2)} / {n(v['ratio_full_boot'], 2)}, при n/4 {n(v['ratio_quarter_half'], 2)} / {n(v['ratio_quarter_boot'], 2)}, «как в настоящих» {n(v['ratio_as_in_real_half'], 2)}" for nm, v in byst.items()) + '.')
 add('')
 add('**Таблица устойчивости** (интервалы уровня 0,0025 на сторону; вердикт по каждому способу; описательно, статусы реестра не меняет):')
 add('')
