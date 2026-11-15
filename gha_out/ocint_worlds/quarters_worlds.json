@@ -1,0 +1,227 @@
+{
+ "meta": 7700000,
+ "worlds": [
+  0,
+  1
+ ],
+ "n_samples": 10,
+ "B": 100,
+ "n_truth": 200,
+ "stats": [
+  "R1 ONE-BEST − MIN8",
+  "R2 wc CONF",
+  "R3 CONF − LR-AGREE",
+  "LR-AGREE − AGREE",
+  "LR-AGREE − NB-IND",
+  "S1 ONE-BEST − CONF",
+  "S4 POST-IN CONF − CONF",
+  "S5 POST-IN CONF − ONE-BEST"
+ ],
+ "keep": {
+  "0": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ],
+  "1": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8
+  ]
+ },
+ "by_world": {
+  "0": {
+   "R1 ONE-BEST − MIN8": {
+    "var_true_n": 0.0006960072011470206,
+    "var_true_quarter": 0.003494452588754895,
+    "ratio_full_half": 1.1419624074385335,
+    "ratio_full_boot": 1.098774625820744,
+    "ratio_quarter_half": 1.0203476236831295,
+    "ratio_quarter_boot": 1.080255329110375,
+    "ratio_between": 0.9347239896665198,
+    "ratio_as_in_real_half": 1.0916031202399732,
+    "ratio_as_in_real_boot": 1.155694452108559
+   },
+   "R2 wc CONF": {
+    "var_true_n": 8.133074296973391e-05,
+    "var_true_quarter": 0.0003194801921642929,
+    "ratio_full_half": 1.5114887671012838,
+    "ratio_full_boot": 1.5313880036440406,
+    "ratio_quarter_half": 1.8628267254948665,
+    "ratio_quarter_boot": 1.889720655713879,
+    "ratio_between": 1.70056786393059,
+    "ratio_as_in_real_half": 1.095414517118559,
+    "ratio_as_in_real_boot": 1.1112291933743195
+   },
+   "R3 CONF − LR-AGREE": {
+    "var_true_n": 0.0007878800072372956,
+    "var_true_quarter": 0.0030395477116304435,
+    "ratio_full_half": 1.2652036620132383,
+    "ratio_full_boot": 1.1947474339974906,
+    "ratio_quarter_half": 1.3835265250617552,
+    "ratio_quarter_boot": 1.4156837432720102,
+    "ratio_between": 1.5215947684193818,
+    "ratio_as_in_real_half": 0.9092608319749611,
+    "ratio_as_in_real_boot": 0.9303947231250073
+   },
+   "LR-AGREE − AGREE": {
+    "var_true_n": 0.0008437312053477215,
+    "var_true_quarter": 0.004164536905973977,
+    "ratio_full_half": 1.1064541097512928,
+    "ratio_full_boot": 1.206278740020563,
+    "ratio_quarter_half": 1.188315961974248,
+    "ratio_quarter_boot": 1.2115360642316753,
+    "ratio_between": 1.1752846169768392,
+    "ratio_as_in_real_half": 1.0110878206088745,
+    "ratio_as_in_real_boot": 1.0308448240802175
+   },
+   "LR-AGREE − NB-IND": {
+    "var_true_n": 0.00027234516918931453,
+    "var_true_quarter": 0.0012764042437686776,
+    "ratio_full_half": 1.593938666560897,
+    "ratio_full_boot": 1.5547179611569342,
+    "ratio_quarter_half": 1.7788836433279063,
+    "ratio_quarter_boot": 1.6628786249994567,
+    "ratio_between": 1.0222503219116785,
+    "ratio_as_in_real_half": 1.7401644246991002,
+    "ratio_as_in_real_boot": 1.6266843740286225
+   },
+   "S1 ONE-BEST − CONF": {
+    "var_true_n": 0.000684589116870942,
+    "var_true_quarter": 0.0031925064735334355,
+    "ratio_full_half": 1.3751587068007325,
+    "ratio_full_boot": 1.2361230219589348,
+    "ratio_quarter_half": 1.2173044481177995,
+    "ratio_quarter_boot": 1.231802169746447,
+    "ratio_between": 0.8385450857310701,
+    "ratio_as_in_real_half": 1.4516863420128625,
+    "ratio_as_in_real_boot": 1.4689754799201082
+   },
+   "S4 POST-IN CONF − CONF": {
+    "var_true_n": 6.12336706793877e-05,
+    "var_true_quarter": 0.00034242296803968487,
+    "ratio_full_half": 1.884402580769026,
+    "ratio_full_boot": 1.9991778457573923,
+    "ratio_quarter_half": 1.5203720370082536,
+    "ratio_quarter_boot": 1.4637267573670625,
+    "ratio_between": 0.8075387331244486,
+    "ratio_as_in_real_half": 1.8827233600619766,
+    "ratio_as_in_real_boot": 1.812577771599582
+   },
+   "S5 POST-IN CONF − ONE-BEST": {
+    "var_true_n": 0.0007582307222745442,
+    "var_true_quarter": 0.0033970578496637714,
+    "ratio_full_half": 1.297802265000093,
+    "ratio_full_boot": 1.2170577222180243,
+    "ratio_quarter_half": 1.2590182063351152,
+    "ratio_quarter_boot": 1.2773874101609268,
+    "ratio_between": 0.9055781601089161,
+    "ratio_as_in_real_half": 1.3902921490329336,
+    "ratio_as_in_real_boot": 1.4105766530492434
+   }
+  },
+  "1": {
+   "R1 ONE-BEST − MIN8": {
+    "var_true_n": 0.005451526096526088,
+    "var_true_quarter": 0.01138300679702892,
+    "ratio_full_half": 1.2918210369579841,
+    "ratio_full_boot": 1.3231976199422866,
+    "ratio_quarter_half": 0.9914841145429247,
+    "ratio_quarter_boot": 0.9593978838263949,
+    "ratio_between": 1.096245401016667,
+    "ratio_as_in_real_half": 0.904436281897661,
+    "ratio_as_in_real_boot": 0.8751670774961897
+   },
+   "R2 wc CONF": {
+    "var_true_n": 8.391217239708561e-05,
+    "var_true_quarter": 0.0003530993513652992,
+    "ratio_full_half": 1.3438647031951032,
+    "ratio_full_boot": 1.2792842976725325,
+    "ratio_quarter_half": 1.4147665336519717,
+    "ratio_quarter_boot": 1.475485606315355,
+    "ratio_between": 1.1601105083892294,
+    "ratio_as_in_real_half": 1.2195101444398797,
+    "ratio_as_in_real_boot": 1.2718491864744954
+   },
+   "R3 CONF − LR-AGREE": {
+    "var_true_n": 0.001153829220690385,
+    "var_true_quarter": 0.004592033628610266,
+    "ratio_full_half": 1.4426798658918794,
+    "ratio_full_boot": 1.3135627793779767,
+    "ratio_quarter_half": 1.2467364987325231,
+    "ratio_quarter_boot": 1.1844413065085477,
+    "ratio_between": 0.806531717573027,
+    "ratio_as_in_real_half": 1.545799714466453,
+    "ratio_as_in_real_boot": 1.4685613481794697
+   },
+   "LR-AGREE − AGREE": {
+    "var_true_n": 0.004724453076553881,
+    "var_true_quarter": 0.010947182369262029,
+    "ratio_full_half": 0.927598872149371,
+    "ratio_full_boot": 0.9986255335077803,
+    "ratio_quarter_half": 0.908295949027237,
+    "ratio_quarter_boot": 0.8962489197064596,
+    "ratio_between": 0.7099727064506186,
+    "ratio_as_in_real_half": 1.2793392489242297,
+    "ratio_as_in_real_boot": 1.2623709497046662
+   },
+   "LR-AGREE − NB-IND": {
+    "var_true_n": 0.0002777136383278252,
+    "var_true_quarter": 0.0011781703292167729,
+    "ratio_full_half": 2.0138877676027227,
+    "ratio_full_boot": 2.139321502899571,
+    "ratio_quarter_half": 1.830861571570787,
+    "ratio_quarter_boot": 1.9771638280759813,
+    "ratio_between": 1.2563926329678143,
+    "ratio_as_in_real_half": 1.4572367932833057,
+    "ratio_as_in_real_boot": 1.5736830797913723
+   },
+   "S1 ONE-BEST − CONF": {
+    "var_true_n": 0.005414101586242528,
+    "var_true_quarter": 0.011388527628453635,
+    "ratio_full_half": 1.409890645720224,
+    "ratio_full_boot": 1.3237768299902273,
+    "ratio_quarter_half": 1.0766103891989236,
+    "ratio_quarter_boot": 1.0223030303867482,
+    "ratio_between": 1.0103206448840816,
+    "ratio_as_in_real_half": 1.0656125801749283,
+    "ratio_as_in_real_boot": 1.0118599828315311
+   },
+   "S4 POST-IN CONF − CONF": {
+    "var_true_n": 8.36484700879744e-05,
+    "var_true_quarter": 0.00035701053802639893,
+    "ratio_full_half": 1.5161785974853879,
+    "ratio_full_boot": 1.2570060721275516,
+    "ratio_quarter_half": 1.4477337208471888,
+    "ratio_quarter_boot": 1.3159688630212973,
+    "ratio_between": 1.1740729877533822,
+    "ratio_as_in_real_half": 1.2330866444832047,
+    "ratio_as_in_real_boot": 1.1208577973839908
+   },
+   "S5 POST-IN CONF − ONE-BEST": {
+    "var_true_n": 0.0054920118694299835,
+    "var_true_quarter": 0.011718010168642701,
+    "ratio_full_half": 1.4153735160385539,
+    "ratio_full_boot": 1.3114734128289358,
+    "ratio_quarter_half": 1.0956872423704889,
+    "ratio_quarter_boot": 1.0341329042591254,
+    "ratio_between": 1.153306858198602,
+    "ratio_as_in_real_half": 0.9500396486689486,
+    "ratio_as_in_real_boot": 0.8966676101054152
+   }
+  }
+ },
+ "seconds": 702.4
+}

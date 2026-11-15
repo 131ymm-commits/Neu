@@ -1,0 +1,45 @@
+{
+ "done": [
+  {
+   "world": 0,
+   "seconds": 805.9
+  },
+  {
+   "world": 1,
+   "seconds": 1221.3
+  },
+  {
+   "world": 2,
+   "seconds": 1635.3
+  },
+  {
+   "world": 3,
+   "seconds": 2049.4
+  },
+  {
+   "world": 4,
+   "seconds": 2469.1
+  },
+  {
+   "world": 5,
+   "seconds": 2886.6
+  },
+  {
+   "world": 6,
+   "seconds": 3302.8
+  },
+  {
+   "world": 7,
+   "seconds": 3716.3
+  },
+  {
+   "world": 8,
+   "seconds": 4131.1
+  },
+  {
+   "world": 9,
+   "seconds": 4544.7
+  }
+ ],
+ "note": "ход счёта по мирам; разбор частичного вывода запрещён (PREREG §10)"
+}
