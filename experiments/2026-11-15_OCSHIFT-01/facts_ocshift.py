@@ -16,7 +16,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 J = lambda p: json.load(open(p if os.path.isabs(p) else os.path.join(ROOT, p), encoding='utf-8'))  # noqa: E731
 EV = ('AGREE', 'NB-AGREE', 'LR-AGREE', 'NB-IND', 'FAM-AGREE', 'CONF', 'VETO', 'MIX-LR')
-EXPECT = dict(E1=0.45, E2=0.08, E3=0.93, E4=0.12, E5=0.30, E6=0.55, E7=0.90, E8=0.45)       # вероятности — копия таблицы PREREG §7
+EXPECT = dict(E1=0.40, E2=0.08, E3=0.88, E4=0.11, E5=0.28, E6=0.55, E7=0.95, E8=0.12)       # вероятности — копия таблицы PREREG §7 (после совета 60)
+EXPECT_DRAFT = dict(E1=0.45, E2=0.08, E3=0.93, E4=0.12, E5=0.30, E6=0.55, E7=0.90, E8=0.45)  # черновик до совета 60 (для сведения)
 
 
 def main(src='gha_out/ocshift_test/analysis.json', dst=None):
@@ -78,7 +79,12 @@ def main(src='gha_out/ocshift_test/analysis.json', dst=None):
     nd = [k for k in r if k.startswith('descr_')]
     out['descr_count'] = len(nd)
     out['descr_family_level_bonferroni'] = len(nd) * 2 * r['descr_level']
-    out['power'] = {k: dict(reading=pw[k]['reading_power'], weight_bits=pw[k]['weight_bits']) for k in ('R1', 'R2', 'R3', 'R4')}
+    out['power'] = {k: dict(reading=pw[k]['reading_power'], weight_bits=pw[k]['weight_bits'], capped=pw[k]['capped'], expectation=pw[k]['expectation'])
+                    for k in ('R1', 'R2', 'R3', 'R4')}
+    out['verdicts'] = dict(main=r['verdicts'], strict=r['verdicts_strict'])
+    out['same_sign'] = {k: dict(n=r[k]['leave_one_range_out']['n_same_sign'], of=r[k]['leave_one_range_out']['n'], holds=r[k]['leave_one_range_out']['holds'])
+                        for k in ('R1', 'R2', 'R3')}
+    out['bias'] = {k: dict(z0=r[k]['z0'], shift=r[k]['boot_shift'], bc_undetermined=r[k]['bc_undetermined']) for k in ('R1', 'R2', 'R3')}
     base = float(np.log2(0.54 / 0.46))
     out['support_bits'] = dict(base_hypothesis_neu=base)
     out['analysis_seconds'] = r.get('seconds')
@@ -94,6 +100,7 @@ def main(src='gha_out/ocshift_test/analysis.json', dst=None):
     out['expectations_outcome'] = oc
     out['expectations_prereg'] = dict(source='PREREG-OCSHIFT-01 §7 (копия таблицы)', **EXPECT)
     out['brier_ocshift'] = float(np.mean([(EXPECT[k] - oc[k]) ** 2 for k in oc]))
+    out['brier_ocshift_draft'] = float(np.mean([(EXPECT_DRAFT[k] - oc[k]) ** 2 for k in oc]))   # по ожиданиям черновика — для сведения
     dst = dst or os.path.join(HERE, 'run', 'facts_ocshift.json')
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
