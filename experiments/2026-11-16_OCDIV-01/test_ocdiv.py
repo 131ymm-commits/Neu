@@ -165,6 +165,14 @@ bad['envs'][0]['idx'] = bad['envs'][0]['idx'][1:] + [bad['envs'][0]['idx'][0]]
 json.dump(bad, open(os.path.join(tmp, 'job1', 'answers_fake.json'), 'w'))
 mg2 = V.merge(os.path.join(tmp, 'm2'), 'pilot', 600, [os.path.join(tmp, 'job0'), os.path.join(tmp, 'job1')], pick='random')
 check('сборка: чужие номера задач → ошибка, голова не входит', len(mg2['heads']) == 0 and any('номера задач' in x['error'] for x in mg2['head_errors']))
+st_f, inf_f = V.S.prepare(fenv, 7)
+ac = V.agree_conf(st_f, inf_f['idi'], inf_f['ood'])
+co = V.S.core(st_f, inf_f['idi'], inf_f['ood'])
+check('agree_conf: AGREE и CONF — те же числа, что analyze_ocshift.core', all(abs(ac[f'{k} AGREE'] - co[f'{k} AGREE']) < 1e-12
+      and abs(ac[f'{k} CONF (core)'] - co[f'{k} CONF']) < 1e-12 for k in ('T', 'C', 'ioi', 'brier')))
+check('вероятность пройти проверку метода: 0,94 → почти 1; 0,995 → почти 0; без числа сверх 5 % → 0',
+      V.p_pass_env(0.94, True, 1004.6) > 0.999 and V.p_pass_env(0.995, True, 1004.6) < 0.05 and V.p_pass_env(0.8, False, 1004.6) == 0.0)
+check('P(не меньше k из n): совпадает с биномиальным при равных p', abs(V.p_at_least([0.7] * 7, 6) - (7 * 0.7 ** 6 * 0.3 + 0.7 ** 7)) < 1e-12)
 py5 = V.pythia_envs('pilot', 600, 'random')
 check('Pythia: те же задачи выборки', [(p['a'], p['b']) for p in py5['X4_p0']['problems']] == [(p['a'], p['b']) for p in pe['problems']]
       and all(len(h['answer']) == 600 for h in py5['X4_p0']['heads']))

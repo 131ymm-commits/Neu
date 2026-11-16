@@ -3,6 +3,7 @@
 """OCDIV-01 «ОЦЕНЩИК-РАЗНЫЕ-ГОЛОВЫ»: сборка ответов новых голов и разбор пилота (тест — после PREREG).
   python3 ocdiv.py merge  OUT_DIR SOURCE N PICK JOB_DIR [JOB_DIR ...]   — answers.json вида ocshift_extract (среды источника + новые головы)
   python3 ocdiv.py pilot  RESULT.json NEW_DIR [--boot 200] [--no-power] — пилот: годность, скорость, совпадение ошибок, оценщики, мощность
+  python3 ocdiv.py test   RESULT.json NEW_DIR [--boot 10000] [--workers W] — тест: D1–D5 и N на пяти средах OCPOST-01 (константы — PREREG)
 SOURCE — test (пять сред OCPOST-01) или pilot (десять сред OCSHIFT-01); N — размер выборки задач среды (0 — все);
 PICK — first (первые N: пилот 1, выборка смещена — ERRORS № 175) или random (N случайных, зерно ocdiv_extract.SEED_PICK + 10·X + p).
 Голова может прийти несколькими файлами (задания по частям сред): сборка сводит их и сверяет ревизию и номера задач.
@@ -38,7 +39,7 @@ PY_DISTINCT = ('pythia-1.4b@main', 'pythia-1.4b-deduped@main', 'pythia-2.8b@main
 SEED_CV_P, SEED_BOOT_P = 7_620_000, 7_950_000               # части — правило OCSHIFT-01 (7 620 000 + 10·X + p); бутстреп пилота — новое зерно
 MAX_SEC_PER_TASK = 1.5                                      # HYPOTHESIS: время на раннере
 RULES_D = {'D2': (('wc CONF', None), 'sign', 'ID'), 'D3': (('C FIXED', 'T FIXED'), 'equiv_out', 'OOD'), 'D4': (('wc POST', None), 'equiv', 'ID'),
-           'D5': (('ioi AGREE', 'ioi CONF'), 'sign', 'OOD'), 'N': (('wc FIXED', None), 'equiv', 'ID')}
+           'D5': (('ioi AGREE', 'ioi CONF (core)'), 'sign', 'OOD'), 'N': (('wc FIXED', None), 'equiv', 'ID')}
 
 
 def vendor(repo):
@@ -191,6 +192,30 @@ def adj_of(ps_new, ps_py):
     return float(coef[2]), float(coef[1]), float(coef[0])
 
 
+def agree_conf(st, fit, cols):
+    """ИОИ AGREE и CONF вне диапазона тем же путём, что analyze_ocshift.core (Q.scores, T.calibrate, select, meas), — только два
+    оценщика, чтобы в бутстрепе не считать остальные шесть. Ключи CONF — с пометкой (core): post_stats считает CONF своим путём."""
+    keep = st['keep']
+    cs = st['corr'][keep]
+    sc = S.Q.scores(st['ag'], st['corr'], st['logp'], keep, fit, st['fam'], ('AGREE', 'CONF'))
+    y_c = cs[:, cols].astype(float)
+    out = {}
+    for e, nm in (('AGREE', 'AGREE'), ('CONF', 'CONF (core)')):
+        t, c, _ = S.select(S.T.calibrate(sc[e], cs, fit, cols), y_c)
+        for k, v in S.meas(t, c).items():
+            out[f'{k} {nm}'] = v
+        out[f'ign {nm}'] = 1 - out[f'T {nm}']
+        out[f'dec {nm}'] = max(0.0, out[f'C {nm}'] - out[f'T {nm}'])
+    return out
+
+
+def stats_div(st, fit, cols, fx):
+    """Все числа одной выборки: ocpost.post_stats (CONF, POST-CV, ONE-BEST, FIXED, POST-IN, SHIFT, wc) и agree_conf (AGREE, CONF (core))."""
+    r = P.post_stats(st, fit, cols, fx)
+    r.update(agree_conf(st, fit, cols))
+    return r
+
+
 def err_type(ans, a, b):
     """Тип ошибки сложения (описательно): потеря переноса в десятки/сотни, лишний перенос, прочее."""
     d = ans - (a + b)
@@ -199,6 +224,27 @@ def err_type(ans, a, b):
     if d in (10, 100, 110):
         return 'лишний перенос'
     return 'прочее'
+
+
+P_PASS_FIXED = 0.95                                         # FIXED-нов: вероятность пройти проверку метода в среде теста — не ниже
+
+
+def p_pass_env(acc, none_ok, n_id):
+    """Вероятность пройти проверку метода в среде теста с n_id задачами ID, если точность головы на ID равна acc (биномиально):
+    не меньше 20 верных и 20 неверных; доля ответов без числа — как в пилотной среде (none_ok)."""
+    from scipy.stats import binom
+    n = int(round(n_id))
+    return float(none_ok) * float(binom.cdf(n - S.MIN_EACH, n, 1 - acc) - binom.cdf(S.MIN_EACH - 1, n, 1 - acc))
+
+
+def p_at_least(ps, k):
+    """P(не меньше k успехов) для независимых испытаний с вероятностями ps (распределение Пуассона — биномиальное, динамикой)."""
+    dist = np.zeros(len(ps) + 1)
+    dist[0] = 1.0
+    for p in ps:
+        dist[1:] = dist[1:] * (1 - p) + dist[:-1] * p
+        dist[0] *= (1 - p)
+    return float(dist[k:].sum())
 
 
 def agg_power(points, sds, n_pilot, n_test, kind, m_test=5):
@@ -240,6 +286,7 @@ def pilot(dst, new_dir, B=200, power=True):
             ph['acc_id'].append(m['id_correct'] / max(m['id_correct'] + m['id_wrong'], 1))
             ph['acc_ood'].append(m['ood_correct'] / max(m['ood_correct'] + m['ood_wrong'], 1))
             ph['none'].append(m['none_frac'])
+            ph.setdefault('p_pass_env', {})[name] = p_pass_env(ph['acc_id'][-1], m['none_frac'] <= S.MAX_NONE, n_test['ID'])
         res['envs'][name] = dict(n=len(env['problems']), n_id=int(len(info['idi'])), n_ood=int(len(info['ood'])), min_each=info['min_each'],
                                  method=info['method'])
     for nm, ph in per_head.items():
@@ -260,7 +307,22 @@ def pilot(dst, new_dir, B=200, power=True):
     res['crowd'] = chosen
     res['vendors'] = sorted(per_v)
     res['crowd_ok'] = bool(len(per_v) >= 4 and len(chosen) >= S.MIN_HEADS)
-    res['fixed_new'] = chosen[0] if chosen else None
+    for nm, ph in per_head.items():
+        ph['p_pass'] = float(np.mean(list(ph['p_pass_env'].values()))) if ph.get('p_pass_env') else 0.0
+    # FIXED-нов (уточнение до данных пилота 2, DECISIONS 16.11): наибольшая точность на ID пилота среди голов толпы, у которых
+    # вероятность пройти проверку метода в среде теста не ниже P_PASS_FIXED; если таких нет — голова толпы с наибольшей такой вероятностью
+    safe = [nm for nm in chosen if per_head[nm]['p_pass'] >= P_PASS_FIXED]
+    res['fixed_new'] = (safe[0] if safe else max(chosen, key=lambda nm: per_head[nm]['p_pass'])) if chosen else None
+    res['fixed_new_by_hypothesis'] = chosen[0] if chosen else None
+    # вероятность, что опыт определён: среда годна, если проверку проходят не меньше шести голов толпы (по каждой пилотной среде —
+    # свои вероятности голов, затем среднее); опыт — не меньше четырёх годных сред из пяти (среды теста независимы)
+    if chosen:
+        pv = [p_at_least([per_head[nm]['p_pass_env'][name] for nm in chosen], S.MIN_HEADS) for name in envs_new]
+        p_env = float(np.mean(pv))
+        p_fx = float(np.mean([per_head[res['fixed_new']]['p_pass_env'][name] for name in envs_new]))
+        res['p_defined'] = dict(p_env_valid=p_env, p_env_valid_by_env=dict(zip(envs_new, pv)), p_defined=p_at_least([p_env] * 5, 4),
+                                p_fixed_pass=p_fx, p_fixed_in_all_valid=p_fx ** 5,
+                                note='приближение: точность головы в среде теста (p = 2) — как в пилотной среде (p = 0, 1); головы независимы при данной среде')
     # совпадение ошибок: пары разнородной толпы от разных производителей и пары шести разных Pythia; на тех же задачах
     q_rows = {}
     for name, env in envs_new.items():
@@ -335,14 +397,9 @@ def crowd_power(envs_new, chosen, fixed_new, B, n_test, m_test=5):
             g0[name] = dict(valid=False, keep=names, min_each=info['min_each'])
             continue
         fx = next((i for i, nm in enumerate(names) if nm.split('@')[0] == fixed_new), None)
-
-        def stats(fit, cols):
-            r = P.post_stats(st, fit, cols, fx)
-            r.update({k: v for k, v in S.core(st, fit, cols).items() if k in ('ioi AGREE', 'ioi CONF')})
-            return r
-        pt = stats(info['idi'], info['ood'])
+        pt = stats_div(st, info['idi'], info['ood'], fx)
         g = np.random.default_rng(SEED_BOOT_P + 1000 + off)
-        reps = [stats(g.choice(info['idi'], len(info['idi'])), g.choice(info['ood'], len(info['ood']))) for _ in range(B)]
+        reps = [stats_div(st, g.choice(info['idi'], len(info['idi'])), g.choice(info['ood'], len(info['ood'])), fx) for _ in range(B)]
         row = dict(valid=True, n=len(env['problems']), n_id=int(len(info['idi'])), n_ood=int(len(info['ood'])), keep=names,
                    min_each=info['min_each'], fixed_in_crowd=fx is not None, rules={})
         for k, (pair, kind, rng) in RULES_D.items():
@@ -360,6 +417,195 @@ def crowd_power(envs_new, chosen, fixed_new, B, n_test, m_test=5):
     return dict(envs=g0, rules=pw, n_test=n_test, m_test=m_test, n_valid_envs=len(valid))
 
 
+# ───────────── тест (после PREREG)
+# Константы теста задаются по пилоту 2 до регистрации (PREREG-OCDIV-01.md); пока они None, тест не запускается.
+CROWD = None              # {имя модели: 'repo@commit'} — разнородная толпа
+FIXED_NEW = None          # имя модели FIXED-нов
+D1_RULE = None            # 'raw' — Q-нов − Q-py; 'adj' — δ с поправкой на точность; 'both' — вердикт, только если обе статистики согласны
+D5_DESCRIPTIVE = None     # True — D5 описательно (мощность по пилоту < 0,2; HYPOTHESIS)
+SEED_BOOT_T, SEED_Q_T = 7_980_000, 7_985_000                # бутстреп теста: оценщики и совпадение ошибок (+ 10·X + p)
+PY_TEST_DIR = os.path.join(EXP, '2026-11-15_OCPOST-01/run/out')   # девять Pythia на средах теста (сырой вывод OCPOST-01)
+PY_FIXED = 'pythia-2.8b-deduped'                            # FIXED однородной толпы — как в OCPOST-01 (описательно)
+DESCR_T = {'POST-CV − SHIFT': ('ioi POST-CV', 'ioi SHIFT'), 'POST-CV − CONF': ('ioi POST-CV', 'ioi CONF'),
+           'самообман CONF вне диапазона': ('dec CONF', None), 'самообман POST-CV вне диапазона': ('dec POST-CV', None),
+           'самообман FIXED вне диапазона': ('dec FIXED', None), 'самообман AGREE вне диапазона': ('dec AGREE', None),
+           'незнание AGREE − CONF': ('ign AGREE', 'ign CONF (core)'), 'самообман AGREE − CONF': ('dec AGREE', 'dec CONF (core)'),
+           'CONF: post_stats − core': ('ioi CONF', 'ioi CONF (core)')}
+UD1 = 'не решено (сырая D1 и D1 с поправкой на точность расходятся)'
+DESCR_KEYS = ('T', 'C', 'ioi', 'ign', 'dec', 'brier')
+DESCR_EST = ('CONF', 'POST-CV', 'ONE-BEST', 'FIXED', 'SHIFT', 'AGREE')
+
+
+def _rep_div(fc):
+    W = P._W
+    r = stats_div(W['st'], fc[0], fc[1], W['fx'])
+    return [r[k] for k in W['keys']]
+
+
+def verdict_d(kind, iv):
+    """Вердикт правила по интервалу M4: sign и equiv — ocpost.verdict; equiv_out (D3) — «подтверждено», если интервал целиком вне
+    полосы ±BAND (со знаком), «опровергнуто», если целиком внутри."""
+    if kind in ('sign', 'equiv'):
+        return P.verdict(kind, iv)
+    lo, hi = iv
+    if hi < -P.BAND or lo > P.BAND:
+        return 'подтверждено'
+    return 'опровергнуто' if (lo >= -P.BAND and hi <= P.BAND) else 'не решено'
+
+
+def crowd_point(env, fixed_model, seed):
+    """Описательно, только точка: оценщики толпы из всех голов среды env; FIXED — fixed_model (по имени модели)."""
+    st, info = S.prepare(env, seed)
+    names = [info['names'][k] for k in info['keep']]
+    out = dict(n_heads=len(env['heads']), crowd=names, valid=info['valid'])
+    if not info['valid']:
+        return out
+    fx = next((i for i, nm in enumerate(names) if nm.split('@')[0] == fixed_model), None)
+    r = stats_div(st, info['idi'], info['ood'], fx)
+    out['stats'] = {f'{k} {e}': r.get(f'{k} {e}') for e in DESCR_EST for k in DESCR_KEYS}
+    out['stats'].update({k: r[k] for k in ('wc CONF', 'wc POST', 'wc FIXED', 'wc ONE-BEST')})
+    cs = st['corr'][info['keep']]
+    out['oracle_ood'] = float(cs[:, info['ood']].any(0).mean())
+    out['acc'] = {names[k]: dict(id=float(cs[k, info['idi']].mean()), ood=float(cs[k, info['ood']].mean())) for k in range(len(names))}
+    return out
+
+
+def test(dst, new_dir, B=10000, workers=1):
+    assert CROWD and FIXED_NEW and D1_RULE in ('raw', 'adj', 'both') and D5_DESCRIPTIVE is not None, 'константы теста не заданы (PREREG)'
+    t00 = time.time()
+    d, envs_new = S.load_new(new_dir)
+    _, envs_py = S.load_new(PY_TEST_DIR)
+    envs_py = {k: v for k, v in envs_py.items() if v['meta'].get('kind') == 'test'}
+    hm = {h['model']: h for h in d['heads']}
+    rev = {nm: (f"{hm[nm]['repo']}@{hm[nm]['revision']}" if nm in hm else None) for nm in CROWD}
+    res = dict(level=P.LEVEL, z=P.Z, band=P.BAND, B=B, crowd=CROWD, fixed_new=FIXED_NEW, d1_rule=D1_RULE, d5_descriptive=D5_DESCRIPTIVE,
+               head_errors=d.get('head_errors', []), revisions=rev, revisions_ok=bool(all(rev[nm] == CROWD[nm] for nm in CROWD)), envs={})
+    names_c = list(CROWD)
+    new_pairs = [(i, j) for i, j in itertools.combinations(range(len(names_c)), 2)
+                 if vendor(CROWD[names_c[i]].split('@')[0]) != vendor(CROWD[names_c[j]].split('@')[0])]
+    py_l = list(PY_DISTINCT)
+    py_pairs = list(itertools.combinations(range(len(py_l)), 2))
+    pts, boots, valid = {}, {}, []
+    for name in sorted(envs_new):
+        t0 = time.time()
+        env, pe = envs_new[name], envs_py[name]
+        meta = env['meta']
+        off = 10 * meta['X'] + meta['p']
+        assert [(p['a'], p['b']) for p in env['problems']] == [(p['a'], p['b']) for p in pe['problems']], 'задачи не совпали с Pythia'
+        env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in CROWD])
+        st, info = S.prepare(env_c, SEED_CV_P + off)
+        r = dict(meta=meta, n_id=int(len(info['idi'])), n_ood=int(len(info['ood'])), method=info['method'], crowd=[info['names'][k] for k in info['keep']],
+                 valid=info['valid'], n_crowd_heads=len(env_c['heads']), seed_cv=SEED_CV_P + off, seed_boot=SEED_BOOT_T + off, seed_q=SEED_Q_T + off)
+        # D1: все задачи среды, все головы толпы и шесть разных Pythia; бутстреп по задачам, одинаковый для всех голов
+        s = [p['sum'] for p in env['problems']]
+        new_ans = {h['model']: [x['answer'] for x in h['rows']] for h in env_c['heads']}
+        py_ans = {f"{h['model']}@{h['revision']}": [x['answer'] for x in h['rows']] for h in pe['heads']}
+        enc, s_ = encode({**new_ans, **py_ans}, s)
+        psn, psp = pair_stats(enc, s_, names_c, new_pairs), pair_stats(enc, s_, py_l, py_pairs)
+        cross = pair_stats(enc, s_, names_c + py_l, [(i, len(names_c) + j) for i in range(len(names_c)) for j in range(len(py_l))])
+        qn, qp = q_of(psn), q_of(psp)
+        dl, beta, alpha = adj_of(psn, psp)
+        g = np.random.default_rng(SEED_Q_T + off)
+        bq = np.empty((B, 2))
+        for b in range(B):
+            idx = g.choice(len(s), len(s))
+            a_, b_ = pair_stats(enc, s_, names_c, new_pairs, idx), pair_stats(enc, s_, py_l, py_pairs, idx)
+            bq[b] = (q_of(a_)[0] - q_of(b_)[0], adj_of(a_, b_)[0])
+        types = {'нов': {}, 'py': {}}
+        for kind_, mp_, labs in (('нов', new_ans, names_c), ('py', py_ans, py_l)):
+            for nm in labs:
+                for a_, p in zip(mp_[nm], env['problems']):
+                    if a_ is not None and a_ != p['sum']:
+                        t = err_type(a_, p['a'], p['b'])
+                        types[kind_][t] = types[kind_].get(t, 0) + 1
+        r['q'] = dict(q_new=qn[0], n_joint_new=qn[1], q_py=qp[0], n_joint_py=qp[1], d1=qn[0] - qp[0], d1_adj=dl, adj_beta=beta, adj_alpha=alpha,
+                      q_cross_descr=q_of(cross)[0], err_types=types, pairs=[dict(x, kind='нов') for x in psn] + [dict(x, kind='py') for x in psp],
+                      acc={nm: float(np.mean(enc[nm][1] & (enc[nm][0] == s_))) for nm in names_c + py_l})
+        if info['valid']:
+            valid.append(name)
+            names = [info['names'][k] for k in info['keep']]
+            fx = next((i for i, nm in enumerate(names) if nm.split('@')[0] == FIXED_NEW), None)
+            r['fixed_in_crowd'] = fx is not None
+            pt = stats_div(st, info['idi'], info['ood'], fx)
+            keys = sorted(pt)
+            gb = np.random.default_rng(SEED_BOOT_T + off)
+            draws = [(gb.choice(info['idi'], len(info['idi'])), gb.choice(info['ood'], len(info['ood']))) for _ in range(B)]
+            bt = np.array(P._pmap(_rep_div, draws, dict(st=st, keys=keys, fx=fx), workers), float).T
+            pt['d1'], pt['d1_adj'] = r['q']['d1'], r['q']['d1_adj']
+            pts[name] = pt
+            boots[name] = {**{k: bt[j] for j, k in enumerate(keys)}, 'd1': bq[:, 0], 'd1_adj': bq[:, 1]}
+            cs = st['corr'][info['keep']]
+            r['oracle_ood'] = float(cs[:, info['ood']].any(0).mean())
+            r['one_best_is_fixed'] = bool(pt.get('one_best_is_fixed'))
+            r['rules_env'] = {k: dict(point=float(P.val(pt, pr)), sd=float(np.std(P.val(boots[name], pr), ddof=1)))
+                              for k, (pr, kind, rng) in RULES_D.items()}
+            r['rules_env']['D1'] = dict(point=r['q']['d1'], sd=float(np.std(bq[:, 0], ddof=1)), adj=dl, adj_sd=float(np.std(bq[:, 1], ddof=1)))
+        # описательно: оценщики однородной (девять Pythia) и смешанной толпы — только точка
+        r['descr_py'] = crowd_point(pe, PY_FIXED, SEED_CV_P + off)
+        r['descr_mix'] = crowd_point(dict(env, heads=pe['heads'] + env_c['heads']), FIXED_NEW, SEED_CV_P + off)
+        r['seconds'] = round(time.time() - t0, 1)
+        res['envs'][name] = r
+        print(f"{name}: ID {r['n_id']}, OOD {r['n_ood']}, толпа {len(r['crowd'])} из {r['n_crowd_heads']}, годна {r['valid']}, "
+              f"Q-нов {qn[0]:.3f} Q-py {qp[0]:.3f}, {r['seconds']} с", flush=True)
+    m = len(valid)
+    n_env = len(envs_new)
+    method_ok = bool(m >= int(np.ceil(P.MIN_VALID_FRAC * n_env)) and m >= 1 and res['revisions_ok'] and n_env == 5)
+    fixed_ok = bool(all(res['envs'][n].get('fixed_in_crowd') for n in valid))
+    res['method'] = dict(ok=method_ok, n_envs=n_env, n_valid=m, valid=valid, fixed_in_all_valid=fixed_ok, revisions_ok=res['revisions_ok'])
+    if m == 0:
+        res['verdicts'] = {k: P.U for k in ('D1',) + tuple(RULES_D)}
+        json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        return res
+    group = {n: envs_new[n]['meta'].get('X', n) for n in valid}
+
+    def mean_entry(pair, level):
+        pt = float(np.mean([P.val(pts[n], pair) for n in valid]))
+        bt = np.mean([P.val(boots[n], pair) for n in valid], 0)
+        iv, sd = P.m4(pt, bt, level)
+        return dict(delta=pt, ci=iv, boot_sd=sd, boot_shift=float(np.mean(bt) - pt), level=level, by_env={n: float(P.val(pts[n], pair)) for n in valid})
+    for k, (pair, kind, rng) in (('D1', (('d1', None), 'sign', 'all')), ('D1 adj', (('d1_adj', None), 'sign', 'all')), *RULES_D.items()):
+        e = mean_entry(pair, P.LEVEL)
+        v = verdict_d(kind, e['ci'])
+        if kind == 'sign':                                          # предохранитель «без одного диапазона» — как в OCPOST-01
+            v, e['leave_one_range_out'] = A_range_guard(v, e['by_env'], group)
+        e['verdict_rule'] = v
+        e['kind'], e['range'] = kind, rng
+        res[k] = e
+    for k in ('D1', 'D1 adj') + tuple(RULES_D):
+        e = res[k]
+        e['verdict'] = P.U if not method_ok else (P.UF if (k in ('D3', 'N') and not fixed_ok) else e['verdict_rule'])
+    vr, va = res['D1']['verdict'], res['D1 adj']['verdict']
+    res['D1']['verdict_raw'] = vr
+    if method_ok:
+        res['D1']['verdict'] = {'raw': vr, 'adj': va, 'both': (vr if vr == va else UD1)}[D1_RULE]
+    if res['N']['verdict'] == 'опровергнуто' and res['D4']['verdict'] != P.U:
+        res['D4']['verdict_before_N'] = res['D4']['verdict']
+        res['D4']['verdict'] = P.UN
+    if D5_DESCRIPTIVE:
+        res['D5']['verdict_rule_descr'] = res['D5']['verdict']
+        res['D5']['verdict'] = 'описательно (мощность по пилоту < 0,2; PREREG)'
+    res['D3']['sign'] = 'C > T (завышение заявки)' if res['D3']['delta'] > 0 else 'C < T (занижение заявки)'
+    for k, pair in DESCR_T.items():
+        if all(np.isfinite(P.val(pts[n], pair)) for n in valid):
+            res[f'descr_{k}'] = mean_entry(pair, P.DESCR_LEVEL)
+    res['verdicts'] = {k: res[k]['verdict'] for k in ('D1',) + tuple(RULES_D)}
+    res['verdict'] = '; '.join(f'{k}: {v}' for k, v in res['verdicts'].items())
+    res['seconds'] = round(time.time() - t00, 1)
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print('вердикт:', res['verdict'])
+    for k in ('D1', 'D1 adj') + tuple(RULES_D):
+        e = res[k]
+        print(f"{k}: Δ {e['delta']:+.4f} M4 [{e['ci'][0]:+.4f}; {e['ci'][1]:+.4f}] ст. откл. {e['boot_sd']:.4f}"
+              + (f" | без диапазона: {e['leave_one_range_out']['holds']}" if 'leave_one_range_out' in e else ''))
+    print('годных сред', m, 'из', n_env, '| время', res['seconds'], 'с')
+    return res
+
+
+def A_range_guard(v, by_env, group):
+    """Предохранитель «без одного диапазона» — функция analyze_ocshift_test.range_guard, как в OCPOST-01 (импорт через ocpost)."""
+    return P.A.range_guard(v, by_env, group)
+
+
 def main():
     a = sys.argv[1:]
     if a[0] == 'merge':
@@ -367,6 +613,10 @@ def main():
     elif a[0] == 'pilot':
         B = int(a[a.index('--boot') + 1]) if '--boot' in a else 200
         pilot(a[1], a[2], B, power='--no-power' not in a)
+    elif a[0] == 'test':
+        B = int(a[a.index('--boot') + 1]) if '--boot' in a else 10000
+        W = int(a[a.index('--workers') + 1]) if '--workers' in a else 1
+        test(a[1], a[2], B, W)
 
 
 if __name__ == '__main__':
