@@ -1,0 +1,5 @@
+[    0.0 с] источник mini | выборка first | сред 1 | задач 600 | ID 272 | OOD 328
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   11.9 с] HuggingFaceTB/SmolLM2-360M-Instruct a10cc1512eabd3dde888204e902eca88bddb4951 загружена за 9.2 с; ревизия a10cc1512eabd3dde888204e902eca88bddb4951
+[  173.7 с] X3_p2 точность {'ID': 0.5, 'OOD': 0.7988} | без числа 0 | время 161.8 с, 0.27 с на задачу
+[  174.0 с] записано gha_out/ocdiv_mini_smol360/answers_SmolLM2-360M-Instruct.json
