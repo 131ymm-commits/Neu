@@ -4,6 +4,7 @@
 на задание, 2200 задач). Пуш новых файлов запускает их на neu-par (до 20 раннеров одновременно).
   python3 make_jobs.py pilot            — кандидаты из HYPOTHESIS.md (пилот 1: первые 300 задач — выборка смещена, ERRORS № 175)
   python3 make_jobs.py pilot2 NAME=REPO@REV ...  — пилот 2: 600 случайных задач каждой среды, два задания на голову (p = 0 и p = 1)
+  python3 make_jobs.py mini NAME=REPO@REV ...    — мини-пилот формата (совет 66, п. 1): среда X = 3, p = 2, 600 случайных задач, одно задание на голову
   python3 make_jobs.py test [--dir DIR] NAME=REPO@REV ...   — годные головы из PREREG (ревизия — хеш коммита из пилота); DIR — куда
       писать (по умолчанию gha_par/; при регистрации — шаблоны в jobs/, копии в gha_par/ — при запуске)"""
 import os
@@ -50,6 +51,12 @@ def main():
                 envs = ','.join(f'X{X_}_p{p}' for X_ in range(4, 9))
                 out.append(write(f'ocdiv_pilot2_{k}_p{p}', f'пилот 2, {repo}@{rev}, пять сред OCSHIFT-01 с p = {p}, по 600 случайных задач',
                                  f'python3 $E/ocdiv_extract.py --source pilot --model {repo} --revision {rev} --envs {envs} --n 600 --pick random --out "$OUT" --bs 16'))
+    elif mode == 'mini':
+        for spec in sys.argv[2:]:
+            k, rr = spec.split('=')
+            repo, rev = rr.split('@')
+            out.append(write(f'ocdiv_mini_{k}', f'мини-пилот формата (совет 66), {repo}@{rev}, среда X = 3, p = 2, 600 случайных задач',
+                             f'python3 $E/ocdiv_extract.py --source mini --model {repo} --revision {rev} --n 600 --out "$OUT" --bs 16'))
     elif mode == 'test':
         args = sys.argv[2:]
         dst = None

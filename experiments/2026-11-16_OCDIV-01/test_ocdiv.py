@@ -163,8 +163,84 @@ check('сборка: два файла одной головы → одна го
 bad = json.load(open(os.path.join(tmp, 'job1', 'answers_fake.json')))
 bad['envs'][0]['idx'] = bad['envs'][0]['idx'][1:] + [bad['envs'][0]['idx'][0]]
 json.dump(bad, open(os.path.join(tmp, 'job1', 'answers_fake.json'), 'w'))
-mg2 = V.merge(os.path.join(tmp, 'm2'), 'pilot', 600, [os.path.join(tmp, 'job0'), os.path.join(tmp, 'job1')], pick='random')
-check('сборка: чужие номера задач → ошибка, голова не входит', len(mg2['heads']) == 0 and any('номера задач' in x['error'] for x in mg2['head_errors']))
+
+
+def merge_stops(*args, **kw):
+    try:
+        V.merge(*args, **kw)
+    except SystemExit as e:
+        return str(e)
+    return ''
+
+
+st_msg = merge_stops(os.path.join(tmp, 'm2'), 'pilot', 600, [os.path.join(tmp, 'job0'), os.path.join(tmp, 'job1')], pick='random')
+check('сборка: чужие номера задач → СТОП (совет 66, п. 7)', st_msg.startswith('СТОП') and 'номера задач' in st_msg, st_msg[:80])
+del bad['envs'][0]['idx']
+json.dump(bad, open(os.path.join(tmp, 'job1', 'answers_fake.json'), 'w'))
+st_msg = merge_stops(os.path.join(tmp, 'm3'), 'pilot', 600, [os.path.join(tmp, 'job0'), os.path.join(tmp, 'job1')], pick='random')
+check('сборка: нет номеров задач → СТОП (допуска нет)', st_msg.startswith('СТОП'), st_msg[:80])
+
+# сборка теста (совет 66, п. 7): ключи задач и подсказка сверяются с источником; перемешанный и сдвинутый вывод — СТОП
+tt = tempfile.mkdtemp(prefix='ocdiv_merge_test_')
+tenv = D.envs_of('test', ['X4_p2'], 0)[0]
+
+
+def write_test_head(jd, keys=None, sha=None, order=None):
+    os.makedirs(jd, exist_ok=True)
+    pr = tenv['problems'] if order is None else [tenv['problems'][i] for i in order]
+    json.dump(dict(source='test', model='org/fake', repo='org/fake', commit='c0ffee', revision='c0ffee', n=0, pick='first',
+                   envs=[dict(name='X4_p2', X=4, p=2, n=len(pr), idx=tenv['idx'], keys=keys if keys is not None else [[q['a'], q['b']] for q in pr],
+                              prompt_sha256=sha or D.prompt_sha(tenv['prompt_head']))],
+                   seconds_env={'X4_p2': 1.0}, versions=dict(torch='2.11.0+cpu', transformers='5.20.2'),
+                   cols={'X4_p2': dict(answer=[q['sum'] for q in pr], correct=[1] * len(pr), logp=[-0.1] * len(pr), n_tok=[3] * len(pr), text_none={})}),
+              open(os.path.join(jd, 'answers_fake.json'), 'w'))
+
+
+def other_envs(jd):
+    for x in range(5, 9):
+        e = D.envs_of('test', [f'X{x}_p2'], 0)[0]
+        d_ = json.load(open(os.path.join(jd, 'answers_fake.json')))
+        d_['envs'].append(dict(name=e['name'], X=x, p=2, n=len(e['problems']), idx=e['idx'], keys=[[q['a'], q['b']] for q in e['problems']],
+                               prompt_sha256=D.prompt_sha(e['prompt_head'])))
+        d_['cols'][e['name']] = dict(answer=[q['sum'] for q in e['problems']], correct=[1] * len(e['problems']), logp=[-0.1] * len(e['problems']),
+                                     n_tok=[3] * len(e['problems']), text_none={})
+        d_['seconds_env'][e['name']] = 1.0
+        json.dump(d_, open(os.path.join(jd, 'answers_fake.json'), 'w'))
+
+
+write_test_head(os.path.join(tt, 'ok'))
+other_envs(os.path.join(tt, 'ok'))
+mt = V.merge(os.path.join(tt, 'm_ok'), 'test', 0, [os.path.join(tt, 'ok')], pick='first')
+check('сборка теста: верные ключи и подсказка → голова собрана, ключи сверены', len(mt['heads']) == 1 and mt['keys_checked'])
+perm = list(range(len(tenv['problems'])))
+rng.shuffle(perm)
+write_test_head(os.path.join(tt, 'shuf'), order=perm)
+check('сборка теста: перемешанный вывод → СТОП', merge_stops(os.path.join(tt, 'm1'), 'test', 0, [os.path.join(tt, 'shuf')]).startswith('СТОП'))
+write_test_head(os.path.join(tt, 'shift'), order=list(range(1, len(tenv['problems']))) + [0])
+check('сборка теста: сдвинутый вывод → СТОП', merge_stops(os.path.join(tt, 'm2'), 'test', 0, [os.path.join(tt, 'shift')]).startswith('СТОП'))
+write_test_head(os.path.join(tt, 'sha'), sha='0' * 64)
+check('сборка теста: чужая подсказка → СТОП', merge_stops(os.path.join(tt, 'm3'), 'test', 0, [os.path.join(tt, 'sha')]).startswith('СТОП'))
+d_nokeys = json.load(open(os.path.join(tt, 'ok', 'answers_fake.json')))
+for e in d_nokeys['envs']:
+    e.pop('keys')
+os.makedirs(os.path.join(tt, 'nokeys'))
+json.dump(d_nokeys, open(os.path.join(tt, 'nokeys', 'answers_fake.json'), 'w'))
+check('сборка теста: нет ключей задач → СТОП', merge_stops(os.path.join(tt, 'm4'), 'test', 0, [os.path.join(tt, 'nokeys')]).startswith('СТОП'))
+
+# годность голов по ревизии и версиям (совет 66, п. 8); z*; тип ошибки; мини-пилот
+hm_ = {nm: dict(repo=spec.split('@')[0], revision=spec.split('@')[1], versions=[dict(V.PILOT_VERSIONS)]) for nm, spec in V.CROWD.items()}
+hm_['Falcon3-1B-Instruct']['versions'] = [dict(torch='2.12.0+cpu', transformers='5.20.2')]
+hm_['OLMo-2-0425-1B-Instruct']['revision'] = 'другая'
+del hm_['TinyLlama-1.1B-Chat-v1.0']
+eff, drp = V.effective_crowd(hm_)
+check('годность голов: чужие версии, чужая ревизия, нет вывода — выбывают только эти головы',
+      sorted(drp) == ['Falcon3-1B-Instruct', 'OLMo-2-0425-1B-Instruct', 'TinyLlama-1.1B-Chat-v1.0'] and len(eff) == 4, str(drp))
+check('z*: знаковое |Δ|/s, полоса ||Δ| − 0,02|/s', abs(V.z_star('sign', -0.03, 0.01) - 3.0) < 1e-12 and abs(V.z_star('equiv', 0.005, 0.005) - 3.0) < 1e-12)
+ek = V.err_kinds([440, 430, 540, 431, None, 357], [430, 430, 430, 430, 430, 340])
+check('тип ошибки: перенос {±10, ±100, ±110}, прочее, без числа', [int(x) for x in ek] == [1, 0, 1, 2, 3, 2], str([int(x) for x in ek]))
+me = V.DX.mini_envs(600)[0]
+check('мини-пилот: X = 3, p = 2, 600 задач, с тестом не пересекается',
+      me['X'] == 3 and me['p'] == 2 and len(me['problems']) == 600 and not ({(q['a'], q['b']) for q in me['problems']} & {(q['a'], q['b']) for e in te for q in e['problems']}))
 st_f, inf_f = V.S.prepare(fenv, 7)
 ac = V.agree_conf(st_f, inf_f['idi'], inf_f['ood'])
 co = V.S.core(st_f, inf_f['idi'], inf_f['ood'])

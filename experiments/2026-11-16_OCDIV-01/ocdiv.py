@@ -4,7 +4,9 @@
   python3 ocdiv.py merge  OUT_DIR SOURCE N PICK JOB_DIR [JOB_DIR ...]   — answers.json вида ocshift_extract (среды источника + новые головы)
   python3 ocdiv.py pilot  RESULT.json NEW_DIR [--boot 200] [--no-power] — пилот: годность, скорость, совпадение ошибок, оценщики, мощность
   python3 ocdiv.py test   RESULT.json NEW_DIR [--boot 10000] [--workers W] — тест: D1–D5 и N на пяти средах OCPOST-01 (константы — PREREG)
-SOURCE — test (пять сред OCPOST-01) или pilot (десять сред OCSHIFT-01); N — размер выборки задач среды (0 — все);
+  python3 ocdiv.py mini   RESULT.json NEW_DIR                       — мини-пилот формата X = 3, p = 2 (совет 66, п. 1): порог и СТОП
+  python3 ocdiv.py timing RESULT.json NEW_DIR [--boot 200] [--workers 4] — хронометраж бутстрепа на среде пилота 2 (совет 66, «можно»)
+SOURCE — test (пять сред OCPOST-01), pilot (десять сред OCSHIFT-01) или mini (X = 3, p = 2); N — размер выборки задач среды (0 — все);
 PICK — first (первые N: пилот 1, выборка смещена — ERRORS № 175) или random (N случайных, зерно ocdiv_extract.SEED_PICK + 10·X + p).
 Голова может прийти несколькими файлами (задания по частям сред): сборка сводит их и сверяет ревизию и номера задач.
 Код счёта — зарегистрированный код прежних опытов: проверка метода и массивы — analyze_ocshift.prepare; оценщики — ocpost.post_stats
@@ -68,13 +70,19 @@ def range_counts(source, n=0, pick='first'):
 
 # ───────────── сборка
 def merge(out_dir, source, n, job_dirs, pick='first'):
-    src, pairs = src_envs(source, n, pick)
-    envs = []
-    for e, idx in pairs:
-        e = dict(e)
-        e['problems'] = [e['problems'][i] for i in idx]
-        e['idx'] = idx
-        envs.append(e)
+    """Сборка ответов новых голов. Совет 66, п. 7: номера задач обязательны и сверяются с выборкой; для теста и мини-пилота ещё
+    ключи задач (a, b) и sha256 подсказки сверяются с источником. Любое расхождение — СТОП (исключение), а не исключение головы."""
+    if source == 'mini':
+        envs = [dict(e) for e in DX.mini_envs(n)]
+    else:
+        src, pairs = src_envs(source, n, pick)
+        envs = []
+        for e, idx in pairs:
+            e = dict(e)
+            e['problems'] = [e['problems'][i] for i in idx]
+            e['idx'] = idx
+            envs.append(e)
+    strict = source in ('test', 'mini')
     per, errors = {}, []
     for jd in job_dirs:
         for f in sorted(glob.glob(os.path.join(jd, 'answers_*.json'))):
@@ -84,39 +92,48 @@ def merge(out_dir, source, n, job_dirs, pick='first'):
                 errors.append(dict(model=h.get('model'), error=h.get('error', 'нет cols'), file=rel))
                 continue
             rev = h.get('commit') or h['revision']
-            r = per.setdefault(h['repo'], dict(commit=rev, cols={}, seconds_env={}, files=[]))
+            r = per.setdefault(h['repo'], dict(commit=rev, cols={}, seconds_env={}, files=[], versions=[], cpu_models=[]))
             if rev != r['commit']:
-                errors.append(dict(model=h['repo'], error=f'ревизия {rev} не равна {r["commit"]} в другом файле той же головы', file=rel))
-                continue
-            h_idx = {x['name']: x.get('idx') for x in h.get('envs', [])}
+                raise SystemExit(f"СТОП: у {h['repo']} ревизия {rev} в {rel} не равна {r['commit']} в другом файле той же головы")
+            h_env = {x['name']: x for x in h.get('envs', [])}
             for e in envs:
                 if e['name'] not in h['cols']:
                     continue
-                hi = h_idx.get(e['name'])
-                ok = (hi is None and pick == 'first') or (hi is not None and hi[:len(e['idx'])] == e['idx'] and (pick == 'first' or len(hi) == len(e['idx'])))
-                if not ok:
-                    errors.append(dict(model=h['repo'], error=f"номера задач среды {e['name']} не совпали с выборкой {pick}", file=rel))
-                    continue
+                he = h_env.get(e['name'], {})
+                if he.get('idx') is None or list(he['idx']) != list(e['idx']):
+                    raise SystemExit(f"СТОП: номера задач среды {e['name']} у {h['repo']} не совпали с выборкой {pick} ({rel})")
+                if 'keys' in he:
+                    if [list(k) for k in he['keys']] != [[q['a'], q['b']] for q in e['problems']]:
+                        raise SystemExit(f"СТОП: ключи задач (a, b) среды {e['name']} у {h['repo']} не совпали с источником ({rel})")
+                    if he.get('prompt_sha256') != DX.prompt_sha(e['prompt_head']):
+                        raise SystemExit(f"СТОП: подсказка среды {e['name']} у {h['repo']} не совпала с источником ({rel})")
+                elif strict:
+                    raise SystemExit(f"СТОП: в выводе {h['repo']} нет ключей задач среды {e['name']} ({rel})")
                 if e['name'] in r['cols']:
-                    errors.append(dict(model=h['repo'], error=f"среда {e['name']} пришла дважды", file=rel))
-                    continue
-                r['cols'][e['name']] = {k: (v[:len(e['problems'])] if isinstance(v, list) else v) for k, v in h['cols'][e['name']].items()}
+                    raise SystemExit(f"СТОП: среда {e['name']} у {h['repo']} пришла дважды ({rel})")
+                if any(len(v) != len(e['problems']) for v in h['cols'][e['name']].values() if isinstance(v, list)):
+                    raise SystemExit(f"СТОП: длина столбцов среды {e['name']} у {h['repo']} не равна числу задач ({rel})")
+                r['cols'][e['name']] = h['cols'][e['name']]
                 r['seconds_env'][e['name']] = (h.get('seconds_env') or {}).get(e['name'])
             r['files'].append(rel)
+            r['versions'].append(h.get('versions') or {})
+            r['cpu_models'].append(h.get('cpu_model'))
     heads = []
     for repo, r in per.items():
         if len(r['cols']) != len(envs):
             errors.append(dict(model=repo, error=f"сред {len(r['cols'])} из {len(envs)}", file=', '.join(r['files'])))
             continue
         heads.append(dict(model=repo.split('/')[-1], repo=repo, revision=r['commit'], vendor=vendor(repo), seconds_env=r['seconds_env'],
-                          n_tasks=sum(len(e['problems']) for e in envs), files=r['files'], cols={e['name']: r['cols'][e['name']] for e in envs}))
+                          n_tasks=sum(len(e['problems']) for e in envs), files=r['files'], versions=r['versions'], cpu_models=r['cpu_models'],
+                          cols={e['name']: r['cols'][e['name']] for e in envs}))
     os.makedirs(out_dir, exist_ok=True)
-    d = dict(mode=source, source_file=os.path.relpath(SRC[source], ROOT), n=n, pick=pick, envs=envs, heads=heads, head_errors=errors,
+    d = dict(mode=source, source_file=(os.path.relpath(SRC[source], ROOT) if source in SRC else 'ocdiv_extract.mini_envs'), n=n, pick=pick,
+             envs=envs, heads=heads, head_errors=errors, keys_checked=strict,
              info=dict(merged_by='ocdiv.py merge', when=time.strftime('%Y-%m-%d %H:%M UTC', time.gmtime())))
     for e in d['envs']:
         e['kind'] = 'test'                                  # S.load_new берёт все среды; метка — для ocpost.load_envs
     json.dump(d, open(os.path.join(out_dir, 'answers.json'), 'w', encoding='utf-8'), ensure_ascii=False)
-    print(f'собрано: голов {len(heads)}, ошибок {len(errors)}, сред {len(envs)}, выборка {pick} {n} → {out_dir}/answers.json')
+    print(f'собрано: голов {len(heads)}, ошибок {len(errors)}, сред {len(envs)}, выборка {pick} {n}, ключи сверены: {strict} → {out_dir}/answers.json')
     for x in errors:
         print('  ошибка:', x)
     return d
@@ -431,6 +448,11 @@ D1_RULE = 'raw'           # 'raw' — Q-нов − Q-py; 'adj' — δ с поп�
                           # Пилот 2: диапазоны точности толп не пересекаются в 9 средах из 10 — δ описательно (DECISIONS 16.11)
 D5_DESCRIPTIVE = True     # D5 описательно: мощность «подтверждено» по пилоту 0,013 < 0,2 (правило HYPOTHESIS)
 MATCH_ACC = 0.05          # описательно: пары одного производителя против пар разных производителей с точностью пары в пределах ±0,05
+PILOT_VERSIONS = {'torch': '2.11.0+cpu', 'transformers': '5.20.2'}   # совет 66, п. 8: версии пилота 2 (одинаковы во всех 20 его файлах)
+LITERAL_CROWD = ('SmolLM2-1.7B-Instruct', 'Falcon3-1B-Instruct', 'OLMo-2-0425-1B-Instruct', 'SmolLM2-360M-Instruct',
+                 'TinyLlama-1.1B-Chat-v1.0')    # совет 66, п. 5: годны по буквальной проверке «20 и 20» в пилоте 2 (описательно)
+Z_SENS = 1.5              # совет 66, п. 6: вердикт «чувствителен к уровню», если z* < 2,807 × 1,5 (ст. откл. повторов к истинному в мирах OCPOST-01 — до 1,75)
+CARRY = {10, -10, 100, -100, 110, -110}   # совет 66, п. 9: ошибка переноса — d = ответ − правда из этого набора
 SEED_BOOT_T, SEED_Q_T = 7_980_000, 7_985_000                # бутстреп теста: оценщики и совпадение ошибок (+ 10·X + p)
 PY_TEST_DIR = os.path.join(EXP, '2026-11-15_OCPOST-01/run/out')   # девять Pythia на средах теста (сырой вывод OCPOST-01)
 PY_FIXED = 'pythia-2.8b-deduped'                            # FIXED однородной толпы — как в OCPOST-01 (описательно)
@@ -478,6 +500,49 @@ def crowd_point(env, fixed_model, seed):
     return out
 
 
+def z_star(kind, delta, sd, band=P.BAND):
+    """Совет 66, п. 6: z, при котором меняется вердикт правила (знаковое — |Δ|/s; полоса — ||Δ| − полоса|/s)."""
+    if not (np.isfinite(delta) and np.isfinite(sd) and sd > 0):
+        return float('nan')
+    return float(abs(delta) / sd) if kind == 'sign' else float(abs(abs(delta) - band) / sd)
+
+
+def err_kinds(ans, s):
+    """Совет 66, п. 9 (описательно): 0 — верно, 1 — перенос (d = ответ − правда ∈ {±10, ±100, ±110}), 2 — прочее, 3 — без числа."""
+    out = np.zeros(len(s), np.int8)
+    for k, (x, t) in enumerate(zip(ans, s)):
+        out[k] = 3 if x is None else (0 if x == t else (1 if (x - t) in CARRY else 2))
+    return out
+
+
+def q_by_kind(enc, kinds, labels, pairs, code):
+    """Среднее по парам q на задачах, где у обеих голов ошибка одного типа code (описательно)."""
+    vals, m = [], 0
+    for i, j in pairs:
+        both = (kinds[labels[i]] == code) & (kinds[labels[j]] == code)
+        if both.sum():
+            vals.append(float((enc[labels[i]][0][both] == enc[labels[j]][0][both]).mean()))
+            m += int(both.sum())
+    return (float(np.mean(vals)) if vals else float('nan')), m
+
+
+def effective_crowd(hm):
+    """Совет 66, п. 8: голова толпы выбывает, если её нет в выводе, ревизия не совпала с PREREG или версии torch и transformers
+    хоть в одном её файле не совпали с пилотом 2. Выбывшая голова — «не определено (проверка метода)» во всех средах."""
+    eff, dropped = [], {}
+    for nm, spec in CROWD.items():
+        h = hm.get(nm)
+        if h is None:
+            dropped[nm] = 'нет вывода'
+        elif f"{h['repo']}@{h['revision']}" != spec:
+            dropped[nm] = f"ревизия {h['repo']}@{h['revision']}"
+        elif not h.get('versions') or any(any(v.get(k) != w for k, w in PILOT_VERSIONS.items()) for v in h['versions']):
+            dropped[nm] = f"версии {h.get('versions')}"
+        else:
+            eff.append(nm)
+    return eff, dropped
+
+
 def test(dst, new_dir, B=10000, workers=1):
     assert CROWD and FIXED_NEW and D1_RULE in ('raw', 'adj', 'both') and D5_DESCRIPTIVE is not None, 'константы теста не заданы (PREREG)'
     t00 = time.time()
@@ -485,12 +550,14 @@ def test(dst, new_dir, B=10000, workers=1):
     _, envs_py = S.load_new(PY_TEST_DIR)
     envs_py = {k: v for k, v in envs_py.items() if v['meta'].get('kind') == 'test'}
     hm = {h['model']: h for h in d['heads']}
-    rev = {nm: (f"{hm[nm]['repo']}@{hm[nm]['revision']}" if nm in hm else None) for nm in CROWD}
+    names_c, dropped = effective_crowd(hm)
     res = dict(level=P.LEVEL, z=P.Z, band=P.BAND, B=B, crowd=CROWD, fixed_new=FIXED_NEW, d1_rule=D1_RULE, d5_descriptive=D5_DESCRIPTIVE,
-               head_errors=d.get('head_errors', []), revisions=rev, revisions_ok=bool(all(rev[nm] == CROWD[nm] for nm in CROWD)), envs={})
-    names_c = list(CROWD)
-    new_pairs = [(i, j) for i, j in itertools.combinations(range(len(names_c)), 2)
-                 if vendor(CROWD[names_c[i]].split('@')[0]) != vendor(CROWD[names_c[j]].split('@')[0])]
+               head_errors=d.get('head_errors', []), keys_checked=d.get('keys_checked'), crowd_effective=names_c, crowd_dropped=dropped,
+               cpu_models={nm: hm[nm].get('cpu_models') for nm in names_c}, envs={})
+    vend = {nm: vendor(CROWD[nm].split('@')[0]) for nm in CROWD}
+    new_pairs = [(i, j) for i, j in itertools.combinations(range(len(names_c)), 2) if vend[names_c[i]] != vend[names_c[j]]]
+    lit = [nm for nm in LITERAL_CROWD if nm in names_c]
+    lit_pairs = [(i, j) for i, j in itertools.combinations(range(len(lit)), 2) if vend[lit[i]] != vend[lit[j]]]
     py_l = list(PY_DISTINCT)
     py_pairs = list(itertools.combinations(range(len(py_l)), 2))
     pts, boots, valid = {}, {}, []
@@ -500,7 +567,7 @@ def test(dst, new_dir, B=10000, workers=1):
         meta = env['meta']
         off = 10 * meta['X'] + meta['p']
         assert [(p['a'], p['b']) for p in env['problems']] == [(p['a'], p['b']) for p in pe['problems']], 'задачи не совпали с Pythia'
-        env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in CROWD])
+        env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in names_c])
         st, info = S.prepare(env_c, SEED_CV_P + off)
         r = dict(meta=meta, n_id=int(len(info['idi'])), n_ood=int(len(info['ood'])), method=info['method'], crowd=[info['names'][k] for k in info['keep']],
                  valid=info['valid'], n_crowd_heads=len(env_c['heads']), seed_cv=SEED_CV_P + off, seed_boot=SEED_BOOT_T + off, seed_q=SEED_Q_T + off)
@@ -519,12 +586,15 @@ def test(dst, new_dir, B=10000, workers=1):
                                 q_cross_matched=(float(np.mean(near)) if near else None)))
         qn, qp = q_of(psn), q_of(psp)
         dl, beta, alpha = adj_of(psn, psp)
+        ql = q_of(pair_stats(enc, s_, lit, lit_pairs)) if lit_pairs else (float('nan'), 0)
         g = np.random.default_rng(SEED_Q_T + off)
-        bq = np.empty((B, 2))
+        bq = np.empty((B, 3))
         for b in range(B):
             idx = g.choice(len(s), len(s))
             a_, b_ = pair_stats(enc, s_, names_c, new_pairs, idx), pair_stats(enc, s_, py_l, py_pairs, idx)
-            bq[b] = (q_of(a_)[0] - q_of(b_)[0], adj_of(a_, b_)[0])
+            l_ = q_of(pair_stats(enc, s_, lit, lit_pairs, idx))[0] if lit_pairs else float('nan')
+            qpb = q_of(b_)[0]
+            bq[b] = (q_of(a_)[0] - qpb, adj_of(a_, b_)[0], l_ - qpb)
         types = {'нов': {}, 'py': {}}
         for kind_, mp_, labs in (('нов', new_ans, names_c), ('py', py_ans, py_l)):
             for nm in labs:
@@ -532,9 +602,12 @@ def test(dst, new_dir, B=10000, workers=1):
                     if a_ is not None and a_ != p['sum']:
                         t = err_type(a_, p['a'], p['b'])
                         types[kind_][t] = types[kind_].get(t, 0) + 1
+        kinds = {nm: err_kinds(a_, s) for nm, a_ in {**new_ans, **py_ans}.items()}
+        by_kind = {f'{nm_k} {lab}': dict(zip(('q', 'm'), q_by_kind(enc, kinds, labs, prs, code)))
+                   for nm_k, code in (('перенос', 1), ('прочее', 2)) for lab, labs, prs in (('нов', names_c, new_pairs), ('py', py_l, py_pairs))}
         r['q'] = dict(q_new=qn[0], n_joint_new=qn[1], q_py=qp[0], n_joint_py=qp[1], d1=qn[0] - qp[0], d1_adj=dl, adj_beta=beta, adj_alpha=alpha,
-                      q_cross_descr=q_of(cross)[0], same_vendor_descr=matched, err_types=types,
-                      pairs=[dict(x, kind='нов') for x in psn] + [dict(x, kind='py') for x in psp],
+                      q_literal=ql[0], d1_literal=ql[0] - qp[0], q_cross_descr=q_of(cross)[0], same_vendor_descr=matched, err_types=types,
+                      q_by_error_kind=by_kind, pairs=[dict(x, kind='нов') for x in psn] + [dict(x, kind='py') for x in psp],
                       acc={nm: float(np.mean(enc[nm][1] & (enc[nm][0] == s_))) for nm in names_c + py_l})
         if info['valid']:
             valid.append(name)
@@ -546,12 +619,16 @@ def test(dst, new_dir, B=10000, workers=1):
             gb = np.random.default_rng(SEED_BOOT_T + off)
             draws = [(gb.choice(info['idi'], len(info['idi'])), gb.choice(info['ood'], len(info['ood']))) for _ in range(B)]
             bt = np.array(P._pmap(_rep_div, draws, dict(st=st, keys=keys, fx=fx), workers), float).T
-            pt['d1'], pt['d1_adj'] = r['q']['d1'], r['q']['d1_adj']
+            pt['d1'], pt['d1_adj'], pt['d1_lit'] = r['q']['d1'], r['q']['d1_adj'], r['q']['d1_literal']
             pts[name] = pt
-            boots[name] = {**{k: bt[j] for j, k in enumerate(keys)}, 'd1': bq[:, 0], 'd1_adj': bq[:, 1]}
+            boots[name] = {**{k: bt[j] for j, k in enumerate(keys)}, 'd1': bq[:, 0], 'd1_adj': bq[:, 1], 'd1_lit': bq[:, 2]}
             cs = st['corr'][info['keep']]
             r['oracle_ood'] = float(cs[:, info['ood']].any(0).mean())
             r['one_best_is_fixed'] = bool(pt.get('one_best_is_fixed'))
+            cal_o = P.calibrate(st['logp'][info['keep']], cs, info['idi'], info['ood'])     # совет 66, п. 4: C − T вне диапазона у каждой головы
+            r['ct_ood_by_head'] = {names[k].split('@')[0]: float(cal_o[k].mean() - cs[k, info['ood']].mean()) for k in range(len(names))}
+            r['acc_id_ood_by_head'] = {names[k].split('@')[0]: dict(id=float(cs[k, info['idi']].mean()), ood=float(cs[k, info['ood']].mean()))
+                                       for k in range(len(names))}
             r['rules_env'] = {k: dict(point=float(P.val(pt, pr)), sd=float(np.std(P.val(boots[name], pr), ddof=1)))
                               for k, (pr, kind, rng) in RULES_D.items()}
             r['rules_env']['D1'] = dict(point=r['q']['d1'], sd=float(np.std(bq[:, 0], ddof=1)), adj=dl, adj_sd=float(np.std(bq[:, 1], ddof=1)))
@@ -564,27 +641,32 @@ def test(dst, new_dir, B=10000, workers=1):
               f"Q-нов {qn[0]:.3f} Q-py {qp[0]:.3f}, {r['seconds']} с", flush=True)
     m = len(valid)
     n_env = len(envs_new)
-    method_ok = bool(m >= int(np.ceil(P.MIN_VALID_FRAC * n_env)) and m >= 1 and res['revisions_ok'] and n_env == 5)
+    method_ok = bool(m >= int(np.ceil(P.MIN_VALID_FRAC * n_env)) and m >= 1 and n_env == 5)
     fixed_ok = bool(all(res['envs'][n].get('fixed_in_crowd') for n in valid))
-    res['method'] = dict(ok=method_ok, n_envs=n_env, n_valid=m, valid=valid, fixed_in_all_valid=fixed_ok, revisions_ok=res['revisions_ok'])
+    res['method'] = dict(ok=method_ok, n_envs=n_env, n_valid=m, valid=valid, fixed_in_all_valid=fixed_ok, crowd_effective=len(names_c))
     if m == 0:
         res['verdicts'] = {k: P.U for k in ('D1',) + tuple(RULES_D)}
+        res['verdict'] = '; '.join(f'{k}: {v}' for k, v in res['verdicts'].items())
         json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        print('вердикт:', res['verdict'])
         return res
     group = {n: envs_new[n]['meta'].get('X', n) for n in valid}
 
-    def mean_entry(pair, level):
+    def mean_entry(pair, level, kind):
         pt = float(np.mean([P.val(pts[n], pair) for n in valid]))
         bt = np.mean([P.val(boots[n], pair) for n in valid], 0)
         iv, sd = P.m4(pt, bt, level)
-        return dict(delta=pt, ci=iv, boot_sd=sd, boot_shift=float(np.mean(bt) - pt), level=level, by_env={n: float(P.val(pts[n], pair)) for n in valid})
+        zp = pt / sd if sd > 0 else float('nan')
+        return dict(delta=pt, ci=iv, boot_sd=sd, boot_shift=float(np.mean(bt) - pt), level=level, by_env={n: float(P.val(pts[n], pair)) for n in valid},
+                    z_point=zp, ci_in_s=[zp - float(P.norm.ppf(1 - level)), zp + float(P.norm.ppf(1 - level))], z_star=z_star(kind, pt, sd))
     for k, (pair, kind, rng) in (('D1', (('d1', None), 'sign', 'all')), ('D1 adj', (('d1_adj', None), 'sign', 'all')), *RULES_D.items()):
-        e = mean_entry(pair, P.LEVEL)
+        e = mean_entry(pair, P.LEVEL, kind)
         v = verdict_d(kind, e['ci'])
         if kind == 'sign':                                          # предохранитель «без одного диапазона» — как в OCPOST-01
             v, e['leave_one_range_out'] = A_range_guard(v, e['by_env'], group)
         e['verdict_rule'] = v
         e['kind'], e['range'] = kind, rng
+        e['sensitive_to_level'] = bool(v in ('подтверждено', 'опровергнуто') and np.isfinite(e['z_star']) and e['z_star'] < P.Z * Z_SENS)
         res[k] = e
     for k in ('D1', 'D1 adj') + tuple(RULES_D):
         e = res[k]
@@ -596,12 +678,19 @@ def test(dst, new_dir, B=10000, workers=1):
     if D1_RULE == 'raw':
         res['D1 adj']['verdict_rule_descr'] = va
         res['D1 adj']['verdict'] = 'описательно (поправка — экстраполяция: диапазоны точности толп в пилоте не пересекаются)'
-    res['D1']['reading'] = ('вывод о толпах: вклад производителя не отделён от вклада точности (толпы разной точности, PREREG)'
-                            if D1_RULE == 'raw' else '')
+    res['D1']['reading'] = ('повтор пилота / перенос на p = 2 (совет 66): знак известен по пилоту; вывод о толпах, вклад производителя не отделён '
+                            'от вклада точности и вида ошибок; объяснение не проверялось; вес 0 бит' if D1_RULE == 'raw' else '')
     sv = [x for n in valid for x in res['envs'][n]['q']['same_vendor_descr'] if x['q_cross_matched'] is not None and np.isfinite(x['q_same'])]
     res['same_vendor_descr'] = dict(n=len(sv), mean_q_same=(float(np.mean([x['q_same'] for x in sv])) if sv else None),
                                     mean_q_cross_matched=(float(np.mean([x['q_cross_matched'] for x in sv])) if sv else None),
                                     note=f'пары одного производителя против пар разных производителей с точностью пары ±{MATCH_ACC}; описательно, вес 0')
+    res['q_by_error_kind_descr'] = {k: float(np.nanmean([res['envs'][n]['q']['q_by_error_kind'][k]['q'] for n in valid]))
+                                    for k in res['envs'][valid[0]]['q']['q_by_error_kind']}
+    res['ct_ood_by_head_descr'] = {nm: float(np.mean([res['envs'][n]['ct_ood_by_head'][nm] for n in valid if nm in res['envs'][n]['ct_ood_by_head']]))
+                                   for nm in names_c if any(nm in res['envs'][n]['ct_ood_by_head'] for n in valid)}
+    if lit_pairs:
+        res['descr_D1 буквальная толпа'] = dict(mean_entry(('d1_lit', None), P.DESCR_LEVEL, 'sign'), crowd=lit,
+                                                note='толпа по буквальному отбору «20 и 20» (5 голов < 6: правила оценщиков не определены); описательно')
     if res['N']['verdict'] == 'опровергнуто' and res['D4']['verdict'] != P.U:
         res['D4']['verdict_before_N'] = res['D4']['verdict']
         res['D4']['verdict'] = P.UN
@@ -609,9 +698,12 @@ def test(dst, new_dir, B=10000, workers=1):
         res['D5']['verdict_rule_descr'] = res['D5']['verdict']
         res['D5']['verdict'] = 'описательно (мощность по пилоту < 0,2; PREREG)'
     res['D3']['sign'] = 'C > T (завышение заявки)' if res['D3']['delta'] > 0 else 'C < T (занижение заявки)'
+    res['D3']['reading'] = 'вырожденный случай: у FIXED-нов малый разрыв ID–OOD (пилот 2: 0,924 / 0,884); «подтверждено» недостижимо по мощности (совет 66)'
+    for k in ('D2', 'D4'):
+        res[k]['class'] = 'перенос на разнородную толпу и p = 2; ожидаемо по построению (совет 66)'
     for k, pair in DESCR_T.items():
         if all(np.isfinite(P.val(pts[n], pair)) for n in valid):
-            res[f'descr_{k}'] = mean_entry(pair, P.DESCR_LEVEL)
+            res[f'descr_{k}'] = mean_entry(pair, P.DESCR_LEVEL, 'sign')
     res['verdicts'] = {k: res[k]['verdict'] for k in ('D1',) + tuple(RULES_D)}
     res['verdict'] = '; '.join(f'{k}: {v}' for k, v in res['verdicts'].items())
     res['seconds'] = round(time.time() - t00, 1)
@@ -619,9 +711,93 @@ def test(dst, new_dir, B=10000, workers=1):
     print('вердикт:', res['verdict'])
     for k in ('D1', 'D1 adj') + tuple(RULES_D):
         e = res[k]
-        print(f"{k}: Δ {e['delta']:+.4f} M4 [{e['ci'][0]:+.4f}; {e['ci'][1]:+.4f}] ст. откл. {e['boot_sd']:.4f}"
+        print(f"{k}: Δ {e['delta']:+.4f} M4 [{e['ci'][0]:+.4f}; {e['ci'][1]:+.4f}] ст. откл. {e['boot_sd']:.4f} | Δ/s {e['z_point']:+.1f} | z* {e['z_star']:.1f}"
+              + (' (чувствителен к уровню)' if e['sensitive_to_level'] else '')
               + (f" | без диапазона: {e['leave_one_range_out']['holds']}" if 'leave_one_range_out' in e else ''))
-    print('годных сред', m, 'из', n_env, '| время', res['seconds'], 'с')
+    print('годных сред', m, 'из', n_env, '| толпа', len(names_c), 'из', len(CROWD), '| выбыли', dropped, '| время', res['seconds'], 'с')
+    return res
+
+
+# ───────────── мини-пилот формата (совет 66, п. 1) и хронометраж бутстрепа («можно»)
+MINI_MAX_NONE = 0.05      # порог записан до запуска (DECISIONS): доля ответов без числа у любой головы толпы больше 0,05 — СТОП
+
+
+def mini(dst, new_dir):
+    """Мини-пилот формата: семь голов толпы на среде X = 3, p = 2 (вне теста и всех будущих тестов). Мерки — доля ответов без числа,
+    проверка метода в масштабе теста (как отбор пилота 2) и время. Q, δ и точность в отбор не идут, толпа по нему не меняется.
+    СТОП (правка постановки, новый пилот), если у любой головы толпы ответов без числа больше 0,05, проверка метода провалена
+    или головы нет в выводе."""
+    d, envs_new = S.load_new(new_dir)
+    n_test = range_counts('test')
+    res = dict(source='mini', crowd=list(CROWD), thresholds=dict(max_none=MINI_MAX_NONE, method='проверка метода в масштабе теста, как отбор пилота 2'),
+               head_errors=d.get('head_errors', []), heads={}, envs={})
+    hm = {h['model']: h for h in d['heads']}
+    for name, env in envs_new.items():
+        env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in CROWD])
+        st, info = prepare_scaled(env_c, SEED_CV_P + 10 * env['meta']['X'] + env['meta']['p'], n_test['ID'])
+        res['envs'][name] = dict(n=len(env['problems']), n_id=int(len(info['idi'])), n_ood=int(len(info['ood'])), min_each=info['min_each'])
+        for k, nm in enumerate(info['names']):
+            m = info['method'][nm]
+            h = env_c['heads'][k]
+            sec = float(np.sum([v or 0 for v in (hm[h['model']].get('seconds_env') or {}).values()])) / max(len(env['problems']), 1)
+            res['heads'][h['model']] = dict(none_frac=m['none_frac'], none_ok=bool(m['none_frac'] <= MINI_MAX_NONE), method_ok=bool(m['ok']),
+                                            id_correct=m['id_correct'], id_wrong=m['id_wrong'], sec_per_task=sec,
+                                            revision=hm[h['model']]['revision'], versions=hm[h['model']].get('versions'))
+    missing = [nm for nm in CROWD if nm not in res['heads']]
+    bad = {nm: v for nm, v in res['heads'].items() if not (v['none_ok'] and v['method_ok'])}
+    rev_bad = [nm for nm in res['heads'] if f"{hm[nm]['repo']}@{hm[nm]['revision']}" != CROWD[nm]]
+    res['missing'], res['failed'], res['revision_mismatch'] = missing, sorted(bad), rev_bad
+    res['stop'] = bool(missing or bad or rev_bad)
+    res['verdict'] = ('СТОП: правка постановки и новый пилот (совет 66, п. 1)' if res['stop'] else 'формат и проверка метода на p = 2 — в порядке; регистрация')
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    for nm, v in res['heads'].items():
+        print(f"{nm:28s} без числа {v['none_frac']:.4f} ({'ок' if v['none_ok'] else 'ВЫШЕ ПОРОГА'}) | проверка метода {'ок' if v['method_ok'] else 'ПРОВАЛ'} "
+              f"(верных {v['id_correct']}, неверных {v['id_wrong']}) | {v['sec_per_task']:.3f} с на задачу")
+    print('итог мини-пилота:', res['verdict'], '| нет в выводе', missing, '| ревизии', rev_bad)
+    return res
+
+
+def timing(dst, new_dir, B=200, workers=4):
+    """Хронометраж бутстрепа на одной среде пилота 2 (совет 66, «можно»): время повтора оценщиков и повтора D1, оценка времени
+    анализа теста при B = 10 000 на пяти средах по 2200 задач (линейно по числу задач — оценка, не проверка)."""
+    d, envs_new = S.load_new(new_dir)
+    n_test = range_counts('test')
+    name = sorted(envs_new)[0]
+    env = envs_new[name]
+    env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in CROWD])
+    off = 10 * env['meta']['X'] + env['meta']['p']
+    st, info = prepare_scaled(env_c, SEED_CV_P + off, n_test['ID'])
+    names = [info['names'][k] for k in info['keep']]
+    fx = next((i for i, nm in enumerate(names) if nm.split('@')[0] == FIXED_NEW), None)
+    pt = stats_div(st, info['idi'], info['ood'], fx)
+    keys = sorted(pt)
+    g = np.random.default_rng(1)
+    draws = [(g.choice(info['idi'], len(info['idi'])), g.choice(info['ood'], len(info['ood']))) for _ in range(B)]
+    t = time.time()
+    P._pmap(_rep_div, draws, dict(st=st, keys=keys, fx=fx), workers)
+    t_est = (time.time() - t) / B
+    names_c = [nm for nm in CROWD if any(h['model'] == nm for h in env['heads'])]
+    vend = {nm: vendor(CROWD[nm].split('@')[0]) for nm in CROWD}
+    new_pairs = [(i, j) for i, j in itertools.combinations(range(len(names_c)), 2) if vend[names_c[i]] != vend[names_c[j]]]
+    s = [p['sum'] for p in env['problems']]
+    new_ans = {h['model']: [x['answer'] for x in h['rows']] for h in env['heads'] if h['model'] in names_c}
+    py = pythia_envs(d['mode'], d.get('n', 0), d.get('pick', 'first'))[name]
+    py_ans = {f"{h['model']}@{h['revision']}": h['answer'] for h in py['heads']}
+    enc, s_ = encode({**new_ans, **py_ans}, s)
+    py_l = list(PY_DISTINCT)
+    t = time.time()
+    for _ in range(B):
+        idx = g.choice(len(s), len(s))
+        pair_stats(enc, s_, names_c, new_pairs, idx)
+        pair_stats(enc, s_, py_l, list(itertools.combinations(range(len(py_l)), 2)), idx)
+    t_q = (time.time() - t) / B
+    scale = n_test['all'] / len(env['problems'])
+    est = (t_est + t_q) * 10000 * 5 * scale
+    res = dict(env=name, n=len(env['problems']), B=B, workers=workers, sec_per_rep_estimators=t_est, sec_per_rep_d1=t_q, scale_tasks=scale,
+               estimate_test_seconds=est, estimate_x2_minutes=2 * est / 60, step_limit_minutes=340,
+               note='оценка: время повтора × 10 000 × 5 сред × (2200 / задач пилота); оценщики — в 4 процессах, D1 — в одном')
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print(f"повтор оценщиков {t_est:.4f} с, повтор D1 {t_q:.4f} с | оценка анализа теста {est / 60:.1f} мин, ×2 — {2 * est / 60:.1f} мин из 340")
     return res
 
 
@@ -641,6 +817,10 @@ def main():
         B = int(a[a.index('--boot') + 1]) if '--boot' in a else 10000
         W = int(a[a.index('--workers') + 1]) if '--workers' in a else 1
         test(a[1], a[2], B, W)
+    elif a[0] == 'mini':
+        mini(a[1], a[2])
+    elif a[0] == 'timing':
+        timing(a[1], a[2], int(a[a.index('--boot') + 1]) if '--boot' in a else 200, int(a[a.index('--workers') + 1]) if '--workers' in a else 4)
 
 
 if __name__ == '__main__':

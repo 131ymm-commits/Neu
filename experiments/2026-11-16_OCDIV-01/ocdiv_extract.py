@@ -12,13 +12,18 @@
 - Правда — по коду (ответ == a + b). Ревизия модели — хеш коммита с Hugging Face; пишется в вывод.
 - Выборка задач среды — pick_idx: first — первые N (пилот 1; задачи отсортированы по (a, b), выборка смещена — ERRORS № 175);
   random — N случайных с зерном SEED_PICK + 10·X + p (пилот 2). Номера задач пишутся в вывод.
-  python3 ocdiv_extract.py --source test|pilot --model REPO [--revision REV] [--envs all|X4_p2,...] [--n N] [--pick first|random] --out DIR [--bs 16]"""
+- Совет 66: в вывод пишутся ключ каждой задачи (a, b), sha256 подсказки, X и p (сборка сверяет их с источником); версии,
+  модель процессора и pip freeze; загрузка модели повторяется один раз при сбое. Источник mini — среда мини-пилота формата
+  X = 3, p = 2 (вне теста и всех будущих тестов), N случайных задач с зерном SEED_MINI + 10·X + p.
+  python3 ocdiv_extract.py --source test|pilot|mini --model REPO [--revision REV] [--envs all|X4_p2,...] [--n N] [--pick first|random] --out DIR [--bs 16]"""
 import argparse
+import hashlib
 import importlib.util
 import json
 import os
 import platform
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -48,6 +53,23 @@ def load_ocpost_extract():
 OE = load_ocpost_extract()
 answer_logp = OE.answer_logp
 SEED_PICK = 7_960_000                                       # пилот 2: случайная выборка задач среды, зерно 7 960 000 + 10·X + p
+SEED_MINI = 7_970_000                                       # мини-пилот формата (совет 66, п. 1): X = 3, p = 2, зерно 7 970 000 + 10·X + p
+MINI_X, MINI_P = 3, 2
+
+
+def prompt_sha(head):
+    return hashlib.sha256(head.encode('utf-8')).hexdigest()
+
+
+def mini_envs(n):
+    """Среда мини-пилота формата: диапазон a ∈ [300, 399], b ∈ [10, 99], граница 400; подсказка p = 2 — функцией shots из
+    ocpost_extract с зерном SHOTS_BASE + 1000·X + p (как у сред теста); задачи — n случайных пар без примеров подсказки."""
+    X, p = MINI_X, MINI_P
+    a_range, bound = (100 * X, 100 * X + 99), 100 * (X + 1)
+    head, ex = OE.shots(a_range, bound, OE.SHOTS_BASE + 1000 * X + p)
+    pairs = [(a, b) for a in range(a_range[0], a_range[1] + 1) for b in range(OE.B_RANGE[0], OE.B_RANGE[1] + 1) if (a, b) not in set(ex)]
+    idx = sorted(int(i) for i in np.random.default_rng(SEED_MINI + 10 * X + p).choice(len(pairs), n, replace=False))
+    return [dict(name=f'X{X}_p{p}', X=X, p=p, bound=bound, prompt_head=head, problems=OE.problems(pairs, idx, bound), idx=idx)]
 
 
 def pick_idx(env, n, pick='first'):
@@ -85,12 +107,22 @@ def run(repo, rev, envs, bs, log):
     torch.set_num_threads(os.cpu_count() or 4)
     cache = tempfile.mkdtemp(prefix='hf_')
     t = time.time()
-    commit = HfApi().model_info(repo, revision=rev).sha       # хеш коммита модели; грузим ровно его (в transformers 5 поле _commit_hash пусто)
-    tok = AutoTokenizer.from_pretrained(repo, revision=commit, cache_dir=cache)
+    load_errors = []
+    for attempt in (1, 2):                                    # совет 66 («можно»): сбой загрузки — один повтор в том же задании
+        try:
+            commit = HfApi().model_info(repo, revision=rev).sha   # хеш коммита модели; грузим ровно его (в transformers 5 поле _commit_hash пусто)
+            tok = AutoTokenizer.from_pretrained(repo, revision=commit, cache_dir=cache)
+            model = AutoModelForCausalLM.from_pretrained(repo, revision=commit, dtype=torch.float32, cache_dir=cache).eval()
+            break
+        except Exception as e:                                # noqa: BLE001 — вторая неудача уходит в поле error вывода
+            load_errors.append(f'попытка {attempt}: {type(e).__name__}: {str(e)[:300]}')
+            log('сбой загрузки', load_errors[-1])
+            if attempt == 2:
+                raise
+            time.sleep(30)
     tok.padding_side = 'left'
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    model = AutoModelForCausalLM.from_pretrained(repo, revision=commit, dtype=torch.float32, cache_dir=cache).eval()
     load_s = round(time.time() - t, 1)
     log(repo, rev, 'загружена за', load_s, 'с; ревизия', commit)
     cols, secs = {}, {}
@@ -121,14 +153,26 @@ def run(repo, rev, envs, bs, log):
             round(secs[env['name']] / max(len(probs), 1), 3), 'с на задачу')
     del model
     shutil.rmtree(cache, ignore_errors=True)
-    return dict(repo=repo, revision=rev, commit=commit, load_seconds=load_s, seconds=round(time.time() - t, 1), seconds_env=secs, cols=cols,
-                versions=dict(python=sys.version.split()[0], torch=torch.__version__, transformers=transformers.__version__, numpy=np.__version__),
-                cpus=os.cpu_count(), machine=platform.machine())
+    return dict(repo=repo, revision=rev, commit=commit, load_seconds=load_s, load_errors=load_errors, seconds=round(time.time() - t, 1), seconds_env=secs,
+                cols=cols, versions=dict(python=sys.version.split()[0], torch=torch.__version__, transformers=transformers.__version__, numpy=np.__version__),
+                cpus=os.cpu_count(), machine=platform.machine(), cpu_model=cpu_model(), pip_freeze=pip_freeze())
+
+
+def cpu_model():
+    try:
+        return next((ln.split(':', 1)[1].strip() for ln in open('/proc/cpuinfo') if ln.startswith('model name')), platform.processor())
+    except OSError:
+        return platform.processor()
+
+
+def pip_freeze():
+    r = subprocess.run([sys.executable, '-m', 'pip', 'freeze'], capture_output=True, text=True)
+    return r.stdout.splitlines()
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--source', choices=('test', 'pilot'), required=True)
+    ap.add_argument('--source', choices=('test', 'pilot', 'mini'), required=True)
     ap.add_argument('--model', required=True)
     ap.add_argument('--revision', default='main')
     ap.add_argument('--envs', default='all')
@@ -143,12 +187,14 @@ def main():
     def log(*x):
         print(f'[{time.time() - t0:7.1f} с]', *x, flush=True)
     names = 'all' if a.envs == 'all' else a.envs.split(',')
-    envs = envs_of(a.source, names, a.n, a.pick)
+    envs = mini_envs(a.n or 600) if a.source == 'mini' else envs_of(a.source, names, a.n, a.pick)
     log('источник', a.source, '| выборка', a.pick, '| сред', len(envs), '| задач', sum(len(e['problems']) for e in envs),
         '| ID', sum(p['range'] == 'ID' for e in envs for p in e['problems']), '| OOD', sum(p['range'] == 'OOD' for e in envs for p in e['problems']))
     dst = os.path.join(a.out, f"answers_{a.model.split('/')[-1]}.json")
-    res = dict(source=a.source, source_file=os.path.relpath(SRC[a.source], ROOT), model=a.model, n=a.n, pick=a.pick,
-               envs=[dict(name=e['name'], n=len(e['problems']), idx=e['idx']) for e in envs])
+    res = dict(source=a.source, source_file=(os.path.relpath(SRC[a.source], ROOT) if a.source in SRC else 'ocdiv_extract.mini_envs'), model=a.model,
+               n=a.n, pick=('random' if a.source == 'mini' else a.pick),
+               envs=[dict(name=e['name'], X=e['X'], p=e['p'], n=len(e['problems']), idx=e['idx'], keys=[[q['a'], q['b']] for q in e['problems']],
+                          prompt_sha256=prompt_sha(e['prompt_head'])) for e in envs])
     try:
         res.update(run(a.model, a.revision, envs, a.bs, log))
     except Exception as e:                       # не загрузилась или упала — записываем, задание не валим: это данные пилота
