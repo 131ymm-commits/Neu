@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 """OCDIV-01: файлы заданий gha_par/ — одна голова на задание (пилот: десять сред OCSHIFT-01 по 300 задач; тест: одна среда OCPOST-01
 на задание, 2200 задач). Пуш новых файлов запускает их на neu-par (до 20 раннеров одновременно).
-  python3 make_jobs.py pilot            — кандидаты из HYPOTHESIS.md
+  python3 make_jobs.py pilot            — кандидаты из HYPOTHESIS.md (пилот 1: первые 300 задач — выборка смещена, ERRORS № 175)
+  python3 make_jobs.py pilot2 NAME=REPO@REV ...  — пилот 2: 600 случайных задач каждой среды, два задания на голову (p = 0 и p = 1)
   python3 make_jobs.py test NAME=REPO@REV ...   — годные головы из PREREG (ревизия — хеш коммита из пилота)"""
 import os
 import sys
@@ -40,6 +41,14 @@ def main():
         for k, repo in CANDIDATES.items():
             out.append(write(f'ocdiv_pilot_{k}', f'пилот, {repo}, десять сред OCSHIFT-01 по 300 задач',
                              f'python3 $E/ocdiv_extract.py --source pilot --model {repo} --envs all --n 300 --out "$OUT" --bs 16'))
+    elif mode == 'pilot2':
+        for spec in sys.argv[2:]:
+            k, rr = spec.split('=')
+            repo, rev = rr.split('@')
+            for p in (0, 1):
+                envs = ','.join(f'X{X_}_p{p}' for X_ in range(4, 9))
+                out.append(write(f'ocdiv_pilot2_{k}_p{p}', f'пилот 2, {repo}@{rev}, пять сред OCSHIFT-01 с p = {p}, по 600 случайных задач',
+                                 f'python3 $E/ocdiv_extract.py --source pilot --model {repo} --revision {rev} --envs {envs} --n 600 --pick random --out "$OUT" --bs 16'))
     elif mode == 'test':
         for spec in sys.argv[2:]:
             k, rr = spec.split('=')

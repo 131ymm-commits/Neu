@@ -10,7 +10,9 @@
   - ответ и logp — функция answer_logp, импортом из ocpost_extract.py.
 - Отличия от Kaggle: процессор, float32, пакет 16.
 - Правда — по коду (ответ == a + b). Ревизия модели — хеш коммита с Hugging Face; пишется в вывод.
-  python3 ocdiv_extract.py --source test|pilot --model REPO [--revision REV] [--envs all|X4_p2,...] [--n N] --out DIR [--bs 16]"""
+- Выборка задач среды — pick_idx: first — первые N (пилот 1; задачи отсортированы по (a, b), выборка смещена — ERRORS № 175);
+  random — N случайных с зерном SEED_PICK + 10·X + p (пилот 2). Номера задач пишутся в вывод.
+  python3 ocdiv_extract.py --source test|pilot --model REPO [--revision REV] [--envs all|X4_p2,...] [--n N] [--pick first|random] --out DIR [--bs 16]"""
 import argparse
 import importlib.util
 import json
@@ -45,9 +47,23 @@ def load_ocpost_extract():
 
 OE = load_ocpost_extract()
 answer_logp = OE.answer_logp
+SEED_PICK = 7_960_000                                       # пилот 2: случайная выборка задач среды, зерно 7 960 000 + 10·X + p
 
 
-def envs_of(source, names, n):
+def pick_idx(env, n, pick='first'):
+    """Номера задач среды для счёта (одна функция для извлечения, сборки и ответов Pythia). n = 0 или n ≥ размера — все задачи."""
+    N = len(env['problems'])
+    if not n or n >= N:
+        return list(range(N))
+    if pick == 'first':
+        return list(range(n))
+    if pick == 'random':
+        g = np.random.default_rng(SEED_PICK + 10 * int(env['X']) + int(env['p']))
+        return sorted(int(i) for i in g.choice(N, n, replace=False))
+    raise ValueError(f'неизвестная выборка {pick}')
+
+
+def envs_of(source, names, n, pick='first'):
     d = json.load(open(SRC[source], encoding='utf-8'))
     out = []
     for e in d['envs']:
@@ -55,8 +71,9 @@ def envs_of(source, names, n):
             continue
         if names != 'all' and e['name'] not in names:
             continue
-        probs = e['problems'][:n] if n else e['problems']
-        out.append(dict(name=e['name'], X=e.get('X'), p=e.get('p'), bound=e['bound'], prompt_head=e['prompt_head'], problems=probs))
+        idx = pick_idx(e, n, pick)
+        out.append(dict(name=e['name'], X=e.get('X'), p=e.get('p'), bound=e['bound'], prompt_head=e['prompt_head'],
+                        problems=[e['problems'][i] for i in idx], idx=idx))
     return out
 
 
@@ -116,6 +133,7 @@ def main():
     ap.add_argument('--revision', default='main')
     ap.add_argument('--envs', default='all')
     ap.add_argument('--n', type=int, default=0)
+    ap.add_argument('--pick', choices=('first', 'random'), default='first')
     ap.add_argument('--out', required=True)
     ap.add_argument('--bs', type=int, default=16)
     a = ap.parse_args()
@@ -125,11 +143,12 @@ def main():
     def log(*x):
         print(f'[{time.time() - t0:7.1f} с]', *x, flush=True)
     names = 'all' if a.envs == 'all' else a.envs.split(',')
-    envs = envs_of(a.source, names, a.n)
-    log('источник', a.source, '| сред', len(envs), '| задач', sum(len(e['problems']) for e in envs))
+    envs = envs_of(a.source, names, a.n, a.pick)
+    log('источник', a.source, '| выборка', a.pick, '| сред', len(envs), '| задач', sum(len(e['problems']) for e in envs),
+        '| ID', sum(p['range'] == 'ID' for e in envs for p in e['problems']), '| OOD', sum(p['range'] == 'OOD' for e in envs for p in e['problems']))
     dst = os.path.join(a.out, f"answers_{a.model.split('/')[-1]}.json")
-    res = dict(source=a.source, source_file=os.path.relpath(SRC[a.source], ROOT), model=a.model, n=a.n,
-               envs=[dict(name=e['name'], n=len(e['problems'])) for e in envs])
+    res = dict(source=a.source, source_file=os.path.relpath(SRC[a.source], ROOT), model=a.model, n=a.n, pick=a.pick,
+               envs=[dict(name=e['name'], n=len(e['problems']), idx=e['idx']) for e in envs])
     try:
         res.update(run(a.model, a.revision, envs, a.bs, log))
     except Exception as e:                       # не загрузилась или упала — записываем, задание не валим: это данные пилота

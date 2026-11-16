@@ -1,0 +1,9 @@
+#!/bin/bash
+# OCDIV-01 «ОЦЕНЩИК-РАЗНЫЕ-ГОЛОВЫ»: пилот 2, ibm-granite/granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09, пять сред OCSHIFT-01 с p = 1, по 600 случайных задач. Файл создан make_jobs.py; одна голова — одно задание (процессор раннера, без ключей).
+set -euo pipefail
+OUT="$1"
+E=experiments/2026-11-16_OCDIV-01
+export HF_HUB_DISABLE_TELEMETRY=1 HF_HUB_DISABLE_PROGRESS_BARS=1 TOKENIZERS_PARALLELISM=false
+python3 -m pip install -q --index-url https://download.pytorch.org/whl/cpu torch==2.11.0
+python3 -m pip install -q transformers==5.20.2 numpy==2.5.3
+python3 $E/ocdiv_extract.py --source pilot --model ibm-granite/granite-3.1-1b-a400m-instruct --revision 0da7a48b0276d500ce5922fd2b33944091fc6c09 --envs X4_p1,X5_p1,X6_p1,X7_p1,X8_p1 --n 600 --pick random --out "$OUT" --bs 16
