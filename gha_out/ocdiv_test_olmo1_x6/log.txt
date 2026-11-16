@@ -1,0 +1,5 @@
+[    0.1 с] источник test | выборка first | сред 1 | задач 2200 | ID 999 | OOD 1201
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   31.4 с] allenai/OLMo-2-0425-1B-Instruct 48d788eca847d4d7548f375ad03d3c9312f6139e загружена за 27.6 с; ревизия 48d788eca847d4d7548f375ad03d3c9312f6139e
+[  814.1 с] X6_p2 точность {'ID': 0.7748, 'OOD': 0.6087} | без числа 3 | время 782.6 с, 0.356 с на задачу
+[  814.5 с] записано gha_out/ocdiv_test_olmo1_x6/answers_OLMo-2-0425-1B-Instruct.json
