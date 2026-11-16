@@ -20,21 +20,32 @@
 ✓ q: векторный счёт равен прямому (и с числами больше int64)
 ✓ q на повторе бутстрепа равен прямому счёту на тех же задачах
 ✓ acc: нет числа — неверно
-✓ поправка на точность: МНК находит δ, β, α — 0.07000000000000017, 0.5000000000000004, 0.09999999999999992
+✓ поправка на точность: МНК находит δ, β, α — 0.07000000000000009, 0.5000000000000004, 0.0999999999999998
 ✓ проверка метода в масштабе теста: порог 20·n_ID/n_ID_теста вверх; на пороге годна, ниже — нет; общий порог восстановлен — n_ID 264, порог 6
-собрано: голов 1, ошибок 0, сред 10, выборка random 600 → /tmp/ocdiv_merge_huwfxo9a/m/answers.json
+собрано: голов 1, ошибок 0, сред 10, выборка random 600, ключи сверены: False → /tmp/ocdiv_merge_y38z1i3g/m/answers.json
 ✓ сборка: два файла одной головы → одна голова на десяти средах, без ошибок
-собрано: голов 0, ошибок 2, сред 10, выборка random 600 → /tmp/ocdiv_merge_huwfxo9a/m2/answers.json
-  ошибка: {'model': 'org/fake', 'error': 'номера задач среды X4_p1 не совпали с выборкой random', 'file': '../../../../../tmp/ocdiv_merge_huwfxo9a/job1/answers_fake.json'}
-  ошибка: {'model': 'org/fake', 'error': 'сред 9 из 10', 'file': '../../../../../tmp/ocdiv_merge_huwfxo9a/job0/answers_fake.json, ../../../../../tmp/ocdiv_merge_huwfxo9a/job1/answers_fake.json'}
-✓ сборка: чужие номера задач → ошибка, голова не входит
+✓ сборка: чужие номера задач → СТОП (совет 66, п. 7) — СТОП: номера задач среды X4_p1 у org/fake не совпали с выборкой random (../../..
+✓ сборка: нет номеров задач → СТОП (допуска нет) — СТОП: номера задач среды X4_p1 у org/fake не совпали с выборкой random (../../..
+собрано: голов 1, ошибок 0, сред 5, выборка first 0, ключи сверены: True → /tmp/ocdiv_merge_test_xi6mfnc3/m_ok/answers.json
+✓ сборка теста: верные ключи и подсказка → голова собрана, ключи сверены
+✓ сборка теста: перемешанный вывод → СТОП
+✓ сборка теста: сдвинутый вывод → СТОП
+✓ сборка теста: чужая подсказка → СТОП
+✓ сборка теста: нет ключей задач → СТОП
+✓ годность голов: чужие версии, чужая ревизия, нет вывода — выбывают только эти головы — {'Falcon3-1B-Instruct': "версии [{'torch': '2.12.0+cpu', 'transformers': '5.20.2'}]", 'OLMo-2-0425-1B-Instruct': 'ревизия allenai/OLMo-2-0425-1B-Instruct@другая', 'TinyLlama-1.1B-Chat-v1.0': 'нет вывода'}
+✓ z*: знаковое |Δ|/s, полоса ||Δ| − 0,02|/s
+✓ тип ошибки: перенос {±10, ±100, ±110}, прочее, без числа — [1, 0, 1, 2, 3, 2]
+✓ мини-пилот: X = 3, p = 2, 600 задач, с тестом не пересекается
+✓ agree_conf: AGREE и CONF — те же числа, что analyze_ocshift.core
+✓ вероятность пройти проверку метода: 0,94 → почти 1; 0,995 → почти 0; без числа сверх 5 % → 0
+✓ P(не меньше k из n): совпадает с биномиальным при равных p
 ✓ Pythia: те же задачи выборки
 ✓ строение теста: ~1000 задач ID и ~1200 OOD на среду — {'ID': 1004.6, 'OOD': 1195.4, 'all': 2200.0}
 [    0.1 с] источник pilot | выборка first | сред 2 | задач 16 | ID 16 | OOD 0
-[    4.9 с] hf-internal-testing/tiny-random-LlamaForCausalLM main загружена за 1.1 с; ревизия 9fb191250dd56d0ba7ec9785a025ed29c03d5998
-[    5.0 с] X4_p0 точность {'ID': 0.0, 'OOD': 0.0} | без числа 8 | время 0.1 с, 0.013 с на задачу
-[    5.1 с] X8_p1 точность {'ID': 0.0, 'OOD': 0.0} | без числа 8 | время 0.1 с, 0.013 с на задачу
-[    5.2 с] записано /tmp/ocdiv_dry_32hhclsl/answers_tiny-random-LlamaForCausalLM.json
+[    5.1 с] hf-internal-testing/tiny-random-LlamaForCausalLM main загружена за 2.3 с; ревизия 9fb191250dd56d0ba7ec9785a025ed29c03d5998
+[    5.2 с] X4_p0 точность {'ID': 0.0, 'OOD': 0.0} | без числа 8 | время 0.0 с, 0.0 с на задачу
+[    5.2 с] X8_p1 точность {'ID': 0.0, 'OOD': 0.0} | без числа 8 | время 0.0 с, 0.0 с на задачу
+[    5.4 с] записано /tmp/ocdiv_dry_o93ddnc3/answers_tiny-random-LlamaForCausalLM.json
  Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
 [transformers] Model config: pad_token_id must be `None` or an integer within the vocabulary (between 0 and 31999), got -1. This may result in unexpected behavior.
 [transformers] The following generation flags are not valid and may be ignored: ['pad_token_id']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
