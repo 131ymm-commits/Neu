@@ -1,0 +1,5501 @@
+{
+ "source": "pilot",
+ "n": 300,
+ "pick": "first",
+ "n_range_test": {
+  "ID": 1004.6,
+  "OOD": 1195.4,
+  "all": 2200.0
+ },
+ "head_errors": [],
+ "envs": {
+  "X4_p0": {
+   "n": 300,
+   "n_id": 283,
+   "n_ood": 17,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 0,
+     "id_wrong": 283,
+     "ood_correct": 0,
+     "ood_wrong": 17,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 242,
+     "id_wrong": 41,
+     "ood_correct": 1,
+     "ood_wrong": 16,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 277,
+     "id_wrong": 6,
+     "ood_correct": 17,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 280,
+     "id_wrong": 3,
+     "ood_correct": 9,
+     "ood_wrong": 8,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 283,
+     "id_wrong": 0,
+     "ood_correct": 17,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 206,
+     "id_wrong": 77,
+     "ood_correct": 14,
+     "ood_wrong": 3,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 240,
+     "id_wrong": 43,
+     "ood_correct": 17,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 277,
+     "id_wrong": 6,
+     "ood_correct": 13,
+     "ood_wrong": 4,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 255,
+     "id_wrong": 28,
+     "ood_correct": 13,
+     "ood_wrong": 4,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 243,
+     "id_wrong": 40,
+     "ood_correct": 10,
+     "ood_wrong": 7,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 138,
+     "id_wrong": 145,
+     "ood_correct": 7,
+     "ood_wrong": 10,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X4_p1": {
+   "n": 300,
+   "n_id": 280,
+   "n_ood": 20,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 1,
+     "id_wrong": 279,
+     "ood_correct": 0,
+     "ood_wrong": 20,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 217,
+     "id_wrong": 63,
+     "ood_correct": 0,
+     "ood_wrong": 20,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 280,
+     "id_wrong": 0,
+     "ood_correct": 10,
+     "ood_wrong": 10,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 280,
+     "id_wrong": 0,
+     "ood_correct": 8,
+     "ood_wrong": 12,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 279,
+     "id_wrong": 1,
+     "ood_correct": 20,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 188,
+     "id_wrong": 92,
+     "ood_correct": 17,
+     "ood_wrong": 3,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 251,
+     "id_wrong": 29,
+     "ood_correct": 20,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 278,
+     "id_wrong": 2,
+     "ood_correct": 7,
+     "ood_wrong": 13,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 252,
+     "id_wrong": 28,
+     "ood_correct": 3,
+     "ood_wrong": 17,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 168,
+     "id_wrong": 112,
+     "ood_correct": 6,
+     "ood_wrong": 14,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 145,
+     "id_wrong": 135,
+     "ood_correct": 17,
+     "ood_wrong": 3,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X5_p0": {
+   "n": 300,
+   "n_id": 281,
+   "n_ood": 19,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 1,
+     "id_wrong": 280,
+     "ood_correct": 0,
+     "ood_wrong": 19,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 247,
+     "id_wrong": 34,
+     "ood_correct": 0,
+     "ood_wrong": 19,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 281,
+     "id_wrong": 0,
+     "ood_correct": 9,
+     "ood_wrong": 10,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 281,
+     "id_wrong": 0,
+     "ood_correct": 10,
+     "ood_wrong": 9,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 281,
+     "id_wrong": 0,
+     "ood_correct": 19,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 178,
+     "id_wrong": 103,
+     "ood_correct": 11,
+     "ood_wrong": 8,
+     "none_frac": 0.0033333333333333335,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 266,
+     "id_wrong": 15,
+     "ood_correct": 12,
+     "ood_wrong": 7,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 263,
+     "id_wrong": 18,
+     "ood_correct": 17,
+     "ood_wrong": 2,
+     "none_frac": 0.016666666666666666,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 267,
+     "id_wrong": 14,
+     "ood_correct": 11,
+     "ood_wrong": 8,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 196,
+     "id_wrong": 85,
+     "ood_correct": 7,
+     "ood_wrong": 12,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 163,
+     "id_wrong": 118,
+     "ood_correct": 10,
+     "ood_wrong": 9,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X5_p1": {
+   "n": 300,
+   "n_id": 274,
+   "n_ood": 26,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 0,
+     "id_wrong": 274,
+     "ood_correct": 5,
+     "ood_wrong": 21,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 198,
+     "id_wrong": 76,
+     "ood_correct": 1,
+     "ood_wrong": 25,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 273,
+     "id_wrong": 1,
+     "ood_correct": 9,
+     "ood_wrong": 17,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 274,
+     "id_wrong": 0,
+     "ood_correct": 11,
+     "ood_wrong": 15,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 274,
+     "id_wrong": 0,
+     "ood_correct": 26,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 181,
+     "id_wrong": 93,
+     "ood_correct": 12,
+     "ood_wrong": 14,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 263,
+     "id_wrong": 11,
+     "ood_correct": 14,
+     "ood_wrong": 12,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 267,
+     "id_wrong": 7,
+     "ood_correct": 9,
+     "ood_wrong": 17,
+     "none_frac": 0.013333333333333334,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 266,
+     "id_wrong": 8,
+     "ood_correct": 4,
+     "ood_wrong": 22,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 187,
+     "id_wrong": 87,
+     "ood_correct": 5,
+     "ood_wrong": 21,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 140,
+     "id_wrong": 134,
+     "ood_correct": 25,
+     "ood_wrong": 1,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X6_p0": {
+   "n": 300,
+   "n_id": 281,
+   "n_ood": 19,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 0,
+     "id_wrong": 281,
+     "ood_correct": 2,
+     "ood_wrong": 17,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 210,
+     "id_wrong": 71,
+     "ood_correct": 0,
+     "ood_wrong": 19,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 280,
+     "id_wrong": 1,
+     "ood_correct": 10,
+     "ood_wrong": 9,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 273,
+     "id_wrong": 8,
+     "ood_correct": 4,
+     "ood_wrong": 15,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 280,
+     "id_wrong": 1,
+     "ood_correct": 19,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 173,
+     "id_wrong": 108,
+     "ood_correct": 10,
+     "ood_wrong": 9,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 257,
+     "id_wrong": 24,
+     "ood_correct": 19,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 247,
+     "id_wrong": 34,
+     "ood_correct": 9,
+     "ood_wrong": 10,
+     "none_frac": 0.043333333333333335,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 227,
+     "id_wrong": 54,
+     "ood_correct": 13,
+     "ood_wrong": 6,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 222,
+     "id_wrong": 59,
+     "ood_correct": 2,
+     "ood_wrong": 17,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 118,
+     "id_wrong": 163,
+     "ood_correct": 2,
+     "ood_wrong": 17,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X6_p1": {
+   "n": 300,
+   "n_id": 282,
+   "n_ood": 18,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 0,
+     "id_wrong": 282,
+     "ood_correct": 0,
+     "ood_wrong": 18,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 204,
+     "id_wrong": 78,
+     "ood_correct": 0,
+     "ood_wrong": 18,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 278,
+     "id_wrong": 4,
+     "ood_correct": 16,
+     "ood_wrong": 2,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 282,
+     "id_wrong": 0,
+     "ood_correct": 5,
+     "ood_wrong": 13,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 282,
+     "id_wrong": 0,
+     "ood_correct": 18,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 204,
+     "id_wrong": 78,
+     "ood_correct": 10,
+     "ood_wrong": 8,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 256,
+     "id_wrong": 26,
+     "ood_correct": 15,
+     "ood_wrong": 3,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 275,
+     "id_wrong": 7,
+     "ood_correct": 16,
+     "ood_wrong": 2,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 233,
+     "id_wrong": 49,
+     "ood_correct": 16,
+     "ood_wrong": 2,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 209,
+     "id_wrong": 73,
+     "ood_correct": 10,
+     "ood_wrong": 8,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 44,
+     "id_wrong": 238,
+     "ood_correct": 1,
+     "ood_wrong": 17,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X7_p0": {
+   "n": 300,
+   "n_id": 286,
+   "n_ood": 14,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 5,
+     "id_wrong": 281,
+     "ood_correct": 0,
+     "ood_wrong": 14,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 233,
+     "id_wrong": 53,
+     "ood_correct": 0,
+     "ood_wrong": 14,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 283,
+     "id_wrong": 3,
+     "ood_correct": 7,
+     "ood_wrong": 7,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 286,
+     "id_wrong": 0,
+     "ood_correct": 8,
+     "ood_wrong": 6,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 285,
+     "id_wrong": 1,
+     "ood_correct": 14,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 159,
+     "id_wrong": 127,
+     "ood_correct": 6,
+     "ood_wrong": 8,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 267,
+     "id_wrong": 19,
+     "ood_correct": 7,
+     "ood_wrong": 7,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 279,
+     "id_wrong": 7,
+     "ood_correct": 7,
+     "ood_wrong": 7,
+     "none_frac": 0.02666666666666667,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 277,
+     "id_wrong": 9,
+     "ood_correct": 2,
+     "ood_wrong": 12,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 247,
+     "id_wrong": 39,
+     "ood_correct": 1,
+     "ood_wrong": 13,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 202,
+     "id_wrong": 84,
+     "ood_correct": 5,
+     "ood_wrong": 9,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X7_p1": {
+   "n": 300,
+   "n_id": 280,
+   "n_ood": 20,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 2,
+     "id_wrong": 278,
+     "ood_correct": 0,
+     "ood_wrong": 20,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 246,
+     "id_wrong": 34,
+     "ood_correct": 0,
+     "ood_wrong": 20,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 278,
+     "id_wrong": 2,
+     "ood_correct": 10,
+     "ood_wrong": 10,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 279,
+     "id_wrong": 1,
+     "ood_correct": 11,
+     "ood_wrong": 9,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 279,
+     "id_wrong": 1,
+     "ood_correct": 20,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 153,
+     "id_wrong": 127,
+     "ood_correct": 10,
+     "ood_wrong": 10,
+     "none_frac": 0.0033333333333333335,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 268,
+     "id_wrong": 12,
+     "ood_correct": 11,
+     "ood_wrong": 9,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 258,
+     "id_wrong": 22,
+     "ood_correct": 19,
+     "ood_wrong": 1,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 250,
+     "id_wrong": 30,
+     "ood_correct": 15,
+     "ood_wrong": 5,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 215,
+     "id_wrong": 65,
+     "ood_correct": 2,
+     "ood_wrong": 18,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 220,
+     "id_wrong": 60,
+     "ood_correct": 0,
+     "ood_wrong": 20,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X8_p0": {
+   "n": 300,
+   "n_id": 284,
+   "n_ood": 16,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 3,
+     "id_wrong": 281,
+     "ood_correct": 0,
+     "ood_wrong": 16,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 220,
+     "id_wrong": 64,
+     "ood_correct": 2,
+     "ood_wrong": 14,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 282,
+     "id_wrong": 2,
+     "ood_correct": 16,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 281,
+     "id_wrong": 3,
+     "ood_correct": 10,
+     "ood_wrong": 6,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 278,
+     "id_wrong": 6,
+     "ood_correct": 15,
+     "ood_wrong": 1,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 173,
+     "id_wrong": 111,
+     "ood_correct": 14,
+     "ood_wrong": 2,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 257,
+     "id_wrong": 27,
+     "ood_correct": 13,
+     "ood_wrong": 3,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 264,
+     "id_wrong": 20,
+     "ood_correct": 13,
+     "ood_wrong": 3,
+     "none_frac": 0.04,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 263,
+     "id_wrong": 21,
+     "ood_correct": 10,
+     "ood_wrong": 6,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 228,
+     "id_wrong": 56,
+     "ood_correct": 5,
+     "ood_wrong": 11,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 130,
+     "id_wrong": 154,
+     "ood_correct": 10,
+     "ood_wrong": 6,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  },
+  "X8_p1": {
+   "n": 300,
+   "n_id": 279,
+   "n_ood": 21,
+   "min_each": 6,
+   "method": {
+    "bloomz-1b1@3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d": {
+     "id_correct": 3,
+     "id_wrong": 276,
+     "ood_correct": 0,
+     "ood_wrong": 21,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf": {
+     "id_correct": 193,
+     "id_wrong": 86,
+     "ood_correct": 6,
+     "ood_wrong": 15,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "granite-3.1-1b-a400m-instruct@0da7a48b0276d500ce5922fd2b33944091fc6c09": {
+     "id_correct": 279,
+     "id_wrong": 0,
+     "ood_correct": 16,
+     "ood_wrong": 5,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "granite-3.1-2b-instruct@bbc2aed595bd38bd770263dc3ab831db9794441d": {
+     "id_correct": 277,
+     "id_wrong": 2,
+     "ood_correct": 3,
+     "ood_wrong": 18,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "LFM2-1.2B@40f3da0d0164913923aee9462c23077868b816a3": {
+     "id_correct": 275,
+     "id_wrong": 4,
+     "ood_correct": 21,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e": {
+     "id_correct": 186,
+     "id_wrong": 93,
+     "ood_correct": 16,
+     "ood_wrong": 5,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775": {
+     "id_correct": 260,
+     "id_wrong": 19,
+     "ood_correct": 17,
+     "ood_wrong": 4,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306": {
+     "id_correct": 237,
+     "id_wrong": 42,
+     "ood_correct": 9,
+     "ood_wrong": 12,
+     "none_frac": 0.09666666666666666,
+     "ok": false
+    },
+    "SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674": {
+     "id_correct": 258,
+     "id_wrong": 21,
+     "ood_correct": 15,
+     "ood_wrong": 6,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951": {
+     "id_correct": 225,
+     "id_wrong": 54,
+     "ood_correct": 8,
+     "ood_wrong": 13,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6": {
+     "id_correct": 120,
+     "id_wrong": 159,
+     "ood_correct": 15,
+     "ood_wrong": 6,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   }
+  }
+ },
+ "heads": {
+  "bloomz-1b1": {
+   "repo": "bigscience/bloomz-1b1",
+   "vendor": "BigScience",
+   "revision": "3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d",
+   "ok_envs": 0,
+   "ok_envs_literal": 0,
+   "n_envs": 10,
+   "acc_id": [
+    0.0,
+    0.0035714285714285713,
+    0.0035587188612099642,
+    0.0,
+    0.0,
+    0.0,
+    0.017482517482517484,
+    0.007142857142857143,
+    0.01056338028169014,
+    0.010752688172043012
+   ],
+   "acc_ood": [
+    0.0,
+    0.0,
+    0.0,
+    0.19230769230769232,
+    0.10526315789473684,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 0.4370666666666666,
+   "p_pass_env": {
+    "X4_p0": 0.0,
+    "X4_p1": 1.5136281112055158e-09,
+    "X5_p0": 1.4262745434117348e-09,
+    "X5_p1": 0.0,
+    "X6_p0": 0.0,
+    "X6_p1": 0.0,
+    "X7_p0": 0.31037683944746114,
+    "X7_p1": 5.7481166911109046e-05,
+    "X8_p0": 0.006212009415942313,
+    "X8_p1": 0.007456942802007187
+   },
+   "acc_id_mean": 0.005307159051174631,
+   "acc_ood_mean": 0.029757085020242914,
+   "none_mean": 0.0,
+   "fast": true,
+   "valid": false,
+   "valid_literal": false,
+   "p_pass": 0.03241032757722244
+  },
+  "Falcon3-1B-Instruct": {
+   "repo": "tiiuae/Falcon3-1B-Instruct",
+   "vendor": "TII",
+   "revision": "28ba2251970a01dd1edc7ba7dad2eb71216ccfdf",
+   "ok_envs": 10,
+   "ok_envs_literal": 10,
+   "n_envs": 10,
+   "acc_id": [
+    0.8551236749116607,
+    0.775,
+    0.8790035587188612,
+    0.7226277372262774,
+    0.7473309608540926,
+    0.723404255319149,
+    0.8146853146853147,
+    0.8785714285714286,
+    0.7746478873239436,
+    0.6917562724014337
+   ],
+   "acc_ood": [
+    0.058823529411764705,
+    0.0,
+    0.0,
+    0.038461538461538464,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.125,
+    0.2857142857142857
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 0.6818666666666666,
+   "p_pass_env": {
+    "X4_p0": 1.0,
+    "X4_p1": 1.0,
+    "X5_p0": 1.0,
+    "X5_p1": 1.0,
+    "X6_p0": 1.0,
+    "X6_p1": 1.0,
+    "X7_p0": 1.0,
+    "X7_p1": 1.0,
+    "X8_p0": 1.0,
+    "X8_p1": 1.0
+   },
+   "acc_id_mean": 0.7862151090012162,
+   "acc_ood_mean": 0.05079993535875889,
+   "none_mean": 0.0,
+   "fast": true,
+   "valid": true,
+   "valid_literal": true,
+   "p_pass": 1.0
+  },
+  "granite-3.1-1b-a400m-instruct": {
+   "repo": "ibm-granite/granite-3.1-1b-a400m-instruct",
+   "vendor": "IBM",
+   "revision": "0da7a48b0276d500ce5922fd2b33944091fc6c09",
+   "ok_envs": 1,
+   "ok_envs_literal": 0,
+   "n_envs": 10,
+   "acc_id": [
+    0.9787985865724381,
+    1.0,
+    1.0,
+    0.9963503649635036,
+    0.99644128113879,
+    0.9858156028368794,
+    0.9895104895104895,
+    0.9928571428571429,
+    0.9929577464788732,
+    1.0
+   ],
+   "acc_ood": [
+    1.0,
+    0.5,
+    0.47368421052631576,
+    0.34615384615384615,
+    0.5263157894736842,
+    0.8888888888888888,
+    0.5,
+    0.5,
+    1.0,
+    0.7619047619047619
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 0.4609666666666667,
+   "p_pass_env": {
+    "X4_p0": 0.6427236516053646,
+    "X4_p1": 0.0,
+    "X5_p0": 0.0,
+    "X5_p1": 2.170119750566357e-09,
+    "X6_p0": 1.4262745429149959e-09,
+    "X6_p1": 0.08590355848233544,
+    "X7_p0": 0.005774909074181767,
+    "X7_p1": 5.748116691106642e-05,
+    "X8_p0": 4.7503303414520026e-05,
+    "X8_p1": 0.0
+   },
+   "acc_id_mean": 0.9932731214358117,
+   "acc_ood_mean": 0.6496947496947496,
+   "none_mean": 0.0,
+   "fast": true,
+   "valid": false,
+   "valid_literal": false,
+   "p_pass": 0.07345071072286016
+  },
+  "granite-3.1-2b-instruct": {
+   "repo": "ibm-granite/granite-3.1-2b-instruct",
+   "vendor": "IBM",
+   "revision": "bbc2aed595bd38bd770263dc3ab831db9794441d",
+   "ok_envs": 1,
+   "ok_envs_literal": 0,
+   "n_envs": 10,
+   "acc_id": [
+    0.9893992932862191,
+    1.0,
+    1.0,
+    1.0,
+    0.9715302491103203,
+    1.0,
+    1.0,
+    0.9964285714285714,
+    0.9894366197183099,
+    0.992831541218638
+   ],
+   "acc_ood": [
+    0.5294117647058824,
+    0.4,
+    0.5263157894736842,
+    0.4230769230769231,
+    0.21052631578947367,
+    0.2777777777777778,
+    0.5714285714285714,
+    0.55,
+    0.625,
+    0.14285714285714285
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 2.1457,
+   "p_pass_env": {
+    "X4_p0": 0.006442963508148214,
+    "X4_p1": 0.0,
+    "X5_p0": 0.0,
+    "X5_p1": 0.0,
+    "X6_p0": 0.9640616994086549,
+    "X6_p1": 0.0,
+    "X7_p0": 0.0,
+    "X7_p1": 1.5136281117378303e-09,
+    "X8_p0": 0.0062120094159423545,
+    "X8_p1": 6.030065807627327e-05
+   },
+   "acc_id_mean": 0.9939626274762059,
+   "acc_ood_mean": 0.42563942851094555,
+   "none_mean": 0.0,
+   "fast": false,
+   "valid": false,
+   "valid_literal": false,
+   "p_pass": 0.097677697450445
+  },
+  "LFM2-1.2B": {
+   "repo": "LiquidAI/LFM2-1.2B",
+   "vendor": "Liquid AI",
+   "revision": "40f3da0d0164913923aee9462c23077868b816a3",
+   "ok_envs": 1,
+   "ok_envs_literal": 0,
+   "n_envs": 10,
+   "acc_id": [
+    1.0,
+    0.9964285714285714,
+    1.0,
+    1.0,
+    0.99644128113879,
+    1.0,
+    0.9965034965034965,
+    0.9964285714285714,
+    0.9788732394366197,
+    0.985663082437276
+   ],
+   "acc_ood": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    0.9375,
+    1.0
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 0.6288333333333334,
+   "p_pass_env": {
+    "X4_p0": 0.0,
+    "X4_p1": 1.5136281117378303e-09,
+    "X5_p0": 0.0,
+    "X5_p1": 0.0,
+    "X6_p0": 1.4262745429149959e-09,
+    "X6_p1": 0.0,
+    "X7_p0": 1.0622313029173824e-09,
+    "X7_p1": 1.5136281117378303e-09,
+    "X8_p0": 0.6366385749887556,
+    "X8_p1": 0.09287351734006744
+   },
+   "acc_id_mean": 0.9950338242373326,
+   "acc_ood_mean": 0.99375,
+   "none_mean": 0.0,
+   "fast": true,
+   "valid": false,
+   "valid_literal": false,
+   "p_pass": 0.07295120978445852
+  },
+  "OLMo-2-0425-1B-Instruct": {
+   "repo": "allenai/OLMo-2-0425-1B-Instruct",
+   "vendor": "AI2",
+   "revision": "48d788eca847d4d7548f375ad03d3c9312f6139e",
+   "ok_envs": 10,
+   "ok_envs_literal": 10,
+   "n_envs": 10,
+   "acc_id": [
+    0.7279151943462897,
+    0.6714285714285714,
+    0.6334519572953736,
+    0.6605839416058394,
+    0.6156583629893239,
+    0.723404255319149,
+    0.5559440559440559,
+    0.5464285714285714,
+    0.6091549295774648,
+    0.6666666666666666
+   ],
+   "acc_ood": [
+    0.8235294117647058,
+    0.85,
+    0.5789473684210527,
+    0.46153846153846156,
+    0.5263157894736842,
+    0.5555555555555556,
+    0.42857142857142855,
+    0.5,
+    0.875,
+    0.7619047619047619
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0033333333333333335,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0033333333333333335,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 0.6690333333333333,
+   "p_pass_env": {
+    "X4_p0": 1.0,
+    "X4_p1": 1.0,
+    "X5_p0": 1.0,
+    "X5_p1": 1.0,
+    "X6_p0": 1.0,
+    "X6_p1": 1.0,
+    "X7_p0": 1.0,
+    "X7_p1": 1.0,
+    "X8_p0": 1.0,
+    "X8_p1": 1.0
+   },
+   "acc_id_mean": 0.6410636506601307,
+   "acc_ood_mean": 0.636136277722965,
+   "none_mean": 0.0006666666666666668,
+   "fast": true,
+   "valid": true,
+   "valid_literal": true,
+   "p_pass": 1.0
+  },
+  "Qwen2.5-0.5B-Instruct": {
+   "repo": "Qwen/Qwen2.5-0.5B-Instruct",
+   "vendor": "Alibaba",
+   "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+   "ok_envs": 10,
+   "ok_envs_literal": 5,
+   "n_envs": 10,
+   "acc_id": [
+    0.8480565371024735,
+    0.8964285714285715,
+    0.9466192170818505,
+    0.9598540145985401,
+    0.9145907473309609,
+    0.9078014184397163,
+    0.9335664335664335,
+    0.9571428571428572,
+    0.9049295774647887,
+    0.931899641577061
+   ],
+   "acc_ood": [
+    1.0,
+    1.0,
+    0.631578947368421,
+    0.5384615384615384,
+    1.0,
+    0.8333333333333334,
+    0.5,
+    0.55,
+    0.8125,
+    0.8095238095238095
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 0.38223333333333337,
+   "p_pass_env": {
+    "X4_p0": 1.0,
+    "X4_p1": 1.0,
+    "X5_p0": 0.9999999756502954,
+    "X5_p1": 0.9998855604120959,
+    "X6_p0": 1.0,
+    "X6_p1": 1.0,
+    "X7_p0": 0.9999999999983996,
+    "X7_p1": 0.999976786783025,
+    "X8_p0": 1.0,
+    "X8_p1": 0.999999999999564
+   },
+   "acc_id_mean": 0.9200889015733253,
+   "acc_ood_mean": 0.7675397628687103,
+   "none_mean": 0.0,
+   "fast": true,
+   "valid": true,
+   "valid_literal": false,
+   "p_pass": 0.999986232284338
+  },
+  "Qwen2.5-1.5B-Instruct": {
+   "repo": "Qwen/Qwen2.5-1.5B-Instruct",
+   "vendor": "Alibaba",
+   "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+   "ok_envs": 8,
+   "ok_envs_literal": 3,
+   "n_envs": 10,
+   "acc_id": [
+    0.9787985865724381,
+    0.9928571428571429,
+    0.9359430604982206,
+    0.9744525547445255,
+    0.8790035587188612,
+    0.975177304964539,
+    0.9755244755244755,
+    0.9214285714285714,
+    0.9295774647887324,
+    0.8494623655913979
+   ],
+   "acc_ood": [
+    0.7647058823529411,
+    0.35,
+    0.8947368421052632,
+    0.34615384615384615,
+    0.47368421052631576,
+    0.8888888888888888,
+    0.5,
+    0.95,
+    0.8125,
+    0.42857142857142855
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.016666666666666666,
+    0.013333333333333334,
+    0.043333333333333335,
+    0.0,
+    0.02666666666666667,
+    0.0,
+    0.04,
+    0.09666666666666666
+   ],
+   "sec_per_task": 1.1636,
+   "p_pass_env": {
+    "X4_p0": 0.6427236516053646,
+    "X4_p1": 5.748116691106642e-05,
+    "X5_p0": 0.9999999999900351,
+    "X5_p1": 0.8952698622027662,
+    "X6_p0": 1.0,
+    "X6_p1": 0.8673340829207742,
+    "X7_p0": 0.8520627488433126,
+    "X7_p1": 0.9999999999999999,
+    "X8_p0": 0.9999999999999304,
+    "X8_p1": 0.0
+   },
+   "acc_id_mean": 0.9412225085688904,
+   "acc_ood_mean": 0.6409241098598684,
+   "none_mean": 0.02366666666666667,
+   "fast": true,
+   "valid": true,
+   "valid_literal": false,
+   "p_pass": 0.7257447826729094
+  },
+  "SmolLM2-1.7B-Instruct": {
+   "repo": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "vendor": "Hugging Face",
+   "revision": "31b70e2e869a7173562077fd711b654946d38674",
+   "ok_envs": 10,
+   "ok_envs_literal": 7,
+   "n_envs": 10,
+   "acc_id": [
+    0.901060070671378,
+    0.9,
+    0.9501779359430605,
+    0.9708029197080292,
+    0.8078291814946619,
+    0.8262411347517731,
+    0.9685314685314685,
+    0.8928571428571429,
+    0.926056338028169,
+    0.9247311827956989
+   ],
+   "acc_ood": [
+    0.7647058823529411,
+    0.15,
+    0.5789473684210527,
+    0.15384615384615385,
+    0.6842105263157895,
+    0.8888888888888888,
+    0.14285714285714285,
+    0.75,
+    0.625,
+    0.7142857142857143
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 1.4138666666666668,
+   "p_pass_env": {
+    "X4_p0": 1.0,
+    "X4_p1": 1.0,
+    "X5_p0": 0.999999724597802,
+    "X5_p1": 0.9731953646221873,
+    "X6_p0": 1.0,
+    "X6_p1": 1.0,
+    "X7_p0": 0.9899282298092092,
+    "X7_p1": 1.0,
+    "X8_p0": 0.9999999999999959,
+    "X8_p1": 0.9999999999999986
+   },
+   "acc_id_mean": 0.9068287374781383,
+   "acc_ood_mean": 0.5452741676967683,
+   "none_mean": 0.0,
+   "fast": true,
+   "valid": true,
+   "valid_literal": false,
+   "p_pass": 0.9963123319029193
+  },
+  "SmolLM2-360M-Instruct": {
+   "repo": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "vendor": "Hugging Face",
+   "revision": "a10cc1512eabd3dde888204e902eca88bddb4951",
+   "ok_envs": 10,
+   "ok_envs_literal": 10,
+   "n_envs": 10,
+   "acc_id": [
+    0.8586572438162544,
+    0.6,
+    0.697508896797153,
+    0.6824817518248175,
+    0.7900355871886121,
+    0.7411347517730497,
+    0.8636363636363636,
+    0.7678571428571429,
+    0.8028169014084507,
+    0.8064516129032258
+   ],
+   "acc_ood": [
+    0.5882352941176471,
+    0.3,
+    0.3684210526315789,
+    0.19230769230769232,
+    0.10526315789473684,
+    0.5555555555555556,
+    0.07142857142857142,
+    0.1,
+    0.3125,
+    0.38095238095238093
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 0.1382,
+   "p_pass_env": {
+    "X4_p0": 1.0,
+    "X4_p1": 1.0,
+    "X5_p0": 1.0,
+    "X5_p1": 1.0,
+    "X6_p0": 1.0,
+    "X6_p1": 1.0,
+    "X7_p0": 1.0,
+    "X7_p1": 1.0,
+    "X8_p0": 1.0,
+    "X8_p1": 1.0
+   },
+   "acc_id_mean": 0.761058025220507,
+   "acc_ood_mean": 0.2974663704888163,
+   "none_mean": 0.0,
+   "fast": true,
+   "valid": true,
+   "valid_literal": true,
+   "p_pass": 1.0
+  },
+  "TinyLlama-1.1B-Chat-v1.0": {
+   "repo": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "vendor": "TinyLlama",
+   "revision": "fe8a4ea1ffedaf415f4da2f062534de366a451e6",
+   "ok_envs": 10,
+   "ok_envs_literal": 10,
+   "n_envs": 10,
+   "acc_id": [
+    0.4876325088339223,
+    0.5178571428571429,
+    0.5800711743772242,
+    0.5109489051094891,
+    0.4199288256227758,
+    0.15602836879432624,
+    0.7062937062937062,
+    0.7857142857142857,
+    0.45774647887323944,
+    0.43010752688172044
+   ],
+   "acc_ood": [
+    0.4117647058823529,
+    0.85,
+    0.5263157894736842,
+    0.9615384615384616,
+    0.10526315789473684,
+    0.05555555555555555,
+    0.35714285714285715,
+    0.0,
+    0.625,
+    0.7142857142857143
+   ],
+   "none": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "sec_per_task": 0.44120000000000004,
+   "p_pass_env": {
+    "X4_p0": 1.0,
+    "X4_p1": 1.0,
+    "X5_p0": 1.0,
+    "X5_p1": 1.0,
+    "X6_p0": 1.0,
+    "X6_p1": 1.0,
+    "X7_p0": 1.0,
+    "X7_p1": 1.0,
+    "X8_p0": 1.0,
+    "X8_p1": 1.0
+   },
+   "acc_id_mean": 0.5052328923357832,
+   "acc_ood_mean": 0.46068662417733625,
+   "none_mean": 0.0,
+   "fast": true,
+   "valid": true,
+   "valid_literal": true,
+   "p_pass": 1.0
+  }
+ },
+ "B": 200,
+ "crowd": [
+  "Qwen2.5-1.5B-Instruct",
+  "Qwen2.5-0.5B-Instruct",
+  "SmolLM2-1.7B-Instruct",
+  "Falcon3-1B-Instruct",
+  "SmolLM2-360M-Instruct",
+  "OLMo-2-0425-1B-Instruct",
+  "TinyLlama-1.1B-Chat-v1.0"
+ ],
+ "vendors": [
+  "AI2",
+  "Alibaba",
+  "Hugging Face",
+  "TII",
+  "TinyLlama"
+ ],
+ "crowd_ok": true,
+ "fixed_new": "Qwen2.5-0.5B-Instruct",
+ "fixed_new_by_hypothesis": "Qwen2.5-1.5B-Instruct",
+ "p_defined": {
+  "p_env_valid": 0.999568834658283,
+  "p_env_valid_by_env": {
+   "X4_p0": 1.0,
+   "X4_p1": 1.0,
+   "X5_p0": 0.9999999999999932,
+   "X5_p1": 0.9971783365798286,
+   "X6_p0": 1.0,
+   "X6_p1": 1.0,
+   "X7_p0": 0.9985100100034445,
+   "X7_p1": 1.0,
+   "X8_p0": 1.0,
+   "X8_p1": 0.9999999999995626
+  },
+  "p_defined": 0.9999981425670661,
+  "p_fixed_pass": 0.999986232284338,
+  "p_fixed_in_all_valid": 0.999931163317164,
+  "note": "приближение: точность головы в среде теста (p = 2) — как в пилотной среде (p = 0, 1); головы независимы при данной среде"
+ },
+ "q": {
+  "X4_p0": {
+   "q_new": 0.2783593599383073,
+   "n_joint_new": 346,
+   "q_py": 0.10931378709494037,
+   "n_joint_py": 2026,
+   "d1": 0.1690455728433669,
+   "d1_sd": 0.049786970370826314,
+   "d1_adj": -0.09489370029759156,
+   "d1_adj_sd": 0.0590282611909957,
+   "adj_beta": 0.5930050677585585,
+   "adj_alpha": -0.09428461950216471,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.3333333333333333,
+     "m": 6,
+     "acc_i": 0.9666666666666667,
+     "acc_j": 0.8933333333333333,
+     "acc_pair": 0.9299999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.6,
+     "m": 5,
+     "acc_i": 0.9666666666666667,
+     "acc_j": 0.81,
+     "acc_pair": 0.8883333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.2,
+     "m": 5,
+     "acc_i": 0.9666666666666667,
+     "acc_j": 0.8433333333333334,
+     "acc_pair": 0.905,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 3,
+     "acc_i": 0.9666666666666667,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.85,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.14285714285714285,
+     "m": 7,
+     "acc_i": 0.9666666666666667,
+     "acc_j": 0.48333333333333334,
+     "acc_pair": 0.725,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.375,
+     "m": 16,
+     "acc_i": 0.8566666666666667,
+     "acc_j": 0.8933333333333333,
+     "acc_pair": 0.875,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.2,
+     "m": 10,
+     "acc_i": 0.8566666666666667,
+     "acc_j": 0.81,
+     "acc_pair": 0.8333333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.2857142857142857,
+     "m": 7,
+     "acc_i": 0.8566666666666667,
+     "acc_j": 0.8433333333333334,
+     "acc_pair": 0.8500000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 12,
+     "acc_i": 0.8566666666666667,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.7949999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.16666666666666666,
+     "m": 36,
+     "acc_i": 0.8566666666666667,
+     "acc_j": 0.48333333333333334,
+     "acc_pair": 0.67,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.5,
+     "m": 16,
+     "acc_i": 0.8933333333333333,
+     "acc_j": 0.81,
+     "acc_pair": 0.8516666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.3333333333333333,
+     "m": 9,
+     "acc_i": 0.8933333333333333,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.8133333333333332,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.36666666666666664,
+     "m": 30,
+     "acc_i": 0.8933333333333333,
+     "acc_j": 0.48333333333333334,
+     "acc_pair": 0.6883333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.6153846153846154,
+     "m": 26,
+     "acc_i": 0.81,
+     "acc_j": 0.8433333333333334,
+     "acc_pair": 0.8266666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.1875,
+     "m": 16,
+     "acc_i": 0.81,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.7716666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.28205128205128205,
+     "m": 39,
+     "acc_i": 0.81,
+     "acc_j": 0.48333333333333334,
+     "acc_pair": 0.6466666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.125,
+     "m": 16,
+     "acc_i": 0.8433333333333334,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.7883333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.5128205128205128,
+     "m": 39,
+     "acc_i": 0.8433333333333334,
+     "acc_j": 0.48333333333333334,
+     "acc_pair": 0.6633333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.0625,
+     "m": 48,
+     "acc_i": 0.7333333333333333,
+     "acc_j": 0.48333333333333334,
+     "acc_pair": 0.6083333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.021645021645021644,
+     "m": 231,
+     "acc_i": 0.22,
+     "acc_j": 0.02,
+     "acc_pair": 0.12,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.10909090909090909,
+     "m": 110,
+     "acc_i": 0.22,
+     "acc_j": 0.56,
+     "acc_pair": 0.39,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.07058823529411765,
+     "m": 85,
+     "acc_i": 0.22,
+     "acc_j": 0.6666666666666666,
+     "acc_pair": 0.4433333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.0707070707070707,
+     "m": 198,
+     "acc_i": 0.22,
+     "acc_j": 0.21,
+     "acc_pair": 0.215,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.06578947368421052,
+     "m": 152,
+     "acc_i": 0.22,
+     "acc_j": 0.38333333333333336,
+     "acc_pair": 0.3016666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.023255813953488372,
+     "m": 129,
+     "acc_i": 0.02,
+     "acc_j": 0.56,
+     "acc_pair": 0.29000000000000004,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.010101010101010102,
+     "m": 99,
+     "acc_i": 0.02,
+     "acc_j": 0.6666666666666666,
+     "acc_pair": 0.3433333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.05128205128205128,
+     "m": 234,
+     "acc_i": 0.02,
+     "acc_j": 0.21,
+     "acc_pair": 0.11499999999999999,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.00546448087431694,
+     "m": 183,
+     "acc_i": 0.02,
+     "acc_j": 0.38333333333333336,
+     "acc_pair": 0.2016666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.6931818181818182,
+     "m": 88,
+     "acc_i": 0.56,
+     "acc_j": 0.6666666666666666,
+     "acc_pair": 0.6133333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.0603448275862069,
+     "m": 116,
+     "acc_i": 0.56,
+     "acc_j": 0.21,
+     "acc_pair": 0.385,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.08333333333333333,
+     "m": 84,
+     "acc_i": 0.56,
+     "acc_j": 0.38333333333333336,
+     "acc_pair": 0.4716666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.056179775280898875,
+     "m": 89,
+     "acc_i": 0.6666666666666666,
+     "acc_j": 0.21,
+     "acc_pair": 0.4383333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.12121212121212122,
+     "m": 66,
+     "acc_i": 0.6666666666666666,
+     "acc_j": 0.38333333333333336,
+     "acc_pair": 0.525,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.19753086419753085,
+     "m": 162,
+     "acc_i": 0.21,
+     "acc_j": 0.38333333333333336,
+     "acc_pair": 0.2966666666666667,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "потеря переноса": 119,
+    "прочее": 171,
+    "лишний перенос": 134
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.9666666666666667,
+    "Qwen2.5-0.5B-Instruct": 0.8566666666666667,
+    "SmolLM2-1.7B-Instruct": 0.8933333333333333,
+    "Falcon3-1B-Instruct": 0.81,
+    "SmolLM2-360M-Instruct": 0.8433333333333334,
+    "OLMo-2-0425-1B-Instruct": 0.7333333333333333,
+    "TinyLlama-1.1B-Chat-v1.0": 0.48333333333333334
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.22,
+    "pythia-1.4b-deduped@main": 0.02,
+    "pythia-2.8b@main": 0.56,
+    "pythia-2.8b-deduped@main": 0.6666666666666666,
+    "pythia-6.9b@main": 0.21,
+    "pythia-6.9b-deduped@main": 0.38333333333333336
+   }
+  },
+  "X4_p1": {
+   "q_new": 0.27036430881380125,
+   "n_joint_new": 447,
+   "q_py": 0.15217315994955335,
+   "n_joint_py": 2824,
+   "d1": 0.11819114886424789,
+   "d1_sd": 0.03969195463345983,
+   "d1_adj": -0.3965316284360116,
+   "d1_adj_sd": 0.09779592108618079,
+   "adj_beta": 1.0126858990777696,
+   "adj_alpha": -0.08186980339286427,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.0,
+     "m": 13,
+     "acc_i": 0.95,
+     "acc_j": 0.85,
+     "acc_pair": 0.8999999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.5714285714285714,
+     "m": 14,
+     "acc_i": 0.95,
+     "acc_j": 0.7233333333333334,
+     "acc_pair": 0.8366666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.08333333333333333,
+     "m": 12,
+     "acc_i": 0.95,
+     "acc_j": 0.58,
+     "acc_pair": 0.7649999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 1.0,
+     "m": 2,
+     "acc_i": 0.95,
+     "acc_j": 0.6833333333333333,
+     "acc_pair": 0.8166666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.6666666666666666,
+     "m": 3,
+     "acc_i": 0.95,
+     "acc_j": 0.54,
+     "acc_pair": 0.745,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.5714285714285714,
+     "m": 7,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.85,
+     "acc_pair": 0.8766666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.08333333333333333,
+     "m": 12,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.7233333333333334,
+     "acc_pair": 0.8133333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.21428571428571427,
+     "m": 14,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.58,
+     "acc_pair": 0.7416666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 8,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.6833333333333333,
+     "acc_pair": 0.7933333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.35714285714285715,
+     "m": 28,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.54,
+     "acc_pair": 0.7216666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.375,
+     "m": 32,
+     "acc_i": 0.85,
+     "acc_j": 0.7233333333333334,
+     "acc_pair": 0.7866666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.09090909090909091,
+     "m": 11,
+     "acc_i": 0.85,
+     "acc_j": 0.6833333333333333,
+     "acc_pair": 0.7666666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.2727272727272727,
+     "m": 22,
+     "acc_i": 0.85,
+     "acc_j": 0.54,
+     "acc_pair": 0.6950000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.3023255813953488,
+     "m": 43,
+     "acc_i": 0.7233333333333334,
+     "acc_j": 0.58,
+     "acc_pair": 0.6516666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.15,
+     "m": 20,
+     "acc_i": 0.7233333333333334,
+     "acc_j": 0.6833333333333333,
+     "acc_pair": 0.7033333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.18181818181818182,
+     "m": 44,
+     "acc_i": 0.7233333333333334,
+     "acc_j": 0.54,
+     "acc_pair": 0.6316666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.05128205128205128,
+     "m": 39,
+     "acc_i": 0.58,
+     "acc_j": 0.6833333333333333,
+     "acc_pair": 0.6316666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.14705882352941177,
+     "m": 68,
+     "acc_i": 0.58,
+     "acc_j": 0.54,
+     "acc_pair": 0.56,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.01818181818181818,
+     "m": 55,
+     "acc_i": 0.6833333333333333,
+     "acc_j": 0.54,
+     "acc_pair": 0.6116666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.08888888888888889,
+     "m": 270,
+     "acc_i": 0.07666666666666666,
+     "acc_j": 0.023333333333333334,
+     "acc_pair": 0.049999999999999996,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.08108108108108109,
+     "m": 185,
+     "acc_i": 0.07666666666666666,
+     "acc_j": 0.3566666666666667,
+     "acc_pair": 0.21666666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.0782122905027933,
+     "m": 179,
+     "acc_i": 0.07666666666666666,
+     "acc_j": 0.37333333333333335,
+     "acc_pair": 0.225,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.09865470852017937,
+     "m": 223,
+     "acc_i": 0.07666666666666666,
+     "acc_j": 0.23666666666666666,
+     "acc_pair": 0.15666666666666668,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.116751269035533,
+     "m": 197,
+     "acc_i": 0.07666666666666666,
+     "acc_j": 0.32,
+     "acc_pair": 0.19833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.06349206349206349,
+     "m": 189,
+     "acc_i": 0.023333333333333334,
+     "acc_j": 0.3566666666666667,
+     "acc_pair": 0.19,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.059782608695652176,
+     "m": 184,
+     "acc_i": 0.023333333333333334,
+     "acc_j": 0.37333333333333335,
+     "acc_pair": 0.19833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.018018018018018018,
+     "m": 222,
+     "acc_i": 0.023333333333333334,
+     "acc_j": 0.23666666666666666,
+     "acc_pair": 0.13,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.035,
+     "m": 200,
+     "acc_i": 0.023333333333333334,
+     "acc_j": 0.32,
+     "acc_pair": 0.17166666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.6140350877192983,
+     "m": 171,
+     "acc_i": 0.3566666666666667,
+     "acc_j": 0.37333333333333335,
+     "acc_pair": 0.365,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.14545454545454545,
+     "m": 165,
+     "acc_i": 0.3566666666666667,
+     "acc_j": 0.23666666666666666,
+     "acc_pair": 0.2966666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.25477707006369427,
+     "m": 157,
+     "acc_i": 0.3566666666666667,
+     "acc_j": 0.32,
+     "acc_pair": 0.3383333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.1320754716981132,
+     "m": 159,
+     "acc_i": 0.37333333333333335,
+     "acc_j": 0.23666666666666666,
+     "acc_pair": 0.305,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.21476510067114093,
+     "m": 149,
+     "acc_i": 0.37333333333333335,
+     "acc_j": 0.32,
+     "acc_pair": 0.3466666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.28160919540229884,
+     "m": 174,
+     "acc_i": 0.23666666666666666,
+     "acc_j": 0.32,
+     "acc_pair": 0.2783333333333333,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "потеря переноса": 193,
+    "прочее": 187,
+    "лишний перенос": 151
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.95,
+    "Qwen2.5-0.5B-Instruct": 0.9033333333333333,
+    "SmolLM2-1.7B-Instruct": 0.85,
+    "Falcon3-1B-Instruct": 0.7233333333333334,
+    "SmolLM2-360M-Instruct": 0.58,
+    "OLMo-2-0425-1B-Instruct": 0.6833333333333333,
+    "TinyLlama-1.1B-Chat-v1.0": 0.54
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.07666666666666666,
+    "pythia-1.4b-deduped@main": 0.023333333333333334,
+    "pythia-2.8b@main": 0.3566666666666667,
+    "pythia-2.8b-deduped@main": 0.37333333333333335,
+    "pythia-6.9b@main": 0.23666666666666666,
+    "pythia-6.9b-deduped@main": 0.32
+   }
+  },
+  "X5_p0": {
+   "q_new": 0.3735643505380348,
+   "n_joint_new": 386,
+   "q_py": 0.15067697362477225,
+   "n_joint_py": 2301,
+   "d1": 0.22288737691326252,
+   "d1_sd": 0.04329867557457098,
+   "d1_adj": -0.10212619379925564,
+   "d1_adj_sd": 0.08026886561231501,
+   "adj_beta": 0.6929840472798083,
+   "adj_alpha": -0.06222312534508017,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.0,
+     "m": 1,
+     "acc_i": 0.9333333333333333,
+     "acc_j": 0.9266666666666666,
+     "acc_pair": 0.9299999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.0,
+     "m": 4,
+     "acc_i": 0.9333333333333333,
+     "acc_j": 0.8233333333333334,
+     "acc_pair": 0.8783333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.6,
+     "m": 5,
+     "acc_i": 0.9333333333333333,
+     "acc_j": 0.6766666666666666,
+     "acc_pair": 0.8049999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 5,
+     "acc_i": 0.9333333333333333,
+     "acc_j": 0.63,
+     "acc_pair": 0.7816666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.38461538461538464,
+     "m": 13,
+     "acc_i": 0.9333333333333333,
+     "acc_j": 0.5766666666666667,
+     "acc_pair": 0.755,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.625,
+     "m": 8,
+     "acc_i": 0.9266666666666666,
+     "acc_j": 0.9266666666666666,
+     "acc_pair": 0.9266666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.6666666666666666,
+     "m": 18,
+     "acc_i": 0.9266666666666666,
+     "acc_j": 0.8233333333333334,
+     "acc_pair": 0.875,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.7692307692307693,
+     "m": 13,
+     "acc_i": 0.9266666666666666,
+     "acc_j": 0.6766666666666666,
+     "acc_pair": 0.8016666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.36363636363636365,
+     "m": 11,
+     "acc_i": 0.9266666666666666,
+     "acc_j": 0.63,
+     "acc_pair": 0.7783333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.3125,
+     "m": 16,
+     "acc_i": 0.9266666666666666,
+     "acc_j": 0.5766666666666667,
+     "acc_pair": 0.7516666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.5333333333333333,
+     "m": 15,
+     "acc_i": 0.9266666666666666,
+     "acc_j": 0.8233333333333334,
+     "acc_pair": 0.875,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.5555555555555556,
+     "m": 9,
+     "acc_i": 0.9266666666666666,
+     "acc_j": 0.63,
+     "acc_pair": 0.7783333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.6111111111111112,
+     "m": 18,
+     "acc_i": 0.9266666666666666,
+     "acc_j": 0.5766666666666667,
+     "acc_pair": 0.7516666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.4,
+     "m": 35,
+     "acc_i": 0.8233333333333334,
+     "acc_j": 0.6766666666666666,
+     "acc_pair": 0.75,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.19047619047619047,
+     "m": 21,
+     "acc_i": 0.8233333333333334,
+     "acc_j": 0.63,
+     "acc_pair": 0.7266666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.22857142857142856,
+     "m": 35,
+     "acc_i": 0.8233333333333334,
+     "acc_j": 0.5766666666666667,
+     "acc_pair": 0.7,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.10810810810810811,
+     "m": 37,
+     "acc_i": 0.6766666666666666,
+     "acc_j": 0.63,
+     "acc_pair": 0.6533333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.6060606060606061,
+     "m": 66,
+     "acc_i": 0.6766666666666666,
+     "acc_j": 0.5766666666666667,
+     "acc_pair": 0.6266666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.14285714285714285,
+     "m": 56,
+     "acc_i": 0.63,
+     "acc_j": 0.5766666666666667,
+     "acc_pair": 0.6033333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.07171314741035857,
+     "m": 251,
+     "acc_i": 0.16333333333333333,
+     "acc_j": 0.0,
+     "acc_pair": 0.08166666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.0547945205479452,
+     "m": 146,
+     "acc_i": 0.16333333333333333,
+     "acc_j": 0.4866666666666667,
+     "acc_pair": 0.325,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.08633093525179857,
+     "m": 139,
+     "acc_i": 0.16333333333333333,
+     "acc_j": 0.5033333333333333,
+     "acc_pair": 0.3333333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.16393442622950818,
+     "m": 183,
+     "acc_i": 0.16333333333333333,
+     "acc_j": 0.3333333333333333,
+     "acc_pair": 0.24833333333333332,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.14792899408284024,
+     "m": 169,
+     "acc_i": 0.16333333333333333,
+     "acc_j": 0.3566666666666667,
+     "acc_pair": 0.26,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.025974025974025976,
+     "m": 154,
+     "acc_i": 0.0,
+     "acc_j": 0.4866666666666667,
+     "acc_pair": 0.24333333333333335,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.03355704697986577,
+     "m": 149,
+     "acc_i": 0.0,
+     "acc_j": 0.5033333333333333,
+     "acc_pair": 0.25166666666666665,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.02,
+     "m": 200,
+     "acc_i": 0.0,
+     "acc_j": 0.3333333333333333,
+     "acc_pair": 0.16666666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.0051813471502590676,
+     "m": 193,
+     "acc_i": 0.0,
+     "acc_j": 0.3566666666666667,
+     "acc_pair": 0.17833333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.7559055118110236,
+     "m": 127,
+     "acc_i": 0.4866666666666667,
+     "acc_j": 0.5033333333333333,
+     "acc_pair": 0.495,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.2184873949579832,
+     "m": 119,
+     "acc_i": 0.4866666666666667,
+     "acc_j": 0.3333333333333333,
+     "acc_pair": 0.41000000000000003,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.07547169811320754,
+     "m": 106,
+     "acc_i": 0.4866666666666667,
+     "acc_j": 0.3566666666666667,
+     "acc_pair": 0.4216666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.25217391304347825,
+     "m": 115,
+     "acc_i": 0.5033333333333333,
+     "acc_j": 0.3333333333333333,
+     "acc_pair": 0.41833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.0784313725490196,
+     "m": 102,
+     "acc_i": 0.5033333333333333,
+     "acc_j": 0.3566666666666667,
+     "acc_pair": 0.43,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.2702702702702703,
+     "m": 148,
+     "acc_i": 0.3333333333333333,
+     "acc_j": 0.3566666666666667,
+     "acc_pair": 0.345,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "лишний перенос": 181,
+    "прочее": 134,
+    "потеря переноса": 131
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.9333333333333333,
+    "Qwen2.5-0.5B-Instruct": 0.9266666666666666,
+    "SmolLM2-1.7B-Instruct": 0.9266666666666666,
+    "Falcon3-1B-Instruct": 0.8233333333333334,
+    "SmolLM2-360M-Instruct": 0.6766666666666666,
+    "OLMo-2-0425-1B-Instruct": 0.63,
+    "TinyLlama-1.1B-Chat-v1.0": 0.5766666666666667
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.16333333333333333,
+    "pythia-1.4b-deduped@main": 0.0,
+    "pythia-2.8b@main": 0.4866666666666667,
+    "pythia-2.8b-deduped@main": 0.5033333333333333,
+    "pythia-6.9b@main": 0.3333333333333333,
+    "pythia-6.9b-deduped@main": 0.3566666666666667
+   }
+  },
+  "X5_p1": {
+   "q_new": 0.2382067248222925,
+   "n_joint_new": 503,
+   "q_py": 0.13677798149901504,
+   "n_joint_py": 3139,
+   "d1": 0.10142874332327745,
+   "d1_sd": 0.02827073724989772,
+   "d1_adj": -0.10156576102125657,
+   "d1_adj_sd": 0.09128294946576494,
+   "adj_beta": 0.36249018632952446,
+   "adj_alpha": 0.07213389827025017,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.0,
+     "m": 13,
+     "acc_i": 0.92,
+     "acc_j": 0.9,
+     "acc_pair": 0.91,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.06666666666666667,
+     "m": 15,
+     "acc_i": 0.92,
+     "acc_j": 0.6633333333333333,
+     "acc_pair": 0.7916666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.08333333333333333,
+     "m": 12,
+     "acc_i": 0.92,
+     "acc_j": 0.64,
+     "acc_pair": 0.78,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.1,
+     "m": 10,
+     "acc_i": 0.92,
+     "acc_j": 0.6433333333333333,
+     "acc_pair": 0.7816666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.0,
+     "m": 6,
+     "acc_i": 0.92,
+     "acc_j": 0.55,
+     "acc_pair": 0.7350000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.6,
+     "m": 15,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.9,
+     "acc_pair": 0.9116666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.3125,
+     "m": 16,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.6633333333333333,
+     "acc_pair": 0.7933333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.5882352941176471,
+     "m": 17,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.64,
+     "acc_pair": 0.7816666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.07142857142857142,
+     "m": 14,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.6433333333333333,
+     "acc_pair": 0.7833333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.6666666666666666,
+     "m": 9,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.55,
+     "acc_pair": 0.7366666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.36,
+     "m": 25,
+     "acc_i": 0.9,
+     "acc_j": 0.6633333333333333,
+     "acc_pair": 0.7816666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 15,
+     "acc_i": 0.9,
+     "acc_j": 0.6433333333333333,
+     "acc_pair": 0.7716666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.2222222222222222,
+     "m": 9,
+     "acc_i": 0.9,
+     "acc_j": 0.55,
+     "acc_pair": 0.7250000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.5223880597014925,
+     "m": 67,
+     "acc_i": 0.6633333333333333,
+     "acc_j": 0.64,
+     "acc_pair": 0.6516666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.044444444444444446,
+     "m": 45,
+     "acc_i": 0.6633333333333333,
+     "acc_j": 0.6433333333333333,
+     "acc_pair": 0.6533333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.1346153846153846,
+     "m": 52,
+     "acc_i": 0.6633333333333333,
+     "acc_j": 0.55,
+     "acc_pair": 0.6066666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.13636363636363635,
+     "m": 44,
+     "acc_i": 0.64,
+     "acc_j": 0.6433333333333333,
+     "acc_pair": 0.6416666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.49206349206349204,
+     "m": 63,
+     "acc_i": 0.64,
+     "acc_j": 0.55,
+     "acc_pair": 0.595,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.125,
+     "m": 56,
+     "acc_i": 0.6433333333333333,
+     "acc_j": 0.55,
+     "acc_pair": 0.5966666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.1524822695035461,
+     "m": 282,
+     "acc_i": 0.05333333333333334,
+     "acc_j": 0.016666666666666666,
+     "acc_pair": 0.035,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.0735930735930736,
+     "m": 231,
+     "acc_i": 0.05333333333333334,
+     "acc_j": 0.2,
+     "acc_pair": 0.12666666666666668,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.08648648648648649,
+     "m": 185,
+     "acc_i": 0.05333333333333334,
+     "acc_j": 0.36333333333333334,
+     "acc_pair": 0.20833333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.11553784860557768,
+     "m": 251,
+     "acc_i": 0.05333333333333334,
+     "acc_j": 0.13666666666666666,
+     "acc_pair": 0.095,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.06,
+     "m": 200,
+     "acc_i": 0.05333333333333334,
+     "acc_j": 0.3,
+     "acc_pair": 0.17666666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.008403361344537815,
+     "m": 238,
+     "acc_i": 0.016666666666666666,
+     "acc_j": 0.2,
+     "acc_pair": 0.10833333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.015873015873015872,
+     "m": 189,
+     "acc_i": 0.016666666666666666,
+     "acc_j": 0.36333333333333334,
+     "acc_pair": 0.19,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.06976744186046512,
+     "m": 258,
+     "acc_i": 0.016666666666666666,
+     "acc_j": 0.13666666666666666,
+     "acc_pair": 0.07666666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.014354066985645933,
+     "m": 209,
+     "acc_i": 0.016666666666666666,
+     "acc_j": 0.3,
+     "acc_pair": 0.15833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.6951871657754011,
+     "m": 187,
+     "acc_i": 0.2,
+     "acc_j": 0.36333333333333334,
+     "acc_pair": 0.2816666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.07981220657276995,
+     "m": 213,
+     "acc_i": 0.2,
+     "acc_j": 0.13666666666666666,
+     "acc_pair": 0.16833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.18333333333333332,
+     "m": 180,
+     "acc_i": 0.2,
+     "acc_j": 0.3,
+     "acc_pair": 0.25,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.08522727272727272,
+     "m": 176,
+     "acc_i": 0.36333333333333334,
+     "acc_j": 0.13666666666666666,
+     "acc_pair": 0.25,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.17880794701986755,
+     "m": 151,
+     "acc_i": 0.36333333333333334,
+     "acc_j": 0.3,
+     "acc_pair": 0.33166666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.2328042328042328,
+     "m": 189,
+     "acc_i": 0.13666666666666666,
+     "acc_j": 0.3,
+     "acc_pair": 0.21833333333333332,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "прочее": 157,
+    "потеря переноса": 211,
+    "лишний перенос": 156
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.92,
+    "Qwen2.5-0.5B-Instruct": 0.9233333333333333,
+    "SmolLM2-1.7B-Instruct": 0.9,
+    "Falcon3-1B-Instruct": 0.6633333333333333,
+    "SmolLM2-360M-Instruct": 0.64,
+    "OLMo-2-0425-1B-Instruct": 0.6433333333333333,
+    "TinyLlama-1.1B-Chat-v1.0": 0.55
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.05333333333333334,
+    "pythia-1.4b-deduped@main": 0.016666666666666666,
+    "pythia-2.8b@main": 0.2,
+    "pythia-2.8b-deduped@main": 0.36333333333333334,
+    "pythia-6.9b@main": 0.13666666666666666,
+    "pythia-6.9b-deduped@main": 0.3
+   }
+  },
+  "X6_p0": {
+   "q_new": 0.23684491846164132,
+   "n_joint_new": 558,
+   "q_py": 0.10721983158179185,
+   "n_joint_py": 2823,
+   "d1": 0.12962508687984947,
+   "d1_sd": 0.031900977774692744,
+   "d1_adj": -0.16473307076743499,
+   "d1_adj_sd": 0.05118186879818744,
+   "adj_beta": 0.5984810053823872,
+   "adj_alpha": -0.02145358457542157,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.5,
+     "m": 8,
+     "acc_i": 0.8533333333333334,
+     "acc_j": 0.8,
+     "acc_pair": 0.8266666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.0,
+     "m": 11,
+     "acc_i": 0.8533333333333334,
+     "acc_j": 0.7,
+     "acc_pair": 0.7766666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.0,
+     "m": 8,
+     "acc_i": 0.8533333333333334,
+     "acc_j": 0.7466666666666667,
+     "acc_pair": 0.8,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.08333333333333333,
+     "m": 12,
+     "acc_i": 0.8533333333333334,
+     "acc_j": 0.61,
+     "acc_pair": 0.7316666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.2222222222222222,
+     "m": 27,
+     "acc_i": 0.8533333333333334,
+     "acc_j": 0.4,
+     "acc_pair": 0.6266666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.46153846153846156,
+     "m": 13,
+     "acc_i": 0.92,
+     "acc_j": 0.8,
+     "acc_pair": 0.8600000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.25,
+     "m": 4,
+     "acc_i": 0.92,
+     "acc_j": 0.7,
+     "acc_pair": 0.81,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.625,
+     "m": 8,
+     "acc_i": 0.92,
+     "acc_j": 0.7466666666666667,
+     "acc_pair": 0.8333333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 16,
+     "acc_i": 0.92,
+     "acc_j": 0.61,
+     "acc_pair": 0.765,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.30434782608695654,
+     "m": 23,
+     "acc_i": 0.92,
+     "acc_j": 0.4,
+     "acc_pair": 0.66,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.4117647058823529,
+     "m": 17,
+     "acc_i": 0.8,
+     "acc_j": 0.7,
+     "acc_pair": 0.75,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.09523809523809523,
+     "m": 42,
+     "acc_i": 0.8,
+     "acc_j": 0.61,
+     "acc_pair": 0.7050000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.4482758620689655,
+     "m": 58,
+     "acc_i": 0.8,
+     "acc_j": 0.4,
+     "acc_pair": 0.6000000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.5384615384615384,
+     "m": 39,
+     "acc_i": 0.7,
+     "acc_j": 0.7466666666666667,
+     "acc_pair": 0.7233333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.13793103448275862,
+     "m": 29,
+     "acc_i": 0.7,
+     "acc_j": 0.61,
+     "acc_pair": 0.655,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.06451612903225806,
+     "m": 62,
+     "acc_i": 0.7,
+     "acc_j": 0.4,
+     "acc_pair": 0.55,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.075,
+     "m": 40,
+     "acc_i": 0.7466666666666667,
+     "acc_j": 0.61,
+     "acc_pair": 0.6783333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.24242424242424243,
+     "m": 66,
+     "acc_i": 0.7466666666666667,
+     "acc_j": 0.4,
+     "acc_pair": 0.5733333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.04,
+     "m": 75,
+     "acc_i": 0.61,
+     "acc_j": 0.4,
+     "acc_pair": 0.505,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.1708185053380783,
+     "m": 281,
+     "acc_i": 0.06333333333333334,
+     "acc_j": 0.0,
+     "acc_pair": 0.03166666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.03680981595092025,
+     "m": 163,
+     "acc_i": 0.06333333333333334,
+     "acc_j": 0.4266666666666667,
+     "acc_pair": 0.24500000000000002,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.0234375,
+     "m": 128,
+     "acc_i": 0.06333333333333334,
+     "acc_j": 0.5466666666666666,
+     "acc_pair": 0.305,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.04230769230769231,
+     "m": 260,
+     "acc_i": 0.06333333333333334,
+     "acc_j": 0.09,
+     "acc_pair": 0.07666666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.046610169491525424,
+     "m": 236,
+     "acc_i": 0.06333333333333334,
+     "acc_j": 0.16333333333333333,
+     "acc_pair": 0.11333333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.023255813953488372,
+     "m": 172,
+     "acc_i": 0.0,
+     "acc_j": 0.4266666666666667,
+     "acc_pair": 0.21333333333333335,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.014705882352941176,
+     "m": 136,
+     "acc_i": 0.0,
+     "acc_j": 0.5466666666666666,
+     "acc_pair": 0.2733333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.06593406593406594,
+     "m": 273,
+     "acc_i": 0.0,
+     "acc_j": 0.09,
+     "acc_pair": 0.045,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.0,
+     "m": 251,
+     "acc_i": 0.0,
+     "acc_j": 0.16333333333333333,
+     "acc_pair": 0.08166666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.6535433070866141,
+     "m": 127,
+     "acc_i": 0.4266666666666667,
+     "acc_j": 0.5466666666666666,
+     "acc_pair": 0.4866666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.09375,
+     "m": 160,
+     "acc_i": 0.4266666666666667,
+     "acc_j": 0.09,
+     "acc_pair": 0.25833333333333336,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.0410958904109589,
+     "m": 146,
+     "acc_i": 0.4266666666666667,
+     "acc_j": 0.16333333333333333,
+     "acc_pair": 0.29500000000000004,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.09923664122137404,
+     "m": 131,
+     "acc_i": 0.5466666666666666,
+     "acc_j": 0.09,
+     "acc_pair": 0.3183333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.06666666666666667,
+     "m": 120,
+     "acc_i": 0.5466666666666666,
+     "acc_j": 0.16333333333333333,
+     "acc_pair": 0.355,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.2301255230125523,
+     "m": 239,
+     "acc_i": 0.09,
+     "acc_j": 0.16333333333333333,
+     "acc_pair": 0.12666666666666665,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "прочее": 233,
+    "лишний перенос": 214,
+    "потеря переноса": 131
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.8533333333333334,
+    "Qwen2.5-0.5B-Instruct": 0.92,
+    "SmolLM2-1.7B-Instruct": 0.8,
+    "Falcon3-1B-Instruct": 0.7,
+    "SmolLM2-360M-Instruct": 0.7466666666666667,
+    "OLMo-2-0425-1B-Instruct": 0.61,
+    "TinyLlama-1.1B-Chat-v1.0": 0.4
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.06333333333333334,
+    "pythia-1.4b-deduped@main": 0.0,
+    "pythia-2.8b@main": 0.4266666666666667,
+    "pythia-2.8b-deduped@main": 0.5466666666666666,
+    "pythia-6.9b@main": 0.09,
+    "pythia-6.9b-deduped@main": 0.16333333333333333
+   }
+  },
+  "X6_p1": {
+   "q_new": 0.28592523272401105,
+   "n_joint_new": 564,
+   "q_py": 0.12456624462892893,
+   "n_joint_py": 2494,
+   "d1": 0.16135898809508212,
+   "d1_sd": 0.03791668930293207,
+   "d1_adj": -0.0818865340029923,
+   "d1_adj_sd": 0.04973604026196186,
+   "adj_beta": 0.5622083432962189,
+   "adj_alpha": -0.02316961447057746,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.16666666666666666,
+     "m": 6,
+     "acc_i": 0.97,
+     "acc_j": 0.83,
+     "acc_pair": 0.8999999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.3333333333333333,
+     "m": 3,
+     "acc_i": 0.97,
+     "acc_j": 0.68,
+     "acc_pair": 0.825,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.2857142857142857,
+     "m": 7,
+     "acc_i": 0.97,
+     "acc_j": 0.73,
+     "acc_pair": 0.85,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.4,
+     "m": 5,
+     "acc_i": 0.97,
+     "acc_j": 0.7133333333333334,
+     "acc_pair": 0.8416666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.5555555555555556,
+     "m": 9,
+     "acc_i": 0.97,
+     "acc_j": 0.15,
+     "acc_pair": 0.5599999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.375,
+     "m": 16,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.83,
+     "acc_pair": 0.8666666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.6,
+     "m": 15,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.68,
+     "acc_pair": 0.7916666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.5,
+     "m": 18,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.73,
+     "acc_pair": 0.8166666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.35294117647058826,
+     "m": 17,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.7133333333333334,
+     "acc_pair": 0.8083333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.2222222222222222,
+     "m": 27,
+     "acc_i": 0.9033333333333333,
+     "acc_j": 0.15,
+     "acc_pair": 0.5266666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.14285714285714285,
+     "m": 21,
+     "acc_i": 0.83,
+     "acc_j": 0.68,
+     "acc_pair": 0.755,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.2413793103448276,
+     "m": 29,
+     "acc_i": 0.83,
+     "acc_j": 0.7133333333333334,
+     "acc_pair": 0.7716666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.21568627450980393,
+     "m": 51,
+     "acc_i": 0.83,
+     "acc_j": 0.15,
+     "acc_pair": 0.49,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.5405405405405406,
+     "m": 37,
+     "acc_i": 0.68,
+     "acc_j": 0.73,
+     "acc_pair": 0.7050000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.10344827586206896,
+     "m": 29,
+     "acc_i": 0.68,
+     "acc_j": 0.7133333333333334,
+     "acc_pair": 0.6966666666666668,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.03614457831325301,
+     "m": 83,
+     "acc_i": 0.68,
+     "acc_j": 0.15,
+     "acc_pair": 0.41500000000000004,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.06896551724137931,
+     "m": 29,
+     "acc_i": 0.73,
+     "acc_j": 0.7133333333333334,
+     "acc_pair": 0.7216666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.2564102564102564,
+     "m": 78,
+     "acc_i": 0.73,
+     "acc_j": 0.15,
+     "acc_pair": 0.44,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.03571428571428571,
+     "m": 84,
+     "acc_i": 0.7133333333333334,
+     "acc_j": 0.15,
+     "acc_pair": 0.4316666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.040740740740740744,
+     "m": 270,
+     "acc_i": 0.09666666666666666,
+     "acc_j": 0.0033333333333333335,
+     "acc_pair": 0.049999999999999996,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.034013605442176874,
+     "m": 147,
+     "acc_i": 0.09666666666666666,
+     "acc_j": 0.47333333333333333,
+     "acc_pair": 0.285,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.05042016806722689,
+     "m": 119,
+     "acc_i": 0.09666666666666666,
+     "acc_j": 0.58,
+     "acc_pair": 0.3383333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.046153846153846156,
+     "m": 260,
+     "acc_i": 0.09666666666666666,
+     "acc_j": 0.05,
+     "acc_pair": 0.07333333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.05202312138728324,
+     "m": 173,
+     "acc_i": 0.09666666666666666,
+     "acc_j": 0.37333333333333335,
+     "acc_pair": 0.23500000000000001,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.0,
+     "m": 158,
+     "acc_i": 0.0033333333333333335,
+     "acc_j": 0.47333333333333333,
+     "acc_pair": 0.23833333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.0,
+     "m": 126,
+     "acc_i": 0.0033333333333333335,
+     "acc_j": 0.58,
+     "acc_pair": 0.29166666666666663,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.007042253521126761,
+     "m": 284,
+     "acc_i": 0.0033333333333333335,
+     "acc_j": 0.05,
+     "acc_pair": 0.02666666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.0,
+     "m": 188,
+     "acc_i": 0.0033333333333333335,
+     "acc_j": 0.37333333333333335,
+     "acc_pair": 0.18833333333333335,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.6513761467889908,
+     "m": 109,
+     "acc_i": 0.47333333333333333,
+     "acc_j": 0.58,
+     "acc_pair": 0.5266666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.10759493670886076,
+     "m": 158,
+     "acc_i": 0.47333333333333333,
+     "acc_j": 0.05,
+     "acc_pair": 0.26166666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.3486238532110092,
+     "m": 109,
+     "acc_i": 0.47333333333333333,
+     "acc_j": 0.37333333333333335,
+     "acc_pair": 0.42333333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.10483870967741936,
+     "m": 124,
+     "acc_i": 0.58,
+     "acc_j": 0.05,
+     "acc_pair": 0.315,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.1839080459770115,
+     "m": 87,
+     "acc_i": 0.58,
+     "acc_j": 0.37333333333333335,
+     "acc_pair": 0.4766666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.24175824175824176,
+     "m": 182,
+     "acc_i": 0.05,
+     "acc_j": 0.37333333333333335,
+     "acc_pair": 0.21166666666666667,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "потеря переноса": 127,
+    "лишний перенос": 169,
+    "прочее": 311
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.97,
+    "Qwen2.5-0.5B-Instruct": 0.9033333333333333,
+    "SmolLM2-1.7B-Instruct": 0.83,
+    "Falcon3-1B-Instruct": 0.68,
+    "SmolLM2-360M-Instruct": 0.73,
+    "OLMo-2-0425-1B-Instruct": 0.7133333333333334,
+    "TinyLlama-1.1B-Chat-v1.0": 0.15
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.09666666666666666,
+    "pythia-1.4b-deduped@main": 0.0033333333333333335,
+    "pythia-2.8b@main": 0.47333333333333333,
+    "pythia-2.8b-deduped@main": 0.58,
+    "pythia-6.9b@main": 0.05,
+    "pythia-6.9b-deduped@main": 0.37333333333333335
+   }
+  },
+  "X7_p0": {
+   "q_new": 0.34579932364381594,
+   "n_joint_new": 343,
+   "q_py": 0.11896216271297236,
+   "n_joint_py": 3536,
+   "d1": 0.22683716093084358,
+   "d1_sd": 0.05755260984130352,
+   "d1_adj": -0.29878934416693403,
+   "d1_adj_sd": 0.3123051456457644,
+   "adj_beta": 0.7843118008003487,
+   "adj_alpha": 0.020923187612928894,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.2,
+     "m": 5,
+     "acc_i": 0.9533333333333334,
+     "acc_j": 0.93,
+     "acc_pair": 0.9416666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.2,
+     "m": 5,
+     "acc_i": 0.9533333333333334,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.865,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.4,
+     "m": 5,
+     "acc_i": 0.9533333333333334,
+     "acc_j": 0.8266666666666667,
+     "acc_pair": 0.89,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 2,
+     "acc_i": 0.9533333333333334,
+     "acc_j": 0.55,
+     "acc_pair": 0.7516666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.3333333333333333,
+     "m": 3,
+     "acc_i": 0.9533333333333334,
+     "acc_j": 0.69,
+     "acc_pair": 0.8216666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.2727272727272727,
+     "m": 11,
+     "acc_i": 0.9133333333333333,
+     "acc_j": 0.93,
+     "acc_pair": 0.9216666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.3125,
+     "m": 16,
+     "acc_i": 0.9133333333333333,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.845,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.5,
+     "m": 16,
+     "acc_i": 0.9133333333333333,
+     "acc_j": 0.8266666666666667,
+     "acc_pair": 0.87,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.21428571428571427,
+     "m": 14,
+     "acc_i": 0.9133333333333333,
+     "acc_j": 0.55,
+     "acc_pair": 0.7316666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.5,
+     "m": 16,
+     "acc_i": 0.9133333333333333,
+     "acc_j": 0.69,
+     "acc_pair": 0.8016666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.65,
+     "m": 20,
+     "acc_i": 0.93,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.8533333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.18181818181818182,
+     "m": 11,
+     "acc_i": 0.93,
+     "acc_j": 0.55,
+     "acc_pair": 0.74,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.5384615384615384,
+     "m": 13,
+     "acc_i": 0.93,
+     "acc_j": 0.69,
+     "acc_pair": 0.81,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.7894736842105263,
+     "m": 38,
+     "acc_i": 0.7766666666666666,
+     "acc_j": 0.8266666666666667,
+     "acc_pair": 0.8016666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.15151515151515152,
+     "m": 33,
+     "acc_i": 0.7766666666666666,
+     "acc_j": 0.55,
+     "acc_pair": 0.6633333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.3055555555555556,
+     "m": 36,
+     "acc_i": 0.7766666666666666,
+     "acc_j": 0.69,
+     "acc_pair": 0.7333333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.25,
+     "m": 24,
+     "acc_i": 0.8266666666666667,
+     "acc_j": 0.55,
+     "acc_pair": 0.6883333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.6428571428571429,
+     "m": 28,
+     "acc_i": 0.8266666666666667,
+     "acc_j": 0.69,
+     "acc_pair": 0.7583333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.1276595744680851,
+     "m": 47,
+     "acc_i": 0.55,
+     "acc_j": 0.69,
+     "acc_pair": 0.62,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.03125,
+     "m": 288,
+     "acc_i": 0.02,
+     "acc_j": 0.02,
+     "acc_pair": 0.02,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.06072874493927125,
+     "m": 247,
+     "acc_i": 0.02,
+     "acc_j": 0.16333333333333333,
+     "acc_pair": 0.09166666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.05179282868525897,
+     "m": 251,
+     "acc_i": 0.02,
+     "acc_j": 0.15,
+     "acc_pair": 0.08499999999999999,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.07112970711297072,
+     "m": 239,
+     "acc_i": 0.02,
+     "acc_j": 0.19666666666666666,
+     "acc_pair": 0.10833333333333332,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.0635593220338983,
+     "m": 236,
+     "acc_i": 0.02,
+     "acc_j": 0.2,
+     "acc_pair": 0.11,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.056910569105691054,
+     "m": 246,
+     "acc_i": 0.02,
+     "acc_j": 0.16333333333333333,
+     "acc_pair": 0.09166666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.099601593625498,
+     "m": 251,
+     "acc_i": 0.02,
+     "acc_j": 0.15,
+     "acc_pair": 0.08499999999999999,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.06302521008403361,
+     "m": 238,
+     "acc_i": 0.02,
+     "acc_j": 0.19666666666666666,
+     "acc_pair": 0.10833333333333332,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.08016877637130802,
+     "m": 237,
+     "acc_i": 0.02,
+     "acc_j": 0.2,
+     "acc_pair": 0.11,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.5147679324894515,
+     "m": 237,
+     "acc_i": 0.16333333333333333,
+     "acc_j": 0.15,
+     "acc_pair": 0.15666666666666668,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.09523809523809523,
+     "m": 210,
+     "acc_i": 0.16333333333333333,
+     "acc_j": 0.19666666666666666,
+     "acc_pair": 0.18,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.16279069767441862,
+     "m": 215,
+     "acc_i": 0.16333333333333333,
+     "acc_j": 0.2,
+     "acc_pair": 0.18166666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.1,
+     "m": 220,
+     "acc_i": 0.15,
+     "acc_j": 0.19666666666666666,
+     "acc_pair": 0.17333333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.1552511415525114,
+     "m": 219,
+     "acc_i": 0.15,
+     "acc_j": 0.2,
+     "acc_pair": 0.175,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.1782178217821782,
+     "m": 202,
+     "acc_i": 0.19666666666666666,
+     "acc_j": 0.2,
+     "acc_pair": 0.19833333333333333,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "потеря переноса": 172,
+    "лишний перенос": 112,
+    "прочее": 116
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.9533333333333334,
+    "Qwen2.5-0.5B-Instruct": 0.9133333333333333,
+    "SmolLM2-1.7B-Instruct": 0.93,
+    "Falcon3-1B-Instruct": 0.7766666666666666,
+    "SmolLM2-360M-Instruct": 0.8266666666666667,
+    "OLMo-2-0425-1B-Instruct": 0.55,
+    "TinyLlama-1.1B-Chat-v1.0": 0.69
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.02,
+    "pythia-1.4b-deduped@main": 0.02,
+    "pythia-2.8b@main": 0.16333333333333333,
+    "pythia-2.8b-deduped@main": 0.15,
+    "pythia-6.9b@main": 0.19666666666666666,
+    "pythia-6.9b-deduped@main": 0.2
+   }
+  },
+  "X7_p1": {
+   "q_new": 0.31238090886381115,
+   "n_joint_new": 420,
+   "q_py": 0.15510839274080263,
+   "n_joint_py": 3663,
+   "d1": 0.15727251612300852,
+   "d1_sd": 0.035224116487481735,
+   "d1_adj": -0.36618144141823017,
+   "d1_adj_sd": 0.1875082544562916,
+   "adj_beta": 0.7714438226282153,
+   "adj_alpha": 0.07196389185753944,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.6,
+     "m": 15,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.8833333333333333,
+     "acc_pair": 0.9033333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.3333333333333333,
+     "m": 3,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.82,
+     "acc_pair": 0.8716666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.42857142857142855,
+     "m": 14,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.7233333333333334,
+     "acc_pair": 0.8233333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.14285714285714285,
+     "m": 14,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.5433333333333333,
+     "acc_pair": 0.7333333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.2,
+     "m": 5,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.8283333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.16666666666666666,
+     "m": 12,
+     "acc_i": 0.93,
+     "acc_j": 0.8833333333333333,
+     "acc_pair": 0.9066666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.0,
+     "m": 12,
+     "acc_i": 0.93,
+     "acc_j": 0.82,
+     "acc_pair": 0.875,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.3684210526315789,
+     "m": 19,
+     "acc_i": 0.93,
+     "acc_j": 0.7233333333333334,
+     "acc_pair": 0.8266666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.14285714285714285,
+     "m": 14,
+     "acc_i": 0.93,
+     "acc_j": 0.5433333333333333,
+     "acc_pair": 0.7366666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.2,
+     "m": 15,
+     "acc_i": 0.93,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.8316666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.6,
+     "m": 15,
+     "acc_i": 0.8833333333333333,
+     "acc_j": 0.82,
+     "acc_pair": 0.8516666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.15789473684210525,
+     "m": 19,
+     "acc_i": 0.8833333333333333,
+     "acc_j": 0.5433333333333333,
+     "acc_pair": 0.7133333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.47619047619047616,
+     "m": 21,
+     "acc_i": 0.8833333333333333,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.8083333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.6944444444444444,
+     "m": 36,
+     "acc_i": 0.82,
+     "acc_j": 0.7233333333333334,
+     "acc_pair": 0.7716666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.10714285714285714,
+     "m": 28,
+     "acc_i": 0.82,
+     "acc_j": 0.5433333333333333,
+     "acc_pair": 0.6816666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.5,
+     "m": 38,
+     "acc_i": 0.82,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.7766666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.13953488372093023,
+     "m": 43,
+     "acc_i": 0.7233333333333334,
+     "acc_j": 0.5433333333333333,
+     "acc_pair": 0.6333333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.5686274509803921,
+     "m": 51,
+     "acc_i": 0.7233333333333334,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.7283333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.10869565217391304,
+     "m": 46,
+     "acc_i": 0.5433333333333333,
+     "acc_j": 0.7333333333333333,
+     "acc_pair": 0.6383333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.01773049645390071,
+     "m": 282,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.02,
+     "acc_pair": 0.03333333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.12992125984251968,
+     "m": 254,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.12,
+     "acc_pair": 0.08333333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.13385826771653545,
+     "m": 254,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.12666666666666668,
+     "acc_pair": 0.08666666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.0784313725490196,
+     "m": 255,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.11666666666666667,
+     "acc_pair": 0.08166666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.13716814159292035,
+     "m": 226,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.21666666666666667,
+     "acc_pair": 0.13166666666666668,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.07307692307692308,
+     "m": 260,
+     "acc_i": 0.02,
+     "acc_j": 0.12,
+     "acc_pair": 0.06999999999999999,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.1,
+     "m": 260,
+     "acc_i": 0.02,
+     "acc_j": 0.12666666666666668,
+     "acc_pair": 0.07333333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.13076923076923078,
+     "m": 260,
+     "acc_i": 0.02,
+     "acc_j": 0.11666666666666667,
+     "acc_pair": 0.06833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.03418803418803419,
+     "m": 234,
+     "acc_i": 0.02,
+     "acc_j": 0.21666666666666667,
+     "acc_pair": 0.11833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.6666666666666666,
+     "m": 255,
+     "acc_i": 0.12,
+     "acc_j": 0.12666666666666668,
+     "acc_pair": 0.12333333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.19834710743801653,
+     "m": 242,
+     "acc_i": 0.12,
+     "acc_j": 0.11666666666666667,
+     "acc_pair": 0.11833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.1308411214953271,
+     "m": 214,
+     "acc_i": 0.12,
+     "acc_j": 0.21666666666666667,
+     "acc_pair": 0.16833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.2644628099173554,
+     "m": 242,
+     "acc_i": 0.12666666666666668,
+     "acc_j": 0.11666666666666667,
+     "acc_pair": 0.12166666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.15639810426540285,
+     "m": 211,
+     "acc_i": 0.12666666666666668,
+     "acc_j": 0.21666666666666667,
+     "acc_pair": 0.1716666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.07476635514018691,
+     "m": 214,
+     "acc_i": 0.11666666666666667,
+     "acc_j": 0.21666666666666667,
+     "acc_pair": 0.16666666666666669,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "лишний перенос": 115,
+    "потеря переноса": 163,
+    "прочее": 154
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.9233333333333333,
+    "Qwen2.5-0.5B-Instruct": 0.93,
+    "SmolLM2-1.7B-Instruct": 0.8833333333333333,
+    "Falcon3-1B-Instruct": 0.82,
+    "SmolLM2-360M-Instruct": 0.7233333333333334,
+    "OLMo-2-0425-1B-Instruct": 0.5433333333333333,
+    "TinyLlama-1.1B-Chat-v1.0": 0.7333333333333333
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.04666666666666667,
+    "pythia-1.4b-deduped@main": 0.02,
+    "pythia-2.8b@main": 0.12,
+    "pythia-2.8b-deduped@main": 0.12666666666666668,
+    "pythia-6.9b@main": 0.11666666666666667,
+    "pythia-6.9b-deduped@main": 0.21666666666666667
+   }
+  },
+  "X8_p0": {
+   "q_new": 0.3534199550058206,
+   "n_joint_new": 460,
+   "q_py": 0.10140231276447184,
+   "n_joint_py": 2796,
+   "d1": 0.2520176422413487,
+   "d1_sd": 0.028462862431293028,
+   "d1_adj": -0.10655953387891326,
+   "d1_adj_sd": 0.0736166986045469,
+   "adj_beta": 0.6776823288745002,
+   "adj_alpha": -0.048817270136042444,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.0,
+     "m": 6,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.91,
+     "acc_pair": 0.9166666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.0,
+     "m": 6,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.74,
+     "acc_pair": 0.8316666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.7142857142857143,
+     "m": 7,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.85,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 3,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.6233333333333333,
+     "acc_pair": 0.7733333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.9,
+     "m": 10,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.4666666666666667,
+     "acc_pair": 0.6950000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.5454545454545454,
+     "m": 11,
+     "acc_i": 0.9,
+     "acc_j": 0.91,
+     "acc_pair": 0.905,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.5333333333333333,
+     "m": 15,
+     "acc_i": 0.9,
+     "acc_j": 0.74,
+     "acc_pair": 0.8200000000000001,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.95,
+     "m": 20,
+     "acc_i": 0.9,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.8383333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 13,
+     "acc_i": 0.9,
+     "acc_j": 0.6233333333333333,
+     "acc_pair": 0.7616666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.6,
+     "m": 30,
+     "acc_i": 0.9,
+     "acc_j": 0.4666666666666667,
+     "acc_pair": 0.6833333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.6666666666666666,
+     "m": 24,
+     "acc_i": 0.91,
+     "acc_j": 0.74,
+     "acc_pair": 0.825,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.08333333333333333,
+     "m": 12,
+     "acc_i": 0.91,
+     "acc_j": 0.6233333333333333,
+     "acc_pair": 0.7666666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.11538461538461539,
+     "m": 26,
+     "acc_i": 0.91,
+     "acc_j": 0.4666666666666667,
+     "acc_pair": 0.6883333333333334,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.5116279069767442,
+     "m": 43,
+     "acc_i": 0.74,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.7583333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.08695652173913043,
+     "m": 23,
+     "acc_i": 0.74,
+     "acc_j": 0.6233333333333333,
+     "acc_pair": 0.6816666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.2857142857142857,
+     "m": 56,
+     "acc_i": 0.74,
+     "acc_j": 0.4666666666666667,
+     "acc_pair": 0.6033333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.0,
+     "m": 29,
+     "acc_i": 0.7766666666666666,
+     "acc_j": 0.6233333333333333,
+     "acc_pair": 0.7,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.6666666666666666,
+     "m": 54,
+     "acc_i": 0.7766666666666666,
+     "acc_j": 0.4666666666666667,
+     "acc_pair": 0.6216666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.05555555555555555,
+     "m": 72,
+     "acc_i": 0.6233333333333333,
+     "acc_j": 0.4666666666666667,
+     "acc_pair": 0.5449999999999999,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.03496503496503497,
+     "m": 286,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.0,
+     "acc_pair": 0.023333333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.029940119760479042,
+     "m": 167,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.4166666666666667,
+     "acc_pair": 0.2316666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.05161290322580645,
+     "m": 155,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.4533333333333333,
+     "acc_pair": 0.25,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.039647577092511016,
+     "m": 227,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.13666666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.0425531914893617,
+     "m": 235,
+     "acc_i": 0.04666666666666667,
+     "acc_j": 0.18666666666666668,
+     "acc_pair": 0.11666666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.022857142857142857,
+     "m": 175,
+     "acc_i": 0.0,
+     "acc_j": 0.4166666666666667,
+     "acc_pair": 0.20833333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.024390243902439025,
+     "m": 164,
+     "acc_i": 0.0,
+     "acc_j": 0.4533333333333333,
+     "acc_pair": 0.22666666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.034482758620689655,
+     "m": 232,
+     "acc_i": 0.0,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.11333333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.020491803278688523,
+     "m": 244,
+     "acc_i": 0.0,
+     "acc_j": 0.18666666666666668,
+     "acc_pair": 0.09333333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.6027397260273972,
+     "m": 146,
+     "acc_i": 0.4166666666666667,
+     "acc_j": 0.4533333333333333,
+     "acc_pair": 0.435,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.12413793103448276,
+     "m": 145,
+     "acc_i": 0.4166666666666667,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.32166666666666666,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.13245033112582782,
+     "m": 151,
+     "acc_i": 0.4166666666666667,
+     "acc_j": 0.18666666666666668,
+     "acc_pair": 0.3016666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.12781954887218044,
+     "m": 133,
+     "acc_i": 0.4533333333333333,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.33999999999999997,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.11851851851851852,
+     "m": 135,
+     "acc_i": 0.4533333333333333,
+     "acc_j": 0.18666666666666668,
+     "acc_pair": 0.32,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.11442786069651742,
+     "m": 201,
+     "acc_i": 0.22666666666666666,
+     "acc_j": 0.18666666666666668,
+     "acc_pair": 0.20666666666666667,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "потеря переноса": 146,
+    "лишний перенос": 211,
+    "прочее": 129
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.9233333333333333,
+    "Qwen2.5-0.5B-Instruct": 0.9,
+    "SmolLM2-1.7B-Instruct": 0.91,
+    "Falcon3-1B-Instruct": 0.74,
+    "SmolLM2-360M-Instruct": 0.7766666666666666,
+    "OLMo-2-0425-1B-Instruct": 0.6233333333333333,
+    "TinyLlama-1.1B-Chat-v1.0": 0.4666666666666667
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.04666666666666667,
+    "pythia-1.4b-deduped@main": 0.0,
+    "pythia-2.8b@main": 0.4166666666666667,
+    "pythia-2.8b-deduped@main": 0.4533333333333333,
+    "pythia-6.9b@main": 0.22666666666666666,
+    "pythia-6.9b-deduped@main": 0.18666666666666668
+   }
+  },
+  "X8_p1": {
+   "q_new": 0.3443275580892785,
+   "n_joint_new": 461,
+   "q_py": 0.087117418062337,
+   "n_joint_py": 3264,
+   "d1": 0.25721014002694154,
+   "d1_sd": 0.038060880313835616,
+   "d1_adj": 0.015865561507190803,
+   "d1_adj_sd": 0.12200762266474308,
+   "adj_beta": 0.4196656795492914,
+   "adj_alpha": 0.02067035213369924,
+   "pairs": [
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.25,
+     "m": 12,
+     "acc_i": 0.82,
+     "acc_j": 0.91,
+     "acc_pair": 0.865,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.5,
+     "m": 14,
+     "acc_i": 0.82,
+     "acc_j": 0.6633333333333333,
+     "acc_pair": 0.7416666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.6666666666666666,
+     "m": 3,
+     "acc_i": 0.82,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.7983333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.2222222222222222,
+     "m": 9,
+     "acc_i": 0.82,
+     "acc_j": 0.6733333333333333,
+     "acc_pair": 0.7466666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.625,
+     "m": 24,
+     "acc_i": 0.82,
+     "acc_j": 0.45,
+     "acc_pair": 0.635,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "q": 0.3333333333333333,
+     "m": 12,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.91,
+     "acc_pair": 0.9166666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.26666666666666666,
+     "m": 15,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.6633333333333333,
+     "acc_pair": 0.7933333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.3333333333333333,
+     "m": 6,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.85,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.2857142857142857,
+     "m": 14,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.6733333333333333,
+     "acc_pair": 0.7983333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.55,
+     "m": 20,
+     "acc_i": 0.9233333333333333,
+     "acc_j": 0.45,
+     "acc_pair": 0.6866666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "q": 0.4583333333333333,
+     "m": 24,
+     "acc_i": 0.91,
+     "acc_j": 0.6633333333333333,
+     "acc_pair": 0.7866666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.25,
+     "m": 12,
+     "acc_i": 0.91,
+     "acc_j": 0.6733333333333333,
+     "acc_pair": 0.7916666666666667,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.18181818181818182,
+     "m": 22,
+     "acc_i": 0.91,
+     "acc_j": 0.45,
+     "acc_pair": 0.68,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "q": 0.6764705882352942,
+     "m": 34,
+     "acc_i": 0.6633333333333333,
+     "acc_j": 0.7766666666666666,
+     "acc_pair": 0.72,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.15151515151515152,
+     "m": 33,
+     "acc_i": 0.6633333333333333,
+     "acc_j": 0.6733333333333333,
+     "acc_pair": 0.6683333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.208955223880597,
+     "m": 67,
+     "acc_i": 0.6633333333333333,
+     "acc_j": 0.45,
+     "acc_pair": 0.5566666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "q": 0.09523809523809523,
+     "m": 21,
+     "acc_i": 0.7766666666666666,
+     "acc_j": 0.6733333333333333,
+     "acc_pair": 0.725,
+     "kind": "нов"
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.4,
+     "m": 50,
+     "acc_i": 0.7766666666666666,
+     "acc_j": 0.45,
+     "acc_pair": 0.6133333333333333,
+     "kind": "нов"
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "q": 0.08695652173913043,
+     "m": 69,
+     "acc_i": 0.6733333333333333,
+     "acc_j": 0.45,
+     "acc_pair": 0.5616666666666666,
+     "kind": "нов"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-1.4b-deduped@main",
+     "q": 0.017421602787456445,
+     "m": 287,
+     "acc_i": 0.03666666666666667,
+     "acc_j": 0.006666666666666667,
+     "acc_pair": 0.021666666666666667,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.04054054054054054,
+     "m": 222,
+     "acc_i": 0.03666666666666667,
+     "acc_j": 0.24,
+     "acc_pair": 0.13833333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.03524229074889868,
+     "m": 227,
+     "acc_i": 0.03666666666666667,
+     "acc_j": 0.23,
+     "acc_pair": 0.13333333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.06140350877192982,
+     "m": 228,
+     "acc_i": 0.03666666666666667,
+     "acc_j": 0.21,
+     "acc_pair": 0.12333333333333332,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.06666666666666667,
+     "m": 225,
+     "acc_i": 0.03666666666666667,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.13166666666666665,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b@main",
+     "q": 0.030837004405286344,
+     "m": 227,
+     "acc_i": 0.006666666666666667,
+     "acc_j": 0.24,
+     "acc_pair": 0.12333333333333332,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.05240174672489083,
+     "m": 229,
+     "acc_i": 0.006666666666666667,
+     "acc_j": 0.23,
+     "acc_pair": 0.11833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.016877637130801686,
+     "m": 237,
+     "acc_i": 0.006666666666666667,
+     "acc_j": 0.21,
+     "acc_pair": 0.10833333333333332,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-1.4b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.008695652173913044,
+     "m": 230,
+     "acc_i": 0.006666666666666667,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.11666666666666665,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-2.8b-deduped@main",
+     "q": 0.5904761904761905,
+     "m": 210,
+     "acc_i": 0.24,
+     "acc_j": 0.23,
+     "acc_pair": 0.235,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.11764705882352941,
+     "m": 187,
+     "acc_i": 0.24,
+     "acc_j": 0.21,
+     "acc_pair": 0.22499999999999998,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.05913978494623656,
+     "m": 186,
+     "acc_i": 0.24,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.23333333333333334,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b@main",
+     "q": 0.15104166666666666,
+     "m": 192,
+     "acc_i": 0.23,
+     "acc_j": 0.21,
+     "acc_pair": 0.22,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-2.8b-deduped@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.026455026455026454,
+     "m": 189,
+     "acc_i": 0.23,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.22833333333333333,
+     "kind": "py"
+    },
+    {
+     "i": "pythia-6.9b@main",
+     "j": "pythia-6.9b-deduped@main",
+     "q": 0.031914893617021274,
+     "m": 188,
+     "acc_i": 0.21,
+     "acc_j": 0.22666666666666666,
+     "acc_pair": 0.21833333333333332,
+     "kind": "py"
+    }
+   ],
+   "n_pairs_new": 19,
+   "n_pairs_py": 15,
+   "err_types_new": {
+    "прочее": 171,
+    "потеря переноса": 110,
+    "лишний перенос": 225
+   },
+   "acc_new": {
+    "Qwen2.5-1.5B-Instruct": 0.82,
+    "Qwen2.5-0.5B-Instruct": 0.9233333333333333,
+    "SmolLM2-1.7B-Instruct": 0.91,
+    "Falcon3-1B-Instruct": 0.6633333333333333,
+    "SmolLM2-360M-Instruct": 0.7766666666666666,
+    "OLMo-2-0425-1B-Instruct": 0.6733333333333333,
+    "TinyLlama-1.1B-Chat-v1.0": 0.45
+   },
+   "acc_py": {
+    "pythia-1.4b@main": 0.03666666666666667,
+    "pythia-1.4b-deduped@main": 0.006666666666666667,
+    "pythia-2.8b@main": 0.24,
+    "pythia-2.8b-deduped@main": 0.23,
+    "pythia-6.9b@main": 0.21,
+    "pythia-6.9b-deduped@main": 0.22666666666666666
+   }
+  }
+ },
+ "seconds": 1.0
+}
