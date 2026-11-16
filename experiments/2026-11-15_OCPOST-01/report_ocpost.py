@@ -143,7 +143,7 @@ dm = an['P2'].get('dominance_descr')
 if dm:
     add(f"- Связь P2 среды с отрывом лучшей головы на ID: ранговая корреляция {n(dm['spearman'], 3)} (n = {dm['n']}; описательно).")
 add('')
-for sec, title in (('main_question', 'Для главного вопроса'), ('next', 'Что дальше')):
+for sec, title in (('expect', 'Ожидания (PREREG §6; исход — по вердиктам выше)'), ('main_question', 'Для главного вопроса'), ('next', 'Что дальше')):
     if NOTES.get(sec):
         add(f'## {title}')
         add('')
