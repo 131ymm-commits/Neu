@@ -418,11 +418,19 @@ def crowd_power(envs_new, chosen, fixed_new, B, n_test, m_test=5):
 
 
 # ───────────── тест (после PREREG)
-# Константы теста задаются по пилоту 2 до регистрации (PREREG-OCDIV-01.md); пока они None, тест не запускается.
-CROWD = None              # {имя модели: 'repo@commit'} — разнородная толпа
-FIXED_NEW = None          # имя модели FIXED-нов
-D1_RULE = None            # 'raw' — Q-нов − Q-py; 'adj' — δ с поправкой на точность; 'both' — вердикт, только если обе статистики согласны
-D5_DESCRIPTIVE = None     # True — D5 описательно (мощность по пилоту < 0,2; HYPOTHESIS)
+# Константы теста — по пилоту 2 (gha_out/ocdiv_sum_pilot2/pilot2.json), до регистрации (PREREG-OCDIV-01.md, DECISIONS 16.11).
+CROWD = {'Qwen2.5-0.5B-Instruct': 'Qwen/Qwen2.5-0.5B-Instruct@7ae557604adf67be50417f59c2c2f167def9a775',
+         'Qwen2.5-1.5B-Instruct': 'Qwen/Qwen2.5-1.5B-Instruct@989aa7980e4cf806f80c7fef2b1adb7bc71aa306',
+         'SmolLM2-1.7B-Instruct': 'HuggingFaceTB/SmolLM2-1.7B-Instruct@31b70e2e869a7173562077fd711b654946d38674',
+         'Falcon3-1B-Instruct': 'tiiuae/Falcon3-1B-Instruct@28ba2251970a01dd1edc7ba7dad2eb71216ccfdf',
+         'OLMo-2-0425-1B-Instruct': 'allenai/OLMo-2-0425-1B-Instruct@48d788eca847d4d7548f375ad03d3c9312f6139e',
+         'SmolLM2-360M-Instruct': 'HuggingFaceTB/SmolLM2-360M-Instruct@a10cc1512eabd3dde888204e902eca88bddb4951',
+         'TinyLlama-1.1B-Chat-v1.0': 'TinyLlama/TinyLlama-1.1B-Chat-v1.0@fe8a4ea1ffedaf415f4da2f062534de366a451e6'}   # разнородная толпа
+FIXED_NEW = 'Qwen2.5-0.5B-Instruct'   # FIXED-нов
+D1_RULE = 'raw'           # 'raw' — Q-нов − Q-py; 'adj' — δ с поправкой на точность; 'both' — вердикт, только если обе статистики согласны.
+                          # Пилот 2: диапазоны точности толп не пересекаются в 9 средах из 10 — δ описательно (DECISIONS 16.11)
+D5_DESCRIPTIVE = True     # D5 описательно: мощность «подтверждено» по пилоту 0,013 < 0,2 (правило HYPOTHESIS)
+MATCH_ACC = 0.05          # описательно: пары одного производителя против пар разных производителей с точностью пары в пределах ±0,05
 SEED_BOOT_T, SEED_Q_T = 7_980_000, 7_985_000                # бутстреп теста: оценщики и совпадение ошибок (+ 10·X + p)
 PY_TEST_DIR = os.path.join(EXP, '2026-11-15_OCPOST-01/run/out')   # девять Pythia на средах теста (сырой вывод OCPOST-01)
 PY_FIXED = 'pythia-2.8b-deduped'                            # FIXED однородной толпы — как в OCPOST-01 (описательно)
@@ -503,6 +511,12 @@ def test(dst, new_dir, B=10000, workers=1):
         enc, s_ = encode({**new_ans, **py_ans}, s)
         psn, psp = pair_stats(enc, s_, names_c, new_pairs), pair_stats(enc, s_, py_l, py_pairs)
         cross = pair_stats(enc, s_, names_c + py_l, [(i, len(names_c) + j) for i in range(len(names_c)) for j in range(len(py_l))])
+        same = pair_stats(enc, s_, names_c, [(i, j) for i, j in itertools.combinations(range(len(names_c)), 2) if (i, j) not in set(new_pairs)])
+        matched = []
+        for sp in same:                                     # контраст производителя при близкой точности (описательно)
+            near = [x['q'] for x in psn if abs(x['acc_pair'] - sp['acc_pair']) <= MATCH_ACC and np.isfinite(x['q'])]
+            matched.append(dict(i=sp['i'], j=sp['j'], q_same=sp['q'], m_same=sp['m'], acc_pair=sp['acc_pair'], n_matched=len(near),
+                                q_cross_matched=(float(np.mean(near)) if near else None)))
         qn, qp = q_of(psn), q_of(psp)
         dl, beta, alpha = adj_of(psn, psp)
         g = np.random.default_rng(SEED_Q_T + off)
@@ -519,7 +533,8 @@ def test(dst, new_dir, B=10000, workers=1):
                         t = err_type(a_, p['a'], p['b'])
                         types[kind_][t] = types[kind_].get(t, 0) + 1
         r['q'] = dict(q_new=qn[0], n_joint_new=qn[1], q_py=qp[0], n_joint_py=qp[1], d1=qn[0] - qp[0], d1_adj=dl, adj_beta=beta, adj_alpha=alpha,
-                      q_cross_descr=q_of(cross)[0], err_types=types, pairs=[dict(x, kind='нов') for x in psn] + [dict(x, kind='py') for x in psp],
+                      q_cross_descr=q_of(cross)[0], same_vendor_descr=matched, err_types=types,
+                      pairs=[dict(x, kind='нов') for x in psn] + [dict(x, kind='py') for x in psp],
                       acc={nm: float(np.mean(enc[nm][1] & (enc[nm][0] == s_))) for nm in names_c + py_l})
         if info['valid']:
             valid.append(name)
@@ -578,10 +593,19 @@ def test(dst, new_dir, B=10000, workers=1):
     res['D1']['verdict_raw'] = vr
     if method_ok:
         res['D1']['verdict'] = {'raw': vr, 'adj': va, 'both': (vr if vr == va else UD1)}[D1_RULE]
+    if D1_RULE == 'raw':
+        res['D1 adj']['verdict_rule_descr'] = va
+        res['D1 adj']['verdict'] = 'описательно (поправка — экстраполяция: диапазоны точности толп в пилоте не пересекаются)'
+    res['D1']['reading'] = ('вывод о толпах: вклад производителя не отделён от вклада точности (толпы разной точности, PREREG)'
+                            if D1_RULE == 'raw' else '')
+    sv = [x for n in valid for x in res['envs'][n]['q']['same_vendor_descr'] if x['q_cross_matched'] is not None and np.isfinite(x['q_same'])]
+    res['same_vendor_descr'] = dict(n=len(sv), mean_q_same=(float(np.mean([x['q_same'] for x in sv])) if sv else None),
+                                    mean_q_cross_matched=(float(np.mean([x['q_cross_matched'] for x in sv])) if sv else None),
+                                    note=f'пары одного производителя против пар разных производителей с точностью пары ±{MATCH_ACC}; описательно, вес 0')
     if res['N']['verdict'] == 'опровергнуто' and res['D4']['verdict'] != P.U:
         res['D4']['verdict_before_N'] = res['D4']['verdict']
         res['D4']['verdict'] = P.UN
-    if D5_DESCRIPTIVE:
+    if D5_DESCRIPTIVE and method_ok:
         res['D5']['verdict_rule_descr'] = res['D5']['verdict']
         res['D5']['verdict'] = 'описательно (мощность по пилоту < 0,2; PREREG)'
     res['D3']['sign'] = 'C > T (завышение заявки)' if res['D3']['delta'] > 0 else 'C < T (занижение заявки)'
