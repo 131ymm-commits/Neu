@@ -109,6 +109,16 @@ def err_type(ans, a, b):
     return 'прочее'
 
 
+def pair_rows(heads_ans, labels, s, pairs, kind):
+    acc = {nm: float(np.mean([x == t for x, t in zip(heads_ans[nm], s)])) for nm in labels}
+    out = []
+    for i, j in pairs:
+        q, m = q_pair(heads_ans[labels[i]], heads_ans[labels[j]], s)
+        out.append(dict(kind=kind, i=labels[i], j=labels[j], q=q, m=m, acc_i=acc[labels[i]], acc_j=acc[labels[j]],
+                        acc_pair=(acc[labels[i]] + acc[labels[j]]) / 2))
+    return out
+
+
 def q_crowd(heads_ans, labels, s, pairs, idx=None):
     vals = []
     for i, j in pairs:
@@ -185,16 +195,77 @@ def pilot(dst, new_dir, B=200):
                     t = err_type(a_, p['a'], p['b'])
                     types[t] = types.get(t, 0) + 1
         acc_pair_new = float(np.mean([(per_head[new_l[i]]['acc_id_mean'] + per_head[new_l[j]]['acc_id_mean']) / 2 for i, j in new_pairs])) if new_pairs else None
-        q_rows[name] = dict(q_new=qn, n_joint_new=mn, q_py=qp, n_joint_py=mp_, d1=qn - qp, d1_sd=float(np.nanstd(bt, ddof=1)),
+        prs = pair_rows(new_ans, new_l, s, new_pairs, 'нов') + pair_rows(py_ans, py_l, s, py_pairs, 'py')
+        q_rows[name] = dict(q_new=qn, n_joint_new=mn, q_py=qp, n_joint_py=mp_, d1=qn - qp, d1_sd=float(np.nanstd(bt, ddof=1)), pairs=prs,
                             n_pairs_new=len(new_pairs), n_pairs_py=len(py_pairs), err_types_new=types, acc_pair_new=acc_pair_new,
                             acc_py={nm: float(np.mean([x == t for x, t in zip(py_ans[nm], s)])) for nm in py_l})
     res['q'] = q_rows
+    if chosen and res['crowd_ok']:
+        res['power'] = crowd_power(d, envs_new, chosen, res['fixed_new'], B)
     res['seconds'] = round(time.time() - t0, 1)
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('толпа:', chosen, '| производителей', len(per_v), '| FIXED-нов', res['fixed_new'])
     for name, r in q_rows.items():
         print(f"{name}: Q-нов {r['q_new']:.3f} ({r['n_joint_new']} общих ошибок) Q-py {r['q_py']:.3f} ({r['n_joint_py']}) D1 {r['d1']:+.3f} ± {r['d1_sd']:.3f}")
     return res
+
+
+RULES_D = {'D2': (('wc CONF', None), 'sign'), 'D3': (('C FIXED', 'T FIXED'), 'equiv_out'), 'D4': (('wc POST', None), 'equiv'),
+           'D5': (('ioi AGREE', 'ioi CONF'), 'sign'), 'N': (('wc FIXED', None), 'equiv')}
+
+
+def power_rule(kind, mu, tau, s, m, z=P.Z, band=P.BAND):
+    """Мощность для среднего по m средам: точка ~ N(mu, (tau² + s²)/m), полуширина M4 = z·s/√m. equiv_out — D3: «подтверждено»,
+    если интервал целиком вне полосы; «опровергнуто» — целиком внутри (правило P3/N с переставленными исходами)."""
+    from scipy.stats import norm
+    if kind in ('sign', 'equiv'):
+        return P.power_one(kind, mu, tau, s, m, z)
+    se, h = np.sqrt((tau ** 2 + s ** 2) / m), z * s / np.sqrt(m)
+    out_ = float(norm.sf((band + h - mu) / se) + norm.cdf((-band - h - mu) / se))
+    inside = 0.0 if h >= band else float(norm.cdf((band - h - mu) / se) - norm.cdf((-band + h - mu) / se))
+    return out_, inside
+
+
+def crowd_power(d, envs_new, chosen, fixed_new, B, n_test=2200, m_test=5):
+    """Точки и ст. откл. повторов D2–D5 и N на пилотных средах для толпы chosen (FIXED — fixed_new), мощность на тесте:
+    ст. откл. среды пересчитывается на 2200 задач (× √(n_пилота / n_теста)), τ — разброс между пилотными средами."""
+    g0 = {}
+    for name, env in envs_new.items():
+        env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in chosen])
+        off = 10 * env['meta']['X'] + env['meta']['p']
+        st, info = S.prepare(env_c, SEED_CV_P + off)
+        if not info['valid']:
+            g0[name] = dict(valid=False)
+            continue
+        names = [info['names'][k] for k in info['keep']]
+        fx = next((i for i, nm in enumerate(names) if nm.split('@')[0] == fixed_new), None)
+
+        def stats(fit, cols):
+            r = P.post_stats(st, fit, cols, fx)
+            r.update({k: v for k, v in S.core(st, fit, cols).items() if k in ('ioi AGREE', 'ioi CONF')})
+            return r
+        pt = stats(info['idi'], info['ood'])
+        g = np.random.default_rng(SEED_BOOT_P + 1000 + off)
+        reps = [stats(g.choice(info['idi'], len(info['idi'])), g.choice(info['ood'], len(info['ood']))) for _ in range(B)]
+        row = dict(valid=True, n=len(env['problems']), fixed_in_crowd=fx is not None, rules={})
+        for k, (pair, kind) in RULES_D.items():
+            v = [P.val(r, pair) for r in reps]
+            row['rules'][k] = dict(point=float(P.val(pt, pair)), sd=float(np.nanstd(v, ddof=1)))
+        g0[name] = row
+    pw = {}
+    valid = [n for n, r in g0.items() if r.get('valid')]
+    for k, (pair, kind) in RULES_D.items():
+        x = np.array([g0[n]['rules'][k]['point'] for n in valid])
+        sp = np.array([g0[n]['rules'][k]['sd'] for n in valid])
+        if len(x) < 2 or not np.all(np.isfinite(x)):
+            continue
+        n_p = float(np.mean([g0[n]['n'] for n in valid]))
+        s_test = float(np.sqrt(np.mean(sp ** 2)) * np.sqrt(n_p / n_test))
+        tau = float(np.sqrt(max(0.0, x.var(ddof=1) - np.mean(sp ** 2))))
+        conf, ref_ = power_rule(kind, float(x.mean()), tau, s_test, m_test)
+        pw[k] = dict(kind=kind, mu=float(x.mean()), tau=tau, s_pilot_rms=float(np.sqrt(np.mean(sp ** 2))), s_test=s_test,
+                     power_confirm=conf, power_refute=ref_)
+    return dict(envs=g0, rules=pw, n_test=n_test, m_test=m_test)
 
 
 def main():
