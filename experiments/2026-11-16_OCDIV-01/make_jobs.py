@@ -4,7 +4,8 @@
 на задание, 2200 задач). Пуш новых файлов запускает их на neu-par (до 20 раннеров одновременно).
   python3 make_jobs.py pilot            — кандидаты из HYPOTHESIS.md (пилот 1: первые 300 задач — выборка смещена, ERRORS № 175)
   python3 make_jobs.py pilot2 NAME=REPO@REV ...  — пилот 2: 600 случайных задач каждой среды, два задания на голову (p = 0 и p = 1)
-  python3 make_jobs.py test NAME=REPO@REV ...   — годные головы из PREREG (ревизия — хеш коммита из пилота)"""
+  python3 make_jobs.py test [--dir DIR] NAME=REPO@REV ...   — годные головы из PREREG (ревизия — хеш коммита из пилота); DIR — куда
+      писать (по умолчанию gha_par/; при регистрации — шаблоны в jobs/, копии в gha_par/ — при запуске)"""
 import os
 import sys
 
@@ -28,8 +29,8 @@ python3 -m pip install -q transformers==5.20.2 numpy==2.5.3
 """
 
 
-def write(name, what, cmd):
-    p = os.path.join(ROOT, 'gha_par', f'{name}.sh')
+def write(name, what, cmd, dst=None):
+    p = os.path.join(dst or os.path.join(ROOT, 'gha_par'), f'{name}.sh')
     open(p, 'w', encoding='utf-8').write(HEAD.format(what=what) + cmd + '\n')
     return p
 
@@ -50,12 +51,17 @@ def main():
                 out.append(write(f'ocdiv_pilot2_{k}_p{p}', f'пилот 2, {repo}@{rev}, пять сред OCSHIFT-01 с p = {p}, по 600 случайных задач',
                                  f'python3 $E/ocdiv_extract.py --source pilot --model {repo} --revision {rev} --envs {envs} --n 600 --pick random --out "$OUT" --bs 16'))
     elif mode == 'test':
-        for spec in sys.argv[2:]:
+        args = sys.argv[2:]
+        dst = None
+        if args and args[0] == '--dir':
+            dst, args = os.path.abspath(args[1]), args[2:]
+            os.makedirs(dst, exist_ok=True)
+        for spec in args:
             k, rr = spec.split('=')
             repo, rev = rr.split('@')
             for X_ in range(4, 9):
                 out.append(write(f'ocdiv_test_{k}_x{X_}', f'тест, {repo}@{rev}, среда X{X_}_p2 OCPOST-01',
-                                 f'python3 $E/ocdiv_extract.py --source test --model {repo} --revision {rev} --envs X{X_}_p2 --out "$OUT" --bs 16'))
+                                 f'python3 $E/ocdiv_extract.py --source test --model {repo} --revision {rev} --envs X{X_}_p2 --out "$OUT" --bs 16', dst))
     print('\n'.join(os.path.relpath(p, ROOT) for p in out))
 
 
