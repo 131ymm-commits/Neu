@@ -48,6 +48,9 @@ jobs:
         with:
           python-version: '3.13'
       - name: Прогон
+        id: run
+        # свой лимит шага (ERRORS № 171): при выходе за него шаг падает, а коммит ниже всё равно сохраняет частичный вывод
+        timeout-minutes: 340
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
@@ -55,8 +58,11 @@ jobs:
           mkdir -p "gha_out/$n"
           ( set -o pipefail; bash "gha_par/$n.sh" "gha_out/$n" 2>&1 | tee "gha_out/$n/log.txt" ) || echo "задание $n завершилось с ошибкой" >> "gha_out/$n/log.txt"
       - name: Коммит результатов
+        if: always()
         run: |
           n="${{ matrix.job }}"
+          mkdir -p "gha_out/$n"
+          if [ "${{ steps.run.outcome }}" != "success" ]; then echo "шаг прогона: ${{ steps.run.outcome }} (лимит шага 340 мин или сбой); вывод частичный" >> "gha_out/$n/log.txt"; fi
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
           git add "gha_out/$n" || true
