@@ -1,0 +1,9 @@
+[    0.1 с] источник pilot | выборка random | сред 5 | задач 3000 | ID 1390 | OOD 1610
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   20.4 с] Qwen/Qwen2.5-1.5B-Instruct 989aa7980e4cf806f80c7fef2b1adb7bc71aa306 загружена за 16.6 с; ревизия 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+[  738.1 с] X4_p1 точность {'ID': 0.9813, 'OOD': 0.979} | без числа 0 | время 717.8 с, 1.196 с на задачу
+[ 1452.3 с] X5_p1 точность {'ID': 0.9315, 'OOD': 0.9513} | без числа 1 | время 714.2 с, 1.19 с на задачу
+[ 2166.7 с] X6_p1 точность {'ID': 0.922, 'OOD': 0.9969} | без числа 0 | время 714.4 с, 1.191 с на задачу
+[ 2883.9 с] X7_p1 точность {'ID': 0.934, 'OOD': 0.9423} | без числа 1 | время 717.2 с, 1.195 с на задачу
+[ 3597.3 с] X8_p1 точность {'ID': 0.8008, 'OOD': 0.9705} | без числа 15 | время 713.4 с, 1.189 с на задачу
+[ 3597.9 с] записано gha_out/ocdiv_pilot2_qwen15_p1/answers_Qwen2.5-1.5B-Instruct.json
