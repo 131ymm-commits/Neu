@@ -1,0 +1,14 @@
+{
+ "source": "tools/ai_probe.py",
+ "prompt": "Reply with the number only. 347 + 58 =",
+ "truth": 405,
+ "token_present": true,
+ "catalog": {
+  "status": null,
+  "seconds": 0.15,
+  "n": 0,
+  "error": "JSONDecodeError('Expecting value: line 1 column 1 (char 0)')",
+  "models": []
+ },
+ "calls": []
+}
