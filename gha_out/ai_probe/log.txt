@@ -1,2 +1,11 @@
-каталог: код None, моделей 0, 0.15 с
-итог: каталог None, вызовов 0, ответили 0, верно 0
+каталог: код 200, моделей 0, 0.24 с, заголовки {'content-type': 'text/plain'}
+каталог, ошибка: {"error": "не JSON", "raw": "OK\r\n", "n_bytes": 4}
+ai21-labs/AI21-Jamba-1.5-Mini (ai21-labs, low): код 200, 0.2 с, ответ '', верно False
+cohere/cohere-command-r-08-2024 (cohere, low): код 200, 0.2 с, ответ '', верно False
+deepseek/DeepSeek-V3-0324 (deepseek, low): код 200, 0.2 с, ответ '', верно False
+meta/Llama-3.3-70B-Instruct (meta, low): код 200, 0.21 с, ответ '', верно False
+microsoft/Phi-4-mini-instruct (microsoft, low): код 200, 0.2 с, ответ '', верно False
+mistral-ai/Ministral-3B (mistral-ai, low): код 200, 0.21 с, ответ '', верно False
+openai/gpt-4.1-mini (openai, low): код 200, 0.2 с, ответ '', верно False
+xai/grok-3-mini (xai, low): код 200, 0.2 с, ответ '', верно False
+итог: каталог 200, вызовов 8, ответили 8, верно 0
