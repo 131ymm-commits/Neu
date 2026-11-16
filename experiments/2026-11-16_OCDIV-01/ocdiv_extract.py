@@ -64,15 +64,16 @@ def run(repo, rev, envs, bs, log):
     import torch
     import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
+    from huggingface_hub import HfApi
     torch.set_num_threads(os.cpu_count() or 4)
     cache = tempfile.mkdtemp(prefix='hf_')
     t = time.time()
-    tok = AutoTokenizer.from_pretrained(repo, revision=rev, cache_dir=cache)
+    commit = HfApi().model_info(repo, revision=rev).sha       # хеш коммита модели; грузим ровно его (в transformers 5 поле _commit_hash пусто)
+    tok = AutoTokenizer.from_pretrained(repo, revision=commit, cache_dir=cache)
     tok.padding_side = 'left'
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    model = AutoModelForCausalLM.from_pretrained(repo, revision=rev, dtype=torch.float32, cache_dir=cache).eval()
-    commit = getattr(model.config, '_commit_hash', None)
+    model = AutoModelForCausalLM.from_pretrained(repo, revision=commit, dtype=torch.float32, cache_dir=cache).eval()
     load_s = round(time.time() - t, 1)
     log(repo, rev, 'загружена за', load_s, 'с; ревизия', commit)
     cols, secs = {}, {}

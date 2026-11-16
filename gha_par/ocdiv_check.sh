@@ -1,5 +1,6 @@
 #!/bin/bash
 # OCDIV-01: проверка кода извлечения — тесты с --real и сухой прогон на крошечной модели (hf-internal-testing), до пилота.
+# Повтор 2: ревизия модели — хеш коммита с Hugging Face (HfApi.model_info), загрузка ровно по нему.
 set -euo pipefail
 OUT="$1"
 E=experiments/2026-11-16_OCDIV-01
