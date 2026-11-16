@@ -26,6 +26,8 @@ BASE = 'https://models.github.ai'
 A, B = 347, 58
 PROMPT = f'Reply with the number only. {A} + {B} ='
 TIER_ORDER = {'low': 0, 'high': 1}
+FALLBACK = ['openai/gpt-4.1-mini', 'meta/Llama-3.3-70B-Instruct', 'mistral-ai/Ministral-3B', 'microsoft/Phi-4-mini-instruct',
+            'deepseek/DeepSeek-V3-0324', 'xai/grok-3-mini', 'cohere/cohere-command-r-08-2024', 'ai21-labs/AI21-Jamba-1.5-Mini']
 
 
 def scrub(x):
@@ -46,8 +48,14 @@ def call(method, path, body=None, timeout=90):
     t0 = time.time()
     try:
         with urllib.request.urlopen(r, timeout=timeout) as resp:
-            hdr = {k.lower(): v for k, v in resp.headers.items() if 'ratelimit' in k.lower() or k.lower() in ('x-request-id', 'date')}
-            return resp.status, json.loads(resp.read().decode('utf-8', 'replace')), hdr, round(time.time() - t0, 2)
+            hdr = {k.lower(): v for k, v in resp.headers.items()
+                   if 'ratelimit' in k.lower() or k.lower() in ('x-request-id', 'date', 'content-type', 'content-encoding')}
+            raw = resp.read()
+            st = resp.status
+        try:
+            return st, json.loads(raw.decode('utf-8', 'replace')), hdr, round(time.time() - t0, 2)
+        except ValueError:                                          # не JSON: код и начало тела — для разбора пробы
+            return st, {'error': 'не JSON', 'raw': raw[:300].decode('utf-8', 'replace'), 'n_bytes': len(raw)}, hdr, round(time.time() - t0, 2)
     except urllib.error.HTTPError as e:
         hdr = {k.lower(): v for k, v in (e.headers or {}).items() if 'ratelimit' in k.lower() or 'retry' in k.lower()}
         return e.code, {'error': e.read().decode('utf-8', 'replace')[:600]}, hdr, round(time.time() - t0, 2)
@@ -62,7 +70,12 @@ def main():
     res['catalog'] = dict(status=st, seconds=dt, n=len(models), error=cat.get('error') if isinstance(cat, dict) else None,
                           models=[dict(id=m.get('id'), publisher=m.get('publisher'), tier=m.get('rate_limit_tier'),
                                        out=m.get('supported_output_modalities'), caps=m.get('capabilities')) for m in models])
-    print(f'каталог: код {st}, моделей {len(models)}, {dt} с', flush=True)
+    print(f'каталог: код {st}, моделей {len(models)}, {dt} с, заголовки {hdr}', flush=True)
+    if isinstance(cat, dict) and cat.get('error'):
+        print('каталог, ошибка:', json.dumps(scrub(cat), ensure_ascii=False)[:400], flush=True)
+    if not models:                                                  # запасной список: имена по памяти, проба покажет, верны ли
+        models = [dict(id=i, publisher=i.split('/')[0], rate_limit_tier='low', supported_output_modalities=['text']) for i in FALLBACK]
+        res['catalog']['fallback'] = FALLBACK
     by_pub = {}
     for m in models:
         if 'text' not in (m.get('supported_output_modalities') or ['text']) or m.get('rate_limit_tier') not in TIER_ORDER:
