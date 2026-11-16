@@ -4,12 +4,16 @@
 # один прогон в полёте (очередь по имени). Задание получает папку gha_out/<имя>/ первым аргументом и пишет туда результаты;
 # workflow коммитит их обратно в ту же ветку. Секрет ANTHROPIC_API_KEY передаётся заданию переменной окружения (печатать его нельзя).
 # neu-run.yml не менялся: его хеш входит в регистрацию OCPOST-01 (docs/COMPUTE.md).
+# Другие ИИ (слово автора, 16.11.2026: «Ты думаешь. Внешние ресурсы считают. … Попробуй их так то интегрировать в проект»):
+# токен раннера с разрешением models: read передаётся заданию как GH_MODELS_TOKEN — для GitHub Models, без новых ключей.
+# Печатать его нельзя; ответы моделей — только текст, ничего из них не исполняется.
 name: neu-par
 on:
   push:
     paths: ['gha_par/*.sh']
 permissions:
   contents: write
+  models: read
 jobs:
   list:
     runs-on: ubuntu-latest
@@ -53,6 +57,7 @@ jobs:
         timeout-minutes: 340
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GH_MODELS_TOKEN: ${{ github.token }}
         run: |
           n="${{ matrix.job }}"
           mkdir -p "gha_out/$n"
