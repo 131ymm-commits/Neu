@@ -64,9 +64,12 @@ def main():
           P_METHOD * out['D4']['power_confirm_tau_s'], '0,95 × мощность при τ = s'),
          ('E6', 'N подтверждено (wc FIXED-нов в полосе ±0,02)', P_METHOD * out['N']['power_confirm_tau_s'], '0,95 × мощность при τ = s'),
          ('E7', 'опыт определён (годны не меньше 4 сред из 5, ревизии голов совпали)', P_METHOD * pdef,
-          '0,95 × вероятность по пилоту (биномиальная модель проверки метода)')]
+          '0,95 × вероятность по пилоту (биномиальная модель проверки метода)'),
+         ('E8', 'D3 не решено (интервал C − T FIXED-нов ни целиком в полосе ±0,02, ни целиком вне)',
+          P_METHOD * (1 - out['D3']['power_refute_tau_s'] - out['D3']['power_confirm_tau_s']), '0,95 × (1 − мощность обоих исходов при τ = s); совет 66, п. 4')]
+    trivial = {'E1', 'E2', 'E5', 'E6'}    # совет 66 (скептик): исход почти известен по пилоту — в калибровке считаются отдельно («(после пилота)»)
     res = dict(source=os.path.relpath(src, ROOT), m=M, z=V.P.Z, band=V.P.BAND, n_mc=N_MC, seed_mc=SEED_MC, p_method=P_METHOD,
-               rules=out, p_defined=r['p_defined'], expect=[dict(id=a, text=b, p=round(c, 3), source=d) for a, b, c, d in X])
+               rules=out, p_defined=r['p_defined'], expect=[dict(id=a, text=b, p=round(c, 3), source=d, trivial=a in trivial) for a, b, c, d in X])
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     for k, v in out.items():
         print(k, {kk: (round(vv, 4) if isinstance(vv, float) else vv) for kk, vv in v.items()})
