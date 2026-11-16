@@ -237,7 +237,7 @@ for sec, title in (('main_question', 'Для главного вопроса'), 
         add(f'## {title}')
         add('')
         for s_ in NOTES[sec]:
-            add(f'- {s_}')
+            add(s_ if s_.startswith('  - ') else f'- {s_}')       # вложенный пункт — как есть
         add('')
 if W:
     add('## Вес опоры (PREREG §10; верхняя оценка, не для реестра)')
