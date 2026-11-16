@@ -1,0 +1,5 @@
+[    0.1 с] источник test | выборка first | сред 1 | задач 2200 | ID 1014 | OOD 1186
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   10.2 с] HuggingFaceTB/SmolLM2-360M-Instruct a10cc1512eabd3dde888204e902eca88bddb4951 загружена за 6.6 с; ревизия a10cc1512eabd3dde888204e902eca88bddb4951
+[  697.5 с] X8_p2 точность {'ID': 0.7692, 'OOD': 0.7057} | без числа 0 | время 687.2 с, 0.312 с на задачу
+[  697.8 с] записано gha_out/ocdiv_test_smol360_x8/answers_SmolLM2-360M-Instruct.json
