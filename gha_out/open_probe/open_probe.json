@@ -1,0 +1,762 @@
+{
+ "source": "tools/open_probe.py",
+ "tasks": [
+  [
+   380,
+   50
+  ],
+  [
+   276,
+   86
+  ],
+  [
+   983,
+   36
+  ],
+  [
+   476,
+   32
+  ],
+  [
+   834,
+   36
+  ],
+  [
+   316,
+   23
+  ],
+  [
+   640,
+   23
+  ],
+  [
+   454,
+   50
+  ],
+  [
+   730,
+   37
+  ],
+  [
+   450,
+   22
+  ],
+  [
+   199,
+   77
+  ],
+  [
+   217,
+   20
+  ]
+ ],
+ "versions": {
+  "torch": "2.11.0+cpu",
+  "transformers": "5.20.2"
+ },
+ "cpus": 4,
+ "models": [
+  {
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "load_s": 9.5,
+   "params_m": 494.0,
+   "rows": [
+    {
+     "a": 380,
+     "b": 50,
+     "answer": "430",
+     "parsed": 430,
+     "correct": true,
+     "logprob": -0.0084,
+     "seconds": 0.4
+    },
+    {
+     "a": 276,
+     "b": 86,
+     "answer": "362",
+     "parsed": 362,
+     "correct": true,
+     "logprob": -0.0251,
+     "seconds": 0.38
+    },
+    {
+     "a": 983,
+     "b": 36,
+     "answer": "1019",
+     "parsed": 1019,
+     "correct": true,
+     "logprob": -0.0918,
+     "seconds": 0.46
+    },
+    {
+     "a": 476,
+     "b": 32,
+     "answer": "508",
+     "parsed": 508,
+     "correct": true,
+     "logprob": -0.6993,
+     "seconds": 0.4
+    },
+    {
+     "a": 834,
+     "b": 36,
+     "answer": "1000",
+     "parsed": 1000,
+     "correct": false,
+     "logprob": -1.6948,
+     "seconds": 0.47
+    },
+    {
+     "a": 316,
+     "b": 23,
+     "answer": "549",
+     "parsed": 549,
+     "correct": false,
+     "logprob": -0.4981,
+     "seconds": 0.41
+    },
+    {
+     "a": 640,
+     "b": 23,
+     "answer": "663",
+     "parsed": 663,
+     "correct": true,
+     "logprob": -0.0512,
+     "seconds": 0.39
+    },
+    {
+     "a": 454,
+     "b": 50,
+     "answer": "954",
+     "parsed": 954,
+     "correct": false,
+     "logprob": -0.1972,
+     "seconds": 0.4
+    },
+    {
+     "a": 730,
+     "b": 37,
+     "answer": "767",
+     "parsed": 767,
+     "correct": true,
+     "logprob": -0.2951,
+     "seconds": 0.42
+    },
+    {
+     "a": 450,
+     "b": 22,
+     "answer": "472",
+     "parsed": 472,
+     "correct": true,
+     "logprob": -0.0117,
+     "seconds": 0.38
+    },
+    {
+     "a": 199,
+     "b": 77,
+     "answer": "276",
+     "parsed": 276,
+     "correct": true,
+     "logprob": -0.0291,
+     "seconds": 0.41
+    },
+    {
+     "a": 217,
+     "b": 20,
+     "answer": "237",
+     "parsed": 237,
+     "correct": true,
+     "logprob": -0.1989,
+     "seconds": 0.38
+    }
+   ],
+   "accuracy": 0.75,
+   "sec_per_answer": 0.41
+  },
+  {
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "load_s": 7.0,
+   "params_m": 361.8,
+   "rows": [
+    {
+     "a": 380,
+     "b": 50,
+     "answer": "380 + 50 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -0.8653,
+     "seconds": 0.6
+    },
+    {
+     "a": 276,
+     "b": 86,
+     "answer": "276 + 86 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -0.8321,
+     "seconds": 0.58
+    },
+    {
+     "a": 983,
+     "b": 36,
+     "answer": "983 + 36 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.4231,
+     "seconds": 0.61
+    },
+    {
+     "a": 476,
+     "b": 32,
+     "answer": "476 + 32 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -0.7333,
+     "seconds": 0.59
+    },
+    {
+     "a": 834,
+     "b": 36,
+     "answer": "834 + 36 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -0.9751,
+     "seconds": 0.64
+    },
+    {
+     "a": 316,
+     "b": 23,
+     "answer": "316 + 23 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -0.8334,
+     "seconds": 0.61
+    },
+    {
+     "a": 640,
+     "b": 23,
+     "answer": "640 + 23 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.375,
+     "seconds": 0.59
+    },
+    {
+     "a": 454,
+     "b": 50,
+     "answer": "454 + 50 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -0.7912,
+     "seconds": 0.6
+    },
+    {
+     "a": 730,
+     "b": 37,
+     "answer": "730 + 37 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.0811,
+     "seconds": 0.58
+    },
+    {
+     "a": 450,
+     "b": 22,
+     "answer": "450 + 22 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.0631,
+     "seconds": 0.61
+    },
+    {
+     "a": 199,
+     "b": 77,
+     "answer": "199 + 77 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -0.8643,
+     "seconds": 0.6
+    },
+    {
+     "a": 217,
+     "b": 20,
+     "answer": "217 + 20 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -0.9132,
+     "seconds": 0.58
+    }
+   ],
+   "accuracy": 0.0,
+   "sec_per_answer": 0.6
+  },
+  {
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "load_s": 19.9,
+   "params_m": 1484.9,
+   "rows": [
+    {
+     "a": 380,
+     "b": 50,
+     "answer": "430",
+     "parsed": 430,
+     "correct": true,
+     "logprob": -0.0377,
+     "seconds": 0.55
+    },
+    {
+     "a": 276,
+     "b": 86,
+     "answer": "368",
+     "parsed": 368,
+     "correct": false,
+     "logprob": -0.9604,
+     "seconds": 0.59
+    },
+    {
+     "a": 983,
+     "b": 36,
+     "answer": "1089",
+     "parsed": 1089,
+     "correct": false,
+     "logprob": -0.9027,
+     "seconds": 0.8
+    },
+    {
+     "a": 476,
+     "b": 32,
+     "answer": "528",
+     "parsed": 528,
+     "correct": false,
+     "logprob": -1.243,
+     "seconds": 0.56
+    },
+    {
+     "a": 834,
+     "b": 36,
+     "answer": "870",
+     "parsed": 870,
+     "correct": true,
+     "logprob": -1.6512,
+     "seconds": 0.6
+    },
+    {
+     "a": 316,
+     "b": 23,
+     "answer": "349",
+     "parsed": 349,
+     "correct": false,
+     "logprob": -0.9359,
+     "seconds": 0.55
+    },
+    {
+     "a": 640,
+     "b": 23,
+     "answer": "663",
+     "parsed": 663,
+     "correct": true,
+     "logprob": -1.1078,
+     "seconds": 0.6
+    },
+    {
+     "a": 454,
+     "b": 50,
+     "answer": "604",
+     "parsed": 604,
+     "correct": false,
+     "logprob": -1.9099,
+     "seconds": 0.55
+    },
+    {
+     "a": 730,
+     "b": 37,
+     "answer": "869",
+     "parsed": 869,
+     "correct": false,
+     "logprob": -2.0,
+     "seconds": 0.6
+    },
+    {
+     "a": 450,
+     "b": 22,
+     "answer": "482",
+     "parsed": 482,
+     "correct": false,
+     "logprob": -1.5979,
+     "seconds": 0.55
+    },
+    {
+     "a": 199,
+     "b": 77,
+     "answer": "266",
+     "parsed": 266,
+     "correct": false,
+     "logprob": -0.6251,
+     "seconds": 0.59
+    },
+    {
+     "a": 217,
+     "b": 20,
+     "answer": "238",
+     "parsed": 238,
+     "correct": false,
+     "logprob": -0.7638,
+     "seconds": 0.56
+    }
+   ],
+   "accuracy": 0.25,
+   "sec_per_answer": 0.59
+  },
+  {
+   "model": "ibm-granite/granite-3.1-1b-a400m-instruct",
+   "load_s": 17.5,
+   "params_m": 1334.6,
+   "rows": [
+    {
+     "a": 380,
+     "b": 50,
+     "answer": "380 + 50 equals",
+     "parsed": 380,
+     "correct": false,
+     "logprob": -1.3855,
+     "seconds": 1.18
+    },
+    {
+     "a": 276,
+     "b": 86,
+     "answer": "276 + 86 equals",
+     "parsed": 276,
+     "correct": false,
+     "logprob": -0.3964,
+     "seconds": 1.2
+    },
+    {
+     "a": 983,
+     "b": 36,
+     "answer": "983 + 36 equals",
+     "parsed": 983,
+     "correct": false,
+     "logprob": -0.8467,
+     "seconds": 1.19
+    },
+    {
+     "a": 476,
+     "b": 32,
+     "answer": "404",
+     "parsed": 404,
+     "correct": false,
+     "logprob": -1.3778,
+     "seconds": 0.9
+    },
+    {
+     "a": 834,
+     "b": 36,
+     "answer": "834 + 36 equals",
+     "parsed": 834,
+     "correct": false,
+     "logprob": -0.7203,
+     "seconds": 1.18
+    },
+    {
+     "a": 316,
+     "b": 23,
+     "answer": "339",
+     "parsed": 339,
+     "correct": true,
+     "logprob": -0.6007,
+     "seconds": 0.88
+    },
+    {
+     "a": 640,
+     "b": 23,
+     "answer": "640 + 23 equals",
+     "parsed": 640,
+     "correct": false,
+     "logprob": -0.9854,
+     "seconds": 1.18
+    },
+    {
+     "a": 454,
+     "b": 50,
+     "answer": "454 + 50 equals",
+     "parsed": 454,
+     "correct": false,
+     "logprob": -0.7463,
+     "seconds": 1.19
+    },
+    {
+     "a": 730,
+     "b": 37,
+     "answer": "730 + 37 equals",
+     "parsed": 730,
+     "correct": false,
+     "logprob": -0.8834,
+     "seconds": 1.17
+    },
+    {
+     "a": 450,
+     "b": 22,
+     "answer": "472",
+     "parsed": 472,
+     "correct": true,
+     "logprob": -0.5755,
+     "seconds": 0.87
+    },
+    {
+     "a": 199,
+     "b": 77,
+     "answer": "199 + 77 equals",
+     "parsed": 199,
+     "correct": false,
+     "logprob": -0.3853,
+     "seconds": 1.18
+    },
+    {
+     "a": 217,
+     "b": 20,
+     "answer": "217 + 20 equals",
+     "parsed": 217,
+     "correct": false,
+     "logprob": -0.5749,
+     "seconds": 1.17
+    }
+   ],
+   "accuracy": 0.16666666666666666,
+   "sec_per_answer": 1.11
+  },
+  {
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "load_s": 30.0,
+   "params_m": 1669.4,
+   "rows": [
+    {
+     "a": 380,
+     "b": 50,
+     "answer": "880",
+     "parsed": 880,
+     "correct": false,
+     "logprob": -0.5389,
+     "seconds": 1.04
+    },
+    {
+     "a": 276,
+     "b": 86,
+     "answer": "114",
+     "parsed": 114,
+     "correct": false,
+     "logprob": -0.3427,
+     "seconds": 1.03
+    },
+    {
+     "a": 983,
+     "b": 36,
+     "answer": "1149",
+     "parsed": 1149,
+     "correct": false,
+     "logprob": -0.2491,
+     "seconds": 1.23
+    },
+    {
+     "a": 476,
+     "b": 32,
+     "answer": "508",
+     "parsed": 508,
+     "correct": true,
+     "logprob": -0.0917,
+     "seconds": 1.04
+    },
+    {
+     "a": 834,
+     "b": 36,
+     "answer": "860",
+     "parsed": 860,
+     "correct": false,
+     "logprob": -0.6056,
+     "seconds": 1.04
+    },
+    {
+     "a": 316,
+     "b": 23,
+     "answer": "339",
+     "parsed": 339,
+     "correct": true,
+     "logprob": -1.6074,
+     "seconds": 1.08
+    },
+    {
+     "a": 640,
+     "b": 23,
+     "answer": "863",
+     "parsed": 863,
+     "correct": false,
+     "logprob": -0.1314,
+     "seconds": 1.05
+    },
+    {
+     "a": 454,
+     "b": 50,
+     "answer": "554",
+     "parsed": 554,
+     "correct": false,
+     "logprob": -0.4798,
+     "seconds": 1.04
+    },
+    {
+     "a": 730,
+     "b": 37,
+     "answer": "100",
+     "parsed": 100,
+     "correct": false,
+     "logprob": -0.0272,
+     "seconds": 1.06
+    },
+    {
+     "a": 450,
+     "b": 22,
+     "answer": "572",
+     "parsed": 572,
+     "correct": false,
+     "logprob": -0.3163,
+     "seconds": 1.07
+    },
+    {
+     "a": 199,
+     "b": 77,
+     "answer": "176",
+     "parsed": 176,
+     "correct": false,
+     "logprob": -0.0015,
+     "seconds": 1.03
+    },
+    {
+     "a": 217,
+     "b": 20,
+     "answer": "237",
+     "parsed": 237,
+     "correct": true,
+     "logprob": -0.0012,
+     "seconds": 1.02
+    }
+   ],
+   "accuracy": 0.25,
+   "sec_per_answer": 1.06
+  },
+  {
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "load_s": 12.5,
+   "params_m": 1100.0,
+   "rows": [
+    {
+     "a": 380,
+     "b": 50,
+     "answer": "380 + 50 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.3855,
+     "seconds": 1.4
+    },
+    {
+     "a": 276,
+     "b": 86,
+     "answer": "276 + 86 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.067,
+     "seconds": 1.39
+    },
+    {
+     "a": 983,
+     "b": 36,
+     "answer": "983 + 36 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.3787,
+     "seconds": 1.42
+    },
+    {
+     "a": 476,
+     "b": 32,
+     "answer": "476 + 32 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.0096,
+     "seconds": 1.39
+    },
+    {
+     "a": 834,
+     "b": 36,
+     "answer": "834 + 36 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.0344,
+     "seconds": 1.4
+    },
+    {
+     "a": 316,
+     "b": 23,
+     "answer": "316 + 23 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.2549,
+     "seconds": 1.44
+    },
+    {
+     "a": 640,
+     "b": 23,
+     "answer": "640 + 23 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.4754,
+     "seconds": 1.38
+    },
+    {
+     "a": 454,
+     "b": 50,
+     "answer": "454 + 50 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.2619,
+     "seconds": 1.39
+    },
+    {
+     "a": 730,
+     "b": 37,
+     "answer": "730 + 37 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.2427,
+     "seconds": 1.39
+    },
+    {
+     "a": 450,
+     "b": 22,
+     "answer": "450 + 22 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.2631,
+     "seconds": 1.44
+    },
+    {
+     "a": 199,
+     "b": 77,
+     "answer": "199 + 77 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.7139,
+     "seconds": 1.56
+    },
+    {
+     "a": 217,
+     "b": 20,
+     "answer": "217 + 20 =",
+     "parsed": null,
+     "correct": false,
+     "logprob": -1.2082,
+     "seconds": 1.39
+    }
+   ],
+   "accuracy": 0.0,
+   "sec_per_answer": 1.42
+  }
+ ]
+}
