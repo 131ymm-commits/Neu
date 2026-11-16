@@ -1,0 +1,12 @@
+[    0.1 с] источник pilot | выборка random | сред 5 | задач 3000 | ID 1367 | OOD 1633
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   15.0 с] LiquidAI/LFM2-1.2B 40f3da0d0164913923aee9462c23077868b816a3 загружена за 11.3 с; ревизия 40f3da0d0164913923aee9462c23077868b816a3
+[transformers] `causal_conv1d_fn` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] `causal_conv1d_update` is falling back to its reference PyTorch implementation because `causal_conv1d` is not installed. This is correct but much slower; install `causal_conv1d` for the optimized kernel.
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+[  404.0 с] X4_p0 точность {'ID': 1.0, 'OOD': 0.994} | без числа 0 | время 389.0 с, 0.648 с на задачу
+[  794.2 с] X5_p0 точность {'ID': 1.0, 'OOD': 0.9969} | без числа 0 | время 390.1 с, 0.65 с на задачу
+[ 1189.5 с] X6_p0 точность {'ID': 1.0, 'OOD': 1.0} | без числа 0 | время 395.3 с, 0.659 с на задачу
+[ 1578.2 с] X7_p0 точность {'ID': 0.9962, 'OOD': 1.0} | без числа 0 | время 388.8 с, 0.648 с на задачу
+[ 1967.8 с] X8_p0 точность {'ID': 0.9783, 'OOD': 0.9568} | без числа 0 | время 389.5 с, 0.649 с на задачу
+[ 1968.2 с] записано gha_out/ocdiv_pilot2_lfm12_p0/answers_LFM2-1.2B.json
