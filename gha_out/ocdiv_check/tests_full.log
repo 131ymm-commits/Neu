@@ -12,16 +12,16 @@
 ✓ разбор: ответ без числа → None
 ✓ разбор: ведущий пробел допускается — 40, 3
 [    0.1 с] источник pilot | сред 2 | задач 16
-[    4.7 с] hf-internal-testing/tiny-random-LlamaForCausalLM main загружена за 2.5 с; ревизия None
-[    4.7 с] X4_p0 точность {'ID': 0.0, 'OOD': 0.0} | без числа 8 | время 0.0 с, 0.0 с на задачу
-[    4.8 с] X8_p1 точность {'ID': 0.0, 'OOD': 0.0} | без числа 8 | время 0.0 с, 0.0 с на задачу
-[    4.8 с] записано /tmp/ocdiv_dry_ayc8_w0v/answers_tiny-random-LlamaForCausalLM.json
+[    4.6 с] hf-internal-testing/tiny-random-LlamaForCausalLM main загружена за 2.4 с; ревизия 9fb191250dd56d0ba7ec9785a025ed29c03d5998
+[    4.6 с] X4_p0 точность {'ID': 0.0, 'OOD': 0.0} | без числа 8 | время 0.0 с, 0.0 с на задачу
+[    4.6 с] X8_p1 точность {'ID': 0.0, 'OOD': 0.0} | без числа 8 | время 0.0 с, 0.0 с на задачу
+[    4.6 с] записано /tmp/ocdiv_dry_l08l9ulk/answers_tiny-random-LlamaForCausalLM.json
  Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
 [transformers] Model config: pad_token_id must be `None` or an integer within the vocabulary (between 0 and 31999), got -1. This may result in unexpected behavior.
 [transformers] The following generation flags are not valid and may be ignored: ['pad_token_id']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
 
 ✓ сухой прогон: файл вывода есть, ошибки нет
 ✓ сухой прогон: две среды по 8 ответов
-✗ сухой прогон: ревизия и версии записаны — None
+✓ сухой прогон: ревизия и версии записаны — 9fb191250dd56d0ba7ec9785a025ed29c03d5998
 ✓ сухой прогон: несуществующая модель — ошибка записана, задание не падает
-провалов: 1
+провалов: 0
