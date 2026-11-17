@@ -13,7 +13,8 @@
   чат-шаблона, левое дополнение, жадный вывод, ответ и logp — ocpost_extract.answer_logp. Отличие одно: число новых токенов —
   из среды (max_new). Равенство с ocdiv_extract.run при max_new = 6 проверяет test_ocdiv2.py --real.
 - В лог задания точность и счёт ответов не пишутся (замок ERRORS № 180): только время по средам.
-  python3 ocdiv2_extract.py --phase pilot|test --model REPO [--revision REV] --envs NAME,NAME... --out DIR [--bs 16]"""
+  python3 ocdiv2_extract.py --phase pilot|test|pilot2|test2 --model REPO [--revision REV] --envs NAME,NAME... --out DIR [--bs 16]
+После пилота 1 (HYPOTHESIS-2.md): фазы pilot2 и test2 — подсказка только из ID (shots_id), p = 1 и 3."""
 import argparse
 import json
 import os
@@ -36,25 +37,57 @@ FAMILIES = {'thousands': dict(code='T', X=(19, 29, 39, 49, 59), max_new=6),
 P_PILOT, P_TEST = 0, 2
 N_PILOT, N_TEST, RESERVE = 400, 2200, 1000       # пилот — места 0…399; места 400…999 — запас под второй пилот; тест — с места 1000
 SPLIT2 = 8_100_000                                # перестановка пар среды OCDIV-02: зерно 8 100 000 + X (новое)
+# HYPOTHESIS-2.md (после пилота 1): подсказка только из ID — пилот 2 (p = 1, места с 400) и тест 2 (p = 3, места с 1000)
+PHASES = {'pilot': dict(p=0, n=N_PILOT, start=0, prompt='mixed'), 'test': dict(p=2, n=N_TEST, start=RESERVE, prompt='mixed'),
+          'pilot2': dict(p=1, n=N_PILOT, start=N_PILOT, prompt='id'), 'test2': dict(p=3, n=N_TEST, start=RESERVE, prompt='id')}
 
 
-def env_of(fam, X, p, n_take, start):
+def shots_id(a_range, bound, seed):
+    """Подсказка только из ID (HYPOTHESIS-2): четыре примера с суммой < bound, без повторов, порядок перемешан — та же схема,
+    что ocpost_extract.shots, без двух примеров с суммой ≥ bound."""
+    g = np.random.default_rng(seed)
+    ex = []
+    while len(ex) < 4:
+        a, b = int(g.integers(a_range[0], a_range[1] + 1)), int(g.integers(OE.B_RANGE[0], OE.B_RANGE[1] + 1))
+        if a + b < bound and (a, b) not in ex:
+            ex.append((a, b))
+    order = g.permutation(4)
+    return ''.join(f'{ex[i][0]}+{ex[i][1]}={ex[i][0] + ex[i][1]}\n' for i in order), ex
+
+
+def env_of(fam, X, p, n_take, start, prompt='mixed'):
+    """Среда: список пар и перестановка — одни на все фазы (пары без примеров смешанных подсказок p = 0 и p = 2). mixed — подсказка
+    ocpost_extract.shots, задачи — места start…start + n_take − 1 (пилот 1 и прежний тест, без изменений); id — подсказка shots_id,
+    задачи — места с start подряд, кроме пар-примеров этой подсказки, пока не наберётся n_take."""
     a_range, bound = (100 * X, 100 * X + 99), 100 * (X + 1)
     hd = {q: OE.shots(a_range, bound, OE.SHOTS_BASE + 1000 * X + q) for q in (P_PILOT, P_TEST)}
-    ex = set(e for q in hd for e in hd[q][1])                    # примеры обеих подсказок в задачи не идут
+    ex = set(e for q in hd for e in hd[q][1])                    # примеры обеих смешанных подсказок в задачи не идут
     pairs = [(a, b) for a in range(a_range[0], a_range[1] + 1) for b in range(OE.B_RANGE[0], OE.B_RANGE[1] + 1) if (a, b) not in ex]
     perm = np.random.default_rng(SPLIT2 + X).permutation(len(pairs))
-    idx = sorted(int(i) for i in perm[start:start + n_take])
+    if prompt == 'mixed':
+        head = hd[p][0]
+        take = [int(i) for i in perm[start:start + n_take]]
+        end = start + n_take
+    else:
+        head, ex_id = shots_id(a_range, bound, OE.SHOTS_BASE + 1000 * X + p)
+        ex_id, take, end = set(ex_id), [], start
+        while len(take) < n_take:
+            i = int(perm[end])
+            end += 1
+            if pairs[i] not in ex_id:
+                take.append(i)
+    idx = sorted(take)
     f = FAMILIES[fam]
     return dict(name=f"{f['code']}_X{X}_p{p}", family=fam, X=X, p=p, bound=bound, a=list(a_range), b=list(OE.B_RANGE), max_new=f['max_new'],
-                shots_seed=OE.SHOTS_BASE + 1000 * X + p, split_seed=SPLIT2 + X, prompt_head=hd[p][0],
-                problems=OE.problems(pairs, idx, bound), idx=idx, n_pairs=len(pairs), place=[start, start + n_take])
+                shots_seed=OE.SHOTS_BASE + 1000 * X + p, split_seed=SPLIT2 + X, prompt=prompt, prompt_head=head,
+                problems=OE.problems(pairs, idx, bound), idx=idx, n_pairs=len(pairs), place=[start, end])
 
 
 def envs_ocdiv2(phase, fams=tuple(FAMILIES)):
-    """Все среды фазы: pilot — p = 0, места 0…399; test — p = 2, места 1000…3199."""
-    p, n, start = (P_PILOT, N_PILOT, 0) if phase == 'pilot' else (P_TEST, N_TEST, RESERVE)
-    return [env_of(fam, X, p, n, start) for fam in fams for X in FAMILIES[fam]['X']]
+    """Все среды фазы (PHASES): pilot — p = 0, места 0…399; test — p = 2, места 1000…3199; pilot2 — p = 1, подсказка только из ID,
+    места с 400; test2 — p = 3, подсказка только из ID, места с 1000."""
+    ph = PHASES[phase]
+    return [env_of(fam, X, ph['p'], ph['n'], ph['start'], ph['prompt']) for fam in fams for X in FAMILIES[fam]['X']]
 
 
 def env_by_name(phase, names):
@@ -125,7 +158,7 @@ def run(repo, rev, envs, bs, log):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--phase', choices=('pilot', 'test'), required=True)
+    ap.add_argument('--phase', choices=tuple(PHASES), required=True)
     ap.add_argument('--model', required=True)
     ap.add_argument('--revision', default='main')
     ap.add_argument('--envs', required=True)

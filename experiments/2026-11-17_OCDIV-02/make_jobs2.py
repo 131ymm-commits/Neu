@@ -4,7 +4,9 @@
   python3 make_jobs2.py check [--dir DIR]      — проверка кода: заглушки, сухой прогон на крошечной модели, тест замка № 180
   python3 make_jobs2.py pilot [--dir DIR]      — пилот: 7 голов × 2 семейства (по заданию на голову и семейство, 5 сред × 400 задач, p = 0)
   python3 make_jobs2.py sum_pilot [--dir DIR]  — разбор пилота (после всех 14 заданий пилота): сборка, правило выбора семейства, мощность
-  python3 make_jobs2.py test FAMILY [--dir DIR] — тест: 7 голов × 5 сред выбранного семейства (по заданию на голову и среду, 2200 задач, p = 2)
+  python3 make_jobs2.py pilot2 | sum_pilot2 [--dir DIR] — пилот 2 и его разбор (HYPOTHESIS-2: подсказка только из ID, p = 1)
+  python3 make_jobs2.py test FAMILY [--dir DIR] — тест: 7 голов × 5 сред выбранного семейства (по заданию на голову и среду, 2200 задач,
+      фаза test2: подсказка только из ID, p = 3)
 Головы и ревизии — ocdiv.CROWD (регистрация OCDIV-01 c626aa32)."""
 import os
 import sys
@@ -58,6 +60,22 @@ def main():
                 envs = ','.join(e['name'] for e in D2.envs_ocdiv2('pilot', (fam,)))
                 out.append(write(f"ocdiv2_pilot_{KEY[nm]}_{f['code']}", f'пилот, {repo}@{rev}, семейство {fam}, 5 сред × 400 задач, p = 0',
                                  TORCH + f'python3 $E/ocdiv2_extract.py --phase pilot --model {repo} --revision {rev} --envs {envs} --out "$OUT" --bs 16\n', dst))
+    elif mode == 'pilot2':
+        for nm, spec in V.CROWD.items():
+            repo, rev = spec.split('@')
+            for fam, f in D2.FAMILIES.items():
+                envs = ','.join(e['name'] for e in D2.envs_ocdiv2('pilot2', (fam,)))
+                out.append(write(f"ocdiv2_pilot2_{KEY[nm]}_{f['code']}", f'пилот 2 (подсказка только из ID, HYPOTHESIS-2), {repo}@{rev}, семейство {fam}, '
+                                 '5 сред × 400 задач, p = 1',
+                                 TORCH + f'python3 $E/ocdiv2_extract.py --phase pilot2 --model {repo} --revision {rev} --envs {envs} --out "$OUT" --bs 16\n', dst))
+    elif mode == 'sum_pilot2':
+        out.append(write('ocdiv2_sum_pilot2', 'разбор пилота 2 (подсказка только из ID) — сборка двух семейств, правило выбора семейства, мощность Т1–Т4', SCI +
+                         'python3 tools/test_raw_status.py | tail -1\n'
+                         'python3 $E/test_ocdiv2.py > "$OUT/tests_full.log" 2>&1; grep -E "^✓|^✗|провалов" "$OUT/tests_full.log" | tee "$OUT/tests.log"\n'
+                         'python3 $E/ocdiv2.py merge "$OUT/m_thousands" pilot2 thousands gha_out/ocdiv2_pilot2_*\n'
+                         'python3 $E/ocdiv2.py merge "$OUT/m_length" pilot2 length gha_out/ocdiv2_pilot2_*\n'
+                         'python3 $E/ocdiv2.py pilot "$OUT/pilot.json" "$OUT/m_thousands" "$OUT/m_length" --boot 200 --workers 4 --test-phase test2\n'
+                         'rm -rf "$OUT/m_thousands" "$OUT/m_length"          # сборка восстанавливается из gha_out/ocdiv2_pilot2_*/ той же командой\n', dst))
     elif mode == 'sum_pilot':
         out.append(write('ocdiv2_sum_pilot', 'разбор пилота — сборка двух семейств, правило выбора семейства (HYPOTHESIS), мощность Т1–Т4', SCI +
                          'python3 tools/test_raw_status.py | tail -1\n'
@@ -67,12 +85,12 @@ def main():
                          'python3 $E/ocdiv2.py pilot "$OUT/pilot.json" "$OUT/m_thousands" "$OUT/m_length" --boot 200 --workers 4\n'
                          'rm -rf "$OUT/m_thousands" "$OUT/m_length"          # сборка восстанавливается из gha_out/ocdiv2_pilot_*/ той же командой\n', dst))
     elif mode == 'test':
-        fam = a[1]
+        fam, phase = a[1], 'test2'                       # HYPOTHESIS-2: тест — подсказка только из ID (p = 3)
         for nm, spec in V.CROWD.items():
             repo, rev = spec.split('@')
-            for e in D2.envs_ocdiv2('test', (fam,)):
-                out.append(write(f"ocdiv2_test_{KEY[nm]}_{e['name']}", f"тест, {repo}@{rev}, среда {e['name']}, 2200 задач, p = 2",
-                                 TORCH + f"python3 $E/ocdiv2_extract.py --phase test --model {repo} --revision {rev} --envs {e['name']} --out \"$OUT\" --bs 16\n", dst))
+            for e in D2.envs_ocdiv2(phase, (fam,)):
+                out.append(write(f"ocdiv2_test_{KEY[nm]}_{e['name']}", f"тест, {repo}@{rev}, среда {e['name']}, 2200 задач, p = {e['p']}",
+                                 TORCH + f"python3 $E/ocdiv2_extract.py --phase {phase} --model {repo} --revision {rev} --envs {e['name']} --out \"$OUT\" --bs 16\n", dst))
     print('\n'.join(os.path.relpath(p, ROOT) for p in out))
 
 

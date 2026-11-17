@@ -44,6 +44,21 @@ check('среды: подсказка — два примера ID и два OOD
                                                           for e in pe + te))
 check('среды: доля ID в тесте 0,44–0,47', all(0.44 < sum(q['range'] == 'ID' for q in e['problems']) / 2200 < 0.47 for e in te))
 
+# 1б. HYPOTHESIS-2: пилот 2 и тест 2 — подсказка только из ID; три набора задач попарно не пересекаются
+p2e, t2e = D2.envs_ocdiv2('pilot2'), D2.envs_ocdiv2('test2')
+check('пилот 2 и тест 2: по 400 и 2200 задач, подсказка — четыре примера ID', all(len(e['problems']) == 400 for e in p2e) and all(len(e['problems']) == 2200 for e in t2e)
+      and all(all(int(ln.split('=')[1]) < e['bound'] for ln in e['prompt_head'].strip().split('\n')) and len(e['prompt_head'].strip().split('\n')) == 4
+              for e in p2e + t2e))
+ok3 = True
+for a, b, c in zip(pe, p2e, t2e):
+    ka, kb, kc = ({(q['a'], q['b']) for q in x['problems']} for x in (a, b, c))
+    exb = set(D2.shots_id((100 * b['X'], 100 * b['X'] + 99), b['bound'], D2.OE.SHOTS_BASE + 1000 * b['X'] + 1)[1])
+    exc = set(D2.shots_id((100 * c['X'], 100 * c['X'] + 99), c['bound'], D2.OE.SHOTS_BASE + 1000 * c['X'] + 3)[1])
+    ok3 &= not (ka & kb) and not (ka & kc) and not (kb & kc) and not (kb & exb) and not (kc & exc)
+check('пилот 1, пилот 2 и тест 2 не пересекаются; примеры подсказок только из ID не в задачах', ok3)
+check('пилот 1 не изменился: те же места и та же подсказка', all(e['place'] == [0, 400] and e['prompt'] == 'mixed' for e in pe)
+      and [q['a'] for q in pe[3]['problems']][:5] == [q['a'] for q in D2.env_of(pe[3]['family'], pe[3]['X'], 0, 400, 0)['problems']][:5])
+
 # 2. Вид ошибки, переносы, голоса и нуль
 check('вид ошибки: −1000, 10, 1100, −110 — перенос; 7, 1001, 20 — прочее', [W.kind_of(d) for d in (-1000, 10, 1100, -110, 7, 1001, 20)]
       == ['перенос'] * 4 + ['прочее'] * 3)
@@ -191,12 +206,12 @@ check('пилот: точность головы — по коротким им�
 
 # 4б. Анализ теста на заглушках: семейство «длина», 7 голов × 5 сред по 2200 задач, B = 30
 tdirs = []
-tenvs = D2.envs_ocdiv2('test', ('length',))
+tenvs = D2.envs_ocdiv2('test2', ('length',))
 for k, nm in enumerate(V.CROWD):
     jd = os.path.join(tmp, f'tjob_{k}')
-    write_job(jd, nm, 'length', tenvs, rng, k=k, phase='test')
+    write_job(jd, nm, 'length', tenvs, rng, k=k, phase='test2')
     tdirs.append(jd)
-mt = W.merge(os.path.join(tmp, 'mt'), 'test', 'length', tdirs)
+mt = W.merge(os.path.join(tmp, 'mt'), 'test2', 'length', tdirs)
 check('сборка теста: семь голов, пять сред', len(mt['heads']) == 7 and not mt['head_errors'] and len(mt['envs']) == 5)
 try:
     W.test(os.path.join(tmp, 'never.json'), os.path.join(tmp, 'mt'), B=5)

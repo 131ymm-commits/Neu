@@ -3,7 +3,7 @@
 """OCDIV-02 «ОЦЕНЩИК-ТРУДНЫЙ-СДВИГ»: сборка ответов, статистики Т1–Т4, разбор пилота с правилом выбора семейства (HYPOTHESIS.md,
 коммит 7187bab5) и мощность. Анализ теста — после PREREG.
   python3 ocdiv2.py merge OUT_DIR PHASE FAMILY JOB_DIR [JOB_DIR ...]   — answers.json вида ocdiv.merge (формат analyze_ocshift)
-  python3 ocdiv2.py pilot RESULT.json MERGED_THOUSANDS MERGED_LENGTH [--boot 200] [--workers 4]
+  python3 ocdiv2.py pilot RESULT.json MERGED_THOUSANDS MERGED_LENGTH [--boot 200] [--workers 4] [--test-phase test|test2]
   python3 ocdiv2.py test  RESULT.json MERGED_DIR [--boot 10000] [--workers 4]   — тест (константы FAMILY_TEST, T3_HEADS, T2_DESCRIPTIVE,
       T4_STRATA задаются в PREREG по пилоту)
 Код счёта — зарегистрированный код прежних опытов: проверка метода и массивы — analyze_ocshift.prepare (в масштабе теста —
@@ -344,9 +344,10 @@ def power_from_envs(points, sds, scale, kind, m=5):
 
 
 # ───────────── пилот
-def test_id_count(fam, X):
+def test_id_count(fam, X, test_phase='test'):
     """Число задач ID в среде теста — по строению среды (ответы не читаются)."""
-    e = D2.env_of(fam, X, D2.P_TEST, D2.N_TEST, D2.RESERVE)
+    ph = D2.PHASES[test_phase]
+    e = D2.env_of(fam, X, ph['p'], ph['n'], ph['start'], ph['prompt'])
     return sum(p['range'] == 'ID' for p in e['problems'])
 
 
@@ -368,9 +369,9 @@ def family_summary(fam, envs_res, head_secs):
                 rule=dict(drop_min=DROP_MIN, drop_heads_min=DROP_HEADS_MIN, pass_heads_min=PASS_HEADS_MIN, pass_envs_min=PASS_ENVS_MIN, max_sec=MAX_SEC))
 
 
-def pilot(dst, mdirs, B=200, workers=1):
+def pilot(dst, mdirs, B=200, workers=1, test_phase='test'):
     t0 = time.time()
-    res = dict(phase='pilot', B=B, families={}, envs={}, head_errors={})
+    res = dict(phase='pilot', test_phase=test_phase, B=B, families={}, envs={}, head_errors={})
     for fam, mdir in mdirs.items():
         d, envs = S.load_new(mdir)
         res['head_errors'][fam] = d.get('head_errors', [])
@@ -380,7 +381,7 @@ def pilot(dst, mdirs, B=200, workers=1):
         pre = {}
         for name, env in envs.items():
             meta = env['meta']
-            st, info = V.prepare_scaled(env, SEED_CV2 + off_of(meta), test_id_count(fam, meta['X']))
+            st, info = V.prepare_scaled(env, SEED_CV2 + off_of(meta), test_id_count(fam, meta['X'], test_phase))
             rid = info['rid']
             pre[name] = dict(acc={info['names'][k].split('@')[0]: dict(id=float(info['corr'][k][rid].mean()), ood=float(info['corr'][k][~rid].mean()),
                                                                       none=float(np.mean([a is None for a in info['ans'][k]])))
@@ -392,10 +393,10 @@ def pilot(dst, mdirs, B=200, workers=1):
         for name, env in envs.items():
             meta = env['meta']
             o = off_of(meta)
-            r = env_analysis(env, SEED_CV2 + o, SEED_BOOT_PILOT + o, SEED_NULL + o, SEED_NULL_BOOT + o, test_id_count(fam, meta['X']), t3h, B, workers,
-                             K_point=200, K_boot=5)
-            r['meta'] = {k: meta[k] for k in ('family', 'X', 'p', 'bound', 'max_new')}
-            r['n_test_ood'] = D2.N_TEST - test_id_count(fam, meta['X'])
+            r = env_analysis(env, SEED_CV2 + o, SEED_BOOT_PILOT + o, SEED_NULL + o, SEED_NULL_BOOT + o, test_id_count(fam, meta['X'], test_phase), t3h, B,
+                             workers, K_point=200, K_boot=5)
+            r['meta'] = {k: meta.get(k) for k in ('family', 'X', 'p', 'bound', 'max_new', 'prompt')}
+            r['n_test_ood'] = D2.N_TEST - test_id_count(fam, meta['X'], test_phase)
             out_envs[name] = r
             print(f"{name}: годна {r['valid']}, толпа {len(r['crowd'])}, {round(time.time() - t0)} с", flush=True)
         res['envs'].update(out_envs)
@@ -421,6 +422,9 @@ def pilot(dst, mdirs, B=200, workers=1):
         summ['power'] = pw
         summ['n_valid'] = len(valid)
         res['families'][fam] = summ
+    for f, s_ in res['families'].items():           # HYPOTHESIS-2: семейство годно, только если годны не меньше 4 сред из 5
+        s_['qualifies_envs'] = bool(s_['n_valid'] >= PASS_ENVS_MIN)
+        s_['qualifies'] = bool(s_['qualifies'] and s_['qualifies_envs'])
     good = [f for f, s_ in res['families'].items() if s_['qualifies']]
     res['chosen'] = max(good, key=lambda f: res['families'][f]['drop_mean']) if good else None
     res['verdict'] = (f"выбрано семейство {res['chosen']}" if res['chosen'] else 'годного семейства нет: теста нет, перепроектирование (HYPOTHESIS)')
@@ -435,6 +439,7 @@ def pilot(dst, mdirs, B=200, workers=1):
 
 # ───────────── тест (константы — в PREREG по пилоту, до данных теста)
 FAMILY_TEST = None        # 'thousands' | 'length' — по правилу выбора семейства на пилоте
+TEST_PHASE = 'test2'      # HYPOTHESIS-2: тест — подсказка только из ID (p = 3)
 T3_HEADS = None           # головы Т3: разрыв ID − OOD на пилоте выбранного семейства не меньше 0,10
 T2_DESCRIPTIVE = None     # True, если мощность Т2 по пилоту меньше 0,2 (HYPOTHESIS)
 T4_STRATA = None          # False — нуль без страт (HYPOTHESIS); True — со стратами по числу переносов
@@ -490,7 +495,7 @@ def test(dst, mdir, B=10000, workers=1):
     for name in sorted(envs):
         env = envs[name]
         meta = env['meta']
-        assert meta['family'] == FAMILY_TEST and int(meta['p']) == D2.P_TEST, f'среда {name} не из теста семейства {FAMILY_TEST}'
+        assert meta['family'] == FAMILY_TEST and int(meta['p']) == D2.PHASES[TEST_PHASE]['p'], f'среда {name} не из теста семейства {FAMILY_TEST}'
         env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in names_c])
         o = off_of(meta)
         n_id = sum(p['range'] == 'ID' for p in env['problems'])
@@ -581,7 +586,7 @@ def main():
     elif a[0] == 'pilot':
         B = int(a[a.index('--boot') + 1]) if '--boot' in a else 200
         W = int(a[a.index('--workers') + 1]) if '--workers' in a else 1
-        pilot(a[1], {'thousands': a[2], 'length': a[3]}, B, W)
+        pilot(a[1], {'thousands': a[2], 'length': a[3]}, B, W, a[a.index('--test-phase') + 1] if '--test-phase' in a else 'test')
     elif a[0] == 'test':
         B = int(a[a.index('--boot') + 1]) if '--boot' in a else 10000
         W = int(a[a.index('--workers') + 1]) if '--workers' in a else 1
