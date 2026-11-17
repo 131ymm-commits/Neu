@@ -1,0 +1,2119 @@
+{
+ "source": "API arXiv (export.arxiv.org/api/query?id_list=...), сверка 2026-11-17 14:52 UTC",
+ "ids": {
+  "1312.6120": {
+   "status": "есть",
+   "title": "Exact solutions to the nonlinear dynamics of learning in deep linear neural networks",
+   "published": "2013-12-20",
+   "first_author": "Andrew M. Saxe",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2006.16736": {
+   "status": "есть",
+   "title": "Beyond accuracy: quantifying trial-by-trial behaviour of CNNs and humans by measuring error consistency",
+   "published": "2020-06-30",
+   "first_author": "Robert Geirhos",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2111.00034": {
+   "status": "есть",
+   "title": "Neural Networks as Kernel Learners: The Silent Alignment Effect",
+   "published": "2021-10-29",
+   "first_author": "Alexander Atanasov",
+   "n_authors": 3,
+   "yymm_matches": false,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2206.13089": {
+   "status": "есть",
+   "title": "Agreement-on-the-Line: Predicting the Performance of Neural Networks under Distribution Shift",
+   "published": "2022-06-27",
+   "first_author": "Christina Baek",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2310.04941": {
+   "status": "есть",
+   "title": "Test-Time Adaptation Induces Stronger Accuracy and Agreement-on-the-Line",
+   "published": "2023-10-07",
+   "first_author": "Eungyeup Kim",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2402.09142": {
+   "status": "есть",
+   "title": "When Representations Align: Universality in Representation Learning Dynamics",
+   "published": "2024-02-14",
+   "first_author": "Loek van Rossem",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2402.19379": {
+   "status": "есть",
+   "title": "Wisdom of the Silicon Crowd: LLM Ensemble Prediction Capabilities Rival Human Crowd Accuracy",
+   "published": "2024-02-29",
+   "first_author": "Philipp Schoenegger",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2404.01542": {
+   "status": "есть",
+   "title": "Predicting the Performance of Foundation Models via Agreement-on-the-Line",
+   "published": "2024-04-02",
+   "first_author": "Rahul Saxena",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2404.18796": {
+   "status": "есть",
+   "title": "Replacing Judges with Juries: Evaluating LLM Generations with a Panel of Diverse Models",
+   "published": "2024-04-29",
+   "first_author": "Pat Verga",
+   "n_authors": 9,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2409.00094": {
+   "status": "есть",
+   "title": "Examining Independence in Ensemble Sentiment Analysis: A Study on the Limits of Large Language Models Using the Condorcet Jury Theorem",
+   "published": "2024-08-26",
+   "first_author": "Baptiste Lefort",
+   "n_authors": 6,
+   "yymm_matches": false,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2409.19839": {
+   "status": "есть",
+   "title": "ForecastBench: A Dynamic Benchmark of AI Forecasting Capabilities",
+   "published": "2024-09-30",
+   "first_author": "Ezra Karger",
+   "n_authors": 7,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2410.13341": {
+   "status": "есть",
+   "title": "Limits to scalable evaluation at the frontier: LLM as Judge won't beat twice the data",
+   "published": "2024-10-17",
+   "first_author": "Florian E. Dorner",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2502.04313": {
+   "status": "есть",
+   "title": "Great Models Think Alike and this Undermines AI Oversight",
+   "published": "2025-02-06",
+   "first_author": "Shashwat Goel",
+   "n_authors": 9,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2502.18710": {
+   "status": "есть",
+   "title": "Bridging Critical Gaps in Convergent Learning: How Representational Alignment Evolves Across Layers, Training, and Distribution Shifts",
+   "published": "2025-02-26",
+   "first_author": "Chaitanya Kapoor",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2504.01848": {
+   "status": "есть",
+   "title": "PaperBench: Evaluating AI's Ability to Replicate AI Research",
+   "published": "2025-04-02",
+   "first_author": "Giulio Starace",
+   "n_authors": 13,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2506.07962": {
+   "status": "есть",
+   "title": "Correlated Errors in Large Language Models",
+   "published": "2025-06-09",
+   "first_author": "Elliot Kim",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md",
+    "platonic_representations.md"
+   ]
+  },
+  "2506.18203": {
+   "status": "есть",
+   "title": "Shrinking the Generation-Verification Gap with Weak Verifiers",
+   "published": "2025-06-22",
+   "first_author": "Jon Saad-Falcon",
+   "n_authors": 12,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2510.05566": {
+   "status": "есть",
+   "title": "Domain-Shift-Aware Conformal Prediction for Large Language Models",
+   "published": "2025-10-07",
+   "first_author": "Zhexiao Lin",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2510.20963": {
+   "status": "есть",
+   "title": "When and Why Does Multi-Agent Debate Fail and Does It Really Underperform?",
+   "published": "2025-10-23",
+   "first_author": "Yongqiang Chen",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2510.22954": {
+   "status": "есть",
+   "title": "Artificial Hivemind: The Open-Ended Homogeneity of Language Models (and Beyond)",
+   "published": "2025-10-27",
+   "first_author": "Liwei Jiang",
+   "n_authors": 10,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2511.07678": {
+   "status": "есть",
+   "title": "AIA Forecaster: Technical Report",
+   "published": "2025-11-10",
+   "first_author": "Rohan Alur",
+   "n_authors": 14,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2512.20607": {
+   "status": "есть",
+   "title": "Saddle-to-Saddle Dynamics Explains A Simplicity Bias Across Neural Network Architectures",
+   "published": "2025-12-23",
+   "first_author": "Yedi Zhang",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2512.23847": {
+   "status": "есть",
+   "title": "Detecting Lookahead Bias in LLM Forecasts",
+   "published": "2025-12-29",
+   "first_author": "Zhenyu Gao",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2601.04170": {
+   "status": "есть",
+   "title": "Agent Drift: Quantifying Behavioral Degradation in Multi-Agent LLM Systems Over Extended Interactions",
+   "published": "2026-01-07",
+   "first_author": "Abhishek Rath",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2601.07992": {
+   "status": "есть",
+   "title": "Fake Date Tests: Can We Trust In-sample Accuracy of LLMs in Macroeconomic Forecasting?",
+   "published": "2026-01-12",
+   "first_author": "Alexander Eliseev",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2601.09173": {
+   "status": "есть",
+   "title": "Geometric Stability: The Missing Axis of Representations",
+   "published": "2026-01-14",
+   "first_author": "Prashant C. Raju",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2601.13770": {
+   "status": "есть",
+   "title": "Look-Ahead-Bench: a Standardized Benchmark of Look-ahead Bias in Point-in-Time LLMs for Finance",
+   "published": "2026-01-20",
+   "first_author": "Mostapha Benhenda",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2601.17093": {
+   "status": "есть",
+   "title": "The Triangle of Similarity: A Multi-Faceted Framework for Comparing Neural Network Representations",
+   "published": "2026-01-23",
+   "first_author": "Olha Sirikova",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2601.19921": {
+   "status": "есть",
+   "title": "Demystifying Multi-Agent Debate: The Role of Confidence and Diversity",
+   "published": "2026-01-09",
+   "first_author": "Xiaochen Zhu",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2601.21568": {
+   "status": "есть",
+   "title": "Bridging Functional and Representational Similarity via Usable Information",
+   "published": "2026-01-29",
+   "first_author": "Antonio Almudévar",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2601.22662": {
+   "status": "есть",
+   "title": "Task-Aware LLM Council with Adaptive Decision Pathways for Decision Support",
+   "published": "2026-01-30",
+   "first_author": "Wei Zhu",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2602.08003": {
+   "status": "есть",
+   "title": "Don't Always Pick the Highest-Performing Model: An Information Theoretic View of LLM Ensemble Selection",
+   "published": "2026-02-08",
+   "first_author": "Yigit Turkmen",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2602.10416": {
+   "status": "есть",
+   "title": "AI-rithmetic",
+   "published": "2026-02-11",
+   "first_author": "Alex Bie",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2602.14486": {
+   "status": "есть",
+   "title": "Revisiting the Platonic Representation Hypothesis: An Aristotelian View",
+   "published": "2026-02-16",
+   "first_author": "Fabian Gröger",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2602.17633": {
+   "status": "есть",
+   "title": "When to Trust the Cheap Check: Weak and Strong Verification for Reasoning",
+   "published": "2026-02-19",
+   "first_author": "Shayan Kiyani",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2602.22413": {
+   "status": "есть",
+   "title": "Epistemic Filtering and Collective Hallucination: A Jury Theorem for Confidence-Calibrated Agents",
+   "published": "2026-02-25",
+   "first_author": "Jonas Karge",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2603.12246": {
+   "status": "есть",
+   "title": "Examining Reasoning LLMs-as-Judges in Non-Verifiable LLM Post-Training",
+   "published": "2026-03-12",
+   "first_author": "Yixin Liu",
+   "n_authors": 10,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2603.17111": {
+   "status": "есть",
+   "title": "Hidden Clones: Exposing and Fixing Family Bias in Vision-Language Model Ensembles",
+   "published": "2026-03-17",
+   "first_author": "Zacharie Bugaud",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2603.26828": {
+   "status": "есть",
+   "title": "Arithmetic OOD Failure Unfolds in Stages in Minimal GPTs",
+   "published": "2026-03-27",
+   "first_author": "Seine A. Shintani",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2604.02923": {
+   "status": "есть",
+   "title": "An Inspectable LLM Council for Multi-Model Research Answer Aggregation",
+   "published": "2026-04-03",
+   "first_author": "Shuai Wu",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2604.06366": {
+   "status": "есть",
+   "title": "Stochastic Gradient Descent in the Saddle-to-Saddle Regime of Deep Linear Networks",
+   "published": "2026-04-07",
+   "first_author": "Guillaume Corlouer",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2604.07650": {
+   "status": "есть",
+   "title": "A Statistical Framework for Auditing Behavioral Dependence and Induced Bias in LLM Judges",
+   "published": "2026-04-08",
+   "first_author": "Chenchen Kuai",
+   "n_authors": 11,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2604.09624": {
+   "status": "есть",
+   "title": "Self-Calibrating Language Models via Test-Time Discriminative Distillation",
+   "published": "2026-03-18",
+   "first_author": "Mohamed Rissal Hedna",
+   "n_authors": 4,
+   "yymm_matches": false,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2604.15149": {
+   "status": "есть",
+   "title": "LLMs Gaming Verifiers: RLVR can Lead to Reward Hacking",
+   "published": "2026-04-16",
+   "first_author": "Lukas Helff",
+   "n_authors": 9,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2604.18572": {
+   "status": "есть",
+   "title": "Back into Plato's Cave: Examining Cross-modal Representational Convergence at Scale",
+   "published": "2026-04-20",
+   "first_author": "A. Sophia Koepke",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2604.18576": {
+   "status": "есть",
+   "title": "Agentic Forecasting with Structured Linguistic Beliefs",
+   "published": "2026-04-20",
+   "first_author": "Kevin Murphy",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2604.19444": {
+   "status": "есть",
+   "title": "Binary Agreement for Efficient Unsupervised Confidence Calibration of Reasoning LLMs",
+   "published": "2026-04-21",
+   "first_author": "Thomas Zollo",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2604.19809": {
+   "status": "есть",
+   "title": "MIRROR: A Hierarchical Benchmark for Metacognitive Calibration in Large Language Models",
+   "published": "2026-04-15",
+   "first_author": "Jason Z Wang",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2604.20911": {
+   "status": "есть",
+   "title": "Omission Constraints Decay While Commission Constraints Persist in Long-Context LLM Agents",
+   "published": "2026-04-22",
+   "first_author": "Yeran Gamage",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2604.23987": {
+   "status": "есть",
+   "title": "Continual Calibration: Coverage Can Collapse Before Accuracy in Lifelong LLM Fine-Tuning",
+   "published": "2026-04-27",
+   "first_author": "Ibne Farabi Shihab",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2605.00914": {
+   "status": "есть",
+   "title": "The Cost of Consensus: Isolated Self-Correction Prevails Over Unguided Homogeneous Multi-Agent Debate",
+   "published": "2026-04-29",
+   "first_author": "Blaž Bertalanič",
+   "n_authors": 2,
+   "yymm_matches": false,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2605.01566": {
+   "status": "есть",
+   "title": "Multi-Agent Reasoning Improves Compute Efficiency: Pareto-Optimal Test-Time Scaling",
+   "published": "2026-05-02",
+   "first_author": "Florian Valentin Wunderlich",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2605.03258": {
+   "status": "есть",
+   "title": "The Right Answer, the Wrong Direction: Why Transformers Fail at Counting and How to Fix It",
+   "published": "2026-05-05",
+   "first_author": "Gabriel Garcia",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2605.05973": {
+   "status": "есть",
+   "title": "Towards Reliable LLM Evaluation: Correcting the Winner's Curse in Adaptive Benchmarking",
+   "published": "2026-05-07",
+   "first_author": "Jiefu Zhang",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2605.07345": {
+   "status": "есть",
+   "title": "Mean-Pooled Cosine Similarity is Not Length-Invariant: Theory and Cross-Domain Evidence for a Length-Invariant Alternative",
+   "published": "2026-05-08",
+   "first_author": "Sibayan Mitra",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2605.10246": {
+   "status": "есть",
+   "title": "SciIntegrity-Bench: A Benchmark for Evaluating Academic Integrity in AI Scientist Systems",
+   "published": "2026-05-11",
+   "first_author": "Zonglin Yang",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2605.12474": {
+   "status": "есть",
+   "title": "Reward Hacking in Rubric-Based Reinforcement Learning",
+   "published": "2026-05-12",
+   "first_author": "Anas Mahmoud",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2605.12922": {
+   "status": "есть",
+   "title": "When Attention Closes: How LLMs Lose the Thread in Multi-Turn Interaction",
+   "published": "2026-05-13",
+   "first_author": "Vardhan Dongre",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2605.18887": {
+   "status": "есть",
+   "title": "Valuing Winners: When and How to Correct for Selection Bias in Randomized Experiments",
+   "published": "2026-05-16",
+   "first_author": "Ron Berman",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2605.20496": {
+   "status": "есть",
+   "title": "Platonic Representations in the Human Brain: Unsupervised Recovery of Universal Geometry",
+   "published": "2026-05-19",
+   "first_author": "Pablo Marcos-Manchón",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2605.22672": {
+   "status": "есть",
+   "title": "Is Capability a Liability? More Capable Language Models Make Worse Forecasts When It Matters Most",
+   "published": "2026-05-21",
+   "first_author": "Nick Merrill",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2605.23315": {
+   "status": "есть",
+   "title": "Convergence Without Understanding: When Language Models Agree on Representations but Disagree on Reasoning",
+   "published": "2026-05-22",
+   "first_author": "Muhammad Usama",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2605.29116": {
+   "status": "есть",
+   "title": "Beyond Consensus: Trace-Level Synthesis in Mixture of Agents",
+   "published": "2026-05-27",
+   "first_author": "Shreyas Fadnavis",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2605.29800": {
+   "status": "есть",
+   "title": "Nine Judges, Two Effective Votes: Correlated Errors Undermine LLM Evaluation Panels",
+   "published": "2026-05-28",
+   "first_author": "Guneet Kohli",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2606.01066": {
+   "status": "есть",
+   "title": "Before the Model Learns the Bug:Fuzzing RLVR Verifiers",
+   "published": "2026-05-31",
+   "first_author": "Jaideep Ray",
+   "n_authors": 1,
+   "yymm_matches": false,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2606.03238": {
+   "status": "есть",
+   "title": "When RLHF Fails: A Mechanistic Taxonomy of Reward Hacking, Collapse, and Evaluator Gaming",
+   "published": "2026-06-02",
+   "first_author": "Zelalem Abahana",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2606.05268": {
+   "status": "есть",
+   "title": "Aggregating LLM-Based Weak Verifiers for Spatial Layout Generation",
+   "published": "2026-06-03",
+   "first_author": "Sharon Zhang",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2606.11217": {
+   "status": "есть",
+   "title": "Preregistration for Experiments with AI Agents",
+   "published": "2026-05-03",
+   "first_author": "Michelle Vaccaro",
+   "n_authors": 1,
+   "yymm_matches": false,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2606.13038": {
+   "status": "есть",
+   "title": "Nous: An Attempt to Extract and Inject the Cognition Behind Prediction-Market Behavior",
+   "published": "2026-06-11",
+   "first_author": "Haowei Qian",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2606.18686": {
+   "status": "есть",
+   "title": "ForecastBench-Sim: A Simulated-World Forecasting Benchmark",
+   "published": "2026-06-17",
+   "first_author": "Jaeho Lee",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2606.26300": {
+   "status": "есть",
+   "title": "The Verification Horizon: No Silver Bullet for Coding Agent Rewards",
+   "published": "2026-06-24",
+   "first_author": "Binghai Wang",
+   "n_authors": 13,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2606.26583": {
+   "status": "есть",
+   "title": "Preference Optimization Drives Monoculture in LLM Prediction Markets",
+   "published": "2026-06-25",
+   "first_author": "James Begin",
+   "n_authors": 9,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2606.27288": {
+   "status": "есть",
+   "title": "When Does Combining Language Models Help? A Co-Failure Ceiling on Routing, Voting, and Mixture-of-Agents Across 67 Frontier Models",
+   "published": "2026-06-25",
+   "first_author": "Josef Chen",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2606.27687": {
+   "status": "есть",
+   "title": "Mitigating LLM-based p-Hacking by Preregistering for the Next LLM",
+   "published": "2026-06-26",
+   "first_author": "Maria Thomas",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2606.29270": {
+   "status": "есть",
+   "title": "Minority Sentinel: When to Overturn Majority Voting in Multi-Agent LLM Debates",
+   "published": "2026-06-28",
+   "first_author": "Chuan He",
+   "n_authors": 8,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2606.29425": {
+   "status": "есть",
+   "title": "Mixture of Debaters: Learn to Debate at Architectural Level in Multi-Agent Reasoning",
+   "published": "2026-06-28",
+   "first_author": "Dayong Liang",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2607.01661": {
+   "status": "есть",
+   "title": "Diverse Evidence, Better Forecasts: Multi-Agent Deliberation Under Information Asymmetry",
+   "published": "2026-07-02",
+   "first_author": "Yuante Li",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2607.05904": {
+   "status": "есть",
+   "title": "More Convincing, Not More Correct: Self-Play Reward Hacking of Reference-Free LLM Judges",
+   "published": "2026-07-07",
+   "first_author": "Chenyu Zhou",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2607.10712": {
+   "status": "есть",
+   "title": "Distributed Denial of Science: How Indirect Data Poisoning of AI Systems Can Industrialize Scientific Fraud",
+   "published": "2026-07-12",
+   "first_author": "Bálint Gyevnár",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2607.14051": {
+   "status": "есть",
+   "title": "Hindcast: Replaying Prediction Markets to Evaluate LLM Forecasters",
+   "published": "2026-07-15",
+   "first_author": "Xiao Ye",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2607.17800": {
+   "status": "есть",
+   "title": "The Concept of Representation in ML: Beyond Plato and Aristotle",
+   "published": "2026-07-20",
+   "first_author": "Gilad Landau",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2607.18545": {
+   "status": "есть",
+   "title": "Flexible Inference for Winners with Conditional Validity",
+   "published": "2026-07-20",
+   "first_author": "Soham Bakshi",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2608.05086": {
+   "status": "есть",
+   "title": "Item Response Theory for AI Safety",
+   "published": "2026-08-05",
+   "first_author": "Joshua Fonseca Rivera",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2608.05179": {
+   "status": "есть",
+   "title": "Autonomous Research Agents: A Survey of AI Scientists and the Verification Gap",
+   "published": "2026-06-29",
+   "first_author": "Tianyu Ding",
+   "n_authors": 4,
+   "yymm_matches": false,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2608.08975": {
+   "status": "есть",
+   "title": "How Can Rhetoric Reward-Hack AI Reviewers? Dissecting Rhetorical Sensitivity in AI-Based Peer Review",
+   "published": "2026-08-10",
+   "first_author": "Ming Li",
+   "n_authors": 8,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2608.11669": {
+   "status": "есть",
+   "title": "Rubric Dropout: A Simple Way to Mitigate Reward Hacking in Rubric-Based RL",
+   "published": "2026-08-12",
+   "first_author": "Minglai Yang",
+   "n_authors": 11,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2608.13433": {
+   "status": "есть",
+   "title": "Algebraic Decomposition Theory for Transformer Length Generalization",
+   "published": "2026-08-13",
+   "first_author": "Andy Yang",
+   "n_authors": 8,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2608.14683": {
+   "status": "есть",
+   "title": "One Score, Two Decisions: Selective Prediction on the Rare-Disease Tail",
+   "published": "2026-08-05",
+   "first_author": "Zhaoyang Jiang",
+   "n_authors": 8,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2608.17124": {
+   "status": "есть",
+   "title": "A decodability criterion predicts when hidden-state selection beats majority voting in large language models",
+   "published": "2026-08-17",
+   "first_author": "Zhixiang wang",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2608.17776": {
+   "status": "есть",
+   "title": "Debate Training Reduces Reward Hacking in RLAIF",
+   "published": "2026-08-18",
+   "first_author": "Zachary Kenton",
+   "n_authors": 11,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2608.21748": {
+   "status": "есть",
+   "title": "Calibrate What You SHIP: Post-Selection Risk Control for Verifier-Guided Text-to-Image Generation",
+   "published": "2026-08-22",
+   "first_author": "Xuanhua Yin",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2608.23541": {
+   "status": "есть",
+   "title": "The Interaction Tax: When Communication Erases Diversity in Multi-Agent Teams",
+   "published": "2026-08-24",
+   "first_author": "Summer Eunhyung Ann",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2608.23720": {
+   "status": "есть",
+   "title": "Platonic Representation Hypothesis on World Models",
+   "published": "2026-08-24",
+   "first_author": "Wenhow Li",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2608.25869": {
+   "status": "есть",
+   "title": "Anchoring Bias in LLM-as-a-Judge Systems: Prior Scores Compromise Evaluation Independence",
+   "published": "2026-08-26",
+   "first_author": "Ante Kapetanovic",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2609.00482": {
+   "status": "есть",
+   "title": "Are Near-Tied LLM Rankings Robust to Family-DIF-Guided Benchmark Recomposition?",
+   "published": "2026-08-31",
+   "first_author": "Qiaoyuan Zheng",
+   "n_authors": 2,
+   "yymm_matches": false,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2609.01660": {
+   "status": "есть",
+   "title": "How Fast Do Agents Rot? An Empirical Study of Long-Horizon Degradation in LLM Agents for Production Decision-Making",
+   "published": "2026-08-31",
+   "first_author": "Shubhra Mittal",
+   "n_authors": 1,
+   "yymm_matches": false,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2609.07879": {
+   "status": "есть",
+   "title": "Do Large Language Models Know What They Don't Know II? A Fully Behavioral, Non-Cognitive Measure of Epistemic Honesty",
+   "published": "2026-09-07",
+   "first_author": "Ali Şenol",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2609.08589": {
+   "status": "есть",
+   "title": "The Unreliable Progress Bar: Can LLM Agents Reliably Report Task Progress Throughout Execution?",
+   "published": "2026-09-08",
+   "first_author": "Boyang Wang",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2609.08826": {
+   "status": "есть",
+   "title": "A Closed-Form Estimator and Diagnostic Battery for Anchor-Judge Error Correlation, Under a Single-Common-Factor Model",
+   "published": "2026-09-08",
+   "first_author": "Veerendra Kumar Sunkavalli",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2609.12439": {
+   "status": "есть",
+   "title": "Debiasing as a Measurement Intervention: Calibrated Ties and Resolution Loss in LLM-as-a-Judge Evaluation",
+   "published": "2026-09-11",
+   "first_author": "Liang Zhao",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2609.13824": {
+   "status": "есть",
+   "title": "When Consistency Does Not Mean Reliability: Evaluating Local LLM Judges Against Human Ratings",
+   "published": "2026-09-12",
+   "first_author": "Aakash Kumar Tiwari",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2609.14438": {
+   "status": "есть",
+   "title": "A latent dimension of Condorcet's jury theorem for multiple AI advisers",
+   "published": "2026-09-13",
+   "first_author": "Kazutoshi Sasahara",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2609.20824": {
+   "status": "есть",
+   "title": "Do small language models know what they don't know?",
+   "published": "2026-07-21",
+   "first_author": "Prashant Mudgal",
+   "n_authors": 1,
+   "yymm_matches": false,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2609.22048": {
+   "status": "есть",
+   "title": "Available Guardrails: Certifying Selective Prediction across ML Systems",
+   "published": "2026-09-18",
+   "first_author": "Parivesh Priye",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2609.22246": {
+   "status": "есть",
+   "title": "The Corroboration Illusion: When More News Makes LLM Forecasts Less True",
+   "published": "2026-09-05",
+   "first_author": "Yuan Lu",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2609.22512": {
+   "status": "есть",
+   "title": "Agreement Overstates Evidence: Error Dependence in LLM Judge Consensus",
+   "published": "2026-09-18",
+   "first_author": "Elias Hossain",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2609.24209": {
+   "status": "есть",
+   "title": "Displacement Geometry Captures Platonic Shared Reality Across Models and Modalities",
+   "published": "2026-09-21",
+   "first_author": "Chenming Shang",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2609.25959": {
+   "status": "есть",
+   "title": "Calibration Is Not Verification: Answer-Level Conformal Guarantees for Mixture-of-Agents",
+   "published": "2026-09-22",
+   "first_author": "Nada Rahali",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2609.27252": {
+   "status": "есть",
+   "title": "What Converges in the Platonic Representation Hypothesis? Structure over Geometry",
+   "published": "2026-09-23",
+   "first_author": "Junwon You",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2609.28475": {
+   "status": "есть",
+   "title": "When Should Forecasting Agents Reason? Behavioral Stress Tests for Reliability Routing",
+   "published": "2026-07-09",
+   "first_author": "Yufeng Wang",
+   "n_authors": 1,
+   "yymm_matches": false,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2609.28614": {
+   "status": "есть",
+   "title": "Reward Hacking Challenges Oversight of Autonomous Research Agents",
+   "published": "2026-09-23",
+   "first_author": "Yue Huang",
+   "n_authors": 15,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2609.28876": {
+   "status": "есть",
+   "title": "Forecast-Dojo: Replayable Environments for Benchmarking and Training LLM Forecasting Agents",
+   "published": "2026-09-24",
+   "first_author": "Liqin Ye",
+   "n_authors": 11,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2609.30028": {
+   "status": "есть",
+   "title": "How does Adversarial Influence Scale in Multi-Agent Systems?",
+   "published": "2026-09-24",
+   "first_author": "Addison J. Wu",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2609.31184": {
+   "status": "есть",
+   "title": "Accounting for Bias Enables Sustainable LLM Evaluation",
+   "published": "2026-09-25",
+   "first_author": "Harshita Katoch",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2609.31996": {
+   "status": "есть",
+   "title": "Can Circuit Alignment Predict OOD Generalization?",
+   "published": "2026-09-25",
+   "first_author": "Ayan Banerjee",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2609.32885": {
+   "status": "есть",
+   "title": "Can LLMs Predict the Future? A Brier Score Analysis of Prediction Markets",
+   "published": "2026-09-26",
+   "first_author": "Yuanbo Li",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2609.33257": {
+   "status": "есть",
+   "title": "Two Heads Are Better Than One: Aggregating Weaker LLMs for Better Forecasts",
+   "published": "2026-09-27",
+   "first_author": "Cheng Peng",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2609.33495": {
+   "status": "есть",
+   "title": "LLMs Trust Their Own: Identity-Dependent Conformity in Multi-Agent Systems",
+   "published": "2026-09-27",
+   "first_author": "Liron Soffer",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2609.33936": {
+   "status": "есть",
+   "title": "How Strong Is the Evidence for the Artificial Hivemind? Reevaluating Evidence for the Open-Ended Homogeneity of Language Models",
+   "published": "2026-09-27",
+   "first_author": "Rylan Schaeffer",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2609.35739": {
+   "status": "есть",
+   "title": "Rubric-Calibrated Preferences: Cross-Query Calibration of LLM Judgments via Item Response Theory",
+   "published": "2026-09-28",
+   "first_author": "Fabian David Schmidt",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2609.35875": {
+   "status": "есть",
+   "title": "Beyond Symmetric Agents: Cognitive Diversity and Multi-Agent Debate in Small Language Models",
+   "published": "2026-09-26",
+   "first_author": "Leonardo Ferreira",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2609.36726": {
+   "status": "есть",
+   "title": "Can AI Scientists Change Their Minds? Prior-Evidence Conflict in Synthetic Universes",
+   "published": "2026-09-29",
+   "first_author": "Kargi Chauhan",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2609.37836": {
+   "status": "есть",
+   "title": "Behavioral Convergence Without Representational Convergence: Persistent Training-History Dependence in Neural Networks",
+   "published": "2026-09-29",
+   "first_author": "Ertuğrul Mutlu",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.01097": {
+   "status": "есть",
+   "title": "YouRA: A Persistent-State Architecture for Evidence-Traceable Autonomous Research Agents",
+   "published": "2026-10-01",
+   "first_author": "Yoonkyu Woo",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2610.02005": {
+   "status": "есть",
+   "title": "Counting Moves, Weighing Voices: Bayesian Dialectical Argumentation for Calibrated Multi-LLM Councils under Persistent Adversaries",
+   "published": "2026-10-01",
+   "first_author": "Ionel Eduard Stan",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2610.02702": {
+   "status": "есть",
+   "title": "Silent Dissent: LLM Agents That Yield to the Majority Still Represent Their Original Premise",
+   "published": "2026-10-02",
+   "first_author": "Ziang Ni",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2610.04130": {
+   "status": "есть",
+   "title": "Shared Geometry Is Not Shared Physics: A Layerwise Test of the Platonic Representation Hypothesis in Astronomy",
+   "published": "2026-10-02",
+   "first_author": "Kshitij Duraphe",
+   "n_authors": 7,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.05094": {
+   "status": "есть",
+   "title": "How Much Do LLM-as-a-Judge Design Choices Matter? A Systematic Comparison of Prompt Designs, Rating Scales, and Models",
+   "published": "2026-10-04",
+   "first_author": "Laurène Vaugrante",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2610.07168": {
+   "status": "есть",
+   "title": "A theory of platonic representations in language models",
+   "published": "2026-10-05",
+   "first_author": "Darshil Doshi",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.07186": {
+   "status": "есть",
+   "title": "Identifying Introspection From the Inside",
+   "published": "2026-10-05",
+   "first_author": "David I. Atkinson",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2610.09239": {
+   "status": "есть",
+   "title": "The Winner's Curse in LLM Self-Improvement Loops: Selection Noise, Lock-in, and Acceptance Rules",
+   "published": "2026-10-07",
+   "first_author": "Litao Hu",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2610.09824": {
+   "status": "есть",
+   "title": "Homogenization in Multi-Agent Systems",
+   "published": "2026-10-07",
+   "first_author": "Prakhar Ganesh",
+   "n_authors": 7,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2610.10619": {
+   "status": "есть",
+   "title": "TestJack: Should you trust the results in coding benchmarks? Agentic Coding Benchmarks Auditing via Evaluator Evolution",
+   "published": "2026-10-07",
+   "first_author": "Shuangjie Yao",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2610.11116": {
+   "status": "есть",
+   "title": "BayesJudge: Uncertainty-Aware Bayesian Meta-Evaluation of Human and LLM Judgments",
+   "published": "2026-10-08",
+   "first_author": "Jiahao Zhang",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2610.11352": {
+   "status": "есть",
+   "title": "RL-ARC: Calibrating Large Reasoning Models via Reasoning-guided Uncertainty",
+   "published": "2026-10-08",
+   "first_author": "Gukhyeon Lee",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2610.11754": {
+   "status": "есть",
+   "title": "What Output-Only Review Cannot Verify: Study Contracts for Research Agents",
+   "published": "2026-10-08",
+   "first_author": "Eitan Waks",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2610.12083": {
+   "status": "есть",
+   "title": "All Verdicts are Not Equal: Rethinking LLM Judge Reliability",
+   "published": "2026-10-08",
+   "first_author": "Vineet Kumar",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2610.13476": {
+   "status": "есть",
+   "title": "A Better Metric Will Not Save You: What You Compare Beats How You Compare It",
+   "published": "2026-10-09",
+   "first_author": "Noureddine Khaous",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.14683": {
+   "status": "есть",
+   "title": "Triage-PiEvo: Evidence Admission for Principle-Evolving Scientific Agents",
+   "published": "2026-10-10",
+   "first_author": "Peize Li",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2610.16755": {
+   "status": "есть",
+   "title": "The Multilingual Artificial Hivemind: Do All LLMs Think Alike in Every Language?",
+   "published": "2026-10-12",
+   "first_author": "Xaver Raphael Davey",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2610.20286": {
+   "status": "есть",
+   "title": "From Plato to Aristotle: Toward a General Theory of Representation Hypotheses",
+   "published": "2026-10-14",
+   "first_author": "Dai Shi",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.20887": {
+   "status": "есть",
+   "title": "Do Emergent Misalignment Models Share a Circuit?",
+   "published": "2026-10-14",
+   "first_author": "Muhammad Haseeb",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.21290": {
+   "status": "есть",
+   "title": "Bias Control and Injection for Multi-Agent Aggregation",
+   "published": "2026-10-15",
+   "first_author": "Sungjae Lee",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2610.22138": {
+   "status": "есть",
+   "title": "Believed but Not Said: Measuring Hidden Belief Collapse in Multi-Agent LLM Discussions",
+   "published": "2026-10-15",
+   "first_author": "Liangjie Huang",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2610.22139": {
+   "status": "есть",
+   "title": "Are You Sure Your LLM Is Sure? Repairing and Auditing Confidence",
+   "published": "2026-10-15",
+   "first_author": "Arijit Dey",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2610.22749": {
+   "status": "есть",
+   "title": "Native Geometry vs. Linear Recoverability: How Alignment Changes Platonic Scaling",
+   "published": "2026-10-15",
+   "first_author": "Angus Hoy",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.24320": {
+   "status": "есть",
+   "title": "The Judge Can Debias Itself: Awareness and Self-Debiasing for Reliable LLM-as-a-Judge",
+   "published": "2026-10-16",
+   "first_author": "Youbing Yin",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2610.24972": {
+   "status": "есть",
+   "title": "A Measurement Perspective on Benchmarking LLM-Generated Text Detectors using Item Response Theory",
+   "published": "2026-10-18",
+   "first_author": "Yanbin Zhao",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2610.25252": {
+   "status": "есть",
+   "title": "Persistent Representational Misalignment Induces Vision-Language Model Failures",
+   "published": "2026-10-18",
+   "first_author": "Yonatan Gideoni",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.26496": {
+   "status": "есть",
+   "title": "Mitigating Reward Hacking in Preference Reward Models with Evolving Penalties",
+   "published": "2026-10-19",
+   "first_author": "Afonso Baldo",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2610.27290": {
+   "status": "есть",
+   "title": "TEX: Test-Time Scaling Testing Agents via Execution-based Cross-Validation",
+   "published": "2026-10-19",
+   "first_author": "Akash Gokul",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2610.27353": {
+   "status": "есть",
+   "title": "Exposing Vulnerability Monoculture Through Systemic Adversarial Robustness",
+   "published": "2026-10-19",
+   "first_author": "Leo Elmecker-Plakolm",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2610.27628": {
+   "status": "есть",
+   "title": "PAR: Progress-Aligned Recurrence for Length Generalization in State Tracking",
+   "published": "2026-10-20",
+   "first_author": "Pan Wang",
+   "n_authors": 11,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2610.27655": {
+   "status": "есть",
+   "title": "Does Multi-Agent Collaboration Pay When Agents Serve Users? Testing Agent Scaling in Dual-Control Settings",
+   "published": "2026-10-20",
+   "first_author": "Ethan Yang",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2610.29864": {
+   "status": "есть",
+   "title": "Silent Alignment in Two-Layer Linear Networks: A High-Dimensional Perspective",
+   "published": "2026-10-21",
+   "first_author": "Simon Martin",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.31670": {
+   "status": "есть",
+   "title": "Sensorimotor Alignment: A Platonic Proxy for Embodied Policy Success",
+   "published": "2026-10-22",
+   "first_author": "Yunfei Xie",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.34329": {
+   "status": "есть",
+   "title": "SHIFT-JEV: Certified Abstention and Gain-Gated Continual Adaptation for LLM-Based Decision Models under Distribution Shift",
+   "published": "2026-10-25",
+   "first_author": "Muhammad Atif Saeed",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2610.35254": {
+   "status": "есть",
+   "title": "Style over Substance? Linguistic Bias in LLM-based Peer Review",
+   "published": "2026-10-26",
+   "first_author": "Sai Suresh Macharla Vasu",
+   "n_authors": 9,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2610.35716": {
+   "status": "есть",
+   "title": "Audit Where Hacks Pay: Budgeted Strong-Verifier Audits Against Reward Hacking in GRPO",
+   "published": "2026-10-26",
+   "first_author": "Shurun Li",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2610.36511": {
+   "status": "есть",
+   "title": "Do AI Scientists Know What's New?",
+   "published": "2026-10-27",
+   "first_author": "Miri Liu",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2610.38691": {
+   "status": "есть",
+   "title": "Beyond fabrication: Misattributed numbers in papers written by AI research agents",
+   "published": "2026-10-28",
+   "first_author": "Mosab Alfaqeeh",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2610.38911": {
+   "status": "есть",
+   "title": "Interventional Training Reduces Causal Bypass in In-Context Introspection",
+   "published": "2026-10-28",
+   "first_author": "Zilu Tang",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2610.39302": {
+   "status": "есть",
+   "title": "Proving and Improving the Platonic Representation Hypothesis with JEPAs",
+   "published": "2026-10-29",
+   "first_author": "Randall Balestriero",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2610.39744": {
+   "status": "есть",
+   "title": "PAPERBENCHX: Can AI Reproduce Science Across Disciplines?",
+   "published": "2026-10-29",
+   "first_author": "Ruoyu Wu",
+   "n_authors": 17,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2610.41218": {
+   "status": "есть",
+   "title": "A Positional Realizability Theory of Length Generalization in Single-Head Attention",
+   "published": "2026-10-30",
+   "first_author": "Jiasong Han",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2610.41691": {
+   "status": "есть",
+   "title": "Does Reasoning Make Language Models Agree?",
+   "published": "2026-10-30",
+   "first_author": "Mila Gorecki",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2611.00507": {
+   "status": "есть",
+   "title": "Selecting or Solving? What Best-of-N Verification Delivers in Video Reasoning",
+   "published": "2026-10-31",
+   "first_author": "Martin Q. Ma",
+   "n_authors": 6,
+   "yymm_matches": false,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2611.04099": {
+   "status": "есть",
+   "title": "Evaluation Contracts and Evaluation Leverage: Sliced-Gap Readings in Structured Prediction Can Move Without Model Change",
+   "published": "2026-11-03",
+   "first_author": "Hao Lu",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2611.04289": {
+   "status": "есть",
+   "title": "When Debate Amplifies Risk: Social-Bias Vulnerabilities in Multi-Agent Safety Deliberation",
+   "published": "2026-11-03",
+   "first_author": "Qinghua Mao",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2611.04338": {
+   "status": "есть",
+   "title": "Patching the Protocol: A Taxonomy of Pre-Registration Repairs in LLM-Proposer Experiments",
+   "published": "2026-11-03",
+   "first_author": "Peter Chen",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2611.05097": {
+   "status": "есть",
+   "title": "The Platonic Brain: Representational Convergence in EEG Foundation Models",
+   "published": "2026-11-03",
+   "first_author": "Nicolas Waehner",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2611.05390": {
+   "status": "есть",
+   "title": "Who May Overrule the Agent? Evidence-Gated Authority in LLM Review Institutions",
+   "published": "2026-09-12",
+   "first_author": "Fuad Ali",
+   "n_authors": 1,
+   "yymm_matches": false,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2611.05556": {
+   "status": "есть",
+   "title": "AGORA: Reliability-Aware Aggregation of LLM Judges on Small Evaluation Sets",
+   "published": "2026-11-03",
+   "first_author": "Junhyung Ahn",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md",
+    "evaluator_selection.md"
+   ]
+  },
+  "2611.07459": {
+   "status": "есть",
+   "title": "Inference after selection on randomized p-values",
+   "published": "2026-11-05",
+   "first_author": "Ronan Perry",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2611.09568": {
+   "status": "есть",
+   "title": "Alignment by Confident Debate: Preference Learning from Multi-Agent Debate",
+   "published": "2026-11-06",
+   "first_author": "Nikhil Verma",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2611.09780": {
+   "status": "есть",
+   "title": "Strategic Competition and Convergence in LLM Leaderboards",
+   "published": "2026-11-06",
+   "first_author": "Naveen Raman",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "correlated_errors.md"
+   ]
+  },
+  "2611.10050": {
+   "status": "есть",
+   "title": "Selected-Risk Calibration for Feasibility at Returned Decisions",
+   "published": "2026-11-05",
+   "first_author": "Raghav Thind",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2611.10063": {
+   "status": "есть",
+   "title": "Done Is Not Correct: Measuring Silent Failures and Self-Verification Calibration When LLM Agents Take CAD Actions",
+   "published": "2026-11-06",
+   "first_author": "Carson Rodrigues",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "grounded_verification.md"
+   ]
+  },
+  "2611.10325": {
+   "status": "есть",
+   "title": "Update Slope Is Bounded by Prior Calibration: A Structural Bound and Its Contingent Empirical Signature",
+   "published": "2026-11-06",
+   "first_author": "Ben Jenkins",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2611.10891": {
+   "status": "есть",
+   "title": "Approximate Recall, Approximate Forecasts: Recall as a Diagnostic for LLM Forecasting Errors",
+   "published": "2026-11-07",
+   "first_author": "Prashanth Bhaskara",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2611.11114": {
+   "status": "есть",
+   "title": "Compositional Conformal Risk Control for Multi-Stage LLM Cascades",
+   "published": "2026-11-08",
+   "first_author": "Yuxia Sun",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  },
+  "2611.12869": {
+   "status": "есть",
+   "title": "Where Does Alignment Emerge and What Does It Mean? A Closer Look at the Platonic Representation Hypothesis",
+   "published": "2026-11-09",
+   "first_author": "Julia Herbst",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2611.15102": {
+   "status": "есть",
+   "title": "One Fabrication Is Enough: A Fake News Article Changes the Forecasts of LLM Forecasting Systems",
+   "published": "2026-11-11",
+   "first_author": "Zeyu Zhang",
+   "n_authors": 2,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2611.15267": {
+   "status": "есть",
+   "title": "A Closer Look at Language Model Introspection: Probing Information and Reporting",
+   "published": "2026-11-11",
+   "first_author": "Dustin Rubin",
+   "n_authors": 6,
+   "yymm_matches": true,
+   "notes": [
+    "calibration_shift_selfknowledge.md"
+   ]
+  },
+  "2611.16182": {
+   "status": "есть",
+   "title": "Same-State Pairs Make One JEPA Proof of the Platonic Representation Hypothesis Vacuous",
+   "published": "2026-11-12",
+   "first_author": "Xin Li",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2611.17052": {
+   "status": "есть",
+   "title": "Auditing AI peer reviewers: a benchmark on real scientific papers",
+   "published": "2026-11-12",
+   "first_author": "Íñigo Zubeldia",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2611.17610": {
+   "status": "есть",
+   "title": "More Agents, More Samples, or More Thinking? Untangling Coordination, Ensembling, and Test-Time Compute in Multi-Agent LLMs",
+   "published": "2026-11-13",
+   "first_author": "Seyed Mahmoud Sajjadi Mohammadabadi",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "multi_agent_councils.md"
+   ]
+  },
+  "2611.17735": {
+   "status": "есть",
+   "title": "Logically Consistent Accurate Forecasts",
+   "published": "2026-11-13",
+   "first_author": "Kate Yuan",
+   "n_authors": 4,
+   "yymm_matches": true,
+   "notes": [
+    "llm_forecasting.md"
+   ]
+  },
+  "2611.17811": {
+   "status": "есть",
+   "title": "AI Reviews Are Biased Towards the Appendix",
+   "published": "2026-11-13",
+   "first_author": "Saptarshi Ghosh",
+   "n_authors": 3,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2611.20000": {
+   "status": "есть",
+   "title": "What Matters for Cross-Modal Alignment",
+   "published": "2026-11-15",
+   "first_author": "Yipeng Sun",
+   "n_authors": 7,
+   "yymm_matches": true,
+   "notes": [
+    "platonic_representations.md"
+   ]
+  },
+  "2611.20608": {
+   "status": "есть",
+   "title": "Same Papers, Different Verdicts: Tracing Version Drift in LLM Peer Review",
+   "published": "2026-11-16",
+   "first_author": "Jizhou Guo",
+   "n_authors": 1,
+   "yymm_matches": true,
+   "notes": [
+    "ai_research_automation.md"
+   ]
+  },
+  "2611.21538": {
+   "status": "есть",
+   "title": "Optimistic Verifiers Get Hacked: Reward Hacking Under an Exact Process Oracle",
+   "published": "2026-11-16",
+   "first_author": "Arunkumar V",
+   "n_authors": 5,
+   "yymm_matches": true,
+   "notes": [
+    "evaluator_selection.md"
+   ]
+  }
+ }
+}
