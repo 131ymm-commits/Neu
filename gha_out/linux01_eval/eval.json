@@ -1,0 +1,2549 @@
+{
+ "mode": "eval",
+ "n": 100000,
+ "trans_dir": "translations",
+ "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+ "modules": {
+  "int_pow": {
+   "c_lines": 28,
+   "heads": {
+    "haiku": {
+     "rs_lines": 22,
+     "unsafe": 0,
+     "sha256": "b7acc3677d18f952b67dc1645d69d3d5aba0219b38078e390131b25e38510330",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Power of zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Power of one",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Base zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Base one",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Two squared",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Two cubed",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Five raised to the fifth power",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Max base",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Large result",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 9,
+      "failed": 0
+     },
+     "diff": {
+      "int_pow": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "opus": {
+     "rs_lines": 22,
+     "unsafe": 0,
+     "sha256": "b7acc3677d18f952b67dc1645d69d3d5aba0219b38078e390131b25e38510330",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Power of zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Power of one",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Base zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Base one",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Two squared",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Two cubed",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Five raised to the fifth power",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Max base",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Large result",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 9,
+      "failed": 0
+     },
+     "diff": {
+      "int_pow": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "sonnet": {
+     "rs_lines": 15,
+     "unsafe": 0,
+     "sha256": "dbb5b43e5b373384c942a0fb88f87355b03b69862ef6bfa90af2da47e8ee5506",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Power of zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Power of one",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Base zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Base one",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Two squared",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Two cubed",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Five raised to the fifth power",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Max base",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_pow",
+        "case": "int_pow_test",
+        "param": "Large result",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 9,
+      "failed": 0
+     },
+     "diff": {
+      "int_pow": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    }
+   }
+  },
+  "int_sqrt": {
+   "c_lines": 60,
+   "heads": {
+    "haiku": {
+     "rs_lines": 22,
+     "unsafe": 0,
+     "sha256": "0ecdff68a97b08317f9d07635dcb7deff4d7d1990c0ac3195a3cdaf317d02613",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "edge case: square root of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 2",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 3",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 4",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 5",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 6",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 7",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 8",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 9",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 15 (N-1 from 16)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 16",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 17 (N+1 from 16)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 80 (N-1 from 81)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 81",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 82 (N+1 from 81)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 255 (N-1 from 256)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 256",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 257 (N+1 from 256)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "large input: square root of 2147483648",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "edge case: ULONG_MAX for 32-bit",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 21,
+      "failed": 0
+     },
+     "diff": {
+      "int_sqrt": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "opus": {
+     "rs_lines": 41,
+     "unsafe": 0,
+     "sha256": "6e52552845a0f1dc7c5474361749b4dc4acad132b74b6ebc8bdbd3b1b5934ff2",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "edge case: square root of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 2",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 3",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 4",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 5",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 6",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 7",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 8",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 9",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 15 (N-1 from 16)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 16",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 17 (N+1 from 16)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 80 (N-1 from 81)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 81",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 82 (N+1 from 81)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 255 (N-1 from 256)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 256",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 257 (N+1 from 256)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "large input: square root of 2147483648",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "edge case: ULONG_MAX for 32-bit",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 21,
+      "failed": 0
+     },
+     "diff": {
+      "int_sqrt": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "sonnet": {
+     "rs_lines": 25,
+     "unsafe": 0,
+     "sha256": "4c0d22f34522ea76ce8acaa44fae4e2d129c863d023472e800899471f0fea632",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "edge case: square root of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 2",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 3",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 4",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 5",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 6",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 7",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 8",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 9",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 15 (N-1 from 16)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 16",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 17 (N+1 from 16)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 80 (N-1 from 81)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 81",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 82 (N+1 from 81)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 255 (N-1 from 256)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "perfect square: square root of 256",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "non-perfect square: square root of 257 (N+1 from 256)",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "large input: square root of 2147483648",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_sqrt",
+        "case": "int_sqrt_test",
+        "param": "edge case: ULONG_MAX for 32-bit",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 21,
+      "failed": 0
+     },
+     "diff": {
+      "int_sqrt": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    }
+   }
+  },
+  "gcd": {
+   "c_lines": 70,
+   "heads": {
+    "haiku": {
+     "rs_lines": 67,
+     "unsafe": 0,
+     "sha256": "8613b268144a9c385e9fa7b2c837bfe3192a3be9497aafd896801755c53d0412",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 48 and 18",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 18 and 48",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 56 and 98",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "Coprime numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "Coprime numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 270 and 192",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD with zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD with zero reversed",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of identical numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of max ulong and 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of max ulong values",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 11,
+      "failed": 0
+     },
+     "diff": {
+      "gcd": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "opus": {
+     "rs_lines": 86,
+     "unsafe": 0,
+     "sha256": "b9fe6d1856d21781924b034f2ab9e0c9fe797a2860916de57fcc1143638bbaf2",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 48 and 18",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 18 and 48",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 56 and 98",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "Coprime numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "Coprime numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 270 and 192",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD with zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD with zero reversed",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of identical numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of max ulong and 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of max ulong values",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 11,
+      "failed": 0
+     },
+     "diff": {
+      "gcd": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "sonnet": {
+     "rs_lines": 37,
+     "unsafe": 0,
+     "sha256": "950e0c22bd56c93616ced0ff59e3e4c529cccce7212e9ec8b5aa64b72d7738ed",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 48 and 18",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 18 and 48",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 56 and 98",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "Coprime numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "Coprime numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of 270 and 192",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD with zero",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD with zero reversed",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of identical numbers",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of max ulong and 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-gcd",
+        "case": "gcd_test",
+        "param": "GCD of max ulong values",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 11,
+      "failed": 0
+     },
+     "diff": {
+      "gcd": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    }
+   }
+  },
+  "rational": {
+   "c_lines": 101,
+   "heads": {
+    "haiku": {
+     "rs_lines": 83,
+     "unsafe": 1,
+     "sha256": "c391095eac629035cc16a396b2ee5e7adaea600b34d3d1d862d4c5aaaaa3705a",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exceeds bounds, semi-convergent term > 1/2 last term",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exceeds bounds, semi-convergent term < 1/2 last term",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Closest to zero",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Closest to smallest non-zero",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Use convergent",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exact answer",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Semiconvergent, numerator limit",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Semiconvergent, denominator limit",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 8,
+      "failed": 0
+     },
+     "diff": {
+      "rational_best_approximation": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "opus": {
+     "rs_lines": 106,
+     "unsafe": 1,
+     "sha256": "786bef3486231f67f8b3941c26560bcf28c414f17bf424cb37aefd401edcde19",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exceeds bounds, semi-convergent term > 1/2 last term",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exceeds bounds, semi-convergent term < 1/2 last term",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Closest to zero",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Closest to smallest non-zero",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Use convergent",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exact answer",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Semiconvergent, numerator limit",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Semiconvergent, denominator limit",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 8,
+      "failed": 0
+     },
+     "diff": {
+      "rational_best_approximation": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "sonnet": {
+     "rs_lines": 55,
+     "unsafe": 1,
+     "sha256": "fe94ca4d7290b54740b3752507993babf9c13d7bd11655c14178700283f117f1",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exceeds bounds, semi-convergent term > 1/2 last term",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exceeds bounds, semi-convergent term < 1/2 last term",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Closest to zero",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Closest to smallest non-zero",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Use convergent",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Exact answer",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Semiconvergent, numerator limit",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "rational",
+        "case": "rational_test",
+        "param": "Semiconvergent, denominator limit",
+        "expectations": 2,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 8,
+      "failed": 0
+     },
+     "diff": {
+      "rational_best_approximation": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    }
+   }
+  },
+  "int_log": {
+   "c_lines": 119,
+   "heads": {
+    "haiku": {
+     "rs_lines": 77,
+     "unsafe": 0,
+     "sha256": "814c4ec0f0d05e064f0a8234ea5a1db38d3a63dac589c5a12918d4121a4666ea",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 2",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 3",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 4",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 8",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 16",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 32",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of MAX",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 6",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 10",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 100",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 1000",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 10000",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of MAX",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 17,
+      "failed": 0
+     },
+     "diff": {
+      "intlog2": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "intlog10": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "opus": {
+     "rs_lines": 85,
+     "unsafe": 0,
+     "sha256": "03b4ff1ab5062ae0e668f9b07d59e0386af4cc2962bb449d8b348b04c57464cc",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 2",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 3",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 4",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 8",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 16",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 32",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of MAX",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 6",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 10",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 100",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 1000",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 10000",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of MAX",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 17,
+      "failed": 0
+     },
+     "diff": {
+      "intlog2": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "intlog10": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "sonnet": {
+     "rs_lines": 65,
+     "unsafe": 0,
+     "sha256": "337cdaacf782453f68a90429b525b2c7881a871f56388f0f5c6823e10618d70d",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 2",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 3",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 4",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 8",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 16",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of 32",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog2_test",
+        "param": "Log base 2 of MAX",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 0",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 1",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 6",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 10",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 100",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 1000",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of 10000",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "math-int_log",
+        "case": "intlog10_test",
+        "param": "Log base 10 of MAX",
+        "expectations": 1,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 17,
+      "failed": 0
+     },
+     "diff": {
+      "intlog2": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "intlog10": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    }
+   }
+  },
+  "cmdline": {
+   "c_lines": 266,
+   "heads": {
+    "haiku": {
+     "rs_lines": 228,
+     "unsafe": 6,
+     "sha256": "42d526f83878a8b22b7674863f6d0870bf00d25a75186fe4fd4221a1528c46cb",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_noint",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_lead_int",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_tail_int",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_range",
+        "param": "",
+        "expectations": 360,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_range_overflow",
+        "param": "",
+        "expectations": 49,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_quoted_value",
+        "param": "",
+        "expectations": 8,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_bare_quote_regression",
+        "param": "",
+        "expectations": 7,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_mixed_tokens",
+        "param": "",
+        "expectations": 11,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_memparse",
+        "param": "",
+        "expectations": 60,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 9,
+      "failed": 0
+     },
+     "diff": {
+      "get_option": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "get_options": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "memparse": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "parse_option_str": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "next_arg": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "opus": {
+     "rs_lines": 255,
+     "unsafe": 6,
+     "sha256": "d23fbad48fb62707dcf445cb0a0b8848233d8c4be6d72a9aa0a75e644896c519",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_noint",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_lead_int",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_tail_int",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_range",
+        "param": "",
+        "expectations": 360,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_range_overflow",
+        "param": "",
+        "expectations": 49,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_quoted_value",
+        "param": "",
+        "expectations": 8,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_bare_quote_regression",
+        "param": "",
+        "expectations": 7,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_mixed_tokens",
+        "param": "",
+        "expectations": 11,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_memparse",
+        "param": "",
+        "expectations": 60,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 9,
+      "failed": 0
+     },
+     "diff": {
+      "get_option": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "get_options": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "memparse": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "parse_option_str": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "next_arg": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    },
+    "sonnet": {
+     "rs_lines": 222,
+     "unsafe": 6,
+     "sha256": "8c16fc6483ffef63fce0af9a0bcf0bd90e28ee69b146cfd50e5b4fe9d82f44a5",
+     "compiled": true,
+     "linked": true,
+     "kunit": {
+      "cases": [
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_noint",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_lead_int",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_tail_int",
+        "param": "",
+        "expectations": 32,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_range",
+        "param": "",
+        "expectations": 360,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_range_overflow",
+        "param": "",
+        "expectations": 49,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_quoted_value",
+        "param": "",
+        "expectations": 8,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_bare_quote_regression",
+        "param": "",
+        "expectations": 7,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_next_arg_mixed_tokens",
+        "param": "",
+        "expectations": 11,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       },
+       {
+        "suite": "cmdline",
+        "case": "cmdline_test_memparse",
+        "param": "",
+        "expectations": 60,
+        "failures": 0,
+        "crashed": false,
+        "ok": true
+       }
+      ],
+      "total": 9,
+      "failed": 0
+     },
+     "diff": {
+      "get_option": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "get_options": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "memparse": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "parse_option_str": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      },
+      "next_arg": {
+       "n": 100000,
+       "mismatches": 0,
+       "crashed_chunks": 0,
+       "example": ""
+      }
+     },
+     "correct": true
+    }
+   }
+  }
+ }
+}
