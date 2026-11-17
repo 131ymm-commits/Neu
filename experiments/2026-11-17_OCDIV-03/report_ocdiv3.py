@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""OCDIV-03: каркас отчёта — написан до вывода анализа теста (проверен на заглушке). Все числа — из analysis.json анализа и из
+"""OCDIV-03: каркас отчёта — написан до вывода анализа теста (проверен на заглушке; 3d958354). После данных добавлены только места
+для заметок notes_ocdiv3.py (short, main_q, next) и для оценки совета (council); числа и вердикты каркаса не менялись. Все числа — из analysis.json анализа и из
 разбора пилота; тексты выводов (заметки после данных) — отдельным файлом notes, если он задан. Вердикты и чтение — по PREREG.
   python3 report_ocdiv3.py ANALYSIS.json PILOT_N2.json OUT.md [--notes NOTES.json] [--commits K=V ...]"""
 import json
@@ -59,6 +60,8 @@ def render(A, Pn, notes=None, commits=None):
         L.append(f"- **Чтение П2 (Н1, совет 70):** {rd['reading']} — шаг 1 пройден в {rd['n_pass']} средах из {rd['n_valid']} годных.")
     L.append(f"- Опыт определён: {'да' if A['method']['ok'] else 'нет'} — годных сред {A['method']['n_valid']} из {A['method']['n_envs']}; "
              f"толпа {len(A['crowd_effective'])} из {len(A['crowd'])}, выбыли: {A['crowd_dropped'] or 'нет'}.")
+    if notes and notes.get('short'):                                   # после данных: заметки к «Коротко» (notes_ocdiv3.py)
+        L += [f'- {x}' for x in notes['short']]
     L += ['', '## Правила', '', '| Правило | Δ | M4 при 0,0025 | z\\* | вердикт по M4 | предохранитель | сред с интервалом > 0 (0,0025/5) | вердикт |',
           '|---|---|---|---|---|---|---|---|']
     for k in RULES:
@@ -123,6 +126,9 @@ def render(A, Pn, notes=None, commits=None):
     oc = outcomes(A)
     for i, t, p in EXPECT:
         L.append(f"| {i} | {t} | {g(p, 4 if p < 0.01 else 3)} | {'да' if oc[i] else 'нет'} |")
+    for key, title in (('main_q', 'Для главного вопроса'), ('next', 'Что дальше')):   # после данных (notes_ocdiv3.py)
+        if notes and notes.get(key):
+            L += ['', f'## {title}', ''] + [f'- {x}' for x in notes[key]]
     L += ['', '## Вес опоры (PREREG §10)', '',
           '- Веса — верхняя оценка, не для `journal/support_bits.json`: перенос M4 на 0,0025 для среднего пяти сред не проверен.']
     pw = Pn['power']
@@ -140,6 +146,8 @@ def render(A, Pn, notes=None, commits=None):
           '- Что эффект есть у других семейств задач, подсказок и голов: пять сред «тысяч», одна подсказка (p = 3), семь малых открытых голов.',
           '- Причину ложного большинства: разложение и Т4 из формул — описательно.',
           '- Что уровень M4 точен для среднего пяти сред: перенос M4 на 0,0025 не проверен (номинальный уровень).']
+    if notes and notes.get('council'):                                 # оценка совета по отчёту — после заседания
+        L += ['', f"## {notes['council']['title']}", ''] + [f'- {x}' for x in notes['council']['items']]
     return '\n'.join(L) + '\n'
 
 
