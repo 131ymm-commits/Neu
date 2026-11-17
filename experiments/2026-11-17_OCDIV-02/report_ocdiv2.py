@@ -75,12 +75,24 @@ for nm, h in (an.get('acc_by_head_mean') or {}).items():
                      n_envs=int(sum(nm in envs[e]['acc'] for e in valid)),
                      method_ok_envs=int(sum(bool(g(envs[e], 'method', nm, 'ok')) for e in envs)))
 t4env = {e: g(an, 'T4', 'by_env', e) for e in valid}
+sys.path.insert(0, os.path.join(ROOT, 'tools'))
+import raw_status as RS  # noqa: E402   время заданий — только поля белого списка (замок № 180)
+secs = {}
+for f in sorted(__import__('glob').glob(os.path.join(ROOT, 'gha_out/ocdiv2_test_*/answers_*.json'))):
+    d = RS.filtered(json.load(open(f, encoding='utf-8')))
+    for env_, s_ in (d.get('seconds_env') or {}).items():
+        nt_ = envs[env_]['n_id'] + envs[env_]['n_ood'] if env_ in envs else 2200
+        secs[os.path.basename(os.path.dirname(f))] = dict(seconds=s_, sec_per_task=s_ / nt_)
+time_ = dict(n_jobs=len(secs), max_min=(max(v['seconds'] for v in secs.values()) / 60 if secs else None),
+             min_min=(min(v['seconds'] for v in secs.values()) / 60 if secs else None),
+             max_sec_per_task=(max(v['sec_per_task'] for v in secs.values()) if secs else None),
+             slowest=(max(secs, key=lambda k: secs[k]['seconds']) if secs else None), limit_sec_per_task=4.6, step_limit_min=340)
 DER = dict(source=f'PREREG-OCDIV-02 §5–§10 (регистрация {REGHASH}); числа — из {os.path.relpath(P_(an_path), ROOT)}',
            n_tasks={e: envs[e]['n_id'] + envs[e]['n_ood'] for e in envs},
            heads=heads, drop_mean=(sum(h['drop'] for h in heads.values()) / len(heads) if heads else None),
            t4_sign=dict(pos=int(sum(v > 0 for v in t4env.values() if v is not None)), neg=int(sum(v < 0 for v in t4env.values() if v is not None)),
                         zero=int(sum(v == 0 for v in t4env.values() if v is not None)), n=len(t4env)),
-           weight_T4=w4, series_false=dict(confirm=LEVEL, any=2 * LEVEL),
+           weight_T4=w4, series_false=dict(confirm=LEVEL, any=2 * LEVEL), job_time=time_,
            n_crowd=len(an.get('crowd_effective', [])), n_crowd_reg=len(an.get('crowd', {})))
 json.dump(DER, open(DER_PATH, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
@@ -168,6 +180,10 @@ if os.path.exists(TLOG):
 cpu = sorted({c for v in (an.get('cpu_models') or {}).values() for c in (v or [])})
 if cpu:
     add(f"- Процессоры раннеров: {'; '.join(cpu)}.")
+if time_['n_jobs']:
+    add(f"- Время заданий извлечения ({time_['n_jobs']} заданий теста, без повтора): от {n(time_['min_min'], 1, False)} до "
+        f"{n(time_['max_min'], 1, False)} мин; самое долгое — `{time_['slowest']}`, {n(time_['max_sec_per_task'], 3, False)} с на задачу при пороге "
+        f"{n(time_['limit_sec_per_task'], 1, False)} с (половина лимита шага {time_['step_limit_min']} мин). Время при p = 3 до теста не мерилось (PREREG §2).")
 add(f"- Время анализа — {n(an.get('seconds'), 0, False)} с.")
 add('')
 add('| Среда | задач ID | задач OOD | голов в толпе | годна | оракул вне диапазона | невырождена по пилоту 2 |')
