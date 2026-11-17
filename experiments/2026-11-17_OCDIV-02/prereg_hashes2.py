@@ -13,9 +13,10 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-OWN = ['ocdiv2.py', 'ocdiv2_extract.py', 'make_jobs2.py', 'test_ocdiv2.py', 'prereg_hashes2.py', 'HYPOTHESIS.md',
-       '../../.github/workflows/neu-par.yml', '../../tools/raw_status.py', '../../tools/test_raw_status.py',
-       '../../gha_out/ocdiv2_sum_pilot/pilot.json',
+OWN = ['ocdiv2.py', 'ocdiv2_extract.py', 'make_jobs2.py', 'test_ocdiv2.py', 'prereg_hashes2.py', 'trunc_check.py', 'HYPOTHESIS.md', 'HYPOTHESIS-2.md',
+       'expect_ocdiv2.json', '../../.github/workflows/neu-par.yml', '../../tools/raw_status.py', '../../tools/test_raw_status.py',
+       '../../gha_out/ocdiv2_sum_pilot/pilot.json', '../../gha_out/ocdiv2_sum_pilot2/pilot.json', '../../gha_out/ocdiv2_sum_pilot2v2/pilot.json',
+       '../../gha_out/ocdiv2_trunc/trunc.json',
        '../2026-11-16_OCDIV-01/ocdiv.py', '../2026-11-16_OCDIV-01/ocdiv_extract.py',
        '../2026-11-15_OCPOST-01/ocpost.py', '../2026-11-15_OCPOST-01/ocpost_extract.py',
        '../2026-11-15_OCSHIFT-01/analyze_ocshift.py', '../2026-11-15_OCSHIFT-01/analyze_ocshift_test.py', '../2026-11-15_OCSHIFT-01/ocshift_extract.py',

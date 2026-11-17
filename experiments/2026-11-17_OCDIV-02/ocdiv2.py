@@ -172,6 +172,22 @@ def f_stats(D, rng, K, strata=None):
     return F, F0, F - F0
 
 
+def homoplasy(D):
+    """Совет 68 (описательно): самый частый неверный числовой ответ набрал не меньше 3 голосов."""
+    numeric = D < NONE_CODE
+    mult = (D[:, :, None] == D[:, None, :]).sum(2)
+    return np.where(numeric & (D != 0), mult, 0).max(1) >= 3
+
+
+def agree_per_task(st, fit, cols):
+    """AGREE по задачам cols тем же путём, что ocdiv.agree_conf (Q.scores, T.calibrate, select): верность выбранного ответа и заявка."""
+    keep = st['keep']
+    cs = st['corr'][keep]
+    sc = S.Q.scores(st['ag'], st['corr'], st['logp'], keep, fit, st['fam'], ('AGREE',))
+    t, c, _ = S.select(S.T.calibrate(sc['AGREE'], cs, fit, cols), cs[:, cols].astype(float))
+    return np.asarray(t, float), np.asarray(c, float)
+
+
 def uncond(D, labels, pairs):
     """Безусловное совпадение ошибок пары: доля задач, где обе головы ошиблись одним и тем же ответом; по видам ошибок."""
     out = []
@@ -187,6 +203,27 @@ def uncond(D, labels, pairs):
 
 
 # ───────────── статистики среды
+def prepare_id(env, seed_cv, n_id_test):
+    """Совет 68: проверка метода — ocdiv.prepare_scaled (analyze_ocshift.prepare в масштабе теста), но доля ответов без числа
+    считается только по задачам ID: зарегистрированный prepare считает её по всем задачам среды, и поведение голов вне диапазона
+    входило бы в состав толпы. Порог прежний (5 %)."""
+    old = S.MAX_NONE
+    S.MAX_NONE = 1.0                                   # без проверки доли «без числа» по всем задачам; она — ниже, по ID
+    try:
+        st, info = V.prepare_scaled(env, seed_cv, n_id_test)
+    finally:
+        S.MAX_NONE = old
+    rid = info['rid']
+    for k, nm in enumerate(info['names']):
+        m = info['method'][nm]
+        m['none_frac_id'] = float(np.mean([a is None for a, r in zip(info['ans'][k], rid) if r]))
+        m['ok'] = bool(m['ok'] and m['none_frac_id'] <= old)
+    keep = [k for k in range(len(info['names'])) if info['method'][info['names'][k]]['ok']]
+    st['keep'] = info['keep'] = keep
+    info['valid'] = bool(len(keep) >= S.MIN_HEADS)
+    return st, info
+
+
 def t3_parts(st, fit, cols, hidx):
     """Т3: числитель Σ(C − T вне диапазона), знаменатель Σ(T на ID − T вне диапазона) по головам hidx (номера среди keep)."""
     if not hidx:
@@ -223,7 +260,7 @@ def env_analysis(env, seed_cv, seed_boot, seed_null, seed_null_boot, n_id_test, 
                  keep_boot=False):
     """Одна среда: проверка метода в масштабе теста, точки и ст. откл. повторов (B) правил, Т4 и описательные числа.
     keep_boot — вернуть и сами повторы (поля _boot, _boot_T4; в json не пишутся): для среднего по средам в анализе теста."""
-    st, info = V.prepare_scaled(env, seed_cv, n_id_test)
+    st, info = prepare_id(env, seed_cv, n_id_test)
     names = [info['names'][k] for k in info['keep']]
     cs_all = info['corr']
     rid = info['rid']
@@ -273,6 +310,12 @@ def env_analysis(env, seed_cv, seed_boot, seed_null, seed_null_boot, n_id_test, 
     if keep_boot:
         out['_boot_T4'] = (np.array(bF), np.array(bFs))
     out['oracle_ood'] = float(st['corr'][keep][:, ood].any(0).mean())
+    hm = homoplasy(D)                                        # совет 68: гомоплазия (описательно)
+    H0 = float(np.mean([homoplasy(permute_cols(D, gn)).mean() for _ in range(K_point)]))
+    t_ag, c_ag = agree_per_task(st, idi, ood)
+    out['homoplasy'] = dict(H=float(hm.mean()), H0=H0, diff=float(hm.mean()) - H0, n_tasks=int(hm.sum()), n_ood=int(len(hm)),
+                            agree_claim=(float(c_ag[hm].mean()) if hm.any() else None), agree_T=(float(t_ag[hm].mean()) if hm.any() else None),
+                            agree_claim_rest=(float(c_ag[~hm].mean()) if (~hm).any() else None), agree_T_rest=(float(t_ag[~hm].mean()) if (~hm).any() else None))
     pairs = list(itertools.combinations(range(len(names)), 2))
     vend = [V.vendor(CROWD[nm.split('@')[0]].split('@')[0]) for nm in names]
     u = uncond(D, [nm.split('@')[0] for nm in names], pairs)
@@ -381,7 +424,7 @@ def pilot(dst, mdirs, B=200, workers=1, test_phase='test'):
         pre = {}
         for name, env in envs.items():
             meta = env['meta']
-            st, info = V.prepare_scaled(env, SEED_CV2 + off_of(meta), test_id_count(fam, meta['X'], test_phase))
+            st, info = prepare_id(env, SEED_CV2 + off_of(meta), test_id_count(fam, meta['X'], test_phase))
             rid = info['rid']
             pre[name] = dict(acc={info['names'][k].split('@')[0]: dict(id=float(info['corr'][k][rid].mean()), ood=float(info['corr'][k][~rid].mean()),
                                                                       none=float(np.mean([a is None for a in info['ans'][k]])))
@@ -444,6 +487,9 @@ T3_HEADS = ('Qwen2.5-0.5B-Instruct', 'Qwen2.5-1.5B-Instruct', 'SmolLM2-1.7B-Inst
             'SmolLM2-360M-Instruct', 'TinyLlama-1.1B-Chat-v1.0')   # головы Т3: разрыв ID − OOD на пилоте 2 («длина») у всех семи ≥ 0,10
 T2_DESCRIPTIVE = True     # мощность Т2 «подтверждено» по пилоту 2 — 0,000 < 0,2 (правило HYPOTHESIS, как D5 в OCDIV-01)
 T4_STRATA = False         # нуль без страт (HYPOTHESIS); со стратами по числу переносов — описательно
+CHECKS = {'T1': 'over', 'T3': 'unit'}   # совет 68: Т1 и Т3 — проверки построения без вердикта; в счёт выводов не входят
+NONDEG_ENVS = ('L_X9_p3', 'L_X99_p3')    # совет 68: невырожденные среды — по пилоту 2 (оракул вне диапазона ≥ 0,1: L_X9 0,913, L_X99 0,849)
+NONDEG_ORACLE = 0.1
 SEED_BOOT_TEST, SEED_NULL_TEST, SEED_NULL_BOOT_TEST = 8_350_000, 8_420_000, 8_470_000
 Z_SENS = 1.5              # как в OCDIV-01: вердикт «чувствителен к уровню», если z* < 2,807 × 1,5
 
@@ -525,18 +571,18 @@ def test(dst, mdir, B=10000, workers=1):
             return e['T4']['point'] if T4_STRATA else e['T4']['point_strata']
         return e['point'][key]
 
-    def mean_entry(key, level, kind):
-        use = [n for n in valid if np.isfinite(point_of(n, key))]
+    def mean_entry(key, level, kind, subset=None):
+        use = [n for n in valid if np.isfinite(point_of(n, key)) and (subset is None or n in subset)]
         if not use:
             return dict(delta=float('nan'), ci=[float('nan'), float('nan')], n_envs=0, kind=kind)
         pt = float(np.mean([point_of(n, key) for n in use]))
-        with warnings.catch_warnings():
-            warnings.simplefilter('ignore', RuntimeWarning)
-            bt = np.nanmean(np.vstack([boots[n][key] for n in use]), 0)
-        bt = bt[np.isfinite(bt)]
+        stack = np.vstack([boots[n][key] for n in use])
+        ok = np.all(np.isfinite(stack), axis=0)          # совет 68: повтор, где хоть одна среда даёт NaN, исключается целиком
+        bt = stack[:, ok].mean(0)
         iv, sd = P.m4(pt, bt, level)
         zp = pt / sd if sd > 0 else float('nan')
         return dict(delta=pt, ci=iv, boot_sd=sd, boot_shift=float(np.mean(bt) - pt), level=level, n_envs=len(use), n_boot_finite=int(len(bt)),
+                    n_boot_dropped=int((~ok).sum()), share_boot_dropped=float((~ok).mean()),
                     by_env={n: float(point_of(n, key)) for n in use}, z_point=zp, z_star=z_star2(kind, pt, sd), kind=kind)
     if m == 0:
         res['verdicts'] = {k: P.U for k in RULES2}
@@ -554,6 +600,21 @@ def test(dst, mdir, B=10000, workers=1):
     if T2_DESCRIPTIVE and method_ok:
         res['T2']['verdict_rule_descr'] = res['T2']['verdict']
         res['T2']['verdict'] = 'описательно (мощность по пилоту < 0,2; PREREG)'
+    for k in CHECKS:                                          # совет 68: проверки построения — исход печатается, вердикта нет
+        if method_ok:
+            res[k]['check_result'] = res[k]['verdict']
+            res[k]['verdict'] = f"проверка построения: {res[k]['verdict']}"
+    nd = [n for n in valid if n in NONDEG_ENVS]
+    dg = [n for n in valid if n not in NONDEG_ENVS]
+    res['descr_T4 невырожденные среды'] = mean_entry('T4', P.DESCR_LEVEL, 'pos', set(nd))
+    res['descr_T3 невырожденные среды'] = mean_entry('T3', P.DESCR_LEVEL, 'unit', set(nd))
+    res['descr_T3 вырожденные среды'] = mean_entry('T3', P.DESCR_LEVEL, 'unit', set(dg))
+    res['nondeg'] = dict(list_by_pilot=list(NONDEG_ENVS), k_degenerate_by_pilot=5 - len(NONDEG_ENVS), oracle_threshold=NONDEG_ORACLE,
+                         oracle_test={n: res['envs'][n]['oracle_ood'] for n in valid},
+                         mismatch=[n for n in valid if (res['envs'][n]['oracle_ood'] >= NONDEG_ORACLE) != (n in NONDEG_ENVS)])
+    hs = [res['envs'][n]['homoplasy'] for n in valid]
+    res['homoplasy_mean'] = {k: (float(np.mean([h[k] for h in hs if h[k] is not None])) if any(h[k] is not None for h in hs) else None)
+                             for k in ('H', 'H0', 'diff', 'agree_claim', 'agree_T', 'agree_claim_rest', 'agree_T_rest')}
     for k, kind in (('D3', 'over'), ('AGREE − CONF', 'sign'), ('wc CONF', 'sign'), ('wc POST', 'over'), ('wc FIXED', 'over'), ('T4 (другой нуль)', 'pos')):
         res[f'descr_{k}'] = mean_entry(k, P.DESCR_LEVEL, kind)
     keys_parts = [k for k in res['envs'][valid[0]]['point'] if k.split(' ')[0] in ('T', 'C', 'ign', 'dec', 'ioi', 'brier')]

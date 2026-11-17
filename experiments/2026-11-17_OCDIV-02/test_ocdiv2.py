@@ -233,8 +233,25 @@ check('тест: повторы бутстрепа не пишутся в json',
 tr2 = None
 W.FAMILY_TEST, W.T3_HEADS, W.T2_DESCRIPTIVE, W.T4_STRATA = REG
 tr2 = W.test(os.path.join(tmp, 'test_reg.json'), os.path.join(tmp, 'mt'), B=10, workers=1)
-check('тест с константами PREREG: Т2 описательно, Т1, Т3, Т4 — правила', tr2['T2']['verdict'].startswith('описательно') and 'verdict_rule_descr' in tr2['T2']
-      and all(not tr2[k]['verdict'].startswith('описательно') for k in ('T1', 'T3', 'T4')), str(tr2['verdicts']))
+check('тест с константами PREREG: Т2 описательно, Т1 и Т3 — проверки построения, Т4 — правило', tr2['T2']['verdict'].startswith('описательно')
+      and 'verdict_rule_descr' in tr2['T2'] and all(tr2[k]['verdict'].startswith('проверка построения') for k in ('T1', 'T3'))
+      and tr2['T4']['verdict'] in ('подтверждено', 'опровергнуто', 'не решено', W.P.A.UR), str(tr2['verdicts']))
+check('тест: Т4 и Т3 по невырожденным средам и гомоплазия — описательно', 'descr_T4 невырожденные среды' in tr2 and 'descr_T3 вырожденные среды' in tr2
+      and tr2['homoplasy_mean']['H'] is not None and set(tr2['nondeg']['list_by_pilot']) == {'L_X9_p3', 'L_X99_p3'})
+# повтор бутстрепа с NaN хоть в одной среде исключается целиком (совет 68)
+b_ok = {'a': np.array([1.0, 2.0, 3.0, 4.0]), 'b': np.array([1.0, np.nan, 3.0, 5.0])}
+stk = np.vstack([b_ok['a'], b_ok['b']])
+okm = np.all(np.isfinite(stk), axis=0)
+check('NaN в повторе: повтор исключается целиком, а не усредняется по оставшимся средам', list(stk[:, okm].mean(0)) == [1.0, 3.0, 4.5] and int((~okm).sum()) == 1)
+src = open(os.path.join(X_DIR, 'ocdiv2.py'), encoding='utf-8').read()
+check('NaN в повторе: в коде среднего по средам нет nanmean', 'np.nanmean(np.vstack' not in src and 'ok = np.all(np.isfinite(stack), axis=0)' in src)
+# проверка метода: доля «без числа» — только по ID (совет 68)
+envq = dict(meta=dict(X=9, p=3, family='length'), problems=[dict(a=900 + i, b=10, sum=910 + i, range='ID' if i < 60 else 'OOD') for i in range(120)],
+            heads=[dict(model=f'h{k}', revision='main', rows=[dict(answer=(None if (k == 0 and j >= 60) else (910 + j if j % 3 else 911 + j)), correct=(False if (k == 0 and j >= 60)
+                                                                    else bool(j % 3)), logp=(None if (k == 0 and j >= 60) else -0.1), n_tok=3) for j in range(120)]) for k in range(7)])
+stq, infq = W.prepare_id(envq, 1, 60)
+check('проверка метода: голова с 50 % «без числа» только вне диапазона проходит (по ID — 0 %)', infq['method']['h0']['ok'] and infq['method']['h0']['none_frac_id'] == 0.0
+      and W.S.MAX_NONE == 0.05, str(infq['method']['h0']))
 
 # 5. С --real (GitHub Actions): сухой прогон извлечения на крошечной модели и равенство с ocdiv_extract.run при 6 новых токенах
 if '--real' in sys.argv:

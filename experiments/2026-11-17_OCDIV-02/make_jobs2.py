@@ -76,6 +76,15 @@ def main():
                          'python3 $E/ocdiv2.py merge "$OUT/m_length" pilot2 length gha_out/ocdiv2_pilot2_*\n'
                          'python3 $E/ocdiv2.py pilot "$OUT/pilot.json" "$OUT/m_thousands" "$OUT/m_length" --boot 200 --workers 4 --test-phase test2\n'
                          'rm -rf "$OUT/m_thousands" "$OUT/m_length"          # сборка восстанавливается из gha_out/ocdiv2_pilot2_*/ той же командой\n', dst))
+    elif mode == 'sum_pilot2v2':
+        out.append(write('ocdiv2_sum_pilot2v2', 'разбор 2 пилота 2 окончательным кодом (совет 68: доля «без числа» только по ID, гомоплазия, NaN в повторах) — '
+                         'мощность и ожидания для PREREG; выбор семейства — по первому разбору (0920425a)', SCI +
+                         'python3 tools/test_raw_status.py | tail -1\n'
+                         'python3 $E/test_ocdiv2.py > "$OUT/tests_full.log" 2>&1; grep -E "^✓|^✗|провалов" "$OUT/tests_full.log" | tee "$OUT/tests.log"\n'
+                         'python3 $E/ocdiv2.py merge "$OUT/m_thousands" pilot2 thousands gha_out/ocdiv2_pilot2_*\n'
+                         'python3 $E/ocdiv2.py merge "$OUT/m_length" pilot2 length gha_out/ocdiv2_pilot2_*\n'
+                         'python3 $E/ocdiv2.py pilot "$OUT/pilot.json" "$OUT/m_thousands" "$OUT/m_length" --boot 200 --workers 4 --test-phase test2\n'
+                         'rm -rf "$OUT/m_thousands" "$OUT/m_length"\n', dst))
     elif mode == 'sum_pilot':
         out.append(write('ocdiv2_sum_pilot', 'разбор пилота — сборка двух семейств, правило выбора семейства (HYPOTHESIS), мощность Т1–Т4', SCI +
                          'python3 tools/test_raw_status.py | tail -1\n'
