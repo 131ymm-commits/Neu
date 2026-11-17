@@ -19,7 +19,7 @@
 - **«When RLHF Fails: A Mechanistic Taxonomy of Reward Hacking, Collapse, and Evaluator Gaming»**, Zelalem Abahana; 2026-06-02; статус: сниппет. Классифицирует переходы чекпойнтов по направлению изменения R_phi (reward-модель) и баллов двух внешних судей. Предлагает ранние предупреждающие сигналы до падения внешнего качества. — [Source](https://arxiv.org/abs/2606.03238)
 - **«Dynalize»** — «Mitigating Reward Hacking in Preference Reward Models with Evolving Penalties», Afonso Baldo и др.; 2026-10-19; статус: сниппет. «training on the reward model alone raises its score continuously but ultimately leads to a decline in external benchmarks». — [Source](https://arxiv.org/abs/2610.26496)
 - **«Optimistic Verifiers Get Hacked: Reward Hacking Under an Exact Process Oracle»**, Arunkumar V; 2026-11-16; статус: сниппет. Точная награда известна (124 416 контекстов, оракул с минимальными достаточными причинами). Оптимистичный верификатор: «sufficiency proxy ends at 0.940 while true faithfulness falls from 0.731 to 0.667 on 96 held-out episodes». Это редкий случай, где отклонение проксиса от истины измерено, а не предполагается. — [Source](https://arxiv.org/abs/2611.21538)
-- **«Examining Reasoning LLMs-as-Judges in Non-Verifiable LLM Post-Training»**, Yixin Liu; 2026-03-12; статус: сниппет. Вне окна (март 2026), упомянут как фон: «vulnerabilities often appear only during RL-based optimization, not in static evaluation» — из поисковой выдержки, не из аннотации. — [Source](https://arxiv.org/abs/2603.12246)
+- **«Examining Reasoning LLMs-as-Judges in Non-Verifiable LLM Post-Training»**, Yixin Liu; 2026-03-12; статус: сниппет. Вне окна (март 2026), упомянут как фон. Аннотация: эффективность reasoning-судей «in actual policy training has not been systematically examined». Утверждение, что уязвимости проявляются только при RL, взято из сводки веб-поиска и в аннотации не проверено. — [Source](https://arxiv.org/abs/2603.12246)
 
 ### Inferences
 - Во всех пяти статьях разрыв между проксиом и истиной появляется только при оптимизации. Статическая оценка его не показывает. Для Neu это значит: проверять оценщика нужно на тех же политиках и отборе, на которых он используется, а не на статическом наборе.
@@ -132,7 +132,7 @@
 | 2611.10050 | 2026-11-05 | сниппет | выбранные решения |
 | 2610.11116 | 2026-10-08 | сниппет (только название) | мета-оценка |
 
-Все даты — из поля «published» arXiv API. Неиспользованные кандидаты в запросе: 2609.31184 и др. — в таблице только вошедшие в текст.
+Все даты — из поля «published» arXiv API.
 
 ## Что дальше (рекомендация)
 
