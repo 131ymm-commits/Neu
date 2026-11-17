@@ -93,7 +93,8 @@ DER = dict(source=f'PREREG-OCDIV-02 §5–§10 (регистрация {REGHASH}
            t4_sign=dict(pos=int(sum(v > 0 for v in t4env.values() if v is not None)), neg=int(sum(v < 0 for v in t4env.values() if v is not None)),
                         zero=int(sum(v == 0 for v in t4env.values() if v is not None)), n=len(t4env)),
            weight_T4=w4, series_false=dict(confirm=LEVEL, any=2 * LEVEL), job_time=time_,
-           n_crowd=len(an.get('crowd_effective', [])), n_crowd_reg=len(an.get('crowd', {})))
+           n_crowd=len(an.get('crowd_effective', [])), n_crowd_reg=len(an.get('crowd', {})),
+           council69=(dict(seconds=CN['timer']['end'] - CN['timer']['start'], over_s=CN['timer'].get('over_s')) if CN else None))
 json.dump(DER, open(DER_PATH, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 # ───────────── отчёт
@@ -142,16 +143,24 @@ for k in ('T4', 'T1', 'T3', 'T2'):
 add('')
 t4 = an.get('T4') or {}
 gd = t4.get('leave_one_range_out')
+ZC = [e for e in valid if envs[e]['T4']['F'] == 1.0]          # совет 69, Н3: F = 1 — Т4 ноль по построению
+NZC = [e for e in valid if e not in ZC]
 if gd:
     mw = '; '.join(f'без X = {k} — {n(v)}' for k, v in gd.get('mean_without', {}).items())
-    add(f"- **Предохранитель «без одной среды» у Т4:** знак среднего сохраняется — {'да' if gd.get('holds') else 'нет'}; сред того же знака — "
-        f"{gd.get('n_same_sign')} из {gd.get('n')}. Среднее без одной среды: {mw}.")
-add(f"- Вердикт Т4 — по среднему пяти сред; из них {an['nondeg']['k_degenerate_by_pilot']} вырождены по пилоту 2: там вне диапазона почти "
-    'никто не верен и Т4 близко к нулю по построению (PREREG §3).')
+    add(f"- **Предохранитель «без одной среды» у Т4:** знак среднего сохраняется — {'да' if gd.get('holds') else 'нет'}. Предохранитель проверяет знак, "
+        f"а не величину (совет 69). Невырожденных по знаку сред — {len(NZC)}: > 0 — {sum(t4env[e] > 0 for e in NZC)}, < 0 — "
+        f"{sum(t4env[e] < 0 for e in NZC)}; в {' и '.join(ZC)} F = 1, Т4 — ноль по построению. Среднее без одной среды: {mw}; интервалы для них не считались.")
+add(f"- Вердикт Т4 — по среднему пяти сред; из них {an['nondeg']['k_degenerate_by_pilot']} вырождены по пилоту 2 (PREREG §3). В тесте Т4 — ноль "
+    f"по построению в {len(ZC)} из них (F = 1: вне диапазона почти никто не верен); L_X999_p3 в тесте — переходная зона (ниже, «Т4 по средам»).")
 add('- Вес опоры — верхняя оценка, не для реестра (PREREG §10): перенос M4 на уровень 0,0025 для среднего пяти сред не проверен. '
     'z\\* — z, при котором меняется исход; пометка «чувствителен к уровню» — при z\\* < 2,807 × 1,5.')
-add('- Знаки: Т4 > 0 — ложное большинство чаще, чем при независимых ошибках; Т2 < 0 — у согласия (AGREE) ИОИ вне диапазона меньше, '
-    'чем у POST-CV, то есть согласие лучше; по правилу вида «sign» это «подтверждено» (PREREG §5: Т2 описательно).')
+add(f"- Знаки: Т4 > 0 — ложное большинство чаще, чем при перестановочном нуле. Т2 < 0 значило бы, что у согласия (AGREE) ИОИ вне диапазона "
+    f"меньше, чем у POST-CV; здесь — «{g(an, 'T2', 'verdict_rule_descr')}» (PREREG §5: Т2 описательно).")
+add('- **Нуль** (совет 69): основной F₀ (Т4) и H₀ (гомоплазия) — один перестановочный нуль без страт (`ocdiv2.py`, стр. 156–172 и 314): '
+    'ответы каждой головы переставляются между задачами среды. Точность головы он сохраняет, трудность задачи — нет. Поэтому F − F₀ > 0 смешивает '
+    'общую трудность задач и совпадение самих неверных ответов; вклад общей трудности не исключён. По коду (`false_major`, стр. 147–153) F '
+    'засчитывает и задачу, где верных голосов нет вовсе. '
+    f"У Т4 есть описательный вариант со стратами по числу переносов ({n(g(an, 'descr_T4 (другой нуль)', 'delta'))}), у H₀ — нет.")
 add(f"- Общий ложный уровень серии (PREREG §7): правило одно, ложное «подтверждено» — не больше {n(LEVEL, 4, False)}, с ложным «опровергнуто» — "
     f"не больше {n(2 * LEVEL, 3, False)}. Уровень номинальный.")
 for k in ('T1', 'T3'):
@@ -169,8 +178,23 @@ add('**Метод опыта.**')
 add(f"- Годных сред {meth.get('n_valid')} из {meth.get('n_envs')}; опыт определён — {'да' if meth.get('ok') else 'нет'}. "
     f"FIXED-нов (Qwen2.5-0.5B) в толпе всех годных сред — {'да' if meth.get('fixed_in_all_valid') else 'нет'}.")
 drop = an.get('crowd_dropped') or {}
-add(f"- Толпа: {DER['n_crowd']} голов из {DER['n_crowd_reg']}; "
-    + ('выбывших по ревизии и версиям нет.' if not drop else 'выбыли: ' + '; '.join(f'{k} — {v}' for k, v in drop.items()) + '.'))
+out_m = []                                                     # совет 69, Н4: кто не прошёл проверку метода и почему — из json
+for e in sorted(envs, key=len):
+    for h, m_ in envs[e]['method'].items():
+        if not m_['ok']:
+            why = []
+            if m_.get('none_frac_id', 0) > 0.05:
+                why.append(f"доля ответов без числа на ID {n(m_['none_frac_id'], 4, False)} > 0,05")
+            if m_.get('id_wrong', 99) < 20:
+                why.append(f"неверных на ID {m_['id_wrong']} < 20")
+            if m_.get('id_correct', 99) < 20:
+                why.append(f"верных на ID {m_['id_correct']} < 20")
+            out_m.append(f"{h} в {e} — {', '.join(why) or 'см. json'}")
+add(f"- Толпа: по ревизии и версиям — {DER['n_crowd']} из {DER['n_crowd_reg']}, "
+    + ('выбывших нет.' if not drop else 'выбыли: ' + '; '.join(f'{k} — {v}' for k, v in drop.items()) + '.')
+    + ' В толпе среды — головы, прошедшие проверку метода (PREREG §4): '
+    + '; '.join(f"{len(envs[e]['crowd'])} в {e}" for e in sorted(envs, key=len) if len(envs[e]['crowd']) < DER['n_crowd'])
+    + f", в остальных средах — {DER['n_crowd']}." + (' Не прошли: ' + '; '.join(out_m) + '.' if out_m else ''))
 add(f"- Сборка: ключи задач и подсказки сверены с источником — {'да' if an.get('keys_checked') else 'нет'}; "
     f"ошибок загрузки голов — {len(an.get('head_errors') or [])}.")
 if os.path.exists(TLOG):
@@ -208,8 +232,15 @@ for nm in sorted(valid, key=lambda s: len(s)):
     add(f"| {nm} | {n(t['F'], 4, False)} | {n(t['F0'], 4, False)} | {n(t['point'])} ({n(t['sd'], 4, False)}) | "
         f"{n(t['point_strata'])} ({n(t['sd_strata'], 4, False)}) | {n(h['H'], 4, False)} | {n(h['H0'], 4, False)} |")
 add('')
-ts = DER['t4_sign']
-add(f"- Знак F − F₀ по средам: больше нуля — {ts['pos']}, меньше — {ts['neg']}, ровно ноль — {ts['zero']} из {ts['n']}.")
+add(f"- Знак F − F₀ по средам (совет 69, Н3): невырожденных по знаку сред — {len(NZC)}: > 0 — {sum(t4env[e] > 0 for e in NZC)}, "
+    f"< 0 — {sum(t4env[e] < 0 for e in NZC)}. В {' и '.join(ZC)} F = 1: Т4 — ноль по построению "
+    f"(в L_X9999_p3 F − F₀ = {n(t4env.get('L_X9999_p3'), 7)} — F₀ чуть меньше 1).")
+nd_t = [e for e in sorted(valid, key=len) if envs[e]['oracle_ood'] >= an['nondeg']['oracle_threshold']]
+if set(nd_t) != set(an['nondeg']['list_by_pilot']):
+    DER['t4_mean_nondeg_by_test_posthoc'] = sum(t4env[e] for e in nd_t) / len(nd_t)
+    add(f"- **Пост-хок, по правде теста (вердикт не меняет; совет 69):** по оракулу теста невырождены {len(nd_t)} среды — {', '.join(nd_t)}; "
+        f"среднее Т4 по ним — {n(DER['t4_mean_nondeg_by_test_posthoc'])} (точка; интервал не считался). Основная разбивка — по пилоту 2. "
+        f"L_X999_p3 — переходная зона: оракул {n(envs['L_X999_p3']['oracle_ood'], 4, False)}, Т4 {n(t4env['L_X999_p3'])}.")
 for k, lab in (('descr_T4 невырожденные среды', 'Т4 по двум невырожденным средам'), ('descr_T4 (другой нуль)', 'Т4 со стратами по числу переносов')):
     e = an.get(k)
     if e:
@@ -258,7 +289,9 @@ add('')
 add(f"- Гомоплазия — доля задач вне диапазона, где самый частый неверный числовой ответ набрал не меньше 3 голосов: H = {n(hm_.get('H'), 4, False)}, "
     f"при перестановочном нуле H₀ = {n(hm_.get('H0'), 4, False)}, разность {n(hm_.get('diff'))} (среднее по годным средам).")
 add(f"- AGREE на задачах с гомоплазией: заявка {n(hm_.get('agree_claim'), 4, False)}, доля верных {n(hm_.get('agree_T'), 4, False)}; "
-    f"на остальных задачах вне диапазона: заявка {n(hm_.get('agree_claim_rest'), 4, False)}, доля верных {n(hm_.get('agree_T_rest'), 4, False)}.")
+    f"на остальных задачах вне диапазона: заявка {n(hm_.get('agree_claim_rest'), 4, False)}, доля верных {n(hm_.get('agree_T_rest'), 4, False)}. "
+    f"В эти средние входят и {' и '.join(ZC)}, где доля верных — 0 по построению; по средам — в json (`envs.*.homoplasy`), для L_X9_p3 и L_X99_p3 — "
+    "в «Коротко».")
 add('')
 add('## Совпадение ошибок пар (вне диапазона; описательно, вес 0)')
 add('')
@@ -274,7 +307,8 @@ add('## Повтор на другом раннере (описательно)')
 add('')
 for r in an.get('repeat_check') or []:
     add(f"- {r['model']}, {r['env']}: задач {r['n']}; ответы совпали в доле {n(r['answers_equal'], 4, False)}; наибольшее |Δ logp| — "
-        f"{n(r['max_abs_dlogp'], 6, False)}; процессор основного задания — {r['cpu_main']}, повтора — {r['cpu_rep']}.")
+        f"{n(r['max_abs_dlogp'], 6, False)}; процессор основного задания — {r['cpu_main']}, повтора — {r['cpu_rep']}. Это одно задание "
+        f"({r['model'].split('/')[-1]} × {r['env']}) на двух процессорах; для остальных заданий детерминизм не проверялся (совет 69, Н5).")
 if not an.get('repeat_check'):
     add('- Вывода повтора в анализе нет.')
 add('')
@@ -310,7 +344,8 @@ for sec, title in (('main_question', 'Для главного вопроса'), 
 add('## Вес опоры (PREREG §10; верхняя оценка, не для реестра)')
 add('')
 add(f"- Т4: {w4['verdict']}; вес {('не определён' if w4['bits'] is None else ('0 бит' if w4['bits'] == 0 else n(w4['bits'], 2) + ' бит'))}"
-    + (f"; мощность {n(w4['power'], 3, False)}" if w4.get('power') is not None else '') + f"; {w4['note']}.")
+    + (f"; мощность {n(w4['power'], 3, False)}" if w4.get('power') is not None else '') + f"; {w4['note']}. "
+    'В `journal/support_bits.json` не вносится (PREREG §10; совет 69 — голоса формалиста и интуита). Вес относится только к знаку среднего пяти сред.')
 add('- Т1, Т3 (проверки построения), Т2 и всё описательное — 0 бит. Данные пилотов опорой не считаются.')
 add('')
 if CN:
@@ -318,12 +353,13 @@ if CN:
     add('')
     tm = CN.get('timer', {})
     add(f"- Стенограмма — `docs/council/2026-11-17_OCDIV-02-report_session69.md`. Итог — {CN.get('status')}: "
-        + ', '.join(f"{v['name']} — {v['vote']}" for v in CN.get('votes', [])) + f"; заседание {tm.get('end', 0) - tm.get('start', 0)} с, перебор {tm.get('over_s')} с.")
+        + ', '.join(f"{v['name']} — {v['vote']}" for v in CN.get('votes', [])) + f"; заседание {DER['council69']['seconds']} с, перебор {tm.get('over_s')} с.")
     for s_ in NOTES.get('council', []):
         add(s_ if s_.startswith('  - ') else f'- {s_}')
     add('')
 add('## Отклонения')
 add('')
-add('См. `DEVIATIONS.md`.' if os.path.exists(os.path.join(X, 'DEVIATIONS.md')) else 'Нет.')
+add('См. `DEVIATIONS.md`.' if os.path.exists(os.path.join(X, 'DEVIATIONS.md')) else
+    'Нет. Расхождение оракула L_X999_p3 с пилотом 2 записано по PREREG §3 (раздел «Метод опыта»); вердикт оно не меняет.')
 open(OUT, 'w', encoding='utf-8').write('\n'.join(L) + '\n')
 print('записано', OUT, len(L), 'строк; производные —', DER_PATH)

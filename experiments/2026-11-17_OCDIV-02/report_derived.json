@@ -93,6 +93,11 @@
  },
  "n_crowd": 7,
  "n_crowd_reg": 7,
+ "council69": {
+  "seconds": 537,
+  "over_s": 0
+ },
+ "t4_mean_nondeg_by_test_posthoc": 0.04702289605886539,
  "expect_hits": {
   "E1": true,
   "E2": true,
