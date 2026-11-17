@@ -1,0 +1,322 @@
+{
+ "cells": {
+  "haiku/int_pow": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 9,
+   "kunit_failed": 0,
+   "kunit_passed": 9,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "sonnet/int_pow": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 9,
+   "kunit_failed": 0,
+   "kunit_passed": 9,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "opus/int_pow": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 9,
+   "kunit_failed": 0,
+   "kunit_passed": 9,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "haiku/int_sqrt": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 21,
+   "kunit_failed": 0,
+   "kunit_passed": 21,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "sonnet/int_sqrt": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 21,
+   "kunit_failed": 0,
+   "kunit_passed": 21,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "opus/int_sqrt": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 21,
+   "kunit_failed": 0,
+   "kunit_passed": 21,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "haiku/gcd": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 11,
+   "kunit_failed": 0,
+   "kunit_passed": 11,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "sonnet/gcd": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 11,
+   "kunit_failed": 0,
+   "kunit_passed": 11,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "opus/gcd": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 11,
+   "kunit_failed": 0,
+   "kunit_passed": 11,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "haiku/rational": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 8,
+   "kunit_failed": 0,
+   "kunit_passed": 8,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "sonnet/rational": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 8,
+   "kunit_failed": 0,
+   "kunit_passed": 8,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "opus/rational": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 8,
+   "kunit_failed": 0,
+   "kunit_passed": 8,
+   "diff_n": 100000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "haiku/int_log": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 17,
+   "kunit_failed": 0,
+   "kunit_passed": 17,
+   "diff_n": 200000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "sonnet/int_log": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 17,
+   "kunit_failed": 0,
+   "kunit_passed": 17,
+   "diff_n": 200000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "opus/int_log": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 17,
+   "kunit_failed": 0,
+   "kunit_passed": 17,
+   "diff_n": 200000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "haiku/cmdline": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 9,
+   "kunit_failed": 0,
+   "kunit_passed": 9,
+   "diff_n": 500000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "sonnet/cmdline": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 9,
+   "kunit_failed": 0,
+   "kunit_passed": 9,
+   "diff_n": 500000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  },
+  "opus/cmdline": {
+   "present": true,
+   "compiled": true,
+   "linked": true,
+   "correct": true,
+   "kunit_total": 9,
+   "kunit_failed": 0,
+   "kunit_passed": 9,
+   "diff_n": 500000,
+   "diff_mismatches": 0,
+   "diff_crashed_chunks": 0,
+   "diff_mismatch_share": 0.0
+  }
+ },
+ "heads": {
+  "haiku": {
+   "correct": 6,
+   "modules": 6,
+   "tokens_in": 37626,
+   "tokens_out": 50879,
+   "cost_usd": 0.03026626,
+   "seconds": 239.2,
+   "tokens_in_per_c_line": 58.42546583850932,
+   "tokens_out_per_c_line": 79.00465838509317,
+   "cost_usd_per_c_line": 4.699729813664596e-05,
+   "cost_usd_per_1000_c_lines": 0.04699729813664596,
+   "cost_usd_per_million_c_lines": 46.99729813664596,
+   "rs_lines": 499,
+   "unsafe": 7
+  },
+  "sonnet": {
+   "correct": 6,
+   "modules": 6,
+   "tokens_in": 32705,
+   "tokens_out": 12452,
+   "cost_usd": 0.2223064,
+   "seconds": 108.6,
+   "tokens_in_per_c_line": 50.78416149068323,
+   "tokens_out_per_c_line": 19.335403726708076,
+   "cost_usd_per_c_line": 0.0003451962732919254,
+   "cost_usd_per_1000_c_lines": 0.3451962732919255,
+   "cost_usd_per_million_c_lines": 345.1962732919255,
+   "rs_lines": 419,
+   "unsafe": 7
+  },
+  "opus": {
+   "correct": 6,
+   "modules": 6,
+   "tokens_in": 33124,
+   "tokens_out": 19164,
+   "cost_usd": 0.5869628,
+   "seconds": 178.5,
+   "tokens_in_per_c_line": 51.43478260869565,
+   "tokens_out_per_c_line": 29.757763975155278,
+   "cost_usd_per_c_line": 0.0009114329192546584,
+   "cost_usd_per_1000_c_lines": 0.9114329192546584,
+   "cost_usd_per_million_c_lines": 911.4329192546585,
+   "rs_lines": 595,
+   "unsafe": 7
+  }
+ },
+ "expectations": {
+  "L1": {
+   "text": "Opus 5.5: верны не меньше 5 модулей из 6",
+   "p": 0.7,
+   "outcome": true
+  },
+  "L2": {
+   "text": "Sonnet 5.5: верны не меньше 5 модулей из 6",
+   "p": 0.6,
+   "outcome": true
+  },
+  "L3": {
+   "text": "Haiku 5.5: верны не меньше 4 модулей из 6",
+   "p": 0.5,
+   "outcome": true
+  },
+  "L4": {
+   "text": "хотя бы один перевод проходит все тесты KUnit, но расходится с оригиналом",
+   "p": 0.5,
+   "outcome": false
+  },
+  "L5": {
+   "text": "cmdline.c: верен хотя бы у одной головы из трёх",
+   "p": 0.6,
+   "outcome": true
+  }
+ },
+ "l4_witness": [],
+ "c_lines_total": 644,
+ "cost_usd_all": 0.83953546,
+ "check": {
+  "kunit_cases": 75,
+  "kunit_failed": 0,
+  "self_diff_mismatches": 0,
+  "self_diff_n": 1100000,
+  "kunit_cases_without_rational": 67
+ }
+}
