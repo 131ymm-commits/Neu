@@ -39,8 +39,17 @@ const VOTE = { type: 'object', properties: { vote: { type: 'string', enum: ['з�
   required_change: { type: 'string', description: 'что изменить, чтобы голос стал «за» (пусто, если «за»)' }, t: { type: 'integer', description: 'date +%s в конце работы' } },
   required: ['vote', 'reason', 'required_change', 't'] }
 
+// Замок (ERRORS № 172, 177, 183): время старта сверяется с часами до первой головы. Текстовое правило «date +%s прямо перед вызовом»
+// трижды не исполнилось после перезапуска процесса сессии. Расхождение больше 180 с — заседание не начинается.
+const CLOCK = { type: 'object', properties: { t: { type: 'integer', description: 'вывод команды date +%s' } }, required: ['t'] }
+const ck = await agent('Выполни одну команду `date +%s` и верни её вывод числом в поле t. Больше ничего не делай и ничего не читай.',
+  { label: 'часы', phase: 'Раунд 1', schema: CLOCK, effort: 'low' })
+const tclock = ck ? Number(ck.t) : NaN
+if (!Number.isFinite(tclock)) throw new Error('замок времени: часы не ответили — заседание не начато')
+if (Math.abs(tclock - start) > 180) throw new Error(`замок времени (ERRORS № 172, 177, 183): args.start ${start} расходится с часами ${tclock} на ${tclock - start} с — возьми date +%s заново и запусти снова`)
+
 let now = start
-const timer = { start, deadline, steps: [], skipped: [] }
+const timer = { start, deadline, clock: tclock, steps: [], skipped: [] }
 const tick = (label, results, est) => {   // время по отметкам агентов; разумные значения — от now до now + 1 ч
   const ts = results.filter(Boolean).map(x => Number(x.t)).filter(x => Number.isFinite(x) && x >= now && x <= now + 3600)
   const before = now
