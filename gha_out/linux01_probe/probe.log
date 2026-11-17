@@ -1,0 +1,21 @@
+пакеты: 9 с
+ядро: 666539eecdf4db623f5e3c3e55cf9f2dfad24aa4 7.4.0-rc3
+клон: 45 с
+KUnit в UML: код 1, 7 с
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+This is probably due to unsatisfied dependencies.
+Missing: CONFIG_RATIONAL_KUNIT_TEST=y
+Note: many Kconfig options aren't available on UML. You can try running on a different architecture with something like "--arch=x86_64".
+[18:04:12] Configuring KUnit Kernel ...
+Generating .config ...
+Populating config with:
+$ make ARCH=um O=/home/runner/work/_temp/kbuild olddefconfig
+минимальные версии: rustc 1.85.0, bindgen 0.71.1
+инструменты Rust: 51 с
+rustavailable (x86_64): код 0
+***
+*** Please see Documentation/rust/quick-start.rst for details
+*** on how to set up the Rust support.
+***
+Rust is available!
+всего: 105 с
