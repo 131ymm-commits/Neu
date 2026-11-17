@@ -1,0 +1,54 @@
+gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0
+rustc 1.99.1 (58cf8f9c3 2026-10-13)
+4
+concurrent.futures.process._RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/concurrent/futures/process.py", line 255, in _process_worker
+    r = call_item.fn(*call_item.args, **call_item.kwargs)
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/concurrent/futures/process.py", line 204, in _process_chunk
+    return [fn(*args) for args in chunk]
+            ~~^^^^^^^
+  File "/home/runner/work/Neu/Neu/experiments/2026-11-17_LINUX-01/harness/mutants.py", line 108, in eval_mut
+    _, out, _, to2 = run_group([d_bin, m, str(n)], 60)
+                     ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/Neu/Neu/experiments/2026-11-17_LINUX-01/harness/mutants.py", line 69, in run_group
+    out, err = p.communicate(timeout=timeout)
+               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/subprocess.py", line 1223, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/subprocess.py", line 2196, in _communicate
+    stdout = self._translate_newlines(stdout,
+                                      self.stdout.encoding,
+                                      self.stdout.errors)
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/subprocess.py", line 1100, in _translate_newlines
+    data = data.decode(encoding, errors)
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xa0 in position 429: invalid start byte
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/runner/work/Neu/Neu/experiments/2026-11-17_LINUX-01/harness/mutants.py", line 168, in <module>
+    sys.exit(main(sys.argv[1:]))
+             ~~~~^^^^^^^^^^^^^^
+  File "/home/runner/work/Neu/Neu/experiments/2026-11-17_LINUX-01/harness/mutants.py", line 152, in main
+    for r in ex.map(eval_mut, jobs):
+             ~~~~~~^^^^^^^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/concurrent/futures/process.py", line 621, in _chain_from_iterable_of_lists
+    for element in iterable:
+                   ^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/concurrent/futures/_base.py", line 625, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/concurrent/futures/_base.py", line 318, in _result_or_cancel
+    return fut.result(timeout)
+           ~~~~~~~~~~^^^^^^^^^
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/concurrent/futures/_base.py", line 453, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/opt/hostedtoolcache/Python/3.13.18/x64/lib/python3.13/concurrent/futures/_base.py", line 402, in __get_result
+    raise self._exception
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xa0 in position 429: invalid start byte
+задание linux01_mutants завершилось с ошибкой
