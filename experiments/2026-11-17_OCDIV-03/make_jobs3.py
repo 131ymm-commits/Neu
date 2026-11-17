@@ -51,7 +51,7 @@ def extract(nm, env):
 def main():
     a = sys.argv[1:]
     mode = a[0]
-    dst = os.path.abspath(a[a.index('--dir') + 1]) if '--dir' in a else (os.path.join(ROOT, 'gha_par') if mode == 'pilot' else os.path.join(HERE, 'jobs'))
+    dst = os.path.abspath(a[a.index('--dir') + 1]) if '--dir' in a else (os.path.join(ROOT, 'gha_par') if mode in ('pilot', 'pilot_n2') else os.path.join(HERE, 'jobs'))
     os.makedirs(dst, exist_ok=True)
     out = []
     if mode in ('pilot', 'pilot_n2'):
