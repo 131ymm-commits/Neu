@@ -89,6 +89,21 @@ der['check'] = dict(kunit_cases=sum(v['kunit']['total'] for v in chk.values()), 
                     self_diff_mismatches=sum(x['mismatches'] for v in chk.values() for x in v['self_diff'].values()),
                     self_diff_n=sum(x['n'] for v in chk.values() for x in v['self_diff'].values()),
                     kunit_cases_without_rational=sum(v['kunit']['total'] for k_, v in chk.items() if k_ != 'rational'))
+der['refs_errors'] = [191, 192, 193, 194, 195]   # записи journal/ERRORS.md, на которые ссылается записка (для ледгера audit)
+MUT = os.path.join(G, 'linux01_mutants2', 'mutants.json')   # первый прогон (linux01_mutants) упал: ERRORS № 194
+REV = os.path.join(X, 'mutants_survivors_review.json')
+if os.path.exists(MUT):
+    # int_log: где стоят мутанты, которых пропустил KUnit, — в таблице логарифмов или в коде (строки таблицы — между LOGTABLE: [ и ];)
+    def _in_table(h, line):
+        src = open(os.path.join(X, 'translations', h, 'int_log.rs'), encoding='utf-8').read().splitlines()
+        a_ = next(k for k, s in enumerate(src, 1) if re.search(r'LOGTABLE\s*:\s*\[', s))
+        b_ = next(k for k, s in enumerate(src, 1) if k > a_ and re.search(r'^\s*\];', s))
+        return a_ < line <= b_
+    _rows = [r for r in json.load(open(MUT, encoding='utf-8'))['rows'] if r['module'] == 'int_log' and r.get('compiled') and r.get('linked')]
+    _tab = [r for r in _rows if _in_table(r['head'], r['line'])]
+    der['int_log_table'] = dict(table_mutants=len(_tab), table_missed_kunit=sum(not r['killed_kunit'] for r in _tab),
+                                table_killed_diff=sum(r['killed_diff'] for r in _tab),
+                                code_mutants=len(_rows) - len(_tab), code_missed_kunit=sum(not r['killed_kunit'] for r in _rows if r not in _tab))
 json.dump(der, open(os.path.join(X, 'note_derived.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 # коммиты: план, обвязка, переводы, оценка
@@ -135,6 +150,11 @@ for m in MODS:
 add('')
 add('«Расх.» — входы, на которых перевод ответил не так, как оригинал. Если порция из 1000 входов упала (паника Rust или сигнал), '
     'все её входы считаются расхождениями: это верхняя граница.')
+if os.path.exists(REV):
+    V0 = json.load(open(REV, encoding='utf-8'))
+    add('')
+    add(f"Оценщик способен провалить перевод (пост-хок, раздел о мутантах): из {V0['behavior_changing']} ошибок в одну правку, меняющих поведение, "
+        f"сравнение с оригиналом ловит {V0['behavior_changing_killed_diff']}, тесты KUnit модуля — {V0['behavior_changing_killed_kunit']}.")
 add('')
 add('## Ожидания (PLAN, до переводов)')
 add('')
@@ -163,8 +183,8 @@ add(f"Всего за 18 переводов: {n(der['cost_usd_all'], 4)} $ по 
 add('')
 add('**Пост-хок, арифметика (не мера PLAN):** при той же цене на строку миллион строк C стоил бы ' +
     ', '.join(f"{NAME[h]} — {n(H[h]['cost_usd_per_million_c_lines'], 0)} $" for h in HEADS) +
-    '. Это нижняя оценка для простого кода: шесть модулей — чистые функции без зависимостей. Перевод драйвера требует заголовков и соседних '
-    'файлов во входе, а неверные переводы — повторов. Не проверялось.')
+    '. Для остального ядра это, скорее всего, нижняя граница: шесть модулей — чистые функции без зависимостей, а перевод драйвера требует '
+    'заголовков и соседних файлов во входе, неверные переводы — повторов. Не проверялось.')
 add('')
 add('## Где ошибки')
 add('')
@@ -184,7 +204,6 @@ for h, m in bad:
     add(f'- {h}/{m}: KUnit — ' + (', '.join(fails[:4]) + (' …' if len(fails) > 4 else '') if fails else 'все случаи прошли') +
         '; сравнение — ' + ('; '.join(ex[:3]) if ex else 'расхождений нет'))
 add('')
-MUT = os.path.join(G, 'linux01_mutants2', 'mutants.json')   # первый прогон (linux01_mutants) упал: ERRORS № 194
 add('## Может ли оценщик провалить перевод (пост-хок, мутанты; вердиктов PLAN не меняет)')
 add('')
 if os.path.exists(MUT):
@@ -193,7 +212,8 @@ if os.path.exists(MUT):
     add(f"Мутантов делает скрипт механически (`harness/mutants.py`), головы не участвуют: одна правка в переводе — сравнение (`<`↔`<=`, `==`↔`!=`), "
         f"плюс-минус, логика (`&&`↔`||`), сдвиг, константа N→N+1. До {M['per_file']} мест на файл, зерно {M['seed']}. "
         f"Всего {i(t['generated'])} мутантов; не собрались {i(t['stillborn'])} — в доли не входят; живых {i(t['alive'])}. "
-        f"Сравнение — {i(M['n'])} входов на функцию, как в оценке.")
+        f"Сравнение — {i(M['n'])} входов на функцию, как в оценке. Первый прогон упал на байте 0xA0 в выводе сравнения (ERRORS № 194); "
+        "числа — из повтора `gha_out/linux01_mutants2/`.")
     add('')
     add('| Модуль | Живых | Убил KUnit | Убило сравнение | KUnit пропустил, сравнение поймало | Сравнение пропустило, KUnit поймал | Выжили оба |')
     add('|---|---|---|---|---|---|---|')
@@ -205,8 +225,26 @@ if os.path.exists(MUT):
         f"Зависания (считаются убийством): KUnit — {t['kunit_timeouts']}, сравнение — {t['diff_timeouts']}. По видам правки (убил KUnit / убило сравнение из живых): "
         + '; '.join(f"{k} — {v['killed_kunit']}/{v['killed_diff']} из {v['alive']}" for k, v in M['by_kind'].items()) + '.')
     add('')
-    add('«Выжили оба» — либо эквивалентные мутанты (правка не меняет поведения: например, убран короткий путь), либо слепые места обоих '
-        'оценщиков. По одному они не разбирались.')
+    if os.path.exists(REV):
+        V = json.load(open(REV, encoding='utf-8'))
+        cc = V['counts']
+        add(f"«Выжили оба» разобраны по одному (`harness/review_survivors.py` → `mutants_survivors_review.json`; {V['method']}):")
+        add(f"- мёртвый код — {cc.get('мёртвый код', 0)}: в gcd у Haiku и Opus медленный путь стоит после безусловного `return binary_gcd(...)` "
+            '(ключ efficient_ffs включён), и правка там не исполняется;')
+        add(f"- эквивалентные правки — {cc.get('эквивалентный', 0)}: например, убран короткий выход, после которого цикл даёт тот же ответ, "
+            'или флаг кавычек 1 → 2, который сравнивается только с нулём;')
+        for r in [r for r in V['rows'] if r['cls'] == 'слепое пятно']:
+            add(f"- слепое пятно — {cc.get('слепое пятно', 0)}: {r['head']}/{r['module']}, строка {r['line']} (`{r['text']}`, {r['frm']} → {r['to']}). "
+                f"{r['why'][0].upper() + r['why'][1:]}. Из пробельных байтов генератор сравнения даёт только 9, 32 и 160 (ERRORS № 195).")
+        add('')
+        add(f"**Итог замера.** Из {V['behavior_changing']} мутантов, меняющих поведение, сравнение с оригиналом поймало "
+            f"{V['behavior_changing_killed_diff']} ({n(V['share_behavior_changing_killed_diff'])}), тесты KUnit модуля — "
+            f"{V['behavior_changing_killed_kunit']} ({n(V['share_behavior_changing_killed_kunit'])}). Мутантов, которых поймал бы только KUnit, нет. "
+            'Тесты модуля — слабый судья перевода: почти каждую третью ошибку в одну правку они пропускают. Сильнее всего — в int_log: '
+            f"из {der['int_log_table']['table_mutants']} правок таблицы логарифмов KUnit пропустил {der['int_log_table']['table_missed_kunit']}, "
+            f"сравнение поймало {der['int_log_table']['table_killed_diff']} (место правки сверено по строкам таблицы).")
+    else:
+        add('«Выжили оба» — либо эквивалентные мутанты, либо слепые места обоих оценщиков; разбор — `harness/review_survivors.py`.')
 else:
     add('Замер идёт (`jobs/linux01_mutants.sh`).')
 add('')
@@ -243,7 +281,9 @@ add('')
 add('## Чего записка не утверждает')
 add('')
 add('- Что Линукс можно перевести: шесть малых модулей без драйверов, работа вне ядра.')
-add('- Что переводы эквивалентны оригиналу: 100 000 случайных входов на функцию — выборка, не доказательство.')
+add('- Что переводы эквивалентны оригиналу: 100 000 случайных входов на функцию — выборка, не доказательство; '
+    'пробельные байты 10–13 генератор не даёт, и isspace переводов на них проверен только чтением кода.')
+add('- Что классы выживших мутантов (мёртвый код, эквивалентные) верны: разбор — чтение кода, тестом не доказан.')
 add('- Что переводы идиоматичны или безопасны: мерилось только поведение.')
 add('- Что исход повторится: каждая голова переводила каждый модуль один раз.')
 open(OUT, 'w', encoding='utf-8').write('\n'.join(L) + '\n')

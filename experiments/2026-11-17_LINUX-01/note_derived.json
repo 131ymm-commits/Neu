@@ -318,5 +318,19 @@
   "self_diff_mismatches": 0,
   "self_diff_n": 1100000,
   "kunit_cases_without_rational": 67
+ },
+ "refs_errors": [
+  191,
+  192,
+  193,
+  194,
+  195
+ ],
+ "int_log_table": {
+  "table_mutants": 63,
+  "table_missed_kunit": 62,
+  "table_killed_diff": 63,
+  "code_mutants": 12,
+  "code_missed_kunit": 2
  }
 }
