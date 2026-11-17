@@ -1,0 +1,9 @@
+[    0.0 с] фаза pilot2 | сред 5 | задач 2000
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   11.4 с] HuggingFaceTB/SmolLM2-360M-Instruct a10cc1512eabd3dde888204e902eca88bddb4951 загружена за 8.4 с; ревизия a10cc1512eabd3dde888204e902eca88bddb4951
+[  139.4 с] L_X9_p1 | задач 400 | время 128.0 с, 0.32 с на задачу
+[  282.0 с] L_X99_p1 | задач 400 | время 142.6 с, 0.356 с на задачу
+[  441.9 с] L_X999_p1 | задач 400 | время 159.9 с, 0.4 с на задачу
+[  620.6 с] L_X9999_p1 | задач 400 | время 178.6 с, 0.447 с на задачу
+[  810.8 с] L_X99999_p1 | задач 400 | время 190.2 с, 0.475 с на задачу
+[  811.1 с] записано gha_out/ocdiv2_pilot2_smol360_L/answers_SmolLM2-360M-Instruct.json
