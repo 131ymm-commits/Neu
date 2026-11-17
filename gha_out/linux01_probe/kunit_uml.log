@@ -1,0 +1,8 @@
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+This is probably due to unsatisfied dependencies.
+Missing: CONFIG_RATIONAL_KUNIT_TEST=y
+Note: many Kconfig options aren't available on UML. You can try running on a different architecture with something like "--arch=x86_64".
+[18:04:12] Configuring KUnit Kernel ...
+Generating .config ...
+Populating config with:
+$ make ARCH=um O=/home/runner/work/_temp/kbuild olddefconfig
