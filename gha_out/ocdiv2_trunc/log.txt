@@ -1,0 +1,14 @@
+24b2115d61f1d246496e5294d23396844b663c9d5db7c81d9983edcd5398a019  experiments/2026-11-17_OCDIV-02/trunc_check.py
+pilot2 L {'n_pairs': 35, 'n_numeric': 13922, 'n_at_max': 0, 'n_extra_tokens': 0, 'n_prefix_of_truth': 14}
+pilot2 T {'n_pairs': 35, 'n_numeric': 13944, 'n_at_max': 0, 'n_extra_tokens': 0, 'n_prefix_of_truth': 0}
+pilot L {'n_pairs': 35, 'n_numeric': 13998, 'n_at_max': 0, 'n_extra_tokens': 0, 'n_prefix_of_truth': 1}
+pilot T {'n_pairs': 35, 'n_numeric': 13903, 'n_at_max': 1, 'n_extra_tokens': 1, 'n_prefix_of_truth': 1}
+ocdiv01 X {'n_pairs': 35, 'n_numeric': 76893, 'n_at_max': 0, 'n_extra_tokens': 0, 'n_prefix_of_truth': 5}
+лишние токены: pilot T_X19_p0 allenai/OLMo-2-0425-1B-Instruct 0.0025 | на пределе 0.0025 | n_tok {1: 11, 2: 388, 6: 1}
+лишние токены: pilot2 L_X9_p1 tiiuae/Falcon3-1B-Instruct 0.0 | на пределе 0.0 | n_tok {3: 210, 4: 190}
+лишние токены: pilot2 L_X99_p1 tiiuae/Falcon3-1B-Instruct 0.0 | на пределе 0.0 | n_tok {4: 122, 5: 278}
+лишние токены: pilot2 L_X999_p1 tiiuae/Falcon3-1B-Instruct 0.0 | на пределе 0.0 | n_tok {5: 360, 6: 40}
+лишние токены: pilot2 L_X9999_p1 tiiuae/Falcon3-1B-Instruct 0.0 | на пределе 0.0 | n_tok {6: 400}
+лишние токены: pilot2 L_X99999_p1 tiiuae/Falcon3-1B-Instruct 0.0 | на пределе 0.0 | n_tok {7: 400}
+лишние токены: pilot2 T_X19_p1 tiiuae/Falcon3-1B-Instruct 0.0 | на пределе 0.0 | n_tok {4: 400}
+лишние токены: pilot2 T_X29_p1 tiiuae/Falcon3-1B-Instruct 0.0 | на пределе 0.0 | n_tok {4: 400}
