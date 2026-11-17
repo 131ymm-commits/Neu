@@ -53,5 +53,24 @@ for word in ('correct', 'answer', 'logp', 'text_none', 'accuracy', 'acc_id', 'n_
 check('сводка показывает модель, ревизию, версии и время', 'org/fake-model' in out and 'abc123def' in out and '2.11.0+cpu' in out and '123.4' in out)
 check('сводка показывает поле error', 'OSError: не загрузилась' in out)
 check('сводка показывает папку без вывода', 'НЕТ файлов вывода' in out)
+
+# вывод другого вида (ERRORS № 193): eval.json и log.txt с вердиктами — в сводке только размеры, белый список и метки сбоя
+os.makedirs(os.path.join(tmp, 'job_other', 'sub'))
+g = dict(mode='eval', n=SENT['n'], rustc='rustc 1.99.1', modules={'m': dict(heads={'h': dict(correct=True, mismatches=SENT['ans'])})},
+         seconds=77.5, error='сбой сборки')
+json.dump(g, open(os.path.join(tmp, 'job_other', 'eval.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+open(os.path.join(tmp, 'job_other', 'eval.log'), 'w', encoding='utf-8').write(f'm h | верен True | расхождений {SENT["ans"]}\n')
+open(os.path.join(tmp, 'job_other', 'log.txt'), 'w', encoding='utf-8').write(f'верен True {SENT["none"]}\nзадание x завершилось с ошибкой\n')
+open(os.path.join(tmp, 'job_other', 'sub', 'broken.json'), 'w', encoding='utf-8').write('{не json')
+out2 = subprocess.run([sys.executable, os.path.join(HERE, 'raw_status.py'), os.path.join(tmp, 'job_other')],
+                      capture_output=True, text=True).stdout
+for k, v in SENT.items():
+    for s in {repr(v), str(v), str(v).replace('.', ',')}:
+        check(f'другой вид: сводка не содержит метку {k} ({s})', s not in out2, out2[:300])
+for word in ('верен', 'correct', 'mismatches', 'modules', 'heads', 'mode', 'rustc', 'расхождений'):
+    check(f'другой вид: сводка не содержит «{word}»', word not in out2, out2[:300])
+check('другой вид: сводка показывает файлы, размеры, error, время и метку сбоя',
+      all(x in out2 for x in ('eval.json', 'eval.log', 'log.txt', 'broken.json', '"bytes"', 'сбой сборки', '77.5',
+                              '"marker_job_failed": true', 'не читается')), out2[:500])
 print(f'провалов: {len(FAIL)}')
 sys.exit(1 if FAIL else 0)
