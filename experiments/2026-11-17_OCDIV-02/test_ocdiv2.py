@@ -118,10 +118,10 @@ def fake_cols(e, head_k, acc, rng):
     return c
 
 
-def write_job(jd, nm, fam, envs, rng, rev=None, k=0, mutate=None):
+def write_job(jd, nm, fam, envs, rng, rev=None, k=0, mutate=None, phase='pilot'):
     os.makedirs(jd, exist_ok=True)
     repo, commit = V.CROWD[nm].split('@')
-    res = dict(experiment='OCDIV-02', phase='pilot', model=repo, repo=repo, revision=rev or commit, commit=rev or commit,
+    res = dict(experiment='OCDIV-02', phase=phase, model=repo, repo=repo, revision=rev or commit, commit=rev or commit,
                envs=[dict(name=e['name'], family=e['family'], X=e['X'], p=e['p'], max_new=e['max_new'], n=len(e['problems']), idx=e['idx'],
                           keys=[[q['a'], q['b']] for q in e['problems']], prompt_sha256=D2.DX.prompt_sha(e['prompt_head'])) for e in envs],
                seconds_env={e['name']: 0.3 * len(e['problems']) for e in envs}, versions=dict(torch='2.11.0+cpu', transformers='5.20.2'),
@@ -188,6 +188,30 @@ check('пилот: все среды годны, Т1–Т4 и описатель
 check('пилот: Т3 — по головам с разрывом ≥ 0,10 (у заглушки «длины» — все семь)', len(el['t3_heads']) == 7, str(el['t3_heads']))
 check('пилот: мощность посчитана для Т1–Т4', all(fs['length']['power'].get(k) for k in ('T1', 'T2', 'T3', 'T4')))
 check('пилот: точность головы — по коротким именам, проверка метода — тоже', set(el['acc']) == set(V.CROWD) and set(el['method']) == set(V.CROWD))
+
+# 4б. Анализ теста на заглушках: семейство «длина», 7 голов × 5 сред по 2200 задач, B = 30
+tdirs = []
+tenvs = D2.envs_ocdiv2('test', ('length',))
+for k, nm in enumerate(V.CROWD):
+    jd = os.path.join(tmp, f'tjob_{k}')
+    write_job(jd, nm, 'length', tenvs, rng, k=k, phase='test')
+    tdirs.append(jd)
+mt = W.merge(os.path.join(tmp, 'mt'), 'test', 'length', tdirs)
+check('сборка теста: семь голов, пять сред', len(mt['heads']) == 7 and not mt['head_errors'] and len(mt['envs']) == 5)
+try:
+    W.test(os.path.join(tmp, 'never.json'), os.path.join(tmp, 'mt'), B=5)
+    check('тест: без констант PREREG анализ не идёт', False)
+except AssertionError:
+    check('тест: без констант PREREG анализ не идёт', True)
+W.FAMILY_TEST, W.T3_HEADS, W.T2_DESCRIPTIVE, W.T4_STRATA = 'length', list(V.CROWD), False, False
+tr = W.test(os.path.join(tmp, 'test.json'), os.path.join(tmp, 'mt'), B=30, workers=1)
+check('тест: опыт определён, вердикты Т1–Т4 есть', tr['method']['ok'] and set(tr['verdicts']) == {'T1', 'T2', 'T3', 'T4'}, str(tr.get('verdicts')))
+check('тест: у заглушки «длины» Т1 и Т4 > 0, Т3 внутри (0; 1) по точке', tr['T1']['delta'] > 0 and tr['T4']['delta'] > -0.05 and 0 < tr['T3']['delta'] < 1,
+      str({k: round(tr[k]['delta'], 3) for k in ('T1', 'T3', 'T4')}))
+check('тест: описательные числа и безусловное совпадение посчитаны', 'descr_D3' in tr and tr['uncond_cross']['u'] is not None and tr['parts_mean'])
+check('тест: повторы бутстрепа не пишутся в json', not any(k in e for e in json.load(open(os.path.join(tmp, 'test.json')))['envs'].values()
+                                                            for k in ('_boot', '_boot_T4')))       # ключи, а не подстрока (есть поле n_boot_finite)
+W.FAMILY_TEST = W.T3_HEADS = W.T2_DESCRIPTIVE = W.T4_STRATA = None
 
 # 5. С --real (GitHub Actions): сухой прогон извлечения на крошечной модели и равенство с ocdiv_extract.run при 6 новых токенах
 if '--real' in sys.argv:

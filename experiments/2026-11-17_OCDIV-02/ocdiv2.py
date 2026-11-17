@@ -4,6 +4,8 @@
 коммит 7187bab5) и мощность. Анализ теста — после PREREG.
   python3 ocdiv2.py merge OUT_DIR PHASE FAMILY JOB_DIR [JOB_DIR ...]   — answers.json вида ocdiv.merge (формат analyze_ocshift)
   python3 ocdiv2.py pilot RESULT.json MERGED_THOUSANDS MERGED_LENGTH [--boot 200] [--workers 4]
+  python3 ocdiv2.py test  RESULT.json MERGED_DIR [--boot 10000] [--workers 4]   — тест (константы FAMILY_TEST, T3_HEADS, T2_DESCRIPTIVE,
+      T4_STRATA задаются в PREREG по пилоту)
 Код счёта — зарегистрированный код прежних опытов: проверка метода и массивы — analyze_ocshift.prepare (в масштабе теста —
 ocdiv.prepare_scaled); оценщики — ocpost.post_stats и ocdiv.agree_conf (ocdiv.stats_div); калибровка головы — ocpost.calibrate.
 Новое здесь: Т3 (доля незамеченного разрыва), Т4 (ложное большинство и перестановочный нуль), безусловное совпадение ошибок,
@@ -217,8 +219,10 @@ def _rep_env(fc):
 RULE_KEYS = ('T1', 'T2', 'T3', 'D3', 'AGREE − CONF', 'wc CONF', 'wc POST', 'wc FIXED')
 
 
-def env_analysis(env, seed_cv, seed_boot, seed_null, seed_null_boot, n_id_test, hnames_t3, B, workers, K_point=K_NULL_POINT, K_boot=K_NULL_BOOT):
-    """Одна среда: проверка метода в масштабе теста, точки и ст. откл. повторов (B) правил, Т4 и описательные числа."""
+def env_analysis(env, seed_cv, seed_boot, seed_null, seed_null_boot, n_id_test, hnames_t3, B, workers, K_point=K_NULL_POINT, K_boot=K_NULL_BOOT,
+                 keep_boot=False):
+    """Одна среда: проверка метода в масштабе теста, точки и ст. откл. повторов (B) правил, Т4 и описательные числа.
+    keep_boot — вернуть и сами повторы (поля _boot, _boot_T4; в json не пишутся): для среднего по средам в анализе теста."""
     st, info = V.prepare_scaled(env, seed_cv, n_id_test)
     names = [info['names'][k] for k in info['keep']]
     cs_all = info['corr']
@@ -243,6 +247,11 @@ def env_analysis(env, seed_cv, seed_boot, seed_null, seed_null_boot, n_id_test, 
         out['sd'] = {k: float(np.nanstd(bt[:, j], ddof=1)) for j, k in enumerate(RULE_KEYS)}
         out['boot_shift'] = {k: float(np.nanmean(bt[:, j]) - pt[k]) for j, k in enumerate(RULE_KEYS)}
     out['fixed_in_crowd'], out['t3_heads'] = fx is not None, [names[i].split('@')[0] for i in hidx]
+    if keep_boot:
+        out['_boot'] = {k: bt[:, j] for j, k in enumerate(RULE_KEYS)}
+    cs_k = st['corr'][info['keep']]                      # C − T вне диапазона у каждой головы толпы (калибровка на ID, описательно)
+    cal_o = P.calibrate(st['logp'][info['keep']], cs_k, idi, ood)
+    out['ct_ood_by_head'] = {names[k].split('@')[0]: float(cal_o[k].mean() - cs_k[k, ood].mean()) for k in range(len(names))}
     # Т4: голоса толпы (головы keep) вне диапазона
     keep = info['keep']
     ans_k = [info['ans'][k] for k in keep]
@@ -261,6 +270,8 @@ def env_analysis(env, seed_cv, seed_boot, seed_null, seed_null_boot, n_id_test, 
         bFs.append(f_stats(Db, gbn, K_boot, sb)[2])
     out['T4'] = dict(F=F, F0=F0, point=dF, sd=float(np.std(bF, ddof=1)), F0_strata=F0s, point_strata=dFs, sd_strata=float(np.std(bFs, ddof=1)),
                      strata_counts={int(s): int((strata == s).sum()) for s in np.unique(strata)})
+    if keep_boot:
+        out['_boot_T4'] = (np.array(bF), np.array(bFs))
     out['oracle_ood'] = float(st['corr'][keep][:, ood].any(0).mean())
     pairs = list(itertools.combinations(range(len(names)), 2))
     vend = [V.vendor(CROWD[nm.split('@')[0]].split('@')[0]) for nm in names]
@@ -422,6 +433,147 @@ def pilot(dst, mdirs, B=200, workers=1):
     return res
 
 
+# ───────────── тест (константы — в PREREG по пилоту, до данных теста)
+FAMILY_TEST = None        # 'thousands' | 'length' — по правилу выбора семейства на пилоте
+T3_HEADS = None           # головы Т3: разрыв ID − OOD на пилоте выбранного семейства не меньше 0,10
+T2_DESCRIPTIVE = None     # True, если мощность Т2 по пилоту меньше 0,2 (HYPOTHESIS)
+T4_STRATA = None          # False — нуль без страт (HYPOTHESIS); True — со стратами по числу переносов
+SEED_BOOT_TEST, SEED_NULL_TEST, SEED_NULL_BOOT_TEST = 8_350_000, 8_420_000, 8_470_000
+Z_SENS = 1.5              # как в OCDIV-01: вердикт «чувствителен к уровню», если z* < 2,807 × 1,5
+
+
+def z_star2(kind, delta, sd, band=P.BAND):
+    """z, при котором меняется вердикт (совет 66, п. 6): sign, pos — |Δ|/s; over — расстояние точки до края полосы; unit — до ближайшей
+    из границ 0 и 1."""
+    if not (np.isfinite(delta) and np.isfinite(sd) and sd > 0):
+        return float('nan')
+    if kind in ('sign', 'pos'):
+        return float(abs(delta) / sd)
+    if kind == 'over':
+        return float((delta - band) / sd) if delta > band else float((band - abs(delta)) / sd)
+    return float(min(abs(delta), abs(1 - delta)) / sd)
+
+
+def repeat_check(main_glob, rep_glob):
+    """Совет 67 («можно»): одно задание теста повторено под другим именем — совпали ли ответы и logp (детерминизм на процессорах)."""
+    out = []
+    mains = {}
+    for f in glob.glob(main_glob):
+        h = json.load(open(f, encoding='utf-8'))
+        for nm, c in (h.get('cols') or {}).items():
+            mains[(h['model'], nm)] = (c, h.get('cpu_model'), os.path.relpath(f, ROOT))
+    for f in sorted(glob.glob(rep_glob)):
+        h = json.load(open(f, encoding='utf-8'))
+        for nm, c in (h.get('cols') or {}).items():
+            m = mains.get((h['model'], nm))
+            if not m:
+                continue
+            a1, a2 = m[0]['answer'], c['answer']
+            l1, l2 = m[0]['logp'], c['logp']
+            dl = [abs(x - y) for x, y in zip(l1, l2) if x is not None and y is not None]
+            out.append(dict(model=h['model'], env=nm, n=len(a1), answers_equal=float(np.mean([x == y for x, y in zip(a1, a2)])),
+                            max_abs_dlogp=(float(max(dl)) if dl else None), cpu_main=m[1], cpu_rep=h.get('cpu_model'), file_main=m[2],
+                            file_rep=os.path.relpath(f, ROOT)))
+    return out
+
+
+def test(dst, mdir, B=10000, workers=1):
+    assert FAMILY_TEST in D2.FAMILIES and T3_HEADS is not None and T2_DESCRIPTIVE is not None and T4_STRATA is not None, 'константы теста не заданы (PREREG)'
+    t00 = time.time()
+    d, envs = S.load_new(mdir)
+    hm = {h['model']: h for h in d['heads']}
+    names_c, dropped = V.effective_crowd(hm)            # голова выбывает при чужой ревизии или версиях (как в OCDIV-01)
+    res = dict(level=P.LEVEL, z=P.Z, band=P.BAND, B=B, family=FAMILY_TEST, crowd=CROWD, fixed_new=FIXED_NEW, t3_heads=list(T3_HEADS),
+               t2_descriptive=T2_DESCRIPTIVE, t4_strata=T4_STRATA, head_errors=d.get('head_errors', []), keys_checked=d.get('keys_checked'),
+               crowd_effective=names_c, crowd_dropped=dropped, cpu_models={nm: hm[nm].get('cpu_models') for nm in names_c}, envs={})
+    boots, valid = {}, []
+    for name in sorted(envs):
+        env = envs[name]
+        meta = env['meta']
+        assert meta['family'] == FAMILY_TEST and int(meta['p']) == D2.P_TEST, f'среда {name} не из теста семейства {FAMILY_TEST}'
+        env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in names_c])
+        o = off_of(meta)
+        n_id = sum(p['range'] == 'ID' for p in env['problems'])
+        r = env_analysis(env_c, SEED_CV2 + o, SEED_BOOT_TEST + o, SEED_NULL_TEST + o, SEED_NULL_BOOT_TEST + o, n_id, set(T3_HEADS), B, workers,
+                         K_point=K_NULL_POINT, K_boot=K_NULL_BOOT, keep_boot=True)
+        r['meta'] = {k: meta[k] for k in ('family', 'X', 'p', 'bound', 'max_new')}
+        r['seeds'] = dict(cv=SEED_CV2 + o, boot=SEED_BOOT_TEST + o, null=SEED_NULL_TEST + o, null_boot=SEED_NULL_BOOT_TEST + o)
+        if r['valid']:
+            valid.append(name)
+            b4 = r.pop('_boot_T4')
+            boots[name] = {**r.pop('_boot'), 'T4': b4[1] if T4_STRATA else b4[0], 'T4 (другой нуль)': b4[0] if T4_STRATA else b4[1]}
+            r['T4']['primary'] = 'strata' if T4_STRATA else 'plain'
+        res['envs'][name] = r
+        print(f"{name}: ID {r['n_id']}, OOD {r['n_ood']}, толпа {len(r['crowd'])} из {len(env_c['heads'])}, годна {r['valid']}, {round(time.time() - t00)} с", flush=True)
+    m, n_env = len(valid), len(envs)
+    method_ok = bool(m >= int(np.ceil(P.MIN_VALID_FRAC * n_env)) and n_env == 5)
+    res['method'] = dict(ok=method_ok, n_envs=n_env, n_valid=m, valid=valid, fixed_in_all_valid=bool(all(res['envs'][n].get('fixed_in_crowd') for n in valid)),
+                         crowd_effective=len(names_c))
+    group = {n: envs[n]['meta']['X'] for n in valid}
+
+    def point_of(n, key):
+        e = res['envs'][n]
+        if key == 'T4':
+            return e['T4']['point_strata'] if T4_STRATA else e['T4']['point']
+        if key == 'T4 (другой нуль)':
+            return e['T4']['point'] if T4_STRATA else e['T4']['point_strata']
+        return e['point'][key]
+
+    def mean_entry(key, level, kind):
+        use = [n for n in valid if np.isfinite(point_of(n, key))]
+        if not use:
+            return dict(delta=float('nan'), ci=[float('nan'), float('nan')], n_envs=0, kind=kind)
+        pt = float(np.mean([point_of(n, key) for n in use]))
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore', RuntimeWarning)
+            bt = np.nanmean(np.vstack([boots[n][key] for n in use]), 0)
+        bt = bt[np.isfinite(bt)]
+        iv, sd = P.m4(pt, bt, level)
+        zp = pt / sd if sd > 0 else float('nan')
+        return dict(delta=pt, ci=iv, boot_sd=sd, boot_shift=float(np.mean(bt) - pt), level=level, n_envs=len(use), n_boot_finite=int(len(bt)),
+                    by_env={n: float(point_of(n, key)) for n in use}, z_point=zp, z_star=z_star2(kind, pt, sd), kind=kind)
+    if m == 0:
+        res['verdicts'] = {k: P.U for k in RULES2}
+        json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        return res
+    for k, kind in RULES2.items():
+        e = mean_entry(k, P.LEVEL, kind)
+        v = verdict2(kind, e['ci'])
+        if kind in ('sign', 'pos') and e['n_envs'] >= 2:         # предохранитель «без одной среды» — как в OCPOST-01
+            v, e['leave_one_range_out'] = P.A.range_guard(v, e['by_env'], group)
+        e['verdict_rule'] = v
+        e['sensitive_to_level'] = bool(v in ('подтверждено', 'опровергнуто') and np.isfinite(e['z_star']) and e['z_star'] < P.Z * Z_SENS)
+        e['verdict'] = P.U if not method_ok else v
+        res[k] = e
+    if T2_DESCRIPTIVE and method_ok:
+        res['T2']['verdict_rule_descr'] = res['T2']['verdict']
+        res['T2']['verdict'] = 'описательно (мощность по пилоту < 0,2; PREREG)'
+    for k, kind in (('D3', 'over'), ('AGREE − CONF', 'sign'), ('wc CONF', 'sign'), ('wc POST', 'over'), ('wc FIXED', 'over'), ('T4 (другой нуль)', 'pos')):
+        res[f'descr_{k}'] = mean_entry(k, P.DESCR_LEVEL, kind)
+    keys_parts = [k for k in res['envs'][valid[0]]['point'] if k.split(' ')[0] in ('T', 'C', 'ign', 'dec', 'ioi', 'brier')]
+    res['parts_mean'] = {k: float(np.nanmean([res['envs'][n]['point'].get(k, np.nan) for n in valid])) for k in keys_parts}
+    res['oracle_ood_mean'] = float(np.mean([res['envs'][n]['oracle_ood'] for n in valid]))
+    for side in (True, False):
+        us = [x for n in valid for x in res['envs'][n]['uncond_ood'] if x['same_vendor'] == side]
+        res['uncond_' + ('same' if side else 'cross')] = {k: (float(np.mean([x[k] for x in us])) if us else None) for k in ('u', 'u перенос', 'u прочее', 'both_wrong')}
+    res['ct_ood_by_head_mean'] = {nm: float(np.mean([res['envs'][n]['ct_ood_by_head'][nm] for n in valid if nm in res['envs'][n]['ct_ood_by_head']]))
+                                  for nm in names_c}
+    res['acc_by_head_mean'] = {nm: {r_: float(np.mean([res['envs'][n]['acc'][nm][r_] for n in valid if nm in res['envs'][n]['acc']])) for r_ in ('id', 'ood')}
+                               for nm in names_c}
+    res['repeat_check'] = repeat_check(os.path.join(ROOT, 'gha_out/ocdiv2_test_*/answers_*.json'), os.path.join(ROOT, 'gha_out/ocdiv2_rep_*/answers_*.json'))
+    res['verdicts'] = {k: res[k]['verdict'] for k in RULES2}
+    res['verdict'] = '; '.join(f'{k}: {v}' for k, v in res['verdicts'].items())
+    res['seconds'] = round(time.time() - t00, 1)
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print('вердикт:', res['verdict'])
+    for k in RULES2:
+        e = res[k]
+        print(f"{k}: Δ {e['delta']:+.4f} M4 [{e['ci'][0]:+.4f}; {e['ci'][1]:+.4f}] ст. откл. {e.get('boot_sd', float('nan')):.4f} | z* {e.get('z_star', float('nan')):.1f}"
+              + (' (чувствителен к уровню)' if e.get('sensitive_to_level') else ''))
+    print('годных сред', m, 'из', n_env, '| толпа', len(names_c), '| выбыли', dropped, '| время', res['seconds'], 'с')
+    return res
+
+
 def main():
     a = sys.argv[1:]
     if a[0] == 'merge':
@@ -430,6 +582,10 @@ def main():
         B = int(a[a.index('--boot') + 1]) if '--boot' in a else 200
         W = int(a[a.index('--workers') + 1]) if '--workers' in a else 1
         pilot(a[1], {'thousands': a[2], 'length': a[3]}, B, W)
+    elif a[0] == 'test':
+        B = int(a[a.index('--boot') + 1]) if '--boot' in a else 10000
+        W = int(a[a.index('--workers') + 1]) if '--workers' in a else 1
+        test(a[1], a[2], B, W)
 
 
 if __name__ == '__main__':
