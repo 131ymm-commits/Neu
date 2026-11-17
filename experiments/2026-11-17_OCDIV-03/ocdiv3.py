@@ -67,7 +67,7 @@ OBSERVED_PAIRS = frozenset({frozenset({'Qwen2.5-0.5B-Instruct', 'Qwen2.5-1.5B-In
                             frozenset({'SmolLM2-1.7B-Instruct', 'SmolLM2-360M-Instruct'})})
 NONDEG_ENVS = ('T_X19_p3', 'T_X29_p3', 'T_X39_p3', 'T_X49_p3', 'T_X59_p3')   # невырождены по пилоту 2: оракул 0,56–0,96 (HYPOTHESIS §1)
 # константы PREREG (по разбору пилота, до данных теста); None — не заданы
-P3_RULE = None
+P3_RULE = True            # мощность «подтверждено» Т4-ID по пилоту 2 — 1,000 ≥ 0,2 (gha_out/ocdiv3_pilot/pilot.json, a0359075): П3 — правило
 
 
 # ───────────── признаки входа, модели голов, страты

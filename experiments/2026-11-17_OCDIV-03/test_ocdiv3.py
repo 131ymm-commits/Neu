@@ -215,12 +215,15 @@ check('пилот: в заглушке трудность — только пе�
       f"{e29['T4']['point']:.4f} {e29['T4d']['point']:.4f}")
 check('пилот: Т4 из формул по задачам теста — для всех пяти сред теста', set(pres['formula_test']) == set(T.NONDEG_ENVS))
 check('пилот: решение «П3 — правило или описательно» записано', isinstance(pres['p3_rule'], bool))
+REG = T.P3_RULE
+check('константа PREREG задана по пилоту: П3 — правило (мощность Т4-ID ≥ 0,2)', REG is True, str(REG))
+T.P3_RULE = None
 try:
     T.test(os.path.join(tmp, 'never.json'), os.path.join(tmp, 'mt'), os.path.join(tmp, 'mp'), os.path.join(tmp, 'pilot.json'), B=5, B_descr=3)
     check('тест: без константы PREREG P3_RULE анализ не идёт', False)
 except AssertionError:
     check('тест: без константы PREREG P3_RULE анализ не идёт', True)
-T.P3_RULE = True
+T.P3_RULE = REG
 tr = T.test(os.path.join(tmp, 'test.json'), os.path.join(tmp, 'mt'), os.path.join(tmp, 'mp'), os.path.join(tmp, 'pilot.json'), B=30, B_descr=5)
 check('тест: опыт определён, три правила с вердиктами и пометками', tr['method']['ok'] and set(tr['verdicts']) == {'П1', 'П2', 'П3'}, str(tr.get('verdict')))
 check('тест: описательные нули, разложение, пары и Т4 из формул посчитаны', 'descr_descr T4 Nd16' in tr and 'descr_descr совпадение ответов' in tr
@@ -235,6 +238,9 @@ try:
     check('тест: чужие веса моделей → СТОП', False)
 except SystemExit as ex:
     check('тест: чужие веса моделей → СТОП', str(ex).startswith('СТОП'))
-T.P3_RULE = None
+T.P3_RULE = False
+trd = T.test(os.path.join(tmp, 'test_d.json'), os.path.join(tmp, 'mt'), os.path.join(tmp, 'mp'), os.path.join(tmp, 'pilot.json'), B=10, B_descr=3)
+check('тест: при P3_RULE = False П3 — описательно, без пометки', trd['П3']['verdict'].startswith('описательно') and trd['marks']['П3'] is None)
+T.P3_RULE = REG
 print(f'провалов: {len(FAIL)}')
 sys.exit(1 if FAIL else 0)
