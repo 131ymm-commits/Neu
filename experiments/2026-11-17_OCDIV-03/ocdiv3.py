@@ -19,8 +19,11 @@ import os
 import sys
 import time
 
+import platform
+
 import numpy as np
-from scipy.stats import norm
+import scipy
+from scipy.stats import chi2, norm
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 EXP = os.path.dirname(HERE)
@@ -54,6 +57,10 @@ SEED_ID, SEED_ID_BOOT = 8_820_000, 8_830_000
 SEED_DS, SEED_DS_BOOT = 8_840_000, 8_850_000
 SEED_PAIRS = 8_860_000
 SEED_FIX = 8_870_000                                # пересчёт без ответов с лишними токенами (описательно)
+SEED_READ, SEED_P_READ = 8_880_000, 8_885_000       # совет 70, Н1: проверка чтения П2 (тест и пилот)
+READ_MIN_ENVS, EMPTY_MAX = 4, 2                     # Н1: шаг 1 пройден хотя бы в 4 годных средах; шаг 0 — пустых страт не больше 2 из 8
+READ_INFORMATIVE = 'сверх трудности, видимой во входе'
+READ_NONINF = 'П2 неинформативно: страты d̂ на тесте не различили трудность (перенос моделей p = 1 → p = 3 не подтверждён)'
 SEED_P_N0, SEED_P_N0_BOOT = 8_710_000, 8_720_000   # пилот (мощность)
 SEED_P_ND, SEED_P_ND_BOOT = 8_730_000, 8_740_000
 SEED_P_ID, SEED_P_ID_BOOT = 8_760_000, 8_770_000
@@ -283,6 +290,47 @@ def t4_formula(models, crowd, X):
     return dict(F_pred=F, F0_pred=F0, T4_pred=F - F0, crowd=list(crowd), n=int(Pm.shape[1]))
 
 
+def empty_strata(d, lab, n_strata=S_RULE):
+    """Совет 70, Н1, шаг 0 (без правды): страта «пустая», если каждое её значение d̂ есть и в соседней страте (страта не добавляет
+    своего уровня трудности; при равных d̂ её отделяет от соседей только номер задачи)."""
+    vals = [set(np.round(d[lab == s], 12).tolist()) for s in range(n_strata)]
+    cnt = 0
+    for s in range(n_strata):
+        nb = (vals[s - 1] if s > 0 else set()) | (vals[s + 1] if s < n_strata - 1 else set())
+        cnt += bool(vals[s]) and vals[s] <= nb
+    return int(cnt)
+
+
+def read_check_env(D, lab, d, seed, B, n_strata=S_RULE):
+    """Совет 70, Н1 — проверка чтения П2 в одной среде (вердикт П2 не меняет).
+    Шаг 0, без правды: пустых страт не больше EMPTY_MAX. Шаг 1, по правде теста: разность ошибки большинства толпы (ложное большинство
+    ocdiv2.false_major на задаче) между верхней и нижней стратой d̂; M4 при 0,0025 — бутстреп задач внутри каждой из двух страт."""
+    n_empty = empty_strata(d, lab, n_strata)
+    fm = W.false_major(D).astype(float)
+    top, bot = np.nonzero(lab == n_strata - 1)[0], np.nonzero(lab == 0)[0]
+    diff = float(fm[top].mean() - fm[bot].mean())
+    g = np.random.default_rng(seed)
+    bt = np.array([fm[g.choice(top, len(top))].mean() - fm[g.choice(bot, len(bot))].mean() for _ in range(B)])
+    iv, sd = P.m4(diff, bt, LEVEL)
+    ok0 = n_empty <= EMPTY_MAX
+    return dict(n_empty=n_empty, step0=bool(ok0), diff=diff, ci=iv, sd=sd, step1=bool(ok0 and iv[0] > 0), fm_top=float(fm[top].mean()),
+                fm_bottom=float(fm[bot].mean()), n_top=int(len(top)), n_bottom=int(len(bot)))
+
+
+def read_verdict(checks, n_valid):
+    """Н1: чтение П2 «сверх трудности, видимой во входе» — если шаг 1 пройден хотя бы в 4 годных средах; при n_годных < 4 — П2
+    неинформативно. Правда теста определяет только чтение, вердикт П2 не меняет."""
+    n_pass = int(sum(c['step1'] for c in checks.values()))
+    ok = bool(n_valid >= READ_MIN_ENVS and n_pass >= READ_MIN_ENVS)
+    return dict(n_valid=int(n_valid), n_pass=n_pass, informative=ok, reading=READ_INFORMATIVE if ok else READ_NONINF,
+                by_env={n: dict(step0=c['step0'], step1=c['step1'], n_empty=c['n_empty'], diff=c['diff'], ci=c['ci']) for n, c in checks.items()})
+
+
+def slope(y):
+    x = np.arange(len(y), dtype=float)
+    return float(np.polyfit(x, np.asarray(y, float), 1)[0])
+
+
 def extra_token_cells(env, crowd, idx):
     """Прибор (ЗАЩИТА-ANSWER_LOGP): (строка, голова) числовых ответов толпы с n_tok больше числа цифр + 1 — цикл answer_logp мог
     засчитать в число служебные токены. Точность не читается."""
@@ -327,6 +375,13 @@ def env_t4(env, models, seeds, n_id_test, B, B_descr, K_point, K_boot, keep_boot
     r = pair_excess(D, np.random.default_rng(seeds['pairs']), K_PAIRS)
     lab8 = sm[f'Nd{S_RULE}']
     err = (D != 0).mean(1)                                     # описательно (по правде): доля неверных голов толпы на задаче
+    read = read_check_env(D, lab8, d, seeds['read'], B)        # совет 70, Н1: проверка чтения П2
+    fm = W.false_major(D).astype(float)
+    fm_s = [float(fm[lab8 == s].mean()) for s in range(S_RULE)]
+    err_s = [float(err[lab8 == s].mean()) for s in range(S_RULE)]
+    auc_h = [DS.auc(p_hat(models[nm], X), (D[:, k] != 0).astype(float)) for k, nm in enumerate(crowd) if 0 < (D[:, k] != 0).mean() < 1]
+    sep = dict(auc_dhat_false_major=(DS.auc(d, fm) if 0 < fm.mean() < 1 else None), auc_heads_mean=(float(np.mean(auc_h)) if auc_h else None),
+               slope_false_major=slope(fm_s), slope_crowd_err=slope(err_s), dhat_range=float(d.max() - d.min()), false_major_by_stratum=fm_s)
     cells = extra_token_cells(env, crowd, list(ood))
     fix = None
     if cells:                                                  # описательно: такие ответы — «без числа», вердикт — по основному счёту
@@ -342,7 +397,7 @@ def env_t4(env, models, seeds, n_id_test, B, B_descr, K_point, K_boot, keep_boot
                pairs=dict(crowd=crowd, r=[[float(x) for x in row] for row in r]),
                formula=t4_formula(models, crowd, X),
                oracle_ood=float(st['corr'][keep][:, ood].any(0).mean()),
-               extra_tokens=dict(n_cells=len(cells), recount=fix),
+               extra_tokens=dict(n_cells=len(cells), recount=fix), read=read, separation=sep,
                seeds=seeds)
     out['_r'] = r
     if keep_boot:
@@ -353,9 +408,11 @@ def env_t4(env, models, seeds, n_id_test, B, B_descr, K_point, K_boot, keep_boot
 def seeds_of(o, test):
     if test:
         return dict(cv=W.SEED_CV2 + o, n0=W.SEED_NULL_TEST + o, n0_boot=W.SEED_NULL_BOOT_TEST + o, nd=SEED_ND + o, nd_boot=SEED_ND_BOOT + o,
-                    id=SEED_ID + o, id_boot=SEED_ID_BOOT + o, ds=SEED_DS + o, ds_boot=SEED_DS_BOOT + o, pairs=SEED_PAIRS + o, fix=SEED_FIX + o)
+                    id=SEED_ID + o, id_boot=SEED_ID_BOOT + o, ds=SEED_DS + o, ds_boot=SEED_DS_BOOT + o, pairs=SEED_PAIRS + o, fix=SEED_FIX + o,
+                    read=SEED_READ + o)
     return dict(cv=W.SEED_CV2 + o, n0=SEED_P_N0 + o, n0_boot=SEED_P_N0_BOOT + o, nd=SEED_P_ND + o, nd_boot=SEED_P_ND_BOOT + o,
-                id=SEED_P_ID + o, id_boot=SEED_P_ID_BOOT + o, ds=SEED_P_DS + o, ds_boot=SEED_P_DS_BOOT + o, pairs=SEED_P_PAIRS + o, fix=SEED_FIX + 50 + o)
+                id=SEED_P_ID + o, id_boot=SEED_P_ID_BOOT + o, ds=SEED_P_DS + o, ds_boot=SEED_P_DS_BOOT + o, pairs=SEED_P_PAIRS + o, fix=SEED_FIX + 50 + o,
+                read=SEED_P_READ + o)
 
 
 def _env_job(job):
@@ -428,8 +485,12 @@ def power_entry(points, sds, scale):
         return None
     s_test = float(np.sqrt(np.mean(sp ** 2)) * scale)
     tau = float(np.sqrt(max(0.0, x.var(ddof=1) - np.mean(sp ** 2))))
-    return dict(n_envs=int(len(x)), mu=float(x.mean()), tau=tau, s_pilot_rms=float(np.sqrt(np.mean(sp ** 2))), s_test=s_test, scale=scale,
-                power=power3(float(x.mean()), tau, s_test), power_tau_s=power3(float(x.mean()), s_test, s_test))
+    # совет 70 («можно»): τ — по пяти средам при p = 1; мощность и при τ из верхней границы 95 % интервала дисперсии точек (χ², n − 1)
+    var_hi = (len(x) - 1) * x.var(ddof=1) / float(chi2.ppf(0.025, len(x) - 1))
+    tau_hi = float(np.sqrt(max(0.0, var_hi - np.mean(sp ** 2))))
+    return dict(n_envs=int(len(x)), mu=float(x.mean()), tau=tau, tau_hi=tau_hi, s_pilot_rms=float(np.sqrt(np.mean(sp ** 2))), s_test=s_test, scale=scale,
+                power=power3(float(x.mean()), tau, s_test), power_tau_s=power3(float(x.mean()), s_test, s_test),
+                power_tau_hi=power3(float(x.mean()), tau_hi, s_test))
 
 
 def test_counts(X):
@@ -488,6 +549,7 @@ def pilot(dst, mdir, B=1000, workers=1, ref=os.path.join(ROOT, 'gha_out/ocdiv2_s
         print(f"{name}: годна {r['valid']}, толпа {len(r['crowd'])}, {round(time.time() - t0)} с", flush=True)
     res['pairs'] = pairs_test(rmaps) if rmaps else None
     valid = [n for n in names if res['envs'][n]['valid']]
+    res['read_pilot'] = read_verdict({n: res['envs'][n]['read'] for n in valid}, len(valid))   # совет 70, Н2: правило Н1 на пилоте (кросс-подгонка)
     # мощность: s пересчитывается на тест по числу задач вне диапазона (Т4, Т4ᵈ) или ID (Т4-ID)
     n_ood_p = np.mean([res['envs'][n]['n_ood'] for n in valid])
     n_id_p = np.mean([res['envs'][n]['n_id'] for n in valid])
@@ -525,6 +587,8 @@ def pilot(dst, mdir, B=1000, workers=1, ref=os.path.join(ROOT, 'gha_out/ocdiv2_s
             print(f"{k}: μ {v['mu']:+.4f} τ {v['tau']:.4f} s(тест) {v['s_test']:.4f} | подтверждено {v['power']['confirm']:.3f} "
                   f"(без предохранителя {v['power']['confirm_no_guard']:.3f}), «общий» {v['power']['general']:.3f}, опровергнуто {v['power']['refute']:.3f}")
     print('П3 — правило' if res['p3_rule'] else 'П3 — описательно (мощность < 0,2)')
+    rp = res['read_pilot']
+    print(f"Н1 на пилоте: шаг 1 пройден в {rp['n_pass']} из {rp['n_valid']} годных сред — {'проходит' if rp['informative'] else 'не проходит'}")
     return res
 
 
@@ -543,7 +607,7 @@ def test(dst, mdir, pilot_mdir, pilot_res, B=10000, B_descr=B_DESCR, workers=1):
     names_c, dropped = V.effective_crowd(hm)
     res = dict(level=LEVEL, z=Z, z_env=Z_ENV, B=B, B_descr=B_descr, K_point=K_POINT, K_boot=K_BOOT, family=FAMILY, s_rule=S_RULE, p3_rule=P3_RULE,
                crowd=CROWD, crowd_effective=names_c, crowd_dropped=dropped, head_errors=d.get('head_errors', []), keys_checked=d.get('keys_checked'),
-               models_checked=True, envs={})
+               models_checked=True, versions=dict(python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__), envs={})
     names = sorted(envs, key=lambda n: int(envs[n]['meta']['X']))
     jobs = []
     for name in names:
@@ -578,6 +642,11 @@ def test(dst, mdir, pilot_mdir, pilot_res, B=10000, B_descr=B_DESCR, workers=1):
         else:
             e['verdict'] = e['verdict_rule']
         res[k] = e
+    if method_ok:                                             # совет 70, Н1: чтение П2 — по правде теста, вердикт П2 не меняет
+        res['П2']['reading'] = read_verdict({n: res['envs'][n]['read'] for n in valid}, m)
+    if valid:                                                 # совет 70, Н3: описательно, задано заранее
+        res['descr_T4 − T4-ID'] = mean_entry({n: res['envs'][n]['T4']['point'] - res['envs'][n]['T4id']['point'] for n in valid},
+                                             {n: boots[n]['T4'] - boots[n]['T4id'] for n in valid}, valid, DESCR_LEVEL)
     dkeys = ['T4 (страты по переносам)'] + ([f'descr {x}' for x in res['envs'][valid[0]]['descr']] if valid else [])
     for key in (dkeys if valid else []):
         pts = {}
@@ -600,6 +669,8 @@ def test(dst, mdir, pilot_mdir, pilot_res, B=10000, B_descr=B_DESCR, workers=1):
     res['seconds'] = round(time.time() - t00, 1)
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('вердикт:', res['verdict'])
+    if 'reading' in res.get('П2', {}):
+        print('П2, чтение (Н1):', res['П2']['reading']['reading'], f"(шаг 1 — {res['П2']['reading']['n_pass']} из {res['П2']['reading']['n_valid']})")
     for k in rules:
         e = res[k]
         if 'ci' in e:

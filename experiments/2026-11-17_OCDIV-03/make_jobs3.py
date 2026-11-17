@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 """OCDIV-03: файлы заданий (процессор раннера GitHub Actions, без ключей). Пуш новых файлов в gha_par/ запускает их на neu-par.
   python3 make_jobs3.py pilot [--dir DIR]     — тесты кода и разбор пилота 2 «тысяч» (модели голов, кросс-подгонка, мощность, Т4 из формул)
+  python3 make_jobs3.py pilot_n2 [--dir DIR]  — то же кодом после правок совета 70 (Н2: правило чтения П2 на пилоте)
   python3 make_jobs3.py test [--dir DIR]      — шаблоны теста: 35 заданий (7 голов × 5 сред «тысяч», 2200 задач, фаза test2) и 3 повтора
   python3 make_jobs3.py sum_test [--dir DIR]  — шаблон анализа теста (после вывода всех 38 заданий)
 Шаблоны теста и анализа лежат в jobs/ (в хешах регистрации); в gha_par/ их копируют только при запуске.
@@ -53,10 +54,13 @@ def main():
     dst = os.path.abspath(a[a.index('--dir') + 1]) if '--dir' in a else (os.path.join(ROOT, 'gha_par') if mode == 'pilot' else os.path.join(HERE, 'jobs'))
     os.makedirs(dst, exist_ok=True)
     out = []
-    if mode == 'pilot':
-        out.append(write('ocdiv3_pilot', 'тесты кода на заглушках и разбор пилота 2 «тысяч» — модели голов (признаки входа), кросс-подгонка, Т4, Т4ᵈ, '
-                         'Т4-ID, мощность правил и условий, Т4 из формул по задачам теста; сверка блока N0 до бита с разбором пилота OCDIV-02',
-                         SCI + TESTS +
+    if mode in ('pilot', 'pilot_n2'):
+        name, what = (('ocdiv3_pilot', 'тесты кода на заглушках и разбор пилота 2 «тысяч» — модели голов (признаки входа), кросс-подгонка, Т4, Т4ᵈ, '
+                       'Т4-ID, мощность правил и условий, Т4 из формул по задачам теста; сверка блока N0 до бита с разбором пилота OCDIV-02')
+                      if mode == 'pilot' else
+                      ('ocdiv3_pilot_n2', 'совет 70, Н2 — разбор пилота 2 «тысяч» кодом после правок совета: правило чтения П2 (Н1) по пяти средам '
+                       'с кросс-подгонкой d̂, различение страт, мощность и при τ из верхней границы; тесты кода с замками Н6'))
+        out.append(write(name, what, SCI + TESTS +
                          'python3 $E2/ocdiv2.py merge "$OUT/m_pilot2" pilot2 thousands gha_out/ocdiv2_pilot2_*\n'
                          'python3 $E/ocdiv3.py pilot "$OUT/pilot.json" "$OUT/m_pilot2" --boot 1000 --workers 4\n'
                          'rm -rf "$OUT/m_pilot2"          # сборка восстанавливается из gha_out/ocdiv2_pilot2_*/ той же командой\n', dst))
@@ -74,7 +78,7 @@ def main():
                          SCI + 'python3 $E/prereg_hashes3.py --verify --jobs\n' + TESTS +
                          'echo "== сборка"; python3 $E2/ocdiv2.py merge "$OUT/merged" test2 thousands gha_out/ocdiv3_test_*\n'
                          'python3 $E2/ocdiv2.py merge "$OUT/m_pilot2" pilot2 thousands gha_out/ocdiv2_pilot2_*\n'
-                         'echo "== тест"; python3 $E/ocdiv3.py test "$OUT/analysis.json" "$OUT/merged" "$OUT/m_pilot2" gha_out/ocdiv3_pilot/pilot.json '
+                         'echo "== тест"; python3 $E/ocdiv3.py test "$OUT/analysis.json" "$OUT/merged" "$OUT/m_pilot2" gha_out/ocdiv3_pilot_n2/pilot.json '
                          '--boot 10000 --boot-descr 2000 --workers 4\n'
                          'echo "== прибор"; python3 $E2/trunc_check.py "$OUT/trunc.json" "gha_out/ocdiv3_test_*/answers_*.json" | tail -3\n'
                          'rm -rf "$OUT/merged" "$OUT/m_pilot2"          # сборки восстанавливаются из gha_out/ той же командой\n', dst))

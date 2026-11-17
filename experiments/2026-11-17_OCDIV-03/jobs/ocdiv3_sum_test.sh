@@ -13,6 +13,6 @@ grep -E "^✓|^✗|провалов" "$OUT/tests_full.log" | tee "$OUT/tests.log
 grep -q "провалов: 0" "$OUT/tests.log"
 echo "== сборка"; python3 $E2/ocdiv2.py merge "$OUT/merged" test2 thousands gha_out/ocdiv3_test_*
 python3 $E2/ocdiv2.py merge "$OUT/m_pilot2" pilot2 thousands gha_out/ocdiv2_pilot2_*
-echo "== тест"; python3 $E/ocdiv3.py test "$OUT/analysis.json" "$OUT/merged" "$OUT/m_pilot2" gha_out/ocdiv3_pilot/pilot.json --boot 10000 --boot-descr 2000 --workers 4
+echo "== тест"; python3 $E/ocdiv3.py test "$OUT/analysis.json" "$OUT/merged" "$OUT/m_pilot2" gha_out/ocdiv3_pilot_n2/pilot.json --boot 10000 --boot-descr 2000 --workers 4
 echo "== прибор"; python3 $E2/trunc_check.py "$OUT/trunc.json" "gha_out/ocdiv3_test_*/answers_*.json" | tail -3
 rm -rf "$OUT/merged" "$OUT/m_pilot2"          # сборки восстанавливаются из gha_out/ той же командой

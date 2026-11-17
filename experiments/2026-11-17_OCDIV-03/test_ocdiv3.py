@@ -205,6 +205,109 @@ check('блок N0 совпадает с ocdiv2.env_analysis до бита (Т4,
       all(mine[x] == ref['T4'][x] for x in ('F', 'F0', 'point', 'sd', 'F0_strata', 'point_strata', 'sd_strata'))
       and hom['H'] == ref['homoplasy']['H'] and hom['H0'] == ref['homoplasy']['H0'], str({x: (mine[x], ref['T4'][x]) for x in ('point', 'sd')}))
 
+# совет 70, Н6: замки линзы 1 — состав толпы зависит только от предельных величин каждой головы на ID
+import copy  # noqa: E402
+
+
+def move_rows(env, in_id, seed):
+    """Перестановка строк каждой головы между задачами ID (или вне диапазона): смещение d и «верен ли» переходят вместе со строкой."""
+    e = copy.deepcopy(env)
+    g_ = np.random.default_rng(seed)
+    idx = [j for j, q in enumerate(e['problems']) if (q['range'] == 'ID') == in_id]
+    for h in e['heads']:
+        old = [dict(h['rows'][j]) for j in idx]
+        for j_new, r_ in zip(idx, [old[i] for i in g_.permutation(len(idx))]):
+            src_sum = None
+            r2 = dict(r_)
+            if r_['answer'] is not None:
+                d_ = r_['answer'] - r_['_sum'] if '_sum' in r_ else None
+                r2['answer'] = e['problems'][j_new]['sum'] + d_
+            h['rows'][j_new] = r2
+    return e
+
+
+def with_sums(env):
+    e = copy.deepcopy(env)
+    for h in e['heads']:
+        for j, r_ in enumerate(h['rows']):
+            r_['_sum'] = e['problems'][j]['sum']
+    return e
+
+
+def strip_sums(env):
+    for h in env['heads']:
+        for r_ in h['rows']:
+            r_.pop('_sum', None)
+    return env
+
+
+def flip_ood(env):
+    """Правда вне диапазона перевёрнута: верный ответ → неверное число, неверное число → верный; «без числа» на месте."""
+    e = copy.deepcopy(env)
+    for h in e['heads']:
+        for j, q in enumerate(e['problems']):
+            if q['range'] == 'ID' or h['rows'][j]['answer'] is None:
+                continue
+            ok_ = h['rows'][j]['answer'] == q['sum']
+            h['rows'][j] = dict(h['rows'][j], answer=(q['sum'] + 7 if ok_ else q['sum']), correct=(not ok_))
+    return e
+
+
+def t4id_of(env, seed_cv):
+    st_, inf_ = W.prepare_id(env, seed_cv, nidt)
+    Di = W.dmat([inf_['ans'][q] for q in inf_['keep']], [p['sum'] for p in env['problems']], list(inf_['idi']))
+    return inf_['keep'], st_['fold_of'], T.t4_stream(Di, None, 5, 6, 30, 50, 3)[0]
+
+
+base_keep, base_fold, base_id = t4id_of(env, W.SEED_CV2 + o)
+ew = with_sums(env)
+ka, _, _ = t4id_of(strip_sums(move_rows(ew, True, 31)), W.SEED_CV2 + o)
+kb, _, _ = t4id_of(strip_sums(move_rows(ew, False, 32)), W.SEED_CV2 + o)
+kc, fc, idc = t4id_of(flip_ood(env), W.SEED_CV2 + o)
+check('Н6а: перестановка строк головы между задачами ID — состав толпы тот же', ka == base_keep, str((ka, base_keep)))
+check('Н6б: то же между задачами вне диапазона — состав толпы тот же', kb == base_keep, str((kb, base_keep)))
+check('Н6в: правда вне диапазона перевёрнута — толпа, части кросс-подгонки и Т4-ID те же', kc == base_keep and np.array_equal(fc, base_fold)
+      and idc['point'] == base_id['point'] and idc['sd'] == base_id['sd'], str((kc, base_keep, idc['point'], base_id['point'])))
+en = copy.deepcopy(env)
+hk = en['heads'][2]
+for j in [j for j, q in enumerate(en['problems']) if q['range'] == 'ID'][:30]:
+    hk['rows'][j] = dict(hk['rows'][j], answer=None, correct=False, logp=None)
+kn, _, _ = t4id_of(en, W.SEED_CV2 + o)
+check('Н6г: замена ответов на «без числа» по ID может менять толпу — законно (доля «без числа» по ID — предельная величина головы)',
+      2 not in kn and 2 in base_keep, str((kn, base_keep)))
+jobs_dir = os.path.join(X_DIR, 'jobs')
+n_t = len([f for f in os.listdir(jobs_dir) if f.startswith('ocdiv3_test_')])
+n_r = len([f for f in os.listdir(jobs_dir) if f.startswith('ocdiv3_rep_')])
+sumt = open(os.path.join(jobs_dir, 'ocdiv3_sum_test.sh'), encoding='utf-8').read()
+merge_line = [ln for ln in sumt.splitlines() if 'merge "$OUT/merged"' in ln][0]
+check('Н6д: шаблонов теста 35 и повторов 3; сборка теста берёт только gha_out/ocdiv3_test_*', n_t == 35 and n_r == 3
+      and 'gha_out/ocdiv3_test_*' in merge_line and 'rep' not in merge_line, str((n_t, n_r, merge_line)))
+jr = os.path.join(tmp, 'rep_dup')
+write_job(jr, list(V.CROWD)[1], [te[1]], rng, 1, 'test2')
+try:
+    W.merge(os.path.join(tmp, 'm_dup'), 'test2', 'thousands', tdirs + [jr])
+    check('Н6д: повтор под основным ключом в сборке → СТОП', False)
+except SystemExit as ex:
+    check('Н6д: повтор под основным ключом в сборке → СТОП', str(ex).startswith('СТОП') and 'дважды' in str(ex), str(ex)[:120])
+
+# совет 70, Н1: проверка чтения П2
+gr = np.random.default_rng(41)
+nn = 1200
+lab_i = np.repeat(np.arange(8), nn // 8)
+dd = lab_i / 10 + gr.random(nn) * 0.01
+Dr = np.where(gr.random((nn, 7)) < (0.1 + 0.1 * lab_i)[:, None], (np.arange(7) + 1)[None, :] * 0 - 100, 0).astype(np.int64)
+rc = T.read_check_env(Dr, lab_i, dd, 3, 500)
+check('Н1: страты различают трудность — шаг 0 и шаг 1 пройдены', rc['step0'] and rc['step1'] and rc['diff'] > 0.3, str(rc))
+lab_r = gr.permutation(lab_i)
+rr = T.read_check_env(Dr, lab_r, dd, 3, 500)
+check('Н1: страты случайны — шаг 1 не пройден', not rr['step1'], str({k: rr[k] for k in ('diff', 'ci')}))
+r0 = T.read_check_env(Dr, T.strata_of(np.full(nn, 0.5), 8), np.full(nn, 0.5), 3, 100)
+check('Н1, шаг 0: все d̂ равны — 8 пустых страт из 8, шаг 0 не пройден', r0['n_empty'] == 8 and not r0['step0'] and not r0['step1'])
+mk_ = lambda flags: {f'e{i}': dict(step0=True, step1=f, n_empty=0, diff=0.1, ci=[0.0, 0.2]) for i, f in enumerate(flags)}   # noqa: E731
+check('Н1: «сверх трудности» — шаг 1 хотя бы в 4 годных средах; 3 из 5 и n_годных < 4 — неинформативно',
+      T.read_verdict(mk_([1, 1, 1, 1, 0]), 5)['informative'] and not T.read_verdict(mk_([1, 1, 1, 0, 0]), 5)['informative']
+      and not T.read_verdict(mk_([1, 1, 1]), 3)['informative'])
+
 pres = T.pilot(os.path.join(tmp, 'pilot.json'), os.path.join(tmp, 'mp'), B=20, workers=1, ref=None)
 check('пилот: пять сред, Т4, Т4ᵈ, Т4-ID и мощность посчитаны', len(pres['envs']) == 5 and all(np.isfinite(pres['envs'][x]['T4d']['point']) for x in pres['envs'])
       and all(pres['power'][x] for x in pres['power']), str(list(pres['power'])))
@@ -215,6 +318,9 @@ check('пилот: в заглушке трудность — только пе�
       f"{e29['T4']['point']:.4f} {e29['T4d']['point']:.4f}")
 check('пилот: Т4 из формул по задачам теста — для всех пяти сред теста', set(pres['formula_test']) == set(T.NONDEG_ENVS))
 check('пилот: решение «П3 — правило или описательно» записано', isinstance(pres['p3_rule'], bool))
+check('пилот (совет 70): правило Н1 по пяти средам с кросс-подгонкой и мощность при τ из верхней границы посчитаны',
+      pres['read_pilot']['n_valid'] == 5 and isinstance(pres['read_pilot']['informative'], bool)
+      and all('power_tau_hi' in pres['power'][x] for x in pres['power']), str(pres['read_pilot']))
 REG = T.P3_RULE
 check('константа PREREG задана по пилоту: П3 — правило (мощность Т4-ID ≥ 0,2)', REG is True, str(REG))
 T.P3_RULE = None
@@ -229,6 +335,10 @@ check('тест: опыт определён, три правила с верд�
 check('тест: описательные нули, разложение, пары и Т4 из формул посчитаны', 'descr_descr T4 Nd16' in tr and 'descr_descr совпадение ответов' in tr
       and tr['pairs'] and set(tr['formula']) == set(tr['method']['valid']))
 check('тест: повторы бутстрепа и r не пишутся в json', not any(x in e for e in json.load(open(os.path.join(tmp, 'test.json')))['envs'].values() for x in ('_boot', '_r')))
+check('тест (совет 70): чтение П2 по правилу Н1, Т4 − Т4-ID, различение страт и версии — в выводе', 'reading' in tr['П2']
+      and tr['П2']['reading']['reading'] in (T.READ_INFORMATIVE, T.READ_NONINF) and 'descr_T4 − T4-ID' in tr
+      and all('separation' in tr['envs'][n] for n in tr['method']['valid']) and set(tr['versions']) == {'python', 'numpy', 'scipy'})
+check('тест (совет 70): чтение П2 не меняет вердикт П2', tr['П2']['verdict'] == tr['П2']['verdict_rule'])
 pj = json.load(open(os.path.join(tmp, 'pilot.json'), encoding='utf-8'))
 nm0 = sorted(pj['models']['weights'])[0]
 pj['models']['weights'][nm0][1] += 0.5

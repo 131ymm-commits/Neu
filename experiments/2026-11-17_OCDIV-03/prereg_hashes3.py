@@ -21,7 +21,7 @@ OWN = ['ocdiv3.py', 'test_ocdiv3.py', 'make_jobs3.py', 'prereg_hashes3.py', 'HYP
        '../2026-11-17_OCDIV-02/ocdiv2.py', '../2026-11-17_OCDIV-02/ocdiv2_extract.py', '../2026-11-17_OCDIV-02/trunc_check.py',
        '../2026-11-17_OCDIV-02/prereg_hashes2.json', '../2026-11-17_DISTILL-01/distill.py',
        '../../.github/workflows/neu-par.yml', '../../tools/raw_status.py', '../../tools/test_raw_status.py',
-       '../../gha_out/ocdiv2_sum_pilot2v2/pilot.json', '../../gha_out/ocdiv3_pilot/pilot.json',
+       '../../gha_out/ocdiv2_sum_pilot2v2/pilot.json', '../../gha_out/ocdiv3_pilot/pilot.json', '../../gha_out/ocdiv3_pilot_n2/pilot.json',
        '../2026-11-16_OCDIV-01/ocdiv.py', '../2026-11-16_OCDIV-01/ocdiv_extract.py',
        '../2026-11-15_OCPOST-01/ocpost.py', '../2026-11-15_OCPOST-01/ocpost_extract.py',
        '../2026-11-15_OCSHIFT-01/analyze_ocshift.py', '../2026-11-15_OCSHIFT-01/analyze_ocshift_test.py', '../2026-11-15_OCSHIFT-01/ocshift_extract.py',
