@@ -1,0 +1,71 @@
+{
+ "head": "sonnet",
+ "module": "cmdline",
+ "model_target": "claude-sonnet-5-5",
+ "prompt_sha256": "0b8a0e033ad343d48ae37b204c7f01510ee6e8e00d3421cc1ca5d62895ab09bd",
+ "seconds": 45.8,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::{c_char, c_int, c_long, c_uint, c_ulong, c_ulonglong};\n\nextern \"C\" {\n    fn simple_strtoull(cp: *const c_char, endp: *mut *mut c_char, base: c_uint) -> c_ulonglong;\n    fn simple_strtol(cp: *const c_char, endp: *mut *mut c_char, base: c_uint) -> c_long;\n    fn skip_spaces(str: *const c_char) -> *mut c_char;\n    fn strlen(s: *const c_char) -> usize;\n    fn strncmp(a: *const c_char, b: *const c_char, n: usize) -> c_int;\n}\n\n#[allow(dead_code)]\ntype KernelUlong = c_ulong;\n\nconst INT_MAX: c_int = c_int::MAX;\nconst ULLONG_MAX: c_ulonglong = c_ulonglong::MAX;\n\n#[inline]\nfn isspace(c: c_char) -> bool {\n    let b = c as u8;\n    (9..=13).contains(&b) || b == 32 || b == 160\n}\n\nfn get_range(str: *mut *mut c_char, pint: *mut c_int, n: c_int) -> c_int {\n    unsafe {\n        let mut pint = pint;\n        let mut n = n;\n\n        *str = (*str).wrapping_add(1);\n        let upper_range: c_int = simple_strtol(*str, core::ptr::null_mut(), 0) as c_int;\n\n        let (diff, overflow) = upper_range.overflowing_sub(*pint);\n        let mut inc_counter: c_int = diff;\n        if overflow {\n            inc_counter = if upper_range < *pint { -1 } else { INT_MAX };\n        }\n\n        let mut x: c_int = *pint;\n        while n != 0 && x < upper_range {\n            *pint = x;\n            pint = pint.wrapping_add(1);\n            x += 1;\n            n = n.wrapping_sub(1);\n        }\n        inc_counter\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn get_option(str: *mut *mut c_char, pint: *mut c_int) -> c_int {\n    unsafe {\n        let mut cur: *mut c_char = *str;\n\n        if cur.is_null() || *cur == 0 {\n            return 0;\n        }\n        let value: c_int;\n        if *cur == b'-' as c_char {\n            cur = cur.add(1);\n            let v = simple_strtoull(cur, str, 0);\n            value = v.wrapping_neg() as c_int;\n        } else {\n            value = simple_strtoull(cur, str, 0) as c_int;\n        }\n        if !pint.is_null() {\n            *pint = value;\n        }\n        if cur == *str {\n            return 0;\n        }\n        if **str == b',' as c_char {\n            *str = (*str).add(1);\n            return 2;\n        }\n        if **str == b'-' as c_char {\n            return 3;\n        }\n\n        1\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn get_options(str: *const c_char, nints: c_int, ints: *mut c_int) -> *mut c_char {\n    unsafe {\n        let mut str: *const c_char = str;\n        let validate = nints == 0;\n        let mut i: c_int = 1;\n\n        while i < nints || validate {\n            let pint: *mut c_int = if validate {\n                ints\n            } else {\n                ints.wrapping_offset(i as isize)\n            };\n            let strp = &mut str as *mut *const c_char as *mut *mut c_char;\n\n            let res = get_option(strp, pint);\n            if res == 0 {\n                break;\n            }\n            if res == 3 {\n                let n: c_int = if validate { 0 } else { nints - i };\n\n                let range_nums = get_range(strp, pint, n);\n                if range_nums < 0 {\n                    break;\n                }\n                // The range didn't fit, so the array is full\n                if !validate && range_nums > n {\n                    i = nints;\n                    break;\n                }\n                // Leave room for the upper number of the range\n                if range_nums >= INT_MAX - i {\n                    break;\n                }\n                i += range_nums - 1;\n            }\n            i += 1;\n            if res == 1 {\n                break;\n            }\n        }\n        *ints = i - 1;\n        str as *mut c_char\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn memparse(ptr: *const c_char, retptr: *mut *mut c_char) -> c_ulonglong {\n    unsafe {\n        let mut endptr: *mut c_char = core::ptr::null_mut();\n        let mut ret: c_ulonglong = simple_strtoull(ptr, &mut endptr, 0);\n        let mut shl: c_uint = 0;\n\n        shl += match *endptr as u8 {\n            b'E' | b'e' => 60,\n            b'P' | b'p' => 50,\n            b'T' | b't' => 40,\n            b'G' | b'g' => 30,\n            b'M' | b'm' => 20,\n            b'K' | b'k' => 10,\n            _ => 0,\n        };\n\n        if shl != 0 && ptr != endptr as *const c_char {\n            // check_shl_overflow(ret, shl, &ret)\n            let (s, big) = if shl >= 64 { (0u32, true) } else { (shl, false) };\n            let d: c_ulonglong = ret.wrapping_shl(s);\n            let overflow = big || (d >> s) != ret;\n            ret = d;\n            if overflow {\n                ret = ULLONG_MAX;\n            }\n            endptr = endptr.add(1);\n        }\n\n        if !retptr.is_null() {\n            *retptr = endptr;\n        }\n\n        ret\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn parse_option_str(str: *const c_char, option: *const c_char) -> bool {\n    unsafe {\n        let mut str = str;\n        while *str != 0 {\n            if strncmp(str, option, strlen(option)) == 0 {\n                str = str.add(strlen(option));\n                if *str == 0 || *str == b',' as c_char {\n                    return true;\n                }\n            }\n\n            while *str != 0 && *str != b',' as c_char {\n                str = str.add(1);\n            }\n\n            if *str == b',' as c_char {\n                str = str.add(1);\n            }\n        }\n\n        false\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn next_arg(\n    args: *mut c_char,\n    param: *mut *mut c_char,\n    val: *mut *mut c_char,\n) -> *mut c_char {\n    unsafe {\n        let mut args = args;\n        let mut equals: c_uint = 0;\n        let mut in_quote: c_int = 0;\n        let mut quoted: c_int = 0;\n\n        if *args == b'\"' as c_char {\n            args = args.add(1);\n            in_quote = 1;\n            quoted = 1;\n        }\n\n        let mut i: c_uint = 0;\n        while *args.add(i as usize) != 0 {\n            let c = *args.add(i as usize);\n            if isspace(c) && in_quote == 0 {\n                break;\n            }\n            if equals == 0 && c == b'=' as c_char {\n                equals = i;\n            }\n            if c == b'\"' as c_char {\n                in_quote = (in_quote == 0) as c_int;\n            }\n            i = i.wrapping_add(1);\n        }\n\n        *param = args;\n        if equals == 0 {\n            *val = core::ptr::null_mut();\n        } else {\n            *args.add(equals as usize) = 0;\n            *val = args.add(equals as usize).add(1);\n\n            // Don't include quotes in value.\n            if **val == b'\"' as c_char {\n                *val = (*val).add(1);\n                if *args.add(i.wrapping_sub(1) as usize) == b'\"' as c_char {\n                    *args.add(i.wrapping_sub(1) as usize) = 0;\n                }\n            }\n        }\n        if quoted != 0 && i > 0 && *args.add(i.wrapping_sub(1) as usize) == b'\"' as c_char {\n            *args.add(i.wrapping_sub(1) as usize) = 0;\n        }\n\n        if *args.add(i as usize) != 0 {\n            *args.add(i as usize) = 0;\n            args = args.add(i.wrapping_add(1) as usize);\n        } else {\n            args = args.add(i as usize);\n        }\n\n        // Chew up trailing spaces.\n        skip_spaces(args)\n    }\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 5591,
+  "cache_read_input_tokens": 1563,
+  "output_tokens": 6483,
+  "output_tokens_details": {
+   "thinking_tokens": 3614
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 5591,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 6483,
+    "cache_read_input_tokens": 1563,
+    "cache_creation_input_tokens": 5591,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5591
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.0873543,
+ "model_usage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 6483,
+   "cacheReadInputTokens": 1563,
+   "cacheCreationInputTokens": 5591,
+   "webSearchRequests": 0,
+   "costUSD": 0.0873543,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 3614,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 5591,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 44493,
+ "code_extracted": true,
+ "models_used": [
+  "claude-sonnet-5-5"
+ ]
+}

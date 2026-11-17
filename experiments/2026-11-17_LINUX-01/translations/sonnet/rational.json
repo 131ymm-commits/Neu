@@ -1,0 +1,71 @@
+{
+ "head": "sonnet",
+ "module": "rational",
+ "model_target": "claude-sonnet-5-5",
+ "prompt_sha256": "50733b996477bcac2df44c979c961280a5343af78c31943b4783bded70b8c2d7",
+ "seconds": 11.4,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::c_ulong;\n\n#[no_mangle]\npub extern \"C\" fn rational_best_approximation(\n    given_numerator: c_ulong,\n    given_denominator: c_ulong,\n    max_numerator: c_ulong,\n    max_denominator: c_ulong,\n    best_numerator: *mut c_ulong,\n    best_denominator: *mut c_ulong,\n) {\n    let mut n: c_ulong = given_numerator;\n    let mut d: c_ulong = given_denominator;\n    let mut n0: c_ulong = 0;\n    let mut d1: c_ulong = 0;\n    let mut n1: c_ulong = 1;\n    let mut d0: c_ulong = 1;\n\n    loop {\n        if d == 0 {\n            break;\n        }\n        let dp: c_ulong = d;\n        let a: c_ulong = n / d;\n        d = n % d;\n        n = dp;\n\n        let n2: c_ulong = n0.wrapping_add(a.wrapping_mul(n1));\n        let d2: c_ulong = d0.wrapping_add(a.wrapping_mul(d1));\n\n        if n2 > max_numerator || d2 > max_denominator {\n            let mut t: c_ulong = c_ulong::MAX;\n\n            if d1 != 0 {\n                t = max_denominator.wrapping_sub(d0) / d1;\n            }\n            if n1 != 0 {\n                t = t.min(max_numerator.wrapping_sub(n0) / n1);\n            }\n\n            // `2u * t`: unsigned int promoted to unsigned long, wraps in 64 bits.\n            let two_t: c_ulong = t.wrapping_mul(2);\n            if d1 == 0\n                || two_t > a\n                || (two_t == a && d0.wrapping_mul(dp) > d1.wrapping_mul(d))\n            {\n                n1 = n0.wrapping_add(t.wrapping_mul(n1));\n                d1 = d0.wrapping_add(t.wrapping_mul(d1));\n            }\n            break;\n        }\n        n0 = n1;\n        n1 = n2;\n        d0 = d1;\n        d1 = d2;\n    }\n    unsafe {\n        *best_numerator = n1;\n        *best_denominator = d1;\n    }\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 3665,
+  "cache_read_input_tokens": 1563,
+  "output_tokens": 1058,
+  "output_tokens_details": {
+   "thinking_tokens": 286
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 3665,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1058,
+    "cache_read_input_tokens": 1563,
+    "cache_creation_input_tokens": 3665,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3665
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.0254003,
+ "model_usage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 1058,
+   "cacheReadInputTokens": 1563,
+   "cacheCreationInputTokens": 3665,
+   "webSearchRequests": 0,
+   "costUSD": 0.0254003,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 286,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 3665,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 10299,
+ "code_extracted": true,
+ "models_used": [
+  "claude-sonnet-5-5"
+ ]
+}

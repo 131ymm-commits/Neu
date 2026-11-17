@@ -1,0 +1,71 @@
+{
+ "head": "opus",
+ "module": "gcd",
+ "model_target": "claude-opus-5-5",
+ "prompt_sha256": "5f284660ad53b7ad99f62baad405a1f675cab5c0653122ed4ef7c150e658fe3c",
+ "seconds": 17.8,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\n// SPDX-License-Identifier: GPL-2.0-only\n//! Перевод lib/math/gcd.c (x86_64, BITS_PER_LONG = 64,\n//! CONFIG_CPU_NO_EFFICIENT_FFS не задан).\n//!\n//! Двоичный алгоритм НОД (часто приписывается Стейну; как заметил Кнут,\n//! встречается в китайском математическом тексте I века).\n\nuse core::ffi::c_ulong;\n\n/// DEFINE_STATIC_KEY_TRUE(efficient_ffs_key): в этой конфигурации ключ включён.\n/// Переменная ключа не экспортируется.\nstruct StaticKeyTrue {\n    enabled: bool,\n}\n\nstatic EFFICIENT_FFS_KEY: StaticKeyTrue = StaticKeyTrue { enabled: true };\n\n/// static_branch_likely(&key): условие истинно, пока ключ включён.\n#[inline(always)]\nfn static_branch_likely(key: &StaticKeyTrue) -> bool {\n    key.enabled\n}\n\n/// __ffs(x): номер младшего установленного бита, считая с 0 (x != 0).\n#[inline(always)]\nfn __ffs(x: c_ulong) -> u32 {\n    x.trailing_zeros()\n}\n\n/* If __ffs is available, the even/odd algorithm benchmarks slower. */\n\nfn binary_gcd(mut a: c_ulong, mut b: c_ulong) -> c_ulong {\n    let r: c_ulong = a | b;\n\n    b >>= __ffs(b);\n    if b == 1 {\n        return r & r.wrapping_neg();\n    }\n\n    loop {\n        a >>= __ffs(a);\n        if a == 1 {\n            return r & r.wrapping_neg();\n        }\n        if a == b {\n            return a << __ffs(r);\n        }\n\n        if a < b {\n            core::mem::swap(&mut a, &mut b);\n        }\n        a = a.wrapping_sub(b);\n    }\n}\n\n/* If normalization is done by loops, the even/odd algorithm is a win. */\n\n/// gcd - calculate and return the greatest common divisor of 2 unsigned longs\n/// @a: first value\n/// @b: second value\n#[no_mangle]\npub extern \"C\" fn gcd(mut a: c_ulong, mut b: c_ulong) -> c_ulong {\n    let mut r: c_ulong = a | b;\n\n    if a == 0 || b == 0 {\n        return r;\n    }\n\n    if static_branch_likely(&EFFICIENT_FFS_KEY) {\n        return binary_gcd(a, b);\n    }\n\n    /* Isolate lsbit of r */\n    r &= r.wrapping_neg();\n\n    while b & r == 0 {\n        b >>= 1;\n    }\n    if b == r {\n        return r;\n    }\n\n    loop {\n        while a & r == 0 {\n            a >>= 1;\n        }\n        if a == r {\n            return r;\n        }\n        if a == b {\n            return a;\n        }\n\n        if a < b {\n            core::mem::swap(&mut a, &mut b);\n        }\n        a = a.wrapping_sub(b);\n        a >>= 1;\n        if a & r != 0 {\n            a = a.wrapping_add(b);\n        }\n        a >>= 1;\n    }\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 3184,
+  "cache_read_input_tokens": 1639,
+  "output_tokens": 1496,
+  "output_tokens_details": {
+   "thinking_tokens": 366
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 3184,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1496,
+    "cache_read_input_tokens": 1639,
+    "cache_creation_input_tokens": 3184,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3184
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.0557278,
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 1496,
+   "cacheReadInputTokens": 1639,
+   "cacheCreationInputTokens": 3184,
+   "webSearchRequests": 0,
+   "costUSD": 0.0557278,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 366,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 3184,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 16692,
+ "code_extracted": true,
+ "models_used": [
+  "claude-opus-5-5"
+ ]
+}
