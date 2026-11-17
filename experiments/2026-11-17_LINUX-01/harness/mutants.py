@@ -63,8 +63,10 @@ def sites(src):
 
 
 def run_group(cmd, timeout):
-    """Запуск в своей группе процессов: при зависании убивается вся группа (исполнители делают fork)."""
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
+    """Запуск в своей группе процессов: при зависании убивается вся группа (исполнители делают fork).
+    Вывод декодируется с заменой: пример расхождения может нести сырой байт 0xA0 из генератора строк (ERRORS № 194)."""
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='replace',
+                         start_new_session=True)
     try:
         out, err = p.communicate(timeout=timeout)
         return p.returncode, out, err, False
@@ -82,6 +84,16 @@ def jload(s):
 
 
 def eval_mut(job):
+    """Сбой обвязки на одном мутанте записывается в его строку (error) и не роняет весь прогон; такой мутант в доли не входит."""
+    try:
+        return eval_mut1(job)
+    except Exception as ex:                      # noqa: BLE001
+        head, m, idx, s, e, frm, to, kind, src, n = job
+        return dict(head=head, module=m, site=idx, line=src.count('\n', 0, s) + 1, frm=frm, to=to, kind=kind, compiled=None,
+                    error=repr(ex)[:300])
+
+
+def eval_mut1(job):
     head, m, idx, s, e, frm, to, kind, src, n = job
     mod, test, syms = R.MODULES[m]
     d = os.path.join(R.WORK, 'mut')
@@ -117,10 +129,11 @@ def eval_mut(job):
 
 
 def summary(rows):
-    alive = [r for r in rows if r['compiled'] and r.get('linked')]
+    alive = [r for r in rows if r['compiled'] and r.get('linked') and 'killed_kunit' in r and 'killed_diff' in r]
     kk = sum(r['killed_kunit'] for r in alive)
     kd = sum(r['killed_diff'] for r in alive)
-    return dict(generated=len(rows), stillborn=sum(not r['compiled'] for r in rows), not_linked=sum(r['compiled'] and not r.get('linked') for r in rows),
+    return dict(generated=len(rows), harness_errors=sum('error' in r for r in rows), stillborn=sum(r['compiled'] is False for r in rows),
+                not_linked=sum(bool(r['compiled']) and not r.get('linked') for r in rows),
                 alive=len(alive), killed_kunit=kk, killed_diff=kd, killed_either=sum(r['killed_kunit'] or r['killed_diff'] for r in alive),
                 kunit_missed_diff_caught=sum((not r['killed_kunit']) and r['killed_diff'] for r in alive),
                 diff_missed_kunit_caught=sum(r['killed_kunit'] and not r['killed_diff'] for r in alive),

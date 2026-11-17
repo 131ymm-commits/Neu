@@ -184,7 +184,7 @@ for h, m in bad:
     add(f'- {h}/{m}: KUnit — ' + (', '.join(fails[:4]) + (' …' if len(fails) > 4 else '') if fails else 'все случаи прошли') +
         '; сравнение — ' + ('; '.join(ex[:3]) if ex else 'расхождений нет'))
 add('')
-MUT = os.path.join(G, 'linux01_mutants', 'mutants.json')
+MUT = os.path.join(G, 'linux01_mutants2', 'mutants.json')   # первый прогон (linux01_mutants) упал: ERRORS № 194
 add('## Может ли оценщик провалить перевод (пост-хок, мутанты; вердиктов PLAN не меняет)')
 add('')
 if os.path.exists(MUT):
