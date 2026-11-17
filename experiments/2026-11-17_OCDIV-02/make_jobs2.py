@@ -91,6 +91,20 @@ def main():
             for e in D2.envs_ocdiv2(phase, (fam,)):
                 out.append(write(f"ocdiv2_test_{KEY[nm]}_{e['name']}", f"тест, {repo}@{rev}, среда {e['name']}, 2200 задач, p = {e['p']}",
                                  TORCH + f"python3 $E/ocdiv2_extract.py --phase {phase} --model {repo} --revision {rev} --envs {e['name']} --out \"$OUT\" --bs 16\n", dst))
+        nm = 'Qwen2.5-0.5B-Instruct'                     # совет 67 («можно»): то же задание под другим именем — детерминизм на другом раннере
+        repo, rev = V.CROWD[nm].split('@')
+        e = D2.envs_ocdiv2(phase, (fam,))[0]
+        out.append(write(f"ocdiv2_rep_{KEY[nm]}_{e['name']}", f"повтор задания ocdiv2_test_{KEY[nm]}_{e['name']} на другом раннере (детерминизм, описательно)",
+                         TORCH + f"python3 $E/ocdiv2_extract.py --phase {phase} --model {repo} --revision {rev} --envs {e['name']} --out \"$OUT\" --bs 16\n", dst))
+    elif mode == 'sum_test':
+        out.append(write('ocdiv2_sum_test', 'анализ теста — после всех 35 заданий теста и повтора; сверка хешей регистрации и копий заданий, тесты кода, '
+                         'тест замка № 180, сборка, Т1–Т4 (B = 10 000, 4 процесса)', SCI +
+                         'python3 $E/prereg_hashes2.py --verify --jobs\n'
+                         'python3 tools/test_raw_status.py | tee "$OUT/raw_status_test.log" | tail -1\n'
+                         'echo "== тесты"; python3 $E/test_ocdiv2.py > "$OUT/tests_full.log" 2>&1; grep -E "^✓|^✗|провалов" "$OUT/tests_full.log" | tee "$OUT/tests.log"\n'
+                         'echo "== сборка"; python3 $E/ocdiv2.py merge "$OUT/merged" test2 length gha_out/ocdiv2_test_*\n'
+                         'echo "== тест"; python3 $E/ocdiv2.py test "$OUT/analysis.json" "$OUT/merged" --boot 10000 --workers 4\n'
+                         'rm -rf "$OUT/merged"          # сборка восстанавливается из gha_out/ocdiv2_test_*/ той же командой\n', dst))
     print('\n'.join(os.path.relpath(p, ROOT) for p in out))
 
 

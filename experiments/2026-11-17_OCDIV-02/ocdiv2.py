@@ -438,11 +438,12 @@ def pilot(dst, mdirs, B=200, workers=1, test_phase='test'):
 
 
 # ───────────── тест (константы — в PREREG по пилоту, до данных теста)
-FAMILY_TEST = None        # 'thousands' | 'length' — по правилу выбора семейства на пилоте
+FAMILY_TEST = 'length'    # пилот 2 (gha_out/ocdiv2_sum_pilot2/pilot.json): годны оба семейства, по правилу — больший средний разрыв (0,5391 > 0,4122)
 TEST_PHASE = 'test2'      # HYPOTHESIS-2: тест — подсказка только из ID (p = 3)
-T3_HEADS = None           # головы Т3: разрыв ID − OOD на пилоте выбранного семейства не меньше 0,10
-T2_DESCRIPTIVE = None     # True, если мощность Т2 по пилоту меньше 0,2 (HYPOTHESIS)
-T4_STRATA = None          # False — нуль без страт (HYPOTHESIS); True — со стратами по числу переносов
+T3_HEADS = ('Qwen2.5-0.5B-Instruct', 'Qwen2.5-1.5B-Instruct', 'SmolLM2-1.7B-Instruct', 'Falcon3-1B-Instruct', 'OLMo-2-0425-1B-Instruct',
+            'SmolLM2-360M-Instruct', 'TinyLlama-1.1B-Chat-v1.0')   # головы Т3: разрыв ID − OOD на пилоте 2 («длина») у всех семи ≥ 0,10
+T2_DESCRIPTIVE = True     # мощность Т2 «подтверждено» по пилоту 2 — 0,000 < 0,2 (правило HYPOTHESIS, как D5 в OCDIV-01)
+T4_STRATA = False         # нуль без страт (HYPOTHESIS); со стратами по числу переносов — описательно
 SEED_BOOT_TEST, SEED_NULL_TEST, SEED_NULL_BOOT_TEST = 8_350_000, 8_420_000, 8_470_000
 Z_SENS = 1.5              # как в OCDIV-01: вердикт «чувствителен к уровню», если z* < 2,807 × 1,5
 

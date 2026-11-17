@@ -213,6 +213,10 @@ for k, nm in enumerate(V.CROWD):
     tdirs.append(jd)
 mt = W.merge(os.path.join(tmp, 'mt'), 'test2', 'length', tdirs)
 check('сборка теста: семь голов, пять сред', len(mt['heads']) == 7 and not mt['head_errors'] and len(mt['envs']) == 5)
+REG = (W.FAMILY_TEST, W.T3_HEADS, W.T2_DESCRIPTIVE, W.T4_STRATA)        # константы PREREG (по пилоту 2)
+check('константы PREREG заданы: «длина», Т3 — семь голов, Т2 описательно, Т4 без страт',
+      REG == ('length', tuple(V.CROWD), True, False) and W.TEST_PHASE == 'test2', str(REG))
+W.FAMILY_TEST = W.T3_HEADS = W.T2_DESCRIPTIVE = W.T4_STRATA = None
 try:
     W.test(os.path.join(tmp, 'never.json'), os.path.join(tmp, 'mt'), B=5)
     check('тест: без констант PREREG анализ не идёт', False)
@@ -226,7 +230,11 @@ check('тест: у заглушки «длины» Т1 и Т4 > 0, Т3 внут
 check('тест: описательные числа и безусловное совпадение посчитаны', 'descr_D3' in tr and tr['uncond_cross']['u'] is not None and tr['parts_mean'])
 check('тест: повторы бутстрепа не пишутся в json', not any(k in e for e in json.load(open(os.path.join(tmp, 'test.json')))['envs'].values()
                                                             for k in ('_boot', '_boot_T4')))       # ключи, а не подстрока (есть поле n_boot_finite)
-W.FAMILY_TEST = W.T3_HEADS = W.T2_DESCRIPTIVE = W.T4_STRATA = None
+tr2 = None
+W.FAMILY_TEST, W.T3_HEADS, W.T2_DESCRIPTIVE, W.T4_STRATA = REG
+tr2 = W.test(os.path.join(tmp, 'test_reg.json'), os.path.join(tmp, 'mt'), B=10, workers=1)
+check('тест с константами PREREG: Т2 описательно, Т1, Т3, Т4 — правила', tr2['T2']['verdict'].startswith('описательно') and 'verdict_rule_descr' in tr2['T2']
+      and all(not tr2[k]['verdict'].startswith('описательно') for k in ('T1', 'T3', 'T4')), str(tr2['verdicts']))
 
 # 5. С --real (GitHub Actions): сухой прогон извлечения на крошечной модели и равенство с ocdiv_extract.run при 6 новых токенах
 if '--real' in sys.argv:
