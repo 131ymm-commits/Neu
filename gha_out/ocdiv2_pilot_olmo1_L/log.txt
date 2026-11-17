@@ -1,0 +1,9 @@
+[    0.0 с] фаза pilot | сред 5 | задач 2000
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   29.5 с] allenai/OLMo-2-0425-1B-Instruct 48d788eca847d4d7548f375ad03d3c9312f6139e загружена за 25.1 с; ревизия 48d788eca847d4d7548f375ad03d3c9312f6139e
+[  329.3 с] L_X9_p0 | задач 400 | время 299.8 с, 0.75 с на задачу
+[  670.8 с] L_X99_p0 | задач 400 | время 341.5 с, 0.854 с на задачу
+[ 1006.4 с] L_X999_p0 | задач 400 | время 335.5 с, 0.839 с на задачу
+[ 1356.6 с] L_X9999_p0 | задач 400 | время 350.2 с, 0.875 с на задачу
+[ 1740.2 с] L_X99999_p0 | задач 400 | время 383.6 с, 0.959 с на задачу
+[ 1741.0 с] записано gha_out/ocdiv2_pilot_olmo1_L/answers_OLMo-2-0425-1B-Instruct.json
