@@ -157,22 +157,130 @@ check('сухой прогон: в мире «головы — программ�
       sm['prog_minus_b1_pos'] == 8 and sm['prog_minus_b1_mean'] > 0, json.dumps(sm, default=float)[:300])
 check('сухой прогон: вывод пилота — json без NaN в формулах', all(np.isfinite(v) for f in out['formulas']['thousands'].values() for v in f['w']))
 
-# 7. Меры по средам с бутстрепом и пилот 2 (мощность) на той же заглушке
-fits_s = D.fit_family(list(D.load_merged(os.path.join(tmp, 'fit')).values()))
-env_s = D.load_merged(os.path.join(tmp, 'eval'))['T_X29_p3']
-ea = D.env_arrays(fits_s, env_s, 10, np.random.default_rng(3))
-em, reps = D.env_measures(ea, 30, np.random.default_rng(4))
-check('меры среды: в мире «головы — программы» m1 > 0, m2 > 0,5 (программа — истина), |m3| < 0,15 (программы независимы при данном входе), '
-      'ст. откл. повторов конечны', em['point']['m1'] > 0 and em['point']['m2'] > 0.5 and abs(em['point']['m3']) < 0.15
-      and all(np.isfinite(v) for v in em['sd'].values()), json.dumps(em, default=float)[:300])
-out2 = D.pilot2(os.path.join(tmp, 'pilot2.json'), {'thousands': (os.path.join(tmp, 'fit'), None)},
-                {'проверка': ('thousands', [os.path.join(tmp, 'eval')], None)}, R=5, B=20)
-pw2 = out2['sets']['проверка']['power']
-check('пилот 2: мощность посчитана для m1, m1_phi, m2 и m3; у двустороннего m3 решающая = вверх + вниз',
-      set(pw2) == {'m1', 'm1_phi', 'm2', 'm3'} and all(v is not None for v in pw2.values())
-      and abs(pw2['m3']['power']['decisive'] - pw2['m3']['power']['confirm'] - pw2['m3']['power']['refute']) < 1e-12, json.dumps(pw2, default=float)[:300])
+# 7. Смесь λ (совет 74, п. 1): ответ с p = 0 даёт log(λ/|V|); λ = 0 — прежняя обрезка 1e-300
+Vt = D.ref_size(2045)
+check('смесь: p = 0 → log(λ/|V|) при λ = 1e-3; p = 1 → log(1 − λ + λ/|V|); λ = 0 → обрезка 1e-300; |V| для суммы из 4 цифр = 10^5 − 10^1',
+      abs(float(D.mixed_log(0.0, Vt)) - math.log(D.LAMBDA / Vt)) < 1e-12 and abs(float(D.mixed_log(1.0, Vt)) - math.log(1 - D.LAMBDA + D.LAMBDA / Vt)) < 1e-12
+      and float(D.mixed_log(0.0, Vt, 0.0)) == math.log(1e-300) and Vt == 10 ** 5 - 10 and D.LAMBDA == 1e-3,
+      f'{float(D.mixed_log(0.0, Vt))} {math.log(D.LAMBDA / Vt)}')
 
-# 8. Сухой прогон анализа теста: без констант PREREG не идёт; с константами — вердикты всех правил, описательное
+# 8. Φ-база: та же «прочая» часть, что у программы (совет 74, п. 11 — скептик); программа = Φ-база → m1_phi = 0
+fit_s = D.fit_family(list(D.load_merged(os.path.join(tmp, 'fit')).values()))
+h0 = sorted(fit_s)[0]
+check('Φ-база и программа: одни ε, частоты «прочих» смещений и остаток (fit_program с fixed=PHI_BASE)',
+      all(fit_s[h]['phi']['eps'] == fit_s[h]['prog']['eps'] and fit_s[h]['phi']['q'] == fit_s[h]['prog']['q']
+          and fit_s[h]['phi']['q_rest'] == fit_s[h]['prog']['q_rest'] for h in fit_s))
+env_s = D.load_merged(os.path.join(tmp, 'eval'))['T_X29_p3']
+fit_eq = {h: dict(f, prog=f['phi']) for h, f in fit_s.items()}
+rb, rp = D.env_seed(1, 'T_X29_p3', 'проверка')
+ea_eq = D.env_arrays(fit_eq, env_s)
+em_eq, _ = D.env_measures(ea_eq, 20, rb, rp, 3)
+check('программа = Φ-база → m1_phi = 0 точно (точка и все повторы)', em_eq['point']['m1_phi'] == 0.0 and em_eq['sd']['m1_phi'] == 0.0,
+      json.dumps(em_eq['point'], default=float)[:200])
+PHI_TRUE = dict(features=['phi'], w=[-1.0, 6.0], w_round=[-1.0, 6.0], eps=0.05, q={7: 1 / 3, 70: 1 / 3, 700: 1 / 3}, q_rest=0.0)
+b_phi = items_thousands(6000, [19, 29, 49, 69, 89], 61)
+f_phi = items_thousands(3000, [19, 29, 49, 69, 89], 62)
+o_bp, o_fp = head_answers(b_phi, PHI_TRUE, 63), head_answers(f_phi, PHI_TRUE, 64)
+pp, pf = D.fit_program(b_phi, o_bp), D.fit_program(b_phi, o_bp, fixed=D.PHI_BASE)
+sc_phi = D.head_scores(pp, D.offset_model(b_phi, o_bp), None, f_phi, o_fp, phi=pf)
+check('мир «голова — Φ-база»: на свежих задачах программа (отбор по BIC) не лучше Φ-базы больше чем на 0,01 нат (|m1_phi| < 0,01)',
+      abs(sc_phi['prog'] - sc_phi['phi']) < 0.01 and 'phi' in pp['features'], json.dumps({'prog': sc_phi['prog'], 'phi': sc_phi['phi'], 'f': pp['features']}))
+
+# 9. Выборка программ (метод Уокера) — то же распределение, что program_dist и «прочее» по частотам головы
+it0 = fresh[5]
+prog_q = dict(TRUE, q={7: 0.5, 70: 0.25}, q_rest=0.25)
+D9 = np.zeros((1, 1), np.int64)
+S9 = D.env_sampler([prog_q], [it0], D9)
+off9, car9 = D.draw_many(S9, np.zeros(400_000, np.int64), np.random.default_rng(9))
+dist9 = D.program_dist(prog_q, it0)
+v9, tot9 = D.other_valid(prog_q, it0, dist9)
+want = {y - it0['sum']: p for y, p in dist9.items()}
+want.update({dd: prog_q['eps'] * qq / tot9 for dd, qq in v9.items()})
+dev = max(abs(np.mean(off9 == o) - p) / math.sqrt(p * (1 - p) / len(off9) + 1e-12) for o, p in want.items())
+rest_mass = 1 - sum(want.values())
+in_rest = ~np.isin(off9, list(want))
+nd9 = len(str(it0['sum']))
+check('выборка программ: частоты опоры и «прочих» смещений — в пределах 5 ст. откл. от вероятностей; «остаток» — с его массой, числа из V '
+      'вне опоры; метка «потеря переноса» — только у смещений опоры, кроме 0',
+      dev < 5 and abs(in_rest.mean() - rest_mass) < 5 * math.sqrt(rest_mass * (1 - rest_mass) / len(off9))
+      and np.all((off9[in_rest] + it0['sum'] >= 10 ** max(nd9 - 3, 0)) & (off9[in_rest] + it0['sum'] < 10 ** (nd9 + 1)))
+      and not np.isin(off9[in_rest] + it0['sum'], list(dist9)).any()
+      and np.array_equal(car9, np.isin(off9, [o for o in want if o != 0 and o + it0['sum'] in dist9])), f'dev={dev:.2f}')
+Ddup, _ = D.sample_D(S9, D9, np.zeros(200, np.int64), 1, np.random.default_rng(10))
+check('выборка в повторе: у каждой копии строки — своя выборка (200 копий одной задачи дают разные ответы)', len(np.unique(Ddup)) > 1)
+
+# 10. K и его разбивка (совет 74, п. 5): k_parts = прежний k_stat по парам; Kc — прямым счётом по lost_set
+Dm3 = np.column_stack([head_answers(fresh, h, 140 + k) for k, h in enumerate(heads[:4])])
+Cm3 = np.zeros(Dm3.shape, bool)
+for i, itx in enumerate(fresh):
+    cp = [j for j, _ in D.carry_info(itx['a'], itx['b'])]
+    for k in range(Dm3.shape[1]):
+        Cm3[i, k] = bool(D.lost_set(int(Dm3[i, k]), cp)) if 0 != Dm3[i, k] < D.NC else False
+
+
+def k_slow(Dx, Cx):
+    ks, kcs = [], []
+    for i, j in __import__('itertools').combinations(range(Dx.shape[1]), 2):
+        both = (Dx[:, i] != 0) & (Dx[:, j] != 0) & (Dx[:, i] < D.NC) & (Dx[:, j] < D.NC)
+        if both.any():
+            same = both & (Dx[:, i] == Dx[:, j])
+            ks.append(same.sum() / both.sum())
+            kcs.append((same & Cx[:, i]).sum() / both.sum())
+    return np.mean(ks), np.mean(kcs)
+
+
+kf, kcf = D.k_parts(Dm3[None], Cm3[None])
+ks_, kcs_ = k_slow(Dm3, Cm3)
+check('K и K «потеря переноса» — как прямой счёт по парам; K «прочие» = K − Kc ≥ 0', abs(kf[0] - ks_) < 1e-12 and abs(kcf[0] - kcs_) < 1e-12 and kf[0] - kcf[0] >= 0,
+      f'{kf[0]} {ks_} {kcf[0]} {kcs_}')
+
+# 11. Меры среды: зерно среды, m2 от одного ящика, разбивка m3, хрупкость
+fits_s = fit_s
+ea = D.env_arrays(fits_s, env_s)
+em, reps = D.env_measures(ea, 30, *D.env_seed(3, 'T_X29_p3', 'проверка'), 10)
+em2, reps2 = D.env_measures(ea, 30, *D.env_seed(3, 'T_X29_p3', 'проверка'), 10)
+check('меры среды: в мире «головы — программы» m1 > 0, m2 > 0,5 (программа — истина), m2 ≥ m2_max, |m3| < 0,15, ст. откл. конечны; '
+      'то же зерно (имя, фаза) — те же числа',
+      em['point']['m1'] > 0 and em['point']['m2'] > 0.5 and em['point']['m2'] >= em['point']['m2_max'] - 1e-12 and abs(em['point']['m3']) < 0.15
+      and all(np.isfinite(em['sd'][k]) for k in ('m1', 'm1_phi', 'm2', 'm3')) and em == em2
+      and all(np.array_equal(reps[k], reps2[k], equal_nan=True) for k in reps), json.dumps(em['point'], default=float)[:300])
+em3, _ = D.env_measures(ea, 30, *D.env_seed(3, 'T_X29_p3', 'другая фаза'), 10)
+check('меры среды: другая фаза — другой поток (повторы другие)', em3['sd']['m1'] != em['sd']['m1'])
+check('разбивка m3: K = Kc + Ko в точке', abs(em['point']['K_obs'] - em['point']['Kc_obs'] - em['point']['Ko_obs']) < 1e-12
+      and abs(em['point']['K_prog'] - em['point']['Kc_prog'] - em['point']['Ko_prog']) < 1e-12)
+con = D.contributions(ea, ea['L'])
+check('вклады задач: сумма вкладов «b1» = m1, «phi» = m1_phi', abs(con['b1'].sum() - em['point']['m1']) < 1e-9 and abs(con['phi'].sum() - em['point']['m1_phi']) < 1e-9)
+c_flat, c_one = np.full(99, 0.01), np.r_[np.full(99, 0.001), 1.0]
+f_flat, f_one = D.concentration(c_flat), D.concentration(c_one)
+check('хрупкость: 99 ровных вкладов — наибольший 1/99 суммы, больше половины дают 50 задач из 99; одна задача на 1,0 из 1,099 — больше '
+      'половины (хрупкий)', abs(f_flat['top_share'] - 1 / 99) < 1e-12 and abs(f_flat['half_tasks_share'] - 50 / 99) < 1e-12
+      and f_one['top_share'] > D.FRAGILE and f_one['half_tasks_share'] == 0.01, json.dumps([f_flat, f_one]))
+sens = D.sens_points(ea)
+check('чувствительность к λ: точки при λ = 0, 1e-2, 1e-4; при 1e-3 — как основная точка',
+      set(sens) == {'0', '0.01', '0.0001'} and abs(D.measures_w(ea, ea['L'], np.ones((1, ea['n'])))['m1'][0] - em['point']['m1']) < 1e-12)
+
+# 12. Строение новых сред (совет 74, п. 3): range у new5 из кода задач — доля вне диапазона около половины, переносы «тысяч» — только в
+# разряды 1–3 (как в построении), у L_X9999 — до разряда 6
+sys.path.insert(0, X_DIR)
+import distill02_extract as XD  # noqa: E402
+cs = {e['name']: D.carry_summary([dict(a=p['a'], b=p['b'], sum=p['sum'], ood=int(p['range'] != 'ID')) for p in e['problems']])
+      for e in XD.envs_d2('new5')}
+check('new5: у T_X109/139/169 доля ood — от 0,45 до 0,65 (не все 1), переносы только в разряды 1–3; у L_X9999 — разряды 1–6; '
+      'ood совпадает с переносом в разряд 3 (второй способ)',
+      all(0.45 < cs[n]['ood_share'] < 0.65 and set(cs[n]['carry_positions']) == {'1', '2', '3'} for n in ('T_X109_p3', 'T_X139_p3', 'T_X169_p3'))
+      and set(cs['L_X9999_p3']['carry_positions']) == {str(j) for j in range(1, 7)}
+      and all(abs(cs[n]['ood_share'] - cs[n]['carry_positions']['3'] / 2200) < 1e-12 for n in ('T_X109_p3', 'T_X139_p3', 'T_X169_p3')),
+      json.dumps(cs))
+
+# 13. Пилот 3 на той же заглушке
+out3 = D.pilot_sets(os.path.join(tmp, 'pilot3.json'), {'thousands': (os.path.join(tmp, 'fit'), None)},
+                    {'проверка': ('thousands', [os.path.join(tmp, 'eval')], None)}, R=5, B=20)
+pw3 = out3['sets']['проверка']['power']
+check('пилот 3: мощность для m1, m1_phi, m2, m2_max и m3; у двустороннего m3 решающая = вверх + вниз; λ записана',
+      set(pw3) == {'m1', 'm1_phi', 'm2', 'm2_max', 'm3'} and all(v is not None for v in pw3.values()) and out3['lam'] == D.LAMBDA
+      and abs(pw3['m3']['power']['decisive'] - pw3['m3']['power']['confirm'] - pw3['m3']['power']['refute']) < 1e-12, json.dumps(pw3, default=float)[:300])
+
+# 14. Анализ теста: без констант не идёт; с константами — вердикты всех правил; частичный json; «выкинуть среду»; детерминизм
 write_merged(os.path.join(tmp, 'cons'), [('T_X19_p3', 19, 500), ('T_X49_p3', 49, 500), ('L_X9_p3', 29, 500), ('L_X99_p3', 69, 500)], heads[:4], 110)
 write_merged(os.path.join(tmp, 't5'), [('T_X19_p3', 19, 400), ('T_X29_p3', 29, 400), ('T_X49_p3', 49, 400), ('T_X69_p3', 69, 400),
                                        ('L_X9_p3', 39, 400), ('L_X99_p3', 59, 400), ('L_X999_p3', 79, 400)], heads[:4], 130)
@@ -187,10 +295,31 @@ except AssertionError:
     no_c = True
 check('анализ теста без констант PREREG не идёт', no_c)
 D.RULES_ACTIVE = {r: True for r in D.RULES}
-ta = D.test_d2(os.path.join(tmp, 'test_d2.json'), *spec_t, B=20, R=3)
-check('анализ теста: вердикты всех правил, среды обеих фаз, описательное m1_phi; в мире «головы — программы» Р1-Т — среднее m1 > 0',
-      set(ta['verdicts']) == set(D.RULES) and len(ta['envs']) == 10 and 'thousands m1_phi' in ta['descr'] and ta['rules']['Р1-Т']['delta'] > 0,
-      json.dumps(ta['verdicts'], ensure_ascii=False))
+pd_ = os.path.join(tmp, 'parts')
+ta = D.test_d2(os.path.join(tmp, 'test_d2.json'), *spec_t, B=20, R=3, part_dir=pd_, no_time=True)
+check('анализ теста: вердикты всех 10 правил (с Р4Ф-Т), среды обеих фаз, описательное m2_max и разбивка m3, хрупкость и λ у правил; '
+      'в мире «головы — программы» Р1-Т — среднее m1 > 0',
+      set(ta['verdicts']) == set(D.RULES) and len(ta['envs']) == 10 and {'thousands m2_max', 'thousands m3_c', 'thousands m3_o'} <= set(ta['descr'])
+      and ta['rules']['Р1-Т']['delta'] > 0 and ta['rules']['Р1-Т']['fragile'] is not None and 'lambda_sens' in ta['rules']['Р4Ф-Т']
+      and len(os.listdir(pd_)) == 10 and 'seconds' not in ta, json.dumps(ta['verdicts'], ensure_ascii=False))
+t_again = D.test_d2(os.path.join(tmp, 'test_d2b.json'), *spec_t, B=20, R=3, part_dir=pd_, no_time=True)
+check('частичный json: повторный запуск берёт готовые среды и даёт побайтно тот же вывод',
+      open(os.path.join(tmp, 'test_d2.json'), 'rb').read() == open(os.path.join(tmp, 'test_d2b.json'), 'rb').read())
+t_only = D.test_d2(os.path.join(tmp, 'test_only.json'), *spec_t, B=20, R=3, only=['T_X29_p3', 'L_X9_p3'], no_time=True)
+check('«выкинуть среды»: у оставшихся сред те же точки и ст. откл., что в полном анализе (зерно — имя и фаза среды)',
+      all(t_only['envs'][n]['point'] == ta['envs'][n]['point'] and t_only['envs'][n]['sd'] == ta['envs'][n]['sd'] for n in ('T_X29_p3', 'L_X9_p3')))
+runner = os.path.join(tmp, 'run_workers.py')                      # процессы «spawn» заново читают главный модуль — отдельный запуск с защитой
+open(runner, 'w', encoding='utf-8').write(
+    'import json, sys\n'
+    f'sys.path.insert(0, {X_DIR!r})\n'
+    'import distill02 as D\n'
+    "if __name__ == '__main__':\n"
+    '    D.RULES_ACTIVE = {r: True for r in D.RULES}\n'
+    f'    D.test_d2({os.path.join(tmp, "test_w.json")!r}, *json.loads({json.dumps(spec_t)!r}), B=20, R=3, no_time=True, workers=2)\n')
+import subprocess  # noqa: E402
+rw = subprocess.run([sys.executable, runner], capture_output=True, text=True, env=dict(os.environ, OMP_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1'))
+check('параллельный счёт сред (2 процесса «spawn») — побайтно тот же вывод', rw.returncode == 0 and open(os.path.join(tmp, 'test_w.json'), 'rb').read() ==
+      open(os.path.join(tmp, 'test_d2.json'), 'rb').read(), rw.stderr[-300:])
 D.RULES_ACTIVE = None
 
 print(f'провалов: {len(fails)}')

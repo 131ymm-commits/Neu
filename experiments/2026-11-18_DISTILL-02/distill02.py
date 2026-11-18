@@ -11,10 +11,14 @@
   B0 — «верно с частотой головы, иначе любое число из V»;
   B1 — «частоты смещений»: самые частые смещения головы на построении независимо от входа (`offset_model`);
   ящик — бустинг деревьев на признаках задачи, предсказывает класс исхода (верно, набор потерянных переносов, прочее).
-Меры: средняя лог-вероятность ответа головы (на числовой ответ), доля неверных ответов в трёх самых вероятных неверных,
-совпадение ошибок голов (F, K) из программ, независимых при данном входе, против наблюдённого, и оценщик P(верно) против
-уверенности головы (AUC; описательно).
+Меры: средняя лог-вероятность ответа головы (на числовой ответ; вероятность каждого соперника смешана с равномерной по V:
+(1 − λ)·p + λ/|V|, λ = 1e-3 — совет 74), доля неверных ответов в трёх самых вероятных неверных, совпадение ошибок голов (F, K)
+из программ, независимых при данном входе, против наблюдённого, и оценщик P(верно) против уверенности головы (AUC; описательно).
+  python3 distill02.py merge4|merge2|merge_d2 ВЫХОД ФАЗА СЕМЕЙСТВО ПАПКИ...   — сборки
+  python3 distill02.py pilot ВЫХОД.json SPEC.json | pilot3 ВЫХОД.json SPEC.json  — пилоты (описательно)
+  python3 distill02.py test ВЫХОД.json SPEC.json                                — анализ теста (нужны константы PREREG)
 Правда — только от кода: сумма и переносы считаются из a и b; ответы голов читаются из сборок OCDIV-03/04."""
+import hashlib
 import itertools
 import json
 import math
@@ -346,13 +350,13 @@ def head_scores(prog, om, box, items, offsets, rounded=True, logp=None, phi=None
         y = it['sum'] + int(d)
         dist = program_dist(prog, it, rounded)
         p_prog = answer_prob(prog, it, y, rounded, dist)
-        ll['prog'].append(math.log(max(p_prog, 1e-300)))
-        ll['b0'].append(math.log(max(b0_prob(om['acc'], it, y), 1e-300)))
-        ll['b1'].append(math.log(max(b1_prob(om, it, y), 1e-300)))
+        ll['prog'].append(mlog(p_prog, it['sum']))                  # смесь λ (совет 74, п. 1), как в мерах сред
+        ll['b0'].append(mlog(b0_prob(om['acc'], it, y), it['sum']))
+        ll['b1'].append(mlog(b1_prob(om, it, y), it['sum']))
         if box is not None:
-            ll['box'].append(math.log(max(box_prob(box, it, y, prog, bx[i]), 1e-300)))
+            ll['box'].append(mlog(box_prob(box, it, y, prog, bx[i]), it['sum']))
         if phi is not None:
-            ll['phi'].append(math.log(max(answer_prob(phi, it, y, rounded), 1e-300)))
+            ll['phi'].append(mlog(answer_prob(phi, it, y, rounded), it['sum']))
         pc.append(dist.get(it['sum'], 0.0))
         corr.append(int(d == 0))
         if d != 0:
@@ -579,43 +583,196 @@ def pilot(dst, fit_dirs, eval_sets, R=50, seed=SEED):
     return out
 
 
-def main(a):
-    if not a:
-        sys.exit(__doc__)
-    if a[0] == 'merge4':                                          # сборка фаз OCDIV-04 (тем же кодом, что в OCDIV-04)
-        C4.merge4(a[1], a[2], a[3], a[4:])
-    elif a[0] == 'merge2':                                        # сборка фаз OCDIV-02/03 (`ocdiv2.merge`)
-        W.merge(a[1], a[2], a[3], a[4:])
-    elif a[0] == 'merge_d2':                                      # сборка свежих фаз DISTILL-02 (test5, new5)
-        merge_d2(a[1], a[2], a[3], a[4:])
-    elif a[0] == 'pilot2':
-        spec = json.load(open(a[2], encoding='utf-8'))
-        pilot2(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
-               R=spec.get('R', 20), B=spec.get('B', 200))
-    elif a[0] == 'test':
-        spec = json.load(open(a[2], encoding='utf-8'))            # {"construction": {fam: [dirs]}, "test": {фаза: [dirs]}}
-        test_d2(a[1], spec['construction'], spec['test'], B=spec.get('B', B_TEST), R=spec.get('R', R_TEST))
-    elif a[0] == 'pilot':
-        spec = json.load(open(a[2], encoding='utf-8'))            # {"fit": {ключ: [dir, [среды] | null]}, "eval": {имя: [ключ, [dirs], [среды] | null]}}
-        pilot(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
-              R=spec.get('R', 50))
-    else:
-        sys.exit(__doc__)
-
-
-# ═══════════════ часть 2: меры по средам с бутстрепом, правила и мощность (для PREREG; пилот 2 — по уже собранным данным)
+# ═══════════════ часть 2: меры по средам с бутстрепом, правила и мощность (совет 74: смесь λ, зерно среды, выборки программ в повторах)
 LEVEL = C4.LEVEL                                                   # 0,0025 на сторону, как в программе
 MIN_NUMERIC = 200                                                  # голова входит в среду, если числовых ответов не меньше 200
 SHARE_MIN = 0.5                                                    # П2: «большая часть» объяснимого — больше половины
+LAMBDA = 1e-3                                                      # совет 74, п. 1: смесь (1 − λ)·p + λ/|V| — одна для всех соперников, фаз и
+#                                                                    сред; по суждению, без пилотных исходов; записана до пересчёта пилотов
+LAMBDA_SENS = (0.0, 1e-2, 1e-4)                                    # описательно, в точке: 0 — прежняя обрезка max(p, 1e-300)
+FRAGILE = 0.5                                                      # «хрупкий»: одна задача даёт больше половины суммы вкладов (совет 74)
+COMPETITORS = ('prog', 'b1', 'b0', 'box', 'phi')
+MEASURES = ('m1', 'm1_phi', 'm2', 'm2_max', 'm3', 'm3_c', 'm3_o')
+LL_PARTS = {'b1': ('prog', 'b1'), 'phi': ('prog', 'phi'), 'box': ('box', 'b1')}   # вклады задач: разности лог-вероятностей
+FRAG_PARTS = {'m1': ('b1',), 'm1_phi': ('phi',), 'm2': ('b1', 'box'), 'm2_max': ('b1', 'box')}
+REST = np.int64(-(2 ** 61))                                        # «остаток» в таблице выборки — заменяется случайным числом из V
+CHUNK = 500                                                        # повторы бутстрепа для мер по лог-вероятностям — частями (память)
 
 
-def env_arrays(fits, env, R, rng, rounded=True):
-    """Для одной среды: по задачам и головам — лог-вероятности ответа у программы, B1, ящика (NaN — без числа), смещения головы и R
-    выборок программ (для K из программ)."""
+def mixed_log(p, V, lam=None):
+    """log((1 − λ)·p + λ/|V|) — одна смесь для всех соперников (совет 74, п. 1). |V| — `ref_size` задачи: целые с числом цифр от n − 2
+    до n + 1, n — цифр в верной сумме; ответ с p = 0 даёт log(λ/|V|), в том числе вне V. λ = 0 — прежняя обрезка max(p, 1e-300)."""
+    lam = LAMBDA if lam is None else lam
+    p = np.asarray(p, float)
+    if lam == 0:
+        return np.log(np.maximum(p, 1e-300))
+    return np.log((1 - lam) * p + lam / np.asarray(V, float))
+
+
+def mlog(p, total, lam=None):
+    """То же для одного ответа (описательные меры голов)."""
+    return float(mixed_log(p, ref_size(total), lam))
+
+
+def _h64(s):
+    return int.from_bytes(hashlib.sha256(str(s).encode('utf-8')).digest()[:8], 'little')
+
+
+def env_seed(seed, name, phase):
+    """Зерно среды (совет 74, п. 7): SeedSequence(зерно, имя, фаза) — числа среды не зависят от того, какие среды прошли до неё.
+    Два потока: строки бутстрепа и выборки программ."""
+    sb, sp = np.random.SeedSequence([int(seed), _h64(name), _h64(phase)]).spawn(2)
+    return np.random.default_rng(sb), np.random.default_rng(sp)
+
+
+def _nanmean(a, axis=-1):
+    a = np.asarray(a, float)
+    ok = np.isfinite(a)
+    c = ok.sum(axis)
+    return np.where(c > 0, np.where(ok, a, 0.0).sum(axis) / np.maximum(c, 1), np.nan)
+
+
+def alias_table(probs):
+    """Таблица Уокера (метод Воуза): выборка из конечного распределения за два случайных числа."""
+    K = len(probs)
+    pr = np.asarray(probs, float)
+    pr = pr * K / pr.sum()
+    acc, ali = np.ones(K), np.arange(K)
+    small = [i for i in range(K) if pr[i] < 1.0]
+    large = [i for i in range(K) if pr[i] >= 1.0]
+    while small and large:
+        s, g = small.pop(), large.pop()
+        acc[s], ali[s] = pr[s], g
+        pr[g] = pr[g] + pr[s] - 1.0
+        (small if pr[g] < 1.0 else large).append(g)
+    return acc, ali
+
+
+def env_sampler(progs, items, D, rounded=True):
+    """Таблицы выборки ответов программ: для каждой головы и задачи с числовым ответом — опора программы (верный ответ и наборы
+    потерянных переносов), «прочие» смещения по частотам головы и «остаток» — случайное число из V вне опоры (как `sampler` и `draw`);
+    метка «потеря переноса» — у смещений опоры, кроме 0."""
+    n, H = D.shape
+    tidx = np.full((n, H), -1, np.int64)
+    tabs = []
+    for k in range(H):
+        for i, it in enumerate(items):
+            if D[i, k] >= NC:
+                continue
+            prog = progs[k]
+            dist = program_dist(prog, it, rounded)
+            offs = [y - it['sum'] for y in dist]
+            pr = list(dist.values())
+            car = [o != 0 for o in offs]
+            nsup = len(offs)
+            v, tot = other_valid(prog, it, dist)
+            if tot > 0:
+                offs += list(v.keys())
+                pr += [prog['eps'] * qq / tot for qq in v.values()]
+                car += [False] * len(v)
+            rest = max(0.0, 1.0 - sum(pr))
+            if rest > 1e-15:
+                offs.append(int(REST))
+                pr.append(rest)
+                car.append(False)
+            acc, ali = alias_table(pr)
+            tidx[i, k] = len(tabs)
+            nd = len(str(it['sum']))
+            tabs.append((offs, acc, ali, car, nsup, it['sum'], 10 ** max(nd - 3, 0), 10 ** (nd + 1)))
+    T, KM = len(tabs), max((len(t[0]) for t in tabs), default=1)
+    S = dict(tidx=tidx, off=np.zeros((T, KM), np.int64), acc=np.ones((T, KM)), ali=np.zeros((T, KM), np.int64),
+             car=np.zeros((T, KM), bool), K=np.zeros(T, np.int64), nsup=np.zeros(T, np.int64), sum=np.zeros(T, np.int64),
+             lo=np.zeros(T, np.int64), hi=np.zeros(T, np.int64))
+    for t, (offs, acc, ali, car, nsup, sm, lo, hi) in enumerate(tabs):
+        K = len(offs)
+        S['off'][t, :K], S['acc'][t, :K], S['ali'][t, :K], S['car'][t, :K] = offs, acc, ali, car
+        S['K'][t], S['nsup'][t], S['sum'][t], S['lo'][t], S['hi'][t] = K, nsup, sm, lo, hi
+    return S
+
+
+def draw_many(S, tt, rng):
+    """Смещения ответов программ по таблицам tt (метод Уокера); «остаток» — случайное число из V, не из опоры программы."""
+    K = S['K'][tt]
+    j = np.minimum((rng.random(len(tt)) * K).astype(np.int64), K - 1)
+    u = rng.random(len(tt))
+    col = np.where(u < S['acc'][tt, j], j, S['ali'][tt, j])
+    off = S['off'][tt, col]
+    car = S['car'][tt, col]
+    r = np.flatnonzero(off == REST)
+    cols = np.arange(S['off'].shape[1])[None, :]
+    while len(r):
+        t_r = tt[r]
+        o = rng.integers(S['lo'][t_r], S['hi'][t_r]) - S['sum'][t_r]
+        bad = ((S['off'][t_r] == o[:, None]) & (cols < S['nsup'][t_r][:, None])).any(1)
+        off[r[~bad]] = o[~bad]
+        r = r[bad]
+    return off, car
+
+
+def sample_D(S, D, idx, R, rng):
+    """R выборок ответов программ на строках idx (у каждой строки повтора — своя выборка); без числа — на тех же местах, что у голов."""
+    Di = D[idx]
+    T = S['tidx'][idx]
+    valid = T >= 0
+    off, car = draw_many(S, np.tile(T[valid], R), rng)
+    Dp = np.repeat(Di[None], R, axis=0)
+    Cp = np.zeros(Dp.shape, bool)
+    Dp[:, valid] = off.reshape(R, -1)
+    Cp[:, valid] = car.reshape(R, -1)
+    return Dp, Cp
+
+
+def k_parts(Dp, Cp):
+    """K по стопке (r, m, H): среднее по парам голов доли одинаковых смещений среди задач, где обе дали неверное числовое смещение (пары
+    без таких задач не входят; NaN — нет ни одной); Kc — то же для одинаковых смещений «потеря переноса» (−Σ 10^j по разрядам с
+    переносом), Ko = K − Kc — «прочие» (совет 74, п. 5)."""
+    I, J = np.triu_indices(Dp.shape[-1], 1)
+    wrong = (Dp != 0) & (Dp < NC)
+    both = wrong[..., I] & wrong[..., J]
+    same = both & (Dp[..., I] == Dp[..., J])
+    nb = both.sum(-2).astype(float)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        k = np.where(nb > 0, same.sum(-2) / nb, np.nan)
+        kc = np.where(nb > 0, (same & Cp[..., I]).sum(-2) / nb, np.nan)
+    return _nanmean(k), _nanmean(kc)
+
+
+def _lr(a, b):
+    return float(math.log(a / b)) if (np.isfinite(a) and np.isfinite(b) and a > 0 and b > 0) else float('nan')
+
+
+def k_measures(ko, kco, kp, kcp):
+    """m3 = ln(K наблюдённое / K из программ); m3_c и m3_o — то же по «потере переноса» и по «прочим» (описательно)."""
+    K_obs, Kc_obs = float(ko[0]), float(kco[0])
+    K_prog, Kc_prog = float(_nanmean(kp, 0)), float(_nanmean(kcp, 0))
+    Ko_obs, Ko_prog = K_obs - Kc_obs, K_prog - Kc_prog
+    return dict(m3=_lr(K_obs, K_prog), m3_c=_lr(Kc_obs, Kc_prog), m3_o=_lr(Ko_obs, Ko_prog), K_obs=K_obs, K_prog=K_prog,
+                Kc_obs=Kc_obs, Kc_prog=Kc_prog, Ko_obs=Ko_obs, Ko_prog=Ko_prog)
+
+
+def measures_w(ea, L, Wm):
+    """Меры по лог-вероятностям на строках с кратностями Wm (повторы × задачи): m1 — среднее по головам разности программа − B1 на
+    числовой ответ; m1_phi — программа − Φ-база; m2 — доля объяснимого Σ(программа − B1) / Σ(ящик − B1) по головам (совет 74, п. 4:
+    решающая — от одного ящика; NaN, если ящик не лучше B1); m2_max — от лучшего из ящика и программы (описательно, смещена вверх)."""
+    M = ea['M']
+    cnt = Wm @ M
+
+    def hm(x, y):
+        return (Wm @ np.where(M > 0, L[x] - L[y], 0.0)) / cnt
+    d1, dphi, dbox = hm('prog', 'b1'), hm('prog', 'phi'), hm('box', 'b1')
+    s1, sb, sbm = d1.sum(1), dbox.sum(1), np.maximum(dbox, d1).sum(1)
+    with np.errstate(invalid='ignore', divide='ignore'):
+        return dict(m1=d1.mean(1), m1_phi=dphi.mean(1), m2=np.where(sb > 1e-12, s1 / sb, np.nan), m2_max=np.where(sbm > 1e-12, s1 / sbm, np.nan))
+
+
+def env_arrays(fits, env, rounded=True):
+    """Для одной среды: по задачам и головам — вероятности ответа у программы, B1, B0, ящика и Φ-базы (NaN — без числа), их смеси λ,
+    смещения головы и метки «потеря переноса», таблицы выборки программ. Головы — с числовыми ответами не меньше MIN_NUMERIC."""
     items, offs, lps = env_table(env, with_logp=True)
     hs = [h for h in offs if h in fits and int((offs[h] < NC).sum()) >= MIN_NUMERIC]
     n = len(items)
-    L = {k: np.full((n, len(hs)), np.nan) for k in ('prog', 'b1', 'box', 'phi', 'b0')}
+    V = np.array([ref_size(it['sum']) for it in items], float)
+    P = {k: np.full((n, len(hs)), np.nan) for k in COMPETITORS}
     for k, h in enumerate(hs):
         f = fits[h]
         bx = box_classes(f['box'], items)
@@ -624,64 +781,114 @@ def env_arrays(fits, env, R, rng, rounded=True):
                 continue
             y = it['sum'] + int(d)
             dist = program_dist(f['prog'], it, rounded)
-            L['prog'][i, k] = math.log(max(answer_prob(f['prog'], it, y, rounded, dist), 1e-300))
-            L['b1'][i, k] = math.log(max(b1_prob(f['om'], it, y), 1e-300))
-            L['b0'][i, k] = math.log(max(b0_prob(f['om']['acc'], it, y), 1e-300))
-            L['box'][i, k] = math.log(max(box_prob(f['box'], it, y, f['prog'], bx[i]), 1e-300))
-            L['phi'][i, k] = math.log(max(answer_prob(f['phi'], it, y, rounded), 1e-300))
+            P['prog'][i, k] = answer_prob(f['prog'], it, y, rounded, dist)
+            P['b1'][i, k] = b1_prob(f['om'], it, y)
+            P['b0'][i, k] = b0_prob(f['om']['acc'], it, y)
+            P['box'][i, k] = box_prob(f['box'], it, y, f['prog'], bx[i])
+            P['phi'][i, k] = answer_prob(f['phi'], it, y, rounded)
+    L = {k: mixed_log(P[k], V[:, None]) for k in COMPETITORS}
     D = np.column_stack([offs[h] for h in hs]) if hs else np.zeros((n, 0), np.int64)
-    tabs = [[sampler(fits[h]['prog'], it, rounded) if D[i, k] < NC else None for i, it in enumerate(items)] for k, h in enumerate(hs)]
-    S_ = []
-    for _ in range(R):
-        Dp = D.copy()
+    C = np.zeros(D.shape, bool)
+    for i, it in enumerate(items):
+        cpos = [j for j, _ in carry_info(it['a'], it['b'])]
         for k in range(len(hs)):
-            for i, it in enumerate(items):
-                if tabs[k][i] is not None:
-                    Dp[i, k] = draw(tabs[k][i], it, rng)
-        S_.append(Dp)
-    return dict(heads=hs, L=L, D=D, S=S_, n=n)
+            if 0 != D[i, k] < NC:
+                C[i, k] = bool(lost_set(int(D[i, k]), cpos))
+    S_ = env_sampler([fits[h]['prog'] for h in hs], items, D, rounded)
+    return dict(heads=hs, P=P, L=L, V=V, D=D, C=C, S=S_, M=np.isfinite(L['prog']).astype(float), n=n, items=items, offs=offs, lps=lps)
 
 
-def k_stat(D, rows=None):
-    Dr = D if rows is None else D[rows]
-    ks = []
-    for i, j in itertools.combinations(range(Dr.shape[1]), 2):
-        both = (Dr[:, i] != 0) & (Dr[:, j] != 0) & (Dr[:, i] < NC) & (Dr[:, j] < NC)
-        if both.any():
-            ks.append(float((Dr[both, i] == Dr[both, j]).mean()))
-    return float(np.mean(ks)) if ks else float('nan')
+def env_measures(ea, B, rng_boot, rng_prog, R):
+    """Точки и повторы бутстрепа мер среды. Строки задач — с возвращением (поток rng_boot, все повторы одним вызовом); выборки
+    программ для K из программ — R на каждую строку точки и каждого повтора (поток rng_prog: сначала точка, потом повторы по порядку)."""
+    n = ea['n']
+    pt = {k: float(v[0]) for k, v in measures_w(ea, ea['L'], np.ones((1, n))).items()}
+    ko, kco = k_parts(ea['D'][None], ea['C'][None])
+    Dp, Cp = sample_D(ea['S'], ea['D'], np.arange(n), R, rng_prog)
+    kp, kcp = k_parts(Dp, Cp)
+    pt.update(k_measures(ko, kco, kp, kcp))
+    has = ea['D'].shape[1] > 0
+    pt['F_obs'] = float(W.false_major(ea['D']).mean()) if has else float('nan')
+    pt['F_prog'] = float(np.mean([W.false_major(Dp[r]).mean() for r in range(R)])) if has and R else float('nan')
+    IDX = rng_boot.integers(0, n, (B, n))
+    reps = {k: np.full(B, np.nan) for k in MEASURES}
+    for s in range(0, B, CHUNK):
+        Wb = np.stack([np.bincount(r, minlength=n) for r in IDX[s:s + CHUNK]]).astype(float)
+        for k, v in measures_w(ea, ea['L'], Wb).items():
+            reps[k][s:s + CHUNK] = v
+    for b in range(B):
+        idx = IDX[b]
+        ko, kco = k_parts(ea['D'][idx][None], ea['C'][idx][None])
+        Dp, Cp = sample_D(ea['S'], ea['D'], idx, R, rng_prog)
+        kp, kcp = k_parts(Dp, Cp)
+        r = k_measures(ko, kco, kp, kcp)
+        for k in ('m3', 'm3_c', 'm3_o'):
+            reps[k][b] = r[k]
+    sd = {k: (float(np.nanstd(v, ddof=1)) if np.isfinite(v).sum() > 1 else float('nan')) for k, v in reps.items()}
+    return dict(point=pt, sd=sd, nan_reps={k: int((~np.isfinite(v)).sum()) for k, v in reps.items()}, n=n, heads=ea['heads']), reps
 
 
-def env_point(ea, rows=None):
-    """Точки мер среды на строках rows (бутстреп) или на всех задачах:
-    m1 — среднее по головам разности лог-вероятностей программа − B1 (на числовой ответ); m1_phi — программа − Φ-база;
-    m2 — доля объяснимого Σ(программа − B1) / Σ(max(ящик, программа) − B1) по головам: сколько программа берёт от лучшего из ящика и
-    программы (≤ 1; не определена, если обе не лучше B1); m3 — ln(K наблюдённое / K из программ)."""
-    L = {k: (v if rows is None else v[rows]) for k, v in ea['L'].items()}
-    with np.errstate(invalid='ignore'):
-        d1 = np.nanmean(L['prog'] - L['b1'], axis=0)
-        dphi = np.nanmean(L['prog'] - L['phi'], axis=0)
-        dbox = np.maximum(np.nanmean(L['box'] - L['b1'], axis=0), d1)
-    m1 = float(np.nanmean(d1)) if len(d1) else float('nan')
-    m2 = float(np.nansum(d1) / np.nansum(dbox)) if np.nansum(dbox) > 1e-12 else float('nan')
-    ko = k_stat(ea['D'], rows)
-    kp = float(np.nanmean([k_stat(s, rows) for s in ea['S']])) if ea['S'] else float('nan')
-    m3 = float(math.log(ko / kp)) if (ko > 0 and kp > 0) else float('nan')
-    return dict(m1=m1, m1_phi=float(np.nanmean(dphi)) if len(dphi) else float('nan'), m2=m2, m3=m3, K_obs=ko, K_prog=kp)
+def contributions(ea, L):
+    """Вклад каждой задачи в меру среды: c_i = (1/H) Σ_h Δ_ih / n_h по числовым ответам; Σ_i c_i — точка меры (m1 для «b1»,
+    m1_phi для «phi»; для «box» — среднее по головам ящик − B1)."""
+    M = ea['M']
+    nh = np.maximum(M.sum(0), 1)
+    H = max(M.shape[1], 1)
+    return {p: (np.where(M > 0, L[x] - L[y], 0.0) / nh).sum(1) / H for p, (x, y) in LL_PARTS.items()}
 
 
-def env_measures(ea, B, rng):
-    """Точки и повторы бутстрепа (строки задач с возвращением) мер среды."""
-    pt = env_point(ea)
-    reps = {k: [] for k in ('m1', 'm1_phi', 'm2', 'm3')}
-    for _ in range(B):
-        rows = rng.integers(0, ea['n'], ea['n'])
-        r = env_point(ea, rows)
-        for k in reps:
-            reps[k].append(r[k])
-    out = dict(point=pt, n=ea['n'], heads=ea['heads'])
-    out['sd'] = {k: float(np.nanstd(v, ddof=1)) for k, v in reps.items()}
-    return out, {k: np.array(v) for k, v in reps.items()}
+def concentration(c):
+    """Наибольший вклад одной задачи по модулю к модулю суммы; доля задач, на которые приходится больше половины суммы (по знаку
+    суммы, от самых больших вкладов)."""
+    c = np.asarray(c, float)
+    tot = float(c.sum())
+    if not len(c) or tot == 0:
+        return dict(total=tot, top_share=float('nan'), half_tasks_share=float('nan'))
+    cs = np.cumsum(np.sort(np.sign(tot) * c)[::-1])
+    k = int(np.argmax(cs > 0.5 * abs(tot))) + 1 if (cs > 0.5 * abs(tot)).any() else len(c)
+    return dict(total=tot, top_share=float(np.abs(c).max() / abs(tot)), half_tasks_share=k / len(c))
+
+
+def sens_points(ea):
+    """Чувствительность к λ (описательно, в точке, без бутстрепа): m1, m1_phi, m2, m2_max при λ = 0 (прежняя обрезка), 1e-2 и 1e-4."""
+    out = {}
+    for lam in LAMBDA_SENS:
+        L = {k: mixed_log(ea['P'][k], ea['V'][:, None], lam) for k in COMPETITORS}
+        out[f'{lam:g}'] = {k: float(v[0]) for k, v in measures_w(ea, L, np.ones((1, ea['n']))).items()}
+    return out
+
+
+def carry_summary(items):
+    """Строение задач среды (из кода, не из ответов): доля вне диапазона (ood) и число задач с переносом в каждый разряд."""
+    pos = {}
+    for it in items:
+        for j, _ in carry_info(it['a'], it['b']):
+            pos[j] = pos.get(j, 0) + 1
+    return dict(ood_share=float(np.mean([it['ood'] for it in items])) if items else float('nan'),
+                carry_positions={str(j): pos[j] for j in sorted(pos)})
+
+
+def env_result(fits, env, name, phase, B, R, seed, rounded=True, descriptive=True, keep_contrib=True):
+    """Всё по одной среде: меры с бутстрепом (зерно — имя и фаза), вклады задач и их сосредоточенность, чувствительность к λ, строение
+    задач; описательно — меры каждой головы (`head_scores`)."""
+    rng_boot, rng_prog = env_seed(seed, name, phase)
+    ea = env_arrays(fits, env, rounded)
+    m, reps = env_measures(ea, B, rng_boot, rng_prog, R)
+    con = contributions(ea, ea['L'])
+    m['concentration'] = {p: concentration(c) for p, c in con.items()}
+    if keep_contrib:
+        m['contrib'] = {p: [float(x) for x in c] for p, c in con.items()}
+    m['lambda_sens'] = sens_points(ea)
+    m['carries'] = carry_summary(ea['items'])
+    if descriptive:
+        desc = {}
+        for h in ea['heads']:
+            f = fits[h]
+            sc = head_scores(f['prog'], f['om'], f['box'], ea['items'], ea['offs'][h], rounded, logp=ea['lps'][h], phi=f['phi'])
+            sc.pop('_ll')
+            desc[h] = sc
+        m['heads_scores'] = desc
+    return m, reps
 
 
 def family_rule(points, boots, sds, names, kind, part_b, shift=0.0):
@@ -719,41 +926,34 @@ def power_rule(points, sds, scale, m, part_b, shift=0.0):
     return C4.power_entry4([x - shift for x in points], sds, scale, m, part_b)
 
 
-def pilot2(dst, fit_dirs, eval_sets, R=20, B=200, seed=SEED + 1000):
-    """Пилот 2: меры по средам с бутстрепом и мощность правил для PREREG (данные — уже собранные, описательно)."""
+POWER_SETS = (('m1', 0.0, 'pos'), ('m1_phi', 0.0, 'pos'), ('m2', SHARE_MIN, 'pos'), ('m2_max', SHARE_MIN, 'pos'), ('m3', 0.0, 'two'))
+
+
+def pilot_sets(dst, fit_dirs, eval_sets, R=20, B=200, seed=SEED + 2000, phase='pilot3'):
+    """Пилот 3 (совет 74): те же наборы, что пилот 2 (запуск e5785e6a), по новым мерам — смесь λ, зерно среды (имя, набор), выборки
+    программ в повторах бутстрепа, m2 от одного ящика, разбивка m3; мощность правил для PREREG. Данные — уже собранные, описательно."""
     t0 = time.time()
-    fits = {}
-    for key, (mdir, names) in fit_dirs.items():
-        fits[key] = fit_family(list(select_envs(load_merged(mdir), names).values()))
-    out = dict(phase='pilot2', hypothesis='394b7be2', R=R, B=B, seed=seed, min_numeric=MIN_NUMERIC, share_min=SHARE_MIN, sets={})
-    for si, (name, (key, mdirs, names)) in enumerate(eval_sets.items()):
+    fits = {key: fit_family(list(select_envs(load_merged(mdir), names).values())) for key, (mdir, names) in fit_dirs.items()}
+    out = dict(phase=phase, hypothesis='394b7be2', R=R, B=B, seed=seed, lam=LAMBDA, min_numeric=MIN_NUMERIC, share_min=SHARE_MIN,
+               code_sha256=code_sha(), sets={})
+    for name, (key, mdirs, names) in eval_sets.items():
         envs = {}
         for md in mdirs:
             envs.update(select_envs(load_merged(md), names))
-        rng = np.random.default_rng(seed + 100 * si)
-        res = {}
-        for en, env in sorted(envs.items()):
-            ea = env_arrays(fits[key], env, R, rng)
-            m, _ = env_measures(ea, B, rng)
-            res[en] = m
+        res = {en: env_result(fits[key], env, en, name, B, R, seed, descriptive=False, keep_contrib=False)[0] for en, env in sorted(envs.items())}
         names_ = sorted(res)
         pw = {}
-        for meas, shift, kind in (('m1', 0.0, 'pos'), ('m1_phi', 0.0, 'pos'), ('m2', SHARE_MIN, 'pos'), ('m3', 0.0, 'two')):
-            pts = [res[n]['point'][meas] for n in names_]
-            sds = [res[n]['sd'][meas] for n in names_]
-            for m_, pb in ((len(names_), len(names_) >= 4),):
-                e = power_rule(pts, sds, 1.0, m_, pb, shift)
-                if e is not None and kind == 'two':
-                    e['power']['decisive'] = e['power']['confirm'] + e['power']['refute']
-                elif e is not None:
-                    e['power']['decisive'] = e['power']['confirm']
-                pw[meas] = e
+        for meas, shift, kind in POWER_SETS:
+            e = power_rule([res[n]['point'][meas] for n in names_], [res[n]['sd'][meas] for n in names_], 1.0, len(names_), len(names_) >= 4, shift)
+            if e is not None:
+                e['power']['decisive'] = e['power']['confirm'] + (e['power']['refute'] if kind == 'two' else 0.0)
+            pw[meas] = e
         out['sets'][name] = dict(key=key, envs=res, power=pw)
     out['seconds'] = round(time.time() - t0, 1)
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
-    print('пилот 2 DISTILL-02:', {k: {m: (round(v['power'][m]['power']['decisive'], 3) if v['power'][m] else None) for m in v['power']}
-                                   for k, v in out['sets'].items()}, '| время', out['seconds'], 'с', flush=True)
+    print(f'{phase} DISTILL-02: время', out['seconds'], 'с; сред', sum(len(v['envs']) for v in out['sets'].values()), flush=True)
     return out
+
 
 # ═══════════════ часть 3: анализ теста (PREREG; константы задаются до регистрации, без них анализ не идёт)
 # правило: (семейство, фаза, мера, вид, есть ли часть Б, сдвиг)
@@ -761,9 +961,9 @@ RULES = {'Р1-Т': ('thousands', 'test5', 'm1', 'pos', True, 0.0), 'Р1-Л': ('l
          'Р1Ф-Т': ('thousands', 'test5', 'm1_phi', 'pos', True, 0.0), 'Р1Ф-Л': ('length', 'test5', 'm1_phi', 'pos', False, 0.0),
          'Р2-Т': ('thousands', 'test5', 'm2', 'pos', True, SHARE_MIN), 'Р2-Л': ('length', 'test5', 'm2', 'pos', False, SHARE_MIN),
          'Р3-Т': ('thousands', 'test5', 'm3', 'two', True, 0.0), 'Р3-Л': ('length', 'test5', 'm3', 'two', False, 0.0),
-         'Р4-Т': ('thousands', 'new5', 'm1', 'pos', False, 0.0)}
-DESCR_MEAS = ()
-RULES_ACTIVE = None        # {'Р1-Т': True|False, ...}: True — правило, False — описательно (решающая мощность по пилоту < POWER_MIN)
+         'Р4-Т': ('thousands', 'new5', 'm1', 'pos', False, 0.0), 'Р4Ф-Т': ('thousands', 'new5', 'm1_phi', 'pos', False, 0.0)}
+DESCR_MEAS = ('m2_max', 'm3_c', 'm3_o')                            # описательно, по обоим семействам test5 (совет 74, пп. 4–5)
+RULES_ACTIVE = None        # {'Р1-Т': True|False, ...}: True — правило, False — описательно (PREREG §5: правило активности по пилоту 3)
 POWER_MIN = 0.2
 B_TEST, R_TEST = 4000, 20
 SEED_TEST = 9_930_000
@@ -773,48 +973,115 @@ def family_of(name):
     return 'thousands' if name.startswith('T_') else 'length'
 
 
-def test_d2(dst, construction, test_sets, B=B_TEST, R=R_TEST, seed=SEED_TEST):
+def code_sha():
+    return hashlib.sha256(open(os.path.abspath(__file__), 'rb').read()).hexdigest()
+
+
+def fragility(envs, names, meas):
+    """«Хрупкий» (совет 74, п. 1): вклады задач всех сред правила в сумму разностей лог-вероятности; хрупкий, если одна задача даёт по
+    модулю больше половины модуля суммы. Для m2 — отдельно числитель (программа − B1) и знаменатель (ящик − B1), хрупкий — если хоть
+    один. Плюс доля задач, на которые приходится больше половины суммы; по каждой среде — описательно."""
+    parts = FRAG_PARTS.get(meas)
+    if not parts or not names:
+        return None
+    out = {}
+    for p in parts:
+        c = np.concatenate([np.asarray(envs[n]['contrib'][p], float) for n in names])
+        e = concentration(c)
+        e['fragile'] = bool(np.isfinite(e['top_share']) and e['top_share'] > FRAGILE)
+        e['by_env_top_share'] = {n: envs[n]['concentration'][p]['top_share'] for n in names}
+        out[p] = e
+    return dict(parts=out, fragile=any(v['fragile'] for v in out.values()))
+
+
+def load_part(path, meta):
+    if not path or not os.path.exists(path):
+        return None
+    r = json.load(open(path, encoding='utf-8'))
+    return r if r.get('meta') == meta else None
+
+
+_POOL = {}
+
+
+def _pool_init(fits, args):
+    _POOL.update(fits=fits, args=args)
+
+
+def _env_job(job):
+    fam, ph, name, env = job
+    a = _POOL['args']
+    m, reps = env_result(_POOL['fits'][fam], env, name, ph, a['B'], a['R'], a['seed'])
+    return name, m, {k: [float(x) for x in v] for k, v in reps.items()}
+
+
+def test_d2(dst, construction, test_sets, B=B_TEST, R=R_TEST, seed=SEED_TEST, part_dir=None, only=None, no_time=False, workers=1):
     """Анализ теста: программы, B1, ящик и Φ-база строятся по всем сборкам построения семейства; меры — на свежих средах фаз test5 и
-    new5; правила — по RULES и RULES_ACTIVE; описательное — m1_phi, совпадение F, попадание в три неверных, оценщик."""
+    new5; правила — по RULES и RULES_ACTIVE; описательное — m2_max, разбивка m3, хрупкость, λ = 0 / 1e-2 / 1e-4, совпадение F, попадание
+    в три неверных, оценщик. Каждая среда пишется в part_dir/<фаза>__<имя>.json; при старте готовые (те же зерно, B, R, λ и код)
+    берутся оттуда. only — только эти среды (повтор на детерминизм); no_time — без времени в выводе (побайтное сравнение)."""
     assert RULES_ACTIVE is not None, 'константы PREREG не заданы'
     t0 = time.time()
-    fits = {}
-    for fam, mdirs in construction.items():
-        envs = []
-        for md in mdirs:
-            envs += [e for n, e in load_merged(md).items() if family_of(n) == fam]
-        fits[fam] = fit_family(envs)
-    out = dict(phase='test', hypothesis='394b7be2', B=B, R=R, seed=seed, level=LEVEL, rules_active=RULES_ACTIVE,
-               formulas={fam: {h: f['prog'] for h, f in fs.items()} for fam, fs in fits.items()},
-               formulas_phi={fam: {h: f['phi'] for h, f in fs.items()} for fam, fs in fits.items()}, envs={}, rules={}, descr={})
-    boots = {}
-    rng = np.random.default_rng(seed)
+    meta = dict(seed=seed, B=B, R=R, lam=LAMBDA, code=code_sha())
+    todo = []
     for ph, mdirs in test_sets.items():
         for md in mdirs:
             for name, env in sorted(load_merged(md).items()):
-                fam = family_of(name)
-                ea = env_arrays(fits[fam], env, R, rng)
-                m, b = env_measures(ea, B, rng)
-                items, offs, lps = env_table(env, with_logp=True)
-                desc = {}
-                for h in ea['heads']:
-                    f = fits[fam][h]
-                    sc = head_scores(f['prog'], f['om'], f['box'], items, offs[h], logp=lps[h], phi=f['phi'])
-                    sc.pop('_ll')
-                    desc[h] = sc
-                m['heads_scores'] = desc
-                F_obs, _ = coincidence_stats(ea['D'])
-                m['F_obs'] = F_obs
-                m['F_prog'] = float(np.mean([coincidence_stats(s_)[0] for s_ in ea['S']])) if ea['S'] else float('nan')
-                out['envs'][name] = dict(m, phase=ph, family=fam)
-                boots[name] = b
+                if only is None or name in only:
+                    todo.append((ph, name, env))
+    fits = {}
+    for fam in sorted({family_of(n) for _, n, _ in todo}):
+        envs = []
+        for md in construction[fam]:
+            envs += [e for n, e in load_merged(md).items() if family_of(n) == fam]
+        fits[fam] = fit_family(envs)
+    out = dict(phase='test', hypothesis='394b7be2', B=B, R=R, seed=seed, lam=LAMBDA, level=LEVEL, rules_active=RULES_ACTIVE,
+               code_sha256=meta['code'], only=only,
+               formulas={fam: {h: f['prog'] for h, f in fs.items()} for fam, fs in fits.items()},
+               formulas_phi={fam: {h: f['phi'] for h, f in fs.items()} for fam, fs in fits.items()}, envs={}, rules={}, descr={})
+    if part_dir:
+        os.makedirs(part_dir, exist_ok=True)
+    res, need = {}, []
+    for ph, name, env in todo:
+        part = os.path.join(part_dir, f'{ph}__{name}.json') if part_dir else None
+        r = load_part(part, meta)
+        if r is None:
+            need.append((family_of(name), ph, name, env))
+        else:
+            res[name] = r
+    args = dict(B=B, R=R, seed=seed)
+    _pool_init(fits, args)
+
+    def keep(name, m, reps, ph, fam):
+        r = dict(m, phase=ph, family=fam, boots=reps, meta=meta)
+        if part_dir:
+            json.dump(r, open(os.path.join(part_dir, f'{ph}__{name}.json'), 'w', encoding='utf-8'), ensure_ascii=False, default=float)
+        res[name] = r
+    if workers > 1 and len(need) > 1:                             # процессы «spawn»: без унаследованных потоков OpenMP и BLAS
+        import multiprocessing as mp
+        with mp.get_context('spawn').Pool(workers, initializer=_pool_init, initargs=(fits, args)) as pool:
+            for (fam, ph, _, _), (name, m, reps) in zip(need, pool.imap(_env_job, need)):
+                keep(name, m, reps, ph, fam)
+    else:
+        for job in need:
+            name, m, reps = _env_job(job)
+            keep(name, m, reps, job[1], job[0])
+    boots = {}
+    for ph, name, _ in todo:
+        r = dict(res[name])
+        boots[name] = {k: np.array(v, float) for k, v in r.pop('boots').items()}
+        r.pop('meta', None)
+        out['envs'][name] = r
     for rule, (fam, ph, meas, kind, part_b, shift) in RULES.items():
         names = sorted(n for n, e in out['envs'].items() if e['family'] == fam and e['phase'] == ph and np.isfinite(e['point'][meas]))
         pts = {n: out['envs'][n]['point'][meas] for n in names}
         sds = {n: out['envs'][n]['sd'][meas] for n in names}
         e = family_rule(pts, {n: boots[n][meas] for n in names}, sds, names, kind, part_b, shift) if len(names) >= 2 else dict(
             verdict_rule='не определено (сред мало)', names=names)
-        e.update(active=RULES_ACTIVE[rule], measure=meas, shift=shift, names=names)
+        e.update(active=RULES_ACTIVE[rule], measure=meas, shift=shift, names=names, fragile=fragility(out['envs'], names, meas))
+        if meas in ('m1', 'm1_phi', 'm2') and names:
+            e['lambda_sens'] = {lam: float(np.mean([out['envs'][n]['lambda_sens'][lam][meas] for n in names])) for lam in
+                                out['envs'][names[0]]['lambda_sens']}
         out['rules'][rule] = e
     for meas in DESCR_MEAS:
         for fam in ('thousands', 'length'):
@@ -823,11 +1090,37 @@ def test_d2(dst, construction, test_sets, B=B_TEST, R=R_TEST, seed=SEED_TEST):
                 out['descr'][f'{fam} {meas}'] = C4.mean_entry({n: out['envs'][n]['point'][meas] for n in names},
                                                               {n: boots[n][meas] for n in names}, names, C4.DESCR_LEVEL)
     out['verdicts'] = {r: out['rules'][r].get('verdict_rule') for r in RULES}
-    out['seconds'] = round(time.time() - t0, 1)
+    if not no_time:
+        out['seconds'] = round(time.time() - t0, 1)
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
-    print('вердикт DISTILL-02:', out['verdicts'], '| время', out['seconds'], 'с', flush=True)
+    print('вердикт DISTILL-02:', {r: (v, out['rules'][r]['active']) for r, v in out['verdicts'].items()},
+          '' if no_time else f"| время {out['seconds']} с", flush=True)
     return out
 
+
+def main(a):
+    if not a:
+        sys.exit(__doc__)
+    if a[0] == 'merge4':                                          # сборка фаз OCDIV-04 (тем же кодом, что в OCDIV-04)
+        C4.merge4(a[1], a[2], a[3], a[4:])
+    elif a[0] == 'merge2':                                        # сборка фаз OCDIV-02/03 (`ocdiv2.merge`)
+        W.merge(a[1], a[2], a[3], a[4:])
+    elif a[0] == 'merge_d2':                                      # сборка свежих фаз DISTILL-02 (test5, new5)
+        merge_d2(a[1], a[2], a[3], a[4:])
+    elif a[0] == 'pilot3':                                        # пилот 3 (совет 74); пилот 2 — код коммита e5785e6a
+        spec = json.load(open(a[2], encoding='utf-8'))
+        pilot_sets(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
+                   R=spec.get('R', 20), B=spec.get('B', 200))
+    elif a[0] == 'test':
+        spec = json.load(open(a[2], encoding='utf-8'))            # {"construction": {fam: [dirs]}, "test": {фаза: [dirs]}, ...}
+        test_d2(a[1], spec['construction'], spec['test'], B=spec.get('B', B_TEST), R=spec.get('R', R_TEST), part_dir=spec.get('part_dir'),
+                only=spec.get('only'), no_time=spec.get('no_time', False), workers=spec.get('workers', 1))
+    elif a[0] == 'pilot':
+        spec = json.load(open(a[2], encoding='utf-8'))            # {"fit": {ключ: [dir, [среды] | null]}, "eval": {имя: [ключ, [dirs], [среды] | null]}}
+        pilot(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
+              R=spec.get('R', 50))
+    else:
+        sys.exit(__doc__)
 
 
 if __name__ == '__main__':
