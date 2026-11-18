@@ -157,4 +157,19 @@ check('сухой прогон: в мире «головы — программ�
       sm['prog_minus_b1_pos'] == 8 and sm['prog_minus_b1_mean'] > 0, json.dumps(sm, default=float)[:300])
 check('сухой прогон: вывод пилота — json без NaN в формулах', all(np.isfinite(v) for f in out['formulas']['thousands'].values() for v in f['w']))
 
+# 7. Меры по средам с бутстрепом и пилот 2 (мощность) на той же заглушке
+fits_s = D.fit_family(list(D.load_merged(os.path.join(tmp, 'fit')).values()))
+env_s = D.load_merged(os.path.join(tmp, 'eval'))['T_X29_p3']
+ea = D.env_arrays(fits_s, env_s, 10, np.random.default_rng(3))
+em, reps = D.env_measures(ea, 30, np.random.default_rng(4))
+check('меры среды: в мире «головы — программы» m1 > 0, m2 > 0,5 (программа — истина), |m3| < 0,15 (программы независимы при данном входе), '
+      'ст. откл. повторов конечны', em['point']['m1'] > 0 and em['point']['m2'] > 0.5 and abs(em['point']['m3']) < 0.15
+      and all(np.isfinite(v) for v in em['sd'].values()), json.dumps(em, default=float)[:300])
+out2 = D.pilot2(os.path.join(tmp, 'pilot2.json'), {'thousands': (os.path.join(tmp, 'fit'), None)},
+                {'проверка': ('thousands', [os.path.join(tmp, 'eval')], None)}, R=5, B=20)
+pw2 = out2['sets']['проверка']['power']
+check('пилот 2: мощность посчитана для m1, m1_phi, m2 и m3; у двустороннего m3 решающая = вверх + вниз',
+      set(pw2) == {'m1', 'm1_phi', 'm2', 'm3'} and all(v is not None for v in pw2.values())
+      and abs(pw2['m3']['power']['decisive'] - pw2['m3']['power']['confirm'] - pw2['m3']['power']['refute']) < 1e-12, json.dumps(pw2, default=float)[:300])
+
 print(f'провалов: {len(fails)}')

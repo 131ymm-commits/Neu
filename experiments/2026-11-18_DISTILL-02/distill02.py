@@ -572,12 +572,146 @@ def main(a):
         C4.merge4(a[1], a[2], a[3], a[4:])
     elif a[0] == 'merge2':                                        # сборка фаз OCDIV-02/03 (`ocdiv2.merge`)
         W.merge(a[1], a[2], a[3], a[4:])
+    elif a[0] == 'pilot2':
+        spec = json.load(open(a[2], encoding='utf-8'))
+        pilot2(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
+               R=spec.get('R', 20), B=spec.get('B', 200))
     elif a[0] == 'pilot':
         spec = json.load(open(a[2], encoding='utf-8'))            # {"fit": {ключ: [dir, [среды] | null]}, "eval": {имя: [ключ, [dirs], [среды] | null]}}
         pilot(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
               R=spec.get('R', 50))
     else:
         sys.exit(__doc__)
+
+
+# ═══════════════ часть 2: меры по средам с бутстрепом, правила и мощность (для PREREG; пилот 2 — по уже собранным данным)
+LEVEL = C4.LEVEL                                                   # 0,0025 на сторону, как в программе
+MIN_NUMERIC = 200                                                  # голова входит в среду, если числовых ответов не меньше 200
+SHARE_MIN = 0.5                                                    # П2: «большая часть» объяснимого — больше половины
+
+
+def env_arrays(fits, env, R, rng, rounded=True):
+    """Для одной среды: по задачам и головам — лог-вероятности ответа у программы, B1, ящика (NaN — без числа), смещения головы и R
+    выборок программ (для K из программ)."""
+    items, offs, lps = env_table(env, with_logp=True)
+    hs = [h for h in offs if h in fits and int((offs[h] < NC).sum()) >= MIN_NUMERIC]
+    n = len(items)
+    L = {k: np.full((n, len(hs)), np.nan) for k in ('prog', 'b1', 'box', 'phi', 'b0')}
+    for k, h in enumerate(hs):
+        f = fits[h]
+        bx = box_classes(f['box'], items)
+        for i, (it, d) in enumerate(zip(items, offs[h])):
+            if d >= NC:
+                continue
+            y = it['sum'] + int(d)
+            dist = program_dist(f['prog'], it, rounded)
+            L['prog'][i, k] = math.log(max(answer_prob(f['prog'], it, y, rounded, dist), 1e-300))
+            L['b1'][i, k] = math.log(max(b1_prob(f['om'], it, y), 1e-300))
+            L['b0'][i, k] = math.log(max(b0_prob(f['om']['acc'], it, y), 1e-300))
+            L['box'][i, k] = math.log(max(box_prob(f['box'], it, y, f['prog'], bx[i]), 1e-300))
+            L['phi'][i, k] = math.log(max(answer_prob(f['phi'], it, y, rounded), 1e-300))
+    D = np.column_stack([offs[h] for h in hs]) if hs else np.zeros((n, 0), np.int64)
+    tabs = [[sampler(fits[h]['prog'], it, rounded) if D[i, k] < NC else None for i, it in enumerate(items)] for k, h in enumerate(hs)]
+    S_ = []
+    for _ in range(R):
+        Dp = D.copy()
+        for k in range(len(hs)):
+            for i, it in enumerate(items):
+                if tabs[k][i] is not None:
+                    Dp[i, k] = draw(tabs[k][i], it, rng)
+        S_.append(Dp)
+    return dict(heads=hs, L=L, D=D, S=S_, n=n)
+
+
+def k_stat(D, rows=None):
+    Dr = D if rows is None else D[rows]
+    ks = []
+    for i, j in itertools.combinations(range(Dr.shape[1]), 2):
+        both = (Dr[:, i] != 0) & (Dr[:, j] != 0) & (Dr[:, i] < NC) & (Dr[:, j] < NC)
+        if both.any():
+            ks.append(float((Dr[both, i] == Dr[both, j]).mean()))
+    return float(np.mean(ks)) if ks else float('nan')
+
+
+def env_point(ea, rows=None):
+    """Точки мер среды на строках rows (бутстреп) или на всех задачах:
+    m1 — среднее по головам разности лог-вероятностей программа − B1 (на числовой ответ); m1_phi — программа − Φ-база;
+    m2 — доля объяснимого Σ(программа − B1) / Σ(max(ящик, программа) − B1) по головам: сколько программа берёт от лучшего из ящика и
+    программы (≤ 1; не определена, если обе не лучше B1); m3 — ln(K наблюдённое / K из программ)."""
+    L = {k: (v if rows is None else v[rows]) for k, v in ea['L'].items()}
+    with np.errstate(invalid='ignore'):
+        d1 = np.nanmean(L['prog'] - L['b1'], axis=0)
+        dphi = np.nanmean(L['prog'] - L['phi'], axis=0)
+        dbox = np.maximum(np.nanmean(L['box'] - L['b1'], axis=0), d1)
+    m1 = float(np.nanmean(d1)) if len(d1) else float('nan')
+    m2 = float(np.nansum(d1) / np.nansum(dbox)) if np.nansum(dbox) > 1e-12 else float('nan')
+    ko = k_stat(ea['D'], rows)
+    kp = float(np.nanmean([k_stat(s, rows) for s in ea['S']])) if ea['S'] else float('nan')
+    m3 = float(math.log(ko / kp)) if (ko > 0 and kp > 0) else float('nan')
+    return dict(m1=m1, m1_phi=float(np.nanmean(dphi)) if len(dphi) else float('nan'), m2=m2, m3=m3, K_obs=ko, K_prog=kp)
+
+
+def env_measures(ea, B, rng):
+    """Точки и повторы бутстрепа (строки задач с возвращением) мер среды."""
+    pt = env_point(ea)
+    reps = {k: [] for k in ('m1', 'm1_phi', 'm2', 'm3')}
+    for _ in range(B):
+        rows = rng.integers(0, ea['n'], ea['n'])
+        r = env_point(ea, rows)
+        for k in reps:
+            reps[k].append(r[k])
+    out = dict(point=pt, n=ea['n'], heads=ea['heads'])
+    out['sd'] = {k: float(np.nanstd(v, ddof=1)) for k, v in reps.items()}
+    return out, {k: np.array(v) for k, v in reps.items()}
+
+
+def family_rule(points, boots, sds, names, kind, part_b, shift=0.0):
+    """Правило по средам семейства (как OCDIV-04, `ocdiv4.rule4`): величина − shift; часть А — M4 среднего, часть Б — t по средам."""
+    p = {n: points[n] - shift for n in names}
+    b = {n: boots[n] - shift for n in names}
+    return C4.rule4(p, b, sds, names, kind, part_b)
+
+
+def power_rule(points, sds, scale, m, part_b, shift=0.0):
+    """Мощность по пилоту (модель «новая среда», `ocdiv4.power_entry4`): точка среды ~ N(μ, τ² + s²)."""
+    return C4.power_entry4([x - shift for x in points], sds, scale, m, part_b)
+
+
+def pilot2(dst, fit_dirs, eval_sets, R=20, B=200, seed=SEED + 1000):
+    """Пилот 2: меры по средам с бутстрепом и мощность правил для PREREG (данные — уже собранные, описательно)."""
+    t0 = time.time()
+    fits = {}
+    for key, (mdir, names) in fit_dirs.items():
+        fits[key] = fit_family(list(select_envs(load_merged(mdir), names).values()))
+    out = dict(phase='pilot2', hypothesis='394b7be2', R=R, B=B, seed=seed, min_numeric=MIN_NUMERIC, share_min=SHARE_MIN, sets={})
+    for si, (name, (key, mdirs, names)) in enumerate(eval_sets.items()):
+        envs = {}
+        for md in mdirs:
+            envs.update(select_envs(load_merged(md), names))
+        rng = np.random.default_rng(seed + 100 * si)
+        res = {}
+        for en, env in sorted(envs.items()):
+            ea = env_arrays(fits[key], env, R, rng)
+            m, _ = env_measures(ea, B, rng)
+            res[en] = m
+        names_ = sorted(res)
+        pw = {}
+        for meas, shift, kind in (('m1', 0.0, 'pos'), ('m1_phi', 0.0, 'pos'), ('m2', SHARE_MIN, 'pos'), ('m3', 0.0, 'two')):
+            pts = [res[n]['point'][meas] for n in names_]
+            sds = [res[n]['sd'][meas] for n in names_]
+            for m_, pb in ((len(names_), len(names_) >= 4),):
+                e = power_rule(pts, sds, 1.0, m_, pb, shift)
+                if e is not None and kind == 'two':
+                    e['power']['decisive'] = e['power']['confirm'] + e['power']['refute']
+                elif e is not None:
+                    e['power']['decisive'] = e['power']['confirm']
+                pw[meas] = e
+        out['sets'][name] = dict(key=key, envs=res, power=pw)
+    out['seconds'] = round(time.time() - t0, 1)
+    json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
+    print('пилот 2 DISTILL-02:', {k: {m: (round(v['power'][m]['power']['decisive'], 3) if v['power'][m] else None) for m in v['power']}
+                                   for k, v in out['sets'].items()}, '| время', out['seconds'], 'с', flush=True)
+    return out
 
 
 if __name__ == '__main__':
