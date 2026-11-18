@@ -224,5 +224,48 @@ check('мир с заложенным совпадением: Р1-Т — сре�
       tr4['rules']['Р1-Т']['delta'] > 0 and all(v > 0 for v in tr4['rules']['Р1-Т']['by_env'].values()), json.dumps(tr4['rules']['Р1-Т']['by_env']))
 C.RULES_ACTIVE = C.NONDEG = C.N3C_FIT = None
 
+# 8. Извлечение на заглушке (без моделей в сессии): ocdiv4_extract.main с подменённым ocdiv2_extract.run; вывод собирается merge4
+import subprocess  # noqa: E402
+import make_jobs4 as MJ  # noqa: E402
+
+orig_run = X4.X2.run
+
+
+def fake_run(repo, rev, envs, bs, log):
+    rr = np.random.default_rng(7)
+    return dict(repo=repo, revision=rev, commit=rev, load_seconds=0.0, load_errors=[], seconds=0.0, seconds_env={e['name']: 0.0 for e in envs},
+                cols={e['name']: fake4(e, 0, rr, 0.3) for e in envs}, versions=dict(torch='2.11.0+cpu', transformers='5.20.2'), cpu_model='заглушка')
+
+
+X4.X2.run = fake_run
+ex_dir = os.path.join(tmp, 'ex')
+argv0 = sys.argv
+try:
+    nm0 = 'Qwen2.5-0.5B-Instruct'
+    repo0, rev0 = C.V.CROWD[nm0].split('@')
+    for e in X4.envs_ocdiv4('pilot3', ('length',)):
+        sys.argv = ['ocdiv4_extract.py', '--phase', 'pilot3', '--model', repo0, '--revision', rev0, '--envs', e['name'], '--out',
+                    os.path.join(ex_dir, e['name'])]
+        X4.main()
+finally:
+    X4.X2.run, sys.argv = orig_run, argv0
+outs = [json.load(open(os.path.join(ex_dir, e['name'], f'answers_{nm0}.json'))) for e in X4.envs_ocdiv4('pilot3', ('length',))]
+check('извлечение на заглушке: фаза pilot3, по одной среде в файле, ключи и номера задач записаны',
+      all(o['phase'] == 'pilot3' and o['experiment'] == 'OCDIV-04' and len(o['envs']) == 1 and len(o['envs'][0]['keys']) == 600 for o in outs))
+mm = C.merge4(os.path.join(tmp, 'm_ex'), 'pilot3', 'length', [os.path.join(ex_dir, e['name']) for e in X4.envs_ocdiv4('pilot3', ('length',))])
+check('сборка вывода извлечения: голова со всеми тремя средами «длины» собрана, без ошибок', len(mm['heads']) == 1 and not mm['head_errors'])
+
+# 9. Файлы заданий: 77 заданий пилота с верной фазой; без --dir генератор останавливается; повторы детерминизма воспроизводимы
+jd4 = os.path.join(tmp, 'jobs_pilot')
+r_ = subprocess.run([sys.executable, os.path.join(X_DIR, 'make_jobs4.py'), 'pilot', '--dir', jd4], capture_output=True, text=True)
+files = sorted(os.listdir(jd4))
+check('make_jobs4 pilot: 77 файлов ocdiv4_pilot_*, у каждого --phase pilot3 и ревизия из ocdiv.CROWD',
+      len(files) == 77 and all(f.startswith('ocdiv4_pilot_') for f in files)
+      and all('--phase pilot3' in open(os.path.join(jd4, f)).read() for f in files)
+      and all(any(C.V.CROWD[nm].split('@')[1] in open(os.path.join(jd4, f)).read() for nm in C.V.CROWD) for f in files), r_.stderr[-300:])
+r2 = subprocess.run([sys.executable, os.path.join(X_DIR, 'make_jobs4.py'), 'pilot'], capture_output=True, text=True)
+check('make_jobs4 без --dir останавливается (ERRORS № 198)', r2.returncode != 0)
+check('ДЕТЕРМИНИЗМ-НА-3 (тест): три разных задания из 77, выбор воспроизводим', len(set(MJ.rep_jobs())) == 3 and MJ.rep_jobs() == MJ.rep_jobs())
+
 print(f'провалов: {len(fails)}')
 sys.exit(len(fails) > 0)
