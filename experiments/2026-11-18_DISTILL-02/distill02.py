@@ -469,6 +469,20 @@ def coincidence_env(progs, items, D_obs, R, rng, rounded=True):
 
 
 # ───────────── сборка данных и пилот
+def merge_d2(out_dir, phase, family, job_dirs):
+    """Сборка свежих фаз DISTILL-02 тем же кодом, что OCDIV-02 и OCDIV-04 (`ocdiv2.merge`: сверка номеров задач, ключей (a, b),
+    sha256 подсказки и ревизий — СТОП при расхождении); на время вызова `ocdiv2.D2.envs_ocdiv2` отдаёт среды `distill02_extract.envs_d2`."""
+    sys.path.insert(0, X_DIR)
+    import distill02_extract as XD
+    assert phase in XD.PHASES5, phase
+    orig = W.D2.envs_ocdiv2
+    W.D2.envs_ocdiv2 = lambda ph, fams=None: XD.envs_d2(ph, fams)
+    try:
+        return W.merge(out_dir, phase, family, job_dirs)
+    finally:
+        W.D2.envs_ocdiv2 = orig
+
+
 def load_merged(mdir):
     d, envs = S.load_new(mdir)
     return envs
@@ -572,6 +586,8 @@ def main(a):
         C4.merge4(a[1], a[2], a[3], a[4:])
     elif a[0] == 'merge2':                                        # сборка фаз OCDIV-02/03 (`ocdiv2.merge`)
         W.merge(a[1], a[2], a[3], a[4:])
+    elif a[0] == 'merge_d2':                                      # сборка свежих фаз DISTILL-02 (test5, new5)
+        merge_d2(a[1], a[2], a[3], a[4:])
     elif a[0] == 'pilot2':
         spec = json.load(open(a[2], encoding='utf-8'))
         pilot2(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
@@ -669,10 +685,33 @@ def env_measures(ea, B, rng):
 
 
 def family_rule(points, boots, sds, names, kind, part_b, shift=0.0):
-    """Правило по средам семейства (как OCDIV-04, `ocdiv4.rule4`): величина − shift; часть А — M4 среднего, часть Б — t по средам."""
+    """Правило по средам семейства — та же логика, что `ocdiv4.rule4` (часть А — M4 среднего при 0,0025, `ocdiv4.mean_entry`; часть Б —
+    t по средам, `ocdiv4.t_envs`; знак по средам — `ocdiv4.env_signs`), величина − shift. Метки вердикта — свои: у одностороннего
+    «подтверждено» / «опровергнуто» / «в среднем этих сред (на новые среды не переносится)» / «не решено»; у двустороннего — «больше» /
+    «меньше» (с той же оговоркой, если есть только часть А) / «не решено»."""
     p = {n: points[n] - shift for n in names}
     b = {n: boots[n] - shift for n in names}
-    return C4.rule4(p, b, sds, names, kind, part_b)
+    e = C4.mean_entry(p, b, names, LEVEL)
+    tb = C4.t_envs(p)
+    e['t_envs'] = tb
+    e['signs'] = C4.env_signs(p, sds, names)
+    a = e['verdict']
+    b_up = bool(np.isfinite(tb['t']) and tb['t'] > tb['crit'])
+    b_dn = bool(np.isfinite(tb['t']) and tb['t'] < -tb['crit'])
+    up, dn = ('подтверждено', 'опровергнуто') if kind == 'pos' else ('больше', 'меньше')
+    if a == 'подтверждено' and (b_up or not part_b):
+        v = up
+    elif a == 'опровергнуто' and (b_dn or not part_b):
+        v = dn
+    elif a == 'подтверждено':
+        v = f'в среднем этих сред: {up} (на новые среды не переносится)' if kind == 'two' else 'в среднем этих сред (на новые среды не переносится)'
+    elif a == 'опровергнуто' and kind == 'two':
+        v = f'в среднем этих сред: {dn} (на новые среды не переносится)'
+    else:
+        v = 'не решено'
+    e['verdict_rule'] = v
+    e['mark'] = 'знак по средам разный' if (e['signs']['neg'] and e['signs']['pos']) else None
+    return e
 
 
 def power_rule(points, sds, scale, m, part_b, shift=0.0):
@@ -719,10 +758,11 @@ def pilot2(dst, fit_dirs, eval_sets, R=20, B=200, seed=SEED + 1000):
 # ═══════════════ часть 3: анализ теста (PREREG; константы задаются до регистрации, без них анализ не идёт)
 # правило: (семейство, фаза, мера, вид, есть ли часть Б, сдвиг)
 RULES = {'Р1-Т': ('thousands', 'test5', 'm1', 'pos', True, 0.0), 'Р1-Л': ('length', 'test5', 'm1', 'pos', False, 0.0),
+         'Р1Ф-Т': ('thousands', 'test5', 'm1_phi', 'pos', True, 0.0), 'Р1Ф-Л': ('length', 'test5', 'm1_phi', 'pos', False, 0.0),
          'Р2-Т': ('thousands', 'test5', 'm2', 'pos', True, SHARE_MIN), 'Р2-Л': ('length', 'test5', 'm2', 'pos', False, SHARE_MIN),
          'Р3-Т': ('thousands', 'test5', 'm3', 'two', True, 0.0), 'Р3-Л': ('length', 'test5', 'm3', 'two', False, 0.0),
          'Р4-Т': ('thousands', 'new5', 'm1', 'pos', False, 0.0)}
-DESCR_MEAS = ('m1_phi',)
+DESCR_MEAS = ()
 RULES_ACTIVE = None        # {'Р1-Т': True|False, ...}: True — правило, False — описательно (решающая мощность по пилоту < POWER_MIN)
 POWER_MIN = 0.2
 B_TEST, R_TEST = 4000, 20
