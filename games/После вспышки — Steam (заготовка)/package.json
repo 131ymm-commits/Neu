@@ -5,7 +5,7 @@
   "description": "Кооперативная стратегия о восстановлении мира после геомагнитной сверхбури",
   "main": "src/main.js",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "start": "electron .",
     "game": "node tools/build_game.js",
