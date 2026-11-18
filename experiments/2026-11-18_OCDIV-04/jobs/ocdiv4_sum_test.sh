@@ -12,6 +12,6 @@ grep -E "^✓|^✗|провалов" "$OUT/tests_full.log" | tee "$OUT/tests.log
 grep -q "провалов: 0" "$OUT/tests.log"
 python3 $E/ocdiv4.py merge "$OUT/m_T" test3 thousands gha_out/ocdiv4_test_*
 python3 $E/ocdiv4.py merge "$OUT/m_L" test3 length gha_out/ocdiv4_test_*
-python3 $E/ocdiv4.py test "$OUT/analysis.json" "$OUT/m_T" "$OUT/m_L" gha_out/ocdiv4_sum_pilot3/pilot.json --boot 10000 --workers 4
+timeout 180m python3 $E/ocdiv4.py test "$OUT/analysis.json" "$OUT/m_T" "$OUT/m_L" gha_out/ocdiv4_sum_pilot3/pilot.json --boot 10000 --workers 4          # совет 72: предел времени анализа (оценка, не замер)
 echo "== прибор"; python3 experiments/2026-11-17_OCDIV-02/trunc_check.py "$OUT/trunc.json" "gha_out/ocdiv4_test_*/answers_*.json" | tail -3
 rm -rf "$OUT/m_T" "$OUT/m_L"

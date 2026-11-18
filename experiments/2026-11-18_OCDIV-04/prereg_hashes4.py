@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 """OCDIV-04: sha256 файлов на момент регистрации → prereg_hashes4.json; --verify [--jobs] — сверка перед счётом теста.
 В списке:
-- код опыта, HYPOTHESIS.md, ожидания;
+- код опыта, HYPOTHESIS.md и оба дополнения, ожидания и скрипты, которые печатают числа PREREG;
 - код OCDIV-03 (ocdiv3.py: permute_wrong, mean_entry, t4_stream, пары) и его хеши; код OCDIV-02 (извлечение, сборка, счёт) и цепочка
   зарегистрированного кода, на который он опирается (OCDIV-01 → OCPOST-01 → OCSHIFT-01, OCINT-01 → OCREP-01 → OCMIX-01 → OCCOR-01 →
   OCGEO-01), distill.py (импортирует ocdiv3);
 - замок сырого вывода (tools/raw_status.py и его тест), файл workflow;
-- вывод пилота OCDIV-04 (ответы голов фазы pilot3) и его разбор; стенограмма совета по трём линзам; шаблоны заданий (jobs/).
+- вывод пилота OCDIV-04 (ответы голов фазы pilot3), три его разбора и вывод обоих заданий третьего контроля N3c; стенограмма совета по трём
+  линзам; шаблоны заданий (jobs/).
 С --jobs копии шаблонов в gha_par/ (если они там есть) должны побайтно совпасть со своими шаблонами."""
 import glob
 import hashlib
@@ -18,12 +19,14 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 OWN = ['ocdiv4.py', 'ocdiv4_extract.py', 'test_ocdiv4.py', 'make_jobs4.py', 'prereg_hashes4.py', 'posthoc_offsets3.py', 'report_ocdiv4.py',
-       'HYPOTHESIS.md', 'HYPOTHESIS-ADDENDUM.md', 'expect_ocdiv4.json',
+       'HYPOTHESIS.md', 'HYPOTHESIS-ADDENDUM.md', 'HYPOTHESIS-ADDENDUM-2.md', 'expect_ocdiv4.json', 'prereg_expect4.py', 'prereg_tables4.py',
+       'prereg_derived4.py', 'prereg_derived4.json',
        '../2026-11-17_OCDIV-03/ocdiv3.py', '../2026-11-17_OCDIV-03/prereg_hashes3.json',
        '../2026-11-17_OCDIV-02/ocdiv2.py', '../2026-11-17_OCDIV-02/ocdiv2_extract.py', '../2026-11-17_OCDIV-02/trunc_check.py',
        '../2026-11-17_OCDIV-02/prereg_hashes2.json', '../2026-11-17_DISTILL-01/distill.py',
        '../../.github/workflows/neu-par.yml', '../../tools/raw_status.py', '../../tools/test_raw_status.py',
        '../../gha_out/ocdiv4_sum_pilot/pilot.json', '../../gha_out/ocdiv4_sum_pilot2/pilot.json', '../../gha_out/ocdiv4_sum_pilot3/pilot.json',
+       '../../gha_out/ocdiv4_curves3/curves3.json', '../../gha_out/ocdiv4_control3/control3.json',
        '../2026-11-16_OCDIV-01/ocdiv.py', '../2026-11-16_OCDIV-01/ocdiv_extract.py',
        '../2026-11-15_OCPOST-01/ocpost.py', '../2026-11-15_OCPOST-01/ocpost_extract.py',
        '../2026-11-15_OCSHIFT-01/analyze_ocshift.py', '../2026-11-15_OCSHIFT-01/analyze_ocshift_test.py', '../2026-11-15_OCSHIFT-01/ocshift_extract.py',

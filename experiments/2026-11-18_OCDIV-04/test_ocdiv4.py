@@ -13,12 +13,28 @@ import ocdiv4 as C  # noqa: E402
 
 W, NC = C.W, C.NC
 fails = []
+REG = (C.RULES_ACTIVE, C.NONDEG, C.N3C_FIT)                      # константы регистрации — до того, как тесты их меняют
 
 
 def check(name, ok, info=''):
     print(('✓ ' if ok else '✗ ') + name + ('' if ok else f'  [{info}]'), flush=True)
     if not ok:
         fails.append(name)
+
+
+# 0. Замок «константы PREREG ↔ их источники» (совет 72, «нужно» 7): N3C_FIT — по выводу третьего контроля; RULES_ACTIVE — решающая мощность
+#    по пилоту при первичном нуле не меньше POWER_MIN; NONDEG — невырожденные среды пилота. Файлы — в репозитории (gha_out/).
+import json  # noqa: E402
+
+_ROOT = os.path.dirname(os.path.dirname(X_DIR))
+_pj, _cj = os.path.join(_ROOT, 'gha_out/ocdiv4_sum_pilot3/pilot.json'), os.path.join(_ROOT, 'gha_out/ocdiv4_control3/control3.json')
+if os.path.isfile(_pj) and os.path.isfile(_cj):
+    _P, _K = json.load(open(_pj, encoding='utf-8')), json.load(open(_cj, encoding='utf-8'))
+    _act = {r: bool(C.decisive(C.primary_power(_P, r, _K['n3c_fit']), C.RULES[r][2]) >= C.POWER_MIN) for r in C.RULES}
+    check('константы PREREG совпадают с источниками: N3C_FIT = control3.n3c_fit, RULES_ACTIVE — по мощности при первичном нуле, NONDEG — по пилоту',
+          REG[2] is _K['n3c_fit'] and REG[0] == _act and REG[1] == _P['nondeg'], f'{REG} | {_act} | {_K["n3c_fit"]}')
+else:
+    check('константы PREREG: файлы pilot.json и control3.json на месте', False, f'{_pj} {_cj}')
 
 
 # 1. Узор переносов: внутри области κ принимает ровно два значения, их различает c1 (обе семьи, все среды гипотезы)
@@ -235,6 +251,7 @@ check('разбор пилота: мощность запасного нуля N
 pr4b = C.pilot4(os.path.join(tmp, 'pilot4b.json'), mp4, B=4, workers=1)
 check('повторный разбор пилота на тех же данных совпадает с первым до бита (compare_pilots)',
       C.compare_pilots(json.load(open(os.path.join(tmp, 'pilot4b.json'))), json.load(open(os.path.join(tmp, 'pilot4.json')))) == [])
+C.RULES_ACTIVE = C.NONDEG = C.N3C_FIT = None
 try:
     C.test4(os.path.join(tmp, 'test4_x.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3)
     no_const = False
@@ -252,14 +269,26 @@ C.N3C_FIT = False
 tr4n = C.test4(os.path.join(tmp, 'test4_n0c.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3)
 check('при N3C_FIT = False правила Р1 идут по запасному нулю N0c (среднее Р1-Т = среднему N0c по средам)',
       abs(tr4n['rules']['Р1-Т']['delta'] - np.mean([tr4n['families']['thousands']['envs'][n]['n0c_ood']['point'] for n in tr4n['families']['thousands']['use']])) < 1e-12)
+_mean = lambda r, key: np.mean([r['families'][f]['envs'][n][key]['point'] for f in ('thousands',) for n in r['families'][f]['use']])  # noqa: E731
+check('ветвь (описательно): при N3C_FIT = False — Р1 по N3c, при True — по N0c; ветвь неактивна, у Р2-Т ветви нет',
+      abs(tr4n['rules_alt']['Р1-Т']['delta'] - _mean(tr4n, 'd3c_ood')) < 1e-12 and abs(tr4['rules_alt']['Р1-Т']['delta'] - _mean(tr4, 'n0c_ood')) < 1e-12
+      and tr4n['rules_alt']['Р1-Т']['key'] == 'd3c_ood' and tr4n['rules']['Р1-Т']['key'] == 'n0c_ood' and set(tr4n['rules_alt']) == {'Р1-Т', 'Р1-Л'}
+      and not any(e['active'] for e in tr4n['rules_alt'].values()))
 C.RULES_ACTIVE = C.NONDEG = C.N3C_FIT = None
 
 # 10. Каркас отчёта собирается на выводе анализа заглушки (до данных теста)
 import report_ocdiv4 as RP  # noqa: E402
-xs = dict(expectations=[dict(id='E1', text='Р1-Т подтверждено', p=0.5, key='Р1-Т:подтверждено'), dict(id='E2', text='опыт определён', p=0.95, key='method')])
+xs = dict(expectations=[dict(id='E1', text='Р1-Т подтверждено', p=0.5, key='Р1-Т:подтверждено'), dict(id='E2', text='опыт определён', p=0.95, key='method'),
+                        dict(id='E3', text='ветвь Р1-Т подтверждено', p=0.25, key='alt:Р1-Т:подтверждено'),
+                        dict(id='E4', text='Р2-Т решающий', p=0.1, key='Р2-Т:решающий')])
 md = RP.render(json.load(open(os.path.join(tmp, 'test4.json'))), json.load(open(os.path.join(tmp, 'pilot4.json'))), xs)
 check('каркас отчёта: собирается на заглушке, в нём три правила, обе таблицы сред, ожидания и вес опоры',
-      all(x in md for x in ('Р1-Т —', 'Р1-Л —', 'Р2-Т —', 'По средам: «тысячи»', 'По средам: «длина»', '| E1 |', '## Вес опоры')), md[:300])
+      all(x in md for x in ('Р1-Т —', 'Р1-Л —', 'Р2-Т —', 'По средам: «тысячи»', 'По средам: «длина»', '| E1 |', '| E4 |', '## Вес опоры')), md[:300])
+_An = json.load(open(os.path.join(tmp, 'test4_n0c.json')))
+mdn = RP.render(_An, json.load(open(os.path.join(tmp, 'pilot4.json'))), xs)
+check('каркас отчёта при N3C_FIT = False: первичный нуль N0c назван, ветвь N3c описательно, текст Р1 — про Δ0c',
+      'Первичный нуль правил Р1 — N0c' in mdn and 'Ветвь (описательно' in mdn and 'Δ0c = F − F₀(N0c)' in mdn and 'Что N3c годен' in mdn
+      and RP.outcome(_An, 'alt:Р1-Т:' + _An['rules_alt']['Р1-Т']['verdict_rule']) and not RP.outcome(_An, 'alt:Р1-Т:нет такого вердикта'), mdn[:300])
 
 # 7а. Третий контроль (HYPOTHESIS-ADDENDUM-2) на заглушке: кривые на Н1, корни, проверка на Н2, критерий; Н1 и Н2 не пересекаются
 cr3 = C.curves3(os.path.join(tmp, 'curves3.json'), mp4['thousands'], os.path.join(tmp, 'pilot4.json'), R=2, workers=1)
@@ -298,12 +327,12 @@ t3 = {e['name']: set(e['idx']) for e in X4.envs_ocdiv4('test3')}
 check('задачи pilot3 и test3 не пересекаются между собой и с прежними фазами (номера пар каждой среды)',
       all(not (p3[n] & t3[n]) for n in p3) and all(not ((p3[n] | t3[n]) & olds[ph][n]) for ph in olds for n in p3 if n in olds[ph]))
 
-# 7в. Вывод анализа теста при workers = 1 и workers = 2 совпадает до бита (кроме времени)
+# 7в. Вывод анализа теста при workers = 1 и workers = 4 совпадает до бита (кроме времени; совет 72)
 C.RULES_ACTIVE, C.NONDEG, C.N3C_FIT = pr4['rules_active'], pr4['nondeg'], True
 w1 = C.test4(os.path.join(tmp, 'tw1.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3, workers=1)
-w2 = C.test4(os.path.join(tmp, 'tw2.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3, workers=2)
+w2 = C.test4(os.path.join(tmp, 'tw2.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3, workers=4)
 strip = lambda r: json.dumps({k: v for k, v in r.items() if k != 'seconds'}, sort_keys=True, default=float)  # noqa: E731
-check('анализ теста: вывод при workers = 1 и workers = 2 совпадает до бита (кроме времени)', strip(w1) == strip(w2))
+check('анализ теста: вывод при workers = 1 и workers = 4 совпадает до бита (кроме времени)', strip(w1) == strip(w2))
 C.RULES_ACTIVE = C.NONDEG = C.N3C_FIT = None
 
 # 8. Извлечение на заглушке (без моделей в сессии): ocdiv4_extract.main с подменённым ocdiv2_extract.run; вывод собирается merge4
@@ -348,6 +377,15 @@ check('make_jobs4 pilot: 77 файлов ocdiv4_pilot_*, у каждого --pha
 r2 = subprocess.run([sys.executable, os.path.join(X_DIR, 'make_jobs4.py'), 'pilot'], capture_output=True, text=True)
 check('make_jobs4 без --dir останавливается (ERRORS № 198)', r2.returncode != 0)
 check('ДЕТЕРМИНИЗМ-НА-3 (тест): три разных задания из 77, выбор воспроизводим', len(set(MJ.rep_jobs())) == 3 and MJ.rep_jobs() == MJ.rep_jobs())
+# 9а. Шаблоны теста и анализа в jobs/ совпадают с тем, что пишет генератор сейчас (ERRORS № 205: шаблон анализа отстал от make_jobs4.py)
+_jt = tempfile.mkdtemp(prefix='ocdiv4_jobs_')
+for _m in ('test', 'sum_test'):
+    subprocess.run([sys.executable, os.path.join(X_DIR, 'make_jobs4.py'), _m, '--dir', _jt], check=True, capture_output=True)
+_gen = sorted(os.listdir(_jt))
+_reg = sorted(x for x in os.listdir(os.path.join(X_DIR, 'jobs')) if x.startswith(('ocdiv4_test_', 'ocdiv4_rep_', 'ocdiv4_sum_test')))
+check('шаблоны jobs/ (80 заданий теста и анализ) побайтно совпадают с выводом make_jobs4.py', _gen == _reg and len(_gen) == 81
+      and all(open(os.path.join(_jt, x), 'rb').read() == open(os.path.join(X_DIR, 'jobs', x), 'rb').read() for x in _gen),
+      str(sorted(set(_gen) ^ set(_reg)))[:300])
 
 print(f'провалов: {len(fails)}')
 sys.exit(len(fails) > 0)

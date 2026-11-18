@@ -240,10 +240,33 @@ SPIKE_ITEM_DELTAS = (0.005, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2)
 SEED_TEST, SEED_PILOT = 9_500_000, 9_600_000
 SEED_POWER4, SEED_REP4 = 9_710_000, 9_720_000
 K_PAIRS = 200
-# константы PREREG (по разбору пилота, до данных теста); None — не заданы
-RULES_ACTIVE = None        # {'Р1-Т': True|False, ...}: True — правило, False — описательно (мощность < POWER_MIN)
-NONDEG = None              # {'thousands': [...], 'length': [...]}: невырожденные среды по пилоту (оракул ≥ 0,1)
-N3C_FIT = None             # True — N3c годен по вбросу; False — первичный нуль Р1 — N0 со стратами c1
+# константы PREREG (по разбору пилота и третьему контролю, до данных теста). Источники сверяет тест test_ocdiv4.py (замок «константы ↔ json»):
+# N3C_FIT — gha_out/ocdiv4_control3/control3.json (n3c_fit; HYPOTHESIS-ADDENDUM-2: в T_X49_p3 нет корня — контроль не пройден);
+# RULES_ACTIVE — решающая мощность по пилоту при первичном нуле не меньше POWER_MIN (gha_out/ocdiv4_sum_pilot3/pilot.json: power_alt для Р1
+# при N0c, power для Р2-Т); NONDEG — pilot.json, nondeg (оракул ≥ 0,1).
+RULES_ACTIVE = {'Р1-Т': False, 'Р1-Л': True, 'Р2-Т': False}
+NONDEG = {'thousands': ['T_X19_p3', 'T_X29_p3', 'T_X39_p3', 'T_X49_p3', 'T_X59_p3', 'T_X69_p3', 'T_X79_p3', 'T_X89_p3'],
+          'length': ['L_X9_p3', 'L_X99_p3', 'L_X999_p3']}
+N3C_FIT = False            # True — N3c годен; False — первичный нуль Р1 — N0 со стратами c1 (N0c), N3c — ветвь (описательно)
+
+
+def primary_key(rule, n3c_fit):
+    """Величина правила при первичном нуле: у Р1 — Δ3c (N3c) при годном N3c, иначе Δ0c (N0c); у Р2-Т — K вне минус ID."""
+    key = RULES[rule][1]
+    return ('d3c_ood' if n3c_fit else 'n0c_ood') if key == 'd3c_ood' else key
+
+
+def primary_power(pilot_res, rule, n3c_fit):
+    """Запись мощности по пилоту при первичном нуле (power_entry4): у Р1 при N0c — power_alt «R (N0c)», иначе — power."""
+    if RULES[rule][1] == 'd3c_ood' and not n3c_fit:
+        return pilot_res['power_alt'][rule + ' (N0c)']
+    return pilot_res['power'][rule]
+
+
+def decisive(pw_entry, kind, tau_hi=False):
+    """Решающая мощность: у двустороннего правила — вверх + вниз (ERRORS № 202), у одностороннего — «подтверждено»."""
+    p = pw_entry['power_tau_hi' if tau_hi else 'power']
+    return p['confirm'] + p['refute'] if kind == 'two' else p['confirm']
 
 
 def seed_of(test, stream, o):
@@ -596,6 +619,18 @@ def compare_pilots(new, old, tol=0.0):
     return bad
 
 
+def rule_entry(F, boots, key, kind, part_b):
+    """Правило по величине key на средах F['use']; вердикт «не определено», если годных сред меньше MIN_VALID."""
+    use = F['use']
+    pts = {n: F['envs'][n][key]['point'] for n in use}
+    sds = {n: F['envs'][n][key]['sd'] for n in use}
+    e = rule4(pts, {n: boots[n][key] for n in use}, sds, use, kind, part_b) if use else dict(verdict_rule='не решено')
+    if not F['method_ok']:
+        e['verdict_rule'] = 'не определено (годных сред мало)'
+    e['key'] = key
+    return e
+
+
 def test4(dst, mdirs, pilot_res, B=B_TEST, workers=1):
     """Анализ теста: правила Р1-Т, Р1-Л, Р2-Т по константам PREREG; знак по средам; описательное; пары."""
     assert RULES_ACTIVE is not None and NONDEG is not None and N3C_FIT is not None, 'константы PREREG не заданы'
@@ -611,19 +646,18 @@ def test4(dst, mdirs, pilot_res, B=B_TEST, workers=1):
         res['families'][fam] = dict(envs=envs, valid=valid, use=use, method_ok=bool(len(use) >= MIN_VALID[fam]), **meta)
         boots_all[fam] = boots
         print(fam, ': годных', len(valid), 'из', len(envs), '| в правилах', len(use), round(time.time() - t0), 'с', flush=True)
-    res['rules'] = {}
+    res['rules'], res['rules_alt'] = {}, {}
     for rule, (fam, key, kind, part_b) in RULES.items():
         F = res['families'][fam]
-        use = F['use']
-        if key == 'd3c_ood' and not N3C_FIT:                     # HYPOTHESIS §7: N3c «не годен» — первичный нуль Р1 — N0 со стратами c1
-            key = 'n0c_ood'
-        pts = {n: F['envs'][n][key]['point'] for n in use}
-        sds = {n: F['envs'][n][key]['sd'] for n in use}
-        e = rule4(pts, {n: boots_all[fam][n][key] for n in use}, sds, use, kind, part_b) if use else dict(verdict_rule='не решено')
-        if not F['method_ok']:
-            e['verdict_rule'] = 'не определено (годных сред мало)'
+        prim = primary_key(rule, N3C_FIT)                         # HYPOTHESIS §7, ADDENDUM-2: N3c «не годен» — первичный нуль Р1 — N0c
+        e = rule_entry(F, boots_all[fam], prim, kind, part_b)
         e['active'] = RULES_ACTIVE[rule]
         res['rules'][rule] = e
+        if key == 'd3c_ood':                                      # ветвь (PREREG §5, описательно): Р1 по второму нулю тем же правилом
+            alt = 'n0c_ood' if N3C_FIT else 'd3c_ood'
+            ea = rule_entry(F, boots_all[fam], alt, kind, part_b)
+            ea['active'] = False
+            res['rules_alt'][rule] = ea
     res['descr'] = {}
     for fam in FAMS:
         F = res['families'][fam]

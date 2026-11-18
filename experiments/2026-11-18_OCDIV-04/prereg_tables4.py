@@ -56,3 +56,18 @@ L += ['', f"- Изменение K при первоначальном вбро�
       f"- Правила по порогу мощности 0,2: " + ', '.join(f"{r} — {'правило' if a else 'описательно'}" for r, a in P['rules_active'].items()) + '.',
       f"- Ожидания (0,95 × мощность): " + ', '.join(f"{r} — {g(v, 4)}" for r, v in P['expect'].items()) + '.']
 print('\n'.join(L))
+
+# ── третий контроль N3c (HYPOTHESIS-ADDENDUM-2): задание 1 — кривые на Н1, задание 2 — проверка на Н2; печать из json (ERRORS № 200)
+import sys  # noqa: E402
+if '--control3' in sys.argv:
+    CR = json.load(open(os.path.join(ROOT, 'gha_out/ocdiv4_curves3/curves3.json'), encoding='utf-8'))
+    CT = json.load(open(os.path.join(ROOT, 'gha_out/ocdiv4_control3/control3.json'), encoding='utf-8'))
+    M = ['', '**Третий контроль N3c** (HYPOTHESIS-ADDENDUM-2; R = ' + str(CR['R']) + '; прирост — среднее по размещениям вброса по задачам):', '',
+         '| Среда | цель t_e | прирост на Н1 при δ = ' + '; '.join(g(d, 3) for d in CR['grid']) + ' | δ_e (Н1) | реализованный прирост (Н2) |',
+         '|---|---|---|---|---|']
+    for n, e in CR['envs'].items():
+        M.append(f"| {n} | {f(CR['targets'][n])} | " + '; '.join(f(y) for y in e['curve']) + f" | {g(e['delta'], 3) if e['delta'] is not None else 'нет корня'} | "
+                 f"{f(CT['realized'][n]) if CT['realized'][n] is not None else '—'} |")
+    M += ['', f"- Все корни найдены: {'да' if CR['all_roots'] else 'нет'}; контроль пройден: {'да' if CT['pass'] else 'нет'}; "
+              f"N3C_FIT = {CT['n3c_fit']}. Время: задание 1 — {g(CR['seconds'], 1)} с, задание 2 — {g(CT['seconds'], 1)} с."]
+    print('\n'.join(M))

@@ -26,5 +26,15 @@ der = dict(source='prereg_derived4.py: константы из ocdiv4.py, ocdiv4
            z=C.Z, quantile=1 - C.LEVEL, mc_sets=inspect.signature(C.power4).parameters['n'].default,
            workflow_timeouts_min=[int(x) for x in re.findall(r'timeout-minutes:\s*(\d+)', wf)],
            rep_jobs=MJ.rep_jobs(), arxiv_ids=sorted(set(re.findall(r'\b2\d{3}\.\d{5}\b|\b2006\.\d{5}\b', lit))))
+# после третьего контроля (PREREG §2, §4, §10): концы мест теста по средам, пороги t, предел смещения среды, вес Р1-Л при первичном нуле
+import json as _json  # noqa: E402
+import math  # noqa: E402
+from scipy.stats import t as _t  # noqa: E402
+_ends = [e['place'][1] - 1 for e in X4.envs_ocdiv4('test3')]
+_P = _json.load(open(os.path.join(ROOT, 'gha_out/ocdiv4_sum_pilot3/pilot.json'), encoding='utf-8'))
+der.update(test_place_end_min=min(_ends), test_place_end_max=max(_ends),
+           t_crit={n: float(_t.ppf(1 - C.LEVEL, n - 1)) for n in (3, 5, 6, 7, 8)},
+           off4_limit=int(re.search(r'assert 0 <= o < (\d+)', inspect.getsource(C.off4)).group(1)),
+           weight_r1l_bits=math.log2(C.primary_power(_P, 'Р1-Л', C.N3C_FIT)['power']['confirm'] / C.LEVEL))
 json.dump(der, open(os.path.join(X, 'prereg_derived4.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=str)
 print(json.dumps(der, ensure_ascii=False, default=str)[:900])
