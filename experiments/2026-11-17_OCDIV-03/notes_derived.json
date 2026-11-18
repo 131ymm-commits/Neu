@@ -1,4 +1,14 @@
 {
+ "t_env": {
+  "П1": 0.9570188409860615,
+  "П2": 2.3311679829630765,
+  "П3": 8.798998692936326
+ },
+ "t_threshold": 5.597568367075492,
+ "t_df": 4,
+ "t_quantile": 0.9975,
+ "series_confirm": 0.0075,
+ "series_with_refute": 0.015,
  "source": "notes_ocdiv3.py по analysis.json",
  "z_env": 3.2905267314919255,
  "env_ci": {
