@@ -319,6 +319,14 @@ def env4(job):
     out['oracle_ood'] = float(st['corr'][keep][:, cols['ood']].any(0).mean())
     out['kinds_ood'] = {nm: kinds_of_head(D['ood'][:, k]) for k, nm in enumerate(names)}
     out['same_pairs_ood'] = same_pairs_by_kind(D['ood'])
+    cells = O3.extra_token_cells(env, names, cols['ood'])          # прибор (как OCDIV-03): ответы с лишними токенами
+    fix = None
+    if cells:                                                      # описательно: такие ответы — «без числа», вердикт — по основному счёту
+        Df = D['ood'].copy()
+        for r_, k in cells:
+            Df[r_, k] = NC + k
+        fix = dict(n_cells=len(cells), d3c=d3c_point(Df, sc['ood'], np.random.default_rng(seed_of(test, 'spike', o) + 2), K_point)[2])
+    out['extra_tokens'] = dict(n_cells=len(cells), recount=fix)
     r = pair_excess4(D['ood'], sc['ood'], np.random.default_rng(seed_of(test, 'pairs', o)), K_PAIRS)
     out['pairs'] = dict(crowd=names, r=[[None if not np.isfinite(x) else float(x) for x in row] for row in r])
     if with_spike:
@@ -562,6 +570,7 @@ def test4(dst, mdirs, pilot_res, B=B_TEST, workers=1):
                                                                       for row in res['families'][f]['envs'][n]['pairs']['r']]))
           for f in FAMS for n in res['families'][f]['use']]
     res['pairs'] = pairs_contrast(rm) if rm else None
+    res['repeat_check'] = W.repeat_check(os.path.join(ROOT, 'gha_out/ocdiv4_test_*/answers_*.json'), os.path.join(ROOT, 'gha_out/ocdiv4_rep_*/answers_*.json'))
     res['verdicts'] = {r: res['rules'][r]['verdict_rule'] for r in RULES}
     res['seconds'] = round(time.time() - t0, 1)
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
