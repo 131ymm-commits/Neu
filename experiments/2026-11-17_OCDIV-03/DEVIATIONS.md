@@ -37,3 +37,4 @@
      - раздел совета;
      - «Что дальше» по совету.
    - `check_report3.py` (Н9) — сверка ключевых чисел по точному ключу json: 44 проверки, 0 промахов (`check_report3.log`). `ledger.py audit` — 0 «не найдено».
+5. **Проверка `ledger.py check`** ищет числа отчёта только в файлах папки опыта. Json анализа лежит в `gha_out/ocdiv3_sum_test/`, поэтому проверка пишет «числа не найдены». Так же у OCINT-01, OCPOST-01, OCSHIFT-01, OCDIV-01 и OCDIV-02. Сверка чисел — `ledger.py audit` с `--data` и `check_report3.py` (п. 3 и 4).
