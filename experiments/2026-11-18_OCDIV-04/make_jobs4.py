@@ -4,6 +4,8 @@
   python3 make_jobs4.py pilot --dir DIR      — 77 заданий пилота: 7 голов × 11 сред (8 «тысяч», 3 «длины»), фаза pilot3, 600 задач
   python3 make_jobs4.py sum_pilot --dir DIR  — разбор пилота: тесты кода, сборка merge4 по семействам, ocdiv4.py pilot (B = 1000, 4 процесса)
   python3 make_jobs4.py sum_pilot2 --dir DIR — повторный разбор по HYPOTHESIS-ADDENDUM и сверка с первым разбором до бита
+  python3 make_jobs4.py curves3 --dir DIR    — третий контроль, задание 1: кривые «доза–прирост» на Н1 (HYPOTHESIS-ADDENDUM-2)
+  python3 make_jobs4.py control3 --dir DIR   — третий контроль, задание 2: проверка на Н2 при δ_e из задания 1
   python3 make_jobs4.py test --dir DIR       — шаблоны теста: 77 заданий фазы test3 (2200 задач) и 3 повтора на детерминизм
   python3 make_jobs4.py sum_test --dir DIR   — шаблон анализа теста
 Папка обязательна (ERRORS № 198: умолчание положило задание не туда). Пилот — в gha_par/ (не регистрируется), тест и анализ теста — в jobs/
@@ -95,6 +97,20 @@ def main():
                          'python3 $E/ocdiv4.py pilot "$OUT/pilot.json" "$OUT/m_T" "$OUT/m_L" --boot 1000 --workers 4\n'
                          'python3 $E/ocdiv4.py compare_pilots "$OUT/pilot.json" gha_out/ocdiv4_sum_pilot2/pilot.json | tee "$OUT/compare.log"\n'
                          'rm -rf "$OUT/m_T" "$OUT/m_L"\n', dst))
+    elif mode == 'curves3':
+        out.append(write('ocdiv4_curves3', 'третий контроль N3c, задание 1 (HYPOTHESIS-ADDENDUM-2, совет 72): кривые «доза–прирост» по средам «тысяч» на '
+                         'первой половине задач пилота, цели, δ_e (R = 20, 4 процесса)',
+                         SCI + TESTS +
+                         'python3 $E/ocdiv4.py merge "$OUT/m_T" pilot3 thousands gha_out/ocdiv4_pilot_*\n'
+                         'python3 $E/ocdiv4.py curves3 "$OUT/curves3.json" "$OUT/m_T" gha_out/ocdiv4_sum_pilot3/pilot.json --R 20 --workers 4\n'
+                         'rm -rf "$OUT/m_T"\n', dst))
+    elif mode == 'control3':
+        out.append(write('ocdiv4_control3', 'третий контроль N3c, задание 2 (HYPOTHESIS-ADDENDUM-2, совет 72): реализованный прирост на второй половине '
+                         'задач пилота при δ_e из задания 1, наклон и мощности частей А и Б, годность N3c (R = 20, 4 процесса)',
+                         SCI + TESTS +
+                         'python3 $E/ocdiv4.py merge "$OUT/m_T" pilot3 thousands gha_out/ocdiv4_pilot_*\n'
+                         'python3 $E/ocdiv4.py control3 "$OUT/control3.json" "$OUT/m_T" gha_out/ocdiv4_curves3/curves3.json --R 20 --workers 4\n'
+                         'rm -rf "$OUT/m_T"\n', dst))
     elif mode == 'test':
         for nm in V.CROWD:
             for e in X4.envs_ocdiv4('test3'):
@@ -109,7 +125,8 @@ def main():
                          SCI + 'python3 $E/prereg_hashes4.py --verify --jobs\n' + TESTS +
                          'python3 $E/ocdiv4.py merge "$OUT/m_T" test3 thousands gha_out/ocdiv4_test_*\n'
                          'python3 $E/ocdiv4.py merge "$OUT/m_L" test3 length gha_out/ocdiv4_test_*\n'
-                         'python3 $E/ocdiv4.py test "$OUT/analysis.json" "$OUT/m_T" "$OUT/m_L" gha_out/ocdiv4_sum_pilot3/pilot.json --boot 10000 --workers 4\n'
+                         'timeout 180m python3 $E/ocdiv4.py test "$OUT/analysis.json" "$OUT/m_T" "$OUT/m_L" gha_out/ocdiv4_sum_pilot3/pilot.json --boot 10000 '
+                         '--workers 4          # совет 72: предел времени анализа (оценка, не замер)\n'
                          'echo "== прибор"; python3 experiments/2026-11-17_OCDIV-02/trunc_check.py "$OUT/trunc.json" "gha_out/ocdiv4_test_*/answers_*.json" | tail -3\n'
                          'rm -rf "$OUT/m_T" "$OUT/m_L"\n', dst))
     else:

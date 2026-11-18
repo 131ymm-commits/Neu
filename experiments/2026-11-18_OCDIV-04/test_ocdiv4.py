@@ -261,6 +261,51 @@ md = RP.render(json.load(open(os.path.join(tmp, 'test4.json'))), json.load(open(
 check('каркас отчёта: собирается на заглушке, в нём три правила, обе таблицы сред, ожидания и вес опоры',
       all(x in md for x in ('Р1-Т —', 'Р1-Л —', 'Р2-Т —', 'По средам: «тысячи»', 'По средам: «длина»', '| E1 |', '## Вес опоры')), md[:300])
 
+# 7а. Третий контроль (HYPOTHESIS-ADDENDUM-2) на заглушке: кривые на Н1, корни, проверка на Н2, критерий; Н1 и Н2 не пересекаются
+cr3 = C.curves3(os.path.join(tmp, 'curves3.json'), mp4['thousands'], os.path.join(tmp, 'pilot4.json'), R=2, workers=1)
+check('третий контроль, задание 1: кривые по восьми средам, цели со средним +0,02; δ_e в (0; 0,4] или «нет корня»; all_roots — по всем средам',
+      len(cr3['envs']) == 8 and abs(np.mean(list(cr3['targets'].values())) - 0.02) < 1e-12
+      and all(e['delta'] is None or 0 < e['delta'] <= max(C.C3_GRID) for e in cr3['envs'].values())
+      and cr3['all_roots'] == all(e['delta'] is not None for e in cr3['envs'].values()))
+ct3 = C.control3(os.path.join(tmp, 'control3.json'), mp4['thousands'], os.path.join(tmp, 'curves3.json'), R=2, workers=1)
+check('третий контроль, задание 2: нет корня хоть в одной среде — контроль провален (N3c не годен), иначе — наклон и мощности записаны',
+      (not ct3['all_roots'] and ct3['pass'] is False and ct3['n3c_fit'] is False) or (ct3['all_roots'] and all(k in ct3 for k in ('slope', 'power'))),
+      json.dumps({k: ct3.get(k) for k in ('all_roots', 'slope', 'pass')}, default=float))
+# чистый мир (смещения от задачи не зависят): вброс по задачам поднимает Δ3c, корни находятся, наклон считается
+mpc = jobs4('pilot3', 'pc', {'thousands': 0.0, 'length': 0.0}, 51)
+prc = C.pilot4(os.path.join(tmp, 'pilot4c.json'), mpc, B=4, workers=1)
+crc = C.curves3(os.path.join(tmp, 'curves3c.json'), mpc['thousands'], os.path.join(tmp, 'pilot4c.json'), R=2, workers=1)
+ctc = C.control3(os.path.join(tmp, 'control3c.json'), mpc['thousands'], os.path.join(tmp, 'curves3c.json'), R=2, workers=1)
+check('третий контроль на чистом мире: все корни найдены, наклон и мощности частей А и Б посчитаны',
+      crc['all_roots'] and ctc['all_roots'] and np.isfinite(ctc['slope']) and 'part_b' in ctc['power'],
+      json.dumps({'roots': {n: e['delta'] for n, e in crc['envs'].items()}, 'slope': ctc.get('slope')}, default=float)[:400])
+e3 = C.c3_env(json.load(open(os.path.join(mp4['thousands'], 'answers.json'))) and C.load_family(mp4['thousands'])[1]['T_X19_p3'],
+              C.test_id_count('thousands', 19))
+check('третий контроль: половины Н1 и Н2 не пересекаются и вместе дают все задачи вне диапазона',
+      not set(e3['h1'][2]) & set(e3['h2'][2]) and len(e3['h1'][2]) + len(e3['h2'][2]) == e3['n'])
+check('третий контроль: корень за сеткой — провал среды (None)', C.c3_root([0.001] * len(C.C3_GRID), 0.02) is None
+      and abs(C.c3_root([0.001, 0.002, 0.006, 0.012, 0.02, 0.03, 0.04, 0.05, 0.06], 0.0167) - 0.079375) < 1e-12)
+try:
+    C.off4(dict(family='thousands', X=19)); C.off4(dict(family='length', X=999)); ok_off = True
+except AssertionError:
+    ok_off = False
+check('off4: смещения обоих семейств в пределах 0–199 (замок, совет 72)', ok_off and C.off4(dict(family='length', X=999)) == 102)
+
+# 7б. Задачи пилота и теста не пересекаются ни между собой, ни с прежними фазами OCDIV-02/03 (по номерам пар каждой среды)
+olds = {ph: {e['name']: set(e['idx']) for e in D2.envs_ocdiv2(ph)} for ph in D2.PHASES}
+p3 = {e['name']: set(e['idx']) for e in X4.envs_ocdiv4('pilot3')}
+t3 = {e['name']: set(e['idx']) for e in X4.envs_ocdiv4('test3')}
+check('задачи pilot3 и test3 не пересекаются между собой и с прежними фазами (номера пар каждой среды)',
+      all(not (p3[n] & t3[n]) for n in p3) and all(not ((p3[n] | t3[n]) & olds[ph][n]) for ph in olds for n in p3 if n in olds[ph]))
+
+# 7в. Вывод анализа теста при workers = 1 и workers = 2 совпадает до бита (кроме времени)
+C.RULES_ACTIVE, C.NONDEG, C.N3C_FIT = pr4['rules_active'], pr4['nondeg'], True
+w1 = C.test4(os.path.join(tmp, 'tw1.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3, workers=1)
+w2 = C.test4(os.path.join(tmp, 'tw2.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3, workers=2)
+strip = lambda r: json.dumps({k: v for k, v in r.items() if k != 'seconds'}, sort_keys=True, default=float)  # noqa: E731
+check('анализ теста: вывод при workers = 1 и workers = 2 совпадает до бита (кроме времени)', strip(w1) == strip(w2))
+C.RULES_ACTIVE = C.NONDEG = C.N3C_FIT = None
+
 # 8. Извлечение на заглушке (без моделей в сессии): ocdiv4_extract.main с подменённым ocdiv2_extract.run; вывод собирается merge4
 import subprocess  # noqa: E402
 import make_jobs4 as MJ  # noqa: E402

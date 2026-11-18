@@ -45,7 +45,9 @@ def merge4(out_dir, phase, family, job_dirs):
 def off4(meta):
     """Смещение зёрен среды OCDIV-04: 100·(номер семейства) + номер X в семействе (см. X4.FAMILIES4)."""
     fam = meta['family']
-    return 100 * list(X4.FAMILIES4).index(fam) + list(X4.FAMILIES4[fam]).index(int(meta['X']))
+    o = 100 * list(X4.FAMILIES4).index(fam) + list(X4.FAMILIES4[fam]).index(int(meta['X']))
+    assert 0 <= o < 200, o                                        # совет 72: смещение зёрен — в пределах двух семейств
+    return o
 
 
 # ───────────── строение задачи (только слагаемые)
@@ -644,6 +646,139 @@ def test4(dst, mdirs, pilot_res, B=B_TEST, workers=1):
     return res
 
 
+# ═══════════════ часть 3: третий положительный контроль N3c (HYPOTHESIS-ADDENDUM-2, совет 72)
+C3_GRID = (0.005, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4)
+C3_R = 20
+C3_TARGET = 0.02
+C3_SLOPE = (0.8, 1.2)
+C3_POWER_MIN = 0.8
+SEED_SPLIT3, SEED_ASSIGN3 = 9_730_000, 9_740_000
+SEED_NULL3, SEED_H1, SEED_H2 = 9_750_000, 9_760_000, 9_770_000
+
+
+def c3_env(env, n_id_test):
+    """Толпа и матрица смещений вне диапазона — как в env4; разбиение задач вне диапазона на Н1 и Н2 зерном SEED_SPLIT3 + смещение."""
+    o = off4(env['meta'])
+    st, info = W.prepare_id(env, SEED_CV4 + o, n_id_test)
+    if not info['valid']:
+        return None
+    probs = env['problems']
+    ans = [info['ans'][k] for k in info['keep']]
+    cols = list(info['ood'])
+    D = W.dmat(ans, [p['sum'] for p in probs], cols)
+    sc = strata_c1(probs, cols)
+    perm = np.random.default_rng(SEED_SPLIT3 + o).permutation(len(cols))
+    h1, h2 = np.sort(perm[:len(cols) // 2]), np.sort(perm[len(cols) // 2:])
+    half = lambda idx: (D[idx], sc[idx], [cols[i] for i in idx])  # noqa: E731
+    return dict(o=o, probs=probs, h1=half(h1), h2=half(h2), n=len(cols))
+
+
+def c3_increment(Dh, sh, ch, probs, delta, seed_place, base_seed):
+    """Прирост Δ3c при ВБРОСЕ-ПО-ЗАДАЧАМ на половине: общее зерно нуля у Δ3c с вбросом и без (общие случайные числа)."""
+    base = d3c_point(Dh, sh, np.random.default_rng(base_seed), K_POINT)[2]
+    Ds = spike_items(Dh, probs, ch, delta, np.random.default_rng(seed_place))
+    return d3c_point(Ds, sh, np.random.default_rng(base_seed), K_POINT)[2] - base
+
+
+def c3_curve_job(job):
+    env, n_id_test, R = job
+    e = c3_env(env, n_id_test)
+    if e is None:
+        return None
+    Dh, sh, ch = e['h1']
+    o = e['o']
+    curve = []
+    for k, dl in enumerate(C3_GRID):
+        curve.append(float(np.mean([c3_increment(Dh, sh, ch, e['probs'], dl, SEED_H1 + 100_000 * k + 1000 * r + o, SEED_NULL3 + 1000 * r + o)
+                                    for r in range(R)])))
+    return dict(n_ood=e['n'], n_h1=int(Dh.shape[0]), n_h2=int(e['h2'][0].shape[0]), curve=curve)
+
+
+def c3_control_job(job):
+    env, n_id_test, R, dl = job
+    e = c3_env(env, n_id_test)
+    if e is None or dl is None:
+        return None
+    Dh, sh, ch = e['h2']
+    o = e['o']
+    return float(np.mean([c3_increment(Dh, sh, ch, e['probs'], dl, SEED_H2 + 1000 * r + o, SEED_NULL3 + 1000 * r + o + 500) for r in range(R)]))
+
+
+def c3_targets(tau, names):
+    """t_i = 0,02 + τ·Φ⁻¹((i − 0,5)/8), i = 1…8; среде с номером j (порядок X) — цель t[perm[j]], perm — permutation(8) от SEED_ASSIGN3."""
+    t = [C3_TARGET + tau * float(norm.ppf((i - 0.5) / len(names))) for i in range(1, len(names) + 1)]
+    perm = np.random.default_rng(SEED_ASSIGN3).permutation(len(names))
+    return {n: t[int(perm[j])] for j, n in enumerate(names)}
+
+
+def c3_root(curve, target):
+    """δ_e — первое пересечение уровня цели при линейной интерполяции по возрастанию дозы от (0; 0); нет пересечения — None (провал среды)."""
+    xs, ys = [0.0] + list(C3_GRID), [0.0] + list(curve)
+    for k in range(1, len(xs)):
+        if ys[k - 1] < target <= ys[k]:
+            return xs[k - 1] + (target - ys[k - 1]) * (xs[k] - xs[k - 1]) / (ys[k] - ys[k - 1])
+    return None
+
+
+def c3_pmap(fn, jobs, workers):
+    if workers <= 1:
+        return [fn(j) for j in jobs]
+    with cf.ProcessPoolExecutor(workers) as ex:
+        return list(ex.map(fn, jobs))
+
+
+def curves3(dst, mdir, pilot_res, R=C3_R, workers=1):
+    """Задание 1 третьего контроля: кривые «доза–прирост» на Н1, цели, δ_e. Данные теста не читаются."""
+    t0 = time.time()
+    pr = json.load(open(pilot_res, encoding='utf-8'))
+    d, envs, names_c, _ = load_family(mdir)
+    order = sorted(envs, key=lambda n: int(envs[n]['meta']['X']))
+    jobs = [(dict(envs[n], heads=[h for h in envs[n]['heads'] if h['model'] in names_c]), test_id_count('thousands', envs[n]['meta']['X']), R)
+            for n in order]
+    outs = c3_pmap(c3_curve_job, jobs, workers)
+    tau = pr['power']['Р1-Т']['tau']
+    tg = c3_targets(tau, order)
+    res = dict(what='OCDIV-04, третий контроль N3c — задание 1 (кривые на Н1; HYPOTHESIS-ADDENDUM-2)', grid=list(C3_GRID), R=R, tau=tau,
+               s_test=pr['power']['Р1-Т']['s_test'], targets=tg, envs={})
+    for n, out in zip(order, outs):
+        res['envs'][n] = dict(**(out or {}), target=tg[n], delta=(c3_root(out['curve'], tg[n]) if out else None))
+    res['all_roots'] = all(res['envs'][n].get('delta') is not None for n in order)
+    res['seconds'] = round(time.time() - t0, 1)
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
+    print('кривые:', {n: (None if res['envs'][n]['delta'] is None else round(res['envs'][n]['delta'], 4)) for n in order},
+          '| все корни:', res['all_roots'], '| время', res['seconds'], 'с', flush=True)
+    return res
+
+
+def control3(dst, mdir, curves_res, R=C3_R, workers=1):
+    """Задание 2 третьего контроля: реализованный прирост на Н2 при δ_e из задания 1; критерий годности N3c (HYPOTHESIS-ADDENDUM-2)."""
+    t0 = time.time()
+    cr = json.load(open(curves_res, encoding='utf-8'))
+    d, envs, names_c, _ = load_family(mdir)
+    order = sorted(envs, key=lambda n: int(envs[n]['meta']['X']))
+    jobs = [(dict(envs[n], heads=[h for h in envs[n]['heads'] if h['model'] in names_c]), test_id_count('thousands', envs[n]['meta']['X']), R,
+             cr['envs'][n]['delta']) for n in order]
+    outs = c3_pmap(c3_control_job, jobs, workers)
+    real = {n: v for n, v in zip(order, outs)}
+    ok_roots = cr['all_roots'] and all(v is not None for v in real.values())
+    res = dict(what='OCDIV-04, третий контроль N3c — задание 2 (проверка на Н2; HYPOTHESIS-ADDENDUM-2)', R=R, curves=os.path.relpath(curves_res, ROOT),
+               targets=cr['targets'], deltas={n: cr['envs'][n]['delta'] for n in order}, realized=real, all_roots=ok_roots)
+    if ok_roots:
+        x = np.array([cr['targets'][n] for n in order])
+        y = np.array([real[n] for n in order])
+        slope = float(np.polyfit(x, y, 1)[0])
+        pw = power4(float(y.mean()), float(np.std(y, ddof=1)), cr['s_test'], len(order), True)
+        res.update(slope=slope, realized_mean=float(y.mean()), realized_sd=float(np.std(y, ddof=1)), power=pw)
+        res['pass'] = bool(C3_SLOPE[0] <= slope <= C3_SLOPE[1] and pw['part_a'] >= C3_POWER_MIN and pw['part_b'] >= C3_POWER_MIN)
+    else:
+        res['pass'] = False
+    res['n3c_fit'] = res['pass']
+    res['seconds'] = round(time.time() - t0, 1)
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
+    print('контроль:', {k: res.get(k) for k in ('slope', 'realized_mean', 'pass')}, '| время', res['seconds'], 'с', flush=True)
+    return res
+
+
 def main():
     a = sys.argv[1:]
     mode = a[0]
@@ -652,6 +787,10 @@ def main():
         merge4(a[1], a[2], a[3], a[4:])
     elif mode == 'pilot':
         pilot4(a[1], {'thousands': a[2], 'length': a[3]}, B=opt('--boot', B_PILOT), workers=opt('--workers', 1))
+    elif mode == 'curves3':
+        curves3(a[1], a[2], a[3], R=opt('--R', C3_R), workers=opt('--workers', 1))
+    elif mode == 'control3':
+        control3(a[1], a[2], a[3], R=opt('--R', C3_R), workers=opt('--workers', 1))
     elif mode == 'compare_pilots':
         bad = compare_pilots(json.load(open(a[1], encoding='utf-8')), json.load(open(a[2], encoding='utf-8')))
         print('сверка разборов пилота:', 'расхождения ' + str(bad[:20]) if bad else 'совпало до бита (кроме вбросов и мощности Р2-Т)')
