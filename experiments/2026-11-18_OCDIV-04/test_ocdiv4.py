@@ -230,6 +230,8 @@ check('мощность двустороннего Р2-Т (№ 202): решаю�
       and pr4['power']['Р1-Т']['power']['decisive'] == pr4['power']['Р1-Т']['power']['confirm'])
 check('разбор пилота: оба вброса (первоначальный и по задачам) и годность по ВБРОСУ-ПО-ЗАДАЧАМ записаны',
       'spike_items' in pr4 and 'n3c_fit_original' in pr4 and len(pr4['spike_items']['mean_curve']) == len(C.SPIKE_ITEM_DELTAS) + 1)
+check('разбор пилота: мощность запасного нуля N0c посчитана для обоих семейств', set(pr4['power_alt']) == {'Р1-Т (N0c)', 'Р1-Л (N0c)'}
+      and all(v is not None for v in pr4['power_alt'].values()))
 pr4b = C.pilot4(os.path.join(tmp, 'pilot4b.json'), mp4, B=4, workers=1)
 check('повторный разбор пилота на тех же данных совпадает с первым до бита (compare_pilots)',
       C.compare_pilots(json.load(open(os.path.join(tmp, 'pilot4b.json'))), json.load(open(os.path.join(tmp, 'pilot4.json')))) == [])
@@ -239,13 +241,17 @@ try:
 except AssertionError:
     no_const = True
 check('анализ теста без констант PREREG не идёт', no_const)
-C.RULES_ACTIVE, C.NONDEG, C.N3C_FIT = pr4['rules_active'], pr4['nondeg'], pr4['n3c_fit']
+C.RULES_ACTIVE, C.NONDEG, C.N3C_FIT = pr4['rules_active'], pr4['nondeg'], True      # основной путь — N3c; запасной — ниже
 tr4 = C.test4(os.path.join(tmp, 'test4.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=4)
 check('анализ теста: вердикты трёх правил, знак по средам, описательное и пары посчитаны',
       set(tr4['verdicts']) == set(C.RULES) and all('signs' in tr4['rules'][r] for r in C.RULES) and tr4['pairs'] is not None
       and 'thousands d3c_id' in tr4['descr'], json.dumps(tr4['verdicts'], ensure_ascii=False))
 check('мир с заложенным совпадением: Р1-Т — среднее Δ3c вне диапазона > 0, все восемь сред > 0 по точке',
       tr4['rules']['Р1-Т']['delta'] > 0 and all(v > 0 for v in tr4['rules']['Р1-Т']['by_env'].values()), json.dumps(tr4['rules']['Р1-Т']['by_env']))
+C.N3C_FIT = False
+tr4n = C.test4(os.path.join(tmp, 'test4_n0c.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3)
+check('при N3C_FIT = False правила Р1 идут по запасному нулю N0c (среднее Р1-Т = среднему N0c по средам)',
+      abs(tr4n['rules']['Р1-Т']['delta'] - np.mean([tr4n['families']['thousands']['envs'][n]['n0c_ood']['point'] for n in tr4n['families']['thousands']['use']])) < 1e-12)
 C.RULES_ACTIVE = C.NONDEG = C.N3C_FIT = None
 
 # 10. Каркас отчёта собирается на выводе анализа заглушки (до данных теста)

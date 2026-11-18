@@ -224,14 +224,14 @@ K_POINT, K_BOOT = O3.K_POINT, O3.K_BOOT                       # 1000 и 10 пе�
 B_TEST, B_PILOT = 10_000, 1000
 RULES = {'Р1-Т': ('thousands', 'd3c_ood', 'pos', True), 'Р1-Л': ('length', 'd3c_ood', 'pos', False),
          'Р2-Т': ('thousands', 'k_diff', 'two', True)}           # правило: (семейство, величина, вид, есть ли часть Б)
-DESCR = ('d3c_id', 'k_ood', 'k_id', 't4_ood', 'd3u_ood', 'd3c_diff', 'rel_ood')
+DESCR = ('d3c_id', 'k_ood', 'k_id', 't4_ood', 'd3u_ood', 'd3c_diff', 'rel_ood', 'n0c_ood', 'd3c_ood')
 # вброс (ПОЛОЖИТЕЛЬНЫЙ-КОНТРОЛЬ-N3): у доли δ неверных ответов каждой головы смещение — общее для задачи −10^(1 + (a + b) mod 3)
 SPIKE_DELTAS = (0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4)
 SPIKE_TARGETS = (0.01, 0.02)                                   # заложенный прирост Δ3c (по суждению, HYPOTHESIS §7)
 SPIKE_FIT_MIN = 0.8                                            # мощность Р1-Т при приросте +0,02 ниже — N3c не годится
 # зёрна OCDIV-04 (+ смещение среды off4); повтор бутстрепа — своё зерно + 5000
 SEED_CV4 = 9_490_000
-STREAMS = {'d3c_ood': 0, 'd3c_id': 1, 'k_ood': 2, 'k_id': 3, 't4_ood': 4, 'd3u_ood': 5, 'pairs': 6, 'spike': 7, 'spike_items': 8}
+STREAMS = {'d3c_ood': 0, 'd3c_id': 1, 'k_ood': 2, 'k_id': 3, 't4_ood': 4, 'd3u_ood': 5, 'pairs': 6, 'spike': 7, 'spike_items': 8, 'n0c_ood': 9}
 # HYPOTHESIS-ADDENDUM.md (после пилота, до повторного разбора): ВБРОС-ПО-ЗАДАЧАМ — на доле δ задач вне диапазона все неверные числовые
 # ответы голов получают общее для задачи смещение; естественные совпадения на других задачах не трогаются. Правило годности — прежнее.
 SPIKE_ITEM_DELTAS = (0.005, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2)
@@ -322,6 +322,10 @@ def env4(job):
         out[f'k_{r}'], boots[f'k_{r}'] = k_stream(D[r], sc[r], seed_of(test, f'k_{r}', o), seed_of(test, f'k_{r}', o) + 5000, B, K_point, K_boot)
         out[f'strata_{r}'] = {int(s): int((sc[r] == s).sum()) for s in np.unique(sc[r])}
     out['t4_ood'], boots['t4_ood'] = O3.t4_stream(D['ood'], None, seed_of(test, 't4_ood', o), seed_of(test, 't4_ood', o) + 5000, B, K_point, K_boot)
+    # запасной нуль по букве HYPOTHESIS §7 (если N3c «не годен»): N0 со стратами c1 — `ocdiv3.t4_stream` со стратами c1 (перестановка всех
+    # смещений головы, верных и неверных, внутри страты); своим потоком
+    out['n0c_ood'], boots['n0c_ood'] = O3.t4_stream(D['ood'], sc['ood'], seed_of(test, 'n0c_ood', o), seed_of(test, 'n0c_ood', o) + 5000, B, K_point,
+                                                    K_boot)
     cu = cells_c1u(probs, cols['ood'])
     out['d3u_ood'], boots['d3u_ood'] = d3c_stream(D['ood'], cu, seed_of(test, 'd3u_ood', o), seed_of(test, 'd3u_ood', o) + 5000, B, K_point, K_boot)
     # производные по средам (повторы — независимые потоки двух областей, строки ID и вне диапазона не пересекаются)
@@ -512,7 +516,12 @@ def pilot4(dst, mdirs, B=B_PILOT, workers=1):
             n_id_t = len(e_test['problems']) - n_ood_t
             scale[n] = dict(ood=float(np.sqrt(envs[n]['n_ood'] / n_ood_t)), id=float(np.sqrt(envs[n]['n_id'] / n_id_t)))
         res['families'][fam] = dict(envs=envs, valid=valid, nondeg=nondeg, scale=scale, **meta)
-    res['power'] = {}
+    res['power'], res['power_alt'] = {}, {}
+    for rule, fam, part_b in (('Р1-Т', 'thousands', True), ('Р1-Л', 'length', False)):   # запасной нуль N0c (описательно, для совета)
+        F = res['families'][fam]
+        use = list(F['nondeg'])
+        res['power_alt'][rule + ' (N0c)'] = power_entry4([F['envs'][n]['n0c_ood']['point'] for n in use], [F['envs'][n]['n0c_ood']['sd'] for n in use],
+                                                          float(np.mean([F['scale'][n]['ood'] for n in use])) if use else float('nan'), N_ENVS[fam], part_b)
     for rule, (fam, key, kind, part_b) in RULES.items():
         F = res['families'][fam]
         use = [n for n in F['nondeg']]
@@ -604,6 +613,8 @@ def test4(dst, mdirs, pilot_res, B=B_TEST, workers=1):
     for rule, (fam, key, kind, part_b) in RULES.items():
         F = res['families'][fam]
         use = F['use']
+        if key == 'd3c_ood' and not N3C_FIT:                     # HYPOTHESIS §7: N3c «не годен» — первичный нуль Р1 — N0 со стратами c1
+            key = 'n0c_ood'
         pts = {n: F['envs'][n][key]['point'] for n in use}
         sds = {n: F['envs'][n][key]['sd'] for n in use}
         e = rule4(pts, {n: boots_all[fam][n][key] for n in use}, sds, use, kind, part_b) if use else dict(verdict_rule='не решено')

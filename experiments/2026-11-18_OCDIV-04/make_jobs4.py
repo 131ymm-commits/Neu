@@ -86,6 +86,15 @@ def main():
                          'python3 $E/ocdiv4.py pilot "$OUT/pilot.json" "$OUT/m_T" "$OUT/m_L" --boot 1000 --workers 4\n'
                          'python3 $E/ocdiv4.py compare_pilots "$OUT/pilot.json" gha_out/ocdiv4_sum_pilot/pilot.json | tee "$OUT/compare.log"\n'
                          'rm -rf "$OUT/m_T" "$OUT/m_L"\n', dst))
+    elif mode == 'sum_pilot3':
+        out.append(write('ocdiv4_sum_pilot3', 'третий разбор пилота — для совета 72: запасной нуль N0 со стратами c1 (по букве HYPOTHESIS §7) и его мощность; '
+                         'всё прежнее сверяется со вторым разбором до бита',
+                         SCI + TESTS +
+                         'python3 $E/ocdiv4.py merge "$OUT/m_T" pilot3 thousands gha_out/ocdiv4_pilot_*\n'
+                         'python3 $E/ocdiv4.py merge "$OUT/m_L" pilot3 length gha_out/ocdiv4_pilot_*\n'
+                         'python3 $E/ocdiv4.py pilot "$OUT/pilot.json" "$OUT/m_T" "$OUT/m_L" --boot 1000 --workers 4\n'
+                         'python3 $E/ocdiv4.py compare_pilots "$OUT/pilot.json" gha_out/ocdiv4_sum_pilot2/pilot.json | tee "$OUT/compare.log"\n'
+                         'rm -rf "$OUT/m_T" "$OUT/m_L"\n', dst))
     elif mode == 'test':
         for nm in V.CROWD:
             for e in X4.envs_ocdiv4('test3'):
