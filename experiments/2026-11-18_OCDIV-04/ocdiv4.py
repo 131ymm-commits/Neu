@@ -21,10 +21,31 @@ ROOT = os.path.dirname(os.path.dirname(X_DIR))
 EXP = os.path.join(ROOT, 'experiments')
 sys.path.insert(0, os.path.join(EXP, '2026-11-17_OCDIV-03'))
 import ocdiv3 as O3  # noqa: E402   OCDIV-03: permute_wrong, mean_entry; через него — ocdiv2 (W), P, S, V
+sys.path.insert(0, X_DIR)
+import ocdiv4_extract as X4  # noqa: E402   среды OCDIV-04 (pilot3, test3)
 W, P, S, V = O3.W, O3.P, O3.S, O3.V
 NC = W.NONE_CODE
 CROWD = W.CROWD
 LEVEL, DESCR_LEVEL = P.LEVEL, P.DESCR_LEVEL
+
+
+# ───────────── сборка ответов фаз OCDIV-04
+def merge4(out_dir, phase, family, job_dirs):
+    """Сборка тем же кодом, что OCDIV-02 (`ocdiv2.merge`: сверка номеров задач, ключей (a, b), sha256 подсказки и ревизий — СТОП при
+    расхождении), но со средами фаз OCDIV-04: на время вызова `ocdiv2.D2.envs_ocdiv2` отдаёт среды `ocdiv4_extract.envs_ocdiv4`."""
+    assert phase in X4.PHASES4, phase
+    orig = W.D2.envs_ocdiv2
+    W.D2.envs_ocdiv2 = lambda ph, fams=None: X4.envs_ocdiv4(ph, fams)
+    try:
+        return W.merge(out_dir, phase, family, job_dirs)
+    finally:
+        W.D2.envs_ocdiv2 = orig
+
+
+def off4(meta):
+    """Смещение зёрен среды OCDIV-04: 100·(номер семейства) + номер X в семействе (см. X4.FAMILIES4)."""
+    fam = meta['family']
+    return 100 * list(X4.FAMILIES4).index(fam) + list(X4.FAMILIES4[fam]).index(int(meta['X']))
 
 
 # ───────────── строение задачи (только слагаемые)
@@ -182,3 +203,385 @@ def t_envs(points):
 def mean_entry(points, boots, names, level):
     """M4 среднего сред — тот же код, что OCDIV-03 (`ocdiv3.mean_entry`)."""
     return O3.mean_entry(points, boots, names, level)
+
+
+# ═══════════════ часть 2: среды, вброс, мощность, правила (HYPOTHESIS §4–§7а)
+import concurrent.futures as cf  # noqa: E402
+import json  # noqa: E402
+import platform  # noqa: E402
+import time  # noqa: E402
+
+import scipy  # noqa: E402
+from scipy.stats import chi2, norm  # noqa: E402
+
+FAMS = ('thousands', 'length')
+N_ENVS = {f: len(X4.FAMILIES4[f]) for f in FAMS}               # 8 и 3
+MIN_VALID = {'thousands': 6, 'length': 2}                     # опыт определён (HYPOTHESIS §5)
+NONDEG_ORACLE = 0.1
+POWER_MIN = 0.2                                               # ниже — правило описательно (HYPOTHESIS §5)
+Z = P.Z
+K_POINT, K_BOOT = O3.K_POINT, O3.K_BOOT                       # 1000 и 10 перестановок, как в OCDIV-02 и OCDIV-03
+B_TEST, B_PILOT = 10_000, 1000
+RULES = {'Р1-Т': ('thousands', 'd3c_ood', 'pos', True), 'Р1-Л': ('length', 'd3c_ood', 'pos', False),
+         'Р2-Т': ('thousands', 'k_diff', 'two', True)}           # правило: (семейство, величина, вид, есть ли часть Б)
+DESCR = ('d3c_id', 'k_ood', 'k_id', 't4_ood', 'd3u_ood', 'd3c_diff', 'rel_ood')
+# вброс (ПОЛОЖИТЕЛЬНЫЙ-КОНТРОЛЬ-N3): у доли δ неверных ответов каждой головы смещение — общее для задачи −10^(1 + (a + b) mod 3)
+SPIKE_DELTAS = (0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4)
+SPIKE_TARGETS = (0.01, 0.02)                                   # заложенный прирост Δ3c (по суждению, HYPOTHESIS §7)
+SPIKE_FIT_MIN = 0.8                                            # мощность Р1-Т при приросте +0,02 ниже — N3c не годится
+# зёрна OCDIV-04 (+ смещение среды off4); повтор бутстрепа — своё зерно + 5000
+SEED_CV4 = 9_490_000
+STREAMS = {'d3c_ood': 0, 'd3c_id': 1, 'k_ood': 2, 'k_id': 3, 't4_ood': 4, 'd3u_ood': 5, 'pairs': 6, 'spike': 7}
+SEED_TEST, SEED_PILOT = 9_500_000, 9_600_000
+SEED_POWER4, SEED_REP4 = 9_710_000, 9_720_000
+K_PAIRS = 200
+# константы PREREG (по разбору пилота, до данных теста); None — не заданы
+RULES_ACTIVE = None        # {'Р1-Т': True|False, ...}: True — правило, False — описательно (мощность < POWER_MIN)
+NONDEG = None              # {'thousands': [...], 'length': [...]}: невырожденные среды по пилоту (оракул ≥ 0,1)
+N3C_FIT = None             # True — N3c годен по вбросу; False — первичный нуль Р1 — N0 со стратами c1
+
+
+def seed_of(test, stream, o):
+    return (SEED_TEST if test else SEED_PILOT) + 10_000 * STREAMS[stream] + o
+
+
+def test_id_count(fam, X):
+    """Число задач ID в среде теста — по строению среды (ответы не читаются); масштаб порогов проверки метода."""
+    e = [x for x in X4.envs_ocdiv4('test3', (fam,)) if int(x['X']) == int(X)][0]
+    return sum(p['range'] == 'ID' for p in e['problems'])
+
+
+def planted(probs, j):
+    a, b = probs[j]['a'], probs[j]['b']
+    return -(10 ** (1 + (a + b) % 3))
+
+
+def spike(D, probs, cols, delta, rng):
+    """Вброс: у доли delta неверных числовых ответов каждой головы смещение заменяется общим для задачи (по слагаемым)."""
+    Ds = D.copy()
+    pl = np.array([planted(probs, j) for j in cols], dtype=np.int64)
+    for k in range(D.shape[1]):
+        w = np.nonzero(wrong_num(D[:, k:k + 1])[:, 0])[0]
+        m = int(round(delta * len(w)))
+        if m:
+            pick = rng.choice(w, m, replace=False)
+            Ds[pick, k] = pl[pick]
+    return Ds
+
+
+def pair_excess4(D, strata, rng, K):
+    """По парам: доля совпавших смещений при совместной ошибке минус то же при N3c (для ОТРИЦАТЕЛЬНОГО-КОНТРОЛЯ-ПАРЫ)."""
+    h = D.shape[1]
+    obs = pair_counts(D)
+    acc = np.zeros(len(obs))
+    for _ in range(K):
+        acc += np.array([s / c if c else np.nan for c, s in pair_counts(permute_wrong(D, rng, strata))])
+    r = np.full((h, h), np.nan)
+    for (i, j), (c, s), a0 in zip(itertools.combinations(range(h), 2), obs, acc / K):
+        if c:
+            r[i, j] = r[j, i] = s / c - a0
+    return r
+
+
+def env4(job):
+    """Одна среда: толпа по проверке метода (только ID), Δ3c и K вне диапазона и на ID, вторичные меры, пары; на пилоте — вброс."""
+    env, test, n_id_test, B, K_point, K_boot, with_spike = job
+    o = off4(env['meta'])
+    st, info = W.prepare_id(env, SEED_CV4 + o, n_id_test)
+    keep = info['keep']
+    names = [O3.short(info['names'][k]) for k in keep]
+    out = dict(crowd=names, valid=bool(info['valid']), n_id=int(info['rid'].sum()), n_ood=int((~info['rid']).sum()),
+               method={O3.short(k): v for k, v in info['method'].items()})
+    if not info['valid']:
+        return out
+    probs = env['problems']
+    sums = [p['sum'] for p in probs]
+    ans = [info['ans'][k] for k in keep]
+    cols = {'ood': list(info['ood']), 'id': list(info['idi'])}
+    D = {r: W.dmat(ans, sums, c) for r, c in cols.items()}
+    sc = {r: strata_c1(probs, c) for r, c in cols.items()}
+    boots = {}
+    for r in ('ood', 'id'):
+        out[f'd3c_{r}'], boots[f'd3c_{r}'] = d3c_stream(D[r], sc[r], seed_of(test, f'd3c_{r}', o), seed_of(test, f'd3c_{r}', o) + 5000,
+                                                       B, K_point, K_boot)
+        out[f'k_{r}'], boots[f'k_{r}'] = k_stream(D[r], sc[r], seed_of(test, f'k_{r}', o), seed_of(test, f'k_{r}', o) + 5000, B, K_point, K_boot)
+        out[f'strata_{r}'] = {int(s): int((sc[r] == s).sum()) for s in np.unique(sc[r])}
+    out['t4_ood'], boots['t4_ood'] = O3.t4_stream(D['ood'], None, seed_of(test, 't4_ood', o), seed_of(test, 't4_ood', o) + 5000, B, K_point, K_boot)
+    cu = cells_c1u(probs, cols['ood'])
+    out['d3u_ood'], boots['d3u_ood'] = d3c_stream(D['ood'], cu, seed_of(test, 'd3u_ood', o), seed_of(test, 'd3u_ood', o) + 5000, B, K_point, K_boot)
+    # производные по средам (повторы — независимые потоки двух областей, строки ID и вне диапазона не пересекаются)
+    out['k_diff'] = dict(point=out['k_ood']['point'] - out['k_id']['point'], sd=float(np.std(boots['k_ood'] - boots['k_id'], ddof=1)))
+    boots['k_diff'] = boots['k_ood'] - boots['k_id']
+    out['d3c_diff'] = dict(point=out['d3c_ood']['point'] - out['d3c_id']['point'], sd=float(np.std(boots['d3c_ood'] - boots['d3c_id'], ddof=1)))
+    boots['d3c_diff'] = boots['d3c_ood'] - boots['d3c_id']
+    f0 = out['d3c_ood']['F0']
+    out['rel_ood'] = dict(point=(out['d3c_ood']['point'] / f0) if f0 > 0 else float('nan'), sd=float('nan'))
+    out['oracle_ood'] = float(st['corr'][keep][:, cols['ood']].any(0).mean())
+    out['kinds_ood'] = {nm: kinds_of_head(D['ood'][:, k]) for k, nm in enumerate(names)}
+    out['same_pairs_ood'] = same_pairs_by_kind(D['ood'])
+    r = pair_excess4(D['ood'], sc['ood'], np.random.default_rng(seed_of(test, 'pairs', o)), K_PAIRS)
+    out['pairs'] = dict(crowd=names, r=[[None if not np.isfinite(x) else float(x) for x in row] for row in r])
+    if with_spike:
+        g = np.random.default_rng(seed_of(test, 'spike', o))
+        base = d3c_point(D['ood'], sc['ood'], np.random.default_rng(seed_of(test, 'spike', o) + 1), K_point)[2]
+        out['spike'] = {}
+        for dl in SPIKE_DELTAS:
+            Ds = spike(D['ood'], probs, cols['ood'], dl, g)
+            out['spike'][str(dl)] = d3c_point(Ds, sc['ood'], np.random.default_rng(seed_of(test, 'spike', o) + 1), K_point)[2] - base
+    out['_boot'] = boots
+    return out
+
+
+def pmap4(jobs, workers):
+    if workers <= 1:
+        return [env4(j) for j in jobs]
+    with cf.ProcessPoolExecutor(workers) as ex:
+        return list(ex.map(env4, jobs))
+
+
+def env_signs(points, sds, names):
+    """Знак по средам: интервал среды при уровне 0,0025 / n (n — число сред правила) целиком > 0, < 0 или накрывает 0."""
+    z_env = float(norm.ppf(1 - LEVEL / max(len(names), 1)))
+    out = dict(z_env=z_env, pos=[], neg=[], zero=[])
+    for n in names:
+        lo, hi = points[n] - z_env * sds[n], points[n] + z_env * sds[n]
+        out['pos' if lo > 0 else 'neg' if hi < 0 else 'zero'].append(n)
+    return out
+
+
+def rule4(points, boots, sds, names, kind, part_b):
+    """Правило из двух частей (HYPOTHESIS §5): А — M4 среднего сред при 0,0025; Б — t по средам (df = n − 1) против t(0,9975; n − 1)."""
+    e = mean_entry(points, boots, names, LEVEL)
+    tb = t_envs({n: points[n] for n in names})
+    e['t_envs'] = tb
+    e['signs'] = env_signs(points, sds, names)
+    a = e['verdict']                                        # pos: «подтверждено» — низ > 0, «опровергнуто» — верх < 0
+    b_up = np.isfinite(tb['t']) and tb['t'] > tb['crit']
+    b_dn = np.isfinite(tb['t']) and tb['t'] < -tb['crit']
+    if kind == 'pos':
+        if a == 'подтверждено' and (b_up or not part_b):
+            v = 'подтверждено'
+        elif a == 'опровергнуто' and (b_dn or not part_b):
+            v = 'опровергнуто'
+        elif a == 'подтверждено':
+            v = 'в среднем этих сред (на новые среды не переносится)'
+        else:
+            v = 'не решено'
+    else:                                                    # двусторонний: направление — по знаку
+        if a == 'подтверждено' and b_up:
+            v = 'вне диапазона больше'
+        elif a == 'опровергнуто' and b_dn:
+            v = 'вне диапазона меньше'
+        elif a in ('подтверждено', 'опровергнуто'):
+            v = 'в среднем этих сред: ' + ('вне диапазона больше' if a == 'подтверждено' else 'вне диапазона меньше') + ' (на новые среды не переносится)'
+        else:
+            v = 'не решено'
+    e['verdict_rule'] = v
+    e['mark'] = 'знак по средам разный' if (e['signs']['neg'] and e['signs']['pos']) else None
+    return e
+
+
+def power4(mu, tau, s, m, part_b, n=200_000, seed=SEED_POWER4):
+    """Мощность правила: точка среды ~ N(mu, tau² + s²); А — среднее ± z·s/√m; Б — t по m средам против t(0,9975; m − 1)."""
+    g = np.random.default_rng(seed)
+    x = g.normal(mu, np.sqrt(tau ** 2 + s ** 2), size=(n, m))
+    mean, sd = x.mean(1), x.std(1, ddof=1)
+    h = Z * s / np.sqrt(m)
+    t = mean / (sd / np.sqrt(m))
+    crit = float(student_t.ppf(1 - LEVEL, m - 1))
+    a_up, a_dn = mean - h > 0, mean + h < 0
+    up = a_up & (t > crit) if part_b else a_up
+    dn = a_dn & (t < -crit) if part_b else a_dn
+    return dict(confirm=float(up.mean()), refute=float(dn.mean()), part_a=float(a_up.mean()), part_b=float((t > crit).mean()), crit=crit)
+
+
+def power_entry4(points, sds, scale, m, part_b, mu=None):
+    x, sp = np.asarray(points, float), np.asarray(sds, float)
+    ok = np.isfinite(x) & np.isfinite(sp)
+    x, sp = x[ok], sp[ok]
+    if len(x) < 2:
+        return None
+    s_test = float(np.sqrt(np.mean(sp ** 2)) * scale)
+    tau = float(np.sqrt(max(0.0, x.var(ddof=1) - np.mean(sp ** 2))))
+    var_hi = (len(x) - 1) * x.var(ddof=1) / float(chi2.ppf(0.025, len(x) - 1))
+    tau_hi = float(np.sqrt(max(0.0, var_hi - np.mean(sp ** 2))))
+    mu_ = float(x.mean()) if mu is None else float(mu)
+    return dict(n_envs=int(len(x)), mu=mu_, tau=tau, tau_hi=tau_hi, s_pilot_rms=float(np.sqrt(np.mean(sp ** 2))), s_test=s_test, scale=scale,
+                power=power4(mu_, tau, s_test, m, part_b), power_tau_hi=power4(mu_, tau_hi, s_test, m, part_b))
+
+
+def load_family(mdir):
+    d, envs = S.load_new(mdir)
+    hm = {h['model']: h for h in d['heads']}
+    names_c, dropped = V.effective_crowd(hm)
+    return d, envs, names_c, dropped
+
+
+def family_jobs(envs, names_c, test, B, with_spike):
+    order = sorted(envs, key=lambda n: int(envs[n]['meta']['X']))
+    jobs = []
+    for n in order:
+        env = envs[n]
+        meta = env['meta']
+        env_c = dict(env, heads=[h for h in env['heads'] if h['model'] in names_c])
+        jobs.append((env_c, test, test_id_count(meta['family'], meta['X']), B, K_POINT, K_BOOT, with_spike))
+    return order, jobs
+
+
+def run_family(mdir, test, B, workers, with_spike):
+    d, envs, names_c, dropped = load_family(mdir)
+    order, jobs = family_jobs(envs, names_c, test, B, with_spike)
+    outs = pmap4(jobs, workers)
+    res, boots = {}, {}
+    for n, r in zip(order, outs):
+        r['meta'] = {k: envs[n]['meta'][k] for k in ('family', 'X', 'p', 'bound', 'max_new')}
+        boots[n] = r.pop('_boot', {})
+        res[n] = r
+    return res, boots, dict(crowd_effective=names_c, crowd_dropped=dropped, head_errors=d.get('head_errors', []), keys_checked=d.get('keys_checked'))
+
+
+def contrast4(rmaps, struct):
+    """Как `ocdiv3.contrast`, но пары без совместной ошибки (r = NaN) не входят в средние."""
+    vals = []
+    for crowd, r in rmaps:
+        same, cross = [], []
+        for i, j in itertools.combinations(range(len(crowd)), 2):
+            if np.isfinite(r[i, j]):
+                (same if frozenset({crowd[i], crowd[j]}) in struct else cross).append(r[i, j])
+        if same and cross:
+            vals.append(np.mean(same) - np.mean(cross))
+    return float(np.mean(vals)) if vals else float('nan')
+
+
+def pairs_contrast(rmaps):
+    """ОТРИЦАТЕЛЬНЫЙ-КОНТРОЛЬ-ПАРЫ: контраст «пары одного производителя − пары разных» по r при совместной ошибке; точный перебор
+    105 структур (`ocdiv3.structures`), наблюдённая — `ocdiv3.OBSERVED_PAIRS`; описательно, наименьшее p = 1/105."""
+    obs = contrast4(rmaps, O3.OBSERVED_PAIRS)
+    allc = [contrast4(rmaps, st) for st in O3.structures(list(CROWD))]
+    fin = [c for c in allc if np.isfinite(c)]
+    return dict(observed=obs, n_structures=len(allc), p_exact=(float(np.mean([c >= obs - 1e-15 for c in fin])) if fin and np.isfinite(obs) else None),
+                null_mean=(float(np.mean(fin)) if fin else None))
+
+
+def versions():
+    return dict(python=platform.python_version(), numpy=np.__version__, scipy=scipy.__version__)
+
+
+def pilot4(dst, mdirs, B=B_PILOT, workers=1):
+    """Разбор пилота: невырожденность сред, мощность Р1-Т, Р1-Л, Р2-Т (частей А и Б), вброс и годность N3c, ожидания. Данные теста не читаются."""
+    t0 = time.time()
+    res = dict(phase='pilot3', hypothesis='7aed3606', B=B, K_point=K_POINT, K_boot=K_BOOT, versions=versions(), families={})
+    for fam in FAMS:
+        envs, boots, meta = run_family(mdirs[fam], False, B, workers, fam == 'thousands')
+        valid = [n for n in envs if envs[n]['valid']]
+        nondeg = [n for n in valid if envs[n]['oracle_ood'] >= NONDEG_ORACLE]
+        scale = {}
+        for n in valid:
+            e_test = [x for x in X4.envs_ocdiv4('test3', (fam,)) if x['name'] == n][0]
+            n_ood_t = sum(p['range'] != 'ID' for p in e_test['problems'])
+            n_id_t = len(e_test['problems']) - n_ood_t
+            scale[n] = dict(ood=float(np.sqrt(envs[n]['n_ood'] / n_ood_t)), id=float(np.sqrt(envs[n]['n_id'] / n_id_t)))
+        res['families'][fam] = dict(envs=envs, valid=valid, nondeg=nondeg, scale=scale, **meta)
+    res['power'] = {}
+    for rule, (fam, key, kind, part_b) in RULES.items():
+        F = res['families'][fam]
+        use = [n for n in F['nondeg']]
+        pts = [F['envs'][n][key]['point'] for n in use]
+        sds = [F['envs'][n][key]['sd'] for n in use]
+        sc = float(np.mean([F['scale'][n]['ood'] for n in use])) if use else float('nan')
+        res['power'][rule] = power_entry4(pts, sds, sc, N_ENVS[fam], part_b)
+    # вброс (положительный контроль N3c): δ* — по средней кривой прироста Δ3c «тысяч» для прироста +0,01 и +0,02; прирост каждой среды
+    # при δ* — линейной интерполяцией её кривой; мощность Р1-Т при заложенном приросте: среднее и разброс между средами — у заложенного
+    # прироста (а не у настоящего эффекта), s — пересчёт ст. откл. Δ3c пилота на тест (как у Р1-Т)
+    F = res['families']['thousands']
+    use = F['nondeg']
+    xs = [0.0] + list(SPIKE_DELTAS)
+    per = {n: [0.0] + [F['envs'][n]['spike'][str(d)] for d in SPIKE_DELTAS] for n in use}
+    mean_curve = [float(np.mean([per[n][i] for n in use])) for i in range(len(xs))] if use else []
+    res['spike'] = dict(deltas=xs, mean_curve=mean_curve, targets={})
+    pw = res['power']['Р1-Т']
+    for tg in SPIKE_TARGETS:
+        dl = None
+        if mean_curve and max(mean_curve) >= tg:
+            i = next(k for k, y in enumerate(mean_curve) if y >= tg)
+            dl = xs[i] if i == 0 or mean_curve[i] == mean_curve[i - 1] else \
+                xs[i - 1] + (tg - mean_curve[i - 1]) * (xs[i] - xs[i - 1]) / (mean_curve[i] - mean_curve[i - 1])
+        inc = [float(np.interp(dl, xs, per[n])) for n in use] if dl is not None else []
+        tau_inc = float(np.std(inc, ddof=1)) if len(inc) > 1 else None
+        p_tg = power4(float(np.mean(inc)), tau_inc, pw['s_test'], N_ENVS['thousands'], True) if (pw and inc and tau_inc is not None) else None
+        res['spike']['targets'][str(tg)] = dict(delta=dl, increments=dict(zip(use, inc)), tau_increment=tau_inc, power_at_target=p_tg)
+    p2 = res['spike']['targets'][str(SPIKE_TARGETS[-1])]['power_at_target']
+    res['n3c_fit'] = bool(p2 is not None and p2['confirm'] >= SPIKE_FIT_MIN)
+    res['rules_active'] = {r: bool(res['power'][r] is not None and res['power'][r]['power']['confirm'] >= POWER_MIN) for r in RULES}
+    res['nondeg'] = {fam: res['families'][fam]['nondeg'] for fam in FAMS}
+    res['expect'] = {r: (0.95 * res['power'][r]['power']['confirm'] if res['power'][r] else None) for r in RULES}
+    res['seconds'] = round(time.time() - t0, 1)
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
+    print('пилот:', {r: (round(res['power'][r]['power']['confirm'], 3) if res['power'][r] else None) for r in RULES},
+          '| годность N3c:', res['n3c_fit'], '| невырожденные:', res['nondeg'], '| время', res['seconds'], 'с', flush=True)
+    return res
+
+
+def test4(dst, mdirs, pilot_res, B=B_TEST, workers=1):
+    """Анализ теста: правила Р1-Т, Р1-Л, Р2-Т по константам PREREG; знак по средам; описательное; пары."""
+    assert RULES_ACTIVE is not None and NONDEG is not None and N3C_FIT is not None, 'константы PREREG не заданы'
+    t0 = time.time()
+    pr = json.load(open(pilot_res, encoding='utf-8'))
+    res = dict(phase='test3', level=LEVEL, z=Z, B=B, K_point=K_POINT, K_boot=K_BOOT, rules_active=RULES_ACTIVE, nondeg=NONDEG, n3c_fit=N3C_FIT,
+               pilot_power={r: pr['power'][r] for r in RULES}, versions=versions(), families={})
+    boots_all = {}
+    for fam in FAMS:
+        envs, boots, meta = run_family(mdirs[fam], True, B, workers, False)
+        valid = [n for n in envs if envs[n]['valid']]
+        use = [n for n in valid if n in NONDEG[fam]]
+        res['families'][fam] = dict(envs=envs, valid=valid, use=use, method_ok=bool(len(use) >= MIN_VALID[fam]), **meta)
+        boots_all[fam] = boots
+        print(fam, ': годных', len(valid), 'из', len(envs), '| в правилах', len(use), round(time.time() - t0), 'с', flush=True)
+    res['rules'] = {}
+    for rule, (fam, key, kind, part_b) in RULES.items():
+        F = res['families'][fam]
+        use = F['use']
+        pts = {n: F['envs'][n][key]['point'] for n in use}
+        sds = {n: F['envs'][n][key]['sd'] for n in use}
+        e = rule4(pts, {n: boots_all[fam][n][key] for n in use}, sds, use, kind, part_b) if use else dict(verdict_rule='не решено')
+        if not F['method_ok']:
+            e['verdict_rule'] = 'не определено (годных сред мало)'
+        e['active'] = RULES_ACTIVE[rule]
+        res['rules'][rule] = e
+    res['descr'] = {}
+    for fam in FAMS:
+        F = res['families'][fam]
+        for key in DESCR:
+            use = [n for n in F['use'] if np.isfinite(F['envs'][n][key]['point'])]
+            if key == 'rel_ood' or not use:
+                res['descr'][f'{fam} {key}'] = dict(by_env={n: F['envs'][n][key]['point'] for n in use})
+                continue
+            res['descr'][f'{fam} {key}'] = dict(**mean_entry({n: F['envs'][n][key]['point'] for n in use}, {n: boots_all[fam][n][key] for n in use},
+                                                             use, DESCR_LEVEL), t_envs=t_envs({n: F['envs'][n][key]['point'] for n in use}))
+    rm = [(res['families'][f]['envs'][n]['pairs']['crowd'], np.array([[np.nan if x is None else x for x in row]
+                                                                      for row in res['families'][f]['envs'][n]['pairs']['r']]))
+          for f in FAMS for n in res['families'][f]['use']]
+    res['pairs'] = pairs_contrast(rm) if rm else None
+    res['verdicts'] = {r: res['rules'][r]['verdict_rule'] for r in RULES}
+    res['seconds'] = round(time.time() - t0, 1)
+    json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
+    print('вердикт:', res['verdicts'], '| время', res['seconds'], 'с', flush=True)
+    return res
+
+
+def main():
+    a = sys.argv[1:]
+    mode = a[0]
+    opt = lambda k, d: (type(d)(a[a.index(k) + 1]) if k in a else d)  # noqa: E731
+    if mode == 'merge':
+        merge4(a[1], a[2], a[3], a[4:])
+    elif mode == 'pilot':
+        pilot4(a[1], {'thousands': a[2], 'length': a[3]}, B=opt('--boot', B_PILOT), workers=opt('--workers', 1))
+    elif mode == 'test':
+        test4(a[1], {'thousands': a[2], 'length': a[3]}, a[4], B=opt('--boot', B_TEST), workers=opt('--workers', 1))
+    else:
+        raise SystemExit(__doc__)
+
+
+if __name__ == '__main__':
+    main()

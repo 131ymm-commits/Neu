@@ -152,5 +152,77 @@ check('сухой прогон: совпавшие смещения вне ди�
 saved = json.load(open(os.path.join(tmp, 'posthoc.json'), encoding='utf-8'))
 check('пост-хок: повторы бутстрепа в json не пишутся (ключа _boot нет ни в одной среде)', all('_boot' not in e for e in saved['envs'].values()))
 
+# 7. Сухой прогон всей цепочки OCDIV-04 на заглушках: задания pilot3 и test3 (7 голов × 11 сред), сборка merge4, разбор пилота,
+#    константы PREREG, анализ теста. Вне диапазона у «тысяч» — общее для задачи смещение у доли ошибок (заложенное совпадение).
+X4 = C.X4
+
+
+def fake4(e, k, rng, shared):
+    c = dict(answer=[], correct=[], logp=[], n_tok=[], text_none={})
+    for j, q in enumerate(e['problems']):
+        pc = 0.88 if q['range'] == 'ID' else 0.45
+        if rng.random() < pc:
+            ans = q['sum']
+        elif q['range'] != 'ID' and rng.random() < shared:
+            ans = q['sum'] - 10 ** (1 + (q['a'] * 7 + q['b']) % 3)
+        else:
+            ans = q['sum'] + int(rng.choice([-10, 9 + k, 21 * (k + 1), -7, 13]))
+        c['answer'].append(ans)
+        c['correct'].append(int(ans == q['sum']))
+        c['logp'].append(float(-rng.random()))
+        c['n_tok'].append(len(str(ans)) + 1)
+    return c
+
+
+def jobs4(phase, tag, shared, seed):
+    rng_ = np.random.default_rng(seed)
+    out = {}
+    for fam in C.FAMS:
+        envs_ = X4.envs_ocdiv4(phase, (fam,))
+        ds = []
+        for k, nm in enumerate(C.V.CROWD):
+            jd = os.path.join(tmp, f'{tag}_{fam}_{k}')
+            os.makedirs(jd)
+            repo, commit = C.V.CROWD[nm].split('@')
+            res = dict(experiment='OCDIV-04', phase=phase, model=repo, repo=repo, revision=commit, commit=commit,
+                       envs=[dict(name=e['name'], family=e['family'], X=e['X'], p=e['p'], max_new=e['max_new'], n=len(e['problems']),
+                                  idx=e['idx'], keys=[[q['a'], q['b']] for q in e['problems']], prompt_sha256=D2.DX.prompt_sha(e['prompt_head']))
+                             for e in envs_],
+                       seconds_env={e['name']: 1.0 for e in envs_}, versions=dict(torch='2.11.0+cpu', transformers='5.20.2'), cpu_model='заглушка',
+                       cols={e['name']: fake4(e, k, rng_, shared[fam]) for e in envs_})
+            json.dump(res, open(os.path.join(jd, f'answers_{nm}.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+            ds.append(jd)
+        C.merge4(os.path.join(tmp, f'm_{tag}_{fam}'), phase, fam, ds)
+        out[fam] = os.path.join(tmp, f'm_{tag}_{fam}')
+    return out
+
+
+C.K_POINT, C.K_PAIRS = 40, 10                                    # только для скорости сухого прогона
+mp4 = jobs4('pilot3', 'p', {'thousands': 0.35, 'length': 0.35}, 41)
+mt4 = jobs4('test3', 't', {'thousands': 0.35, 'length': 0.35}, 42)
+check('merge4: обе фазы, оба семейства собраны тем же кодом OCDIV-02 (7 голов)',
+      all(len(json.load(open(os.path.join(d, 'answers.json')))['heads']) == 7 for d in list(mp4.values()) + list(mt4.values())))
+pr4 = C.pilot4(os.path.join(tmp, 'pilot4.json'), mp4, B=4, workers=1)
+check('разбор пилота: мощность трёх правил, кривая вброса растёт с δ, годность N3c и ожидания посчитаны',
+      all(pr4['power'][r] is not None for r in C.RULES) and pr4['spike']['mean_curve'][-1] > pr4['spike']['mean_curve'][1] > 0
+      and isinstance(pr4['n3c_fit'], bool) and set(pr4['expect']) == set(C.RULES), json.dumps(pr4['spike'], default=float)[:300])
+check('вброс: δ для прироста +0,02 найден, приросты сред около +0,02, мощность при заложенном приросте посчитана',
+      pr4['spike']['targets']['0.02']['delta'] is not None and abs(np.mean(list(pr4['spike']['targets']['0.02']['increments'].values())) - 0.02) < 0.005
+      and pr4['spike']['targets']['0.02']['power_at_target'] is not None, json.dumps(pr4['spike']['targets'], default=float)[:400])
+try:
+    C.test4(os.path.join(tmp, 'test4_x.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3)
+    no_const = False
+except AssertionError:
+    no_const = True
+check('анализ теста без констант PREREG не идёт', no_const)
+C.RULES_ACTIVE, C.NONDEG, C.N3C_FIT = pr4['rules_active'], pr4['nondeg'], pr4['n3c_fit']
+tr4 = C.test4(os.path.join(tmp, 'test4.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=4)
+check('анализ теста: вердикты трёх правил, знак по средам, описательное и пары посчитаны',
+      set(tr4['verdicts']) == set(C.RULES) and all('signs' in tr4['rules'][r] for r in C.RULES) and tr4['pairs'] is not None
+      and 'thousands d3c_id' in tr4['descr'], json.dumps(tr4['verdicts'], ensure_ascii=False))
+check('мир с заложенным совпадением: Р1-Т — среднее Δ3c вне диапазона > 0, все восемь сред > 0 по точке',
+      tr4['rules']['Р1-Т']['delta'] > 0 and all(v > 0 for v in tr4['rules']['Р1-Т']['by_env'].values()), json.dumps(tr4['rules']['Р1-Т']['by_env']))
+C.RULES_ACTIVE = C.NONDEG = C.N3C_FIT = None
+
 print(f'провалов: {len(fails)}')
 sys.exit(len(fails) > 0)
