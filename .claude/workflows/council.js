@@ -1,7 +1,7 @@
 export const meta = {
   name: 'council',
   description: 'Совет голов-специалистов: формалист, интуит, скептик, инженер и мозолистое тело ведут диалог над задачей; таймер 10 минут',
-  whenToUse: 'Проектирование экспериментов, разбор результатов, спорные решения, проверка PREREG в Neu. args: { task, start, context?, proposal?, rounds?, minutes?, decision? } — start: время запуска в секундах unix (date +%s), обязательно; proposal: текст или путь к файлу; если передан decision, совет сразу голосует по нему',
+  whenToUse: 'Проектирование экспериментов, разбор результатов, спорные решения, проверка PREREG в Neu. args: { task, start, context?, proposal?, rounds?, minutes?, decision? } — start: необязателен — старт таймера берётся по часам агента при получении задания (решение автора 18.11.2026), переданный start только записывается; proposal: текст или путь к файлу; если передан decision, совет сразу голосует по нему',
   phases: [
     { title: 'Раунд 1', detail: 'каждая голова предлагает своё' },
     { title: 'Диалог', detail: 'головы отвечают друг другу через мозолистое тело — пока позволяет таймер' },
@@ -25,12 +25,20 @@ const HEADS = {
 const CALLOSUM = 'Ты — мозолистое тело совета: координатор между полушариями и специалистами. Ты не предлагаешь своё, а передаёшь, сталкиваешь и сводишь: находишь согласия, реальные разногласия и вопросы, на которые головы должны ответить друг другу.'
 
 if (!args || !args.task) throw new Error('нужен args.task')
-if (!Number.isFinite(Number(args.start))) throw new Error('нужен args.start — время запуска, секунды unix (date +%s): по нему считается таймер')
 const task = args.task
 const proposal = args.proposal ? `\n\nПРЕДЛОЖЕНИЕ НА РАЗБОРЕ (если это путь к файлу — прочитай файл целиком):\n${args.proposal}` : ''
 const context = (args.context || '') + proposal
 const rounds = args.rounds || 2
-const start = Number(args.start)
+// Решение автора 18.11.2026: «бери время с получения моего решения» (ERRORS № 203). Старт таймера — по часам агента в начале
+// заседания, когда задание получено. args.start не обязателен; если передан, он и расхождение пишутся в timer. Заседание из-за
+// расхождения больше не останавливается: до этого замок (№ 183) ловил старое время старта после перезапусков процесса семь раз.
+const CLOCK = { type: 'object', properties: { t: { type: 'integer', description: 'вывод команды date +%s' } }, required: ['t'] }
+const ck = await agent('Выполни одну команду `date +%s` и верни её вывод числом в поле t. Больше ничего не делай и ничего не читай.',
+  { label: 'часы', phase: 'Раунд 1', schema: CLOCK, effort: 'low' })
+const tclock = ck ? Number(ck.t) : NaN
+if (!Number.isFinite(tclock)) throw new Error('часы не ответили — заседание не начато')
+const argStart = Number.isFinite(Number(args.start)) ? Number(args.start) : null
+const start = tclock
 const deadline = start + 60 * (args.minutes || 10)
 const EST = { r1: 180, round: 180, synth: 90, vote: 100, rewrite: 60 }   // запасные оценки длительности шагов, с
 const RULES = `Пиши по-русски, коротко и конкретно, без воды и без украшений. Не выдумывай числа и источники; если опираешься на память, помечай «(п)». Отвечай 150–350 словами. Не открывай журналы текущего прогона workflow (journal.jsonl, agent-*.jsonl) и файлы других голов. Не больше 10 обращений к инструментам. ТАЙМЕР: заседание кончается в ${deadline} (секунды unix; сейчас — команда \`date +%s\`). Если до конца меньше 3 минут — отвечай сразу, без чтения файлов. В поле t верни результат \`date +%s\` в самом конце работы.`
@@ -39,17 +47,8 @@ const VOTE = { type: 'object', properties: { vote: { type: 'string', enum: ['з�
   required_change: { type: 'string', description: 'что изменить, чтобы голос стал «за» (пусто, если «за»)' }, t: { type: 'integer', description: 'date +%s в конце работы' } },
   required: ['vote', 'reason', 'required_change', 't'] }
 
-// Замок (ERRORS № 172, 177, 183): время старта сверяется с часами до первой головы. Текстовое правило «date +%s прямо перед вызовом»
-// трижды не исполнилось после перезапуска процесса сессии. Расхождение больше 180 с — заседание не начинается.
-const CLOCK = { type: 'object', properties: { t: { type: 'integer', description: 'вывод команды date +%s' } }, required: ['t'] }
-const ck = await agent('Выполни одну команду `date +%s` и верни её вывод числом в поле t. Больше ничего не делай и ничего не читай.',
-  { label: 'часы', phase: 'Раунд 1', schema: CLOCK, effort: 'low' })
-const tclock = ck ? Number(ck.t) : NaN
-if (!Number.isFinite(tclock)) throw new Error('замок времени: часы не ответили — заседание не начато')
-if (Math.abs(tclock - start) > 180) throw new Error(`замок времени (ERRORS № 172, 177, 183): args.start ${start} расходится с часами ${tclock} на ${tclock - start} с — возьми date +%s заново и запусти снова`)
-
 let now = start
-const timer = { start, deadline, clock: tclock, steps: [], skipped: [] }
+const timer = { start, deadline, clock: tclock, args_start: argStart, args_start_diff: argStart === null ? null : tclock - argStart, steps: [], skipped: [] }
 const tick = (label, results, est) => {   // время по отметкам агентов; разумные значения — от now до now + 1 ч
   const ts = results.filter(Boolean).map(x => Number(x.t)).filter(x => Number.isFinite(x) && x >= now && x <= now + 3600)
   const before = now
