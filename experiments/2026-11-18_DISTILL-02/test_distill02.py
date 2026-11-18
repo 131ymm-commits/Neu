@@ -25,6 +25,18 @@ def check(name, ok, info=''):
 
 rng = np.random.default_rng(1)
 
+# 0. Замок констант PREREG: RULES_ACTIVE — либо None (до регистрации: анализ теста не идёт), либо ровно правило активности PREREG §5,
+# посчитанное по prereg_power_d2.json, и то же, что записано там
+RA0 = D.RULES_ACTIVE
+if RA0 is None:
+    check('константы PREREG: до регистрации RULES_ACTIVE не задан (анализ теста не пойдёт)', True)
+else:
+    import prereg_power_d2 as PP  # noqa: E402
+    pwj = json.load(open(os.path.join(X_DIR, 'prereg_power_d2.json'), encoding='utf-8'))
+    act0, _ = PP.active_rules(pwj['rules'])
+    check('замок констант: RULES_ACTIVE в distill02.py = правило активности PREREG §5 по prereg_power_d2.json = записанному там',
+          RA0 == act0 == pwj['active'] and set(RA0) == set(D.RULES), json.dumps([RA0, pwj['active']], ensure_ascii=False))
+
 # 1. Переносы: тот же узор, что ocdiv4.kappa; ⌊Φ_j⌋ — перенос в разряд j (второй способ правды)
 ok_k, ok_phi = True, True
 for _ in range(3000):

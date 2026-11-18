@@ -963,7 +963,8 @@ RULES = {'Р1-Т': ('thousands', 'test5', 'm1', 'pos', True, 0.0), 'Р1-Л': ('l
          'Р3-Т': ('thousands', 'test5', 'm3', 'two', True, 0.0), 'Р3-Л': ('length', 'test5', 'm3', 'two', False, 0.0),
          'Р4-Т': ('thousands', 'new5', 'm1', 'pos', False, 0.0), 'Р4Ф-Т': ('thousands', 'new5', 'm1_phi', 'pos', False, 0.0)}
 DESCR_MEAS = ('m2_max', 'm3_c', 'm3_o')                            # описательно, по обоим семействам test5 (совет 74, пп. 4–5)
-RULES_ACTIVE = None        # {'Р1-Т': True|False, ...}: True — правило, False — описательно (PREREG §5: правило активности по пилоту 3)
+# PREREG §5 (правило активности по пилоту 3, prereg_power_d2.json; тест-замок сверяет): True — правило, False — описательно
+RULES_ACTIVE = {'Р1-Т': True, 'Р1-Л': True, 'Р1Ф-Т': True, 'Р1Ф-Л': True, 'Р2-Т': True, 'Р2-Л': False, 'Р3-Т': False, 'Р3-Л': True, 'Р4-Т': False, 'Р4Ф-Т': True}
 POWER_MIN = 0.2
 B_TEST, R_TEST = 4000, 20
 SEED_TEST = 9_930_000

@@ -96,5 +96,75 @@
   }
  },
  "ocdiv2_end_L_X9999": 3200,
- "quantile": 0.9975
+ "quantile": 0.9975,
+ "lam": 0.001,
+ "lam_sens": [
+  0.0,
+  0.01,
+  0.0001
+ ],
+ "fragile": 0.5,
+ "power_min": 0.2,
+ "seed_test": 9930000,
+ "n_rules": 10,
+ "workers": 4,
+ "det_B": 200,
+ "det_envs": [
+  "T_X19_p3",
+  "L_X9_p3"
+ ],
+ "n_templates": 109,
+ "top_k_wrong": 3,
+ "max_features": 3,
+ "new5_carries": {
+  "T_X109_p3": {
+   "ood_share": 0.5540909090909091,
+   "carry_positions": {
+    "1": 988,
+    "2": 1219,
+    "3": 1219
+   }
+  },
+  "T_X139_p3": {
+   "ood_share": 0.5363636363636364,
+   "carry_positions": {
+    "1": 975,
+    "2": 1180,
+    "3": 1180
+   }
+  },
+  "T_X169_p3": {
+   "ood_share": 0.5472727272727272,
+   "carry_positions": {
+    "1": 1005,
+    "2": 1204,
+    "3": 1204
+   }
+  },
+  "L_X9999_p3": {
+   "ood_share": 0.5363636363636364,
+   "carry_positions": {
+    "1": 983,
+    "2": 1180,
+    "3": 1180,
+    "4": 1180,
+    "5": 1180,
+    "6": 1180
+   }
+  }
+ },
+ "ref_size_4digit": 99990,
+ "log_floor_old": -690.7755278982137,
+ "skeptic_assumed_offset": -10000,
+ "new5_max_lost_offset": {
+  "T_X109_p3": -1000,
+  "T_X139_p3": -1000,
+  "T_X169_p3": -1000,
+  "L_X9999_p3": -1000000
+ },
+ "errors_refs": [
+  209,
+  210,
+  211
+ ]
 }
