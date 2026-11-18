@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""OCDIV-04: каркас отчёта — написан до вывода анализа теста (проверен на заглушке). Все числа — из analysis.json и разбора пилота;
+"""OCDIV-04: каркас отчёта — написан до вывода анализа теста (проверен на заглушке; регистрация 5a7706fe). После совета 73 — правки только текста отчёта по его «нужно» (слова описательных строк, оговорка правила без части Б, путь поля прибора, вес; DEVIATIONS.md). Все числа — из analysis.json и разбора пилота;
 тексты выводов после данных — отдельным файлом notes (short, main_q, next, notes, council), если он задан. Вердикты — из json по PREREG.
   python3 report_ocdiv4.py ANALYSIS.json PILOT.json EXPECT.json OUT.md [--notes NOTES.json] [--commits K=V ...]"""
 import json
@@ -48,6 +48,43 @@ def ci(e, d=4):
     return f"[{f(e['ci'][0], d)}; {f(e['ci'][1], d)}]" if e and 'ci' in e else '—'
 
 
+PART_B = {'Р1-Т': True, 'Р1-Л': False, 'Р2-Т': True}          # как ocdiv4.RULES
+
+
+def tt(x, d=2):
+    return g(x, d).replace('-', '−')
+
+
+def bound_words(e):
+    """Совет 73, «нужно» 3: у описательных строк — слова о границе, а не «подтверждено» и «опровергнуто»."""
+    if not e or 'ci' not in e:
+        return '—'
+    lo, hi = e['ci']
+    return 'нижняя граница M4 > 0' if lo > 0 else ('верхняя граница M4 < 0' if hi < 0 else 'M4 накрывает 0')
+
+
+def t_words(e):
+    tb = e.get('t_envs', {})
+    t, c = tb.get('t'), tb.get('crit')
+    if t is None or c is None or t != t:
+        return 't по средам —'
+    return f"t по средам по модулю {'выше' if abs(t) > c else 'ниже'} порога"
+
+
+def desc_label(e):
+    return f"описательно: {bound_words(e)}; {t_words(e)}"
+
+
+def active_label(r, e):
+    """Вердикт правила; у правила без части Б — оговорка «в среднем этих сред» (совет 73, «нужно» 1)."""
+    v = e['verdict_rule']
+    if not PART_B.get(r, True) and v == 'подтверждено':
+        tb = e.get('t_envs', {})
+        v += (f" только по части А — в среднем этих {len(e.get('signs', {}).get('pos', [])) + len(e.get('signs', {}).get('neg', [])) + len(e.get('signs', {}).get('zero', []))} сред; "
+              f"на новые среды не переносится (t по средам {tt(tb.get('t'))} < {g(tb.get('crit'), 3)})")
+    return v
+
+
 def render(A, Pn, X, notes=None, commits=None):
     commits = commits or {}
     L = ['# OCDIV-04 «СОВПАДЕНИЕ-СМЕЩЕНИЙ» — отчёт', '']
@@ -60,16 +97,18 @@ def render(A, Pn, X, notes=None, commits=None):
     for r, e in A['rules'].items():
         pw = (power_of(Pn, A, r) or {}).get('power', {})
         dec = (pw.get('confirm', 0) + pw.get('refute', 0)) if r == 'Р2-Т' else pw.get('confirm')
-        act = '' if e.get('active', True) else f" (описательно: решающая мощность по пилоту {g(dec, 3)} < 0,2; вердикт правилом не считается)"
+        head = (f"{r} — {active_label(r, e)}" if e.get('active', True) else
+                f"{r} ({desc_label(e)}; решающая мощность по пилоту {g(dec, 3)} < 0,2 — без вердикта)")
         sg = e.get('signs', {})
         signs = f"знак по средам: > 0 — {len(sg.get('pos', []))}, < 0 — {len(sg.get('neg', []))}, накрывает 0 — {len(sg.get('zero', []))}" if sg else ''
         tb = e.get('t_envs', {})
-        L.append(f"- **{r} — {e['verdict_rule']}{act}.** {rule_text(A, r)}: {f(e.get('delta'))}, M4 {ci(e)}; t по средам {g(tb.get('t'), 2)} "
+        L.append(f"- **{head}.** {rule_text(A, r)}: {f(e.get('delta'))}, M4 {ci(e)}; t по средам {tt(tb.get('t'))} "
                  f"при пороге {g(tb.get('crit'), 3)} (df = {tb.get('df', '—')}); {signs}" + (f"; {e['mark']}" if e.get('mark') else '') + '.')
     for r, e in (A.get('rules_alt') or {}).items():
         tb = e.get('t_envs', {})
-        L.append(f"- Ветвь (описательно, тем же правилом): {r} по второму нулю — {e['verdict_rule']}. {rule_text(A, r, alt=True)}: {f(e.get('delta'))}, "
-                 f"M4 {ci(e)}; t по средам {g(tb.get('t'), 2)} при пороге {g(tb.get('crit'), 3)}.")
+        why = 'нуль N3c не прошёл положительный контроль' if not A.get('n3c_fit', True) else 'второй нуль'
+        L.append(f"- Ветвь ({why}; описательно, тем же правилом): {r} по второму нулю — {bound_words(e)}; {t_words(e)}. "
+                 f"{rule_text(A, r, alt=True)}: {f(e.get('delta'))}, M4 {ci(e)}; t по средам {tt(tb.get('t'))} при пороге {g(tb.get('crit'), 3)}.")
     for fam, F in A['families'].items():
         L.append(f"- {FAM_RU[fam]}: годных сред {len(F['valid'])} из {len(F['envs'])}, в правилах {len(F['use'])}; опыт по семейству "
                  f"{'определён' if F['method_ok'] else 'не определён'}; толпа {len(F['crowd_effective'])} из 7, выбыли: {F['crowd_dropped'] or 'нет'}.")
@@ -77,15 +116,18 @@ def render(A, Pn, X, notes=None, commits=None):
         L += [f'- {x}' for x in notes['short']]
     L += ['', '## Правила', '', '| Правило | Δ | M4 при 0,0025 | часть А | t по средам | порог t | знак по средам: > 0 / < 0 / накрывает 0 | вердикт |',
           '|---|---|---|---|---|---|---|---|']
-    rows = [(r, e, '' if e.get('active', True) else ' (описательно)') for r, e in A['rules'].items()]
-    rows += [(r + ' — ветвь', e, ' (описательно)') for r, e in (A.get('rules_alt') or {}).items()]
-    for r, e, d in rows:
+    rows = [(r, r, e, e.get('active', True)) for r, e in A['rules'].items()]
+    rows += [(r + ' — ветвь', r, e, False) for r, e in (A.get('rules_alt') or {}).items()]
+    for lab, r, e, act in rows:
         sg, tb = e.get('signs', {}), e.get('t_envs', {})
-        L.append(f"| {r} ({e.get('key', '—')}) | {f(e.get('delta'))} | {ci(e)} | {e.get('verdict', '—')} | {g(tb.get('t'), 2)} | {g(tb.get('crit'), 3)} | "
-                 f"{len(sg.get('pos', []))} / {len(sg.get('neg', []))} / {len(sg.get('zero', []))} | {e['verdict_rule']}{d} |")
+        pa = e.get('verdict', '—') if act else bound_words(e)
+        vd = active_label(r, e) if act else desc_label(e)
+        L.append(f"| {lab} ({e.get('key', '—')}) | {f(e.get('delta'))} | {ci(e)} | {pa} | {tt(tb.get('t'))} | {g(tb.get('crit'), 3)} | "
+                 f"{len(sg.get('pos', []))} / {len(sg.get('neg', []))} / {len(sg.get('zero', []))} | {vd} |")
     L += ['', 'Часть А — нижняя граница M4 среднего сред > 0; часть Б — t по средам (среды как выборка) выше квантиля t(0,9975; n − 1). '
           'Интервал среды для знака — при 0,0025 / n. Р1-Л — только часть А (три среды). Величины: d3c_ood — Δ3c (N3c), n0c_ood — Δ0c (N0c), '
-          'k_diff — K вне диапазона минус K на ID.']
+          'k_diff — K вне диапазона минус K на ID. «Подтверждено» и «опровергнуто» — только у правила с вердиктом; у описательных строк — слова '
+          'о границе M4 (совет 73).']
     for fam, F in A['families'].items():
         L += ['', f"## По средам: {FAM_RU[fam]} (точки; в скобках — ст. откл. повторов)", '',
               '| Среда | толпа | вне диапазона / ID | оракул | F вне диапазона | Δ3c вне диапазона | Δ0c (N0c) вне диапазона | Δ3c на ID | K вне диапазона | K на ID | Т4 (N0) |',
@@ -121,7 +163,7 @@ def render(A, Pn, X, notes=None, commits=None):
         L.append('- ДЕТЕРМИНИЗМ-НА-3: ' + '; '.join(f"{x['model']} на {x['env']} — ответы совпали в доле {g(x['answers_equal'])}, наибольшая разность logp "
                                                     f"{g(x['max_abs_dlogp'], 6) if x['max_abs_dlogp'] is not None else '—'}" for x in rc) + '.')
     ex = sum(e.get('extra_tokens', {}).get('n_cells', 0) for F in A['families'].values() for e in F['envs'].values() if e.get('valid'))
-    L.append(f"- Прибор: числовых ответов толпы с лишними токенами — {ex}" + (' (пересчёт — в analysis.json, поле extra_tokens.recount).' if ex else '.'))
+    L.append(f"- Прибор: числовых ответов толпы с лишними токенами — {ex}" + (' (пересчёт — в analysis.json, поле families.<семейство>.envs.<среда>.extra_tokens.recount).' if ex else '.'))
     L.append(f"- Версии анализа: python {A['versions']['python']}, numpy {A['versions']['numpy']}, scipy {A['versions']['scipy']}.")
     L += ['', '## Ожидания (PREREG §6)', '', '| № | Исход | Вероятность | Сбылось |', '|---|---|---|---|']
     for e in X['expectations']:
@@ -138,7 +180,8 @@ def render(A, Pn, X, notes=None, commits=None):
         act = e.get('active', True)
         w = math.log2(pc / 0.0025) if (act and pc and v in ('подтверждено', 'вне диапазона больше', 'вне диапазона меньше')) else (
             -math.log2(pc / 0.0025) if (act and pc and v == 'опровергнуто') else 0.0)
-        L.append(f"- {r}: {v}{'' if act else ' (описательно)'} — {g(w, 2)} бита" + (f" (log₂({g(pc, 3)} / 0,0025))" if w else ''))
+        L.append(f"- {r}: {v} — {g(w, 2)} бита (log₂({g(pc, 3)} / 0,0025); верхняя оценка)" if (act and w) else
+                 (f"- {r}: {v} — 0 бит" if act else f"- {r}: описательно — 0 бит"))
     L.append('- Ветви и описательные величины — 0 бит.')
     if notes and notes.get('notes'):
         L += ['', '## После данных (заметки; причина — только проверенная)', ''] + [f'- {x}' for x in notes['notes']]
@@ -148,6 +191,8 @@ def render(A, Pn, X, notes=None, commits=None):
           '- Что уровень M4 точен для среднего сред: перенос M4 на 0,0025 не проверен (номинальный уровень).']
     if not A.get('n3c_fit', True):
         L.append('- Что N3c годен: третий контроль (HYPOTHESIS-ADDENDUM-2) его не подтвердил, поэтому ветвь N3c — описательно, без вердикта и без веса.')
+        L.append('- Что «подтверждено» у правила по нулю N0c говорит о совпадении самих неверных чисел: N0c стирает общую трудность задач, и '
+                 'превышение над ним неспецифично (совет 73).')
     if notes and notes.get('council'):
         L += ['', f"## {notes['council']['title']}", ''] + [f'- {x}' for x in notes['council']['items']]
     return '\n'.join(L) + '\n'

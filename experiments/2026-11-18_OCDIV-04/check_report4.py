@@ -26,15 +26,19 @@ for src, rules in (('rules', A['rules']), ('rules_alt', A['rules_alt'])):
     for r, e in rules.items():
         need(f'{src}.{r}.delta', RP.f(e['delta']))
         need(f'{src}.{r}.ci', f"[{RP.f(e['ci'][0])}; {RP.f(e['ci'][1])}]")
-        need(f'{src}.{r}.t', RP.g(e['t_envs']['t'], 2))
+        need(f'{src}.{r}.t', RP.tt(e['t_envs']['t']))
         need(f'{src}.{r}.crit', RP.g(e['t_envs']['crit'], 3))
-        need(f'{src}.{r}.verdict', e['verdict_rule'])
+        act = src == 'rules' and e.get('active', True)
+        need(f'{src}.{r}.verdict', RP.active_label(r, e) if act else RP.desc_label(e))     # совет 73: у описательных — слова о границе M4
 for fam, F in A['families'].items():
     for n, e in F['envs'].items():
         for key in ('d3c_ood', 'n0c_ood', 'd3c_id', 'k_ood', 'k_id', 't4_ood'):
             need(f'{fam}.{n}.{key}', f"{RP.f(e[key]['point'])} ({RP.g(e[key]['sd'])})")
 for k in ('thousands d3u_ood', 'length d3u_ood', 'thousands k_ood', 'thousands k_id', 'length k_ood', 'length k_id', 'thousands d3c_id', 'length d3c_id'):
     need(f'descr.{k}', RP.f(A['descr'][k]['delta']))
+for r, e in A['rules'].items():                                  # совет 73, «нужно» 3: вердиктные слова — только у правила с вердиктом
+    if not e.get('active', True):
+        checks.append((f'rules.{r}.нет вердиктного слова', e['verdict_rule'], e['verdict_rule'] not in md.split('## Ожидания')[0]))
 for e in EX['expectations']:
     got = RP.outcome(A, e['key'])
     need(f"expect.{e['id']}", f"| {e['id']} | {e['text']} | {RP.g(e['p'], 4 if e['p'] < 0.01 else 3)} | {'да' if got else 'нет'} |")
