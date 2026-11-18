@@ -231,7 +231,10 @@ SPIKE_TARGETS = (0.01, 0.02)                                   # заложен�
 SPIKE_FIT_MIN = 0.8                                            # мощность Р1-Т при приросте +0,02 ниже — N3c не годится
 # зёрна OCDIV-04 (+ смещение среды off4); повтор бутстрепа — своё зерно + 5000
 SEED_CV4 = 9_490_000
-STREAMS = {'d3c_ood': 0, 'd3c_id': 1, 'k_ood': 2, 'k_id': 3, 't4_ood': 4, 'd3u_ood': 5, 'pairs': 6, 'spike': 7}
+STREAMS = {'d3c_ood': 0, 'd3c_id': 1, 'k_ood': 2, 'k_id': 3, 't4_ood': 4, 'd3u_ood': 5, 'pairs': 6, 'spike': 7, 'spike_items': 8}
+# HYPOTHESIS-ADDENDUM.md (после пилота, до повторного разбора): ВБРОС-ПО-ЗАДАЧАМ — на доле δ задач вне диапазона все неверные числовые
+# ответы голов получают общее для задачи смещение; естественные совпадения на других задачах не трогаются. Правило годности — прежнее.
+SPIKE_ITEM_DELTAS = (0.005, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2)
 SEED_TEST, SEED_PILOT = 9_500_000, 9_600_000
 SEED_POWER4, SEED_REP4 = 9_710_000, 9_720_000
 K_PAIRS = 200
@@ -266,6 +269,18 @@ def spike(D, probs, cols, delta, rng):
         if m:
             pick = rng.choice(w, m, replace=False)
             Ds[pick, k] = pl[pick]
+    return Ds
+
+
+def spike_items(D, probs, cols, delta, rng):
+    """ВБРОС-ПО-ЗАДАЧАМ (HYPOTHESIS-ADDENDUM): доля delta задач; на каждой все неверные числовые ответы — общее для задачи смещение."""
+    Ds = D.copy()
+    m = int(round(delta * D.shape[0]))
+    if m:
+        rows = rng.choice(D.shape[0], m, replace=False)
+        wr = wrong_num(D)
+        for j in rows:
+            Ds[j, wr[j]] = planted(probs, cols[j])
     return Ds
 
 
@@ -332,10 +347,17 @@ def env4(job):
     if with_spike:
         g = np.random.default_rng(seed_of(test, 'spike', o))
         base = d3c_point(D['ood'], sc['ood'], np.random.default_rng(seed_of(test, 'spike', o) + 1), K_point)[2]
-        out['spike'] = {}
+        out['spike'], out['spike_k'] = {}, {}
+        k0 = k_raw(D['ood'])
         for dl in SPIKE_DELTAS:
             Ds = spike(D['ood'], probs, cols['ood'], dl, g)
             out['spike'][str(dl)] = d3c_point(Ds, sc['ood'], np.random.default_rng(seed_of(test, 'spike', o) + 1), K_point)[2] - base
+            out['spike_k'][str(dl)] = k_raw(Ds) - k0           # ERRORS № 201: ломает ли вброс естественные совпадения (K падает)
+        gi = np.random.default_rng(seed_of(test, 'spike_items', o))
+        out['spike_items'] = {}
+        for dl in SPIKE_ITEM_DELTAS:
+            Ds = spike_items(D['ood'], probs, cols['ood'], dl, gi)
+            out['spike_items'][str(dl)] = d3c_point(Ds, sc['ood'], np.random.default_rng(seed_of(test, 'spike', o) + 1), K_point)[2] - base
     out['_boot'] = boots
     return out
 
@@ -500,34 +522,67 @@ def pilot4(dst, mdirs, B=B_PILOT, workers=1):
         res['power'][rule] = power_entry4(pts, sds, sc, N_ENVS[fam], part_b)
     # вброс (положительный контроль N3c): δ* — по средней кривой прироста Δ3c «тысяч» для прироста +0,01 и +0,02; прирост каждой среды
     # при δ* — линейной интерполяцией её кривой; мощность Р1-Т при заложенном приросте: среднее и разброс между средами — у заложенного
-    # прироста (а не у настоящего эффекта), s — пересчёт ст. откл. Δ3c пилота на тест (как у Р1-Т)
+    # прироста (а не у настоящего эффекта), s — пересчёт ст. откл. Δ3c пилота на тест (как у Р1-Т). Два вброса: первоначальный
+    # (HYPOTHESIS §7) и ВБРОС-ПО-ЗАДАЧАМ (HYPOTHESIS-ADDENDUM); годность N3c — по второму, первый — как записанный.
     F = res['families']['thousands']
     use = F['nondeg']
-    xs = [0.0] + list(SPIKE_DELTAS)
-    per = {n: [0.0] + [F['envs'][n]['spike'][str(d)] for d in SPIKE_DELTAS] for n in use}
-    mean_curve = [float(np.mean([per[n][i] for n in use])) for i in range(len(xs))] if use else []
-    res['spike'] = dict(deltas=xs, mean_curve=mean_curve, targets={})
     pw = res['power']['Р1-Т']
-    for tg in SPIKE_TARGETS:
-        dl = None
-        if mean_curve and max(mean_curve) >= tg:
-            i = next(k for k, y in enumerate(mean_curve) if y >= tg)
-            dl = xs[i] if i == 0 or mean_curve[i] == mean_curve[i - 1] else \
-                xs[i - 1] + (tg - mean_curve[i - 1]) * (xs[i] - xs[i - 1]) / (mean_curve[i] - mean_curve[i - 1])
-        inc = [float(np.interp(dl, xs, per[n])) for n in use] if dl is not None else []
-        tau_inc = float(np.std(inc, ddof=1)) if len(inc) > 1 else None
-        p_tg = power4(float(np.mean(inc)), tau_inc, pw['s_test'], N_ENVS['thousands'], True) if (pw and inc and tau_inc is not None) else None
-        res['spike']['targets'][str(tg)] = dict(delta=dl, increments=dict(zip(use, inc)), tau_increment=tau_inc, power_at_target=p_tg)
-    p2 = res['spike']['targets'][str(SPIKE_TARGETS[-1])]['power_at_target']
-    res['n3c_fit'] = bool(p2 is not None and p2['confirm'] >= SPIKE_FIT_MIN)
-    res['rules_active'] = {r: bool(res['power'][r] is not None and res['power'][r]['power']['confirm'] >= POWER_MIN) for r in RULES}
+    for key, deltas in (('spike', SPIKE_DELTAS), ('spike_items', SPIKE_ITEM_DELTAS)):
+        xs = [0.0] + list(deltas)
+        per = {n: [0.0] + [F['envs'][n][key][str(d)] for d in deltas] for n in use if key in F['envs'][n]}
+        mean_curve = [float(np.mean([per[n][i] for n in per])) for i in range(len(xs))] if per else []
+        out_sp = dict(deltas=xs, mean_curve=mean_curve, targets={})
+        for tg in SPIKE_TARGETS:
+            dl = None
+            if mean_curve and max(mean_curve) >= tg:
+                i = next(k for k, y in enumerate(mean_curve) if y >= tg)
+                dl = xs[i] if i == 0 or mean_curve[i] == mean_curve[i - 1] else \
+                    xs[i - 1] + (tg - mean_curve[i - 1]) * (xs[i] - xs[i - 1]) / (mean_curve[i] - mean_curve[i - 1])
+            inc = [float(np.interp(dl, xs, per[n])) for n in per] if dl is not None else []
+            tau_inc = float(np.std(inc, ddof=1)) if len(inc) > 1 else None
+            p_tg = power4(float(np.mean(inc)), tau_inc, pw['s_test'], N_ENVS['thousands'], True) if (pw and inc and tau_inc is not None) else None
+            out_sp['targets'][str(tg)] = dict(delta=dl, increments=dict(zip(per, inc)), tau_increment=tau_inc, power_at_target=p_tg)
+        res[key] = out_sp
+    res['spike_k_mean'] = {str(d): float(np.mean([F['envs'][n]['spike_k'][str(d)] for n in use])) for d in SPIKE_DELTAS} if use else {}
+    fit = {}
+    for key in ('spike', 'spike_items'):
+        p2 = res[key]['targets'][str(SPIKE_TARGETS[-1])]['power_at_target']
+        fit[key] = bool(p2 is not None and p2['confirm'] >= SPIKE_FIT_MIN)
+    res['n3c_fit_original'] = fit['spike']
+    res['n3c_fit'] = fit['spike_items']                         # HYPOTHESIS-ADDENDUM: годность — по ВБРОСУ-ПО-ЗАДАЧАМ
+    for r, (_, _, kind, _) in RULES.items():                  # ERRORS № 202: у двустороннего правила вердикт — в любую сторону
+        if res['power'][r] is not None:
+            pw_ = res['power'][r]['power']
+            pw_['decisive'] = pw_['confirm'] + pw_['refute'] if kind == 'two' else pw_['confirm']
+    res['rules_active'] = {r: bool(res['power'][r] is not None and res['power'][r]['power']['decisive'] >= POWER_MIN) for r in RULES}
     res['nondeg'] = {fam: res['families'][fam]['nondeg'] for fam in FAMS}
-    res['expect'] = {r: (0.95 * res['power'][r]['power']['confirm'] if res['power'][r] else None) for r in RULES}
+    res['expect'] = {r: (0.95 * res['power'][r]['power']['decisive'] if res['power'][r] else None) for r in RULES}
     res['seconds'] = round(time.time() - t0, 1)
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
     print('пилот:', {r: (round(res['power'][r]['power']['confirm'], 3) if res['power'][r] else None) for r in RULES},
           '| годность N3c:', res['n3c_fit'], '| невырожденные:', res['nondeg'], '| время', res['seconds'], 'с', flush=True)
     return res
+
+
+def compare_pilots(new, old, tol=0.0):
+    """Повторный разбор пилота (HYPOTHESIS-ADDENDUM): всё, кроме вбросов и мощности Р2-Т, должно совпасть с первым разбором до бита."""
+    bad = []
+    for fam in FAMS:
+        for n, e in old['families'][fam]['envs'].items():
+            e2 = new['families'][fam]['envs'][n]
+            for key in ('d3c_ood', 'd3c_id', 'k_ood', 'k_id', 't4_ood', 'd3u_ood'):
+                if key in e and (abs(e[key]['point'] - e2[key]['point']) > tol or abs(e[key]['sd'] - e2[key]['sd']) > tol):
+                    bad.append(f'{n} {key}')
+            for d in SPIKE_DELTAS:
+                if 'spike' in e and abs(e['spike'][str(d)] - e2['spike'][str(d)]) > tol:
+                    bad.append(f'{n} spike {d}')
+    for r in ('Р1-Т', 'Р1-Л', 'Р2-Т'):
+        for k in ('mu', 'tau', 's_test'):
+            if abs(old['power'][r][k] - new['power'][r][k]) > tol:
+                bad.append(f'power {r} {k}')
+        if r != 'Р2-Т' and abs(old['power'][r]['power']['confirm'] - new['power'][r]['power']['confirm']) > tol:
+            bad.append(f'power {r} confirm')
+    return bad
 
 
 def test4(dst, mdirs, pilot_res, B=B_TEST, workers=1):
@@ -586,6 +641,10 @@ def main():
         merge4(a[1], a[2], a[3], a[4:])
     elif mode == 'pilot':
         pilot4(a[1], {'thousands': a[2], 'length': a[3]}, B=opt('--boot', B_PILOT), workers=opt('--workers', 1))
+    elif mode == 'compare_pilots':
+        bad = compare_pilots(json.load(open(a[1], encoding='utf-8')), json.load(open(a[2], encoding='utf-8')))
+        print('сверка разборов пилота:', 'расхождения ' + str(bad[:20]) if bad else 'совпало до бита (кроме вбросов и мощности Р2-Т)')
+        sys.exit(1 if bad else 0)
     elif mode == 'test':
         test4(a[1], {'thousands': a[2], 'length': a[3]}, a[4], B=opt('--boot', B_TEST), workers=opt('--workers', 1))
     else:

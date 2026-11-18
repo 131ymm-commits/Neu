@@ -87,6 +87,22 @@ _, _, ds = C.d3c_point(Ds, sts, np.random.default_rng(10), 200)
 _, _, ks = C.k_point(Ds, sts, np.random.default_rng(11), 200)
 check('мир «общее для задачи смещение у 40 % ошибок»: K > 0,1 и Δ3c > 0,03', ks > 0.1 and ds > 0.03, f'K {ks:.4f}, Δ3c {ds:.4f}')
 
+# ERRORS № 201: положительный контроль — на мире с сильными естественными совпадениями (как в данных): первоначальный вброс при малом δ
+# ломает их и Δ3c не растёт; ВБРОС-ПО-ЗАДАЧАМ растёт монотонно
+probs_s = [dict(a=1900 + (j % 100), b=10 + (j * 7) % 90) for j in range(Ds.shape[0])]
+cols_s = list(range(Ds.shape[0]))
+_, _, base_s = C.d3c_point(Ds, sts, np.random.default_rng(12), 200)
+orig_small = C.d3c_point(C.spike(Ds, probs_s, cols_s, 0.05, np.random.default_rng(13)), sts, np.random.default_rng(12), 200)[2] - base_s
+k_small = C.k_raw(C.spike(Ds, probs_s, cols_s, 0.05, np.random.default_rng(13))) - C.k_raw(Ds)
+inc_items = [C.d3c_point(C.spike_items(Ds, probs_s, cols_s, dl, np.random.default_rng(14)), sts, np.random.default_rng(12), 200)[2] - base_s
+             for dl in (0.01, 0.05, 0.1, 0.2)]
+check('вброс (№ 201): на мире с естественными совпадениями первоначальный вброс при δ = 0,05 ломает их (K падает) и Δ3c не растёт заметно',
+      k_small < 0 and orig_small < 0.005, f'ΔK {k_small:.4f}, ΔΔ3c {orig_small:.4f}')
+check('ВБРОС-ПО-ЗАДАЧАМ: прирост Δ3c растёт с δ и при δ = 0,2 больше +0,02', all(b > a for a, b in zip(inc_items, inc_items[1:])) and inc_items[-1] > 0.02,
+      str([round(x, 4) for x in inc_items]))
+Dsi = C.spike_items(Ds, probs_s, cols_s, 0.2, np.random.default_rng(14))
+check('ВБРОС-ПО-ЗАДАЧАМ: верные ответы и «без числа» не меняются', np.array_equal(Ds == 0, Dsi == 0) and np.array_equal(Ds >= NC, Dsi >= NC))
+
 # 4. Потоки и повторы
 a1, b1 = C.d3c_stream(Ds[:300], sts[:300], 1, 2, 20, 30, 3)
 a2, b2 = C.d3c_stream(Ds[:300], sts[:300], 1, 2, 20, 30, 3)
@@ -209,6 +225,14 @@ check('разбор пилота: мощность трёх правил, кри
 check('вброс: δ для прироста +0,02 найден, приросты сред около +0,02, мощность при заложенном приросте посчитана',
       pr4['spike']['targets']['0.02']['delta'] is not None and abs(np.mean(list(pr4['spike']['targets']['0.02']['increments'].values())) - 0.02) < 0.005
       and pr4['spike']['targets']['0.02']['power_at_target'] is not None, json.dumps(pr4['spike']['targets'], default=float)[:400])
+check('мощность двустороннего Р2-Т (№ 202): решающая = вверх + вниз; у односторонних — вверх',
+      abs(pr4['power']['Р2-Т']['power']['decisive'] - pr4['power']['Р2-Т']['power']['confirm'] - pr4['power']['Р2-Т']['power']['refute']) < 1e-12
+      and pr4['power']['Р1-Т']['power']['decisive'] == pr4['power']['Р1-Т']['power']['confirm'])
+check('разбор пилота: оба вброса (первоначальный и по задачам) и годность по ВБРОСУ-ПО-ЗАДАЧАМ записаны',
+      'spike_items' in pr4 and 'n3c_fit_original' in pr4 and len(pr4['spike_items']['mean_curve']) == len(C.SPIKE_ITEM_DELTAS) + 1)
+pr4b = C.pilot4(os.path.join(tmp, 'pilot4b.json'), mp4, B=4, workers=1)
+check('повторный разбор пилота на тех же данных совпадает с первым до бита (compare_pilots)',
+      C.compare_pilots(json.load(open(os.path.join(tmp, 'pilot4b.json'))), json.load(open(os.path.join(tmp, 'pilot4.json')))) == [])
 try:
     C.test4(os.path.join(tmp, 'test4_x.json'), mt4, os.path.join(tmp, 'pilot4.json'), B=3)
     no_const = False

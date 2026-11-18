@@ -3,6 +3,7 @@
 """OCDIV-04: файлы заданий (процессор раннера GitHub Actions, без ключей). Пуш новых файлов в gha_par/ запускает их на neu-par.
   python3 make_jobs4.py pilot --dir DIR      — 77 заданий пилота: 7 голов × 11 сред (8 «тысяч», 3 «длины»), фаза pilot3, 600 задач
   python3 make_jobs4.py sum_pilot --dir DIR  — разбор пилота: тесты кода, сборка merge4 по семействам, ocdiv4.py pilot (B = 1000, 4 процесса)
+  python3 make_jobs4.py sum_pilot2 --dir DIR — повторный разбор по HYPOTHESIS-ADDENDUM и сверка с первым разбором до бита
   python3 make_jobs4.py test --dir DIR       — шаблоны теста: 77 заданий фазы test3 (2200 задач) и 3 повтора на детерминизм
   python3 make_jobs4.py sum_test --dir DIR   — шаблон анализа теста
 Папка обязательна (ERRORS № 198: умолчание положило задание не туда). Пилот — в gha_par/ (не регистрируется), тест и анализ теста — в jobs/
@@ -76,6 +77,15 @@ def main():
                          'python3 $E/ocdiv4.py merge "$OUT/m_L" pilot3 length gha_out/ocdiv4_pilot_*\n'
                          'python3 $E/ocdiv4.py pilot "$OUT/pilot.json" "$OUT/m_T" "$OUT/m_L" --boot 1000 --workers 4\n'
                          'rm -rf "$OUT/m_T" "$OUT/m_L"          # сборки восстанавливаются из gha_out/ocdiv4_pilot_*/ той же командой\n', dst))
+    elif mode == 'sum_pilot2':
+        out.append(write('ocdiv4_sum_pilot2', 'повторный разбор пилота по HYPOTHESIS-ADDENDUM (ВБРОС-ПО-ЗАДАЧАМ, двусторонняя мощность Р2-Т; '
+                         'ERRORS № 201, 202): тесты кода, сборка merge4, ocdiv4.py pilot (B = 1000), сверка с первым разбором до бита',
+                         SCI + TESTS +
+                         'python3 $E/ocdiv4.py merge "$OUT/m_T" pilot3 thousands gha_out/ocdiv4_pilot_*\n'
+                         'python3 $E/ocdiv4.py merge "$OUT/m_L" pilot3 length gha_out/ocdiv4_pilot_*\n'
+                         'python3 $E/ocdiv4.py pilot "$OUT/pilot.json" "$OUT/m_T" "$OUT/m_L" --boot 1000 --workers 4\n'
+                         'python3 $E/ocdiv4.py compare_pilots "$OUT/pilot.json" gha_out/ocdiv4_sum_pilot/pilot.json | tee "$OUT/compare.log"\n'
+                         'rm -rf "$OUT/m_T" "$OUT/m_L"\n', dst))
     elif mode == 'test':
         for nm in V.CROWD:
             for e in X4.envs_ocdiv4('test3'):
