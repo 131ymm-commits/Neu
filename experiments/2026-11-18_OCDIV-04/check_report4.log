@@ -1,0 +1,107 @@
+✓ rules.Р1-Т.delta: +0,0091
+✓ rules.Р1-Т.ci: [+0,0006; +0,0177]
+✓ rules.Р1-Т.t: 0,53
+✓ rules.Р1-Т.crit: 4,029
+✓ rules.Р1-Т.verdict: в среднем этих сред (на новые среды не переносится)
+✓ rules.Р1-Л.delta: +0,0450
+✓ rules.Р1-Л.ci: [+0,0350; +0,0550]
+✓ rules.Р1-Л.t: 1,28
+✓ rules.Р1-Л.crit: 14,089
+✓ rules.Р1-Л.verdict: подтверждено
+✓ rules.Р2-Т.delta: −0,0408
+✓ rules.Р2-Т.ci: [−0,0659; −0,0156]
+✓ rules.Р2-Т.t: -2,97
+✓ rules.Р2-Т.crit: 4,029
+✓ rules.Р2-Т.verdict: в среднем этих сред: вне диапазона меньше (на новые среды не переносится)
+✓ rules_alt.Р1-Т.delta: +0,0269
+✓ rules_alt.Р1-Т.ci: [+0,0206; +0,0331]
+✓ rules_alt.Р1-Т.t: 6,89
+✓ rules_alt.Р1-Т.crit: 4,029
+✓ rules_alt.Р1-Т.verdict: подтверждено
+✓ rules_alt.Р1-Л.delta: +0,0203
+✓ rules_alt.Р1-Л.ci: [+0,0120; +0,0286]
+✓ rules_alt.Р1-Л.t: 2,36
+✓ rules_alt.Р1-Л.crit: 14,089
+✓ rules_alt.Р1-Л.verdict: подтверждено
+✓ thousands.T_X19_p3.d3c_ood: +0,0292 (0,0061)
+✓ thousands.T_X19_p3.n0c_ood: +0,0500 (0,0094)
+✓ thousands.T_X19_p3.d3c_id: +0,0079 (0,0034)
+✓ thousands.T_X19_p3.k_ood: +0,0493 (0,0047)
+✓ thousands.T_X19_p3.k_id: +0,0596 (0,0261)
+✓ thousands.T_X19_p3.t4_ood: +0,0600 (0,0093)
+✓ thousands.T_X29_p3.d3c_ood: +0,0419 (0,0069)
+✓ thousands.T_X29_p3.n0c_ood: +0,0713 (0,0094)
+✓ thousands.T_X29_p3.d3c_id: +0,0213 (0,0044)
+✓ thousands.T_X29_p3.k_ood: +0,0635 (0,0066)
+✓ thousands.T_X29_p3.k_id: +0,1177 (0,0222)
+✓ thousands.T_X29_p3.t4_ood: +0,0759 (0,0096)
+✓ thousands.T_X39_p3.d3c_ood: +0,0392 (0,0062)
+✓ thousands.T_X39_p3.n0c_ood: +0,0403 (0,0084)
+✓ thousands.T_X39_p3.d3c_id: +0,0027 (0,0042)
+✓ thousands.T_X39_p3.k_ood: +0,0630 (0,0040)
+✓ thousands.T_X39_p3.k_id: +0,0866 (0,0176)
+✓ thousands.T_X39_p3.t4_ood: +0,0451 (0,0086)
+✓ thousands.T_X49_p3.d3c_ood: +0,0134 (0,0056)
+✓ thousands.T_X49_p3.n0c_ood: −0,0516 (0,0069)
+✓ thousands.T_X49_p3.d3c_id: +0,0181 (0,0042)
+✓ thousands.T_X49_p3.k_ood: +0,0433 (0,0031)
+✓ thousands.T_X49_p3.k_id: +0,1123 (0,0399)
+✓ thousands.T_X49_p3.t4_ood: −0,0507 (0,0070)
+✓ thousands.T_X59_p3.d3c_ood: +0,0303 (0,0068)
+✓ thousands.T_X59_p3.n0c_ood: −0,0319 (0,0088)
+✓ thousands.T_X59_p3.d3c_id: +0,0053 (0,0028)
+✓ thousands.T_X59_p3.k_ood: +0,0532 (0,0035)
+✓ thousands.T_X59_p3.k_id: +0,0902 (0,0272)
+✓ thousands.T_X59_p3.t4_ood: −0,0299 (0,0089)
+✓ thousands.T_X69_p3.d3c_ood: +0,0236 (0,0066)
+✓ thousands.T_X69_p3.n0c_ood: −0,0271 (0,0080)
+✓ thousands.T_X69_p3.d3c_id: +0,0109 (0,0040)
+✓ thousands.T_X69_p3.k_ood: +0,0668 (0,0040)
+✓ thousands.T_X69_p3.k_id: +0,0613 (0,0203)
+✓ thousands.T_X69_p3.t4_ood: −0,0212 (0,0080)
+✓ thousands.T_X79_p3.d3c_ood: +0,0267 (0,0062)
+✓ thousands.T_X79_p3.n0c_ood: +0,0515 (0,0095)
+✓ thousands.T_X79_p3.d3c_id: +0,0233 (0,0046)
+✓ thousands.T_X79_p3.k_ood: +0,0659 (0,0042)
+✓ thousands.T_X79_p3.k_id: +0,0865 (0,0166)
+✓ thousands.T_X79_p3.t4_ood: +0,0698 (0,0096)
+✓ thousands.T_X89_p3.d3c_ood: +0,0106 (0,0062)
+✓ thousands.T_X89_p3.n0c_ood: −0,0293 (0,0084)
+✓ thousands.T_X89_p3.d3c_id: +0,0164 (0,0042)
+✓ thousands.T_X89_p3.k_ood: +0,0522 (0,0042)
+✓ thousands.T_X89_p3.k_id: +0,1691 (0,0206)
+✓ thousands.T_X89_p3.t4_ood: −0,0225 (0,0085)
+✓ length.L_X9_p3.d3c_ood: +0,0183 (0,0058)
+✓ length.L_X9_p3.n0c_ood: +0,1142 (0,0080)
+✓ length.L_X9_p3.d3c_id: +0,0118 (0,0039)
+✓ length.L_X9_p3.k_ood: +0,0641 (0,0099)
+✓ length.L_X9_p3.k_id: +0,0873 (0,0232)
+✓ length.L_X9_p3.t4_ood: +0,1200 (0,0081)
+✓ length.L_X99_p3.d3c_ood: +0,0361 (0,0061)
+✓ length.L_X99_p3.n0c_ood: +0,0206 (0,0063)
+✓ length.L_X99_p3.d3c_id: +0,0105 (0,0035)
+✓ length.L_X99_p3.k_ood: +0,0660 (0,0035)
+✓ length.L_X99_p3.k_id: +0,0820 (0,0207)
+✓ length.L_X99_p3.t4_ood: +0,0213 (0,0064)
+✓ length.L_X999_p3.d3c_ood: +0,0065 (0,0026)
+✓ length.L_X999_p3.n0c_ood: +0,0001 (0,0032)
+✓ length.L_X999_p3.d3c_id: +0,0158 (0,0051)
+✓ length.L_X999_p3.k_ood: +0,0431 (0,0026)
+✓ length.L_X999_p3.k_id: +0,0776 (0,0137)
+✓ length.L_X999_p3.t4_ood: −0,0006 (0,0032)
+✓ descr.thousands d3u_ood: +0,0146
+✓ descr.length d3u_ood: +0,0101
+✓ descr.thousands k_ood: +0,0572
+✓ descr.thousands k_id: +0,0979
+✓ descr.length k_ood: +0,0577
+✓ descr.length k_id: +0,0823
+✓ descr.thousands d3c_id: +0,0132
+✓ descr.length d3c_id: +0,0127
+✓ expect.E1: | E1 | Р1-Л подтверждено (нуль N0c; часть А, три среды «длины») | 0,822 | да |
+✓ expect.E2: | E2 | Р1-Л опровергнуто (нуль N0c) | 0,048 | нет |
+✓ expect.E3: | E3 | Р1-Т подтверждено (нуль N0c; обе части) — описательно, заранее неинформативно | 0,0027 | нет |
+✓ expect.E4: | E4 | ветвь N3c (описательно): Р1-Т подтверждено тем же правилом | 0,252 | да |
+✓ expect.E5: | E5 | ветвь N3c (описательно): Р1-Л подтверждено тем же правилом | 0,887 | да |
+✓ expect.E6: | E6 | Р2-Т (описательно): решающий вердикт в любую сторону | 0,099 | нет |
+✓ expect.E7: | E7 | опыт определён по обоим семействам (годны ≥ 6 сред «тысяч» и ≥ 2 «длины») | 0,950 | да |
+проверок: 106; пропусков: 0
