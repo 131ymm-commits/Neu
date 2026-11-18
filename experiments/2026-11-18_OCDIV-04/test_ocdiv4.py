@@ -224,6 +224,13 @@ check('мир с заложенным совпадением: Р1-Т — сре�
       tr4['rules']['Р1-Т']['delta'] > 0 and all(v > 0 for v in tr4['rules']['Р1-Т']['by_env'].values()), json.dumps(tr4['rules']['Р1-Т']['by_env']))
 C.RULES_ACTIVE = C.NONDEG = C.N3C_FIT = None
 
+# 10. Каркас отчёта собирается на выводе анализа заглушки (до данных теста)
+import report_ocdiv4 as RP  # noqa: E402
+xs = dict(expectations=[dict(id='E1', text='Р1-Т подтверждено', p=0.5, key='Р1-Т:подтверждено'), dict(id='E2', text='опыт определён', p=0.95, key='method')])
+md = RP.render(json.load(open(os.path.join(tmp, 'test4.json'))), json.load(open(os.path.join(tmp, 'pilot4.json'))), xs)
+check('каркас отчёта: собирается на заглушке, в нём три правила, обе таблицы сред, ожидания и вес опоры',
+      all(x in md for x in ('Р1-Т —', 'Р1-Л —', 'Р2-Т —', 'По средам: «тысячи»', 'По средам: «длина»', '| E1 |', '## Вес опоры')), md[:300])
+
 # 8. Извлечение на заглушке (без моделей в сессии): ocdiv4_extract.main с подменённым ocdiv2_extract.run; вывод собирается merge4
 import subprocess  # noqa: E402
 import make_jobs4 as MJ  # noqa: E402
