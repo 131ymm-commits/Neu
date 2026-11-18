@@ -54,8 +54,21 @@ def t_words(e):
     return f"t по средам по модулю {'выше' if abs(t) > c else 'ниже'} порога"
 
 
+PART_B = {'Р1-Т': True, 'Р1-Л': False, 'Р1Ф-Т': True, 'Р1Ф-Л': False, 'Р2-Т': True, 'Р2-Л': False, 'Р3-Т': True, 'Р3-Л': False, 'Р4-Т': False,
+          'Р4Ф-Т': False}                                          # как distill02.RULES
+
+
 def label(r, e):
-    return e['verdict_rule'] if e.get('active') else f"описательно: {bound_words(e)}; {t_words(e)}"
+    """Вердикт правила; у правила без части Б (3 среды) — оговорка «только часть А: в среднем этих сред, на новые среды не переносится»
+    (урок совета 73, OCDIV-04); у описательного — слова о границе M4, не вердикт."""
+    if not e.get('active'):
+        return f"описательно: {bound_words(e)}; {t_words(e)}"
+    v = e['verdict_rule']
+    if not PART_B.get(r, True) and v in DECISIVE:
+        tb = e.get('t_envs', {})
+        v += (f" только по части А — в среднем этих {len(e.get('names', []))} сред; на новые среды не переносится "
+              f"(t по средам {tt(tb.get('t'))}, порог {g(tb.get('crit'), 3)})")
+    return v
 
 
 def frag_words(e):
@@ -70,7 +83,7 @@ def lam_words(e):
     s = e.get('lambda_sens')
     if not s:
         return '—'
-    return ' / '.join(f(s[k]) for k in ('0', '0.0001', '0.01') if k in s)
+    return ' / '.join(f(s[k] - e.get('shift', 0.0)) for k in ('0', '0.0001', '0.01') if k in s)
 
 
 def outcome(A, key):
@@ -116,7 +129,7 @@ def render(A, PW, X, notes=None, commits=None, det=None, trunc=None):
         L.append(f"| {r} | {MEAS_RU[e['measure']]} | {f(e.get('delta'))} | {ci(e)} | {tt(tb.get('t'))} | {g(tb.get('crit'), 3)} | "
                  f"{len(sg.get('pos', []))} / {len(sg.get('neg', []))} / {len(sg.get('zero', []))} | {frag_words(e)} | {lam_words(e)} | {label(r, e)} |")
     L += ['', 'Часть А — нижняя граница M4 среднего сред (за вычетом сдвига) > 0; часть Б — t по средам выше t(0,9975; n − 1). Δ при других λ — '
-          'среднее точек сред без сдвига, описательно (вердикт не меняет). «Хрупкий» — одна задача даёт больше половины суммы вкладов (PREREG §4).']
+          'среднее точек сред за вычетом того же сдвига, описательно (вердикт не меняет). «Хрупкий» — одна задача даёт больше половины суммы вкладов (PREREG §4).']
     for fam in ('thousands', 'length'):
         for ph in ('test5', 'new5'):
             names = sorted(n for n, e in A['envs'].items() if e['family'] == fam and e['phase'] == ph)

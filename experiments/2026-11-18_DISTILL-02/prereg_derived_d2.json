@@ -166,5 +166,18 @@
   209,
   210,
   211
- ]
+ ],
+ "dry": {
+  "main_s": 641.0,
+  "analysis_s": 640.6,
+  "resume_s": 148.0,
+  "det_s": 308.0,
+  "resume_same": true,
+  "det_same": true,
+  "mem_before_mb": 1094,
+  "mem_peak_mb": 2826,
+  "mem_peak_over_mb": 1732,
+  "max_rss_kb": 552076,
+  "main_min": 10.683333333333334
+ }
 }

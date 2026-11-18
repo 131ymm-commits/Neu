@@ -48,8 +48,7 @@ if os.path.exists(os.path.join(dry, 'dry_summary.txt')):
                       resume_s=nums(r'продолжение с готовых сред, с: (\d+)')[0], det_s=nums(r'повтор на детерминизм \(2 × 2 среды, B = 200\), с: (\d+)')[0],
                       resume_same='вывод тот же, кроме времени: True' in txt, det_same='побайтно одинаково: True' in txt,
                       mem_before_mb=mem[0], mem_peak_mb=max(mem), mem_peak_over_mb=max(mem) - mem[0],
-                      max_rss_kb=int(re.findall(r'Maximum resident set size \(kbytes\): (\d+)', tm)[0]),
-                      cores=int(re.findall(r'ядер: (\d+)', open(os.path.join(dry, 'machine.txt'), encoding='utf-8').read())[0]))
+                      max_rss_kb=int(re.findall(r'Maximum resident set size \(kbytes\): (\d+)', tm)[0]))   # nproc при OMP_NUM_THREADS=1 печатает 1 — не ядра
     der['dry']['main_min'] = der['dry']['main_s'] / 60
 json.dump(der, open(os.path.join(X, 'prereg_derived_d2.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=str)
 print(json.dumps(der, ensure_ascii=False, default=str)[:600])
