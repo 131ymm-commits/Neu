@@ -109,7 +109,7 @@ def main():
                          SCI + 'python3 $E/prereg_hashes4.py --verify --jobs\n' + TESTS +
                          'python3 $E/ocdiv4.py merge "$OUT/m_T" test3 thousands gha_out/ocdiv4_test_*\n'
                          'python3 $E/ocdiv4.py merge "$OUT/m_L" test3 length gha_out/ocdiv4_test_*\n'
-                         'python3 $E/ocdiv4.py test "$OUT/analysis.json" "$OUT/m_T" "$OUT/m_L" gha_out/ocdiv4_sum_pilot/pilot.json --boot 10000 --workers 4\n'
+                         'python3 $E/ocdiv4.py test "$OUT/analysis.json" "$OUT/m_T" "$OUT/m_L" gha_out/ocdiv4_sum_pilot3/pilot.json --boot 10000 --workers 4\n'
                          'echo "== прибор"; python3 experiments/2026-11-17_OCDIV-02/trunc_check.py "$OUT/trunc.json" "gha_out/ocdiv4_test_*/answers_*.json" | tail -3\n'
                          'rm -rf "$OUT/m_T" "$OUT/m_L"\n', dst))
     else:

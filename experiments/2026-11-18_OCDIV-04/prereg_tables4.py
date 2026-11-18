@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""OCDIV-04: таблицы пилота для PREREG — печатаются из gha_out/ocdiv4_sum_pilot2/pilot.json (числа не переписываются руками; ERRORS № 200).
+"""OCDIV-04: таблицы пилота для PREREG — печатаются из gha_out/ocdiv4_sum_pilot3/pilot.json (числа не переписываются руками; ERRORS № 200).
   python3 prereg_tables4.py > prereg_pilot_tables.md"""
 import json
 import os
 
 X = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(X))
-P = json.load(open(os.path.join(ROOT, 'gha_out/ocdiv4_sum_pilot2/pilot.json'), encoding='utf-8'))
+P = json.load(open(os.path.join(ROOT, 'gha_out/ocdiv4_sum_pilot3/pilot.json'), encoding='utf-8'))
 
 
 def f(x, d=4):
@@ -32,6 +32,12 @@ for r, v in P['power'].items():
     pw, ph = v['power'], v['power_tau_hi']
     L.append(f"| {r} | {v['n_envs']} | {f(v['mu'])} | {g(v['tau'])} | {g(v['s_test'])} | {g(pw['part_a'], 3)} | {g(pw['part_b'], 3)} | "
              f"{g(pw['decisive'], 3)} | {g(ph['confirm'] + (ph['refute'] if r == 'Р2-Т' else 0), 3)} (τ = {g(v['tau_hi'])}) |")
+for r, v in P.get('power_alt', {}).items():
+    pw, ph = v['power'], v['power_tau_hi']
+    L.append(f"| {r}, запасной нуль | {v['n_envs']} | {f(v['mu'])} | {g(v['tau'])} | {g(v['s_test'])} | {g(pw['part_a'], 3)} | {g(pw['part_b'], 3)} | "
+             f"{g(pw['confirm'], 3)} | {g(ph['confirm'], 3)} (τ = {g(v['tau_hi'])}) |")
+L += ['', '**Запасной нуль N0c по средам** (Δ = F − F₀(N0 со стратами c1) вне диапазона; точки, в скобках — ст. откл. повторов): ' +
+      '; '.join(f"{n} {f(e['n0c_ood']['point'])} ({g(e['n0c_ood']['sd'])})" for fam in ('thousands', 'length') for n, e in P['families'][fam]['envs'].items()) + '.']
 L += ['', '**Положительный контроль N3c** (среднее по восьми средам «тысяч»; прирост Δ3c при вбросе):', '',
       '| Вброс | δ | ' + ' | '.join(['прирост'] * 1) + ' |', '|---|---|---|']
 for key, name in (('spike', 'первоначальный (HYPOTHESIS §7)'), ('spike_items', 'по задачам (HYPOTHESIS-ADDENDUM)')):

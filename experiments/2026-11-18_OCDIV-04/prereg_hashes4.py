@@ -17,13 +17,13 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-OWN = ['ocdiv4.py', 'ocdiv4_extract.py', 'test_ocdiv4.py', 'make_jobs4.py', 'prereg_hashes4.py', 'posthoc_offsets3.py', 'HYPOTHESIS.md',
-       'expect_ocdiv4.json',
+OWN = ['ocdiv4.py', 'ocdiv4_extract.py', 'test_ocdiv4.py', 'make_jobs4.py', 'prereg_hashes4.py', 'posthoc_offsets3.py', 'report_ocdiv4.py',
+       'HYPOTHESIS.md', 'HYPOTHESIS-ADDENDUM.md', 'expect_ocdiv4.json',
        '../2026-11-17_OCDIV-03/ocdiv3.py', '../2026-11-17_OCDIV-03/prereg_hashes3.json',
        '../2026-11-17_OCDIV-02/ocdiv2.py', '../2026-11-17_OCDIV-02/ocdiv2_extract.py', '../2026-11-17_OCDIV-02/trunc_check.py',
        '../2026-11-17_OCDIV-02/prereg_hashes2.json', '../2026-11-17_DISTILL-01/distill.py',
        '../../.github/workflows/neu-par.yml', '../../tools/raw_status.py', '../../tools/test_raw_status.py',
-       '../../gha_out/ocdiv4_sum_pilot/pilot.json',
+       '../../gha_out/ocdiv4_sum_pilot/pilot.json', '../../gha_out/ocdiv4_sum_pilot2/pilot.json', '../../gha_out/ocdiv4_sum_pilot3/pilot.json',
        '../2026-11-16_OCDIV-01/ocdiv.py', '../2026-11-16_OCDIV-01/ocdiv_extract.py',
        '../2026-11-15_OCPOST-01/ocpost.py', '../2026-11-15_OCPOST-01/ocpost_extract.py',
        '../2026-11-15_OCSHIFT-01/analyze_ocshift.py', '../2026-11-15_OCSHIFT-01/analyze_ocshift_test.py', '../2026-11-15_OCSHIFT-01/ocshift_extract.py',
