@@ -576,6 +576,9 @@ def main(a):
         spec = json.load(open(a[2], encoding='utf-8'))
         pilot2(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
                R=spec.get('R', 20), B=spec.get('B', 200))
+    elif a[0] == 'test':
+        spec = json.load(open(a[2], encoding='utf-8'))            # {"construction": {fam: [dirs]}, "test": {фаза: [dirs]}}
+        test_d2(a[1], spec['construction'], spec['test'], B=spec.get('B', B_TEST), R=spec.get('R', R_TEST))
     elif a[0] == 'pilot':
         spec = json.load(open(a[2], encoding='utf-8'))            # {"fit": {ключ: [dir, [среды] | null]}, "eval": {имя: [ключ, [dirs], [среды] | null]}}
         pilot(a[1], {k: (v[0], v[1]) for k, v in spec['fit'].items()}, {k: (v[0], v[1], v[2]) for k, v in spec['eval'].items()},
@@ -712,6 +715,79 @@ def pilot2(dst, fit_dirs, eval_sets, R=20, B=200, seed=SEED + 1000):
     print('пилот 2 DISTILL-02:', {k: {m: (round(v['power'][m]['power']['decisive'], 3) if v['power'][m] else None) for m in v['power']}
                                    for k, v in out['sets'].items()}, '| время', out['seconds'], 'с', flush=True)
     return out
+
+# ═══════════════ часть 3: анализ теста (PREREG; константы задаются до регистрации, без них анализ не идёт)
+# правило: (семейство, фаза, мера, вид, есть ли часть Б, сдвиг)
+RULES = {'Р1-Т': ('thousands', 'test5', 'm1', 'pos', True, 0.0), 'Р1-Л': ('length', 'test5', 'm1', 'pos', False, 0.0),
+         'Р2-Т': ('thousands', 'test5', 'm2', 'pos', True, SHARE_MIN), 'Р2-Л': ('length', 'test5', 'm2', 'pos', False, SHARE_MIN),
+         'Р3-Т': ('thousands', 'test5', 'm3', 'two', True, 0.0), 'Р3-Л': ('length', 'test5', 'm3', 'two', False, 0.0),
+         'Р4-Т': ('thousands', 'new5', 'm1', 'pos', False, 0.0)}
+DESCR_MEAS = ('m1_phi',)
+RULES_ACTIVE = None        # {'Р1-Т': True|False, ...}: True — правило, False — описательно (решающая мощность по пилоту < POWER_MIN)
+POWER_MIN = 0.2
+B_TEST, R_TEST = 4000, 20
+SEED_TEST = 9_930_000
+
+
+def family_of(name):
+    return 'thousands' if name.startswith('T_') else 'length'
+
+
+def test_d2(dst, construction, test_sets, B=B_TEST, R=R_TEST, seed=SEED_TEST):
+    """Анализ теста: программы, B1, ящик и Φ-база строятся по всем сборкам построения семейства; меры — на свежих средах фаз test5 и
+    new5; правила — по RULES и RULES_ACTIVE; описательное — m1_phi, совпадение F, попадание в три неверных, оценщик."""
+    assert RULES_ACTIVE is not None, 'константы PREREG не заданы'
+    t0 = time.time()
+    fits = {}
+    for fam, mdirs in construction.items():
+        envs = []
+        for md in mdirs:
+            envs += [e for n, e in load_merged(md).items() if family_of(n) == fam]
+        fits[fam] = fit_family(envs)
+    out = dict(phase='test', hypothesis='394b7be2', B=B, R=R, seed=seed, level=LEVEL, rules_active=RULES_ACTIVE,
+               formulas={fam: {h: f['prog'] for h, f in fs.items()} for fam, fs in fits.items()},
+               formulas_phi={fam: {h: f['phi'] for h, f in fs.items()} for fam, fs in fits.items()}, envs={}, rules={}, descr={})
+    boots = {}
+    rng = np.random.default_rng(seed)
+    for ph, mdirs in test_sets.items():
+        for md in mdirs:
+            for name, env in sorted(load_merged(md).items()):
+                fam = family_of(name)
+                ea = env_arrays(fits[fam], env, R, rng)
+                m, b = env_measures(ea, B, rng)
+                items, offs, lps = env_table(env, with_logp=True)
+                desc = {}
+                for h in ea['heads']:
+                    f = fits[fam][h]
+                    sc = head_scores(f['prog'], f['om'], f['box'], items, offs[h], logp=lps[h], phi=f['phi'])
+                    sc.pop('_ll')
+                    desc[h] = sc
+                m['heads_scores'] = desc
+                F_obs, _ = coincidence_stats(ea['D'])
+                m['F_obs'] = F_obs
+                m['F_prog'] = float(np.mean([coincidence_stats(s_)[0] for s_ in ea['S']])) if ea['S'] else float('nan')
+                out['envs'][name] = dict(m, phase=ph, family=fam)
+                boots[name] = b
+    for rule, (fam, ph, meas, kind, part_b, shift) in RULES.items():
+        names = sorted(n for n, e in out['envs'].items() if e['family'] == fam and e['phase'] == ph and np.isfinite(e['point'][meas]))
+        pts = {n: out['envs'][n]['point'][meas] for n in names}
+        sds = {n: out['envs'][n]['sd'][meas] for n in names}
+        e = family_rule(pts, {n: boots[n][meas] for n in names}, sds, names, kind, part_b, shift) if len(names) >= 2 else dict(
+            verdict_rule='не определено (сред мало)', names=names)
+        e.update(active=RULES_ACTIVE[rule], measure=meas, shift=shift, names=names)
+        out['rules'][rule] = e
+    for meas in DESCR_MEAS:
+        for fam in ('thousands', 'length'):
+            names = sorted(n for n, e in out['envs'].items() if e['family'] == fam and e['phase'] == 'test5' and np.isfinite(e['point'][meas]))
+            if len(names) >= 2:
+                out['descr'][f'{fam} {meas}'] = C4.mean_entry({n: out['envs'][n]['point'][meas] for n in names},
+                                                              {n: boots[n][meas] for n in names}, names, C4.DESCR_LEVEL)
+    out['verdicts'] = {r: out['rules'][r].get('verdict_rule') for r in RULES}
+    out['seconds'] = round(time.time() - t0, 1)
+    json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
+    print('вердикт DISTILL-02:', out['verdicts'], '| время', out['seconds'], 'с', flush=True)
+    return out
+
 
 
 if __name__ == '__main__':

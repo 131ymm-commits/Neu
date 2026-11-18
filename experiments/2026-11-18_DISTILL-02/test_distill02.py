@@ -172,4 +172,25 @@ check('пилот 2: мощность посчитана для m1, m1_phi, m2 �
       set(pw2) == {'m1', 'm1_phi', 'm2', 'm3'} and all(v is not None for v in pw2.values())
       and abs(pw2['m3']['power']['decisive'] - pw2['m3']['power']['confirm'] - pw2['m3']['power']['refute']) < 1e-12, json.dumps(pw2, default=float)[:300])
 
+# 8. Сухой прогон анализа теста: без констант PREREG не идёт; с константами — вердикты всех правил, описательное
+write_merged(os.path.join(tmp, 'cons'), [('T_X19_p3', 19, 500), ('T_X49_p3', 49, 500), ('L_X9_p3', 29, 500), ('L_X99_p3', 69, 500)], heads[:4], 110)
+write_merged(os.path.join(tmp, 't5'), [('T_X19_p3', 19, 400), ('T_X29_p3', 29, 400), ('T_X49_p3', 49, 400), ('T_X69_p3', 69, 400),
+                                       ('L_X9_p3', 39, 400), ('L_X99_p3', 59, 400), ('L_X999_p3', 79, 400)], heads[:4], 130)
+write_merged(os.path.join(tmp, 'n5'), [('T_X109_p3', 89, 400), ('T_X139_p3', 39, 400), ('T_X169_p3', 59, 400)], heads[:4], 150)
+spec_t = ({'thousands': [os.path.join(tmp, 'cons')], 'length': [os.path.join(tmp, 'cons')]},
+          {'test5': [os.path.join(tmp, 't5')], 'new5': [os.path.join(tmp, 'n5')]})
+D.RULES_ACTIVE = None
+try:
+    D.test_d2(os.path.join(tmp, 'test_x.json'), *spec_t, B=10, R=3)
+    no_c = False
+except AssertionError:
+    no_c = True
+check('анализ теста без констант PREREG не идёт', no_c)
+D.RULES_ACTIVE = {r: True for r in D.RULES}
+ta = D.test_d2(os.path.join(tmp, 'test_d2.json'), *spec_t, B=20, R=3)
+check('анализ теста: вердикты всех правил, среды обеих фаз, описательное m1_phi; в мире «головы — программы» Р1-Т — среднее m1 > 0',
+      set(ta['verdicts']) == set(D.RULES) and len(ta['envs']) == 10 and 'thousands m1_phi' in ta['descr'] and ta['rules']['Р1-Т']['delta'] > 0,
+      json.dumps(ta['verdicts'], ensure_ascii=False))
+D.RULES_ACTIVE = None
+
 print(f'провалов: {len(fails)}')
