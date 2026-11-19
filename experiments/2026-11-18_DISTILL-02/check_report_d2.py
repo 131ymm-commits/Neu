@@ -65,13 +65,14 @@ def main(a):
         need(f'envs.{n}.m2', f"{RP.g(pt['m2'], 3)} ({RP.g(sd['m2'], 3)})")
         need(f'envs.{n}.m3', f"{RP.f(pt['m3'])} ({RP.g(sd['m3'])})")
         bt = e['concentration']['box']['total']                     # знаменатель m2: ящик − B1 (совет 75, «нужно» 5)
-        need(f'envs.{n}.box_total', f"| {RP.g(pt['m2'], 3)} ({RP.g(sd['m2'], 3)}) | {RP.f(bt)} |")
+        need(f'envs.{n}.m2_m4+box_total', f"| {RP.g(pt['m2'], 3)} ({RP.g(sd['m2'], 3)}) | {RP.m2_m4(A, e)} | {RP.f(bt)} |")
         checks.append((f'envs.{n}.box_total > 0', RP.f(bt), bt > 0))
     for fam, fs in A['formulas'].items():
         for h, fm in fs.items():
             need(f'formulas.{fam}.{h}.params', f"| {RP.g(fm['eps'], 3)} | {RP.n_params(fm)} |")
     bad_lines = broken_lines(md)
-    checks.append(('целостность строк (скобки и кавычки парны)', f'оборванных строк: {len(bad_lines)}', not bad_lines))
+    checks.append(('целостность строк (скобки и кавычки парны)', f'оборванных строк: {len(bad_lines)}' + ''.join(
+        f' | {ln[:120]}' for ln in bad_lines), not bad_lines))
     for k, e in A['descr'].items():
         need(f'descr.{k}', f"| {k} | {RP.f(e['delta'])} | {RP.ci(e)} |")
     for e in EX['expectations']:

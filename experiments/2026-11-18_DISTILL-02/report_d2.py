@@ -101,8 +101,23 @@ def outcome(A, key):
 
 
 def n_params(fm):
-    """Свободных параметров программы: коэффициенты формулы (len w), ε, частоты «прочих» смещений (len q); q_rest = 1 − Σq (совет 75, «нужно» 6)."""
-    return len(fm['w']) + 1 + len(fm['q'])
+    """Свободных параметров программы (совет 75, «нужно» 6): коэффициенты формулы, ε, частоты «прочих» смещений; q_rest = 1 − Σq не свободен.
+    Без строк построения w = [0.0] — постоянная, не параметр; если q покрывает все «прочие» (q_rest = 0), одна частота q не свободна."""
+    nw = len(fm['w']) if (fm.get('features') or fm.get('n')) else 0
+    nq = len(fm['q']) - (1 if fm['q'] and abs(fm.get('q_rest', 1.0)) < 1e-12 else 0)
+    return nw + 1 + nq
+
+
+def z_level(A):
+    """z для M4 при уровне A['level'] на сторону (2,807 при 0,0025)."""
+    import statistics
+    return statistics.NormalDist().inv_cdf(1 - A['level'])
+
+
+def m2_m4(A, e):
+    """Интервал M4 m2 среды: точка ± z · ст. откл. повторов (вариант инженера, совет 75)."""
+    z, pt, sd = z_level(A), e['point']['m2'], e['sd']['m2']
+    return f"[{g(pt - z * sd, 3)}; {g(pt + z * sd, 3)}]"
 
 
 def mean_head(A, fam, ph, key):
@@ -142,17 +157,18 @@ def render(A, PW, X, notes=None, commits=None, det=None, trunc=None):
             if not names:
                 continue
             L += ['', f"## По средам: {FAM_RU[fam]}, {ph} (точки; в скобках — ст. откл. повторов)", '',
-                  '| Среда | голов | m1 | m1_phi | m2 | ящик − B1 (знаменатель m2) | m2_max | m3 | m3_c | m3_o | K набл. / прогр. | F набл. / прогр. | ood | разряды переносов |',
-                  '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|']
+                  '| Среда | голов | m1 | m1_phi | m2 | m2: M4 при 0,0025 | ящик − B1 (знаменатель m2) | m2_max | m3 | m3_c | m3_o | K набл. / прогр. | F набл. / прогр. | ood | разряды переносов |',
+                  '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|']
             for n in names:
                 e = A['envs'][n]
                 pt, sd = e['point'], e['sd']
                 L.append(f"| {n} | {len(e['heads'])} | {f(pt['m1'])} ({g(sd['m1'])}) | {f(pt['m1_phi'])} ({g(sd['m1_phi'])}) | {g(pt['m2'], 3)} ({g(sd['m2'], 3)}) | "
-                         f"{f(e['concentration']['box']['total'])} | "
+                         f"{m2_m4(A, e)} | {f(e['concentration']['box']['total'])} | "
                          f"{g(pt['m2_max'], 3)} | {f(pt['m3'])} ({g(sd['m3'])}) | {f(pt['m3_c'])} | {f(pt['m3_o'])} | {g(pt['K_obs'], 3)} / {g(pt['K_prog'], 3)} | "
                          f"{g(pt['F_obs'], 3)} / {g(pt['F_prog'], 3)} | {g(e['carries']['ood_share'], 3)} | {', '.join(e['carries']['carry_positions'])} |")
-            L += ['', 'Ящик − B1 — среднее по головам выигрыша ящика над B1, нат на ответ (`concentration.box.total`; совет 75, «нужно» 5); интервал '
-                  'не считался, порога пометы «знаменатель мал» нет (DEVIATIONS.md).']
+            L += ['', f"Ящик − B1 — среднее по головам выигрыша ящика над B1, нат на ответ (`concentration.box.total`; совет 75, «нужно» 5). "
+                  f"Порога пометы «знаменатель мал» нет; у m2 рядом — её интервал M4 при 0,0025: точка ± z · ст. откл. повторов, z = "
+                  f"{g(z_level(A), 3)} (вариант инженера, совет 75; DEVIATIONS.md)."]
     L += ['', '## Описательно (PREREG §5; вердикт не меняет; M4 при уровне описательного)', '', '| Семейство и мера | Среднее | M4 | t по средам |', '|---|---|---|---|']
     for k, e in A['descr'].items():
         L.append(f"| {k} | {f(e['delta'])} | {ci(e)} | {tt(e.get('t_envs', {}).get('t'))} |")
@@ -179,7 +195,7 @@ def render(A, PW, X, notes=None, commits=None, det=None, trunc=None):
         sm = trunc['summary']
         L.append('- Прибор (`trunc_check.py`), по наборам: ' + '; '.join(
             f"{k} — пар «голова × среда» {v['n_pairs']}, числовых ответов {v['n_numeric']}, на пределе длины {v['n_at_max']}, с лишними токенами "
-            f"{v['n_extra_tokens']}" for k, v in sm.items()) + '.')
+            f"{v['n_extra_tokens']}, ответ — начало верного {v['n_prefix_of_truth']}" for k, v in sm.items()) + '.')
         top = max(trunc['rows'], key=lambda r: r['share_at_max'])
         L.append(f"- Наибольшая доля ответов на пределе длины: {g(top['share_at_max'], 4)} — {top['model'].split('/')[-1]}, {top['env']} ({top['phase']}): "
                  f"{top['n_at_max']} из {top['n_numeric']} числовых.")
