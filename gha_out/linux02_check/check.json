@@ -1,0 +1,1702 @@
+{
+ "mode": "check",
+ "n": 20000,
+ "kflags": [
+  "-std=gnu11",
+  "-O2",
+  "-funsigned-char",
+  "-fno-common",
+  "-fno-strict-aliasing",
+  "-fno-delete-null-pointer-checks",
+  "-fno-strict-overflow"
+ ],
+ "ubsan": [
+  "-fsanitize=undefined",
+  "-fno-sanitize=alignment",
+  "-fno-sanitize-recover=all"
+ ],
+ "gcc": "gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0",
+ "modules": {
+  "errseq": {
+   "c_lines": 192,
+   "exported": [
+    "errseq_check",
+    "errseq_check_and_advance",
+    "errseq_sample",
+    "errseq_set"
+   ],
+   "kunit_plain": {
+    "cases": [
+     {
+      "suite": "errseq",
+      "case": "errseq_test_zero_epoch_reports_no_error",
+      "param": "",
+      "expectations": 4,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_set_records_error",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_set_overwrites_error",
+      "param": "",
+      "expectations": 1,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_errno_range_extremes",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_sample_of_unseen_error_is_zero",
+      "param": "",
+      "expectations": 1,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_new_sampler_sees_unseen_error",
+      "param": "",
+      "expectations": 1,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_check_and_advance_reports_once",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_sample_after_seen_is_current",
+      "param": "",
+      "expectations": 3,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_new_error_after_advance",
+      "param": "",
+      "expectations": 3,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_same_error_reported_again_after_seen",
+      "param": "",
+      "expectations": 4,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_repeat_error_visible_to_all_cursors",
+      "param": "",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_advance_stable_when_unchanged",
+      "param": "",
+      "expectations": 3,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_two_subscribers_independent",
+      "param": "",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_check_and_advance_race",
+      "param": "",
+      "expectations": 4,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 14,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_plain": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "errseq_sequence": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_plain_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "errseq_sequence": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_plain": true,
+   "kunit_ubsan": {
+    "cases": [
+     {
+      "suite": "errseq",
+      "case": "errseq_test_zero_epoch_reports_no_error",
+      "param": "",
+      "expectations": 4,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_set_records_error",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_set_overwrites_error",
+      "param": "",
+      "expectations": 1,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_errno_range_extremes",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_sample_of_unseen_error_is_zero",
+      "param": "",
+      "expectations": 1,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_new_sampler_sees_unseen_error",
+      "param": "",
+      "expectations": 1,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_check_and_advance_reports_once",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_sample_after_seen_is_current",
+      "param": "",
+      "expectations": 3,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_new_error_after_advance",
+      "param": "",
+      "expectations": 3,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_same_error_reported_again_after_seen",
+      "param": "",
+      "expectations": 4,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_repeat_error_visible_to_all_cursors",
+      "param": "",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_advance_stable_when_unchanged",
+      "param": "",
+      "expectations": 3,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_two_subscribers_independent",
+      "param": "",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "errseq",
+      "case": "errseq_test_check_and_advance_race",
+      "param": "",
+      "expectations": 4,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 14,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_ubsan": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "errseq_sequence": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_ubsan_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "errseq_sequence": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_ubsan": true
+  },
+  "842_decompress": {
+   "c_lines": 347,
+   "exported": [
+    "sw842_decompress"
+   ],
+   "kunit_plain": {
+    "cases": [
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "index_exact_fit",
+      "expectations": 6,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "index_output_overflow",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "short_data_exact_fit",
+      "expectations": 6,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "short_data_output_overflow",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "repeat_exact_history",
+      "expectations": 6,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "repeat_without_full_history",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 6,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_plain": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "sw842_decompress": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_plain_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "sw842_decompress": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_plain": true,
+   "kunit_ubsan": {
+    "cases": [
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "index_exact_fit",
+      "expectations": 6,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "index_output_overflow",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "short_data_exact_fit",
+      "expectations": 6,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "short_data_output_overflow",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "repeat_exact_history",
+      "expectations": 6,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "842-decompress",
+      "case": "sw842_decompress_test",
+      "param": "repeat_without_full_history",
+      "expectations": 5,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 6,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_ubsan": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "sw842_decompress": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_ubsan_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "sw842_decompress": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_ubsan": true
+  },
+  "md5": {
+   "c_lines": 257,
+   "exported": [
+    "hmac_md5",
+    "hmac_md5_final",
+    "hmac_md5_init",
+    "hmac_md5_init_usingrawkey",
+    "hmac_md5_preparekey",
+    "hmac_md5_usingrawkey",
+    "md5",
+    "md5_final",
+    "md5_init",
+    "md5_update"
+   ],
+   "kunit_plain": {
+    "cases": [
+     {
+      "suite": "md5",
+      "case": "test_hash_test_vectors",
+      "param": "",
+      "expectations": 49,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_all_lens_up_to_4096",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_incremental_updates",
+      "param": "",
+      "expectations": 1002,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_buffer_overruns",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_overlaps",
+      "param": "",
+      "expectations": 302,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_alignment_consistency",
+      "param": "",
+      "expectations": 102,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_ctx_zeroization",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_interrupt_context_1",
+      "param": "",
+      "expectations": 6,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_interrupt_context_2",
+      "param": "",
+      "expectations": 8,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hmac",
+      "param": "",
+      "expectations": 4103,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "benchmark_hash",
+      "param": "",
+      "expectations": 1,
+      "failures": 0,
+      "crashed": false,
+      "skipped": true,
+      "empty": false,
+      "ok": false
+     }
+    ],
+    "total": 11,
+    "failed": 0,
+    "skipped": 1,
+    "empty": 0
+   },
+   "self_plain": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "md5_stream": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "md5_oneshot": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "hmac_md5": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_plain_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "md5_stream": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "md5_oneshot": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "hmac_md5": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_plain": true,
+   "kunit_ubsan": {
+    "cases": [
+     {
+      "suite": "md5",
+      "case": "test_hash_test_vectors",
+      "param": "",
+      "expectations": 49,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_all_lens_up_to_4096",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_incremental_updates",
+      "param": "",
+      "expectations": 1002,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_buffer_overruns",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_overlaps",
+      "param": "",
+      "expectations": 302,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_alignment_consistency",
+      "param": "",
+      "expectations": 102,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_ctx_zeroization",
+      "param": "",
+      "expectations": 2,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_interrupt_context_1",
+      "param": "",
+      "expectations": 6,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hash_interrupt_context_2",
+      "param": "",
+      "expectations": 8,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "test_hmac",
+      "param": "",
+      "expectations": 4103,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "md5",
+      "case": "benchmark_hash",
+      "param": "",
+      "expectations": 1,
+      "failures": 0,
+      "crashed": false,
+      "skipped": true,
+      "empty": false,
+      "ok": false
+     }
+    ],
+    "total": 11,
+    "failed": 0,
+    "skipped": 1,
+    "empty": 0
+   },
+   "self_ubsan": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "md5_stream": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "md5_oneshot": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "hmac_md5": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_ubsan_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "md5_stream": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "md5_oneshot": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "hmac_md5": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_ubsan": true
+  },
+  "random32": {
+   "c_lines": 125,
+   "exported": [
+    "prandom_bytes_state",
+    "prandom_seed_full_state",
+    "prandom_u32_state",
+    "prandom_warmup"
+   ],
+   "kunit_plain": {
+    "cases": [
+     {
+      "suite": "prandom",
+      "case": "test_prandom_seed_boundary",
+      "param": "",
+      "expectations": 4,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "prandom",
+      "case": "test_prandom_taus113",
+      "param": "",
+      "expectations": 100,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 2,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_plain": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "prandom_sequence": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_plain_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "prandom_sequence": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_plain": true,
+   "kunit_ubsan": {
+    "cases": [
+     {
+      "suite": "prandom",
+      "case": "test_prandom_seed_boundary",
+      "param": "",
+      "expectations": 4,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "prandom",
+      "case": "test_prandom_taus113",
+      "param": "",
+      "expectations": 100,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 2,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_ubsan": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "prandom_sequence": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_ubsan_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "prandom_sequence": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_ubsan": true
+  },
+  "min_heap": {
+   "c_lines": 60,
+   "exported": [
+    "__min_heap_del",
+    "__min_heap_full",
+    "__min_heap_init",
+    "__min_heap_peek",
+    "__min_heap_pop",
+    "__min_heap_pop_push",
+    "__min_heap_push",
+    "__min_heap_sift_down",
+    "__min_heap_sift_up",
+    "__min_heapify_all"
+   ],
+   "kunit_plain": {
+    "cases": [
+     {
+      "suite": "min_heap",
+      "case": "test_heapify_all",
+      "param": "min",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heapify_all",
+      "param": "max",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_push",
+      "param": "min",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_push",
+      "param": "max",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_pop_push",
+      "param": "min",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_pop_push",
+      "param": "max",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_del",
+      "param": "min",
+      "expectations": 12,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_del",
+      "param": "max",
+      "expectations": 12,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 8,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_plain": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "min_heap_sequence": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_plain_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "min_heap_sequence": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_plain": true,
+   "kunit_ubsan": {
+    "cases": [
+     {
+      "suite": "min_heap",
+      "case": "test_heapify_all",
+      "param": "min",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heapify_all",
+      "param": "max",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_push",
+      "param": "min",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_push",
+      "param": "max",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_pop_push",
+      "param": "min",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_pop_push",
+      "param": "max",
+      "expectations": 24,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_del",
+      "param": "min",
+      "expectations": 12,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "min_heap",
+      "case": "test_heap_del",
+      "param": "max",
+      "expectations": 12,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 8,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_ubsan": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "min_heap_sequence": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_ubsan_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "min_heap_sequence": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_ubsan": true
+  },
+  "string_helpers": {
+   "c_lines": 918,
+   "exported": [
+    "__sysfs_match_string",
+    "devm_kasprintf_strarray",
+    "kasprintf_strarray",
+    "kfree_strarray",
+    "kstrdup_and_replace",
+    "kstrdup_quotable",
+    "kstrdup_quotable_cmdline",
+    "kstrdup_quotable_file",
+    "match_string",
+    "memcpy_and_pad",
+    "parse_int_array",
+    "parse_int_array_user",
+    "skip_spaces",
+    "strim",
+    "string_escape_mem",
+    "string_get_size",
+    "string_unescape",
+    "strreplace",
+    "sysfs_streq"
+   ],
+   "kunit_plain": {
+    "cases": [
+     {
+      "suite": "string_helpers",
+      "case": "test_get_size",
+      "param": "",
+      "expectations": 72,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "string_helpers",
+      "case": "test_upper_lower",
+      "param": "",
+      "expectations": 8,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "string_helpers",
+      "case": "test_unescape",
+      "param": "",
+      "expectations": 85,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "string_helpers",
+      "case": "test_escape",
+      "param": "",
+      "expectations": 6144,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 4,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_plain": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "string_get_size": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "string_unescape": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "string_escape_mem": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "kstrdup_quotable_and_co": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "kasprintf_strarray": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "parse_int_array": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "small_functions": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "match_string": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_plain_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "string_get_size": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "string_unescape": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "string_escape_mem": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "kstrdup_quotable_and_co": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "kasprintf_strarray": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "parse_int_array": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "small_functions": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "match_string": {
+      "n": 20000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_plain": true,
+   "kunit_ubsan": {
+    "cases": [
+     {
+      "suite": "string_helpers",
+      "case": "test_get_size",
+      "param": "",
+      "expectations": 72,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "string_helpers",
+      "case": "test_upper_lower",
+      "param": "",
+      "expectations": 8,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "string_helpers",
+      "case": "test_unescape",
+      "param": "",
+      "expectations": 85,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     },
+     {
+      "suite": "string_helpers",
+      "case": "test_escape",
+      "param": "",
+      "expectations": 6144,
+      "failures": 0,
+      "crashed": false,
+      "skipped": false,
+      "empty": false,
+      "ok": true
+     }
+    ],
+    "total": 4,
+    "failed": 0,
+    "skipped": 0,
+    "empty": 0
+   },
+   "self_ubsan": {
+    "boundary": false,
+    "seed": 3237998080,
+    "fns": {
+     "string_get_size": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "string_unescape": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "string_escape_mem": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "kstrdup_quotable_and_co": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "kasprintf_strarray": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "parse_int_array": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "small_functions": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "match_string": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "self_ubsan_boundary": {
+    "boundary": true,
+    "seed": 777,
+    "fns": {
+     "string_get_size": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "string_unescape": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "string_escape_mem": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "kstrdup_quotable_and_co": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "kasprintf_strarray": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "parse_int_array": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "small_functions": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     },
+     "match_string": {
+      "n": 2000,
+      "mismatches": 0,
+      "crashed_chunks": 0,
+      "example": ""
+     }
+    }
+   },
+   "ok_ubsan": true
+  }
+ },
+ "ok": true
+}
