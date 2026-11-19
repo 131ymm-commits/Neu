@@ -35,7 +35,39 @@
    "expect_outcome": "меньше",
    "bits_side": 8.61,
    "bits_dec": 8.61,
-   "bits_not": -5.31
+   "bits_not": -5.31,
+   "models_78": {
+    "test5_thousands": {
+     "mu": -0.3773635021006802,
+     "tau": 0.1548991204333464,
+     "s": 0.02328934627163547,
+     "p_more": 0.0,
+     "p_less": 0.97477,
+     "decisive": 0.97477,
+     "p_more_mirror": 0.97484,
+     "n_envs": 8
+    },
+    "new5_thousands": {
+     "mu": -0.027146196637263902,
+     "tau": 0.19968989488766895,
+     "s": 0.03084207798196249,
+     "p_more": 0.000965,
+     "p_less": 0.005955,
+     "decisive": 0.00692,
+     "p_more_mirror": 0.00604,
+     "n_envs": 3
+    }
+   },
+   "expect_e1": {
+    "test5_thousands": 0.926,
+    "new5_thousands": 0.0057
+   },
+   "expect_e1_used": 0.0057,
+   "expect_e1_mix_judgment": 0.4658,
+   "bits_less": 1.25,
+   "bits_more": 1.27,
+   "bits_undecided": 0.0,
+   "bits_council_estimate": 1.47
   },
   "П1МТ-Т": {
    "measure": "m_MT",

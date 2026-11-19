@@ -81,6 +81,33 @@ def main(a):
             dec = q['confirm'] + (q['refute'] if kind == 'two' else 0.0)
             print(f"- {name} (сред в пилоте {e['n_envs']}; сред теста в счёте {p['power'][name]['m_test']}), {rule}: μ {r(e['mu'], 4, True)}, τ {r(e['tau'], 4)}; "
                   f"«подтверждено/больше» {r(q['confirm'], 4)}, «опровергнуто/меньше» {r(q['refute'], 4)} → решающая {r(dec, 4)}")
+    print('## Совет 78, пп. 1–3: П1-Т по двум моделям «новая среда» (test5 — устройство построения; new5 — другое устройство), 8 сред теста')
+    D2 = T.D2
+    m78 = {}
+    for name in ('test5_thousands', 'new5_thousands'):
+        s = p['sets'][name]['envs']
+        pts = [s[n]['point']['m_M'] for n in sorted(s)]
+        sds = [s[n]['sd']['m_M'] for n in sorted(s)]
+        e = D2.power_rule(pts, sds, 1.0, 8, True)                       # как pilot_d4.py: модель «новая среда», 8 сред, части А и Б
+        em = D2.power_rule([-x for x in pts], sds, 1.0, 8, True)        # зеркальная модель (μ → −μ): мощность исхода «больше»
+        q = e['power']
+        m78[name] = dict(mu=e['mu'], tau=e['tau'], s=e['s_test'], p_more=q['confirm'], p_less=q['refute'], decisive=q['confirm'] + q['refute'],
+                         p_more_mirror=em['power']['confirm'], n_envs=e['n_envs'])
+        x = m78[name]
+        print(f"- {name} ({x['n_envs']} сред пилота): μ {r(x['mu'], 4, True)}, τ {r(x['tau'], 4)}, s {r(x['s'], 4)}; «больше» {r(x['p_more'], 4)}, "
+              f"«меньше» {r(x['p_less'], 4)}, решающая {r(x['decisive'], 4)}; «больше» в зеркальной модели {r(x['p_more_mirror'], 4)}")
+    e1 = {k: round(0.95 * m78[k]['p_less'], 4) for k in m78}
+    e1_mix = round(0.95 * (m78['test5_thousands']['p_less'] + m78['new5_thousands']['p_less']) / 2, 4)
+    bits_less = min(math.log2(max(m78[k]['p_less'], 1e-12) / LEVEL) for k in m78)
+    bits_more = min(math.log2(max(m78[k]['p_more_mirror'], 1e-12) / LEVEL) for k in m78)
+    bits_dec_new5 = math.log2(m78['new5_thousands']['decisive'] / LEVEL)
+    print(f"- E1 «П1-Т „меньше“» двумя строками: по test5 {r(e1['test5_thousands'], 4)}, по new5 {r(e1['new5_thousands'], 4)} — в калибровку идёт "
+          f"меньшая ({r(min(e1.values()), 4)}); смесь 0,5/0,5 (суждение, в калибровку не идёт) {r(e1_mix, 4)}")
+    print(f"- вес опоры П1-Т (меньший по двум моделям; мощность того исхода, о котором утверждение): «меньше» {r(bits_less, 2, True)} бит, "
+          f"«больше» {r(bits_more, 2, True)} бит (зеркальные модели); «не решено» 0 бит. Оценка совета по решающей мощности обеих сторон new5 — "
+          f"{r(bits_dec_new5, 2, True)} бит; взят меньший")
+    exp['П1-Т'].update(models_78=m78, expect_e1=e1, expect_e1_used=min(e1.values()), expect_e1_mix_judgment=e1_mix,
+                       bits_less=round(bits_less, 2), bits_more=round(bits_more, 2), bits_undecided=0.0, bits_council_estimate=round(bits_dec_new5, 2))
     print('## Направление среднего 8 сред (описательные правила; модель «новая среда»: среднее ~ N(μ, (τ² + s²)/8))')
     from scipy.stats import norm
     desc = {}
