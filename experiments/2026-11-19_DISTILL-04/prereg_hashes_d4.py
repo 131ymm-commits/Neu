@@ -25,14 +25,18 @@ import prereg_hashes_d3 as H3  # noqa: E402
 
 CODE = ['prog_m.py', 'explore_d4.py', 'tokenizers_d4.py', 'note_explore_d4.py', 'distill04_extract.py', 'make_jobs_d4.py', 'pilot_d4.py',
         'test_d4.py', 'rep_check_d4.py', 'test_prog_m.py', 'test_explore_d4.py', 'test_extract_d4.py', 'test_analysis_d4.py',
-        'prereg_numbers_d4.py', 'prereg_hashes_d4.py']
-TEXT = ['HYPOTHESIS.md', 'NOTE-explore.md', 'PREREG-DISTILL-04.md', 'expect_d4.json']
+        'prereg_numbers_d4.py', 'prereg_hashes_d4.py', 'null_d4.py', 'null_sum_d4.py', 'norm_bound_d4.py']
+TEXT = ['HYPOTHESIS.md', 'NOTE-explore.md', 'PREREG-DISTILL-04.md', 'expect_d4.json', 'prereg_numbers_d4.log', 'norm_bound_d4.json',
+        'null_timing_d4.json', 'null_timing_d4.log', 'null_sum_d4.json']
 OUTS = ['../../gha_out/distill04_check/tests.log', '../../gha_out/distill04_explore/explore.json', '../../gha_out/distill04_explore/tokenizers.json',
         '../../gha_out/distill04_explore2/explore.json', '../../gha_out/distill04_explore2/tokenizers.json',
         '../../gha_out/distill04_pilot/pilot.json', '../../gha_out/distill04_pilot2/pilot.json',
         '../../gha_par/distill04_check.sh', '../../gha_par/distill04_explore.sh', '../../gha_par/distill04_explore2.sh',
-        '../../gha_par/distill04_pilot.sh', '../../gha_par/distill04_pilot2.sh']
-COUNCIL = ['../../docs/council/2026-11-19_DISTILL-04-lenses_session78_task.md', '../../docs/council/2026-11-19_DISTILL-04-lenses_session78.json']
+        '../../gha_par/distill04_pilot.sh', '../../gha_par/distill04_pilot2.sh', '../../gha_out/distill04_pilot3/pilot.json',
+        '../../gha_par/distill04_pilot3.sh'] + [f'../../gha_out/distill04_null_{k}/null.json' for k in range(1, 5)] + \
+       [f'../../gha_par/distill04_null_{k}.sh' for k in range(1, 5)]
+COUNCIL = ['../../docs/council/2026-11-19_DISTILL-04-lenses_session78_task.md', '../../docs/council/2026-11-19_DISTILL-04-lenses_session78.json',
+           '../../docs/council/2026-11-19_DISTILL-04-lenses_session78.md']
 OWN = CODE + TEXT + OUTS + COUNCIL
 FROM_D3 = sorted(set(os.path.relpath(os.path.join(D3_DIR, f), HERE) for f in H3.OWN + H3.FROM_D2 + ['prereg_hashes_d3.json']))
 ANSWERS = sorted(set(os.path.relpath(os.path.join(D3_DIR, f), HERE) for f in H3.ANSWERS))
