@@ -25,12 +25,22 @@ def check(name, cond, info=''):
 
 
 def main():
-    try:
+    registered = T.RULES_ACTIVE
+    try:                                   # ERRORS № 230: после записи констант замок проверяется на временно стёртых константах
+        T.RULES_ACTIVE = None
         T.main(['/dev/null', '/dev/null'])
         ok = False
     except AssertionError as e:
         ok = 'константы PREREG' in str(e)
+    finally:
+        T.RULES_ACTIVE = registered
     check('замок: без констант PREREG анализ не идёт', ok)
+    try:
+        T.test_lock()
+        ok_reg = True
+    except AssertionError:
+        ok_reg = False
+    check('замок: с записанными константами PREREG анализ идёт', ok_reg, str(T.RULES_ACTIVE))
     rng = np.random.default_rng(31)
     heads = TP.ab_heads = ['Falcon3-1B-Instruct', 'OLMo-2-0425-1B-Instruct', 'Qwen2.5-0.5B-Instruct', 'Qwen2.5-1.5B-Instruct',
                            'SmolLM2-1.7B-Instruct', 'SmolLM2-360M-Instruct', 'TinyLlama-1.1B-Chat-v1.0']
@@ -74,6 +84,11 @@ def main():
     check('сухой прогон: A-на-B — семь голов, у программы «да»', a['ab']['verdicts']['АБ-П-Т6']['k'] == 7 and a['ab']['verdicts']['АБ-П-Т6']['verdict'] == 'да',
           str({k: (v['verdict'], round(v['D'], 4)) for k, v in a['ab']['verdicts'].items()}))
     check('сухой прогон: «длина» test6L посчитана описательно', list(a['descriptive']) == ['length_test6L'])
+    sl = a['ab']['slices']
+    d_prog = a['ab']['verdicts']['АБ-П-Т6']['D']
+    check('срезы A-на-B: «среднее чужих» по головам = D программы', abs(sl['prog']['mean']['mean'] - d_prog) < 1e-9,
+          f"{sl['prog']['mean']['mean']:.6f} против {d_prog:.6f}")
+    check('срезы A-на-B: медиана и «без худшей» посчитаны для обоих видов', all(set(sl[k]['mean']) == {'mean', 'median', 'drop_worst'} for k in ('prog', 'shape')))
     check('сухой прогон: в тесте ровно 8 новых сред', sorted(a['envs']) == sorted(T.TEST_ENVS))
     for x in (a, b):
         x.pop('seconds')

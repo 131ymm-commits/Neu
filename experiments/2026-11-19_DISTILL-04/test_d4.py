@@ -28,7 +28,8 @@ D2 = PM.D2
 TEST_ENVS = ('T_X14_p3', 'T_X24_p3', 'T_X34_p3', 'T_X44_p3', 'T_X54_p3', 'T_X64_p3', 'T_X74_p3', 'T_X84_p3')
 # PREREG: правило → (мера, вид, часть Б). Вид 'two' — двусторонний («больше» / «меньше»), 'pos' — односторонний.
 RULES = {'П1-Т': ('m_M', 'two', True), 'П1МТ-Т': ('m_MT', 'pos', True), 'П2-Т': ('top3', 'pos', True)}
-RULES_ACTIVE = None            # PREREG: {правило: True/False} по правилу активности (мощность пилота ≥ 0,2); None — анализ не идёт
+# PREREG §5: правило активности по пилоту 2 (gha_out/distill04_pilot2/pilot.json; prereg_numbers_d4.py сверяет): True — решающее
+RULES_ACTIVE = {'П1-Т': True, 'П1МТ-Т': False, 'П2-Т': False}
 AB_RULES = {'АБ-П-Т6': 'prog', 'АБ-Ф-Т6': 'shape'}
 B_TEST = 4000
 SEED_TEST = 9_940_400
@@ -84,6 +85,28 @@ def ab_replication(construction_envs, test_envs):
     return res, v
 
 
+def ab_slices(ab_res):
+    """Совет 77 (опись DISTILL-04): срезы D формы и программы — своя минус среднее чужих (как D), минус медиана чужих, минус среднее
+    чужих без худшей чужой; по средам и головам, описательно. Матрицы — из ab.family_result (строки — чья программа, столбцы — чьи ответы)."""
+    out = {}
+    for kind in ('prog', 'shape'):
+        hk = ab_res.get('heads_kept') or ab_res['heads']
+        heads = ab_res['heads']
+        jj = [heads.index(h) for h in hk]
+        per = {h: dict(mean=[], median=[], drop_worst=[]) for h in hk}
+        for en in ab_res.get('envs_kept', []):
+            M = np.array(ab_res['envs'][en][kind], dtype=float)[np.ix_(jj, jj)]
+            for b, h in enumerate(hk):
+                o = np.delete(M[:, b], b)
+                per[h]['mean'].append(M[b, b] - o.mean())
+                per[h]['median'].append(M[b, b] - np.median(o))
+                per[h]['drop_worst'].append(M[b, b] - np.delete(o, np.argmin(o)).mean())
+        ph = {h: {k: float(np.mean(v)) for k, v in d.items()} for h, d in per.items()}
+        out[kind] = dict(per_head=ph, mean={k: float(np.mean([ph[h][k] for h in hk])) for k in ('mean', 'median', 'drop_worst')},
+                         n_pos={k: int(sum(ph[h][k] > 0 for h in hk)) for k in ('mean', 'median', 'drop_worst')})
+    return out
+
+
 def main(a):
     t0 = time.time()
     test_lock()
@@ -114,7 +137,7 @@ def main(a):
         out['rules'][rule] = {k: (v if not isinstance(v, np.ndarray) else v.tolist()) for k, v in e.items()}
         print(rule, '|', meas, '| среднее сред', round(float(np.mean([res[n]['point'][meas] for n in names])), 4), '|', out['rules'][rule]['verdict_final'], flush=True)
     ab_res, ab_v = ab_replication(cons['thousands'], tenv)
-    out['ab'] = dict(result=ab_res, verdicts=ab_v)
+    out['ab'] = dict(result=ab_res, verdicts=ab_v, slices=ab_slices(ab_res))
     for rule, v in ab_v.items():
         print(rule, '|', v['verdict'], '| D', None if v.get('D') is None else round(v['D'], 4), '| p', v.get('p'), '| k', v.get('k'), flush=True)
     if spec.get('descriptive', {}).get('length'):
