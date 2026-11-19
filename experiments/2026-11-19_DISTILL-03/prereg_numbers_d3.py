@@ -64,6 +64,14 @@ def main(a):
     for h in heads:
         print(f"| {SHORT[h]} | {dc['total']['per_head'][h]:+.4f} | {dc['form']['per_head'][h]:+.4f} | {dc['level']['per_head'][h]:+.4f} | {dc['others']['per_head'][h]:+.4f} |")
     print(f"| среднее | {dc['total']['mean']:+.4f} | {dc['form']['mean']:+.4f} | {dc['level']['mean']:+.4f} | {dc['others']['mean']:+.4f} |")
+    print(f"- доля «прочих» в D пилота (совет 76, п. 6): {dc['others']['mean'] / dc['total']['mean']:.4f}; формы — {dc['form']['mean'] / dc['total']['mean']:.4f}; "
+          f"уровня — {dc['level']['mean'] / dc['total']['mean']:.4f}")
+    an = json.load(open(os.path.join(ROOT, 'gha_out/distill02_sum_test/analysis.json'), encoding='utf-8'))
+    ks = {n: len(v['heads']) for n, v in an['envs'].items()}
+    want = [n for fam in ab.TEST_ENVS.values() for n in fam]
+    new5 = [n for n, v in an['envs'].items() if v.get('phase') == 'new5']
+    print(f"- k по analysis.json DISTILL-02 (правило ≥ {ab.MIN_NUMERIC} числовых ответов то же): среды теста — "
+          f"{sorted(set(ks[n] for n in want))} голов в каждой из {len(want)}; new5 — {sorted(set(ks[n] for n in new5))} в каждой из {len(new5)}")
     print('## Пилот T_X19 новым кодом: родство (описательно)')
     print('| вид | голова | родич | своя − родич | родич − чужие | своя − чужие |')
     print('|---|---|---|---|---|---|')
@@ -96,6 +104,15 @@ def main(a):
     print('## Ожидания (0,95 × наименьшая мощность при δ = D пилота) и вес опоры (log₂ Λ: «да» — мощность/α, «нет» — (1 − мощность)/(1 − α))')
     for rule, e in expect.items():
         print(f"- {rule}: мощность {e['power_min']:.3f} ({e['model_min']}) → ожидание «да» {e['expect']:.4f}; вес «да» {e['bits_yes']:+.2f} бит, «нет» {e['bits_no']:+.2f} бит")
+    k6p = os.path.join(ROOT, 'gha_out/distill03_power_k6/power_k6.json')
+    if os.path.exists(k6p):
+        k6 = json.load(open(k6p, encoding='utf-8'))
+        print(f"## Мощность при k = 6 (совет 76, п. 3; α = {k6['alpha']}, повторов {k6['reps']}): наименьшая по 7 выпадениям и 4 моделям шума")
+        for kind, v in k6['kinds'].items():
+            mp = v['min_power']
+            print(f"- {kind}: {mp:.4f} (без {SHORT[v['worst_drop']]}); по семействам: " +
+                  ', '.join(f'{f} {x:.4f}' for f, x in v['min_power_by_family'].items()) +
+                  f"; вес «да» {math.log2(mp / k6['alpha']):+.2f} бит, «нет» {math.log2((1 - mp) / (1 - k6['alpha'])):+.2f} бит")
     if '--write' in a:
         json.dump(dict(rule='0,95 × наименьшая из четырёх моделей шума мощность при δ = D пилота T_X19', alpha=pw['alpha'], rules=expect),
                   open(os.path.join(HERE, 'expect_d3.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
