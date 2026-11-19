@@ -1,0 +1,7 @@
+info: syncing channel updates for 1.85.0-x86_64-unknown-linux-gnu
+info: latest update on 2025-02-20 for version 1.85.0 (4d91de4e4 2025-02-17)
+info: downloading 4 components
+
+  1.85.0-x86_64-unknown-linux-gnu installed - rustc 1.85.0 (4d91de4e4 2025-02-17)
+
+info: override toolchain for /home/runner/work/_temp/linux set to 1.85.0-x86_64-unknown-linux-gnu

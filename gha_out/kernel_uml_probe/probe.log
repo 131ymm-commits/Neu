@@ -1,0 +1,31 @@
+пакеты: 23 с
+ядро: aebb7274476403040d582c61478df8f4a7bf9cd3 7.4.0-rc3
+клон: 62 с
+минимальные версии: rustc 1.85.0, bindgen 0.71.1
+rustc 1.85.0 (4d91de4e4 2025-02-17)
+bindgen 0.71.1
+Ubuntu clang version 21.1.8 (6ubuntu1)
+инструменты: 115 с
+--- HAVE_RUST в Kconfig архитектур:
+arch/um/Kconfig:42:	select HAVE_RUST
+arch/x86/Kconfig:299:	select HAVE_RUST			if X86_64
+arch/Kconfig:449:config HAVE_RUST
+init/Kconfig:2062:	depends on HAVE_RUST
+control_um (um): код 1, 16 с; CONFIG_RUST в .config: 0
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+UML с Rust не вышло — запасной путь x86_64 (QEMU)
+control_x86_64 (x86_64): код 1, 6 с; CONFIG_RUST в .config: 0
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+--- lib/math/Makefile до подмены:
+2:obj-y += div64.o gcd.o lcm.o int_log.o int_pow.o int_sqrt.o reciprocal_div.o
+2:obj-y += div64.o gcd.o lcm.o int_log.o int_pow_rs.o int_sqrt.o reciprocal_div.o
+trans_haiku_x86_64 (x86_64): код 1, 4 с; CONFIG_RUST в .config: 0
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+  haiku: int_pow_rs.o НЕ собран; в built-in.a: 
+trans_sonnet_x86_64 (x86_64): код 1, 4 с; CONFIG_RUST в .config: 0
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+  sonnet: int_pow_rs.o НЕ собран; в built-in.a: 
+trans_opus_x86_64 (x86_64): код 1, 5 с; CONFIG_RUST в .config: 0
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+  opus: int_pow_rs.o НЕ собран; в built-in.a: 
+всего: 151 с

@@ -1,0 +1,7 @@
+ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+This is probably due to unsatisfied dependencies.
+Missing: CONFIG_RUST=y
+[17:48:15] Configuring KUnit Kernel ...
+Regenerating .config ...
+Populating config with:
+$ make ARCH=x86_64 O=/home/runner/work/_temp/kbuild_x86_64 olddefconfig LLVM=1
