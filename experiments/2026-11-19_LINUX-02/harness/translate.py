@@ -4,10 +4,11 @@
 «claude -p --tools ""» (инструментов нет вовсе) из пустой папки вне репозитория (нет CLAUDE.md и снимка git). Поручение —
 prompts/<модуль>.md (фаза test — prompts/test/<модуль>.md) дословно через stdin. Новое: фазы (pilot / test), повторы и счётчик трат с остановкой.
 Пишет translations/<фаза>/<голова>/<модуль>_r<повтор>.rs (блок ```rust из ответа) и .json (ответ, расход, модель, хеш поручения).
-Счётчик: перед каждым вызовом складывается total_cost_usd всех уже записанных .json фазы (вместе с прежними запусками);
+Счётчик: перед каждым вызовом складывается total_cost_usd всех уже записанных .json группы фаз (pilot и pilot2 — один
+предел; вместе с прежними запусками);
 если сумма не меньше предела, новые вызовы не начинаются. Вызовы в полёте (не больше --workers) могут превысить предел на свою цену.
 Уже готовые переводы (есть .json без ошибки) не повторяются: продолжение с места остановки.
-  python3 harness/translate.py SEALED_CWD --phase pilot|test --limit USD [--heads haiku,sonnet,opus] [--modules ...] [--reps N]
+  python3 harness/translate.py SEALED_CWD --phase pilot|pilot2|test --limit USD [--heads haiku,sonnet,opus] [--modules ...] [--reps N]
                                [--workers 6]"""
 import concurrent.futures as cf
 import glob
@@ -26,9 +27,18 @@ MODULES = ['errseq', '842_decompress', 'md5', 'random32', 'min_heap', 'string_he
 LOCK = threading.Lock()
 
 
+PHASES = ('pilot', 'pilot2', 'test')
+BUDGET_GROUP = {'pilot': ('pilot', 'pilot2'), 'pilot2': ('pilot', 'pilot2'), 'test': ('test',)}   # предел пилота — общий на обе версии
+
+
 def prompt_path(phase, mod):
-    """Пилот — prompts/<модуль>.md (хеши пилота); тест — prompts/test/<модуль>.md (новая версия, DEVIATIONS п. 8)."""
-    return os.path.join(X, 'prompts', *(['test'] if phase == 'test' else []), f'{mod}.md')
+    """Пилот — prompts/<модуль>.md (хеши пилота); повтор пилота (pilot2) и тест — prompts/test/<модуль>.md
+    (новая версия, DEVIATIONS пп. 8–9)."""
+    return os.path.join(X, 'prompts', *(['test'] if phase != 'pilot' else []), f'{mod}.md')
+
+
+def spent_group(phase):
+    return sum(spent(p) for p in BUDGET_GROUP[phase])
 
 
 def spent(phase):
@@ -72,7 +82,7 @@ def main(a):
     cwd = a[0]
     opt = lambda k, dflt: a[a.index(k) + 1] if k in a else dflt   # noqa: E731
     phase, limit = opt('--phase', None), float(opt('--limit', 'nan'))
-    assert phase in ('pilot', 'test') and limit == limit, 'нужны --phase pilot|test и --limit'
+    assert phase in PHASES and limit == limit, 'нужны --phase pilot|pilot2|test и --limit'
     heads = opt('--heads', ','.join(MODELS)).split(',')
     mods = opt('--modules', ','.join(MODULES)).split(',')
     reps = int(opt('--reps', '1'))
@@ -81,12 +91,13 @@ def main(a):
     assert os.listdir(cwd) == [], 'папка вызова должна быть пустой'
     jobs = [(h, m, r) for r in range(1, reps + 1) for m in mods for h in heads
             if not done(os.path.join(X, 'translations', phase, h, f'{m}_r{r}.json'))]
-    print('к переводу:', len(jobs), '| потрачено в фазе до старта, $:', round(spent(phase), 4), '| предел, $:', limit, flush=True)
+    print('к переводу:', len(jobs), '| потрачено до старта (группа фаз', BUDGET_GROUP[phase], '), $:', round(spent_group(phase), 4),
+          '| предел, $:', limit, flush=True)
     stopped = []
 
     def guarded(h, m, r):
         with LOCK:
-            s = spent(phase)
+            s = spent_group(phase)
             if s >= limit:
                 stopped.append((h, m, r))
                 return None
@@ -112,7 +123,8 @@ def main(a):
             u = rec.get('usage') or {}
             print(h, m, f'r{r}', '| код', rec.get('code_extracted'), '| модели', rec.get('models_used'), '| вход', u.get('input_tokens'),
                   '| выход', u.get('output_tokens'), '| $', rec.get('total_cost_usd'), '|', rec.get('seconds'), 'с', flush=True)
-    print('итого в фазе, $:', round(spent(phase), 4), '| не начато из-за предела:', len(stopped), stopped, flush=True)
+    print('итого в фазе, $:', round(spent(phase), 4), '| в группе фаз, $:', round(spent_group(phase), 4), '| не начато из-за предела:',
+          len(stopped), stopped, flush=True)
     return 0
 
 

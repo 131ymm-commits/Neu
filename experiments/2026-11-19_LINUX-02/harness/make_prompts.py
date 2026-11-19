@@ -7,7 +7,8 @@
 сообщение автора (о DISTILL-02, «…додестелировать до простой математики») к переводу не относится и могло бы подтолкнуть голову
 «упростить» код.
 Версии: pilot — как было (prompts/<модуль>.md; перед записью сверяется с хешами prompts/prompts.json, менять их нельзя);
-test — то же плюс объяснения имён, пропущенных в пилоте (ERRORS № 216, DEVIATIONS п. 8), в prompts/test/. Поручение версии test
+test — то же плюс объяснения имён, пропущенных в пилоте (ERRORS № 216, DEVIATIONS п. 8), и `char` = `u8` (ERRORS № 218),
+в prompts/test/. Поручение версии test
 не пишется, пока harness/prompt_coverage.py находит в нём пропуск.
   python3 harness/make_prompts.py [--version pilot|test]"""
 import hashlib
@@ -131,10 +132,19 @@ def read(p):
     return open(os.path.join(X, 'src', p), encoding='utf-8').read().rstrip('\n')
 
 
+CHAR_PILOT = '`char` = `c_char`'
+CHAR_TEST = ('`char` = `u8` (ядро собирается с `-funsigned-char`: `char` беззнаковый; `core::ffi::c_char` на x86_64 знаковый '
+             'и не подходит)')                                              # ERRORS № 218
+
+
 def build(m, d, version):
     macros = d['macros'] + (('; ' + TEST_EXTRA[m]) if version == 'test' and TEST_EXTRA[m] else '')
+    tmpl = TEMPLATE
+    if version == 'test':
+        assert TEMPLATE.count(CHAR_PILOT) == 1
+        tmpl = TEMPLATE.replace(CHAR_PILOT, CHAR_TEST)
     hdr = ''.join(f"Заголовок `{h}` (типы, структуры, константы, встроенные функции):\n```c\n{read(h)}\n```\n\n" for h in d['headers'])
-    return TEMPLATE.format(path=d['path'], config=d['config'], macros=macros, externs=d['externs'], headers=hdr, source=read(d['path']))
+    return tmpl.format(path=d['path'], config=d['config'], macros=macros, externs=d['externs'], headers=hdr, source=read(d['path']))
 
 
 def main(a):

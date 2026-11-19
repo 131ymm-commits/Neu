@@ -1,37 +1,37 @@
 {
  "errseq": {
-  "chars": 9899,
-  "sha256": "d1bd3d015c8327534311ed1baaadfc85d483e9556a99bb57b0841e279f590a31",
+  "chars": 10007,
+  "sha256": "f241a2e6c79d5c63eba6a3d38f6e02c661625dbacc38ce7349fa1a02997391f6",
   "c_lines": 192,
   "header_lines": 12
  },
  "842_decompress": {
-  "chars": 18165,
-  "sha256": "e8389292a22c57b8a06170c12220408deccdd65b4eeb6a37f88a785c34f130e5",
+  "chars": 18273,
+  "sha256": "f16dc00f03d4320b1171ec7d28fa1de91af491b3b9facbbd54f2162a6a9a7203",
   "c_lines": 347,
   "header_lines": 127
  },
  "md5": {
-  "chars": 18752,
-  "sha256": "f4a90fa67eade41b08100fa2e943a99b04fac30045f7b753b68c2cb8eb868440",
+  "chars": 18860,
+  "sha256": "b711d91e9574e18d03ce85dc3680220ab2a61c2ffcd5815685cc07c1f5c26f60",
   "c_lines": 257,
   "header_lines": 211
  },
  "random32": {
-  "chars": 8001,
-  "sha256": "9d5624445432b97c3cd23a5327b7594f7d6e88c4ea0e131e58446198639e4149",
+  "chars": 8109,
+  "sha256": "d0770bcde1cfaf8540129ec38beeef5e24d590d2dae4d52b1043e9a685463fe6",
   "c_lines": 125,
   "header_lines": 42
  },
  "min_heap": {
-  "chars": 20967,
-  "sha256": "c38cff36261cf1a501c0b058fa1876fc028c10a7fc6c9bc3dea922f039ac409a",
+  "chars": 21075,
+  "sha256": "65aefafdcad1008055396b2b8f189e43a79d9b2d722a735c0affe68612b14b36",
   "c_lines": 60,
   "header_lines": 418
  },
  "string_helpers": {
-  "chars": 33235,
-  "sha256": "8d27d99a7297a6b6ffc781ee22a94acff5604ae40209f03758d5419e4fd0fc8d",
+  "chars": 33343,
+  "sha256": "87e73055f7f30a6b8172d2a10bc0a1eba0fe9e2cca62552decfb62586535ddae",
   "c_lines": 918,
   "header_lines": 98
  }
