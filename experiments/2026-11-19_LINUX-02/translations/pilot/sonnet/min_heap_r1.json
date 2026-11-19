@@ -1,0 +1,73 @@
+{
+ "phase": "pilot",
+ "head": "sonnet",
+ "module": "min_heap",
+ "rep": 1,
+ "model_target": "claude-sonnet-5-5",
+ "prompt_sha256": "77025a0a009cb56be47193c8f293cd2b40ddec288c97bc7f3ecccb631160b89d",
+ "seconds": 47.6,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::{c_char, c_void};\nuse core::sync::atomic::{AtomicBool, Ordering};\n\ntype SwapFn = extern \"C\" fn(*mut c_void, *mut c_void, *mut c_void);\ntype LessFn = extern \"C\" fn(*const c_void, *const c_void, *mut c_void) -> bool;\n\n#[repr(C)]\npub struct min_heap_char {\n    pub nr: usize,\n    pub size: usize,\n    pub data: *mut c_char,\n    pub preallocated: [c_char; 0],\n}\n\n#[repr(C)]\npub struct min_heap_callbacks {\n    pub less: Option<LessFn>,\n    pub swp: Option<SwapFn>,\n}\n\nconst SWAP_WORDS_64: usize = 0;\nconst SWAP_WORDS_32: usize = 1;\nconst SWAP_BYTES: usize = 2;\n\n/// WARN_ONCE: the warning is printed once per call site; no output is available here.\n#[inline(always)]\nfn warn_once(cond: bool, flag: &AtomicBool) -> bool {\n    if cond {\n        let _ = flag.swap(true, Ordering::Relaxed);\n    }\n    cond\n}\n\n#[inline(always)]\nfn is_aligned(_base: *const c_void, size: usize, align: u8) -> bool {\n    let lsbits = size as u8;\n    (lsbits & (align - 1)) == 0\n}\n\n#[inline(always)]\nunsafe fn swap_words_32(a: *mut c_void, b: *mut c_void, mut n: usize) {\n    let a = a as *mut u8;\n    let b = b as *mut u8;\n    loop {\n        n = n.wrapping_sub(4);\n        let pa = a.wrapping_add(n) as *mut u32;\n        let pb = b.wrapping_add(n) as *mut u32;\n        let t = pa.read_unaligned();\n        pa.write_unaligned(pb.read_unaligned());\n        pb.write_unaligned(t);\n        if n == 0 {\n            break;\n        }\n    }\n}\n\n#[inline(always)]\nunsafe fn swap_words_64(a: *mut c_void, b: *mut c_void, mut n: usize) {\n    let a = a as *mut u8;\n    let b = b as *mut u8;\n    loop {\n        n = n.wrapping_sub(8);\n        let pa = a.wrapping_add(n) as *mut u64;\n        let pb = b.wrapping_add(n) as *mut u64;\n        let t = pa.read_unaligned();\n        pa.write_unaligned(pb.read_unaligned());\n        pb.write_unaligned(t);\n        if n == 0 {\n            break;\n        }\n    }\n}\n\n#[inline(always)]\nunsafe fn swap_bytes(a: *mut c_void, b: *mut c_void, mut n: usize) {\n    let a = a as *mut u8;\n    let b = b as *mut u8;\n    loop {\n        n = n.wrapping_sub(1);\n        let pa = a.wrapping_add(n);\n        let pb = b.wrapping_add(n);\n        let t = pa.read();\n        pa.write(pb.read());\n        pb.write(t);\n        if n == 0 {\n            break;\n        }\n    }\n}\n\n#[inline(always)]\nfn select_swap_func(base: *const c_void, size: usize) -> usize {\n    if is_aligned(base, size, 8) {\n        SWAP_WORDS_64\n    } else if is_aligned(base, size, 4) {\n        SWAP_WORDS_32\n    } else {\n        SWAP_BYTES\n    }\n}\n\n#[inline(always)]\nunsafe fn do_swap(a: *mut c_void, b: *mut c_void, size: usize, swap_func: usize, privp: *mut c_void) {\n    if swap_func == SWAP_WORDS_64 {\n        swap_words_64(a, b, size);\n    } else if swap_func == SWAP_WORDS_32 {\n        swap_words_32(a, b, size);\n    } else if swap_func == SWAP_BYTES {\n        swap_bytes(a, b, size);\n    } else {\n        let f: SwapFn = core::mem::transmute::<usize, SwapFn>(swap_func);\n        f(a, b, privp);\n    }\n}\n\n#[inline(always)]\nfn parent(mut i: usize, lsbit: u32, size: usize) -> usize {\n    i = i.wrapping_sub(size);\n    let m = (i & (lsbit as usize)).wrapping_neg();\n    i = i.wrapping_sub(size & m);\n    i / 2\n}\n\n#[inline(always)]\nunsafe fn call_less(func: *const min_heap_callbacks, a: *const c_void, b: *const c_void, args: *mut c_void) -> bool {\n    match (*func).less {\n        Some(f) => f(a, b, args),\n        None => core::hint::unreachable_unchecked(),\n    }\n}\n\n#[inline(always)]\nunsafe fn raw_swp(func: *const min_heap_callbacks) -> usize {\n    core::mem::transmute::<Option<SwapFn>, usize>((*func).swp)\n}\n\n#[inline(always)]\nfn off(data: *mut c_void, o: usize) -> *mut c_void {\n    (data as *mut u8).wrapping_add(o) as *mut c_void\n}\n\n#[inline(always)]\nunsafe fn min_heap_init_inline(heap: *mut min_heap_char, data: *mut c_void, size: usize) {\n    (*heap).nr = 0;\n    (*heap).size = size;\n    if !data.is_null() {\n        (*heap).data = data as *mut c_char;\n    } else {\n        (*heap).data = core::ptr::addr_of_mut!((*heap).preallocated) as *mut c_char;\n    }\n}\n\n#[inline(always)]\nunsafe fn min_heap_peek_inline(heap: *mut min_heap_char) -> *mut c_void {\n    if (*heap).nr != 0 {\n        (*heap).data as *mut c_void\n    } else {\n        core::ptr::null_mut()\n    }\n}\n\n#[inline(always)]\nunsafe fn min_heap_full_inline(heap: *mut min_heap_char) -> bool {\n    (*heap).nr == (*heap).size\n}\n\n#[inline(always)]\nunsafe fn min_heap_sift_down_inline(\n    heap: *mut min_heap_char,\n    pos: usize,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) {\n    let lsbit: usize = elem_size & elem_size.wrapping_neg();\n    let lsbit32 = lsbit as u32;\n    let data = (*heap).data as *mut c_void;\n    let mut swp = raw_swp(func);\n    let a = pos.wrapping_mul(elem_size);\n    let mut b: usize;\n    let mut c: usize;\n    let mut d: usize;\n    let n = (*heap).nr.wrapping_mul(elem_size);\n\n    if swp == 0 {\n        swp = select_swap_func(data, elem_size);\n    }\n\n    b = a;\n    loop {\n        c = b.wrapping_mul(2).wrapping_add(elem_size);\n        d = c.wrapping_add(elem_size);\n        if !(d < n) {\n            break;\n        }\n        b = if call_less(func, off(data, c), off(data, d), args) { c } else { d };\n    }\n\n    if d == n {\n        b = c;\n    }\n\n    while b != a && call_less(func, off(data, a), off(data, b), args) {\n        b = parent(b, lsbit32, elem_size);\n    }\n\n    c = b;\n    while b != a {\n        b = parent(b, lsbit32, elem_size);\n        do_swap(off(data, b), off(data, c), elem_size, swp, args);\n    }\n}\n\n#[inline(always)]\nunsafe fn min_heap_sift_up_inline(\n    heap: *mut min_heap_char,\n    elem_size: usize,\n    idx: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) {\n    let lsbit: usize = elem_size & elem_size.wrapping_neg();\n    let lsbit32 = lsbit as u32;\n    let data = (*heap).data as *mut c_void;\n    let mut swp = raw_swp(func);\n    let mut a = idx.wrapping_mul(elem_size);\n    let mut b: usize;\n\n    if swp == 0 {\n        swp = select_swap_func(data, elem_size);\n    }\n\n    while a != 0 {\n        b = parent(a, lsbit32, elem_size);\n        if call_less(func, off(data, b), off(data, a), args) {\n            break;\n        }\n        do_swap(off(data, a), off(data, b), elem_size, swp, args);\n        a = b;\n    }\n}\n\n#[inline(always)]\nunsafe fn min_heapify_all_inline(\n    heap: *mut min_heap_char,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) {\n    let mut i: isize = ((*heap).nr / 2).wrapping_sub(1) as isize;\n    while i >= 0 {\n        min_heap_sift_down_inline(heap, i as usize, elem_size, func, args);\n        i -= 1;\n    }\n}\n\nstatic WARN_POP: AtomicBool = AtomicBool::new(false);\nstatic WARN_PUSH: AtomicBool = AtomicBool::new(false);\nstatic WARN_DEL: AtomicBool = AtomicBool::new(false);\n\n#[inline(always)]\nunsafe fn min_heap_pop_inline(\n    heap: *mut min_heap_char,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) -> bool {\n    let data = (*heap).data as *mut c_void;\n\n    if warn_once((*heap).nr == 0, &WARN_POP) {\n        return false;\n    }\n\n    (*heap).nr -= 1;\n    core::ptr::copy(\n        off(data, (*heap).nr.wrapping_mul(elem_size)) as *const u8,\n        data as *mut u8,\n        elem_size,\n    );\n    min_heap_sift_down_inline(heap, 0, elem_size, func, args);\n\n    true\n}\n\n#[inline(always)]\nunsafe fn min_heap_pop_push_inline(\n    heap: *mut min_heap_char,\n    element: *const c_void,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) {\n    core::ptr::copy((element as *const u8), (*heap).data as *mut u8, elem_size);\n    min_heap_sift_down_inline(heap, 0, elem_size, func, args);\n}\n\n#[inline(always)]\nunsafe fn min_heap_push_inline(\n    heap: *mut min_heap_char,\n    element: *const c_void,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) -> bool {\n    let data = (*heap).data as *mut c_void;\n\n    if warn_once((*heap).nr >= (*heap).size, &WARN_PUSH) {\n        return false;\n    }\n\n    let pos = (*heap).nr;\n    core::ptr::copy(\n        element as *const u8,\n        off(data, pos.wrapping_mul(elem_size)) as *mut u8,\n        elem_size,\n    );\n    (*heap).nr += 1;\n\n    min_heap_sift_up_inline(heap, elem_size, pos, func, args);\n\n    true\n}\n\n#[inline(always)]\nunsafe fn min_heap_del_inline(\n    heap: *mut min_heap_char,\n    elem_size: usize,\n    idx: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) -> bool {\n    let data = (*heap).data as *mut c_void;\n    let mut swp = raw_swp(func);\n\n    if warn_once((*heap).nr == 0, &WARN_DEL) {\n        return false;\n    }\n\n    if swp == 0 {\n        swp = select_swap_func(data, elem_size);\n    }\n\n    (*heap).nr -= 1;\n    if idx == (*heap).nr {\n        return true;\n    }\n    do_swap(\n        off(data, idx.wrapping_mul(elem_size)),\n        off(data, (*heap).nr.wrapping_mul(elem_size)),\n        elem_size,\n        swp,\n        args,\n    );\n    min_heap_sift_up_inline(heap, elem_size, idx, func, args);\n    min_heap_sift_down_inline(heap, idx, elem_size, func, args);\n\n    true\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_init(heap: *mut min_heap_char, data: *mut c_void, size: usize) {\n    unsafe { min_heap_init_inline(heap, data, size) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_peek(heap: *mut min_heap_char) -> *mut c_void {\n    unsafe { min_heap_peek_inline(heap) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_full(heap: *mut min_heap_char) -> bool {\n    unsafe { min_heap_full_inline(heap) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_sift_down(\n    heap: *mut min_heap_char,\n    pos: usize,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) {\n    unsafe { min_heap_sift_down_inline(heap, pos, elem_size, func, args) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_sift_up(\n    heap: *mut min_heap_char,\n    elem_size: usize,\n    idx: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) {\n    unsafe { min_heap_sift_up_inline(heap, elem_size, idx, func, args) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heapify_all(\n    heap: *mut min_heap_char,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) {\n    unsafe { min_heapify_all_inline(heap, elem_size, func, args) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_pop(\n    heap: *mut min_heap_char,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) -> bool {\n    unsafe { min_heap_pop_inline(heap, elem_size, func, args) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_pop_push(\n    heap: *mut min_heap_char,\n    element: *const c_void,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) {\n    unsafe { min_heap_pop_push_inline(heap, element, elem_size, func, args) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_push(\n    heap: *mut min_heap_char,\n    element: *const c_void,\n    elem_size: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) -> bool {\n    unsafe { min_heap_push_inline(heap, element, elem_size, func, args) }\n}\n\n#[no_mangle]\npub extern \"C\" fn __min_heap_del(\n    heap: *mut min_heap_char,\n    elem_size: usize,\n    idx: usize,\n    func: *const min_heap_callbacks,\n    args: *mut c_void,\n) -> bool {\n    unsafe { min_heap_del_inline(heap, elem_size, idx, func, args) }\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 11188,
+  "cache_read_input_tokens": 1563,
+  "output_tokens": 7763,
+  "output_tokens_details": {
+   "thinking_tokens": 2317
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 11188,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 7763,
+    "cache_read_input_tokens": 1563,
+    "cache_creation_input_tokens": 11188,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 11188
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.1225423,
+ "model_usage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 7763,
+   "cacheReadInputTokens": 1563,
+   "cacheCreationInputTokens": 11188,
+   "webSearchRequests": 0,
+   "costUSD": 0.1225423,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 2317,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 11188,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 46657,
+ "code_extracted": true,
+ "models_used": [
+  "claude-sonnet-5-5"
+ ]
+}

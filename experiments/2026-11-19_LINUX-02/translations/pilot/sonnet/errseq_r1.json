@@ -1,0 +1,73 @@
+{
+ "phase": "pilot",
+ "head": "sonnet",
+ "module": "errseq",
+ "rep": 1,
+ "model_target": "claude-sonnet-5-5",
+ "prompt_sha256": "d1bd3d015c8327534311ed1baaadfc85d483e9556a99bb57b0841e279f590a31",
+ "seconds": 16.2,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::c_int;\nuse core::sync::atomic::{AtomicU32, Ordering};\n\n#[allow(non_camel_case_types)]\npub type errseq_t = u32;\n\nconst MAX_ERRNO: u32 = 4095;\n\n/* ilog2(MAX_ERRNO) + 1 = 11 + 1 = 12 */\nconst ERRSEQ_SHIFT: u32 = (31 - MAX_ERRNO.leading_zeros()) + 1;\nconst ERRSEQ_SEEN: u32 = 1 << ERRSEQ_SHIFT;\nconst ERRNO_MASK: u32 = ERRSEQ_SEEN - 1;\nconst ERRSEQ_CTR_INC: u32 = 1 << (ERRSEQ_SHIFT + 1);\n\n#[inline(always)]\nunsafe fn read_once(p: *mut errseq_t) -> errseq_t {\n    AtomicU32::from_ptr(p).load(Ordering::Relaxed)\n}\n\n#[inline(always)]\nunsafe fn cmpxchg(p: *mut errseq_t, old: errseq_t, new: errseq_t) -> errseq_t {\n    match AtomicU32::from_ptr(p).compare_exchange(old, new, Ordering::SeqCst, Ordering::SeqCst) {\n        Ok(v) => v,\n        Err(v) => v,\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_set(eseq: *mut errseq_t, err: c_int) -> errseq_t {\n    unsafe {\n        let mut old = read_once(eseq);\n        let cur: errseq_t;\n\n        let neg = err.wrapping_neg() as u32;\n        if err == 0 || neg > MAX_ERRNO {\n            // WARN(\"err = %d\\n\", err): no logging available\n            return old;\n        }\n\n        loop {\n            let mut new = (old & !(ERRNO_MASK | ERRSEQ_SEEN)) | neg;\n\n            if old & ERRSEQ_SEEN != 0 {\n                new = new.wrapping_add(ERRSEQ_CTR_INC);\n            }\n\n            if new == old {\n                cur = new;\n                break;\n            }\n\n            let c = cmpxchg(eseq, old, new);\n            if c == old || c == new {\n                cur = c;\n                break;\n            }\n\n            old = c;\n        }\n        cur\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_sample(eseq: *mut errseq_t) -> errseq_t {\n    unsafe {\n        let mut old = read_once(eseq);\n        if old & ERRSEQ_SEEN == 0 {\n            old = 0;\n        }\n        old\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_check(eseq: *mut errseq_t, since: errseq_t) -> c_int {\n    unsafe {\n        let cur = read_once(eseq);\n        if cur == since {\n            return 0;\n        }\n        -((cur & ERRNO_MASK) as c_int)\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_check_and_advance(eseq: *mut errseq_t, since: *mut errseq_t) -> c_int {\n    unsafe {\n        let mut err: c_int = 0;\n        let mut old = read_once(eseq);\n        while old != core::ptr::read_volatile(since) {\n            let new = old | ERRSEQ_SEEN;\n            if new != old {\n                let cur = cmpxchg(eseq, old, new);\n                if cur != old {\n                    old = cur;\n                    continue;\n                }\n            }\n            core::ptr::write_volatile(since, new);\n            err = -((new & ERRNO_MASK) as c_int);\n            break;\n        }\n        err\n    }\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 5758,
+  "cache_read_input_tokens": 1563,
+  "output_tokens": 1967,
+  "output_tokens_details": {
+   "thinking_tokens": 663
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 5758,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1967,
+    "cache_read_input_tokens": 1563,
+    "cache_creation_input_tokens": 5758,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5758
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.042862300000000006,
+ "model_usage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 1967,
+   "cacheReadInputTokens": 1563,
+   "cacheCreationInputTokens": 5758,
+   "webSearchRequests": 0,
+   "costUSD": 0.042862300000000006,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 663,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 5758,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 14850,
+ "code_extracted": true,
+ "models_used": [
+  "claude-sonnet-5-5"
+ ]
+}

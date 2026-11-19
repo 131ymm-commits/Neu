@@ -1,0 +1,73 @@
+{
+ "phase": "pilot",
+ "head": "haiku",
+ "module": "errseq",
+ "rep": 1,
+ "model_target": "claude-haiku-5-5",
+ "prompt_sha256": "d1bd3d015c8327534311ed1baaadfc85d483e9556a99bb57b0841e279f590a31",
+ "seconds": 31.8,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::c_int;\nuse core::ptr;\nuse core::sync::atomic::{AtomicU32, Ordering};\n\ntype ErrseqT = u32;\n\nconst MAX_ERRNO: u32 = 4095;\n\nconst fn ilog2(n: u32) -> u32 {\n    31 - n.leading_zeros()\n}\n\n/// Младшие биты: код ошибки (0..=MAX_ERRNO).\nconst ERRSEQ_SHIFT: u32 = ilog2(MAX_ERRNO) + 1;\n/// Флаг: значение уже было просмотрено.\nconst ERRSEQ_SEEN: u32 = 1 << ERRSEQ_SHIFT;\n/// Маска кода ошибки.\nconst ERRNO_MASK: u32 = ERRSEQ_SEEN - 1;\n/// Младший бит счётчика.\nconst ERRSEQ_CTR_INC: u32 = 1 << (ERRSEQ_SHIFT + 1);\n\n/// Атомарное чтение (READ_ONCE над errseq_t).\n#[inline]\nunsafe fn read_once(p: *mut ErrseqT) -> ErrseqT {\n    unsafe { AtomicU32::from_ptr(p).load(Ordering::Relaxed) }\n}\n\n/// cmpxchg: если *p == old, записать new; вернуть значение *p до операции.\n#[inline]\nunsafe fn cmpxchg(p: *mut ErrseqT, old: ErrseqT, new: ErrseqT) -> ErrseqT {\n    let a = unsafe { AtomicU32::from_ptr(p) };\n    match a.compare_exchange(old, new, Ordering::SeqCst, Ordering::SeqCst) {\n        Ok(v) | Err(v) => v,\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_set(eseq: *mut ErrseqT, err: c_int) -> ErrseqT {\n    let mut old = unsafe { read_once(eseq) };\n\n    // WARN(): журнала нет (ввод-вывод запрещён), сохраняется только условие.\n    let warn_cond = err == 0 || (err.wrapping_neg() as u32) > MAX_ERRNO;\n    if warn_cond {\n        return old;\n    }\n\n    loop {\n        // Сброс кода ошибки и флага SEEN, установка новой ошибки.\n        let mut new = (old & !(ERRNO_MASK | ERRSEQ_SEEN)) | (err.wrapping_neg() as u32);\n\n        // Увеличиваем счётчик только если значение кто-то просмотрел.\n        if (old & ERRSEQ_SEEN) != 0 {\n            new = new.wrapping_add(ERRSEQ_CTR_INC);\n        }\n\n        // Изменений нет — готово.\n        if new == old {\n            break new;\n        }\n\n        let cur = unsafe { cmpxchg(eseq, old, new) };\n\n        // Успех, либо кто-то уже записал то же значение.\n        if cur == old || cur == new {\n            break cur;\n        }\n\n        // Гонка с другим обновлением — повторяем.\n        old = cur;\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_sample(eseq: *mut ErrseqT) -> ErrseqT {\n    let old = unsafe { read_once(eseq) };\n\n    // Если никто не видел эту ошибку, мы можем быть первыми.\n    if (old & ERRSEQ_SEEN) == 0 {\n        0\n    } else {\n        old\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_check(eseq: *mut ErrseqT, since: ErrseqT) -> c_int {\n    let cur = unsafe { read_once(eseq) };\n\n    if cur == since {\n        return 0;\n    }\n    -((cur & ERRNO_MASK) as c_int)\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_check_and_advance(eseq: *mut ErrseqT, since: *mut ErrseqT) -> c_int {\n    let mut err: c_int = 0;\n    let mut old = unsafe { read_once(eseq) };\n\n    while old != unsafe { ptr::read(since) } {\n        // Выставляем SEEN и пытаемся записать значение обратно.\n        let new = old | ERRSEQ_SEEN;\n        if new != old {\n            let cur = unsafe { cmpxchg(eseq, old, new) };\n            if cur != old {\n                // Значение изменилось параллельно — повторяем с новым.\n                old = cur;\n                continue;\n            }\n        }\n        unsafe { ptr::write(since, new) };\n        err = -((new & ERRNO_MASK) as c_int);\n        break;\n    }\n    err\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 5780,
+  "cache_read_input_tokens": 2366,
+  "output_tokens": 7366,
+  "output_tokens_details": {
+   "thinking_tokens": 5724
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 5780,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 7366,
+    "cache_read_input_tokens": 2366,
+    "cache_creation_input_tokens": 5780,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5780
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.00486286,
+ "model_usage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 7366,
+   "cacheReadInputTokens": 2366,
+   "cacheCreationInputTokens": 5780,
+   "webSearchRequests": 0,
+   "costUSD": 0.00486286,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 5724,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 5780,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 30533,
+ "code_extracted": true,
+ "models_used": [
+  "claude-haiku-5-5"
+ ]
+}
