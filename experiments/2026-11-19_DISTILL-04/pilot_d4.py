@@ -59,7 +59,7 @@ def main(a):
         m = int(spec.get('m_test', {}).get(fam, len(res)))
         names = sorted(res)
         pw = {}
-        for meas in ('m_M', 'top3'):
+        for meas in ('m_M', 'top3', 'm_MT'):            # m_MT — после первого пилота (bc50da0f): М+Т против таблицы 30, то же число параметров
             e = D2.power_rule([res[n]['point'][meas] for n in names], [res[n]['sd'][meas] for n in names], 1.0, m, m >= 4)
             pw[meas] = e
             if e is not None:
