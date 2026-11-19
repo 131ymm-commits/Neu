@@ -1,0 +1,73 @@
+{
+ "phase": "pilot2",
+ "head": "haiku",
+ "module": "random32",
+ "rep": 1,
+ "model_target": "claude-haiku-5-5",
+ "prompt_sha256": "a195d647b6613df000fcdc08317b29eea53d46de53843a453358e2c3c922e7a5",
+ "seconds": 30.7,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::{c_int, c_void};\nuse core::mem;\nuse core::ptr;\n\n/// struct rnd_state из include/linux/prandom.h\n#[repr(C)]\npub struct RndState {\n    pub s1: u32,\n    pub s2: u32,\n    pub s3: u32,\n    pub s4: u32,\n}\n\nextern \"C\" {\n    fn get_random_bytes(buf: *mut c_void, len: usize);\n}\n\n/// Количество возможных процессоров: в этой конфигурации один.\nconst NR_POSSIBLE_CPUS: c_int = 1;\n\n/// per_cpu_ptr(p, 0) == p: __percpu-указатель — обычный указатель.\n#[inline(always)]\nfn per_cpu_ptr(p: *mut RndState, _cpu: c_int) -> *mut RndState {\n    p\n}\n\n/// Минимальные значения для затравок.\n#[inline(always)]\nfn __seed(x: u32, m: u32) -> u32 {\n    if x < m {\n        x + m\n    } else {\n        x\n    }\n}\n\n/// TAUSWORTHE(s, a, b, c, d) из оригинала.\n#[inline(always)]\nfn tausworthe(s: u32, a: u32, b: u32, c: u32, d: u32) -> u32 {\n    ((s & c) << d) ^ (((s << a) ^ s) >> b)\n}\n\n/// u32 prandom_u32_state(struct rnd_state *state)\n#[no_mangle]\npub extern \"C\" fn prandom_u32_state(state: *mut RndState) -> u32 {\n    unsafe {\n        let st = &mut *state;\n        st.s1 = tausworthe(st.s1, 6, 13, 4294967294, 18);\n        st.s2 = tausworthe(st.s2, 2, 27, 4294967288, 2);\n        st.s3 = tausworthe(st.s3, 13, 21, 4294967280, 7);\n        st.s4 = tausworthe(st.s4, 3, 12, 4294967168, 13);\n\n        st.s1 ^ st.s2 ^ st.s3 ^ st.s4\n    }\n}\n\n/// void prandom_bytes_state(struct rnd_state *state, void *buf, size_t bytes)\n#[no_mangle]\npub extern \"C\" fn prandom_bytes_state(state: *mut RndState, buf: *mut c_void, bytes: usize) {\n    let mut ptr = buf as *mut u8;\n    let mut bytes = bytes;\n\n    while bytes >= mem::size_of::<u32>() {\n        let v = prandom_u32_state(state);\n        unsafe {\n            ptr::write_unaligned(ptr as *mut u32, v);\n            ptr = ptr.add(mem::size_of::<u32>());\n        }\n        bytes -= mem::size_of::<u32>();\n    }\n\n    if bytes > 0 {\n        let mut rem = prandom_u32_state(state);\n        loop {\n            unsafe {\n                *ptr = rem as u8;\n                ptr = ptr.add(1);\n            }\n            bytes -= 1;\n            rem >>= 8; // BITS_PER_BYTE\n            if !(bytes > 0) {\n                break;\n            }\n        }\n    }\n}\n\n/// void prandom_warmup(struct rnd_state *state)\n/// CONFIG_KUNIT задан: функция нестатическая и экспортируется.\n#[no_mangle]\npub extern \"C\" fn prandom_warmup(state: *mut RndState) {\n    // Calling RNG ten times to satisfy recurrence condition\n    for _ in 0..10 {\n        prandom_u32_state(state);\n    }\n}\n\n/// void prandom_seed_full_state(struct rnd_state __percpu *pcpu_state)\n#[no_mangle]\npub extern \"C\" fn prandom_seed_full_state(pcpu_state: *mut RndState) {\n    let mut i: c_int = 0;\n    while i < NR_POSSIBLE_CPUS {\n        let state = per_cpu_ptr(pcpu_state, i);\n        let mut seeds = [0u32; 4];\n\n        unsafe {\n            get_random_bytes(\n                seeds.as_mut_ptr() as *mut c_void,\n                mem::size_of::<[u32; 4]>(),\n            );\n        }\n\n        unsafe {\n            let st = &mut *state;\n            st.s1 = __seed(seeds[0], 2);\n            st.s2 = __seed(seeds[1], 8);\n            st.s3 = __seed(seeds[2], 16);\n            st.s4 = __seed(seeds[3], 128);\n        }\n\n        prandom_warmup(state);\n\n        i += 1;\n    }\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 5788,
+  "cache_read_input_tokens": 2366,
+  "output_tokens": 7105,
+  "output_tokens_details": {
+   "thinking_tokens": 5505
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 5788,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 7105,
+    "cache_read_input_tokens": 2366,
+    "cache_creation_input_tokens": 5788,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 5788
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.004733960000000001,
+ "model_usage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 7105,
+   "cacheReadInputTokens": 2366,
+   "cacheCreationInputTokens": 5788,
+   "webSearchRequests": 0,
+   "costUSD": 0.004733960000000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 5505,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 5788,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 29148,
+ "code_extracted": true,
+ "models_used": [
+  "claude-haiku-5-5"
+ ]
+}

@@ -6,7 +6,8 @@ prompts/<модуль>.md (фаза test — prompts/test/<модуль>.md) д�
 Пишет translations/<фаза>/<голова>/<модуль>_r<повтор>.rs (блок ```rust из ответа) и .json (ответ, расход, модель, хеш поручения).
 Счётчик: перед каждым вызовом складывается total_cost_usd всех уже записанных .json группы фаз (pilot и pilot2 — один
 предел; вместе с прежними запусками);
-если сумма не меньше предела, новые вызовы не начинаются. Вызовы в полёте (не больше --workers) могут превысить предел на свою цену.
+если сумма не меньше предела, новые вызовы не начинаются. Итог вызова пишется в рабочем потоке до следующего вызова (ERRORS № 222).
+Вызовы в полёте (не больше --workers) могут превысить предел на свою цену; при --workers 1 — только последний начатый.
 Уже готовые переводы (есть .json без ошибки) не повторяются: продолжение с места остановки.
   python3 harness/translate.py SEALED_CWD --phase pilot|pilot2|test --limit USD [--heads haiku,sonnet,opus] [--modules ...] [--reps N]
                                [--workers 6]"""
@@ -28,7 +29,8 @@ LOCK = threading.Lock()
 
 
 PHASES = ('pilot', 'pilot2', 'test')
-BUDGET_GROUP = {'pilot': ('pilot', 'pilot2'), 'pilot2': ('pilot', 'pilot2'), 'test': ('test',)}   # предел пилота — общий на обе версии
+PILOT_GROUP = ('pilot', 'pilot2', 'pilot2_over_limit')   # pilot2_over_limit — вызов, начатый за пределом (ERRORS № 222): цена учтена
+BUDGET_GROUP = {'pilot': PILOT_GROUP, 'pilot2': PILOT_GROUP, 'test': ('test',)}   # предел пилота — общий на обе версии
 
 
 def prompt_path(phase, mod):
@@ -95,31 +97,38 @@ def main(a):
           '| предел, $:', limit, flush=True)
     stopped = []
 
+    def save(h, m, r, res):
+        rec, code = res
+        d = os.path.join(X, 'translations', phase, h)
+        os.makedirs(d, exist_ok=True)
+        json.dump(rec, open(os.path.join(d, f'{m}_r{r}.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        if code is not None:
+            open(os.path.join(d, f'{m}_r{r}.rs'), 'w', encoding='utf-8').write(code)
+
     def guarded(h, m, r):
+        """Проверка предела и запись итога — в рабочем потоке, под замком: следующий вызов видит цену предыдущего
+        (ERRORS № 222: запись в главном потоке отставала на один вызов, и предел пропустил лишний)."""
         with LOCK:
             s = spent_group(phase)
             if s >= limit:
                 stopped.append((h, m, r))
                 return None
-        return one(h, m, r, cwd, phase)
+        try:
+            res = one(h, m, r, cwd, phase)
+        except Exception as e:                          # сбой вызова — записывается, перевода нет
+            res = (dict(phase=phase, head=h, module=m, rep=r, error=repr(e)), None)
+        with LOCK:
+            save(h, m, r, res)
+        return res
 
     with cf.ThreadPoolExecutor(workers) as ex:
         futs = {ex.submit(guarded, h, m, r): (h, m, r) for h, m, r in jobs}
         for f in cf.as_completed(futs):
             h, m, r = futs[f]
-            try:
-                res = f.result()
-            except Exception as e:                      # сбой вызова — записывается, перевода нет
-                res = (dict(phase=phase, head=h, module=m, rep=r, error=repr(e)), None)
+            res = f.result()
             if res is None:
                 continue
-            rec, code = res
-            d = os.path.join(X, 'translations', phase, h)
-            with LOCK:
-                os.makedirs(d, exist_ok=True)
-                json.dump(rec, open(os.path.join(d, f'{m}_r{r}.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-                if code is not None:
-                    open(os.path.join(d, f'{m}_r{r}.rs'), 'w', encoding='utf-8').write(code)
+            rec, _ = res
             u = rec.get('usage') or {}
             print(h, m, f'r{r}', '| код', rec.get('code_extracted'), '| модели', rec.get('models_used'), '| вход', u.get('input_tokens'),
                   '| выход', u.get('output_tokens'), '| $', rec.get('total_cost_usd'), '|', rec.get('seconds'), 'с', flush=True)
