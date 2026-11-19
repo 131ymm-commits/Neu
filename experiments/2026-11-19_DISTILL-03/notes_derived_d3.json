@@ -1,0 +1,18 @@
+{
+ "pilot_others_share": 0.7734651533756426,
+ "shares": {
+  "thousands": {
+   "others": 0.7380501369778038,
+   "form": 0.21215459466397502,
+   "level": 0.04979526835822133
+  },
+  "length": {
+   "others": 0.8862663298854211,
+   "form": 0.06401602300669733,
+   "level": 0.04971764710788129
+  }
+ },
+ "kinship_rows": 16,
+ "kinship_own_gt_relative": 16,
+ "kinship_relative_gt_strangers": 16
+}
