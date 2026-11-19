@@ -108,6 +108,24 @@ def main(a):
           f"{r(bits_dec_new5, 2, True)} бит; взят меньший")
     exp['П1-Т'].update(models_78=m78, expect_e1=e1, expect_e1_used=min(e1.values()), expect_e1_mix_judgment=e1_mix,
                        bits_less=round(bits_less, 2), bits_more=round(bits_more, 2), bits_undecided=0.0, bits_council_estimate=round(bits_dec_new5, 2))
+    P3 = os.path.join(ROOT, 'gha_out/distill04_pilot3/pilot.json')
+    if os.path.exists(P3):
+        p3 = json.load(open(P3, encoding='utf-8'))
+        print('## Пилот 3 (совет 78, п. 6): прежние меры против пилота 2 и П1-Т пилота в обеих версиях нормировки')
+        same = all(p3['sets'][nm]['envs'][en]['point'][k] == p['sets'][nm]['envs'][en]['point'][k] and
+                   p3['sets'][nm]['envs'][en]['sd'][k] == p['sets'][nm]['envs'][en]['sd'][k]
+                   for nm in p['sets'] for en in p['sets'][nm]['envs'] for k in ('m_M', 'm_Mo', 'top3', 'm_MT', 'm_T30'))
+        print(f"- прежние меры (точки и ст. откл. m_M, m_Mo, top3, m_MT, m_T30 во всех средах всех наборов) совпали с пилотом 2 побайтно: {same}; "
+              f"каталог тот же: {p3['catalog'] == p['catalog']}")
+        for nm in ('test5_thousands', 'new5_thousands'):
+            s3 = p3['sets'][nm]['envs']
+            a = [s3[en]['point']['m_M'] for en in sorted(s3)]
+            b = [s3[en]['point']['m_M_sym'] for en in sorted(s3)]
+            print(f"- {nm}: m_M — среднее {r(sum(a) / len(a), 4, True)}, симметричная версия m_M_sym — среднее {r(sum(b) / len(b), 4, True)}; "
+                  f"знак совпал в {sum((x > 0) == (y > 0) for x, y in zip(a, b))} средах из {len(a)}; наибольшая |разность| {r(max(abs(x - y) for x, y in zip(a, b)), 6)}")
+            pw3 = p3['power'][nm].get('m_M_sym')
+            if pw3:
+                print(f"  мощность П1-Т в симметричной версии (8 сред теста): «больше» {r(pw3['power']['confirm'], 4)}, «меньше» {r(pw3['power']['refute'], 4)}")
     print('## Направление среднего 8 сред (описательные правила; модель «новая среда»: среднее ~ N(μ, (τ² + s²)/8))')
     from scipy.stats import norm
     desc = {}
