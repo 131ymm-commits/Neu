@@ -55,6 +55,22 @@ def env_seed(name):
     return np.random.default_rng([SEED_TEST, int.from_bytes(name.encode(), 'little') % (2 ** 32)])
 
 
+def head_points(er):
+    """Описательно (PREREG §4; токенизатор как ковариата, совет 77): меры по головам в точке — те же разности, что prog_m.measures_w
+    до среднего по головам (среднее по головам этих чисел = точка среды; проверка — test_analysis_d4.py)."""
+    L, out = er['L'], {}
+    for j, h in enumerate(er['heads']):
+        num = np.isfinite(L['M'][:, j])
+        oth, wr = er['other'][:, j], er['wrong'][:, j]
+
+        def d(x, y, m):
+            return float(np.mean(L[x][m, j] - L[y][m, j])) if m.any() else float('nan')
+        top = float(((er['hitM'][:, j] & wr).sum() - (er['hitT'][:, j] & wr).sum()) / wr.sum()) if wr.any() else float('nan')
+        out[h] = dict(m_M=d('M', 'T', num), m_Mo=d('M', 'T', oth), top3=top, m_T30=d('M', 'T30', num), m_MT=d('MT', 'T30', num),
+                      n_num=int(num.sum()), n_wrong=int(wr.sum()), n_other=int(oth.sum()))
+    return out
+
+
 def measure_envs(fits, envs):
     out, boots = {}, {}
     for en, env in sorted(envs.items()):
@@ -62,9 +78,27 @@ def measure_envs(fits, envs):
         heads = [h for h in sorted(fits) if h in offs_e and int((offs_e[h] < PM.NC).sum()) >= D2.MIN_NUMERIC]
         er = PM.env_rows(fits, items_e, offs_e, heads)
         pt, sd, reps = PM.env_measures(er, B_TEST, env_seed(en))
-        out[en] = dict(point=pt, sd=sd, heads=heads, n=er['n'])
+        out[en] = dict(point=pt, sd=sd, heads=heads, n=er['n'], per_head=head_points(er))
         boots[en] = reps
     return out, boots
+
+
+KIN = (('Qwen2.5-0.5B-Instruct', 'Qwen2.5-1.5B-Instruct'), ('SmolLM2-360M-Instruct', 'SmolLM2-1.7B-Instruct'))
+
+
+def op_kinship(weights):
+    """Описательно (HYPOTHESIS: родство весов операторов): расстояние полной вариации ½·Σ|π_A − π_B| между весами операторов и остатка
+    (построение); у каждой головы пары — до родича и среднее до пяти чужих (не родич и не она сама)."""
+    heads = sorted(weights)
+    pi = {h: np.array(weights[h]['pi'], float) for h in heads}
+    tv = {(a, b): float(0.5 * np.abs(pi[a] - pi[b]).sum()) for a in heads for b in heads}
+    out = []
+    for x, y in KIN:
+        for h, kin in ((x, y), (y, x)):
+            if h in pi and kin in pi:
+                others = [tv[(h, o)] for o in heads if o not in (h, kin)]
+                out.append(dict(head=h, kin=kin, tv_kin=tv[(h, kin)], tv_others=float(np.mean(others)), kin_closer=bool(tv[(h, kin)] < np.mean(others))))
+    return dict(pairs=out, n_kin_closer=int(sum(p['kin_closer'] for p in out)), n=len(out))
 
 
 def ab_replication(construction_envs, test_envs):
@@ -120,6 +154,7 @@ def main(a):
     fits = {fam: PM.fit_family(*data[fam], catalog) for fam in data}
     out['weights'] = {fam: {h: dict(pi=[float(x) for x in f['pi']], pi_mt=[float(x) for x in f['pi_mt']], n_other=f['n_other'])
                             for h, f in fs.items()} for fam, fs in fits.items()}
+    out['op_kinship'] = {fam: op_kinship(w) for fam, w in out['weights'].items()}
     lst = load_list(spec['test']['thousands'], 'thousands')
     tenv = dict(lst)
     assert len(tenv) == len(lst), 'одна среда теста дважды'

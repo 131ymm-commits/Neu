@@ -24,6 +24,21 @@ def check(name, cond, info=''):
         FAILS.append(name)
 
 
+def t_rep_check():
+    """rep_check_d4.py на заглушке: одинаковые столбцы — доля 1; одно расхождение из четырёх — 0,75; разная длина — None."""
+    import rep_check_d4 as RC
+    tmp = tempfile.mkdtemp()
+    for job, cols in (('distill04_rep_x_T_X14_p3', {'T_X14_p3': {'text': ['1', '2', '3', '4'], 'off': [0, 1, 2, 3], 'n': [1, 2]}}),
+                      ('distill04_test_x_T_X14_p3', {'T_X14_p3': {'text': ['1', '2', '3', '5'], 'off': [0, 1, 2, 3], 'n': [1, 2, 3]}})):
+        os.makedirs(os.path.join(tmp, job))
+        json.dump({'model': 'x', 'cols': cols}, open(os.path.join(tmp, job, 'answers_x.json'), 'w'))
+    dst = os.path.join(tmp, 'rep.json')
+    RC.main([dst, tmp])
+    c = json.load(open(dst))['jobs']['distill04_rep_x_T_X14_p3']['columns']['T_X14_p3']
+    check('повтор извлечения: доли совпадений по столбцам (1; 0,75; разная длина — None)',
+          c['off']['equal_share'] == 1.0 and c['text']['equal_share'] == 0.75 and c['n']['equal_share'] is None, str(c))
+
+
 def main():
     registered = T.RULES_ACTIVE
     try:                                   # ERRORS № 230: после записи констант замок проверяется на временно стёртых константах
@@ -90,10 +105,22 @@ def main():
           f"{sl['prog']['mean']['mean']:.6f} против {d_prog:.6f}")
     check('срезы A-на-B: медиана и «без худшей» посчитаны для обоих видов', all(set(sl[k]['mean']) == {'mean', 'median', 'drop_worst'} for k in ('prog', 'shape')))
     check('сухой прогон: в тесте ровно 8 новых сред', sorted(a['envs']) == sorted(T.TEST_ENVS))
+    gap = max(abs(np.mean([v[k] for v in e['per_head'].values()]) - e['point'][k]) for e in a['envs'].values() for k in ('m_M', 'm_Mo', 'top3', 'm_MT'))
+    check('по головам: среднее мер по головам = точка среды (m_M, m_Mo, top3, m_MT)', gap < 1e-12, f'наибольшее расхождение {gap:.1e}')
+    ok_kin = a['op_kinship']['thousands']['n'] == 4 and all(abs(p['tv_kin']) <= 1 for p in a['op_kinship']['thousands']['pairs'])
+    check('родство весов операторов: 4 головы с родичем, расстояние в [0, 1]', ok_kin, str(a['op_kinship']['thousands']['n_kin_closer']))
+    w_same = {'x': dict(pi=[0.5, 0.5]), 'y': dict(pi=[0.5, 0.5])}
+    T.KIN, kin0 = (('x', 'y'),), T.KIN
+    try:
+        k1 = T.op_kinship(w_same)
+    finally:
+        T.KIN = kin0
+    check('родство весов операторов: одинаковые веса — расстояние 0', k1['n'] == 2 and all(p['tv_kin'] == 0 for p in k1['pairs']))
     for x in (a, b):
         x.pop('seconds')
     check('детерминизм: два прогона дают один вывод (без seconds)', json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True))
     check('замок: в тесте нет сред — СТОП', ok_miss)
+    t_rep_check()
     print('провалов:', len(FAILS), FAILS)
     return 1 if FAILS else 0
 
