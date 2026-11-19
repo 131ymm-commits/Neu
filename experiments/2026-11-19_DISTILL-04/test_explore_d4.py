@@ -33,6 +33,9 @@ def t_candidates():
     check('transpose — без ведущего нуля', c['transpose'] == {2403, 2034}, str(sorted(c['transpose'])))
     check('concat', c['concat'] == {195786, 861957})
     check('верной суммы нет ни в одном операторе', all(2043 not in v for v in c.values()))
+    check('drop_b_digit: 2043 − 6 и 2043 − 80', c['drop_b_digit'] == {2037, 1963}, str(sorted(c['drop_b_digit'])))
+    check('drop_a_digit: без 7, 50, 900, 1000', c['drop_a_digit'] == {2036, 1993, 1143, 1043}, str(sorted(c['drop_a_digit'])))
+    check('move_b_digit: 6 → 60; 80 → 8 и 800', c['move_b_digit'] == {2043 - 6 + 60, 2043 - 80 + 8, 2043 - 80 + 800}, str(sorted(c['move_b_digit'])))
 
 
 def t_classify():

@@ -11,7 +11,9 @@ test5/new5 DISTILL-02; тест DISTILL-04 будет на новых ответ
     shift      — сдвиг слагаемого на разряд: a + 10b, a + ⌊b/10⌋, 10a + b, ⌊a/10⌋ + b;
     operand    — ответ равен слагаемому: a или b;
     omit_digit — пропущена одна цифра суммы; dup_digit — одна цифра суммы повторена; transpose — переставлены соседние цифры суммы;
-    concat     — слагаемые записаны подряд: «ab» или «ba».
+    concat     — слагаемые записаны подряд: «ab» или «ba»;
+    drop_b_digit, drop_a_digit — цифра слагаемого пропущена: s − d_j·10^j (вторая разведка, после −20…−90 в первой);
+    move_b_digit, move_a_digit — цифра слагаемого учтена в соседнем разряде: s − d_j·10^j + d_j·10^(j±1).
   Для наборов теста DISTILL-02 — ещё покрытие таблицей: доля «прочих» ответов, чьё смещение входит в 30 самых частых «прочих»
   смещений головы на построении того же семейства (как q программы DISTILL-02).
   python3 explore_d4.py ВЫХОД.json SPEC.json
@@ -30,7 +32,8 @@ import distill02 as D2  # noqa: E402
 
 NC = D2.NC
 TOP = D2.TOP_OFFSETS
-OPS = ('plus10j', 'minus10j', 'digit_pm1', 'shift', 'operand', 'omit_digit', 'dup_digit', 'transpose', 'concat')
+OPS = ('plus10j', 'minus10j', 'digit_pm1', 'shift', 'operand', 'omit_digit', 'dup_digit', 'transpose', 'concat',
+       'drop_b_digit', 'drop_a_digit', 'move_b_digit', 'move_a_digit')   # вторая разведка: после −20…−90 в первой (a2b5306e)
 
 
 def carry_positions(a, b):
@@ -59,6 +62,11 @@ def candidates(a, b):
     c['dup_digit'] = {int(st[:i] + st[i] + st[i:]) for i in range(n)}
     c['transpose'] = {int(st[:i] + st[i + 1] + st[i] + st[i + 2:]) for i in range(n - 1) if not (i == 0 and st[1] == '0')}
     c['concat'] = {int(str(a) + str(b)), int(str(b) + str(a))}
+    # вторая разведка: цифра слагаемого пропущена (s − d_j·10^j) или учтена не в своём разряде (s − d_j·10^j + d_j·10^(j±1))
+    for name, x in (('b', b), ('a', a)):
+        dg = [int(ch) for ch in reversed(str(x))]
+        c[f'drop_{name}_digit'] = {s - d * 10 ** j for j, d in enumerate(dg) if d}
+        c[f'move_{name}_digit'] = {s - d * 10 ** j + d * 10 ** k for j, d in enumerate(dg) if d for k in (j - 1, j + 1) if k >= 0}
     return {k: {y for y in v if y != s and y >= 0} for k, v in c.items()}
 
 
@@ -78,6 +86,7 @@ def head_stats(items, offs, table=None):
     union, by_table = 0, 0
     only = {k: 0 for k in OPS}                     # «прочие», которые объясняет ровно этот оператор
     unexplained = {}
+    examples = {}
     other_offsets = {}
     for it, d in zip(items, offs):
         c = classify(it, d)
@@ -99,6 +108,9 @@ def head_stats(items, offs, table=None):
             union += 1
         else:
             unexplained[int(d)] = unexplained.get(int(d), 0) + 1
+            ex = examples.setdefault(int(d), [])
+            if len(ex) < 8:
+                ex.append((it['a'], it['b'], it['sum'], y))
         if table is not None and int(d) in table:
             by_table += 1
     no = max(cnt['other'], 1)
@@ -107,6 +119,7 @@ def head_stats(items, offs, table=None):
                only_op={k: v for k, v in only.items()},
                union=dict(n=union, share=union / no),
                unexplained_top=sorted(unexplained.items(), key=lambda kv: -kv[1])[:15],
+               unexplained_examples={d: examples[d] for d, _ in sorted(unexplained.items(), key=lambda kv: -kv[1])[:3]},
                other_top=sorted(other_offsets.items(), key=lambda kv: -kv[1])[:TOP])
     if table is not None:
         out['table'] = dict(n=by_table, share=by_table / no)
