@@ -16,11 +16,12 @@ DEVIATIONS.md, запись 19.11 до оценки пилота; числа —
     (u32) ↔ (u64), (u32) ↔ (s32), (int) ↔ (unsigned int)); у min_heap правки и в include/linux/min_heap.h — его встроенные функции
     собираются в lib/min_heap.c (мутант заголовка подставляется только при сборке реализации).
 
-Три прогона каждого мутанта:
-  * KUnit — убит, если KUnit не «прошёл» по правилу оценки (run.py: провалов 0, пустых 0, случаев > 0), упал или завис;
-  * основное сравнение — как в оценке (то же зерно, --n на функцию, без крайних) — убит при расхождении, падении, зависании;
-  * независимый поиск — другое зерно, в 10 раз больше входов и крайние значения (--boundary, своё зерно). Расхождение, падение или
-    зависание — мутант «меняет поведение».
+Прогоны каждого мутанта:
+  * вердикт — те же прогоны, что в оценке переводов (run.verdict_runs): KUnit — убит, если не «прошёл» (провалов 0, пустых 0,
+    случаев > 0), упал или завис; основное сравнение — --n обычных проверок на функцию (зерно драйвера) и --n крайних (зерно 777);
+    убит при расхождении, падении, зависании;
+  * независимый поиск — другое зерно, в 10 раз больше обычных входов и крайние значения со своим зерном. Расхождение, падение или
+    зависание — мутант «меняет поведение». Генератор тот же, что у вердикта: слепые зоны у них общие (README, «Пределы правды»).
 Пределы времени — от времени оригинала на том же раннере: не меньше 10 его времён и не меньше нижней границы (README).
 Правило п. 3 (строгое, без разбора по одному): среди меняющих поведение основное сравнение убивает ≥ 0,95; «KUnit поймал, основное
 сравнение пропустило» ≤ 2 % от всех живых мутантов, убитых KUnit. Нет меняющих поведение — правило не выполнено.
@@ -44,10 +45,10 @@ import time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import run as R  # noqa: E402   (переходит в папку опыта: MODULES, CF, LIBS, helpers, orig_objects, kunit_bin, diff_bin, build_rust)
 
-IND_SEED, BND_SEED = 20261119, 1119          # независимый поиск: свои зёрна (основное сравнение — зерно по умолчанию драйвера)
+IND_SEED, BND_SEED = 20261119, 1119          # независимый поиск: свои зёрна (вердикт — зерно драйвера по умолчанию и крайние с 777)
 IND_MULT = 10                                 # во сколько раз больше входов в независимом поиске
-FLOOR = dict(kunit=30, main=60, ind=120, bnd=60)   # нижние границы пределов времени, с
-TIME_MULT = 10                                # предел — не меньше TIME_MULT времён оригинала
+FLOOR = dict(R.FLOOR, ind=120, ibnd=60)       # нижние границы пределов времени, с: вердикт (run.py) и независимый поиск
+TIME_MULT = R.TIME_MULT                       # предел — не меньше TIME_MULT времён оригинала
 C_EXTRA_FILES = {'min_heap': ['include/linux/min_heap.h']}   # заголовки, чьи встроенные функции собираются в реализацию
 
 TOK = re.compile(r'<<=|>>=|<<|>>|<=|>=|==|!=|&&|\|\||->|=>|\+\+|--|\+=|-=|[<>+\-]|\bwrapping_(?:add|sub)\b|'
@@ -121,52 +122,22 @@ def sites(src, lang):
     return res
 
 
-def run_group(cmd, timeout):
-    """Запуск в своей группе процессов: при зависании убивается вся группа (исполнители делают fork).
-    Вывод декодируется с заменой: пример расхождения может нести сырой байт (ERRORS № 194)."""
-    t0 = time.time()
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='replace',
-                         start_new_session=True)
-    try:
-        out, err = p.communicate(timeout=timeout)
-        return p.returncode, out, err, False, time.time() - t0
-    except subprocess.TimeoutExpired:
-        os.killpg(p.pid, signal.SIGKILL)
-        p.communicate()
-        return -9, '', 'TIMEOUT', True, time.time() - t0
-
-
-def jload(s):
-    try:
-        return json.loads(s)
-    except json.JSONDecodeError:
-        return None
-
-
 def mism(df):
-    return sum(v['mismatches'] for v in df['fns'].values()) if df else None
-
-
-def kunit_ok(kd):
-    return bool(kd) and kd.get('failed') == 0 and kd.get('empty') == 0 and kd.get('total', 0) > 0
+    return R.mism(df)
 
 
 def three_runs(k_bin, d_bin, n, lim):
-    """KUnit, основное сравнение, независимый поиск (обычные входы и крайние) — с пределами времени lim."""
-    rec = {}
-    _, out, _, to, sec = run_group([k_bin], lim['kunit'])
-    kd = jload(out)
-    rec.update(kunit_timeout=to, kunit_s=round(sec, 2), kunit_total=(kd or {}).get('total'), kunit_failed=(kd or {}).get('failed'),
-               kunit_empty=(kd or {}).get('empty'), killed_kunit=not kunit_ok(kd))
-    _, out, _, to, sec = run_group([d_bin, str(n)], lim['main'])
-    df = jload(out)
-    rec.update(main_timeout=to, main_s=round(sec, 2), main_mismatches=mism(df), killed_main=df is None or mism(df) > 0)
-    _, out, _, to1, sec1 = run_group([d_bin, str(n * IND_MULT), '--seed', str(IND_SEED)], lim['ind'])
-    di = jload(out)
-    _, out, _, to2, sec2 = run_group([d_bin, str(n), '--boundary', '--seed', str(BND_SEED)], lim['bnd'])
-    db = jload(out)
-    rec.update(ind_timeout=to1, ind_s=round(sec1, 2), ind_mismatches=mism(di), bnd_timeout=to2, bnd_s=round(sec2, 2),
-               bnd_mismatches=mism(db), changed=di is None or mism(di) > 0 or db is None or mism(db) > 0)
+    """Вердикт — те же прогоны, что в оценке переводов (run.verdict_runs: KUnit, основное сравнение, крайние с зерном 777);
+    затем независимый поиск: обычные входы (зерно IND_SEED, n × IND_MULT) и крайние (зерно BND_SEED, n)."""
+    v = R.verdict_runs(k_bin, d_bin, n, lim)
+    kd = v.get('kunit') or {}
+    rec = {k: x for k, x in v.items() if k not in ('kunit', 'diff', 'diff_boundary', 'kunit_err', 'diff_err', 'diff_boundary_err')}
+    rec.update(kunit_total=kd.get('total'), kunit_failed=kd.get('failed'), kunit_empty=kd.get('empty'),
+               killed_kunit=not v['kunit_pass'], killed_main=not v['comparison_clean'])
+    di, to1, s1, _ = R.timed([d_bin, str(n * IND_MULT), '--seed', str(IND_SEED)], lim['ind'])
+    db, to2, s2, _ = R.timed([d_bin, str(n), '--boundary', '--seed', str(BND_SEED)], lim['ibnd'])
+    rec.update(ind_timeout=to1, ind_s=round(s1, 2), ind_mismatches=mism(di), ibnd_timeout=to2, ibnd_s=round(s2, 2),
+               ibnd_mismatches=mism(db), changed=di is None or mism(di) > 0 or db is None or mism(db) > 0)
     return rec
 
 
@@ -176,7 +147,7 @@ def build_impl(lang, src_text, rel, work, ctx):
     if lang == 'rust':
         rs, lib = os.path.join(work, 'impl.rs'), os.path.join(work, 'impl.a')
         open(rs, 'w', encoding='utf-8').write(src_text)
-        rc, _, err, _, _ = run_group(R.RUSTC + ['-o', lib, rs], 600)
+        rc, _, err = R.sh(R.RUSTC + ['-o', lib, rs], 900)
         return (lib if rc == 0 else None), err[-1500:]
     mod_src = f"src/{R.MODULES[ctx['module']]['src']}"
     inc = []
@@ -192,7 +163,7 @@ def build_impl(lang, src_text, rel, work, ctx):
         open(hpath, 'w', encoding='utf-8').write(src_text)
         cpath, inc = mod_src, ['-I', hdir]
     obj = os.path.join(work, 'impl.o')
-    rc, _, err, _, _ = run_group(['gcc'] + inc + R.CF + ['-c', cpath, '-o', obj], 600)
+    rc, _, err = R.sh(['gcc'] + inc + R.CF + ['-c', cpath, '-o', obj], 600)
     return (obj if rc == 0 else None), err[-1500:]
 
 
@@ -239,7 +210,8 @@ def summary(rows):
              main_killed_not_changed=sum(r['killed_main'] and not r['changed'] for r in alive),
              survived_all=sum(not r['killed_kunit'] and not r['killed_main'] and not r['changed'] for r in alive),
              timeouts=dict(kunit=sum(bool(r.get('kunit_timeout')) for r in alive), main=sum(bool(r.get('main_timeout')) for r in alive),
-                           ind=sum(bool(r.get('ind_timeout')) for r in alive), bnd=sum(bool(r.get('bnd_timeout')) for r in alive)))
+                           bnd=sum(bool(r.get('bnd_timeout')) for r in alive), ind=sum(bool(r.get('ind_timeout')) for r in alive),
+                           ibnd=sum(bool(r.get('ibnd_timeout')) for r in alive)))
     s['share_changed_killed_kunit'] = s['changed_killed_kunit'] / len(ch) if ch else None
     s['share_changed_killed_main'] = s['changed_killed_main'] / len(ch) if ch else None
     s['share_kunit_caught_main_missed'] = s['kunit_caught_main_missed'] / len(kk) if kk else None
@@ -258,13 +230,14 @@ def main(a):
     dst, m = a[0], a[1]
     opt = lambda k, d=None: a[a.index(k) + 1] if k in a else d   # noqa: E731
     phase, per, seed = opt('--phase', 'pilot'), int(opt('--per-file', '25')), int(opt('--seed', '17'))
-    n, workers = int(opt('--n', '20000')), int(opt('--workers', str(os.cpu_count() or 2)))
+    ncpu = len(os.sched_getaffinity(0))                       # процессоры по маске сродства, не все на машине (разбор, Н5)
+    n, workers = int(opt('--n', '20000')), int(opt('--workers', str(ncpu)))
     assert m in R.MODULES, m
     h = R.helpers('plain')
     o = R.orig_objects(m, 'plain')
     ctx = dict(module=m, h=h, o=o, n=n, lim=dict(FLOOR))
     t0 = time.time()
-    # 1. оригинал против себя: время для пределов и проверка, что все три прогона дают «чисто»
+    # 1. оригинал против себя: время для пределов и проверка, что все прогоны (вердикт и независимый поиск) дают «чисто»
     k_bin, d_bin = os.path.join(o['dir'], 'kunit_mut'), os.path.join(o['dir'], 'diff_mut')
     assert R.kunit_bin(o, o['plain'], h, k_bin)[0] and R.diff_bin(o, o['plain'], h, d_bin)[0], 'оригинал не собрался'
     orig = three_runs(k_bin, d_bin, n, {k: 3600 for k in FLOOR})
@@ -275,7 +248,7 @@ def main(a):
     kunit_refs = sorted(x for x in o['syms'] if x in nm_u)
     res = dict(module=m, phase=phase, n=n, exported=o['syms'], kunit_refs=kunit_refs, ind=dict(seed=IND_SEED, n=n * IND_MULT), bnd=dict(seed=BND_SEED, n=n), per_file=per, seed=seed,
                workers=workers, rustc=R.sh(['rustc', '--version'])[1].strip(), gcc=R.sh(['gcc', '--version'])[1].splitlines()[0],
-               nproc=os.cpu_count(), orig=orig, orig_ok=orig_ok, limits_s=lim)
+               nproc=os.cpu_count(), cpus_affinity=ncpu, orig=orig, orig_ok=orig_ok, limits_s=lim)
     if not orig_ok:
         res['stop'] = 'оригинал не чист в трёх прогонах — мутанты не считаются'
         json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

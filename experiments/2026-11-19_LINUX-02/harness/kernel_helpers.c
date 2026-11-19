@@ -12,6 +12,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/mman.h>
+#include <sys/syscall.h>
 #include "kalloc_log.h"
 
 #define KSTRTOX_OVERFLOW (1U << 31)
@@ -169,7 +170,11 @@ u32 crc32_be(u32 crc, const u8 *p, size_t len)
 struct klog_entry kalloc_log[KLOG_MAX];
 int kalloc_log_n;
 int kalloc_log_overflow;
-void kalloc_log_reset(void) { kalloc_log_n = 0; kalloc_log_overflow = 0; }
+int harness_kmalloc_fail_at = -1;
+static int harness_kmalloc_calls;
+void kalloc_log_reset(void) { kalloc_log_n = 0; kalloc_log_overflow = 0; harness_kmalloc_calls = 0; }
+/* отказ выделения по заказу драйвера: тот же номер вызова у обеих сторон */
+static int harness_inject_fail(void) { return harness_kmalloc_fail_at >= 0 && harness_kmalloc_calls++ == harness_kmalloc_fail_at; }
 void kalloc_log_add(int op, size_t arg)
 {
 	if (kalloc_log_n < KLOG_MAX)
@@ -181,7 +186,7 @@ void kalloc_log_add(int op, size_t arg)
 /* выделение памяти (include/linux/slab.h): поведение — как у успешного kmalloc; флаги не влияют, кроме __GFP_ZERO */
 void *kmalloc(size_t size, gfp_t flags)
 {
-	if (size > KMALLOC_MAX_SIZE_K) {               /* как ядро: больше KMALLOC_MAX_SIZE (4 МиБ, x86_64) — NULL */
+	if (harness_inject_fail() || size > KMALLOC_MAX_SIZE_K) {   /* отказ по заказу; как ядро: больше KMALLOC_MAX_SIZE (4 МиБ) — NULL */
 		kalloc_log_add(KLOG_KMALLOC_FAIL, size);
 		return NULL;
 	}
@@ -204,8 +209,12 @@ void *kmalloc_array(size_t n, size_t size, gfp_t flags)
 void *kcalloc(size_t n, size_t size, gfp_t flags) { return kmalloc_array(n, size, flags | __GFP_ZERO); }
 void *krealloc(const void *p, size_t new_size, gfp_t flags)
 {
-	kalloc_log_add(KLOG_KREALLOC, new_size);
 	(void)flags;
+	if (harness_inject_fail()) {
+		kalloc_log_add(KLOG_KMALLOC_FAIL, new_size);
+		return NULL;
+	}
+	kalloc_log_add(KLOG_KREALLOC, new_size);
 	return realloc((void *)p, new_size ? new_size : 1);
 }
 void kfree(const void *p)
@@ -277,39 +286,64 @@ void *vmalloc(unsigned long size)
 }
 void vfree(const void *p) { (void)p; }    /* случай идёт в своём процессе — память вернётся при выходе */
 
-/* заглушки ядра для string_helpers (kstrdup_quotable_cmdline, kstrdup_quotable_file, devm_kasprintf_strarray):
- * фиксированные данные — одинаковые для оригинала и перевода */
-static const char harness_cmdline[] = "prog\0arg one\0\tx\001\0";
+/* заглушки ядра для string_helpers (kstrdup_quotable_cmdline, kstrdup_quotable_file, devm_kasprintf_strarray): данные задаёт
+ * драйвер перед парой вызовов — одинаковые для оригинала и перевода (разбор, Н2). По умолчанию — прежние постоянные данные. */
+static char harness_cmdline[8192] = "prog\0arg one\0\tx\001\0";
+static int harness_cmdline_n = 17;
+void harness_set_cmdline(const char *p, int n)
+{
+	if (n < 0) n = 0;
+	if (n > (int)sizeof(harness_cmdline)) n = (int)sizeof(harness_cmdline);
+	memcpy(harness_cmdline, p, (size_t)n);
+	harness_cmdline_n = n;
+}
 int get_cmdline(struct task_struct *task, char *buffer, int buflen)
 {
 	(void)task;
 	kalloc_log_add(KLOG_GET_CMDLINE, (size_t)buflen);
-	int n = (int)sizeof(harness_cmdline) - 1;
+	int n = harness_cmdline_n;
 	if (n > buflen)
 		n = buflen;
 	memcpy(buffer, harness_cmdline, (size_t)n);
 	return n;
 }
+static char harness_path[8192] = "/tmp/a b\\c\"\177";
+static int harness_path_err;
+void harness_set_file_path(const char *path, int err)
+{
+	size_t n = strlen(path);
+	if (n >= sizeof(harness_path)) n = sizeof(harness_path) - 1;
+	memcpy(harness_path, path, n);
+	harness_path[n] = '\0';
+	harness_path_err = err;
+}
+/* как d_path ядра: путь кладётся в конец буфера; не помещается (с NUL) — ERR_PTR(-ENAMETOOLONG) */
 char *file_path(struct file *file, char *buf, int buflen)
 {
-	static const char path[] = "/tmp/a b\\c\"\177";
 	kalloc_log_add(KLOG_FILE_PATH, (size_t)buflen);
 	if (!file)
 		return ERR_PTR(-ENOENT);
-	if ((int)sizeof(path) > buflen)
+	if (harness_path_err)
+		return ERR_PTR(-harness_path_err);
+	size_t n = strlen(harness_path) + 1;
+	if ((int)n > buflen)
 		return ERR_PTR(-ENAMETOOLONG_K);
-	char *p = buf + buflen - sizeof(path);
-	memcpy(p, path, sizeof(path));
+	char *p = buf + buflen - n;
+	memcpy(p, harness_path, n);
 	return p;
 }
+void *harness_devres_res;
+void (*harness_devres_release)(struct device *dev, void *res);
 void *__devres_alloc_node(dr_release_t release, size_t size, gfp_t gfp, int nid, const char *name)
 {
-	(void)release; (void)nid; (void)name;
+	(void)nid; (void)name;
 	kalloc_log_add(KLOG_DEVRES_ALLOC, size);
+	harness_devres_release = release;
+	harness_devres_res = NULL;
 	return kzalloc(size, gfp);
 }
-void devres_add(struct device *dev, void *res) { (void)dev; (void)res; kalloc_log_add(KLOG_DEVRES_ADD, 0); }
-void devres_free(void *res) { kalloc_log_add(KLOG_DEVRES_FREE, 0); free(res); }
+void devres_add(struct device *dev, void *res) { (void)dev; harness_devres_res = res; kalloc_log_add(KLOG_DEVRES_ADD, 0); }
+void devres_free(void *res) { kalloc_log_add(KLOG_DEVRES_FREE, res != NULL); free(res); }
 
 /* случайные числа: xorshift64*, один поток на процесс; сбрасывается драйвером перед парой вызовов оригинал / перевод */
 static u64 harness_rng = 0x9E3779B97F4A7C15ULL;
@@ -321,12 +355,22 @@ static u64 harness_next(void)
 	harness_rng ^= harness_rng >> 27;
 	return harness_rng * 0x2545F4914F6CDD1DULL;
 }
+static int harness_small;
+void harness_random_small(int on) { harness_small = on; }
 void get_random_bytes(void *buf, size_t len)
 {
 	kalloc_log_add(KLOG_RANDOM_BYTES, len);
 	u8 *p = buf;
 	while (len) {
 		u64 v = harness_next();
+		if (harness_small) {                     /* каждое 32-битное слово — малое (< 131) с вероятностью 1/2 */
+			u32 w[2] = { (u32)v, (u32)(v >> 32) };
+			u64 c = harness_next();
+			for (int i = 0; i < 2; i++)
+				if ((c >> i) & 1)
+					w[i] = (u32)((c >> (8 + 16 * i)) % 131);
+			memcpy(&v, w, 8);
+		}
 		size_t k = len < 8 ? len : 8;
 		memcpy(p, &v, k);
 		p += k;
@@ -350,7 +394,21 @@ u64 ktime_get_ns(void)
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	return (u64)ts.tv_sec * 1000000000ULL + (u64)ts.tv_nsec;
 }
-unsigned int num_online_cpus(void) { long n = sysconf(_SC_NPROCESSORS_ONLN); return n > 0 ? (unsigned int)n : 1; }
+/* процессоры по маске сродства процесса (не все на машине): под taskset или квотой гонке негде идти (разбор, Н5) */
+unsigned int num_online_cpus(void)
+{
+	unsigned long mask[16] = { 0 };            /* до 1024 процессоров; системный вызов — без _GNU_SOURCE */
+	long r = syscall(SYS_sched_getaffinity, 0, sizeof(mask), mask);
+	if (r > 0) {
+		int n = 0;
+		for (long i = 0; i < r / (long)sizeof(long); i++)
+			n += __builtin_popcountl(mask[i]);
+		if (n > 0)
+			return (unsigned int)n;
+	}
+	long n = sysconf(_SC_NPROCESSORS_ONLN);
+	return n > 0 ? (unsigned int)n : 1;
+}
 void cond_resched(void) { sched_yield(); }
 
 /* kthread на pthreads: kthread_should_stop() читает флаг своей нити */

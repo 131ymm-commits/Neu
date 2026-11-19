@@ -3,7 +3,9 @@
  *     он не переводится и одинаков для обеих сторон);
  *   - затем без порчи / с перевёрнутыми битами / с обрезкой / с дописанным хвостом / совсем случайные байты;
  *   - ёмкость выхода: ровно нужная, меньше, больше, 0.
- * Сравниваются код возврата, *olen, весь выходной буфер с запасом (запись за пределы ёмкости видна) и журнал вызовов crc32_be. */
+ * Сравниваются код возврата, *olen, весь выходной буфер с запасом (запись за пределы ёмкости видна) и журнал вызовов crc32_be.
+ * Вход у каждой стороны — своя копия вплотную к недоступной странице: чтение за концом входа роняет порцию (Н10); запись во
+ * вход — расхождение. */
 #include <linux/sw842.h>
 #include "diff_common.h"
 
@@ -43,12 +45,18 @@ static int c_decomp(char *ex, size_t exn)
 	memset(ob, 0xEE, sizeof(ob));
 	unsigned int la = cap, lb = cap;
 	struct klog_snap ka, kb;
+	static struct gbuf ga, gb;                     /* вход — вплотную к недоступной странице, у каждой стороны свой (Н10) */
+	gbuf_init(&ga, sizeof(comp));
+	gbuf_init(&gb, sizeof(comp));
+	u8 *ia = gbuf_put(&ga, comp, clen), *ib = gbuf_put(&gb, comp, clen);
 	kalloc_log_reset();
-	int ra = orig_sw842_decompress(comp, clen, oa + PAD, &la);
+	int ra = orig_sw842_decompress(ia, clen, oa + PAD, &la);
 	klog_take(&ka);
 	kalloc_log_reset();
-	int rb = sw842_decompress(comp, clen, ob + PAD, &lb);
+	int rb = sw842_decompress(ib, clen, ob + PAD, &lb);
 	klog_take(&kb);
+	if (memcmp(ib, comp, clen))
+		DIFF_EX("данные %zu, порча %d, сжато %u: перевод изменил входной буфер", dlen, kind, clen);
 	if (ra != rb || la != lb)
 		DIFF_EX("данные %zu, порча %d, сжато %u, ёмкость %u: возврат %d против %d, olen %u против %u", dlen, kind, clen, cap, ra, rb, la, lb);
 	if (memcmp(oa, ob, sizeof(oa)))

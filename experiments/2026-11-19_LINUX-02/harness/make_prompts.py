@@ -7,8 +7,8 @@
 сообщение автора (о DISTILL-02, «…додестелировать до простой математики») к переводу не относится и могло бы подтолкнуть голову
 «упростить» код.
 Версии: pilot — как было (prompts/<модуль>.md; перед записью сверяется с хешами prompts/prompts.json, менять их нельзя);
-test — то же плюс объяснения имён, пропущенных в пилоте (ERRORS № 216, DEVIATIONS п. 8), и `char` = `u8` (ERRORS № 218),
-в prompts/test/. Поручение версии test
+test — то же плюс объяснения имён, пропущенных в пилоте (ERRORS № 216, DEVIATIONS п. 8), `char` = `u8` (ERRORS № 218),
+знаковое заворачивание, обратные вызовы, kzalloc_objs и enum string_size_units (ERRORS № 220), в prompts/test/. Поручение версии test
 не пишется, пока harness/prompt_coverage.py находит в нём пропуск.
   python3 harness/make_prompts.py [--version pilot|test]"""
 import hashlib
@@ -104,7 +104,9 @@ TEST_EXTRA = {
                       '`hex_asc_hi(x)` и `hex_asc_lo(x)` — символ строчной шестнадцатеричной цифры (`"0123456789abcdef"`) старшей и '
                       'младшей тетрады байта x; `tolower(c)` и `toupper(c)` — по таблице ядра (Latin-1): заглавные — «A»–«Z», 192–214 и '
                       '216–222, строчные — «a»–«z», 223–246 и 248–255; `tolower` прибавляет 32 к заглавной, `toupper` вычитает 32 из '
-                      'строчной, остальные байты не меняет.',
+                      'строчной, остальные байты не меняет; `enum string_size_units` на границе с C — 4-байтовое беззнаковое целое '
+                      '(`c_uint`): значения складываются по OR (`STRING_UNITS_2 | STRING_UNITS_NO_SPACE | STRING_UNITS_NO_BYTES`), '
+                      'поэтому перечисление Rust для него не годится.',
 }
 TEMPLATE = """LINUX-02, переводчик.
 
@@ -135,14 +137,34 @@ def read(p):
 CHAR_PILOT = '`char` = `c_char`'
 CHAR_TEST = ('`char` = `u8` (ядро собирается с `-funsigned-char`: `char` беззнаковый; `core::ffi::c_char` на x86_64 знаковый '
              'и не подходит)')                                              # ERRORS № 218
+# Версия test: правки шаблона и описаний по разбору кода 19.11 (ERRORS № 220; DEVIATIONS п. 10) — каждая строка «было» встречается ровно раз
+TEMPLATE_TEST_REPL = [
+    (CHAR_PILOT, CHAR_TEST),
+    ('Где C полагается на заворачивание беззнаковой арифметики, используй `wrapping_*`.',
+     'Где C полагается на заворачивание арифметики, используй `wrapping_*` — и для беззнаковой, и для знаковой: ядро собирается с '
+     '`-fno-strict-overflow`, и знаковое переполнение там заворачивается (как `-fwrapv`), например `-x` при `x == INT_MIN` даёт `INT_MIN`.'),
+    ('те же вызовы внешних функций.',
+     'те же вызовы внешних функций и переданных функций обратного вызова — в том же порядке и с теми же аргументами (указатели — на те '
+     'же места в памяти, а не на временные копии).'),
+]
+MACRO_TEST_REPL = {
+    'string_helpers': [("`kzalloc_objs(p, n)` — то же, что `kcalloc(n, sizeof(*p), GFP_KERNEL)`",
+                        "`kzalloc_objs(x, n)` — то же, что `kcalloc(n, sizeof(x), GFP_KERNEL)`, где x — объект (здесь `*ints`, то есть "
+                        "`int`, 4 байта)")],
+}
 
 
 def build(m, d, version):
-    macros = d['macros'] + (('; ' + TEST_EXTRA[m]) if version == 'test' and TEST_EXTRA[m] else '')
+    macros = d['macros']
     tmpl = TEMPLATE
     if version == 'test':
-        assert TEMPLATE.count(CHAR_PILOT) == 1
-        tmpl = TEMPLATE.replace(CHAR_PILOT, CHAR_TEST)
+        for a, b in MACRO_TEST_REPL.get(m, []):
+            assert macros.count(a) == 1, (m, a)
+            macros = macros.replace(a, b)
+        macros += ('; ' + TEST_EXTRA[m]) if TEST_EXTRA[m] else ''
+        for a, b in TEMPLATE_TEST_REPL:
+            assert tmpl.count(a) == 1, a
+            tmpl = tmpl.replace(a, b)
     hdr = ''.join(f"Заголовок `{h}` (типы, структуры, константы, встроенные функции):\n```c\n{read(h)}\n```\n\n" for h in d['headers'])
     return tmpl.format(path=d['path'], config=d['config'], macros=macros, externs=d['externs'], headers=hdr, source=read(d['path']))
 

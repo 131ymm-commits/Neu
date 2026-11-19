@@ -4,7 +4,8 @@
  *   --boundary — генератор крайних значений (пустой вход, 0, наибольшие значения, длины на границах блоков и буферов):
  *                вместе с другим зерном и большим N это независимый поиск, по которому решается, меняет ли мутант
  *                поведение (план пилота);
- *   журнал вызовов внешних функций (kalloc_log.h) — сверяется у оригинала и перевода.
+ *   журнал вызовов внешних функций (kalloc_log.h) — сверяется у оригинала и перевода;
+ *   охранные буферы входов (gbuf) — чтение за концом входа роняет процесс, как в ядре на границе страницы.
  *   diff_<модуль> [N] [--seed S] [--boundary] → JSON в stdout. */
 #pragma once
 #include <stdlib.h>
@@ -87,16 +88,59 @@ static int klog_equal(const struct klog_snap *a, const struct klog_snap *b)
 	return 1;
 }
 
+/* Охранные буферы (разбор, Н10): данные кладутся вплотную к странице без доступа — чтение или запись за конец данных роняет
+ * процесс (падение порции = расхождения), как в ядре на границе страницы. У каждой стороны (оригинал, перевод) — своя копия;
+ * после вызова копия сверяется с исходными данными (запись во входной буфер — расхождение). Область создаётся один раз. */
+#include <sys/mman.h>
+struct gbuf { u8 *end; size_t cap; };
+static void gbuf_init(struct gbuf *g, size_t cap)
+{
+	if (g->end)
+		return;
+	size_t pg = (size_t)sysconf(_SC_PAGESIZE), span = (cap + pg - 1) / pg * pg;
+	u8 *p = mmap(NULL, span + pg, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	if (p == MAP_FAILED || mprotect(p + span, pg, PROT_NONE)) {
+		perror("gbuf");
+		exit(2);
+	}
+	g->end = p + span;
+	g->cap = span;
+}
+/* копия n байт src так, что за последним байтом — недоступная страница; возвращает начало копии */
+static void *gbuf_put(struct gbuf *g, const void *src, size_t n)
+{
+	if (n > g->cap) {
+		fprintf(stderr, "gbuf: %zu > %zu\n", n, g->cap);
+		exit(2);
+	}
+	u8 *p = g->end - n;
+	if (n)
+		memcpy(p, src, n);
+	return p;
+}
+
 typedef int (*check_fn)(char *ex, size_t exn);
 struct fn { const char *name; check_fn f; };
 
+/* Пример расхождения в JSON (разбор, Н12; ERRORS № 219): верные последовательности UTF-8 (кириллица сообщений) идут как есть,
+ * всякий другой байт ≥ 0x80 (сырые байты входа) и управляющие — как \u00XX. Так JSON всегда верный UTF-8. */
+static int utf8_len(const unsigned char *p)
+{
+	int n = p[0] >= 0xC2 && p[0] <= 0xDF ? 2 : p[0] >= 0xE0 && p[0] <= 0xEF ? 3 : p[0] >= 0xF0 && p[0] <= 0xF4 ? 4 : 0;
+	for (int i = 1; i < n; i++)
+		if ((p[i] & 0xC0) != 0x80)
+			return 0;
+	return n;
+}
 static void json_puts(const char *p)
 {
-	for (; *p; p++) {
-		unsigned char c = (unsigned char)*p;
-		if (c == '"' || c == '\\') printf("\\%c", c);
-		else if (c < 0x20) printf("\\u%04x", c);
-		else putchar(c);
+	const unsigned char *q = (const unsigned char *)p;
+	while (*q) {
+		unsigned char c = *q;
+		int n = c >= 0x80 ? utf8_len(q) : 1;
+		if (c == '"' || c == '\\') { printf("\\%c", c); q++; }
+		else if (c < 0x20 || c == 0x7f || (c >= 0x80 && n == 0)) { printf("\\u%04x", c); q++; }
+		else { fwrite(q, 1, (size_t)n, stdout); q += n; }
 	}
 }
 

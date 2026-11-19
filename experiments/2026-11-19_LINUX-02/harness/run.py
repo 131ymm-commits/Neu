@@ -1,28 +1,32 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """LINUX-02: сборка и прогон обвязки (PLAN-PILOT.md; устройство — harness/README.md).
-  python3 harness/run.py check OUT.json [--n N]                 — оригиналы: KUnit; оригинал против себя (обычные входы и крайние);
-                                                                  то же со сборкой под UBSan (неопределённое поведение оригинала)
+  python3 harness/run.py check OUT.json [--n N]                 — оригиналы: KUnit; оригинал против себя на всех потоках правды
+                                                                  (вердикт и независимый поиск); то же под UBSan
   python3 harness/run.py eval OUT.json PHASE [--n N] [--modules ...] [--heads ...]
                                                                 — переводы translations/PHASE/<голова>/<модуль>_r<k>.rs:
                                                                   rustc, KUnit, сравнение с оригиналом
   python3 harness/run.py one OUT.json MODULE FILE.rs [--n N] [--seed S] [--boundary] [--no-kunit]
-                                                                — один файл Rust (для мутантов и независимого поиска)
+                                                                — один файл Rust: вердикт, и свой прогон (--seed/--boundary) для разбора
 Семантика C — как у ядра (флаги Makefile v7.4-rc3). Rust — с проверками переполнения (CONFIG_RUST_OVERFLOW_CHECKS), panic=abort.
-Символы оригинала для сравнения переименовываются objcopy: каждый определённый глобальный символ s → orig_s."""
+Символы оригинала для сравнения переименовываются objcopy: каждый определённый глобальный символ s → orig_s.
+Вердикт «верен» (verdict_runs): собрался и слинковался, KUnit пройден, 0 расхождений в основном сравнении (n обычных проверок на
+функцию) и 0 на крайних значениях (n проверок, зерно 777) — DEVIATIONS п. 10. Пределы времени — от времени оригинала на том же раннере."""
 import glob
 import hashlib
 import json
 import os
 import re
+import signal
 import subprocess
 import sys
+import time
 
 X = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(X)
 WORK = os.path.join(X, 'work')
 KFLAGS = ['-std=gnu11', '-O2', '-funsigned-char', '-fno-common', '-fno-strict-aliasing', '-fno-delete-null-pointer-checks',
-          '-fno-strict-overflow']
+          '-fno-strict-overflow', '-U_FORTIFY_SOURCE']   # gcc Ubuntu сам ставит _FORTIFY_SOURCE=3; в ядре CONFIG_FORTIFY_SOURCE не задан
 CF = KFLAGS + ['-Werror=implicit-function-declaration', '-Werror=int-conversion', '-Iharness/include', '-Iharness', '-Isrc/include',
                '-Isrc/lib/842', '-Isrc/lib/crypto/tests', '-include', 'harness/kernel_shim.h']
 UBSAN = ['-fsanitize=undefined', '-fno-sanitize=alignment', '-fno-sanitize-recover=all']   # без alignment: README, «UBSan»
@@ -41,10 +45,15 @@ MODULES = {
 
 
 def sh(cmd, timeout=1800):
+    """Запуск в своей группе процессов: при пределе времени убивается вся группа (исполнители делают fork) — ERRORS № 219.
+    Вывод декодируется с заменой: пример расхождения может нести сырой байт ≥ 0x80 (ERRORS № 194, № 219)."""
+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
     try:
-        p = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-        return p.returncode, p.stdout, p.stderr
+        out, err = p.communicate(timeout=timeout)
+        return p.returncode, out.decode('utf-8', 'replace'), err.decode('utf-8', 'replace')
     except subprocess.TimeoutExpired:
+        os.killpg(p.pid, signal.SIGKILL)
+        p.communicate()
         return -999, '', 'TIMEOUT'
 
 
@@ -122,17 +131,21 @@ def check(dst, n, mods):
             okk, ek = kunit_bin(o, o['plain'], h, kb, extra)
             r[f'kunit_{tag}'] = run_json([kb])[0] if okk else dict(build_error=ek)
             okd, ed = diff_bin(o, o['plain'], h, db, extra)
-            nn = n if tag == 'plain' else max(1, n // 10)
-            r[f'self_{tag}'] = run_json([db, str(nn)])[0] if okd else dict(build_error=ed)
-            r[f'self_{tag}_boundary'] = run_json([db, str(nn), '--boundary', '--seed', '777'])[0] if okd else None
+            # все потоки, которыми судят и решают «меняет поведение» (разбор, Н16): вердикт — n обычных и n крайних (зерно 777);
+            # независимый поиск — 10n обычных (зерно 20261119) и n крайних (зерно 1119); под UBSan — те же потоки
+            r[f'self_{tag}'] = run_json([db, str(n)])[0] if okd else dict(build_error=ed)
+            r[f'self_{tag}_boundary'] = run_json([db, str(n), '--boundary', '--seed', str(VERDICT_BND_SEED)])[0] if okd else None
+            r[f'self_{tag}_ind'] = run_json([db, str(10 * n), '--seed', '20261119'])[0] if okd else None
+            r[f'self_{tag}_ibnd'] = run_json([db, str(n), '--boundary', '--seed', '1119'])[0] if okd else None
             ku = r[f'kunit_{tag}'] or {}
             ok = (ku.get('failed') == 0 and ku.get('empty') == 0 and ku.get('total', 0) > 0
-                  and mism(r[f'self_{tag}']) == 0 and mism(r[f'self_{tag}_boundary']) == 0)
+                  and all(mism(r[f'self_{tag}{x}']) == 0 for x in ('', '_boundary', '_ind', '_ibnd')))
             r[f'ok_{tag}'] = ok
             ok_all &= ok
             print(m, tag, '| KUnit: случаев', ku.get('total'), 'провалено', ku.get('failed'), 'пропущено', ku.get('skipped'),
                   'пустых', ku.get('empty'), '| против себя: расхождений', mism(r[f'self_{tag}']), '/ крайние', mism(r[f'self_{tag}_boundary']),
-                  '|', 'верно' if ok else 'НЕВЕРНО', flush=True)
+                  '/ независимый', mism(r[f'self_{tag}_ind']), '/ его крайние', mism(r[f'self_{tag}_ibnd']), '|', 'верно' if ok else 'НЕВЕРНО',
+                  flush=True)
     res['ok'] = ok_all
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     print('обвязка:', 'верна' if ok_all else 'НЕВЕРНА')
@@ -140,11 +153,63 @@ def check(dst, n, mods):
 
 
 def build_rust(path, out):
-    rc, _, err = sh(RUSTC + ['-o', out, path])
+    rc, _, err = sh(RUSTC + ['-o', out, path], 900)
     return rc == 0, err[-2000:]
 
 
-def eval_one(m, path, h, o, n, seed=None, boundary=False, kunit=True, tag='x'):
+VERDICT_BND_SEED = 777                       # крайние значения входят в вердикт «верен» (DEVIATIONS п. 10)
+FLOOR = dict(kunit=30, main=60, bnd=60)      # нижние границы пределов времени, с
+TIME_MULT = 10                               # предел — не меньше TIME_MULT времён оригинала на том же раннере
+
+
+def timed(cmd, timeout):
+    """(json или None, истёк ли предел, секунды, хвост stderr)."""
+    t0 = time.time()
+    rc, out, err = sh(cmd, timeout)
+    try:
+        d = json.loads(out)
+    except json.JSONDecodeError:
+        d = None
+    return d, rc == -999, time.time() - t0, (err or '')[-1500:]
+
+
+def kunit_ok(kd):
+    return bool(kd) and kd.get('failed') == 0 and kd.get('empty') == 0 and kd.get('total', 0) > 0
+
+
+def verdict_runs(k_bin, d_bin, n, lim):
+    """Прогоны вердикта «верен» — одни и те же в оценке переводов и у мутантов: KUnit (если k_bin), основное сравнение
+    (n обычных проверок на функцию, зерно драйвера по умолчанию) и крайние значения (n проверок, зерно VERDICT_BND_SEED)."""
+    r = {}
+    if k_bin:
+        kd, to, sec, ke = timed([k_bin], lim['kunit'])
+        r.update(kunit=kd, kunit_timeout=to, kunit_s=round(sec, 2), kunit_pass=kunit_ok(kd))
+        if kd is None:
+            r['kunit_err'] = ke
+    dm, to, sec, de = timed([d_bin, str(n)], lim['main'])
+    r.update(diff=dm, main_timeout=to, main_s=round(sec, 2), main_mismatches=mism(dm))
+    if dm is None:
+        r['diff_err'] = de
+    dbd, to, sec, be = timed([d_bin, str(n), '--boundary', '--seed', str(VERDICT_BND_SEED)], lim['bnd'])
+    r.update(diff_boundary=dbd, bnd_timeout=to, bnd_s=round(sec, 2), bnd_mismatches=mism(dbd))
+    if dbd is None:
+        r['diff_boundary_err'] = be
+    r['comparison_clean'] = dm is not None and dbd is not None and r['main_mismatches'] == 0 and r['bnd_mismatches'] == 0
+    return r
+
+
+def orig_limits(o, h, n, floor=None):
+    """Оригинал против себя на этом раннере: время → пределы max(нижняя граница, TIME_MULT × время); заодно проверка, что чист."""
+    floor = floor or FLOOR
+    kb, db = os.path.join(o['dir'], 'kunit_lim'), os.path.join(o['dir'], 'diff_lim')
+    assert kunit_bin(o, o['plain'], h, kb)[0] and diff_bin(o, o['plain'], h, db)[0], 'оригинал не собрался'
+    r = verdict_runs(kb, db, n, {k: 3600 for k in FLOOR})
+    ok = r['kunit_pass'] and r['comparison_clean']
+    slim = {k: v for k, v in r.items() if k not in ('kunit', 'diff', 'diff_boundary')}
+    return {k: max(floor[k], TIME_MULT * r[f'{k}_s']) for k in FLOOR}, slim, ok, (kb, db)
+
+
+def eval_one(m, path, h, o, n, lim, kunit=True, tag='x'):
     src = open(path, encoding='utf-8').read()
     r = dict(file=os.path.relpath(path, X), rs_lines=lines(path), unsafe=len(re.findall(r'\bunsafe\b', src)),
              sha256=hashlib.sha256(src.encode()).hexdigest())
@@ -152,54 +217,52 @@ def eval_one(m, path, h, o, n, seed=None, boundary=False, kunit=True, tag='x'):
     os.makedirs(d, exist_ok=True)
     lib = os.path.join(d, 'lib.a')
     r['compiled'], err = build_rust(path, lib)
+    r['linked'] = False
     if not r['compiled']:
         r['compile_err'] = err
         r['correct'] = False
         return r
-    if kunit:
-        kb = os.path.join(d, 'kunit')
-        okk, ek = kunit_bin(o, lib, h, kb)
-        r['kunit_linked'] = okk
-        if okk:
-            r['kunit'], _, ke = run_json([kb])
-            if r['kunit'] is None:
-                r['kunit_err'] = ke
-        else:
-            r['kunit_link_err'] = ek
-    db = os.path.join(d, 'diff')
+    kb, db = os.path.join(d, 'kunit'), os.path.join(d, 'diff')
+    okk, ek = kunit_bin(o, lib, h, kb) if kunit else (True, '')
     okd, ed = diff_bin(o, lib, h, db)
-    r['diff_linked'] = okd
-    if okd:
-        cmd = [db, str(n)] + (['--seed', str(seed)] if seed is not None else []) + (['--boundary'] if boundary else [])
-        r['diff'], _, de = run_json(cmd)
-        if r['diff'] is None:
-            r['diff_err'] = de
-    else:
+    r.update(kunit_linked=okk, diff_linked=okd, linked=okk and okd)
+    if not okk:
+        r['kunit_link_err'] = ek
+    if not okd:
         r['diff_link_err'] = ed
-    ku, df = r.get('kunit') or {}, r.get('diff')
-    r['kunit_pass'] = bool(kunit and r.get('kunit_linked') and ku and ku.get('failed') == 0 and ku.get('empty') == 0 and ku.get('total', 0) > 0)
-    r['mismatches'] = mism(df)
-    r['correct'] = bool(r['compiled'] and (not kunit or r['kunit_pass']) and df is not None and r['mismatches'] == 0)
+    if not r['linked']:
+        r['correct'] = False
+        return r
+    r.update(verdict_runs(kb if kunit else None, db, n, lim))
+    r['mismatches'] = None if r['main_mismatches'] is None or r['bnd_mismatches'] is None else r['main_mismatches'] + r['bnd_mismatches']
+    r['correct'] = bool((not kunit or r['kunit_pass']) and r['comparison_clean'])
+    r['diff_bin'] = db
     return r
 
 
 def evaluate(dst, phase, n, mods, heads):
     h = helpers('plain')
-    res = dict(mode='eval', phase=phase, n=n, rustc=sh(['rustc', '--version'])[1].strip(), kflags=KFLAGS, modules={})
+    res = dict(mode='eval', phase=phase, n=n, verdict_boundary_seed=VERDICT_BND_SEED, rustc=sh(['rustc', '--version'])[1].strip(),
+               kflags=KFLAGS, modules={}, done=False)
     for m in mods:
         o = orig_objects(m, 'plain')
-        res['modules'][m] = dict(c_lines=lines(f"src/{MODULES[m]['src']}"), translations={})
-        for path in sorted(glob.glob(os.path.join(X, 'translations', phase, '*', f'{m}_r*.rs'))):
-            head = os.path.basename(os.path.dirname(path))
-            if heads and head not in heads:
+        lim, orig, ok, _ = orig_limits(o, h, n)
+        paths = sorted(glob.glob(os.path.join(X, 'translations', phase, '*', f'{m}_r*.rs')))
+        keys = [f"{os.path.basename(os.path.dirname(p))}/{os.path.basename(p)[:-3]}" for p in paths]
+        res['modules'][m] = dict(c_lines=lines(f"src/{MODULES[m]['src']}"), limits_s=lim, orig=orig, orig_ok=ok, expected=keys,
+                                 translations={})
+        for path, key in zip(paths, keys):
+            if heads and key.split('/')[0] not in heads:
                 continue
-            key = f"{head}/{os.path.basename(path)[:-3]}"
-            r = eval_one(m, path, h, o, n, tag=key.replace('/', '_'))
+            r = eval_one(m, path, h, o, n, lim, tag=key.replace('/', '_'))
+            r.pop('diff_bin', None)
             res['modules'][m]['translations'][key] = r
             ku = r.get('kunit') or {}
-            print(m, key, '| собран', r['compiled'], '| KUnit провалено', ku.get('failed'), 'из', ku.get('total'), '| расхождений',
-                  r.get('mismatches'), '| верен', r['correct'], flush=True)
+            print(m, key, '| собран', r['compiled'], '| слинкован', r['linked'], '| KUnit провалено', ku.get('failed'), 'из', ku.get('total'),
+                  '| расхождений', r.get('main_mismatches'), '/ крайние', r.get('bnd_mismatches'), '| верен', r['correct'], flush=True)
             json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        res['modules'][m]['complete'] = sorted(res['modules'][m]['translations']) == sorted(k for k in keys if not heads or k.split('/')[0] in heads)
+    res['done'] = True
     json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return 0
 
@@ -218,11 +281,16 @@ def main(a):
         m, path = a[2], a[3]
         h = helpers('plain')
         o = orig_objects(m, 'plain')
-        seed = int(opt('--seed')) if opt('--seed') else None
-        r = eval_one(m, path, h, o, n, seed=seed, boundary='--boundary' in a, kunit='--no-kunit' not in a,
-                     tag='one_' + hashlib.sha256(path.encode()).hexdigest()[:12])
+        lim, _, _, _ = orig_limits(o, h, n)
+        r = eval_one(m, path, h, o, n, lim, kunit='--no-kunit' not in a, tag='one_' + hashlib.sha256(path.encode()).hexdigest()[:12])
+        if (opt('--seed') or '--boundary' in a) and r.get('linked'):       # свой прогон для разбора, в вердикт не входит
+            cmd = [r['diff_bin'], str(n)] + (['--seed', opt('--seed')] if opt('--seed') else []) + (['--boundary'] if '--boundary' in a else [])
+            r['custom'], r['custom_timeout'], _, _ = timed(cmd, 3600)
+            r['custom_mismatches'] = mism(r['custom'])
+        r.pop('diff_bin', None)
         json.dump(r, open(a[1], 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-        print(json.dumps({k: r.get(k) for k in ('compiled', 'kunit_pass', 'mismatches', 'correct')}, ensure_ascii=False))
+        print(json.dumps({k: r.get(k) for k in ('compiled', 'linked', 'kunit_pass', 'main_mismatches', 'bnd_mismatches', 'custom_mismatches',
+                                                'correct')}, ensure_ascii=False))
         return 0
     raise SystemExit('режим: check | eval | one')
 

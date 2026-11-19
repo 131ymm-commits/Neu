@@ -1,7 +1,8 @@
 /* LINUX-02: сравнение перевода lib/random32.c с оригиналом. Состояние rnd_state — любое (в том числе s1…s4 меньше
  * минимумов __seed: генератор тогда вырожден, но поведение должно совпадать). Последовательность до 20 вызовов
  * prandom_u32_state / prandom_bytes_state (длины 0…67, буфер с любым смещением) / prandom_warmup / prandom_seed_full_state
- * (get_random_bytes — один и тот же поток для обеих сторон). После каждого вызова сравниваются результат, буфер и состояние. */
+ * (get_random_bytes — один и тот же поток для обеих сторон; в половине случаев слова потока малые, < 131, чтобы исполнялась ветка
+ * x < m у __seed — разбор, Н2). После каждого вызова сравниваются результат, буфер и состояние. */
 #include <linux/prandom.h>
 #include "diff_common.h"
 
@@ -31,8 +32,11 @@ static int c_seq(char *ex, size_t exn)
 		case 2: orig_prandom_warmup(&a); prandom_warmup(&b); break;
 		default: {
 			u64 sd = rnd();
+			int small = rnd() % 2;                         /* малые слова в потоке: ветка x < m у __seed (разбор, Н2) */
+			harness_random_small(small);
 			harness_random_reset(sd); kalloc_log_reset(); orig_prandom_seed_full_state(&a); klog_take(&la);
 			harness_random_reset(sd); kalloc_log_reset(); prandom_seed_full_state(&b); klog_take(&lb);
+			harness_random_small(0);
 			if (!klog_equal(&la, &lb))
 				DIFF_EX("операция %d: prandom_seed_full_state вызывает get_random_bytes иначе", i);
 		}

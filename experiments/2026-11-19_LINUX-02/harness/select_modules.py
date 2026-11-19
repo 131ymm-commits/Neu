@@ -6,10 +6,13 @@
 Условия для модуля:
   1–2. проверка обвязки: оригинал проходит KUnit и против себя даёт 0 расхождений — в обычной сборке и под UBSan (check.json);
   3.   правда сильнее оценщика (mutants_<модуль>.json, total.rule3);
-  4.   хотя бы один перевод пилота с кодом неверен (eval.json; отказ площадки — не перевод, DEVIATIONS п. 1);
+  4.   хотя бы один перевод пилота собрался, слинковался и неверен (eval.json; отказ площадки и несобравшийся перевод о трудности
+       для вопроса «прошёл KUnit, но неверен» не говорят — DEVIATIONS пп. 1, 10);
   5.   KUnit может провалить перевод (mutants_<модуль>.json, rule5).
-Меньше двух модулей — тест в этом виде не ставится (решение по слову автора).
-Фаза модуля (DEVIATIONS п. 9): errseq — pilot (поручение v1 по сути то же), остальные — pilot2 (повтор под поручениями test).
+Меньше двух модулей — тест в этом виде не ставится (решение по слову автора). Оценка фазы неполна (нет done, не все переводы,
+оригинал не чист) — отбор не делается, код выхода 1.
+Фаза модуля: pilot2 у всех шести (повтор под поручениями test — DEVIATIONS пп. 9–10; errseq тоже: его поручение test изменилось
+по сути — знаковое заворачивание). --phase-of оставлен для разбора.
 Условие 4 и числа мощности берутся из оценки фазы модуля; мутанты mutants_<модуль>.json посчитаны на той же фазе.
   python3 harness/select_modules.py CHECK.json MUT_DIR OUT.json --eval pilot=E1.json [--eval pilot2=E2.json]
                                     [--phase-of errseq=pilot] [--default-phase pilot2]"""
@@ -58,14 +61,20 @@ def main(a):
         e = (evals.get(ph) or {}).get('modules', {}).get(m, {})
         mu = load(os.path.join(mdir, f'mutants_{m}.json'))
         tr = e.get('translations', {})
-        rows = {k: dict(compiled=v.get('compiled'), kunit_pass=v.get('kunit_pass'), mismatches=v.get('mismatches'), correct=v.get('correct'),
+        rows = {k: dict(compiled=v.get('compiled'), linked=v.get('linked'), kunit_pass=v.get('kunit_pass'),
+                        main_mismatches=v.get('main_mismatches'), bnd_mismatches=v.get('bnd_mismatches'), correct=v.get('correct'),
                         kunit_failed=(v.get('kunit') or {}).get('failed'), kunit_total=(v.get('kunit') or {}).get('total'))
                 for k, v in sorted(tr.items())}
+        ev = evals.get(ph) or {}
+        if not (ev.get('done') and e.get('complete') and e.get('orig_ok')):
+            res['modules'][m] = dict(phase=ph, error='оценка фазы неполна или оригинал не чист — отбор не делается')
+            res['incomplete'] = True
+            continue
         t = (mu or {}).get('total', {})
         cond = {
             '1_2_harness': bool(c.get('ok_plain') and c.get('ok_ubsan')),
             '3_truth_stronger': bool(mu and mu.get('orig_ok') and mu.get('phase') == ph and t.get('rule3')),
-            '4_some_wrong': any(r['correct'] is False for r in rows.values()),
+            '4_some_wrong': any(r['compiled'] and r['linked'] and r['correct'] is False for r in rows.values()),   # DEVIATIONS п. 10
             '5_kunit_can_fail': bool(mu and mu.get('phase') == ph and mu.get('rule5')),
         }
         passed = [r for r in rows.values() if r['kunit_pass']]
@@ -82,6 +91,10 @@ def main(a):
                                                                       'kunit_caught_main_missed', 'main_killed_not_changed', 'survived_all',
                                                                       'share_changed_killed_kunit', 'share_changed_killed_main',
                                                                       'share_kunit_caught_main_missed', 'timeouts')}))
+    if res.get('incomplete'):
+        json.dump(res, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+        print('СТОП: оценка неполна —', [m for m in MODULES if 'error' in res['modules'][m]], '— отбор не делается')
+        return 1
     sel = [m for m in MODULES if res['modules'][m]['selected']]
     res['selected'] = sel
     res['test_possible'] = len(sel) >= 2
