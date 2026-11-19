@@ -12,9 +12,9 @@ set -uo pipefail
 OUT=$(realpath "$1")
 E=experiments/2026-11-19_LINUX-02
 if command -v rustup >/dev/null; then
-  rustup toolchain install 1.97.0 --profile minimal >/dev/null 2>&1 && rustup default 1.97.0 >/dev/null
+  rustup set profile minimal >/dev/null 2>&1; rustup toolchain install 1.97.0 >/dev/null 2>&1 && rustup default 1.97.0 >/dev/null
 else
-  curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.97.0 --profile minimal >/dev/null
+  curl -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.97.0 >/dev/null
 fi
 source "$HOME/.cargo/env" 2>/dev/null || true
 { gcc --version | head -1; rustc --version; nproc; git rev-parse HEAD; } | tee "$OUT/versions.txt"
