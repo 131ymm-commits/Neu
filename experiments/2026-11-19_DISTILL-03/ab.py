@@ -105,7 +105,8 @@ def programs_from(items, offs):
         rows[h] = program_rows(items, o)
     shape = {(a, b): shape_at_level(progs[a], progs[b], *rows[b]) for a in progs for b in progs}     # и диагональ — той же процедурой
     const = {b: const_program(progs[b], *rows[b]) for b in progs}
-    return dict(prog=progs, shape=shape, const=const)
+    acc = {h: float(np.mean(np.asarray(o)[np.asarray(o) < NC] == 0)) if np.any(np.asarray(o) < NC) else None for h, o in offs.items()}
+    return dict(prog=progs, shape=shape, const=const, acc=acc)
 
 
 def env_matrices(P, env, heads_order):
@@ -186,6 +187,16 @@ def family_result(P, envs, names, heads_order):
         res[kind] = dict(s=s.tolist(), heads_in_test=[heads_order[j] for j in ok], **perm_test(s[np.ix_(ok, ok)]))
     own = np.array([np.diag(m) for m in mats['prog']])         # среды × головы
     res['input_gain'] = dict(per_env_head=(own - np.array(const)).tolist(), mean=float(np.nanmean(own - np.array(const))))
+    # описательно (записка литературы): «ближайший чужой» — своя минус лучшая из чужих, по средам и головам
+    for kind in KINDS:
+        nn = []
+        for m in mats[kind]:
+            k = m.shape[0]
+            nn.append([float(m[b, b] - np.nanmax(np.delete(m[:, b], b))) if np.isfinite(m[b, b]) else float('nan') for b in range(k)])
+        nn = np.array(nn)
+        res[kind]['nearest_other'] = dict(per_env_head=nn.tolist(), per_head=np.nanmean(nn, axis=0).tolist(), mean=float(np.nanmean(nn)),
+                                          heads_own_best=int(np.sum(np.nanmean(nn, axis=0) > 0)))
+    res['accuracy_construction'] = {h: P['acc'].get(h) for h in heads_order}
     return res
 
 
