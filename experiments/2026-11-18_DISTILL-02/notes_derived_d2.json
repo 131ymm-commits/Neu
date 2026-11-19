@@ -280,6 +280,37 @@
  "perm7": 5040,
  "prereg_line_m2max": 255,
  "z_m4": 2.8070337683438114,
+ "trunc_summary": {
+  "new5 L": {
+   "n_pairs": 7,
+   "n_numeric": 15400,
+   "n_at_max": 0,
+   "n_extra_tokens": 0,
+   "n_prefix_of_truth": 2
+  },
+  "test5 L": {
+   "n_pairs": 21,
+   "n_numeric": 45798,
+   "n_at_max": 0,
+   "n_extra_tokens": 0,
+   "n_prefix_of_truth": 112
+  },
+  "new5 T": {
+   "n_pairs": 21,
+   "n_numeric": 46164,
+   "n_at_max": 3,
+   "n_extra_tokens": 0,
+   "n_prefix_of_truth": 1
+  },
+  "test5 T": {
+   "n_pairs": 56,
+   "n_numeric": 121098,
+   "n_at_max": 6,
+   "n_extra_tokens": 6,
+   "n_prefix_of_truth": 10
+  }
+ },
+ "trunc_top_n_numeric": 2192,
  "m2_m4": {
   "T_X19_p3": [
    0.6226914407362978,

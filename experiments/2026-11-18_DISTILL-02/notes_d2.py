@@ -145,6 +145,7 @@ der = dict(source='notes_d2.py по analysis.json, trunc.json, det.txt, prereg_p
            box_total_max=max(box_tot.values()), crit_n3=crit3, council_status=CJ['status'], council_for=n_for, council_n=len(votes),
            council_over_s=CJ['timer'].get('over_s'), council_seconds=CJ['timer']['end'] - CJ['timer']['start'], heads_wrong_denominator=wrong_den,
            council_number=75, perm7=perm7, prereg_line_m2max=line_255[0], z_m4=RP.z_level(A),
+           trunc_summary=TR['summary'], trunc_top_n_numeric=tr_top['n_numeric'],
            m2_m4={nm: [e['point']['m2'] - RP.z_level(A) * e['sd']['m2'], e['point']['m2'] + RP.z_level(A) * e['sd']['m2']] for nm, e in E.items()})
 json.dump(der, open(OUT_DER, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
