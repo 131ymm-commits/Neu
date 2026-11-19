@@ -12,7 +12,8 @@ MEAS_RU = {'m1': 'программа − B1 (m1)', 'm1_phi': 'программа
            'm3': 'ln K наблюдённое / из программ (m3)'}
 RULE_TEXT = {'Р1-Т': 'программа лучше частот смещений B1, «тысячи» (8 сред test5)', 'Р1-Л': 'то же, «длина» (3 среды test5; только часть А)',
              'Р1Ф-Т': 'программа лучше Φ-базы, «тысячи»', 'Р1Ф-Л': 'программа лучше Φ-базы, «длина» (только часть А)',
-             'Р2-Т': 'программа берёт больше половины объяснимого против одного ящика, «тысячи»', 'Р2-Л': 'то же, «длина»',
+             'Р2-Т': 'программа берёт больше половины объяснимого в пространстве классов переноса против одного ящика, «тысячи»',
+             'Р2-Л': 'то же, «длина»',                               # «в пространстве классов переноса» — совет 75, «нужно» 1 (DEVIATIONS.md)
              'Р3-Т': 'ошибки голов совпадают иначе, чем дают их программы, «тысячи» (двусторонне)', 'Р3-Л': 'то же, «длина» (двусторонне; часть А)',
              'Р4-Т': 'на новых средах new5 (пятизначные a) программа лучше B1 (часть А)', 'Р4Ф-Т': 'на новых средах new5 программа лучше Φ-базы (часть А)'}
 DECISIVE = ('подтверждено', 'опровергнуто', 'больше', 'меньше')
@@ -99,6 +100,11 @@ def outcome(A, key):
     return A['rules'][r]['verdict_rule'] == v
 
 
+def n_params(fm):
+    """Свободных параметров программы: коэффициенты формулы (len w), ε, частоты «прочих» смещений (len q); q_rest = 1 − Σq (совет 75, «нужно» 6)."""
+    return len(fm['w']) + 1 + len(fm['q'])
+
+
 def mean_head(A, fam, ph, key):
     xs = [s[key] for e in A['envs'].values() if e['family'] == fam and e['phase'] == ph for s in e.get('heads_scores', {}).values()
           if s.get(key) == s.get(key) and s.get(key) is not None]
@@ -136,14 +142,17 @@ def render(A, PW, X, notes=None, commits=None, det=None, trunc=None):
             if not names:
                 continue
             L += ['', f"## По средам: {FAM_RU[fam]}, {ph} (точки; в скобках — ст. откл. повторов)", '',
-                  '| Среда | голов | m1 | m1_phi | m2 | m2_max | m3 | m3_c | m3_o | K набл. / прогр. | F набл. / прогр. | ood | разряды переносов |',
-                  '|---|---|---|---|---|---|---|---|---|---|---|---|---|']
+                  '| Среда | голов | m1 | m1_phi | m2 | ящик − B1 (знаменатель m2) | m2_max | m3 | m3_c | m3_o | K набл. / прогр. | F набл. / прогр. | ood | разряды переносов |',
+                  '|---|---|---|---|---|---|---|---|---|---|---|---|---|---|']
             for n in names:
                 e = A['envs'][n]
                 pt, sd = e['point'], e['sd']
                 L.append(f"| {n} | {len(e['heads'])} | {f(pt['m1'])} ({g(sd['m1'])}) | {f(pt['m1_phi'])} ({g(sd['m1_phi'])}) | {g(pt['m2'], 3)} ({g(sd['m2'], 3)}) | "
+                         f"{f(e['concentration']['box']['total'])} | "
                          f"{g(pt['m2_max'], 3)} | {f(pt['m3'])} ({g(sd['m3'])}) | {f(pt['m3_c'])} | {f(pt['m3_o'])} | {g(pt['K_obs'], 3)} / {g(pt['K_prog'], 3)} | "
                          f"{g(pt['F_obs'], 3)} / {g(pt['F_prog'], 3)} | {g(e['carries']['ood_share'], 3)} | {', '.join(e['carries']['carry_positions'])} |")
+            L += ['', 'Ящик − B1 — среднее по головам выигрыша ящика над B1, нат на ответ (`concentration.box.total`; совет 75, «нужно» 5); интервал '
+                  'не считался, порога пометы «знаменатель мал» нет (DEVIATIONS.md).']
     L += ['', '## Описательно (PREREG §5; вердикт не меняет; M4 при уровне описательного)', '', '| Семейство и мера | Среднее | M4 | t по средам |', '|---|---|---|---|']
     for k, e in A['descr'].items():
         L.append(f"| {k} | {f(e['delta'])} | {ci(e)} | {tt(e.get('t_envs', {}).get('t'))} |")
@@ -154,18 +163,26 @@ def render(A, PW, X, notes=None, commits=None, det=None, trunc=None):
                 L.append(f"| {FAM_RU[fam]}, {ph} | {g(mean_head(A, fam, ph, 'hit_prog'), 3)} / {g(mean_head(A, fam, ph, 'hit_b1'), 3)} | "
                          f"{g(mean_head(A, fam, ph, 'auc_prog'), 3)} / {g(mean_head(A, fam, ph, 'auc_conf'), 3)} |")
     L += ['', '## Формулы голов (построение; P(потеря переноса в разряд j) = σ(…), две значащие цифры; ε — доля «прочих»)', '',
-          '| Семейство | Голова | формула | ε | Φ-база |', '|---|---|---|---|---|']
+          '| Семейство | Голова | формула | ε | параметров | Φ-база |', '|---|---|---|---|---|---|']
     for fam, fs in A['formulas'].items():
         for h, fm in fs.items():
             terms = ' '.join(f"{w:+.2g}·{n}" for w, n in zip(fm['w_round'][1:], fm['features']))
             ph = A['formulas_phi'][fam][h]
-            L.append(f"| {FAM_RU[fam]} | {h.split('/')[-1]} | σ({fm['w_round'][0]:+.2g} {terms}) | {g(fm['eps'], 3)} | "
+            L.append(f"| {FAM_RU[fam]} | {h.split('/')[-1]} | σ({fm['w_round'][0]:+.2g} {terms}) | {g(fm['eps'], 3)} | {n_params(fm)} | "
                      f"σ({ph['w_round'][0]:+.2g} {ph['w_round'][1]:+.2g}·phi) |")
+    L += ['', 'Параметров — коэффициенты формулы, ε и частоты «прочих» смещений из сохранённой программы: len(w) + 1 + len(q); q_rest = 1 − Σq не '
+          'свободен (совет 75, «нужно» 6). У B1 — не больше 30 частот смещений (TOP_OFFSETS = 30, `offset_model`).']
     L += ['', '## Детерминизм и прибор', '']
     if det:
         L.append(f"- Повтор анализа (2 среды, B = 200, дважды): {det.strip()}.")
-    if trunc:
-        L.append(f"- Прибор (`trunc_check.py`): {json.dumps(trunc, ensure_ascii=False)[:300]}.")
+    if trunc:                                                      # сводка полей вместо обрезки json (совет 75, «нужно» 4)
+        sm = trunc['summary']
+        L.append('- Прибор (`trunc_check.py`), по наборам: ' + '; '.join(
+            f"{k} — пар «голова × среда» {v['n_pairs']}, числовых ответов {v['n_numeric']}, на пределе длины {v['n_at_max']}, с лишними токенами "
+            f"{v['n_extra_tokens']}" for k, v in sm.items()) + '.')
+        top = max(trunc['rows'], key=lambda r: r['share_at_max'])
+        L.append(f"- Наибольшая доля ответов на пределе длины: {g(top['share_at_max'], 4)} — {top['model'].split('/')[-1]}, {top['env']} ({top['phase']}): "
+                 f"{top['n_at_max']} из {top['n_numeric']} числовых.")
     L += ['', '## Ожидания (PREREG §6)', '', '| № | Исход | Вероятность | Сбылось |', '|---|---|---|---|']
     for e in X['expectations']:
         L.append(f"| {e['id']} | {e['text']} | {g(e['p'], 4 if e['p'] < 0.01 else 3)} | {'да' if outcome(A, e['key']) else 'нет'} |")
@@ -173,7 +190,8 @@ def render(A, PW, X, notes=None, commits=None, det=None, trunc=None):
         for key, title in (('main_q', 'Для главного вопроса'), ('next', 'Что дальше')):
             if notes.get(key):
                 L += ['', f'## {title}', ''] + [f'- {x}' for x in notes[key]]
-    L += ['', '## Вес опоры (PREREG §11)', '', '- Веса — верхняя оценка, не для `journal/support_bits.json`: перенос M4 на 0,0025 для среднего сред не проверен.']
+    L += ['', '## Вес опоры (PREREG §11)', '', '- Веса — верхняя оценка, только если настоящий уровень M4 для среднего сред не ниже номинального 0,0025; '
+          'направление не проверялось (совет 75, «нужно» 3). Не для `journal/support_bits.json`: перенос M4 на 0,0025 для среднего сред не проверен.']
     for r in order:
         e = A['rules'][r]
         pw = PW['rules'][r]

@@ -1,5 +1,5 @@
 {
- "source": "notes_d2.py по analysis.json, trunc.json, det.txt, prereg_power_d2.json, полю seconds вывода заданий и времени коммитов git",
+ "source": "notes_d2.py по analysis.json, trunc.json, det.txt, prereg_power_d2.json, стенограмме совета 75, полю seconds вывода заданий и времени коммитов git",
  "pilot_mu": {
   "Р1-Т": 0.19715415544859763,
   "Р1-Л": 0.18399092638645378,
@@ -168,7 +168,8 @@
  "n_decisive": 7,
  "errors_refs": [
   212,
-  213
+  213,
+  214
  ],
  "lambda_sens_shifted": {
   "Р1-Т": {
@@ -221,5 +222,61 @@
   "Р4Ф-Т": 8.643856189774725,
   "Р3-Л": 8.49641441234776
  },
- "analysis_timeout_min": 180
+ "analysis_timeout_min": 180,
+ "n_params": {
+  "length": {
+   "Qwen2.5-0.5B-Instruct": 35,
+   "Qwen2.5-1.5B-Instruct": 35,
+   "SmolLM2-1.7B-Instruct": 35,
+   "Falcon3-1B-Instruct": 35,
+   "OLMo-2-0425-1B-Instruct": 35,
+   "SmolLM2-360M-Instruct": 35,
+   "TinyLlama-1.1B-Chat-v1.0": 35
+  },
+  "thousands": {
+   "Qwen2.5-0.5B-Instruct": 35,
+   "Qwen2.5-1.5B-Instruct": 35,
+   "SmolLM2-1.7B-Instruct": 35,
+   "Falcon3-1B-Instruct": 35,
+   "OLMo-2-0425-1B-Instruct": 35,
+   "SmolLM2-360M-Instruct": 35,
+   "TinyLlama-1.1B-Chat-v1.0": 35
+  }
+ },
+ "n_params_min": 35,
+ "n_params_max": 35,
+ "b1_max_offsets": 30,
+ "eps_olmo": {
+  "length": 0.7672619047619048,
+  "thousands": 0.8054382655047465
+ },
+ "box_total": {
+  "T_X19_p3": 0.21934205054648265,
+  "T_X29_p3": 0.23075590233765017,
+  "T_X39_p3": 0.25182748310774505,
+  "T_X49_p3": 0.3324699880507993,
+  "T_X59_p3": 0.3210104115811621,
+  "T_X69_p3": 0.3383931870373224,
+  "T_X79_p3": 0.21986456785779296,
+  "T_X89_p3": 0.2589886146803721,
+  "L_X999_p3": 0.6177373848868449,
+  "L_X99_p3": 0.4975245423471657,
+  "L_X9_p3": 0.29851094324964444,
+  "T_X109_p3": 0.32581385809164665,
+  "T_X139_p3": 0.31446618562701034,
+  "T_X169_p3": 0.3218316096429376,
+  "L_X9999_p3": 0.4569991008670923
+ },
+ "box_total_min": 0.21934205054648265,
+ "box_total_max": 0.6177373848868449,
+ "crit_n3": 14.089047275555446,
+ "council_status": "принято единогласно",
+ "council_for": 4,
+ "council_n": 4,
+ "council_over_s": 0,
+ "council_seconds": 341,
+ "heads_wrong_denominator": 0.017651606784428342,
+ "council_number": 75,
+ "perm7": 5040,
+ "prereg_line_m2max": 255
 }
