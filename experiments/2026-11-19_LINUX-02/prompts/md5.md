@@ -1,0 +1,564 @@
+LINUX-02, переводчик.
+
+Задача: переведи файл ядра Linux `lib/crypto/md5.c` (ниже целиком) с C на Rust так, чтобы перевод можно было подставить вместо оригинала: те же экспортируемые функции и то же поведение.
+
+Условия:
+1. Конфигурация: x86_64, BITS_PER_LONG = 64, little-endian; `unsigned long` = `core::ffi::c_ulong` (64 бита), `long` = `c_long`, `int` = `c_int` (32 бита), `unsigned int` = `c_uint`, `size_t` = `usize`, `char` = `c_char`, `bool` = `bool`, `u8`/`u16`/`u32`/`u64` и `s8`…`s64` — соответствующие целые Rust. Архитектурной реализации MD5 нет: используется общая, код этого файла.
+2. Каждую нестатическую функцию (с `EXPORT_SYMBOL`, `EXPORT_SYMBOL_GPL` или `EXPORT_SYMBOL_IF_KUNIT`) экспортируй с тем же именем и той же сигнатурой C: `#[no_mangle] pub extern "C" fn имя(...)`. Статические функции — обычные функции Rust.
+3. Структуры, которые передаются в эти функции или из них, объяви `#[repr(C)]` с тем же порядком и типами полей, что в заголовках ниже: вызывающий код на C передаёт свои структуры.
+4. Сборка: `rustc --edition 2021 --crate-type staticlib -C opt-level=2 -C overflow-checks=on -C panic=abort`. Проверки переполнения включены, как CONFIG_RUST_OVERFLOW_CHECKS в ядре. Где C полагается на заворачивание беззнаковой арифметики, используй `wrapping_*`.
+5. Поведение должно совпадать с оригиналом на всех входах, включая крайние: те же возвращаемые значения, те же записи в выходные буферы и структуры, те же вызовы внешних функций.
+6. Только `core`: без `alloc`, без ввода-вывода. Не пиши `#![no_std]`. `unsafe` — только там, где этого требуют сырые указатели C-сигнатуры и вызовы внешних функций.
+7. Макросы и встроенные функции ядра переведи сами по их смыслу: `rol32(x, n)` — циклический сдвиг u32 влево на n; `le32_to_cpu_array(p, n)` и `cpu_to_le32_array(p, n)` — на little-endian ничего не делают; `cpu_to_le64(x)` — x; `memzero_explicit(p, n)` — обнулить n байт (запись не должна выбрасываться); `memcpy`, `memset` — как в C; `ARRAY_SIZE(a)` — число элементов массива; `likely(x)` и `unlikely(x)` — то же, что x; `static_assert` — проверка при сборке.
+8. Внешние функции ядра, которые можно вызывать через `extern "C"` (они будут слинкованы): нет.
+9. Ответ: один файл Rust целиком в одном блоке ```rust … ```. Пояснений вне блока не нужно.
+
+Заголовок `include/crypto/md5.h` (типы, структуры, константы, встроенные функции):
+```c
+/* SPDX-License-Identifier: GPL-2.0 */
+#ifndef _CRYPTO_MD5_H
+#define _CRYPTO_MD5_H
+
+#include <crypto/hash.h>
+#include <linux/types.h>
+#include <linux/string.h>
+
+#define MD5_DIGEST_SIZE		16
+#define MD5_HMAC_BLOCK_SIZE	64
+#define MD5_BLOCK_SIZE		64
+#define MD5_BLOCK_WORDS		16
+#define MD5_HASH_WORDS		4
+#define MD5_STATE_SIZE		24
+
+#define MD5_H0	0x67452301UL
+#define MD5_H1	0xefcdab89UL
+#define MD5_H2	0x98badcfeUL
+#define MD5_H3	0x10325476UL
+
+#define CRYPTO_MD5_STATESIZE \
+	CRYPTO_HASH_STATESIZE(MD5_STATE_SIZE, MD5_HMAC_BLOCK_SIZE)
+
+extern const u8 md5_zero_message_hash[MD5_DIGEST_SIZE];
+
+struct md5_state {
+	u32 hash[MD5_HASH_WORDS];
+	u64 byte_count;
+	u32 block[MD5_BLOCK_WORDS];
+};
+
+/* State for the MD5 compression function */
+struct md5_block_state {
+	u32 h[MD5_HASH_WORDS];
+};
+
+/**
+ * struct md5_ctx - Context for hashing a message with MD5
+ * @state: the compression function state
+ * @bytecount: number of bytes processed so far
+ * @buf: partial block buffer; bytecount % MD5_BLOCK_SIZE bytes are valid
+ */
+struct md5_ctx {
+	struct md5_block_state state;
+	u64 bytecount;
+	u8 buf[MD5_BLOCK_SIZE] __aligned(__alignof__(__le64));
+};
+
+/**
+ * md5_init() - Initialize an MD5 context for a new message
+ * @ctx: the context to initialize
+ *
+ * If you don't need incremental computation, consider md5() instead.
+ *
+ * Context: Any context.
+ */
+void md5_init(struct md5_ctx *ctx);
+
+/**
+ * md5_update() - Update an MD5 context with message data
+ * @ctx: the context to update; must have been initialized
+ * @data: the message data
+ * @len: the data length in bytes
+ *
+ * This can be called any number of times.
+ *
+ * Context: Any context.
+ */
+void md5_update(struct md5_ctx *ctx, const u8 *data, size_t len);
+
+/**
+ * md5_final() - Finish computing an MD5 message digest
+ * @ctx: the context to finalize; must have been initialized
+ * @out: (output) the resulting MD5 message digest
+ *
+ * After finishing, this zeroizes @ctx.  So the caller does not need to do it.
+ *
+ * Context: Any context.
+ */
+void md5_final(struct md5_ctx *ctx, u8 out[at_least MD5_DIGEST_SIZE]);
+
+/**
+ * md5() - Compute MD5 message digest in one shot
+ * @data: the message data
+ * @len: the data length in bytes
+ * @out: (output) the resulting MD5 message digest
+ *
+ * Context: Any context.
+ */
+void md5(const u8 *data, size_t len, u8 out[at_least MD5_DIGEST_SIZE]);
+
+/**
+ * struct hmac_md5_key - Prepared key for HMAC-MD5
+ * @istate: private
+ * @ostate: private
+ */
+struct hmac_md5_key {
+	struct md5_block_state istate;
+	struct md5_block_state ostate;
+};
+
+/**
+ * hmac_md5_zeroize_key() - Zeroize an hmac_md5_key structure
+ * @key: The hmac_md5_key to zeroize
+ */
+static inline void hmac_md5_zeroize_key(struct hmac_md5_key *key)
+{
+	memzero_explicit(key, sizeof(*key));
+}
+
+/**
+ * struct hmac_md5_ctx - Context for computing HMAC-MD5 of a message
+ * @hash_ctx: private
+ * @ostate: private
+ */
+struct hmac_md5_ctx {
+	struct md5_ctx hash_ctx;
+	struct md5_block_state ostate;
+};
+
+/**
+ * hmac_md5_zeroize_ctx() - Zeroize an hmac_md5_ctx structure
+ * @ctx: The hmac_md5_ctx context to zeroize
+ */
+static inline void hmac_md5_zeroize_ctx(struct hmac_md5_ctx *ctx)
+{
+	memzero_explicit(ctx, sizeof(*ctx));
+}
+
+/**
+ * hmac_md5_preparekey() - Prepare a key for HMAC-MD5
+ * @key: (output) the key structure to initialize
+ * @raw_key: the raw HMAC-MD5 key
+ * @raw_key_len: the key length in bytes.  All key lengths are supported.
+ *
+ * Note: the caller is responsible for zeroizing both the struct hmac_md5_key
+ * and the raw key once they are no longer needed.
+ *
+ * Context: Any context.
+ */
+void hmac_md5_preparekey(struct hmac_md5_key *key,
+			 const u8 *raw_key, size_t raw_key_len);
+
+/**
+ * hmac_md5_init() - Initialize an HMAC-MD5 context for a new message
+ * @ctx: (output) the HMAC context to initialize
+ * @key: the prepared HMAC key
+ *
+ * If you don't need incremental computation, consider hmac_md5() instead.
+ *
+ * Context: Any context.
+ */
+void hmac_md5_init(struct hmac_md5_ctx *ctx, const struct hmac_md5_key *key);
+
+/**
+ * hmac_md5_init_usingrawkey() - Initialize an HMAC-MD5 context for a new
+ *				  message, using a raw key
+ * @ctx: (output) the HMAC context to initialize
+ * @raw_key: the raw HMAC-MD5 key
+ * @raw_key_len: the key length in bytes.  All key lengths are supported.
+ *
+ * If you don't need incremental computation, consider hmac_md5_usingrawkey()
+ * instead.
+ *
+ * Context: Any context.
+ */
+void hmac_md5_init_usingrawkey(struct hmac_md5_ctx *ctx,
+			       const u8 *raw_key, size_t raw_key_len);
+
+/**
+ * hmac_md5_update() - Update an HMAC-MD5 context with message data
+ * @ctx: the HMAC context to update; must have been initialized
+ * @data: the message data
+ * @data_len: the data length in bytes
+ *
+ * This can be called any number of times.
+ *
+ * Context: Any context.
+ */
+static inline void hmac_md5_update(struct hmac_md5_ctx *ctx,
+				   const u8 *data, size_t data_len)
+{
+	md5_update(&ctx->hash_ctx, data, data_len);
+}
+
+/**
+ * hmac_md5_final() - Finish computing an HMAC-MD5 value
+ * @ctx: the HMAC context to finalize; must have been initialized
+ * @out: (output) the resulting HMAC-MD5 value
+ *
+ * After finishing, this zeroizes @ctx.  So the caller does not need to do it.
+ *
+ * Context: Any context.
+ */
+void hmac_md5_final(struct hmac_md5_ctx *ctx, u8 out[at_least MD5_DIGEST_SIZE]);
+
+/**
+ * hmac_md5() - Compute HMAC-MD5 in one shot, using a prepared key
+ * @key: the prepared HMAC key
+ * @data: the message data
+ * @data_len: the data length in bytes
+ * @out: (output) the resulting HMAC-MD5 value
+ *
+ * If you're using the key only once, consider using hmac_md5_usingrawkey().
+ *
+ * Context: Any context.
+ */
+void hmac_md5(const struct hmac_md5_key *key,
+	      const u8 *data, size_t data_len,
+	      u8 out[at_least MD5_DIGEST_SIZE]);
+
+/**
+ * hmac_md5_usingrawkey() - Compute HMAC-MD5 in one shot, using a raw key
+ * @raw_key: the raw HMAC-MD5 key
+ * @raw_key_len: the key length in bytes.  All key lengths are supported.
+ * @data: the message data
+ * @data_len: the data length in bytes
+ * @out: (output) the resulting HMAC-MD5 value
+ *
+ * If you're using the key multiple times, prefer to use hmac_md5_preparekey()
+ * followed by multiple calls to hmac_md5() instead.
+ *
+ * Context: Any context.
+ */
+void hmac_md5_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+			  const u8 *data, size_t data_len,
+			  u8 out[at_least MD5_DIGEST_SIZE]);
+
+#endif /* _CRYPTO_MD5_H */
+```
+
+Заголовок `include/crypto/hmac.h` (типы, структуры, константы, встроенные функции):
+```c
+/* SPDX-License-Identifier: GPL-2.0 */
+#ifndef _CRYPTO_HMAC_H
+#define _CRYPTO_HMAC_H
+
+#define HMAC_IPAD_VALUE 0x36
+#define HMAC_OPAD_VALUE 0x5c
+
+#endif /* _CRYPTO_HMAC_H */
+```
+
+Файл `lib/crypto/md5.c`:
+```c
+// SPDX-License-Identifier: GPL-2.0-or-later
+/*
+ * MD5 and HMAC-MD5 library functions
+ *
+ * md5_block() is derived from cryptoapi implementation, originally based on the
+ * public domain implementation written by Colin Plumb in 1993.
+ *
+ * Copyright (c) Cryptoapi developers.
+ * Copyright (c) 2002 James Morris <jmorris@intercode.com.au>
+ * Copyright 2025 Google LLC
+ */
+
+#include <crypto/hmac.h>
+#include <crypto/md5.h>
+#include <linux/export.h>
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/string.h>
+#include <linux/wordpart.h>
+
+static const struct md5_block_state md5_iv = {
+	.h = { MD5_H0, MD5_H1, MD5_H2, MD5_H3 },
+};
+
+#define F1(x, y, z) (z ^ (x & (y ^ z)))
+#define F2(x, y, z) F1(z, x, y)
+#define F3(x, y, z) (x ^ y ^ z)
+#define F4(x, y, z) (y ^ (x | ~z))
+
+#define MD5STEP(f, w, x, y, z, in, s) \
+	(w += f(x, y, z) + in, w = rol32(w, s) + x)
+
+static void md5_block(struct md5_block_state *state,
+		      const u8 data[MD5_BLOCK_SIZE])
+{
+	u32 in[MD5_BLOCK_WORDS];
+	u32 a, b, c, d;
+
+	memcpy(in, data, MD5_BLOCK_SIZE);
+	le32_to_cpu_array(in, ARRAY_SIZE(in));
+
+	a = state->h[0];
+	b = state->h[1];
+	c = state->h[2];
+	d = state->h[3];
+
+	MD5STEP(F1, a, b, c, d, in[0] + 0xd76aa478, 7);
+	MD5STEP(F1, d, a, b, c, in[1] + 0xe8c7b756, 12);
+	MD5STEP(F1, c, d, a, b, in[2] + 0x242070db, 17);
+	MD5STEP(F1, b, c, d, a, in[3] + 0xc1bdceee, 22);
+	MD5STEP(F1, a, b, c, d, in[4] + 0xf57c0faf, 7);
+	MD5STEP(F1, d, a, b, c, in[5] + 0x4787c62a, 12);
+	MD5STEP(F1, c, d, a, b, in[6] + 0xa8304613, 17);
+	MD5STEP(F1, b, c, d, a, in[7] + 0xfd469501, 22);
+	MD5STEP(F1, a, b, c, d, in[8] + 0x698098d8, 7);
+	MD5STEP(F1, d, a, b, c, in[9] + 0x8b44f7af, 12);
+	MD5STEP(F1, c, d, a, b, in[10] + 0xffff5bb1, 17);
+	MD5STEP(F1, b, c, d, a, in[11] + 0x895cd7be, 22);
+	MD5STEP(F1, a, b, c, d, in[12] + 0x6b901122, 7);
+	MD5STEP(F1, d, a, b, c, in[13] + 0xfd987193, 12);
+	MD5STEP(F1, c, d, a, b, in[14] + 0xa679438e, 17);
+	MD5STEP(F1, b, c, d, a, in[15] + 0x49b40821, 22);
+
+	MD5STEP(F2, a, b, c, d, in[1] + 0xf61e2562, 5);
+	MD5STEP(F2, d, a, b, c, in[6] + 0xc040b340, 9);
+	MD5STEP(F2, c, d, a, b, in[11] + 0x265e5a51, 14);
+	MD5STEP(F2, b, c, d, a, in[0] + 0xe9b6c7aa, 20);
+	MD5STEP(F2, a, b, c, d, in[5] + 0xd62f105d, 5);
+	MD5STEP(F2, d, a, b, c, in[10] + 0x02441453, 9);
+	MD5STEP(F2, c, d, a, b, in[15] + 0xd8a1e681, 14);
+	MD5STEP(F2, b, c, d, a, in[4] + 0xe7d3fbc8, 20);
+	MD5STEP(F2, a, b, c, d, in[9] + 0x21e1cde6, 5);
+	MD5STEP(F2, d, a, b, c, in[14] + 0xc33707d6, 9);
+	MD5STEP(F2, c, d, a, b, in[3] + 0xf4d50d87, 14);
+	MD5STEP(F2, b, c, d, a, in[8] + 0x455a14ed, 20);
+	MD5STEP(F2, a, b, c, d, in[13] + 0xa9e3e905, 5);
+	MD5STEP(F2, d, a, b, c, in[2] + 0xfcefa3f8, 9);
+	MD5STEP(F2, c, d, a, b, in[7] + 0x676f02d9, 14);
+	MD5STEP(F2, b, c, d, a, in[12] + 0x8d2a4c8a, 20);
+
+	MD5STEP(F3, a, b, c, d, in[5] + 0xfffa3942, 4);
+	MD5STEP(F3, d, a, b, c, in[8] + 0x8771f681, 11);
+	MD5STEP(F3, c, d, a, b, in[11] + 0x6d9d6122, 16);
+	MD5STEP(F3, b, c, d, a, in[14] + 0xfde5380c, 23);
+	MD5STEP(F3, a, b, c, d, in[1] + 0xa4beea44, 4);
+	MD5STEP(F3, d, a, b, c, in[4] + 0x4bdecfa9, 11);
+	MD5STEP(F3, c, d, a, b, in[7] + 0xf6bb4b60, 16);
+	MD5STEP(F3, b, c, d, a, in[10] + 0xbebfbc70, 23);
+	MD5STEP(F3, a, b, c, d, in[13] + 0x289b7ec6, 4);
+	MD5STEP(F3, d, a, b, c, in[0] + 0xeaa127fa, 11);
+	MD5STEP(F3, c, d, a, b, in[3] + 0xd4ef3085, 16);
+	MD5STEP(F3, b, c, d, a, in[6] + 0x04881d05, 23);
+	MD5STEP(F3, a, b, c, d, in[9] + 0xd9d4d039, 4);
+	MD5STEP(F3, d, a, b, c, in[12] + 0xe6db99e5, 11);
+	MD5STEP(F3, c, d, a, b, in[15] + 0x1fa27cf8, 16);
+	MD5STEP(F3, b, c, d, a, in[2] + 0xc4ac5665, 23);
+
+	MD5STEP(F4, a, b, c, d, in[0] + 0xf4292244, 6);
+	MD5STEP(F4, d, a, b, c, in[7] + 0x432aff97, 10);
+	MD5STEP(F4, c, d, a, b, in[14] + 0xab9423a7, 15);
+	MD5STEP(F4, b, c, d, a, in[5] + 0xfc93a039, 21);
+	MD5STEP(F4, a, b, c, d, in[12] + 0x655b59c3, 6);
+	MD5STEP(F4, d, a, b, c, in[3] + 0x8f0ccc92, 10);
+	MD5STEP(F4, c, d, a, b, in[10] + 0xffeff47d, 15);
+	MD5STEP(F4, b, c, d, a, in[1] + 0x85845dd1, 21);
+	MD5STEP(F4, a, b, c, d, in[8] + 0x6fa87e4f, 6);
+	MD5STEP(F4, d, a, b, c, in[15] + 0xfe2ce6e0, 10);
+	MD5STEP(F4, c, d, a, b, in[6] + 0xa3014314, 15);
+	MD5STEP(F4, b, c, d, a, in[13] + 0x4e0811a1, 21);
+	MD5STEP(F4, a, b, c, d, in[4] + 0xf7537e82, 6);
+	MD5STEP(F4, d, a, b, c, in[11] + 0xbd3af235, 10);
+	MD5STEP(F4, c, d, a, b, in[2] + 0x2ad7d2bb, 15);
+	MD5STEP(F4, b, c, d, a, in[9] + 0xeb86d391, 21);
+
+	state->h[0] += a;
+	state->h[1] += b;
+	state->h[2] += c;
+	state->h[3] += d;
+}
+
+static void md5_blocks(struct md5_block_state *state,
+		       const u8 *data, size_t nblocks)
+{
+	do {
+		md5_block(state, data);
+		data += MD5_BLOCK_SIZE;
+	} while (--nblocks);
+}
+
+void md5_init(struct md5_ctx *ctx)
+{
+	ctx->state = md5_iv;
+	ctx->bytecount = 0;
+}
+EXPORT_SYMBOL_GPL(md5_init);
+
+void md5_update(struct md5_ctx *ctx, const u8 *data, size_t len)
+{
+	size_t partial = ctx->bytecount % MD5_BLOCK_SIZE;
+
+	ctx->bytecount += len;
+
+	if (partial + len >= MD5_BLOCK_SIZE) {
+		size_t nblocks;
+
+		if (partial) {
+			size_t l = MD5_BLOCK_SIZE - partial;
+
+			memcpy(&ctx->buf[partial], data, l);
+			data += l;
+			len -= l;
+
+			md5_blocks(&ctx->state, ctx->buf, 1);
+		}
+
+		nblocks = len / MD5_BLOCK_SIZE;
+		len %= MD5_BLOCK_SIZE;
+
+		if (nblocks) {
+			md5_blocks(&ctx->state, data, nblocks);
+			data += nblocks * MD5_BLOCK_SIZE;
+		}
+		partial = 0;
+	}
+	if (len)
+		memcpy(&ctx->buf[partial], data, len);
+}
+EXPORT_SYMBOL_GPL(md5_update);
+
+static void __md5_final(struct md5_ctx *ctx, u8 out[MD5_DIGEST_SIZE])
+{
+	u64 bitcount = ctx->bytecount << 3;
+	size_t partial = ctx->bytecount % MD5_BLOCK_SIZE;
+
+	ctx->buf[partial++] = 0x80;
+	if (partial > MD5_BLOCK_SIZE - 8) {
+		memset(&ctx->buf[partial], 0, MD5_BLOCK_SIZE - partial);
+		md5_blocks(&ctx->state, ctx->buf, 1);
+		partial = 0;
+	}
+	memset(&ctx->buf[partial], 0, MD5_BLOCK_SIZE - 8 - partial);
+	*(__le64 *)&ctx->buf[MD5_BLOCK_SIZE - 8] = cpu_to_le64(bitcount);
+	md5_blocks(&ctx->state, ctx->buf, 1);
+
+	cpu_to_le32_array(ctx->state.h, ARRAY_SIZE(ctx->state.h));
+	memcpy(out, ctx->state.h, MD5_DIGEST_SIZE);
+}
+
+void md5_final(struct md5_ctx *ctx, u8 out[MD5_DIGEST_SIZE])
+{
+	__md5_final(ctx, out);
+	memzero_explicit(ctx, sizeof(*ctx));
+}
+EXPORT_SYMBOL_GPL(md5_final);
+
+void md5(const u8 *data, size_t len, u8 out[MD5_DIGEST_SIZE])
+{
+	struct md5_ctx ctx;
+
+	md5_init(&ctx);
+	md5_update(&ctx, data, len);
+	md5_final(&ctx, out);
+}
+EXPORT_SYMBOL_GPL(md5);
+
+static void __hmac_md5_preparekey(struct md5_block_state *istate,
+				  struct md5_block_state *ostate,
+				  const u8 *raw_key, size_t raw_key_len)
+{
+	union {
+		u8 b[MD5_BLOCK_SIZE];
+		unsigned long w[MD5_BLOCK_SIZE / sizeof(unsigned long)];
+	} derived_key = { 0 };
+
+	if (unlikely(raw_key_len > MD5_BLOCK_SIZE))
+		md5(raw_key, raw_key_len, derived_key.b);
+	else
+		memcpy(derived_key.b, raw_key, raw_key_len);
+
+	for (size_t i = 0; i < ARRAY_SIZE(derived_key.w); i++)
+		derived_key.w[i] ^= REPEAT_BYTE(HMAC_IPAD_VALUE);
+	*istate = md5_iv;
+	md5_blocks(istate, derived_key.b, 1);
+
+	for (size_t i = 0; i < ARRAY_SIZE(derived_key.w); i++)
+		derived_key.w[i] ^= REPEAT_BYTE(HMAC_OPAD_VALUE ^
+						HMAC_IPAD_VALUE);
+	*ostate = md5_iv;
+	md5_blocks(ostate, derived_key.b, 1);
+
+	memzero_explicit(&derived_key, sizeof(derived_key));
+}
+
+void hmac_md5_preparekey(struct hmac_md5_key *key,
+			 const u8 *raw_key, size_t raw_key_len)
+{
+	__hmac_md5_preparekey(&key->istate, &key->ostate, raw_key, raw_key_len);
+}
+EXPORT_SYMBOL_GPL(hmac_md5_preparekey);
+
+void hmac_md5_init(struct hmac_md5_ctx *ctx, const struct hmac_md5_key *key)
+{
+	ctx->hash_ctx.state = key->istate;
+	ctx->hash_ctx.bytecount = MD5_BLOCK_SIZE;
+	ctx->ostate = key->ostate;
+}
+EXPORT_SYMBOL_GPL(hmac_md5_init);
+
+void hmac_md5_init_usingrawkey(struct hmac_md5_ctx *ctx,
+			       const u8 *raw_key, size_t raw_key_len)
+{
+	__hmac_md5_preparekey(&ctx->hash_ctx.state, &ctx->ostate,
+			      raw_key, raw_key_len);
+	ctx->hash_ctx.bytecount = MD5_BLOCK_SIZE;
+}
+EXPORT_SYMBOL_GPL(hmac_md5_init_usingrawkey);
+
+void hmac_md5_final(struct hmac_md5_ctx *ctx, u8 out[MD5_DIGEST_SIZE])
+{
+	/* Generate the padded input for the outer hash in ctx->hash_ctx.buf. */
+	__md5_final(&ctx->hash_ctx, ctx->hash_ctx.buf);
+	memset(&ctx->hash_ctx.buf[MD5_DIGEST_SIZE], 0,
+	       MD5_BLOCK_SIZE - MD5_DIGEST_SIZE);
+	ctx->hash_ctx.buf[MD5_DIGEST_SIZE] = 0x80;
+	*(__le64 *)&ctx->hash_ctx.buf[MD5_BLOCK_SIZE - 8] =
+		cpu_to_le64(8 * (MD5_BLOCK_SIZE + MD5_DIGEST_SIZE));
+
+	/* Compute the outer hash, which gives the HMAC value. */
+	md5_blocks(&ctx->ostate, ctx->hash_ctx.buf, 1);
+	cpu_to_le32_array(ctx->ostate.h, ARRAY_SIZE(ctx->ostate.h));
+	memcpy(out, ctx->ostate.h, MD5_DIGEST_SIZE);
+
+	hmac_md5_zeroize_ctx(ctx);
+}
+EXPORT_SYMBOL_GPL(hmac_md5_final);
+
+void hmac_md5(const struct hmac_md5_key *key,
+	      const u8 *data, size_t data_len, u8 out[MD5_DIGEST_SIZE])
+{
+	struct hmac_md5_ctx ctx;
+
+	hmac_md5_init(&ctx, key);
+	hmac_md5_update(&ctx, data, data_len);
+	hmac_md5_final(&ctx, out);
+}
+EXPORT_SYMBOL_GPL(hmac_md5);
+
+void hmac_md5_usingrawkey(const u8 *raw_key, size_t raw_key_len,
+			  const u8 *data, size_t data_len,
+			  u8 out[MD5_DIGEST_SIZE])
+{
+	struct hmac_md5_ctx ctx;
+
+	hmac_md5_init_usingrawkey(&ctx, raw_key, raw_key_len);
+	hmac_md5_update(&ctx, data, data_len);
+	hmac_md5_final(&ctx, out);
+}
+EXPORT_SYMBOL_GPL(hmac_md5_usingrawkey);
+
+MODULE_DESCRIPTION("MD5 and HMAC-MD5 library functions");
+MODULE_LICENSE("GPL");
+```
