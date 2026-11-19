@@ -32,7 +32,7 @@ for f in F:
     tot = dc['total']['mean']
     w(f"   - {R.FAM[f]}: доля «прочих» {r(dc['others']['mean'] / tot, 4)}, формы {r(dc['form']['mean'] / tot, 4)}, уровня {r(dc['level']['mean'] / tot, 4)} "
       f"(всё {r(tot, 4, True)}). Порог расхождения с пилотом (0,5) не достигнут.")
-w('   - Поэтому правило «П и Ф» было нужно: без АБ-Ф-Т «установлено» досталось бы в основном таблице частот (совет 76).')
+w('   - Это описание; на статус C-109 оно не влияет. Для «установлено» правило «П и Ф» (совет 76) требовало и АБ-Ф-Т.')
 # 3. без OLMo
 w('3. **Без OLMo** (описательно; перебор 720, «да» было бы только при ранге 1):')
 for f in F:
@@ -41,7 +41,7 @@ for f in F:
         x = F[f][kind]['without']['OLMo-2-0425-1B-Instruct']
         parts.append(f"{R.KIND[kind]} D {r(x['D'], 4, True)}, ранг {x['rank']} из {x['n_perm']}")
     w(f"   - {R.FAM[f]}: " + '; '.join(parts) + '.')
-w('   - Итог не держится на одной OLMo. Проверкой это не читать: срез выбран после пилота (совет 76, п. 6).')
+w('   - Без OLMo — ранг 1 из 720 во всех четырёх решающих правилах (описательно; срез выбран после пилота, совет 76, п. 6; формулировка — совет 77).')
 # 4. вклад входа
 w('4. **Вклад входа** (своя программа против своей же без входа; ответ на несогласие 3 совета 75, описательно, без интервала):')
 for f in F:
@@ -67,6 +67,9 @@ w(f"   - D формы на «длине» ({r(fs, 4, True)}) меньше D фо
 # 8. пределы
 w('8. **Пределы.**')
 w('   - Те же ответы `test5`, что в DISTILL-02. Диагональ была известна, клетки вне её — нет (PREREG §2).')
+w('   - Контроль на неспецифичность сделан один раз, на тех же ответах `test5`; на независимых ответах не повторён (совет 77).')
+w('   - Механизм не проверялся (совет 77).')
+w('   - Срез «без худшей чужой формы» не считался; он записан в опись для PREREG DISTILL-04 (совет 77).')
 w('   - Семь малых голов, одна подсказка (p = 3), сложение.')
 w('   - Сильный нуль — взаимозаменяемость программ. «Да» по форме значит, что чужие формы при своём уровне хуже своей в среднем, а не что форма уникальна (заметка 1).')
 w('   - В шкале `ledger.py` статуса «установлено» нет. Как у C-035, C-038 и C-044, он идёт пометой в записи, статус — «подтверждено», в карте проекта — в «установлено».')
@@ -75,5 +78,8 @@ pil2 = json.load(open(os.path.join(ROOT, 'gha_out/distill03_power/pilot.json'), 
 der = dict(pilot_others_share=pil2['others']['mean'] / pil2['total']['mean'],
            shares={f: {p: F[f]['decomposition'][p]['mean'] / F[f]['decomposition']['total']['mean'] for p in ('others', 'form', 'level')} for f in F},
            kinship_rows=len(rows), kinship_own_gt_relative=n_own, kinship_relative_gt_strangers=n_rel)
+ex = json.load(open(os.path.join(HERE, 'expect_d3.json'), encoding='utf-8'))['rules']
+lb = ex['АБ-П-Т']['power_min'] + ex['АБ-Ф-Т']['power_min'] - 1
+der['frechet'] = dict(power_P=ex['АБ-П-Т']['power_min'], power_F=ex['АБ-Ф-Т']['power_min'], joint_power_lower=lb, bits_lower=__import__('math').log2(lb / 0.0025))
 json.dump(der, open(os.path.join(HERE, 'notes_derived_d3.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 print('\n'.join(L))

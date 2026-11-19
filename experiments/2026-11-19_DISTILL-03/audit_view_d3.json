@@ -589,7 +589,13 @@
   },
   "kinship_rows": 16,
   "kinship_own_gt_relative": 16,
-  "kinship_relative_gt_strangers": 16
+  "kinship_relative_gt_strangers": 16,
+  "frechet": {
+   "power_P": 0.9825,
+   "power_F": 0.5775,
+   "joint_power_lower": 0.56,
+   "bits_lower": 7.807354922057605
+  }
  },
  "support_bits_C109": {
   "total_bits": 8.1,
