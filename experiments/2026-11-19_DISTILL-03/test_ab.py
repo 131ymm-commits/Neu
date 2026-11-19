@@ -38,6 +38,29 @@ def t_perm():
     check('нуль: среднее p около 0,5', abs(np.mean(ps) - 0.5) < 0.06, f"{np.mean(ps):.3f}")
 
 
+def t_trace_identity():
+    """Записка литературы, §3 п. 2: D = след(M)/(k − 1) − T/(k(k − 1)), T — сумма матрицы; T от перестановки строк не зависит."""
+    rng = np.random.default_rng(5)
+    k = 7
+    M = rng.normal(0, 1, (k, k)) + rng.normal(0, 1, k)[:, None] + rng.normal(0, 1, k)[None, :]
+    D = ab.perm_test(ab.s_table([M]))['D']
+    alt = np.trace(M) / (k - 1) - M.sum() / (k * (k - 1))
+    check('D = след/(k − 1) − сумма/(k(k − 1))', abs(D - alt) < 1e-12, f'{D:.6f} против {alt:.6f}')
+    r = ab.perm_test(ab.s_table([M]))
+    check('число различных D_π записано', 1 <= r['n_distinct'] <= 5040, str(r['n_distinct']))
+
+
+def t_verdicts():
+    fams = {'thousands': {'prog': dict(D=0.5, p=12 / 5040, rank=12, n_perm=5040, heads_in_test=list('abcdefg')),
+                          'shape': dict(D=0.1, p=13 / 5040, rank=13, n_perm=5040, heads_in_test=list('abcdefg'))},
+            'length': {'prog': dict(D=-0.1, p=1 / 5040, rank=1, n_perm=5040, heads_in_test=list('abcdefg'))}}
+    v = ab.verdicts(fams)
+    check('вердикт: p = 12/5040 ≤ 0,0025 и D > 0 — «да»', v['АБ-П-Т']['verdict'] == 'да')
+    check('вердикт: p = 13/5040 > 0,0025 — «нет»', v['АБ-Ф-Т']['verdict'] == 'нет')
+    check('вердикт: D ≤ 0 — «нет» при любом p', v['АБ-П-Л']['verdict'] == 'нет')
+    check('вердикт: нет данных — None', v['АБ-Ф-Л']['verdict'] is None)
+
+
 def t_s_table():
     M1 = np.array([[1.0, 0.0], [0.0, 1.0]])
     M2 = np.array([[3.0, np.nan], [1.0, np.nan]])                            # во второй среде голова 1 отсутствует
@@ -157,15 +180,104 @@ def t_end_to_end():
     check('все одинаковы: программа не своя (p > 0,05)', r3['prog']['p'] > 0.05, f"D {r3['prog']['D']:.5f}, p {r3['prog']['p']:.4f}")
     check('все одинаковы: форма не своя (p > 0,05)', r3['shape']['p'] > 0.05, f"D {r3['shape']['D']:.5f}, p {r3['shape']['p']:.4f}")
     check('вклад входа у формы с наклоном > 0', r['input_gain']['mean'] > 0, f"{r['input_gain']['mean']:.4f}")
+    # разбивка: «всё» = форма + уровень + прочие у каждой головы; среднее «всего» = D программы; у «уровня разного» форма ≈ 0
+    for name, res in (('уровень разный', r), ('форма разная', r2)):
+        dc = res['decomposition']
+        err = max(abs(dc['total']['per_head'][h] - dc['form']['per_head'][h] - dc['level']['per_head'][h] - dc['others']['per_head'][h]) for h in H)
+        check(f'разбивка ({name}): всё = форма + уровень + прочие', err < 1e-9, f'{err:.1e}')
+        check(f'разбивка ({name}): среднее «всего» = D программы', abs(dc['total']['mean'] - res['prog']['D']) < 1e-9)
+        cd = max(abs(np.array(e['carry'])[i, i] - np.array(e['prog'])[i, i]) for e in res['envs'].values() for i in range(7))
+        check(f'перенос A при «прочих» A = своя программа ({name})', cd < 1e-12, f'{cd:.1e}')
+    dc = r['decomposition']
+    check('уровень разный, форма одна: доля формы в преимуществе мала (< 0,2 всего)', abs(dc['form']['mean']) < 0.2 * dc['total']['mean'],
+          f"форма {dc['form']['mean']:.4f}, уровень {dc['level']['mean']:.4f}, прочие {dc['others']['mean']:.4f}, всё {dc['total']['mean']:.4f}")
+    dc2 = r2['decomposition']
+    # ERRORS № 225: я ждал «форма — больше половины всего»; вышло форма 0,253, уровень 0,856. Порядок разбивки: «уровень» включает
+    # подгонку свободного члена чужой формы к частоте ошибок B, даже когда свободные члены голов равны. Проверяю то, что верно по устройству.
+    check('форма разная, уровень и прочие одни: «прочие» ≈ 0 (ε и q у голов одни)', abs(dc2['others']['mean']) < 0.01,
+          f"форма {dc2['form']['mean']:.4f}, уровень {dc2['level']['mean']:.4f}, прочие {dc2['others']['mean']:.4f}, всё {dc2['total']['mean']:.4f}")
+    check('форма разная, свободные члены равны: «уровень» > 0 — подгонка чужой формы (свойство порядка разбивки)', dc2['level']['mean'] > 0,
+          f"уровень {dc2['level']['mean']:.4f}")
+
+
+REAL = ['Falcon3-1B-Instruct', 'OLMo-2-0425-1B-Instruct', 'Qwen2.5-0.5B-Instruct', 'Qwen2.5-1.5B-Instruct', 'SmolLM2-1.7B-Instruct',
+        'SmolLM2-360M-Instruct', 'TinyLlama-1.1B-Chat-v1.0']
+
+
+def t_kinship():
+    """Родичи с одной программой: своя ≈ родич; родич лучше чужих. Головы названы как настоящие (пары KIN)."""
+    fs = {'Falcon3-1B-Instruct': ('top',), 'OLMo-2-0425-1B-Instruct': ('chain',), 'TinyLlama-1.1B-Chat-v1.0': ('nines',),
+          'Qwen2.5-0.5B-Instruct': ('prop',), 'Qwen2.5-1.5B-Instruct': ('prop',), 'SmolLM2-360M-Instruct': ('pos',), 'SmolLM2-1.7B-Instruct': ('pos',)}
+    progs = {h: mk(0.08, -1.0, f, [2.0]) for h, f in fs.items()}
+    r = synth(progs, 2500, 900, 3, 14)
+    kp = r['kinship']['shape']
+    worst_rel = max(abs(v['own_minus_relative']) for v in kp['per_head'].values())
+    check('родство: у родичей с одной программой своя ≈ родич (|разница| < 0,02)', worst_rel < 0.02, f'{worst_rel:.4f}')
+    check('родство: родич лучше чужих у всех четырёх голов', len(kp['per_head']) == 4 and all(v['relative_minus_strangers'] > 0 for v in kp['per_head'].values()),
+          str({h: round(v['relative_minus_strangers'], 4) for h, v in kp['per_head'].items()}))
+
+
+def t_run_cmd_dry():
+    """Сухой прогон всей цепочки `ab.py test` на заглушках: сборка из папок, замки, вердикты, описательный набор."""
+    import json as _json
+    import tempfile
+    rng = np.random.default_rng(15)
+    fs = [('prop',), ('chain',), ('pos',), ('top',), ('nines',), ('newplace',), ('phi',)]
+    progs = {h: mk(0.03 + 0.02 * i, -1.5 + 0.2 * i, fs[i], [1.5]) for i, h in enumerate(REAL)}
+
+    def env(n):
+        it = items_pool(n, rng)
+        return dict(items=it, offs={h: np.array([D2.sample_program(p, x, rng) for x in it]) for h, p in progs.items()})
+    dirs = {'c_T': {'T_X19_p3': env(700), 'T_X29_p3': env(700)}, 'c_L': {'L_X9_p3': env(700), 'L_X99_p3': env(700)},
+            't_T': {n: env(260) for n in ('T_X19_p3',) + ab.TEST_ENVS['thousands']}, 't_L': {n: env(260) for n in ab.TEST_ENVS['length']},
+            'n_T': {'T_X109_p3': env(260)}, 'dup': {'T_X29_p3': env(260)}}
+    orig = (D2.load_merged, D2.env_table)
+    try:
+        D2.load_merged = lambda d: dirs[d]
+        D2.env_table = lambda e, heads=None, with_logp=False: (e['items'], e['offs'])
+        spec = {'construction': {'thousands': ['c_T'], 'length': ['c_L']}, 'test': {'thousands': ['t_T'], 'length': ['t_L']},
+                'descriptive': {'thousands': {'new5': ['n_T']}}}
+        tmp = tempfile.mkdtemp()
+        rc = ab.run_cmd(os.path.join(tmp, 'test.json'), spec, 'test')
+        out = _json.load(open(os.path.join(tmp, 'test.json'), encoding='utf-8'))
+        v = out['verdicts']
+        check('сухой прогон: четыре вердикта, у всех семь голов', rc == 0 and len(v) == 4 and all(x['heads'] == 7 for x in v.values()),
+              str({k: (x['verdict'], round(x['D'], 3), x['p']) for k, x in v.items()}))
+        check('сухой прогон: формы разные — все четыре «да»', all(x['verdict'] == 'да' for x in v.values()))
+        check('сухой прогон: в тесте ровно среды TEST_ENVS (пилот T_X19 не вошёл)',
+              sorted(out['families']['thousands']['envs']) == sorted(ab.TEST_ENVS['thousands']) and
+              sorted(out['families']['length']['envs']) == sorted(ab.TEST_ENVS['length']))
+        check('сухой прогон: описательный набор new5 посчитан', list(out['families']['thousands'].get('descriptive', {})) == ['new5'])
+        check('сухой прогон: хеши кода записаны', set(out['code']) == {'ab.py', 'distill02.py'} and all(len(x) == 64 for x in out['code'].values()))
+        bad = dict(spec, test={'thousands': ['t_T'], 'length': ['n_T']})
+        try:
+            ab.run_cmd(os.path.join(tmp, 'bad.json'), bad, 'test')
+            ok = False
+        except AssertionError as e:
+            ok = 'нет сред' in str(e)
+        check('замок: в тесте нет сред семейства — СТОП', ok)
+        dup = dict(spec, test={'thousands': ['t_T', 'dup'], 'length': ['t_L']})
+        try:
+            ab.run_cmd(os.path.join(tmp, 'dup.json'), dup, 'test')
+            ok = False
+        except AssertionError as e:
+            ok = 'дважды' in str(e)
+        check('замок: одна среда теста дважды — СТОП', ok)
+    finally:
+        D2.load_merged, D2.env_table = orig
 
 
 if __name__ == '__main__':
     t_perm()
+    t_trace_identity()
+    t_verdicts()
     t_s_table()
     t_intercept()
     t_rows_match_fit_program()
     t_large_slopes()
     t_loader_keeps_phases()
     t_end_to_end()
+    t_kinship()
+    t_run_cmd_dry()
     print('провалов:', len(FAILS), FAILS)
     sys.exit(1 if FAILS else 0)

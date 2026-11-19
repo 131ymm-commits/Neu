@@ -8,13 +8,15 @@
   вид «форма» — признаки и наклоны формулы A (округлённые, как в оценке) при уровне головы B: свободный член подобран на
     данных построения головы B при наклонах A, доля «прочих» ε и их частоты q — головы B;
   вид «без входа» (описательно, «B1-расщеплённый» совета 75) — у каждой головы своя формула без признаков (один свободный
-    член на её построении) с её ε и q.
+    член на её построении) с её ε и q;
+  вид «перенос» (описательно, для разбивки преимущества на форму, уровень и «прочие») — формула A целиком при ε и q головы B.
 Статистика семейства: s(a, B) = среднее по средам головы B от [L(a, B, e) − среднее по A ≠ a от L(A, B, e)];
 D = среднее по головам B от s(B, B). Нуль — перестановка меток программ между головами: D_π = среднее по B от s(π(B), B),
 полный перебор всех перестановок (7! = 5040), p = доля D_π ≥ D (вместе с тождественной) — точное.
   python3 ab.py fits ВЫХОД.json SPEC.json        — программы по семействам и сверка с DISTILL-02 (formulas в analysis.json)
   python3 ab.py pilot ВЫХОД.json SPEC.json       — пилот: матрицы одной среды (T_X19_p3), описательно
-  python3 ab.py test ВЫХОД.json SPEC.json        — тест: матрицы, D и p по семействам и видам (нужны константы PREREG)"""
+  python3 ab.py test ВЫХОД.json SPEC.json        — тест: матрицы, D и p по семействам и видам, вердикты RULES при уровне LEVEL
+SPEC: {"construction": {семейство: [папки]}, "test": {семейство: [папки]}, "descriptive": {семейство: {имя: [папки]}} (необяз.)}"""
 import itertools
 import json
 import math
@@ -31,10 +33,15 @@ import distill02 as D2  # noqa: E402
 
 NC = D2.NC
 MIN_NUMERIC = D2.MIN_NUMERIC
-KINDS = ('prog', 'shape')                  # решающие виды; 'const' — описательный
+KINDS = ('prog', 'shape')                  # решающие виды; 'carry' и 'const' — описательные
+DESCR_KINDS = ('carry',)                   # формула переноса A целиком при «прочих» головы B — для разбивки преимущества
 PILOT_ENVS = ('T_X19_p3',)                 # пилот совета 75; в тест не входит
 TEST_ENVS = {'thousands': ('T_X29_p3', 'T_X39_p3', 'T_X49_p3', 'T_X59_p3', 'T_X69_p3', 'T_X79_p3', 'T_X89_p3'),
              'length': ('L_X9_p3', 'L_X99_p3', 'L_X999_p3')}
+# PREREG: решающие проверки — D > 0 и точное p ≤ LEVEL (уровень на проверку, как в программе); четыре проверки → серия ≤ 0,01
+LEVEL = 0.0025
+RULES = {'АБ-П-Т': ('thousands', 'prog'), 'АБ-П-Л': ('length', 'prog'), 'АБ-Ф-Т': ('thousands', 'shape'), 'АБ-Ф-Л': ('length', 'shape')}
+KIN = (('Qwen2.5-0.5B-Instruct', 'Qwen2.5-1.5B-Instruct'), ('SmolLM2-360M-Instruct', 'SmolLM2-1.7B-Instruct'))   # родичи (совет 75)
 
 
 # ───────────── строки формулы (как в distill02.fit_program) и подбор свободного члена при заданных наклонах
@@ -89,6 +96,14 @@ def shape_at_level(prog_a, prog_b, rows_b, y_b):
     return out
 
 
+def carry_with_others(prog_a, prog_b):
+    """Описательно (разбивка): формула потери переноса головы A целиком — признаки, наклоны и свободный член — при «прочих» головы B
+    (её ε и частоты q). Между «формой» (свободный член B) и «программой» (всё от A): отделяет уровень переноса от «прочих»."""
+    out = dict(prog_a)
+    out.update(eps=prog_b['eps'], q=prog_b['q'], q_rest=prog_b['q_rest'], others_of=prog_b.get('_head'))
+    return out
+
+
 def const_program(prog_b, rows_b, y_b):
     """Формула без входа (один свободный член на построении головы B) с её ε и q — «B1-расщеплённый», описательно."""
     b0 = fit_intercept(rows_b, y_b, [], [])
@@ -111,9 +126,10 @@ def programs_from(items, offs):
         progs[h] = p
         rows[h] = program_rows(items, o)
     shape = {(a, b): shape_at_level(progs[a], progs[b], *rows[b]) for a in progs for b in progs}     # и диагональ — той же процедурой
+    carry = {(a, b): carry_with_others(progs[a], progs[b]) for a in progs for b in progs}
     const = {b: const_program(progs[b], *rows[b]) for b in progs}
     acc = {h: float(np.mean(np.asarray(o)[np.asarray(o) < NC] == 0)) if np.any(np.asarray(o) < NC) else None for h, o in offs.items()}
-    return dict(prog=progs, shape=shape, const=const, acc=acc)
+    return dict(prog=progs, shape=shape, carry=carry, const=const, acc=acc)
 
 
 def env_matrices(P, env, heads_order):
@@ -124,7 +140,7 @@ def env_matrices(P, env, heads_order):
 
 def matrices_from(P, items, offs, heads_order):
     k = len(heads_order)
-    M = {kind: np.full((k, k), np.nan) for kind in KINDS}
+    M = {kind: np.full((k, k), np.nan) for kind in KINDS + DESCR_KINDS}
     M['const'] = np.full(k, np.nan)
     present = [hb for hb in heads_order if hb in offs and int((offs[hb] < NC).sum()) >= MIN_NUMERIC]
     n_num = {hb: int((offs[hb] < NC).sum()) for hb in present}
@@ -147,6 +163,7 @@ def matrices_from(P, items, offs, heads_order):
         jb = heads_order.index(hb)
         for ja, ha in enumerate(heads_order):
             M['shape'][ja, jb] = ll_of(P['shape'][(ha, hb)], hb)
+            M['carry'][ja, jb] = ll_of(P['carry'][(ha, hb)], hb)
         M['const'][jb] = ll_of(P['const'][hb], hb)
     return M, n_num
 
@@ -176,20 +193,70 @@ def perm_test(s):
     vals = s[_PERMS[k], np.arange(k)].mean(axis=1)                     # все перестановки меток программ сразу
     p = float(np.mean(vals >= D - 1e-12))
     return dict(D=D, p=p, n_perm=len(vals), rank=int(np.sum(vals > D + 1e-12)) + 1, perm_mean=float(np.mean(vals)),
-                perm_max=float(np.max(vals)), per_head={int(b): float(s[b, b] - (np.sum(s[:, b]) - s[b, b]) / (k - 1)) for b in range(k)})
+                perm_max=float(np.max(vals)), n_distinct=int(len(np.unique(np.round(vals, 12)))),
+                per_head={int(b): float(s[b, b] - (np.sum(s[:, b]) - s[b, b]) / (k - 1)) for b in range(k)})
+
+
+def decomposition(mats, heads_order):
+    """Описательно (гипотеза: «разбивка преимущества программы на уровень, форму и „прочие“»). Для головы B в среде e, среднее по A ≠ B:
+      всё     = Lп(B, B) − Lп(A, B);
+      форма   = Lп(B, B) − Lф(A, B)  (чужие признаки и наклоны при уровне и «прочих» B);
+      уровень = Lф(A, B) − Lпер(A, B) (свободный член B против свободного члена A — при «прочих» B);
+      прочие  = Lпер(A, B) − Lп(A, B) («прочие» B против «прочих» A — при формуле A целиком).
+    Сумма трёх частей равна «всему» тождественно; среднее «всего» по головам — D вида «программа». Дальше — среднее по средам головы."""
+    k = len(heads_order)
+    parts = {p: [] for p in ('total', 'form', 'level', 'others')}
+    for Mp, Ms, Mc in zip(mats['prog'], mats['shape'], mats['carry']):
+        row = {p: np.full(k, np.nan) for p in parts}
+        for b in range(k):
+            if not np.isfinite(Mp[b, b]):
+                continue
+            o = [a for a in range(k) if a != b]
+            row['total'][b] = Mp[b, b] - np.mean(Mp[o, b])
+            row['form'][b] = Mp[b, b] - np.mean(Ms[o, b])
+            row['level'][b] = np.mean(Ms[o, b] - Mc[o, b])
+            row['others'][b] = np.mean(Mc[o, b] - Mp[o, b])
+        for p in parts:
+            parts[p].append(row[p])
+    out = {}
+    for p, v in parts.items():
+        with np.errstate(invalid='ignore'):
+            ph = np.nanmean(np.array(v), axis=0)
+        out[p] = dict(per_head={h: float(x) for h, x in zip(heads_order, ph)}, mean=float(np.nanmean(ph)))
+    return out
+
+
+def kinship(mats, heads_order, pairs=KIN):
+    """Описательно (совет 75, «градиент родства»): своя / родич / чужие. Для головы B с родичем R, среднее по средам головы:
+    своя − родич = L(B, B) − L(R, B); родич − чужие = L(R, B) − среднее по A ∉ {B, R} от L(A, B); своя − чужие — так же."""
+    k = len(heads_order)
+    out = {}
+    for h1, h2 in pairs:
+        if h1 not in heads_order or h2 not in heads_order:
+            continue
+        for hb, hr in ((h1, h2), (h2, h1)):
+            b, r = heads_order.index(hb), heads_order.index(hr)
+            st = [a for a in range(k) if a not in (b, r)]
+            v = np.array([[M[b, b] - M[r, b], M[r, b] - np.mean(M[st, b]), M[b, b] - np.mean(M[st, b])] for M in mats])
+            with np.errstate(invalid='ignore'):
+                m = np.nanmean(v, axis=0)
+            out[hb] = dict(relative=hr, own_minus_relative=float(m[0]), relative_minus_strangers=float(m[1]), own_minus_strangers=float(m[2]))
+    keys = ('own_minus_relative', 'relative_minus_strangers', 'own_minus_strangers')
+    mean = {kk: float(np.nanmean([v[kk] for v in out.values()])) if out else float('nan') for kk in keys}
+    return dict(per_head=out, mean=mean)
 
 
 def family_result(P, envs, names, heads_order):
     """envs: {имя: среда-словарь сборки} или {имя: (items, offs)} — второе для заглушек."""
-    mats = {kind: [] for kind in KINDS}
+    mats = {kind: [] for kind in KINDS + DESCR_KINDS}
     const, envs_out = [], {}
     for name in names:
         e = envs[name]
         M, n_num = matrices_from(P, *e, heads_order) if isinstance(e, tuple) else env_matrices(P, e, heads_order)
-        for kind in KINDS:
+        for kind in KINDS + DESCR_KINDS:
             mats[kind].append(M[kind])
         const.append(M['const'])
-        envs_out[name] = dict(n_numeric=n_num, **{kind: M[kind].tolist() for kind in KINDS}, const=M['const'].tolist(),
+        envs_out[name] = dict(n_numeric=n_num, **{kind: M[kind].tolist() for kind in KINDS + DESCR_KINDS}, const=M['const'].tolist(),
                               diag_minus_offmean={kind: (np.diag(M[kind]) - (np.nansum(M[kind], axis=0) - np.diag(M[kind])) /
                                                          (len(heads_order) - 1)).tolist() for kind in KINDS})
     res = dict(envs=envs_out, heads=heads_order)
@@ -208,6 +275,8 @@ def family_result(P, envs, names, heads_order):
         nn = np.array(nn)
         res[kind]['nearest_other'] = dict(per_env_head=nn.tolist(), per_head=np.nanmean(nn, axis=0).tolist(), mean=float(np.nanmean(nn)),
                                           heads_own_best=int(np.sum(np.nanmean(nn, axis=0) > 0)))
+    res['decomposition'] = decomposition(mats, heads_order)
+    res['kinship'] = {kind: kinship(mats[kind], heads_order) for kind in KINDS}
     res['accuracy_construction'] = {h: P['acc'].get(h) for h in heads_order}
     # проверка формы: своя форма при своём уровне почти совпадает со своей программой (наклоны те же, свободный член подобран заново)
     res['own_shape_minus_own_prog'] = (np.array([np.diag(m) for m in mats['shape']]) - own).tolist()
@@ -244,27 +313,64 @@ def fits_cmd(dst, spec):
     return 0
 
 
+def code_hashes():
+    import hashlib
+
+    def h(p):
+        return hashlib.sha256(open(p, 'rb').read()).hexdigest()
+    return {'ab.py': h(os.path.abspath(__file__)), 'distill02.py': h(os.path.abspath(D2.__file__))}
+
+
+def unique_envs(dirs, fam):
+    """{имя: среда} семейства; одна среда дважды — СТОП (в тесте и в описательных наборах фаза одна; ERRORS № 224)."""
+    lst = load_family_envs(dirs, fam)
+    d = dict(lst)
+    assert len(d) == len(lst), 'одна среда встретилась дважды'
+    return d
+
+
+def verdicts(families):
+    """PREREG: «да» — D > 0 и точное p ≤ LEVEL; иначе «нет». Нет данных семейства — None."""
+    out = {}
+    for rule, (fam, kind) in RULES.items():
+        r = families.get(fam, {}).get(kind)
+        if r is None:
+            out[rule] = dict(family=fam, kind=kind, verdict=None)
+            continue
+        yes = bool(r['D'] > 0 and r['p'] <= LEVEL + 1e-15)
+        out[rule] = dict(family=fam, kind=kind, D=r['D'], p=r['p'], rank=r['rank'], n_perm=r['n_perm'], heads=len(r['heads_in_test']),
+                         level=LEVEL, verdict='да' if yes else 'нет')
+    return out
+
+
 def run_cmd(dst, spec, phase):
     t0 = time.time()
-    out = dict(phase=phase, lam=D2.LAMBDA, families={})
+    out = dict(phase=phase, lam=D2.LAMBDA, level=LEVEL, code=code_hashes(), families={})
     for fam, dirs in spec['construction'].items():
         P = family_programs([e for _, e in load_family_envs(dirs, fam)])
         heads_order = sorted(P['prog'])
-        test_list = load_family_envs(spec['test'][fam], fam)
-        test_envs = dict(test_list)
-        assert len(test_envs) == len(test_list), 'в тесте одна среда встретилась дважды'
+        test_envs = unique_envs(spec['test'][fam], fam)
         out.setdefault('construction_n', {})[fam] = {h: int(p['n_numeric']) for h, p in P['prog'].items()}
-        names = [n for n in (PILOT_ENVS if phase == 'pilot' else TEST_ENVS[fam]) if n in test_envs]
-        if not names:
-            continue
-        out['families'][fam] = family_result(P, test_envs, names, heads_order)
-        for kind in KINDS:
-            r = out['families'][fam][kind]
-            print(fam, kind, '| сред', len(names), '| D =', round(r['D'], 4), '| p =', round(r['p'], 5), '| ранг', r['rank'], 'из', r['n_perm'], flush=True)
-        if 'descriptive' in spec:
-            for dfam_name, ddirs in spec['descriptive'].get(fam, {}).items():
-                denvs = dict(load_family_envs(ddirs, fam))
-                out['families'][fam].setdefault('descriptive', {})[dfam_name] = family_result(P, denvs, sorted(denvs), heads_order)
+        want = PILOT_ENVS if phase == 'pilot' else TEST_ENVS[fam]
+        if phase == 'test':
+            miss = [n for n in want if n not in test_envs]
+            assert not miss, f'в тесте нет сред: {miss}'
+        names = [n for n in want if n in test_envs]
+        fo = {}
+        if names:
+            fo = family_result(P, test_envs, names, heads_order)
+            for kind in KINDS:
+                r = fo[kind]
+                print(fam, kind, '| сред', len(names), '| D =', round(r['D'], 4), '| p =', round(r['p'], 5), '| ранг', r['rank'], 'из', r['n_perm'], flush=True)
+        for dname, ddirs in spec.get('descriptive', {}).get(fam, {}).items():
+            denvs = unique_envs(ddirs, fam)
+            fo.setdefault('descriptive', {})[dname] = family_result(P, denvs, sorted(denvs), heads_order)
+        if fo:
+            out['families'][fam] = fo
+    if phase == 'test':
+        out['verdicts'] = verdicts(out['families'])
+        for rule, v in out['verdicts'].items():
+            print(rule, '|', v['verdict'], '| D =', None if v.get('D') is None else round(v['D'], 4), '| p =', v.get('p'), flush=True)
     out['seconds'] = round(time.time() - t0, 1)
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return 0
