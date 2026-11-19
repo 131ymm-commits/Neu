@@ -40,7 +40,8 @@ def main(a):
     print('каталог (правило CATALOG_MIN на построении):', catalog, flush=True)
     fits = {fam: PM.fit_family(items, offs, catalog) for fam, (items, offs) in data.items()}
     out = dict(B=B, seed=seed, catalog=catalog, catalog_min=PM.CATALOG_MIN, coverage=cov,
-               weights={fam: {h: dict(pi=[float(x) for x in f['pi']], pi_mt=[float(x) for x in f['pi_mt']], n_other=f['n_other'],
+               weights={fam: {h: dict(pi=[float(x) for x in f['pi']], pi_mt=[float(x) for x in f['pi_mt']], pi_sym=[float(x) for x in f['pi_sym']],
+                                      n_other=f['n_other'],
                                       eps=float(f['prog']['eps']), T_offsets=list(f['prog_T']['q'])) for h, f in fs.items()} for fam, fs in fits.items()},
                sets={}, power={})
     for name, s in spec['eval'].items():
@@ -54,12 +55,13 @@ def main(a):
             pt, sd, _ = PM.env_measures(er, B, rng)
             res[en] = dict(point=pt, sd=sd, heads=heads, n=er['n'])
             print(name, en, '| m_M', round(pt['m_M'], 4), '| по «прочим»', round(pt['m_Mo'], 4), '| top3', round(pt['top3'], 4),
-                  '| М − таблица 30', round(pt['m_T30'], 4), '| М+Т − таблица 30', round(pt['m_MT'], 4), flush=True)
+                  '| М − таблица 30', round(pt['m_T30'], 4), '| М+Т − таблица 30', round(pt['m_MT'], 4),
+                  '| m_M в симметричной версии', round(pt['m_M_sym'], 4), flush=True)
         out['sets'][name] = dict(family=fam, envs=res)
         m = int(spec.get('m_test', {}).get(fam, len(res)))
         names = sorted(res)
         pw = {}
-        for meas in ('m_M', 'top3', 'm_MT'):            # m_MT — после первого пилота (bc50da0f): М+Т против таблицы 30, то же число параметров
+        for meas in ('m_M', 'top3', 'm_MT', 'm_M_sym'):  # m_MT — после пилота 1 (bc50da0f); m_M_sym — после совета 78 (п. 6, описательно)
             e = D2.power_rule([res[n]['point'][meas] for n in names], [res[n]['sd'][meas] for n in names], 1.0, m, m >= 4)
             pw[meas] = e
             if e is not None:

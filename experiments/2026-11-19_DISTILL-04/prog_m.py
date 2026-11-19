@@ -43,8 +43,22 @@ def support(prog, it):
     return set(D2.program_dist(prog, it, True))
 
 
-def other_rows(items, offs, prog, ops):
-    """«Прочие» ответы головы: для каждого — a_ik = 1[y ∈ C'_k]/|C'_k|, z_ik = 1[C'_k ≠ ∅], u_i = 1/|V|."""
+def v_range(total):
+    """Справочное множество V задачи — целые с числом цифр от n − 2 до n + 1 (distill02.ref_size): [lo, hi)."""
+    n = len(str(total))
+    return 10 ** max(n - 3, 0), 10 ** (n + 1)
+
+
+def n_free(total, S, extra=()):
+    """|V ∖ S ∖ extra| — число значений V, куда симметричная версия кладёт равномерный остаток (PREREG §4, «Нормировка»)."""
+    lo, hi = v_range(total)
+    return D2.ref_size(total) - sum(lo <= y < hi for y in set(S) | set(extra))
+
+
+def other_rows(items, offs, prog, ops, sym=False):
+    """«Прочие» ответы головы: для каждого — a_ik = 1[y ∈ C'_k]/|C'_k|, z_ik = 1[C'_k ≠ ∅], u_i = 1/|V|. Симметричная версия (sym,
+    описательная; совет 78, п. 6): u_i = 1[y ∈ V ∖ S]/|V ∖ S|; ответ, которому программа не может дать вероятность (вне V и вне
+    кандидатов), в подбор не входит."""
     A, Zm, U = [], [], []
     for it, d in zip(items, offs):
         if d >= NC or d == 0:
@@ -59,9 +73,16 @@ def other_rows(items, offs, prog, ops):
             ck = cand[op] - S
             row_z.append(1.0 if ck else 0.0)
             row_a.append(1.0 / len(ck) if y in ck else 0.0)
+        if sym:
+            lo, hi = v_range(it['sum'])
+            u = 1.0 / n_free(it['sum'], S) if lo <= y < hi else 0.0
+            if u == 0.0 and not any(row_a):
+                continue
+        else:
+            u = 1.0 / D2.ref_size(it['sum'])
         A.append(row_a)
         Zm.append(row_z)
-        U.append(1.0 / D2.ref_size(it['sum']))
+        U.append(u)
     k = len(ops)
     return np.array(A, float).reshape(-1, k), np.array(Zm, float).reshape(-1, k), np.array(U, float)
 
@@ -114,12 +135,13 @@ def fit_head(items, offs, ops):
     prog = D2.fit_program(items, offs)
     A, Zm, U = other_rows(items, offs, prog, ops)
     pi = fit_weights(A, Zm, U)
+    pi_sym = fit_weights(*other_rows(items, offs, prog, ops, sym=True))      # симметричная версия (описательно)
     K = len(ops)
     # М+Т (описательно): операторы и таблица из TABLE_FULL − K смещений — веса совместно, тем же способом
     tq = list(prog['q'])[:max(TABLE_FULL - K, 0)]
     A2, Z2 = mt_rows(items, offs, prog, ops, tq)
     pi_mt = fit_weights(A2, Z2, U)
-    return dict(prog=prog, ops=list(ops), pi=pi, prog_T=table_prog(prog, K), mt_offsets=tq, pi_mt=pi_mt, n_other=int(len(U)))
+    return dict(prog=prog, ops=list(ops), pi=pi, pi_sym=pi_sym, prog_T=table_prog(prog, K), mt_offsets=tq, pi_mt=pi_mt, n_other=int(len(U)))
 
 
 def mt_rows(items, offs, prog, ops, tq):
@@ -149,10 +171,10 @@ def mt_rows(items, offs, prog, ops, tq):
     return np.array(A, float).reshape(-1, k), np.array(Zm, float).reshape(-1, k)
 
 
-def q_m(fm, it, y, S, cand=None, mt=False):
-    """Q_М(y) (или Q_М+Т) для y вне опоры S."""
+def q_m(fm, it, y, S, cand=None, mt=False, sym=False):
+    """Q_М(y) (или Q_М+Т) для y вне опоры S. sym — симметричная версия: остаток только на V ∖ S, сумма по y ∉ S равна 1."""
     cand = candidates(it['a'], it['b']) if cand is None else cand
-    pi = fm['pi_mt'] if mt else fm['pi']
+    pi = fm['pi_mt'] if mt else (fm['pi_sym'] if sym else fm['pi'])
     num, Z = 0.0, pi[-1]
     for k, op in enumerate(fm['ops']):
         ck = cand[op] - S
@@ -168,8 +190,26 @@ def q_m(fm, it, y, S, cand=None, mt=False):
                 Z += pi[K + j]
                 if yy == y:
                     num += pi[K + j]
-    num += pi[-1] / D2.ref_size(it['sum'])
+    if sym:
+        lo, hi = v_range(it['sum'])
+        num += pi[-1] / n_free(it['sum'], S) if lo <= y < hi else 0.0
+    else:
+        num += pi[-1] / D2.ref_size(it['sum'])
     return num / Z
+
+
+def t_prob_sym(prog_t, it, y, dist):
+    """Нуль-Т в симметричной версии (описательно; совет 78, п. 6): смещения таблицы — как distill02.other_prob; остаток q_rest — только на
+    V ∖ S ∖ (смещения таблицы); сумма «прочих» равна ε."""
+    S = set(dist)
+    v, tot = D2.other_valid(prog_t, it, S)
+    d = y - it['sum']
+    if d in v:
+        return prog_t['eps'] * v[d] / tot
+    lo, hi = v_range(it['sum'])
+    if not (lo <= y < hi):
+        return 0.0
+    return prog_t['eps'] * (prog_t.get('q_rest', 1.0) / tot) / n_free(it['sum'], S, {it['sum'] + dd for dd in v})
 
 
 def answer_probs(fm, it, y):
@@ -177,12 +217,13 @@ def answer_probs(fm, it, y):
     dist = D2.program_dist(fm['prog'], it, True)
     if y in dist:
         p = dist[y]
-        return dict(M=p, T=p, T30=p, MT=p)
+        return dict(M=p, T=p, T30=p, MT=p, M_sym=p, T_sym=p)
     S = set(dist)
     eps = fm['prog']['eps']
     cand = candidates(it['a'], it['b'])
     return dict(M=eps * q_m(fm, it, y, S, cand), T=D2.answer_prob(fm['prog_T'], it, y, True, dist),
-                T30=D2.answer_prob(fm['prog'], it, y, True, dist), MT=eps * q_m(fm, it, y, S, cand, mt=True))
+                T30=D2.answer_prob(fm['prog'], it, y, True, dist), MT=eps * q_m(fm, it, y, S, cand, mt=True),
+                M_sym=eps * q_m(fm, it, y, S, cand, sym=True), T_sym=t_prob_sym(fm['prog_T'], it, y, dist))
 
 
 def top3_wrong(fm, it, kind):
@@ -237,7 +278,7 @@ def env_rows(fits, env_items, env_offs, heads):
     """По задачам × головам: лог-вероятности (смесь λ) четырёх программ, метки «неверный», «прочий», попадание в три самых вероятных
     неверных ответа у М и у нуля-Т. NaN — нечисловой ответ или голова вне среды."""
     n, H = len(env_items), len(heads)
-    L = {k: np.full((n, H), np.nan) for k in ('M', 'T', 'T30', 'MT')}
+    L = {k: np.full((n, H), np.nan) for k in ('M', 'T', 'T30', 'MT', 'M_sym', 'T_sym')}
     wrong = np.zeros((n, H), bool)
     other = np.zeros((n, H), bool)
     hitM = np.zeros((n, H), bool)
@@ -267,7 +308,8 @@ def measures_w(er, Wm):
       m_M   — среднее по головам разности М − нуль-Т на числовой ответ (решающая П1);
       m_Mo  — то же по «прочим» ответам (описательно);
       top3  — среднее по головам (доля неверных, названных М среди трёх) − (то же у нуля-Т) (П2);
-      m_T30 — М − таблица DISTILL-02 (30), m_MT — М+Т − таблица (30) (описательно)."""
+      m_T30 — М − таблица DISTILL-02 (30), m_MT — М+Т − таблица (30) (описательно);
+      m_M_sym — m_M в симметричной версии нормировки (описательно; совет 78, п. 6)."""
     num = np.isfinite(er['L']['M']).astype(float)
     cnt = Wm @ num
 
@@ -280,12 +322,14 @@ def measures_w(er, Wm):
         mMo = hm('M', 'T', er['other'])
         mT30 = hm('M', 'T30', num > 0)
         mMT = hm('MT', 'T30', num > 0)
+        mMs = hm('M_sym', 'T_sym', num > 0)
         wr = er['wrong'].astype(float)
         top = (Wm @ (er['hitM'] & er['wrong']).astype(float) - Wm @ (er['hitT'] & er['wrong']).astype(float)) / (Wm @ wr)
-    return dict(m_M=np.nanmean(mM, 1), m_Mo=np.nanmean(mMo, 1), top3=np.nanmean(top, 1), m_T30=np.nanmean(mT30, 1), m_MT=np.nanmean(mMT, 1))
+    return dict(m_M=np.nanmean(mM, 1), m_Mo=np.nanmean(mMo, 1), top3=np.nanmean(top, 1), m_T30=np.nanmean(mT30, 1), m_MT=np.nanmean(mMT, 1),
+                m_M_sym=np.nanmean(mMs, 1))
 
 
-MEASURES = ('m_M', 'm_Mo', 'top3', 'm_T30', 'm_MT')
+MEASURES = ('m_M', 'm_Mo', 'top3', 'm_T30', 'm_MT', 'm_M_sym')
 
 
 def env_measures(er, B, rng):

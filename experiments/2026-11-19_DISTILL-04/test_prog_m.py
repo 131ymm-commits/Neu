@@ -52,7 +52,7 @@ def t_fit_weights():
 
 def true_head(rng, ops, pi, eps=0.3, b0=-1.5):
     prog = dict(eps=eps, q={}, q_rest=1.0, n_other=1, features=['prop'], w=[b0, 1.0], w_round=[b0, 1.0])
-    return dict(prog=prog, ops=list(ops), pi=np.array(pi, float))
+    return dict(prog=prog, ops=list(ops), pi=np.array(pi, float), pi_sym=np.array(pi, float))
 
 
 def table_head(rng, eps=0.3):
@@ -158,7 +158,7 @@ def mass_by_enum(fm, it):
     assert len(V) == D2.ref_size(s)
     C = set().union(*[cand[op] for op in fm['ops']]) | {s + int(d) for d in list(fm['prog']['q']) + list(fm['mt_offsets']) if s + int(d) >= 0}
     eps = fm['prog']['eps']
-    parts = dict(M=[], T=[], T30=[], MT=[])               # точное суммирование math.fsum: 10^5 слагаемых (ERRORS № 232)
+    parts = dict(M=[], T=[], T30=[], MT=[], M_sym=[], T_sym=[])     # точное суммирование math.fsum: 10^5 слагаемых (ERRORS № 232)
     for y in set(V) | C:
         if y in dist:
             for k in parts:
@@ -168,6 +168,8 @@ def mass_by_enum(fm, it):
         parts['T'].append(D2.answer_prob(fm['prog_T'], it, y, True, dist))
         parts['T30'].append(D2.answer_prob(fm['prog'], it, y, True, dist))
         parts['MT'].append(eps * PM.q_m(fm, it, y, S, cand, mt=True))
+        parts['M_sym'].append(eps * PM.q_m(fm, it, y, S, cand, sym=True))
+        parts['T_sym'].append(PM.t_prob_sym(fm['prog_T'], it, y, dist))
     return {k: math.fsum(v) for k, v in parts.items()}, dict(S=S, cand=cand, V=V, dist=dist)
 
 
@@ -194,19 +196,22 @@ def t_norm():
     q = {-20: 0.25, -40: 0.15, 20: 0.1, -90: 0.05, 2: 0.05}
     prog = dict(eps=0.3, q=q, q_rest=0.4, n_other=100, features=['prop'], w=[-1.0, 1.0], w_round=[-1.0, 1.0])
     fm = dict(prog=prog, ops=list(OPS), pi=np.array([0.1, 0.05, 0.1, 0.05, 0.3, 0.1, 0.3]), prog_T=PM.table_prog(prog, 3),
-              mt_offsets=[-20, -40], pi_mt=np.array([0.1, 0.05, 0.05, 0.05, 0.2, 0.05, 0.2, 0.1, 0.2]))
+              mt_offsets=[-20, -40], pi_mt=np.array([0.1, 0.05, 0.05, 0.05, 0.2, 0.05, 0.2, 0.1, 0.2]),
+              pi_sym=np.array([0.05, 0.1, 0.1, 0.05, 0.25, 0.15, 0.3]))
     tasks = [(457, 86), (199, 99), (805, 17), (360, 45), (898, 99), (1957, 86)]
-    worst, gap, rows = 0.0, 0.0, []
+    worst, gap, sym_gap, rows = 0.0, 0.0, 0.0, []
     for a, b in tasks:
         it = dict(a=a, b=b, sum=a + b, ood=0)
         tot, aux = mass_by_enum(fm, it)
         worst = max(worst, max(tot.values()) - 1.0)
+        sym_gap = max(sym_gap, abs(tot['M_sym'] - 1.0), abs(tot['T_sym'] - 1.0))
         d_m, d_t = 1.0 - tot['M'], 1.0 - tot['T']
         f_m, f_t = deficit_formula(fm, it, aux)
         gap = max(gap, abs(d_m - f_m), abs(d_t - f_t))
         rows.append((a, b, d_m / prog['eps'], d_t / prog['eps']))
     check('нормировка: суммы М, Т, Т30, М+Т по V ∪ C не больше 1 (допуск 1e-12)', worst <= 1e-12, f'наибольший избыток {worst:.1e}')
     check('нормировка: недостача М и Т по формуле PREREG совпадает с перебором (1e-12)', gap <= 1e-12, f'расхождение {gap:.1e}')
+    check('нормировка: симметричная версия — сумма «прочих» у М и Т равна ε (|Σ − 1| ≤ 1e-12)', sym_gap <= 1e-12, f'расхождение {sym_gap:.1e}')
     mx = max(abs(r[2] - r[3]) for r in rows)
     for a, b, dm, dt in rows:
         print(f'  недостача / ε: {a} + {b} — М {dm:.3e}, Т {dt:.3e}, |М − Т| {abs(dm - dt):.3e}')

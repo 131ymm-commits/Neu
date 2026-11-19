@@ -67,7 +67,7 @@ def head_points(er):
             return float(np.mean(L[x][m, j] - L[y][m, j])) if m.any() else float('nan')
         top = float(((er['hitM'][:, j] & wr).sum() - (er['hitT'][:, j] & wr).sum()) / wr.sum()) if wr.any() else float('nan')
         out[h] = dict(m_M=d('M', 'T', num), m_Mo=d('M', 'T', oth), top3=top, m_T30=d('M', 'T30', num), m_MT=d('MT', 'T30', num),
-                      n_num=int(num.sum()), n_wrong=int(wr.sum()), n_other=int(oth.sum()))
+                      m_M_sym=d('M_sym', 'T_sym', num), n_num=int(num.sum()), n_wrong=int(wr.sum()), n_other=int(oth.sum()))
     return out
 
 
@@ -152,7 +152,8 @@ def main(a):
     catalog = PM.select_catalog(cov)
     out.update(catalog=catalog, coverage=cov)
     fits = {fam: PM.fit_family(*data[fam], catalog) for fam in data}
-    out['weights'] = {fam: {h: dict(pi=[float(x) for x in f['pi']], pi_mt=[float(x) for x in f['pi_mt']], n_other=f['n_other'])
+    out['weights'] = {fam: {h: dict(pi=[float(x) for x in f['pi']], pi_mt=[float(x) for x in f['pi_mt']], pi_sym=[float(x) for x in f['pi_sym']],
+                                    n_other=f['n_other'])
                             for h, f in fs.items()} for fam, fs in fits.items()}
     out['op_kinship'] = {fam: op_kinship(w) for fam, w in out['weights'].items()}
     lst = load_list(spec['test']['thousands'], 'thousands')
@@ -171,6 +172,10 @@ def main(a):
         e['verdict_final'] = e['verdict_rule'] if RULES_ACTIVE[rule] else f"описательно ({e['verdict_rule']})"
         out['rules'][rule] = {k: (v if not isinstance(v, np.ndarray) else v.tolist()) for k, v in e.items()}
         print(rule, '|', meas, '| среднее сред', round(float(np.mean([res[n]['point'][meas] for n in names])), 4), '|', out['rules'][rule]['verdict_final'], flush=True)
+    # совет 78, п. 6: симметричная версия нормировки — описательно (ветвь «мала», PREREG §4); то же правило, вердикт в реестр не идёт
+    e = D2.family_rule({n: res[n]['point']['m_M_sym'] for n in names}, {n: boots[n]['m_M_sym'] for n in names},
+                       {n: res[n]['sd']['m_M_sym'] for n in names}, names, 'two', True)
+    out['descriptive']['m_M_sym'] = {k: (v if not isinstance(v, np.ndarray) else v.tolist()) for k, v in e.items()}
     ab_res, ab_v = ab_replication(cons['thousands'], tenv)
     out['ab'] = dict(result=ab_res, verdicts=ab_v, slices=ab_slices(ab_res))
     for rule, v in ab_v.items():
