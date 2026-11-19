@@ -11,7 +11,7 @@ No containers need to be restarted.
 No user sessions are running outdated binaries.
 
 No VM guests are running outdated hypervisor (qemu) binaries on this host.
-пакеты: 23 с
+пакеты: 14 с
 warning: refs/tags/v7.4-rc3 19d1b4de6d37bccecc3ad9144d279f1baa405eb1 is not a commit!
 Note: switching to 'aebb7274476403040d582c61478df8f4a7bf9cd3'.
 
@@ -31,33 +31,190 @@ Or undo this operation with:
 Turn off this advice by setting config variable advice.detachedHead to false
 
 ядро: aebb7274476403040d582c61478df8f4a7bf9cd3 7.4.0-rc3
-клон: 62 с
+клон: 44 с
 минимальные версии: rustc 1.85.0, bindgen 0.71.1
 info: profile set to minimal
 rustc 1.85.0 (4d91de4e4 2025-02-17)
 bindgen 0.71.1
 Ubuntu clang version 21.1.8 (6ubuntu1)
-инструменты: 115 с
+инструменты: 107 с
 --- HAVE_RUST в Kconfig архитектур:
 arch/um/Kconfig:42:	select HAVE_RUST
 arch/x86/Kconfig:299:	select HAVE_RUST			if X86_64
 arch/Kconfig:449:config HAVE_RUST
 init/Kconfig:2062:	depends on HAVE_RUST
-control_um (um): код 1, 16 с; CONFIG_RUST в .config: 0
-ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+--- зависимости config RUST (init/Kconfig):
+config RUST
+	bool "Rust support"
+	depends on HAVE_RUST
+	depends on RUST_IS_AVAILABLE
+	select EXTENDED_MODVERSIONS if MODVERSIONS
+	depends on !MODVERSIONS || GENDWARFKSYMS
+	depends on !GCC_PLUGIN_RANDSTRUCT
+	depends on !RANDSTRUCT
+	depends on !DEBUG_INFO_BTF || (PAHOLE_HAS_LANG_EXCLUDE && !LTO)
+	depends on !CFI || HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
+	select CFI_ICALL_NORMALIZE_INTEGERS if CFI
+	depends on !KASAN || CC_IS_CLANG
+	depends on !KASAN_SW_TAGS || RUSTC_VERSION >= 109600
+	help
+	  Enables Rust support in the kernel.
+
+	  This allows other Rust-related options, like drivers written in Rust,
+	  to be selected.
+
+	  It is also required to be able to load external kernel modules
+	  written in Rust.
+
+	  See Documentation/rust/ for more information.
+
+	  If unsure, say N.
+
+source "rust/kernel/Kconfig.test"
+
+--- rustc в папке сборки um: rustc 1.85.0 (4d91de4e4 2025-02-17)
+  rustavailable um: ***
+  rustavailable um: *** Please see Documentation/rust/quick-start.rst for details
+  rustavailable um: *** on how to set up the Rust support.
+  rustavailable um: ***
+  rustavailable um: Rust is available!
+  rustavailable um: make[1]: Leaving directory '/home/runner/work/_temp/kbuild_um'
+--- rustc в папке сборки x86_64: rustc 1.85.0 (4d91de4e4 2025-02-17)
+  rustavailable x86_64: ***
+  rustavailable x86_64: *** Please see Documentation/rust/quick-start.rst for details
+  rustavailable x86_64: *** on how to set up the Rust support.
+  rustavailable x86_64: ***
+  rustavailable x86_64: Rust is available!
+  rustavailable x86_64: make[1]: Leaving directory '/home/runner/work/_temp/kbuild_x86_64'
+control_um (um): код 1, 46 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `nents` on type `bindings::sg_table`
+error[E0609]: no field `sgl` on type `bindings::sg_table`
+error[E0609]: no field `status` on type `bindings::kunit`
+error[E0609]: no field `pid` on type `bindings::task_struct`
+error[E0609]: no field `tgid` on type `bindings::task_struct`
+error[E0609]: no field `mm` on type `bindings::task_struct`
+error[E0609]: no field `group_leader` on type `bindings::task_struct`
+error: aborting due to 154 previous errors
 UML с Rust не вышло — запасной путь x86_64 (QEMU)
-control_x86_64 (x86_64): код 1, 6 с; CONFIG_RUST в .config: 0
-ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+control_x86_64 (x86_64): код 1, 51 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: # CONFIG_CFI is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `nents` on type `bindings::sg_table`
+error[E0609]: no field `sgl` on type `bindings::sg_table`
+error[E0609]: no field `status` on type `bindings::kunit`
+error[E0609]: no field `pid` on type `bindings::task_struct`
+error[E0609]: no field `tgid` on type `bindings::task_struct`
+error[E0609]: no field `mm` on type `bindings::task_struct`
+error[E0609]: no field `group_leader` on type `bindings::task_struct`
+error: aborting due to 140 previous errors
 --- lib/math/Makefile до подмены:
 2:obj-y += div64.o gcd.o lcm.o int_log.o int_pow.o int_sqrt.o reciprocal_div.o
 2:obj-y += div64.o gcd.o lcm.o int_log.o int_pow_rs.o int_sqrt.o reciprocal_div.o
-trans_haiku_x86_64 (x86_64): код 1, 4 с; CONFIG_RUST в .config: 0
-ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+trans_haiku_x86_64 (x86_64): код 1, 8 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: # CONFIG_CFI is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `nents` on type `bindings::sg_table`
+error[E0609]: no field `sgl` on type `bindings::sg_table`
+error[E0609]: no field `status` on type `bindings::kunit`
+error[E0609]: no field `pid` on type `bindings::task_struct`
+error[E0609]: no field `tgid` on type `bindings::task_struct`
+error[E0609]: no field `mm` on type `bindings::task_struct`
+error[E0609]: no field `group_leader` on type `bindings::task_struct`
+error: aborting due to 140 previous errors
   haiku: int_pow_rs.o НЕ собран; в built-in.a: 
-trans_sonnet_x86_64 (x86_64): код 1, 4 с; CONFIG_RUST в .config: 0
-ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+trans_sonnet_x86_64 (x86_64): код 1, 8 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: # CONFIG_CFI is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `nents` on type `bindings::sg_table`
+error[E0609]: no field `sgl` on type `bindings::sg_table`
+error[E0609]: no field `status` on type `bindings::kunit`
+error[E0609]: no field `pid` on type `bindings::task_struct`
+error[E0609]: no field `tgid` on type `bindings::task_struct`
+error[E0609]: no field `mm` on type `bindings::task_struct`
+error[E0609]: no field `group_leader` on type `bindings::task_struct`
+error: aborting due to 140 previous errors
   sonnet: int_pow_rs.o НЕ собран; в built-in.a: 
-trans_opus_x86_64 (x86_64): код 1, 5 с; CONFIG_RUST в .config: 0
-ERROR:root:Not all Kconfig options selected in kunitconfig were in the generated .config.
+trans_opus_x86_64 (x86_64): код 1, 9 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: # CONFIG_CFI is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `dev` on type `platform_device`
+error[E0609]: no field `nents` on type `bindings::sg_table`
+error[E0609]: no field `sgl` on type `bindings::sg_table`
+error[E0609]: no field `status` on type `bindings::kunit`
+error[E0609]: no field `pid` on type `bindings::task_struct`
+error[E0609]: no field `tgid` on type `bindings::task_struct`
+error[E0609]: no field `mm` on type `bindings::task_struct`
+error[E0609]: no field `group_leader` on type `bindings::task_struct`
+error: aborting due to 140 previous errors
   opus: int_pow_rs.o НЕ собран; в built-in.a: 
-всего: 151 с
+всего: 231 с

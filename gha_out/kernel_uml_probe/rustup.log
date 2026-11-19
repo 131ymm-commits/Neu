@@ -4,4 +4,8 @@ info: downloading 4 components
 
   1.85.0-x86_64-unknown-linux-gnu installed - rustc 1.85.0 (4d91de4e4 2025-02-17)
 
-info: override toolchain for /home/runner/work/_temp/linux set to 1.85.0-x86_64-unknown-linux-gnu
+info: using existing install for 1.85.0-x86_64-unknown-linux-gnu
+info: default toolchain set to 1.85.0-x86_64-unknown-linux-gnu
+
+  1.85.0-x86_64-unknown-linux-gnu unchanged - rustc 1.85.0 (4d91de4e4 2025-02-17)
+
