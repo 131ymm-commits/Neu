@@ -3,6 +3,7 @@
 """DISTILL-03: тесты ab.py на заглушках с известным знаком (ворота CLAUDE.md: направленные слова, мутанты до прогона).
   python3 test_ab.py   — печатает ✓/✗ и «провалов: N»"""
 import itertools
+import json
 import math
 import os
 import sys
@@ -64,15 +65,46 @@ def t_verdicts():
     check('вердикт: p = 12/5040 ≤ 0,0025 и D > 0 — «да»', v['АБ-П-Т']['verdict'] == 'да')
     check('вердикт: p = 13/5040 > 0,0025 — «нет»', v['АБ-Ф-Т']['verdict'] == 'нет')
     check('вердикт: D ≤ 0 — «нет» при любом p', v['АБ-П-Л']['verdict'] == 'нет')
-    check('вердикт: нет данных — None', v['АБ-Ф-Л']['verdict'] is None)
+    check('вердикт: семейства нет в выводе — None', ab.verdicts({'thousands': fams['thousands']})['АБ-Ф-Л']['verdict'] is None)
+    k5 = {'thousands': {'prog': dict(D=0.9, p=1 / 120, rank=1, n_perm=120, k=5, heads_in_test=list('abcde'))}, 'length': {'k': 1, 'empty': True}}
+    v5 = ab.verdicts(k5)
+    check('вердикт: k = 5 (наименьшее p 1/120 > 0,0025) — «непроверяемо», а не «нет» (совет 76)', v5['АБ-П-Т']['verdict'] == 'непроверяемо',
+          f"min_p {v5['АБ-П-Т']['min_p']:.4f}")
+    check('вердикт: семейство без полных голов и сред — «непроверяемо»', v5['АБ-П-Л']['verdict'] == 'непроверяемо')
+    k6 = {'thousands': {'prog': dict(D=0.9, p=1 / 720, rank=1, n_perm=720, k=6, heads_in_test=list('abcdef')),
+                        'shape': dict(D=0.9, p=2 / 720, rank=2, n_perm=720, k=6, heads_in_test=list('abcdef'))}}
+    v6 = ab.verdicts(k6)
+    check('вердикт: k = 6 — «да» только при ранге 1 из 720', v6['АБ-П-Т']['verdict'] == 'да' and v6['АБ-Ф-Т']['verdict'] == 'нет')
+
+
+def t_check_fits():
+    ok7 = {'families': {f: {'same_as_distill02': {f'h{i}': dict(features=True, w_round=True, eps=True, q=True) for i in range(7)}}
+                        for f in ('thousands', 'length')}}
+    check('замок (а): 7 голов, всё совпало — проходит', ab.check_fits(ok7) == [])
+    check('замок (а): пустой словарь сверки — СТОП', ab.check_fits({'families': {'thousands': {'same_as_distill02': {}}, 'length': {'same_as_distill02': {}}}}) != [])
+    check('замок (а): нет семейств — СТОП', ab.check_fits({}) != [] and ab.check_fits({'families': {}}) != [])
+    six = json.loads(json.dumps(ok7))
+    six['families']['length']['same_as_distill02'].pop('h6')
+    check('замок (а): 6 голов в семействе — СТОП', ab.check_fits(six) != [])
+    bad = json.loads(json.dumps(ok7))
+    bad['families']['thousands']['same_as_distill02']['h3']['eps'] = False
+    none = json.loads(json.dumps(ok7))
+    none['families']['thousands']['same_as_distill02']['h0'] = None
+    check('замок (а): одно расхождение или None (нет формул DISTILL-02) — СТОП', ab.check_fits(bad) != [] and ab.check_fits(none) != [])
 
 
 def t_s_table():
     M1 = np.array([[1.0, 0.0], [0.0, 1.0]])
-    M2 = np.array([[3.0, np.nan], [1.0, np.nan]])                            # во второй среде голова 1 отсутствует
+    M2 = np.array([[3.0, 2.0], [1.0, 0.0]])
     s = ab.s_table([M1, M2])
-    # s[a, b]: среда 1 — L − (S − L)/(k − 1) = [[1, −1], [−1, 1]]; среда 2, столбец 0 — [3 − 1, 1 − 3] = [2, −2]
-    check('s_table: среднее по средам головы, NaN пропускаются', np.allclose(s, [[1.5, -1.0], [-1.5, 1.0]]), str(s.tolist()))
+    # s[a, b] = L − (S − L)/(k − 1): среда 1 — [[1, −1], [−1, 1]]; среда 2 — [[2, 2], [−2, −2]]; среднее — [[1,5, 0,5], [−1,5, −0,5]]
+    check('s_table: среднее по средам', np.allclose(s, [[1.5, 0.5], [-1.5, -0.5]]), str(s.tolist()))
+    try:
+        ab.s_table([M1, np.array([[3.0, np.nan], [1.0, np.nan]])])
+        ok = False
+    except AssertionError:
+        ok = True
+    check('замок (г): NaN в матрице до s_table — СТОП, тихого nansum нет', ok)
 
 
 # ───────────── подбор свободного члена и строки формулы
@@ -210,6 +242,63 @@ REAL = ['Falcon3-1B-Instruct', 'OLMo-2-0425-1B-Instruct', 'Qwen2.5-0.5B-Instruct
         'SmolLM2-360M-Instruct', 'TinyLlama-1.1B-Chat-v1.0']
 
 
+def direct_D_p(Ls):
+    """Прямой счёт D и точного p — отдельно от s_table и perm_test (совет 76, инженер): циклы по перестановкам, головам и средам.
+    Ls — матрицы сред (строки — чья программа, столбцы — чьи ответы); D_π = среднее по B от среднего по средам
+    [L(π(B), B) − среднее по A ≠ π(B) от L(A, B)]."""
+    k = len(Ls[0])
+
+    def D_of(perm):
+        tot = 0.0
+        for b in range(k):
+            a = perm[b]
+            acc = 0.0
+            for L in Ls:
+                acc += L[a][b] - sum(L[x][b] for x in range(k) if x != a) / (k - 1)
+            tot += acc / len(Ls)
+        return tot / k
+    D = D_of(tuple(range(k)))
+    vals = [D_of(pm) for pm in itertools.permutations(range(k))]
+    return D, sum(v >= D - 1e-12 for v in vals) / len(vals), len(vals)
+
+
+def t_complete_case():
+    """Совет 76, п. 4: голова без данных — выкинута целиком (k × k, перебор k!); голова без данных в одной среде — среда выкинута у всех;
+    k = 5 — «непроверяемо». Сверка с прямым счётом до 1e-12."""
+    H = [f'h{i}' for i in range(7)]
+    fs = [('prop',), ('chain',), ('pos',), ('top',), ('nines',), ('newplace',), ('phi',)]
+    progs = {h: mk(0.03 + 0.02 * i, -1.5 + 0.2 * i, fs[i], [1.5]) for i, h in enumerate(H)}
+    rng = np.random.default_rng(16)
+    con = items_pool(1500, rng)
+    P = ab.programs_from(con, {h: np.array([D2.sample_program(p, it, rng) for it in con]) for h, p in progs.items()})
+
+    def env(n, absent=()):
+        it = items_pool(n, rng)
+        return (it, {h: (np.full(n, D2.NC) if h in absent else np.array([D2.sample_program(p, x, rng) for x in it])) for h, p in progs.items()})
+    envs = {f'E{i}': env(260, absent=('h6',)) for i in range(3)}
+    r = ab.family_result(P, envs, sorted(envs), H)
+    raw = [ab.matrices_from(P, *envs[n], H)[0] for n in sorted(envs)]
+    for kind in ab.KINDS:
+        D, p, n = direct_D_p([[[M[kind][a][b] for b in range(6)] for a in range(6)] for M in raw])
+        check(f'голова без данных ({kind}): k = 6, перебор 720, D и p — как прямой счёт на 6 × 6 (1e-12)',
+              r[kind]['k'] == 6 and r[kind]['n_perm'] == 720 == n and abs(r[kind]['D'] - D) < 1e-12 and abs(r[kind]['p'] - p) < 1e-12,
+              f"D {r[kind]['D']:.6f} / {D:.6f}, p {r[kind]['p']:.5f} / {p:.5f}")
+    check('голова без данных: выкинута и как программа, и как ответы', r['heads_dropped'] == ['h6'] and r['heads_kept'] == H[:6] and r['envs_dropped'] == [])
+    envs2 = {'E0': env(260), 'E1': env(260, absent=('h2',)), 'E2': env(260)}
+    r2 = ab.family_result(P, envs2, sorted(envs2), H)
+    raw2 = {n: ab.matrices_from(P, *envs2[n], H)[0] for n in envs2}
+    for kind in ab.KINDS:
+        D, p, n = direct_D_p([[[raw2[e][kind][a][b] for b in range(7)] for a in range(7)] for e in ('E0', 'E2')])
+        check(f'голова без данных в одной среде ({kind}): среда выкинута у всех голов, D и p — как прямой счёт без неё (1e-12)',
+              r2['envs_dropped'] == ['E1'] and r2['heads_dropped'] == [] and r2[kind]['k'] == 7 and abs(r2[kind]['D'] - D) < 1e-12
+              and abs(r2[kind]['p'] - p) < 1e-12, f"D {r2[kind]['D']:.6f} / {D:.6f}, p {r2[kind]['p']:.5f} / {p:.5f}")
+    envs3 = {f'E{i}': env(260, absent=('h5', 'h6')) for i in range(2)}
+    r3 = ab.family_result(P, envs3, sorted(envs3), H)
+    v3 = ab.verdicts({'thousands': r3, 'length': r3})
+    check('k = 5 (две головы без данных): все четыре вердикта «непроверяемо»', all(x['verdict'] == 'непроверяемо' for x in v3.values()),
+          str({k: (x['verdict'], x.get('k'), round(x.get('min_p'), 4)) for k, x in v3.items()}))
+
+
 def t_kinship():
     """Родичи с одной программой: своя ≈ родич; родич лучше чужих. Головы названы как настоящие (пары KIN)."""
     fs = {'Falcon3-1B-Instruct': ('top',), 'OLMo-2-0425-1B-Instruct': ('chain',), 'TinyLlama-1.1B-Chat-v1.0': ('nines',),
@@ -254,6 +343,15 @@ def t_run_cmd_dry():
               sorted(out['families']['thousands']['envs']) == sorted(ab.TEST_ENVS['thousands']) and
               sorted(out['families']['length']['envs']) == sorted(ab.TEST_ENVS['length']))
         check('сухой прогон: описательный набор new5 посчитан', list(out['families']['thousands'].get('descriptive', {})) == ['new5'])
+        fam = out['families']['thousands']
+        j = fam['heads'].index('OLMo-2-0425-1B-Instruct')
+        rest = [x for x in range(7) if x != j]
+        for kind in ab.KINDS:
+            D, p, n = direct_D_p([[[fam['envs'][e][kind][a][b] for b in rest] for a in rest] for e in fam['envs_kept']])
+            w = fam[kind]['without']['OLMo-2-0425-1B-Instruct']
+            check(f'сухой прогон: без OLMo ({kind}, описательно) — k = 6, перебор 720, D и p как прямой счёт (1e-12)',
+                  w['k'] == 6 and w['n_perm'] == 720 == n and abs(w['D'] - D) < 1e-12 and abs(w['p'] - p) < 1e-12, f"D {w['D']:.5f}, p {w['p']:.5f}")
+        check('сухой прогон: в выводе k и наименьшее p у каждого вердикта', all(x['k'] == 7 and abs(x['min_p'] - 1 / 5040) < 1e-15 for x in v.values()))
         check('сухой прогон: хеши кода записаны', set(out['code']) == {'ab.py', 'distill02.py'} and all(len(x) == 64 for x in out['code'].values()))
         bad = dict(spec, test={'thousands': ['t_T'], 'length': ['n_T']})
         try:
@@ -277,6 +375,7 @@ if __name__ == '__main__':
     t_perm()
     t_trace_identity()
     t_verdicts()
+    t_check_fits()
     t_s_table()
     t_intercept()
     t_rows_match_fit_program()
@@ -284,6 +383,7 @@ if __name__ == '__main__':
     t_loader_keeps_phases()
     t_end_to_end()
     t_kinship()
+    t_complete_case()
     t_run_cmd_dry()
     print('провалов:', len(FAILS), FAILS)
     sys.exit(1 if FAILS else 0)

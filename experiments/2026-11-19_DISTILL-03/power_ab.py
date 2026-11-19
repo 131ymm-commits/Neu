@@ -52,10 +52,48 @@ def power(resid, sigma, delta, n_env, shared, nkind, reps, alpha, rng, k=7):
     return hits / reps
 
 
+def main_k6(pilot, out_path, alpha, reps, seed):
+    """Совет 76, п. 3: мощность при k = 6 (одна голова выпала; «да» — только ранг 1 из 720). Для каждой из 7 голов: подматрица 6 × 6
+    пилота без её строки и столбца, шум — из её остатков, δ = D этой подматрицы; мощность при δ — по четырём моделям шума и двум
+    семействам. В PREREG идёт наименьшая."""
+    rng = np.random.default_rng(seed)
+    fam = pilot['families']['thousands']
+    env = fam['envs'][ab.PILOT_ENVS[0]]
+    heads = fam['heads']
+    out = dict(alpha=alpha, reps=reps, seed=seed, pilot_env=ab.PILOT_ENVS[0], k=6, kinds={})
+    for kind in ab.KINDS:
+        M = np.array(env[kind], float)
+        rows, worst = {}, None
+        for j, h in enumerate(heads):
+            rest = [x for x in range(len(heads)) if x != j]
+            M6 = M[np.ix_(rest, rest)]
+            resid = offdiag_resid(M6)
+            sig = float(np.std(resid, ddof=1))
+            D6 = float(ab.perm_test(ab.s_table([M6]))['D'])
+            pw = {}
+            for fam_name, n_env in N_ENVS.items():
+                for nkind in NOISE:
+                    for shared in (True, False):
+                        name = f"{fam_name}_{nkind}_{'общий' if shared else 'независимый'}"
+                        pw[name] = power(resid, sig, abs(D6), n_env, shared, nkind, reps, alpha, rng, k=6)
+            rows[h] = dict(D6=D6, sigma=sig, powers=pw, min_power=min(pw.values()), min_model=min(pw, key=pw.get))
+            if worst is None or rows[h]['min_power'] < rows[worst]['min_power']:
+                worst = h
+            print(kind, '| без', h, '| D 6 × 6', round(D6, 4), '| σ', round(sig, 4), '| наименьшая мощность', rows[h]['min_power'],
+                  f"({rows[h]['min_model']})", flush=True)
+        by_fam = {f: min(min(v for n, v in r['powers'].items() if n.startswith(f + '_')) for r in rows.values()) for f in N_ENVS}
+        out['kinds'][kind] = dict(drops=rows, worst_drop=worst, min_power=rows[worst]['min_power'], min_power_by_family=by_fam)
+        print(kind, '| k = 6: наименьшая мощность по всем выпадениям', rows[worst]['min_power'], '(без', worst + ')', '| по семействам', by_fam, flush=True)
+    json.dump(out, open(out_path, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    return 0
+
+
 def main(a):
     pilot = json.load(open(a[0], encoding='utf-8'))
     opt = lambda k, d: a[a.index(k) + 1] if k in a else d   # noqa: E731
     alpha, reps, seed = float(opt('--alpha', str(ab.LEVEL))), int(opt('--reps', '400')), int(opt('--seed', '20261119'))
+    if '--k6' in a:
+        return main_k6(pilot, a[1], alpha, reps, seed)
     rng = np.random.default_rng(seed)
     fam = pilot['families']['thousands']
     env = fam['envs'][ab.PILOT_ENVS[0]]

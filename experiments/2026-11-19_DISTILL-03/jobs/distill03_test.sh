@@ -34,9 +34,9 @@ cat > "$OUT/spec.json" <<SPEC
  "descriptive": {"thousands": {"new5": ["$OUT/t_T_n"]}, "length": {"new5": ["$OUT/t_L_n"]}},
  "distill02_analysis": "gha_out/distill02_sum_test/analysis.json"}
 SPEC
-echo "== программы (сверка с DISTILL-02 — иначе СТОП)"
+echo "== программы (сверка с DISTILL-02 — иначе СТОП; совет 76, замок а)"
 python3 $E3/ab.py fits "$OUT/fits.json" "$OUT/spec.json" | tee "$OUT/fits.log"
-python3 -c "import json, sys; f = json.load(open(sys.argv[1]))['families']; ok = all(v and all(v.values()) for fam in f.values() for v in fam['same_as_distill02'].values()); print('программы совпадают с DISTILL-02:', ok); sys.exit(0 if ok else 1)" "$OUT/fits.json" | tee -a "$OUT/fits.log"
+python3 $E3/ab.py checkfits "$OUT/fits.json" | tee -a "$OUT/fits.log"          # замок (а) совета 76: 7 голов, оба семейства, всё совпало
 echo "== тест"
 python3 $E3/ab.py test "$OUT/test.json" "$OUT/spec.json" | tee "$OUT/test.log"
 echo "== повтор на детерминизм (побайтно без seconds)"

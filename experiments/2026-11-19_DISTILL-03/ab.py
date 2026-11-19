@@ -14,6 +14,7 @@
 D = среднее по головам B от s(B, B). Нуль — перестановка меток программ между головами: D_π = среднее по B от s(π(B), B),
 полный перебор всех перестановок (7! = 5040), p = доля D_π ≥ D (вместе с тождественной) — точное.
   python3 ab.py fits ВЫХОД.json SPEC.json        — программы по семействам и сверка с DISTILL-02 (formulas в analysis.json)
+  python3 ab.py checkfits FITS.json             — замок (а) совета 76: 7 голов в обоих семействах, всё совпало, иначе код 1
   python3 ab.py pilot ВЫХОД.json SPEC.json       — пилот: матрицы одной среды (T_X19_p3), описательно
   python3 ab.py test ВЫХОД.json SPEC.json        — тест: матрицы, D и p по семействам и видам, вердикты RULES при уровне LEVEL
 SPEC: {"construction": {семейство: [папки]}, "test": {семейство: [папки]}, "descriptive": {семейство: {имя: [папки]}} (необяз.)}"""
@@ -42,6 +43,8 @@ TEST_ENVS = {'thousands': ('T_X29_p3', 'T_X39_p3', 'T_X49_p3', 'T_X59_p3', 'T_X6
 LEVEL = 0.0025
 RULES = {'АБ-П-Т': ('thousands', 'prog'), 'АБ-П-Л': ('length', 'prog'), 'АБ-Ф-Т': ('thousands', 'shape'), 'АБ-Ф-Л': ('length', 'shape')}
 KIN = (('Qwen2.5-0.5B-Instruct', 'Qwen2.5-1.5B-Instruct'), ('SmolLM2-360M-Instruct', 'SmolLM2-1.7B-Instruct'))   # родичи (совет 75)
+WITHOUT = ('OLMo-2-0425-1B-Instruct',)     # совет 76, п. 6: описательно — D и p без головы, давшей 42 % D программы в пилоте
+N_HEADS = 7                                # голов в семействе (ocdiv.CROWD); меньше — сверка программ не прошла (совет 76, замок а)
 
 
 # ───────────── строки формулы (как в distill02.fit_program) и подбор свободного члена при заданных наклонах
@@ -170,15 +173,27 @@ def matrices_from(P, items, offs, heads_order):
 
 # ───────────── статистика и точный перестановочный тест
 def s_table(mats):
-    """s[a, b] = среднее по средам головы b от [L(a, b, e) − среднее по A ≠ a от L(A, b, e)] (NaN-среды головы пропускаются)."""
+    """s[a, b] = среднее по средам от [L(a, b, e) − среднее по A ≠ a от L(A, b, e)]. Матрицы полные, k × k: головы и среды с пропусками
+    выкинуты до этого (`complete_case`); NaN — СТОП (совет 76, замок г: тихого nansum нет)."""
     st = []
     for M in mats:
+        M = np.asarray(M, float)
+        assert M.ndim == 2 and M.shape[0] == M.shape[1] and not np.isnan(M).any(), 'NaN или неквадратная матрица до s_table (совет 76, замок г)'
         k = M.shape[0]
-        S = np.nansum(M, axis=0, keepdims=True)
+        S = M.sum(axis=0, keepdims=True)
         st.append(M - (S - M) / (k - 1))
-    A = np.stack(st)                               # среды × a × b
-    with np.errstate(invalid='ignore'):
-        return np.nanmean(A, axis=0)
+    return np.mean(np.stack(st), axis=0)
+
+
+def complete_case(mats, heads_order):
+    """Совет 76, п. 4 (б)–(в). Голова, которой нет ни в одной среде (меньше MIN_NUMERIC числовых ответов везде), исключается из семейства
+    целиком — и строка (её программа), и столбец (её ответы). Затем среда, где нет хоть одной из оставшихся голов, исключается у всех.
+    mats: {вид: [матрица среды k × k с NaN в столбцах отсутствующих голов]}. Возвращает индексы голов и сред, которые остаются."""
+    k = len(heads_order)
+    present = np.array([[bool(np.all(np.isfinite(M[:, j]))) for j in range(k)] for M in mats['prog']]).reshape(len(mats['prog']), k)
+    keep_h = [j for j in range(k) if present[:, j].any()]
+    keep_e = [i for i in range(present.shape[0]) if keep_h and present[i, keep_h].all()]
+    return keep_h, keep_e
 
 
 _PERMS = {}
@@ -192,8 +207,9 @@ def perm_test(s):
         _PERMS[k] = np.array(list(itertools.permutations(range(k))), dtype=np.int64)
     vals = s[_PERMS[k], np.arange(k)].mean(axis=1)                     # все перестановки меток программ сразу
     p = float(np.mean(vals >= D - 1e-12))
-    return dict(D=D, p=p, n_perm=len(vals), rank=int(np.sum(vals > D + 1e-12)) + 1, perm_mean=float(np.mean(vals)),
+    return dict(D=D, p=p, k=k, n_perm=len(vals), min_p=1 / len(vals), rank=int(np.sum(vals > D + 1e-12)) + 1, perm_mean=float(np.mean(vals)),
                 perm_max=float(np.max(vals)), n_distinct=int(len(np.unique(np.round(vals, 12)))),
+                n_pos=int(np.sum(np.diag(s) > 0)),
                 per_head={int(b): float(s[b, b] - (np.sum(s[:, b]) - s[b, b]) / (k - 1)) for b in range(k)})
 
 
@@ -246,37 +262,61 @@ def kinship(mats, heads_order, pairs=KIN):
     return dict(per_head=out, mean=mean)
 
 
+def _nan_none(M):
+    """Матрица или вектор в список для json: NaN → None (голова не в среде)."""
+    M = np.asarray(M, float)
+    if M.ndim == 1:
+        return [float(x) if np.isfinite(x) else None for x in M]
+    return [[float(x) if np.isfinite(x) else None for x in row] for row in M]
+
+
 def family_result(P, envs, names, heads_order):
-    """envs: {имя: среда-словарь сборки} или {имя: (items, offs)} — второе для заглушек."""
-    mats = {kind: [] for kind in KINDS + DESCR_KINDS}
-    const, envs_out = [], {}
+    """envs: {имя: среда-словарь сборки} или {имя: (items, offs)} — второе для заглушек. Матрицы считаются для всех голов программ
+    (heads_order); головы и среды с пропусками выкидываются по `complete_case` (совет 76, п. 4), дальше всё — на полных матрицах k × k."""
+    raw = {kind: [] for kind in KINDS + DESCR_KINDS}
+    const_raw, envs_out = [], {}
     for name in names:
         e = envs[name]
         M, n_num = matrices_from(P, *e, heads_order) if isinstance(e, tuple) else env_matrices(P, e, heads_order)
         for kind in KINDS + DESCR_KINDS:
-            mats[kind].append(M[kind])
-        const.append(M['const'])
-        envs_out[name] = dict(n_numeric=n_num, **{kind: M[kind].tolist() for kind in KINDS + DESCR_KINDS}, const=M['const'].tolist(),
-                              diag_minus_offmean={kind: (np.diag(M[kind]) - (np.nansum(M[kind], axis=0) - np.diag(M[kind])) /
-                                                         (len(heads_order) - 1)).tolist() for kind in KINDS})
-    res = dict(envs=envs_out, heads=heads_order)
+            raw[kind].append(M[kind])
+        const_raw.append(M['const'])
+        envs_out[name] = dict(n_numeric=n_num, **{kind: _nan_none(M[kind]) for kind in KINDS + DESCR_KINDS}, const=_nan_none(M['const']))
+    keep_h, keep_e = complete_case(raw, heads_order)
+    hk, ek = [heads_order[j] for j in keep_h], [names[i] for i in keep_e]
+    res = dict(envs=envs_out, heads=heads_order, heads_kept=hk, heads_dropped=[h for h in heads_order if h not in hk],
+               envs_kept=ek, envs_dropped=[n for n in names if n not in ek], k=len(hk))
+    if len(hk) < 2 or not ek:
+        res['empty'] = True                          # проверять нечего: вердикт «непроверяемо» (verdicts)
+        return res
+    k = len(hk)
+    mats = {kind: [raw[kind][i][np.ix_(keep_h, keep_h)] for i in keep_e] for kind in raw}
+    const = [const_raw[i][keep_h] for i in keep_e]
+    for name, i in zip(ek, keep_e):
+        envs_out[name]['diag_minus_offmean'] = {kind: (np.diag(M) - (M.sum(axis=0) - np.diag(M)) / (k - 1)).tolist()
+                                                for kind, M in ((kd, raw[kd][i][np.ix_(keep_h, keep_h)]) for kd in KINDS)}
     for kind in KINDS:
         s = s_table(mats[kind])
-        ok = [j for j in range(len(heads_order)) if np.all(np.isfinite(s[:, j]))]      # голова хоть в одной среде
-        res[kind] = dict(s=s.tolist(), heads_in_test=[heads_order[j] for j in ok], **perm_test(s[np.ix_(ok, ok)]))
+        env_mean = np.mean(np.stack(mats[kind]), axis=0)
+        own_first = int(sum(env_mean[b, b] > np.max(np.delete(env_mean[:, b], b)) for b in range(k)))   # своя первая в столбце
+        res[kind] = dict(s=s.tolist(), heads_in_test=hk, own_first=own_first, **perm_test(s))
+        res[kind]['without'] = {}                    # совет 76, п. 6: описательно, без вердикта — тем же кодом на (k − 1) × (k − 1)
+        for h in WITHOUT:
+            if h in hk and k - 1 >= 2:
+                rest = [x for x in range(k) if x != hk.index(h)]
+                r = perm_test(s_table([M[np.ix_(rest, rest)] for M in mats[kind]]))
+                res[kind]['without'][h] = {kk: r[kk] for kk in ('D', 'p', 'k', 'n_perm', 'rank', 'n_distinct', 'n_pos')}
     own = np.array([np.diag(m) for m in mats['prog']])         # среды × головы
-    res['input_gain'] = dict(per_env_head=(own - np.array(const)).tolist(), mean=float(np.nanmean(own - np.array(const))))
+    gain = own - np.array(const)
+    res['input_gain'] = dict(per_env_head=gain.tolist(), per_head={h: float(x) for h, x in zip(hk, gain.mean(axis=0))},
+                             mean=float(gain.mean()), n_pos=int(np.sum(gain.mean(axis=0) > 0)))
     # описательно (записка литературы): «ближайший чужой» — своя минус лучшая из чужих, по средам и головам
     for kind in KINDS:
-        nn = []
-        for m in mats[kind]:
-            k = m.shape[0]
-            nn.append([float(m[b, b] - np.nanmax(np.delete(m[:, b], b))) if np.isfinite(m[b, b]) else float('nan') for b in range(k)])
-        nn = np.array(nn)
-        res[kind]['nearest_other'] = dict(per_env_head=nn.tolist(), per_head=np.nanmean(nn, axis=0).tolist(), mean=float(np.nanmean(nn)),
-                                          heads_own_best=int(np.sum(np.nanmean(nn, axis=0) > 0)))
-    res['decomposition'] = decomposition(mats, heads_order)
-    res['kinship'] = {kind: kinship(mats[kind], heads_order) for kind in KINDS}
+        nn = np.array([[float(m[b, b] - np.max(np.delete(m[:, b], b))) for b in range(k)] for m in mats[kind]])
+        res[kind]['nearest_other'] = dict(per_env_head=nn.tolist(), per_head=nn.mean(axis=0).tolist(), mean=float(nn.mean()),
+                                          heads_own_best=int(np.sum(nn.mean(axis=0) > 0)))
+    res['decomposition'] = decomposition(mats, hk)
+    res['kinship'] = {kind: kinship(mats[kind], hk) for kind in KINDS}
     res['accuracy_construction'] = {h: P['acc'].get(h) for h in heads_order}
     # проверка формы: своя форма при своём уровне почти совпадает со своей программой (наклоны те же, свободный член подобран заново)
     res['own_shape_minus_own_prog'] = (np.array([np.diag(m) for m in mats['shape']]) - own).tolist()
@@ -330,17 +370,39 @@ def unique_envs(dirs, fam):
 
 
 def verdicts(families):
-    """PREREG: «да» — D > 0 и точное p ≤ LEVEL; иначе «нет». Нет данных семейства — None."""
+    """PREREG §5: «непроверяемо» — наименьшее возможное p = 1/k! больше LEVEL (k ≤ 5 голов) или семейство без полных голов и сред
+    (совет 76, п. 2; вес 0 бит); иначе «да» — D > 0 и точное p ≤ LEVEL, «нет» — остальное. Семейства нет в выводе — None."""
     out = {}
     for rule, (fam, kind) in RULES.items():
-        r = families.get(fam, {}).get(kind)
-        if r is None:
+        fr = families.get(fam)
+        if fr is None:
             out[rule] = dict(family=fam, kind=kind, verdict=None)
             continue
-        yes = bool(r['D'] > 0 and r['p'] <= LEVEL + 1e-15)
-        out[rule] = dict(family=fam, kind=kind, D=r['D'], p=r['p'], rank=r['rank'], n_perm=r['n_perm'], heads=len(r['heads_in_test']),
-                         level=LEVEL, verdict='да' if yes else 'нет')
+        r = fr.get(kind)
+        if r is None:
+            out[rule] = dict(family=fam, kind=kind, k=fr.get('k', 0), min_p=1.0, level=LEVEL, verdict='непроверяемо')
+            continue
+        min_p = 1 / r['n_perm']
+        if min_p > LEVEL:
+            v = 'непроверяемо'
+        else:
+            v = 'да' if (r['D'] > 0 and r['p'] <= LEVEL + 1e-15) else 'нет'
+        out[rule] = dict(family=fam, kind=kind, D=r['D'], p=r['p'], rank=r['rank'], n_perm=r['n_perm'], k=r.get('k'), min_p=min_p,
+                         heads=len(r['heads_in_test']), n_distinct=r.get('n_distinct'), level=LEVEL, verdict=v)
     return out
+
+
+def check_fits(fits, n_heads=N_HEADS, fams=tuple(TEST_ENVS)):
+    """Совет 76, замок (а): программы обоих семейств совпадают с DISTILL-02 у всех n_heads голов. Пустой или неполный словарь сверки,
+    None (нет формул DISTILL-02) или хоть одно расхождение — список причин (не пуст — СТОП)."""
+    bad = []
+    F = fits.get('families') or {}
+    for fam in fams:
+        cmp = (F.get(fam) or {}).get('same_as_distill02') or {}
+        if len(cmp) < n_heads:
+            bad.append(f'{fam}: голов в сверке {len(cmp)} < {n_heads}')
+        bad += [f'{fam}: {h} не совпадает с DISTILL-02' for h, v in cmp.items() if not v or not all(v.values())]
+    return bad
 
 
 def run_cmd(dst, spec, phase):
@@ -370,19 +432,24 @@ def run_cmd(dst, spec, phase):
     if phase == 'test':
         out['verdicts'] = verdicts(out['families'])
         for rule, v in out['verdicts'].items():
-            print(rule, '|', v['verdict'], '| D =', None if v.get('D') is None else round(v['D'], 4), '| p =', v.get('p'), flush=True)
+            print(rule, '|', v['verdict'], '| D =', None if v.get('D') is None else round(v['D'], 4), '| p =', v.get('p'), '| голов k =', v.get('k'),
+                  '| наименьшее возможное p =', v.get('min_p'), flush=True)
     out['seconds'] = round(time.time() - t0, 1)
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return 0
 
 
 def main(a):
+    if a[0] == 'checkfits':
+        bad = check_fits(json.load(open(a[1], encoding='utf-8')))
+        print('сверка программ с DISTILL-02 (замок а):', 'СТОП — ' + '; '.join(bad) if bad else f'все {N_HEADS} голов в обоих семействах')
+        return 1 if bad else 0
     spec = json.load(open(a[2], encoding='utf-8'))
     if a[0] == 'fits':
         return fits_cmd(a[1], spec)
     if a[0] in ('pilot', 'test'):
         return run_cmd(a[1], spec, a[0])
-    raise SystemExit('команда: fits | pilot | test')
+    raise SystemExit('команда: fits | checkfits | pilot | test')
 
 
 if __name__ == '__main__':
