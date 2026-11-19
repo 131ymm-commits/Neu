@@ -1,0 +1,30 @@
+{
+ "source": "https://raw.githubusercontent.com/torvalds/linux/v7.4-rc3 (тег; то же ядро, что в LINUX-01), скачано 19.11.2026",
+ "files": {
+  "src/include/crypto/hmac.h": "a443de971df651e434ab3864023c85ab08727f71f5cd7056dfdac01713b20b68",
+  "src/include/crypto/md5.h": "e8bed0bc06a2103fa2f0b0d59f8e8f2320585b65508134366e85c7916bd0fac4",
+  "src/include/linux/errseq.h": "c22d636d1eb4f5812ab7150751869979b34f073475e5a78a42dbee3e75e99a17",
+  "src/include/linux/min_heap.h": "c2dffd63e388532574cac4e9706b97d80ccc275b28a6446c97b498a16cb231c5",
+  "src/include/linux/prandom.h": "6ea0da29077c11c6343c7713bbab3c3357d1bc004f2554bb8eb7f9dbe7c505e2",
+  "src/include/linux/string_helpers.h": "a09fedc20fc8c61098d002fdcafa6a0b1989a40bce9ea3663ecea89ea5606cf4",
+  "src/include/linux/sw842.h": "a2c8228e0e743a9e0645a7ecca837061392cd67e6ee84a28dd56ab142870705b",
+  "src/lib/842/842.h": "2b9658f5cb167a78db19d869375aff86546e4df9b3c3a5a71a45418d76043ab4",
+  "src/lib/842/842_compress.c": "5fe4426f31a89fd1bc6094abdeeb9c93885519bffb1c09b9b507ed68e5bce21c",
+  "src/lib/842/842_debugfs.h": "d37a1fc5cc23f26dca0c3a5d1e2ed36881d80272da80f6dc847b57df64ec8ef7",
+  "src/lib/842/842_decompress.c": "c1302332760341c90d09021078433bc0611defeece6e9243f2ac50cbfed0cf36",
+  "src/lib/crypto/md5.c": "0efe0ec997ef128452b3fd6dd0448cbf29db349bdd0d490bb528a18a33dc11c8",
+  "src/lib/crypto/tests/hash-test-template.h": "af640f24bb0978718492cf28c0e38813228b486ff87785d6f98626d79e289367",
+  "src/lib/crypto/tests/md5-testvecs.h": "21d2a36feeb167d9d9469fafcb524e8b7604402ea5648b33201491bc71924db1",
+  "src/lib/crypto/tests/md5_kunit.c": "a59cebe541e7716eac0ecaad5d2cc81952d2165791385ca07e7c3fb5d0b7bc8a",
+  "src/lib/crypto/tests/test-utils.h": "32c8b11147819b8e9e3ad4beb7b613cfa816bfdc4e7a8c098d1b936558bfaa5f",
+  "src/lib/errseq.c": "a1e08d5131a3b83a9a88abc2c76bb7e1cdbad23204c5acad3bcf6a4bce723261",
+  "src/lib/min_heap.c": "1a356293120b3173356cc119d468c27df341666e55cc7e1fa5e5a0e38dc6be56",
+  "src/lib/random32.c": "fe8a3f3006001da36b4eed8a4ecb39e51a2afd8a29b9b1bf00c7f91e1daffb48",
+  "src/lib/string_helpers.c": "674e41d0f69f197783bc6970fd887a52e2cd92ff7956ac6b2d0bb700c2969535",
+  "src/lib/tests/842_decompress_kunit.c": "51363b4bf4d0e7435f7886548ae5ac69bc4404b35e9766ce6efe2c9ff83e4d92",
+  "src/lib/tests/errseq_kunit.c": "529e45e018aad47b3fa5020c390c6cbdae7893ae5eb036d5c775a4a9a20d7c08",
+  "src/lib/tests/min_heap_kunit.c": "fbc7e084bbae73a28cb78c02354c0a10e942e3fe0e0037475fbf91742ffe20fb",
+  "src/lib/tests/random32_kunit.c": "66f1566c78523d1e71a54bcdea4fe86ccc3f031c8472ef3e8b94a5764cc83178",
+  "src/lib/tests/string_helpers_kunit.c": "a224551e5a6407f890f53d4e5192f13595e46672550a9f10248c330f017f1364"
+ }
+}
