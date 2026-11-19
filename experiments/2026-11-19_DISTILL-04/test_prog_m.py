@@ -4,6 +4,7 @@
 положительный (голова ошибается операторами — М лучше нуля-Т), отрицательный (ошибки по таблице, не зависящей от входа — М не лучше),
 мутант кода (из каталога убран главный оператор — преимущество М на положительной заглушке пропадает).
   python3 test_prog_m.py   — печатает ✓/✗ и «провалов: N»"""
+import math
 import os
 import sys
 
@@ -157,17 +158,17 @@ def mass_by_enum(fm, it):
     assert len(V) == D2.ref_size(s)
     C = set().union(*[cand[op] for op in fm['ops']]) | {s + int(d) for d in list(fm['prog']['q']) + list(fm['mt_offsets']) if s + int(d) >= 0}
     eps = fm['prog']['eps']
-    tot = dict(M=0.0, T=0.0, T30=0.0, MT=0.0)
+    parts = dict(M=[], T=[], T30=[], MT=[])               # точное суммирование math.fsum: 10^5 слагаемых (ERRORS № 232)
     for y in set(V) | C:
         if y in dist:
-            for k in tot:
-                tot[k] += dist[y]
+            for k in parts:
+                parts[k].append(dist[y])
             continue
-        tot['M'] += eps * PM.q_m(fm, it, y, S, cand)
-        tot['T'] += D2.answer_prob(fm['prog_T'], it, y, True, dist)
-        tot['T30'] += D2.answer_prob(fm['prog'], it, y, True, dist)
-        tot['MT'] += eps * PM.q_m(fm, it, y, S, cand, mt=True)
-    return tot, dict(S=S, cand=cand, V=V, dist=dist)
+        parts['M'].append(eps * PM.q_m(fm, it, y, S, cand))
+        parts['T'].append(D2.answer_prob(fm['prog_T'], it, y, True, dist))
+        parts['T30'].append(D2.answer_prob(fm['prog'], it, y, True, dist))
+        parts['MT'].append(eps * PM.q_m(fm, it, y, S, cand, mt=True))
+    return {k: math.fsum(v) for k, v in parts.items()}, dict(S=S, cand=cand, V=V, dist=dist)
 
 
 def deficit_formula(fm, it, aux):
