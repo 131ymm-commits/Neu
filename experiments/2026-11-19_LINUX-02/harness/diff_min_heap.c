@@ -2,8 +2,8 @@
  * массивом: размер элемента 1…32 байт (в том числе 3, 5, 12 — не кратные словам), смещение массива 0…4 байта, ёмкость
  * 0…40; less — порядок по первым байтам элемента (с равными ключами: порядок сравнений виден в результате), по возрастанию
  * или убыванию; swp — NULL (выбор встроенного обмена по размеру) или свой обмен. Последовательность до 40 операций:
- * push / pop / pop_push / del / peek / full / heapify_all (после случайного заполнения) / sift_down / sift_up (с позицией
- * внутри кучи: за её пределами поведение оригинала не определено). После каждой операции сравниваются результат,
+ * push / pop / pop_push / del / peek / full / heapify_all (после случайного заполнения) / sift_down / sift_up / del — с позицией
+ * внутри кучи: за её пределами оригинал выходит за массив (поведение не определено). После каждой операции сравниваются результат,
  * nr, size, смещение data и весь массив. */
 #include <linux/min_heap.h>
 #include "diff_common.h"
@@ -73,7 +73,8 @@ static int c_seq(char *ex, size_t exn)
 		case 0: ra = orig___min_heap_push(ha, el, es, &cb, &args); rb = __min_heap_push(hb, el, es, &cb, &args); break;
 		case 1: ra = orig___min_heap_pop(ha, es, &cb, &args); rb = __min_heap_pop(hb, es, &cb, &args); break;
 		case 2: if (ha->nr) { orig___min_heap_pop_push(ha, el, es, &cb, &args); __min_heap_pop_push(hb, el, es, &cb, &args); } break;
-		case 3: { size_t idx = rnd_below(ha->nr + 2); ra = orig___min_heap_del(ha, es, idx, &cb, &args); rb = __min_heap_del(hb, es, idx, &cb, &args); break; }
+		/* __min_heap_del не проверяет idx: idx ≥ nr — выход за массив уже у оригинала; пустая куча — путь с WARN */
+		case 3: { size_t idx = ha->nr ? rnd_below(ha->nr) : 0; ra = orig___min_heap_del(ha, es, idx, &cb, &args); rb = __min_heap_del(hb, es, idx, &cb, &args); break; }
 		case 4: { void *pa = orig___min_heap_peek(ha), *pb = __min_heap_peek(hb);
 			ra = pa ? (long)((u8 *)pa - A.raw) : -1; rb = pb ? (long)((u8 *)pb - B.raw) : -1; break; }
 		case 5: ra = orig___min_heap_full(ha); rb = __min_heap_full(hb); break;

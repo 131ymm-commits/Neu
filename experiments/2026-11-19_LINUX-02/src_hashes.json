@@ -12,6 +12,7 @@
   "src/lib/842/842_compress.c": "5fe4426f31a89fd1bc6094abdeeb9c93885519bffb1c09b9b507ed68e5bce21c",
   "src/lib/842/842_debugfs.h": "d37a1fc5cc23f26dca0c3a5d1e2ed36881d80272da80f6dc847b57df64ec8ef7",
   "src/lib/842/842_decompress.c": "c1302332760341c90d09021078433bc0611defeece6e9243f2ac50cbfed0cf36",
+  "src/lib/cmdline.c": "ab8dea19d720ea8ea974a090e63f927ac7f8d2a37241732875b8b5abbbf1083e",
   "src/lib/crypto/md5.c": "0efe0ec997ef128452b3fd6dd0448cbf29db349bdd0d490bb528a18a33dc11c8",
   "src/lib/crypto/tests/hash-test-template.h": "af640f24bb0978718492cf28c0e38813228b486ff87785d6f98626d79e289367",
   "src/lib/crypto/tests/md5-testvecs.h": "21d2a36feeb167d9d9469fafcb524e8b7604402ea5648b33201491bc71924db1",
@@ -26,5 +27,8 @@
   "src/lib/tests/min_heap_kunit.c": "fbc7e084bbae73a28cb78c02354c0a10e942e3fe0e0037475fbf91742ffe20fb",
   "src/lib/tests/random32_kunit.c": "66f1566c78523d1e71a54bcdea4fe86ccc3f031c8472ef3e8b94a5764cc83178",
   "src/lib/tests/string_helpers_kunit.c": "a224551e5a6407f890f53d4e5192f13595e46672550a9f10248c330f017f1364"
+ },
+ "added_2026_11_19": {
+  "src/lib/cmdline.c": "взят из LINUX-01 (там снимок master 17.11.2026, Makefile 7.4-rc3) для get_options; хеш сверен с тегом v7.4-rc3 (raw.githubusercontent.com, 19.11.2026) — совпадает"
  }
 }

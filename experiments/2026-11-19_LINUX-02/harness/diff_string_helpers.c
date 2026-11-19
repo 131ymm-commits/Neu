@@ -189,10 +189,16 @@ static int c_parse_int(char *ex, size_t exn)
 	char buf[200];
 	size_t n = rnd_below(12);
 	size_t pos = 0;
+	long prev = 0;
 	for (size_t k = 0; k < n && pos < 150; k++) {
 		long v = (long)(rnd_below(2000)) - 1000;
 		if (rnd() % 8 == 0) v = (long)(int)rnd();
-		pos += (size_t)snprintf(buf + pos, sizeof(buf) - pos, "%s%ld", k ? (rnd() % 6 ? "," : (rnd() % 2 ? "-" : " ")) : "", v);
+		/* «a-b» get_options разворачивает в b − a + 1 чисел: диапазон — только узкий (иначе миллиарды чисел и нехватка памяти) */
+		/* обрезка строки (parse_int_array_user) превращает «-900--870» в «-900--8»: концы диапазона — только малые по модулю */
+		int range = k && rnd() % 6 == 0 && prev > -100000 && prev < 100000;
+		if (range) v = prev + (long)rnd_below(40) - 5;
+		pos += (size_t)snprintf(buf + pos, sizeof(buf) - pos, "%s%ld", k ? (range ? "-" : (rnd() % 5 ? "," : " ")) : "", v);
+		prev = v;
 	}
 	if (rnd() % 5 == 0 && pos < 190) buf[pos++] = (char)ALPHA[rnd_below(sizeof(ALPHA) - 1)];
 	buf[pos] = '\0';

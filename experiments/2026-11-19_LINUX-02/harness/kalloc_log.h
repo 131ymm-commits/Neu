@@ -10,3 +10,4 @@ extern int kalloc_log_overflow;
 void kalloc_log_reset(void);
 void kalloc_log_add(int op, size_t arg);
 #define ENAMETOOLONG_K 36
+#define KMALLOC_MAX_SIZE_K (4UL << 20)   /* 1 << (MAX_PAGE_ORDER 10 + PAGE_SHIFT 12) */

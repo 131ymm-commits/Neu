@@ -181,6 +181,10 @@ void kalloc_log_add(int op, size_t arg)
 /* выделение памяти (include/linux/slab.h): поведение — как у успешного kmalloc; флаги не влияют, кроме __GFP_ZERO */
 void *kmalloc(size_t size, gfp_t flags)
 {
+	if (size > KMALLOC_MAX_SIZE_K) {               /* как ядро: больше KMALLOC_MAX_SIZE (4 МиБ, x86_64) — NULL */
+		kalloc_log_add(KLOG_KMALLOC_FAIL, size);
+		return NULL;
+	}
 	kalloc_log_add(KLOG_KMALLOC, size);
 	void *p = malloc(size ? size : 1);
 	if (p && (flags & __GFP_ZERO))
