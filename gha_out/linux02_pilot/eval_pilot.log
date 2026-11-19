@@ -1,0 +1,17 @@
+errseq haiku/errseq_r1 | собран True | слинкован True | KUnit провалено 0 из 14 | расхождений 0 / крайние 0 | верен True
+errseq opus/errseq_r1 | собран True | слинкован True | KUnit провалено 0 из 14 | расхождений 0 / крайние 0 | верен True
+errseq sonnet/errseq_r1 | собран True | слинкован True | KUnit провалено 0 из 14 | расхождений 0 / крайние 0 | верен True
+842_decompress haiku/842_decompress_r1 | собран True | слинкован True | KUnit провалено 0 из 6 | расхождений 0 / крайние 0 | верен True
+842_decompress opus/842_decompress_r1 | собран True | слинкован True | KUnit провалено 0 из 6 | расхождений 0 / крайние 0 | верен True
+842_decompress sonnet/842_decompress_r1 | собран True | слинкован True | KUnit провалено 0 из 6 | расхождений 0 / крайние 0 | верен True
+md5 haiku/md5_r1 | собран True | слинкован True | KUnit провалено 0 из 11 | расхождений 0 / крайние 0 | верен True
+md5 opus/md5_r1 | собран True | слинкован True | KUnit провалено 0 из 11 | расхождений 0 / крайние 0 | верен True
+md5 sonnet/md5_r1 | собран True | слинкован True | KUnit провалено 0 из 11 | расхождений 0 / крайние 0 | верен True
+random32 haiku/random32_r1 | собран True | слинкован True | KUnit провалено 0 из 2 | расхождений 0 / крайние 0 | верен True
+random32 opus/random32_r1 | собран True | слинкован True | KUnit провалено 0 из 2 | расхождений 0 / крайние 0 | верен True
+random32 sonnet/random32_r1 | собран True | слинкован True | KUnit провалено 0 из 2 | расхождений 0 / крайние 0 | верен True
+min_heap haiku/min_heap_r1 | собран True | слинкован True | KUnit провалено 0 из 8 | расхождений 20000 / крайние 20000 | верен False
+min_heap opus/min_heap_r1 | собран True | слинкован True | KUnit провалено 0 из 8 | расхождений 0 / крайние 0 | верен True
+min_heap sonnet/min_heap_r1 | собран True | слинкован True | KUnit провалено 0 из 8 | расхождений 0 / крайние 0 | верен True
+string_helpers haiku/string_helpers_r1 | собран True | слинкован True | KUnit провалено 0 из 4 | расхождений 0 / крайние 0 | верен True
+string_helpers sonnet/string_helpers_r1 | собран True | слинкован True | KUnit провалено 0 из 4 | расхождений 0 / крайние 0 | верен True

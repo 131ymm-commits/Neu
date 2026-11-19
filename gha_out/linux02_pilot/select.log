@@ -1,0 +1,8 @@
+errseq [pilot2] | 1_2_harness=да 3_truth_stronger=нет 4_some_wrong=нет 5_kunit_can_fail=да | в тест: нет
+842_decompress [pilot2] | 1_2_harness=да 3_truth_stronger=да 4_some_wrong=нет 5_kunit_can_fail=да | в тест: нет
+md5 [pilot2] | 1_2_harness=да 3_truth_stronger=да 4_some_wrong=нет 5_kunit_can_fail=да | в тест: нет
+random32 [pilot2] | 1_2_harness=да 3_truth_stronger=да 4_some_wrong=нет 5_kunit_can_fail=да | в тест: нет
+min_heap [pilot2] | 1_2_harness=да 3_truth_stronger=да 4_some_wrong=нет 5_kunit_can_fail=нет | в тест: нет
+string_helpers [pilot2] | 1_2_harness=да 3_truth_stronger=да 4_some_wrong=да 5_kunit_can_fail=да | в тест: да
+в тест: ['string_helpers'] | тест возможен: False
+время: 3431 с
