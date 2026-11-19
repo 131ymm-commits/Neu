@@ -6,7 +6,10 @@
 Отличие от LINUX-01: слова автора в поручение не кладутся. Голова могла бы принять их за указание (урок ERRORS № 31). Последнее
 сообщение автора (о DISTILL-02, «…додестелировать до простой математики») к переводу не относится и могло бы подтолкнуть голову
 «упростить» код.
-  python3 harness/make_prompts.py"""
+Версии: pilot — как было (prompts/<модуль>.md; перед записью сверяется с хешами prompts/prompts.json, менять их нельзя);
+test — то же плюс объяснения имён, пропущенных в пилоте (ERRORS № 216, DEVIATIONS п. 8), в prompts/test/. Поручение версии test
+не пишется, пока harness/prompt_coverage.py находит в нём пропуск.
+  python3 harness/make_prompts.py [--version pilot|test]"""
 import hashlib
 import json
 import os
@@ -79,6 +82,29 @@ MODS = {
                 '`void devres_add(struct device *dev, void *res)`, `void devres_free(void *res)`, `size_t strlen(const char *s)`, '
                 '`int strcmp(const char *a, const char *b)`'),
 }
+# Объяснения для версии test (имена, которые нашёл prompt_coverage.py в поручениях пилота; смысл — по заглушкам обвязки,
+# сверенным с ядром: harness/kernel_shim.h)
+TEST_EXTRA = {
+    'errseq': '',
+    '842_decompress': '`DIV_ROUND_UP(n, d)` — (n + d − 1) / d, целочисленно; `EOVERFLOW` = 75; `GENMASK_ULL(h, l)` — u64, в котором '
+                      'установлены биты с l по h включительно; `__be16`, `__be32`, `__be64` — u16, u32, u64 со значением в порядке big-endian '
+                      '(тип, без преобразования); `atomic_inc(&v)` — атомарно увеличить счётчик на 1 (здесь только счётчики отладки, их можно '
+                      'опустить); `MODULE_AUTHOR`, `MODULE_DESCRIPTION`, `MODULE_LICENSE`, `__init`, `__exit` — служебные, на поведение не влияют.',
+    'md5': '`REPEAT_BYTE(x)` — `unsigned long`, в каждом из 8 байтов которого стоит x: `(~0UL / 0xff) * x`; `__aligned(n)` — выравнивание '
+           'поля или переменной на n байт (`__alignof__(__le64)` = 8); `__le64` — u64 со значением в порядке little-endian (тип, без '
+           'преобразования); `at_least` — пометка размера параметра-массива (в C — `static`), на поведение не влияет; '
+           '`MODULE_DESCRIPTION`, `MODULE_LICENSE` — служебные.',
+    'random32': '`IS_ENABLED(CONFIG_…)` — 1, если параметр задан, иначе 0 (здесь задан `CONFIG_KUNIT`); `__u32` — u32.',
+    'min_heap': '`CONFIG_64BIT` задан (x86_64): ветви `#ifdef CONFIG_64BIT` действуют; `__always_inline` — пометка встраивания, на '
+                'поведение не влияет; `container_of(ptr, type, member)` — указатель на структуру type, в которой ptr указывает на поле '
+                'member: `(type *)((char *)ptr - offsetof(type, member))`.',
+    'string_helpers': '`BIT(n)` — `1UL << n`; `GENMASK(h, l)` — `unsigned long`, в котором установлены биты с l по h включительно; '
+                      '`PAGE_SIZE` = 4096; `PATH_MAX` = 4096; `WARN(cond, fmt, ...)` — предупреждение в журнал, возвращает cond; '
+                      '`hex_asc_hi(x)` и `hex_asc_lo(x)` — символ строчной шестнадцатеричной цифры (`"0123456789abcdef"`) старшей и '
+                      'младшей тетрады байта x; `tolower(c)` и `toupper(c)` — по таблице ядра (Latin-1): заглавные — «A»–«Z», 192–214 и '
+                      '216–222, строчные — «a»–«z», 223–246 и 248–255; `tolower` прибавляет 32 к заглавной, `toupper` вычитает 32 из '
+                      'строчной, остальные байты не меняет.',
+}
 TEMPLATE = """LINUX-02, переводчик.
 
 Задача: переведи файл ядра Linux `{path}` (ниже целиком) с C на Rust так, чтобы перевод можно было подставить вместо оригинала: те же экспортируемые функции и то же поведение.
@@ -105,20 +131,42 @@ def read(p):
     return open(os.path.join(X, 'src', p), encoding='utf-8').read().rstrip('\n')
 
 
-def main():
-    os.makedirs(os.path.join(X, 'prompts'), exist_ok=True)
-    out = {}
+def build(m, d, version):
+    macros = d['macros'] + (('; ' + TEST_EXTRA[m]) if version == 'test' and TEST_EXTRA[m] else '')
+    hdr = ''.join(f"Заголовок `{h}` (типы, структуры, константы, встроенные функции):\n```c\n{read(h)}\n```\n\n" for h in d['headers'])
+    return TEMPLATE.format(path=d['path'], config=d['config'], macros=macros, externs=d['externs'], headers=hdr, source=read(d['path']))
+
+
+def main(a):
+    version = a[a.index('--version') + 1] if '--version' in a else 'pilot'
+    assert version in ('pilot', 'test'), version
+    out_dir = os.path.join(X, 'prompts') if version == 'pilot' else os.path.join(X, 'prompts', 'test')
+    os.makedirs(out_dir, exist_ok=True)
+    committed = json.load(open(os.path.join(X, 'prompts', 'prompts.json'), encoding='utf-8')) if version == 'pilot' else {}
+    texts, out = {}, {}
     for m, d in MODS.items():
-        hdr = ''.join(f"Заголовок `{h}` (типы, структуры, константы, встроенные функции):\n```c\n{read(h)}\n```\n\n" for h in d['headers'])
-        txt = TEMPLATE.format(path=d['path'], config=d['config'], macros=d['macros'], externs=d['externs'], headers=hdr, source=read(d['path']))
-        p = os.path.join(X, 'prompts', f'{m}.md')
-        open(p, 'w', encoding='utf-8').write(txt)
-        out[m] = dict(chars=len(txt), sha256=hashlib.sha256(txt.encode()).hexdigest(),
+        txt = build(m, d, version)
+        sha = hashlib.sha256(txt.encode()).hexdigest()
+        if version == 'pilot' and committed.get(m, {}).get('sha256') not in (None, sha):
+            raise SystemExit(f'СТОП: поручение пилота {m} вышло не таким, как закоммиченное (хеш) — пилотные поручения не меняются')
+        texts[m] = txt
+        out[m] = dict(chars=len(txt), sha256=sha,
                       c_lines=sum(1 for l in read(d['path']).splitlines() if l.strip()),
                       header_lines=sum(1 for h in d['headers'] for l in read(h).splitlines() if l.strip()))
-        print(m, out[m]['chars'], 'символов; строк C:', out[m]['c_lines'], '+ заголовки', out[m]['header_lines'])
-    json.dump(out, open(os.path.join(X, 'prompts', 'prompts.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    if version == 'test':
+        import prompt_coverage as PC                       # noqa: E402  (рядом в harness/)
+        shim = PC.shim_names()
+        bad = {m: PC.gaps(m, t, shim)[0] for m, t in texts.items()}
+        bad = {m: g for m, g in bad.items() if g}
+        if bad:
+            raise SystemExit(f'СТОП: в поручениях версии test есть необъяснённые имена: {bad}')
+    for m, txt in texts.items():
+        open(os.path.join(out_dir, f'{m}.md'), 'w', encoding='utf-8').write(txt)
+        print(version, m, out[m]['chars'], 'символов; строк C:', out[m]['c_lines'], '+ заголовки', out[m]['header_lines'])
+    json.dump(out, open(os.path.join(out_dir, 'prompts.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
 
 
 if __name__ == '__main__':
-    main()
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    main(sys.argv[1:])

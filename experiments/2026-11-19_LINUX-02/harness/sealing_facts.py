@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """LINUX-02: факты запечатывания голов-переводчиков — как в LINUX-01 (harness/sealing_facts.py там же; tools/audit_heads.py
 читает журналы workflow, а не вызовы claude -p). Новое: фаза (translations/<фаза>/<голова>/<модуль>_r<k>.json) и повтор.
-По каждому вызову — факты запечатывания: хеш поручения совпадает с закоммиченным prompts/<модуль>.md; флаг инструментов
+По каждому вызову — факты запечатывания: хеш поручения совпадает с закоммиченным prompts/<модуль>.md (фаза test — prompts/test/<модуль>.md); флаг инструментов
 --tools ""; папка вызова вне репозитория; модель ответа — заказанная. Отдельно — исход (в запечатывание не входит): ответ без
 ошибки, код извлечён, файл .rs на месте; отказ площадки (текст «safeguards flagged») помечается refused.
 Плюс факты среды на момент записи: папки вызовов (через запятую) пусты, пользовательского ~/.claude/CLAUDE.md нет.
@@ -22,7 +22,7 @@ def main(a):
     for f in sorted(glob.glob(os.path.join(X, 'translations', phase, '*', '*.json'))):
         r = json.load(open(f, encoding='utf-8'))
         mod = r['module']
-        sha = hashlib.sha256(open(os.path.join(X, 'prompts', f'{mod}.md'), 'rb').read()).hexdigest()
+        sha = hashlib.sha256(open(os.path.join(X, 'prompts', *(['test'] if phase == 'test' else []), f'{mod}.md'), 'rb').read()).hexdigest()
         seal = dict(prompt_matches_committed=r.get('prompt_sha256') == sha,
                     tools_flag_empty=r.get('tools_flag') == '--tools ""',
                     cwd_outside_repo=bool(r.get('cwd_outside_repo')),

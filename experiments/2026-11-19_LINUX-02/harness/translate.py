@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """LINUX-02: переводы запечатанными головами — как в LINUX-01 (harness/translate.py там же). Каждая голова — отдельный вызов
 «claude -p --tools ""» (инструментов нет вовсе) из пустой папки вне репозитория (нет CLAUDE.md и снимка git). Поручение —
-prompts/<модуль>.md дословно через stdin. Новое: фазы (pilot / test), повторы и счётчик трат с остановкой.
+prompts/<модуль>.md (фаза test — prompts/test/<модуль>.md) дословно через stdin. Новое: фазы (pilot / test), повторы и счётчик трат с остановкой.
 Пишет translations/<фаза>/<голова>/<модуль>_r<повтор>.rs (блок ```rust из ответа) и .json (ответ, расход, модель, хеш поручения).
 Счётчик: перед каждым вызовом складывается total_cost_usd всех уже записанных .json фазы (вместе с прежними запусками);
 если сумма не меньше предела, новые вызовы не начинаются. Вызовы в полёте (не больше --workers) могут превысить предел на свою цену.
@@ -26,6 +26,11 @@ MODULES = ['errseq', '842_decompress', 'md5', 'random32', 'min_heap', 'string_he
 LOCK = threading.Lock()
 
 
+def prompt_path(phase, mod):
+    """Пилот — prompts/<модуль>.md (хеши пилота); тест — prompts/test/<модуль>.md (новая версия, DEVIATIONS п. 8)."""
+    return os.path.join(X, 'prompts', *(['test'] if phase == 'test' else []), f'{mod}.md')
+
+
 def spent(phase):
     tot = 0.0
     for f in glob.glob(os.path.join(X, 'translations', phase, '*', '*.json')):
@@ -42,7 +47,7 @@ def done(path):
 
 
 def one(head, mod, rep, cwd, phase):
-    prompt = open(os.path.join(X, 'prompts', f'{mod}.md'), encoding='utf-8').read()
+    prompt = open(prompt_path(phase, mod), encoding='utf-8').read()
     t0 = time.time()
     p = subprocess.run(['claude', '-p', '--tools', '', '--model', MODELS[head], '--output-format', 'json'],
                        input=prompt, capture_output=True, text=True, cwd=cwd, timeout=3600)

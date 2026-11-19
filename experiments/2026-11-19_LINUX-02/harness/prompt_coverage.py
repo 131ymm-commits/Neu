@@ -5,7 +5,7 @@
 заголовках (строки #include не считаются), но не определено
 в приложенных заголовках и не названо в условиях поручения (текст поручения вне блоков кода), — пропуск.
 Стандартные имена C (memcpy, size_t, …) пропуском не считаются.
-  python3 harness/prompt_coverage.py [OUT.json]   — код выхода 1, если есть пропуски"""
+  python3 harness/prompt_coverage.py [OUT.json] [--dir prompts/test]   — код выхода 1, если есть пропуски"""
 import glob
 import json
 import os
@@ -57,22 +57,31 @@ def defined_in(src):
     return d
 
 
+def gaps(m, prompt, shim=None):
+    """Пропуски поручения prompt для модуля m: имена из обвязки, которые стоят в исходнике или заголовках и нигде не объяснены."""
+    shim = shim_names() if shim is None else shim
+    d = MP.MODS[m]
+    text_ids = set(ID.findall(code_free(prompt)))
+    src = MP.read(d['path'])
+    hdrs = '\n'.join(MP.read(h) for h in d['headers'])
+    used = set(ID.findall(strip_comments(src + '\n' + hdrs)))
+    defined = defined_in(src + '\n' + hdrs)
+    return sorted((used & shim) - defined - text_ids - C_STD), sorted((used & shim) - defined)
+
+
 def main(a):
+    pdir = a[a.index('--dir') + 1] if '--dir' in a else os.path.join(X, 'prompts')
+    out = [x for i, x in enumerate(a) if not x.startswith('--') and (i == 0 or a[i - 1] != '--dir')]
     shim = shim_names()
     res, gaps_all = {}, 0
-    for m, d in MP.MODS.items():
-        prompt = open(os.path.join(X, 'prompts', f'{m}.md'), encoding='utf-8').read()
-        text_ids = set(ID.findall(code_free(prompt)))
-        src = MP.read(d['path'])
-        hdrs = '\n'.join(MP.read(h) for h in d['headers'])
-        used = set(ID.findall(strip_comments(src + '\n' + hdrs)))
-        defined = defined_in(src + '\n' + hdrs)
-        gaps = sorted((used & shim) - defined - text_ids - C_STD)
-        res[m] = dict(used_from_shim=sorted((used & shim) - defined), gaps=gaps)
-        gaps_all += len(gaps)
-        print(m, '| имён из обвязки:', len(res[m]['used_from_shim']), '| не объяснено в поручении:', len(gaps), gaps)
-    if len(a) > 0:
-        json.dump(res, open(a[0], 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    for m in MP.MODS:
+        prompt = open(os.path.join(pdir, f'{m}.md'), encoding='utf-8').read()
+        g, used = gaps(m, prompt, shim)
+        res[m] = dict(used_from_shim=used, gaps=g)
+        gaps_all += len(g)
+        print(m, '| имён из обвязки:', len(used), '| не объяснено в поручении:', len(g), g)
+    if out:
+        json.dump(dict(prompts_dir=os.path.relpath(pdir, X), modules=res), open(out[0], 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
     return 1 if gaps_all else 0
 
 

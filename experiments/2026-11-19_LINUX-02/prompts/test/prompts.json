@@ -1,0 +1,38 @@
+{
+ "errseq": {
+  "chars": 9899,
+  "sha256": "d1bd3d015c8327534311ed1baaadfc85d483e9556a99bb57b0841e279f590a31",
+  "c_lines": 192,
+  "header_lines": 12
+ },
+ "842_decompress": {
+  "chars": 18165,
+  "sha256": "e8389292a22c57b8a06170c12220408deccdd65b4eeb6a37f88a785c34f130e5",
+  "c_lines": 347,
+  "header_lines": 127
+ },
+ "md5": {
+  "chars": 18752,
+  "sha256": "f4a90fa67eade41b08100fa2e943a99b04fac30045f7b753b68c2cb8eb868440",
+  "c_lines": 257,
+  "header_lines": 211
+ },
+ "random32": {
+  "chars": 8001,
+  "sha256": "9d5624445432b97c3cd23a5327b7594f7d6e88c4ea0e131e58446198639e4149",
+  "c_lines": 125,
+  "header_lines": 42
+ },
+ "min_heap": {
+  "chars": 20967,
+  "sha256": "c38cff36261cf1a501c0b058fa1876fc028c10a7fc6c9bc3dea922f039ac409a",
+  "c_lines": 60,
+  "header_lines": 418
+ },
+ "string_helpers": {
+  "chars": 33235,
+  "sha256": "8d27d99a7297a6b6ffc781ee22a94acff5604ae40209f03758d5419e4fd0fc8d",
+  "c_lines": 918,
+  "header_lines": 98
+ }
+}
