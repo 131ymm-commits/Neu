@@ -144,7 +144,77 @@ def t_pilot_dry():
     check('сухой прогон пилота: мощность посчитана для 8 сред теста', pw is not None and out['power']['test5_thousands']['m_test'] == 8, str(pw and pw['power']))
 
 
+NORM_MAX = 1e-3                 # PREREG §4 «Нормировка» (совет 78, п. 6): порог наибольшей по задачам |недостача М − недостача Т| / ε
+
+
+def mass_by_enum(fm, it):
+    """Перебор всех значений V ∪ C (C — кандидаты операторов и смещения таблиц): суммы вероятностей М, Т, Т30, М+Т на задаче."""
+    dist = D2.program_dist(fm['prog'], it, True)
+    S = set(dist)
+    cand = PM.candidates(it['a'], it['b'])
+    s, n = it['sum'], len(str(it['sum']))
+    V = range(10 ** max(n - 3, 0), 10 ** (n + 1))
+    assert len(V) == D2.ref_size(s)
+    C = set().union(*[cand[op] for op in fm['ops']]) | {s + int(d) for d in list(fm['prog']['q']) + list(fm['mt_offsets']) if s + int(d) >= 0}
+    eps = fm['prog']['eps']
+    tot = dict(M=0.0, T=0.0, T30=0.0, MT=0.0)
+    for y in set(V) | C:
+        if y in dist:
+            for k in tot:
+                tot[k] += dist[y]
+            continue
+        tot['M'] += eps * PM.q_m(fm, it, y, S, cand)
+        tot['T'] += D2.answer_prob(fm['prog_T'], it, y, True, dist)
+        tot['T30'] += D2.answer_prob(fm['prog'], it, y, True, dist)
+        tot['MT'] += eps * PM.q_m(fm, it, y, S, cand, mt=True)
+    return tot, dict(S=S, cand=cand, V=V, dist=dist)
+
+
+def deficit_formula(fm, it, aux):
+    """Недостача по формуле (PREREG §4): М — ε·(π_U/Z)·(|S ∩ V| − |C' ∖ V|)/|V|; Т — ε·(q_rest/tot)·(|S ∩ V| + |T_valid ∩ V|)/|V|."""
+    S, cand, V = aux['S'], aux['cand'], aux['V']
+    eps, s = fm['prog']['eps'], it['sum']
+    lo, hi = V.start, V.stop
+    live = [cand[op] - S for op in fm['ops']]
+    Z = sum(p for p, ck in zip(fm['pi'][:-1], live) if ck) + fm['pi'][-1]
+    out_v = len(set().union(*live) - set(V)) if live else 0
+    d_m = eps * (fm['pi'][-1] / Z) * (sum(lo <= y < hi for y in S) - out_v) / len(V)
+    pt = fm['prog_T']
+    valid = {s + int(d) for d, q in pt['q'].items() if s + int(d) >= 0 and s + int(d) not in S}
+    tot_t = sum(q for d, q in pt['q'].items() if s + int(d) >= 0 and s + int(d) not in S) + pt['q_rest']
+    d_t = eps * (pt['q_rest'] / tot_t) * (sum(lo <= y < hi for y in S) + sum(lo <= y < hi for y in valid)) / len(V)
+    return d_m, d_t
+
+
+def t_norm():
+    """Совет 78, п. 6: суммы М, Т, Т30 и М+Т по V ∪ C не больше 1 (допуск 1e-12); недостача ε − Σ_{y ∉ S} P(y) у М и у Т по задачам;
+    формулы недостачи сверены с перебором; наибольшая по задачам |недостача М − недостача Т| / ε печатается (порог NORM_MAX — правило
+    PREREG, ветвь выбирается по нему, а не по исходу теста)."""
+    q = {-20: 0.25, -40: 0.15, 20: 0.1, -90: 0.05, 2: 0.05}
+    prog = dict(eps=0.3, q=q, q_rest=0.4, n_other=100, features=['prop'], w=[-1.0, 1.0], w_round=[-1.0, 1.0])
+    fm = dict(prog=prog, ops=list(OPS), pi=np.array([0.1, 0.05, 0.1, 0.05, 0.3, 0.1, 0.3]), prog_T=PM.table_prog(prog, 3),
+              mt_offsets=[-20, -40], pi_mt=np.array([0.1, 0.05, 0.05, 0.05, 0.2, 0.05, 0.2, 0.1, 0.2]))
+    tasks = [(457, 86), (199, 99), (805, 17), (360, 45), (898, 99), (1957, 86)]
+    worst, gap, rows = 0.0, 0.0, []
+    for a, b in tasks:
+        it = dict(a=a, b=b, sum=a + b, ood=0)
+        tot, aux = mass_by_enum(fm, it)
+        worst = max(worst, max(tot.values()) - 1.0)
+        d_m, d_t = 1.0 - tot['M'], 1.0 - tot['T']
+        f_m, f_t = deficit_formula(fm, it, aux)
+        gap = max(gap, abs(d_m - f_m), abs(d_t - f_t))
+        rows.append((a, b, d_m / prog['eps'], d_t / prog['eps']))
+    check('нормировка: суммы М, Т, Т30, М+Т по V ∪ C не больше 1 (допуск 1e-12)', worst <= 1e-12, f'наибольший избыток {worst:.1e}')
+    check('нормировка: недостача М и Т по формуле PREREG совпадает с перебором (1e-12)', gap <= 1e-12, f'расхождение {gap:.1e}')
+    mx = max(abs(r[2] - r[3]) for r in rows)
+    for a, b, dm, dt in rows:
+        print(f'  недостача / ε: {a} + {b} — М {dm:.3e}, Т {dt:.3e}, |М − Т| {abs(dm - dt):.3e}')
+    print(f'ℹ нормировка (заглушка): наибольшая по задачам |недостача М − недостача Т| / ε = {mx:.3e}; порог PREREG {NORM_MAX:g} — '
+          + ('не выше порога' if mx <= NORM_MAX else 'ВЫШЕ порога'), flush=True)
+
+
 if __name__ == '__main__':
+    t_norm()
     t_clamp()
     t_fit_weights()
     t_probs()
