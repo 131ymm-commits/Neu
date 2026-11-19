@@ -1,15 +1,19 @@
 #!/bin/bash
-# ЯДРО-UML, проба 2 (experiments/2026-11-19_KERNEL-UML/PLAN.md). Проба 1: у UML есть select HAVE_RUST, но CONFIG_RUST не
-# включился ни под um, ни под x86_64 («Missing: CONFIG_RUST=y»). Предположение (не проверено): rustup override стоял для папки
-# исходников, а kunit.py собирает в O=папке — там другой toolchain без rust-src. Здесь: toolchain по умолчанию с rust-src,
-# rustavailable с O=, выписка зависимостей RUST из .config. Дальше — как в пробе 1: собирается ли ядро с CONFIG_RUST под ARCH=um и
+# ЯДРО-UML, проба 3 (experiments/2026-11-19_KERNEL-UML/PLAN.md).
+#   Проба 1: у UML есть select HAVE_RUST, но CONFIG_RUST не включился — rustup override стоял только для папки исходников
+#   (проверено пробой 2, ERRORS № 223). Проба 2: CONFIG_RUST=y, но крейт kernel не собрался — привязки bindgen без полей; ядро
+#   само предупредило: bindgen < 0.72.1 с libclang ≥ 22 (у раннера 22.1.2) — ошибка bindgen, и libclang не той версии, что clang 21.
+#   Здесь: bindgen 0.72.1 и libclang 21 (LIBCLANG_PATH), версия та же, что у clang. Дальше — собирается ли ядро с CONFIG_RUST под ARCH=um и
 # идёт ли KUnit int_pow, если int_pow заменён переводом на Rust из LINUX-01 (три головы, все верны в ступени А).
 # Запасной путь — --arch=x86_64 (QEMU). Только проба: головы не вызываются, ключей нет. Процессор раннера.
 set -uo pipefail
 OUT=$(realpath "$1")
 NEU=$PWD
 T0=$(date +%s)
-sudo apt-get update -q >/dev/null && sudo apt-get install -y -q flex bison bc libelf-dev libssl-dev clang lld llvm qemu-system-x86 >/dev/null
+sudo apt-get update -q >/dev/null && sudo apt-get install -y -q flex bison bc libelf-dev libssl-dev clang lld llvm libclang-dev qemu-system-x86 >/dev/null
+CLV=$(clang --version | sed -n 's/.*clang version \([0-9]*\)\..*/\1/p' | head -1)
+[ -d "/usr/lib/llvm-$CLV/lib" ] && export LIBCLANG_PATH="/usr/lib/llvm-$CLV/lib"
+{ echo "clang $CLV; LIBCLANG_PATH=${LIBCLANG_PATH:-не задан}"; ls /usr/lib/llvm-*/lib/libclang.so* 2>/dev/null | head; } | tee -a "$OUT/probe.log"
 echo "пакеты: $(( $(date +%s) - T0 )) с" | tee "$OUT/probe.log"
 git clone -q --depth 1 --branch v7.4-rc3 https://github.com/torvalds/linux.git "$RUNNER_TEMP/linux" && cd "$RUNNER_TEMP/linux" || exit 1
 { echo "ядро: $(git rev-parse HEAD) $(make -s kernelversion)"; echo "клон: $(( $(date +%s) - T0 )) с"; } | tee -a "$OUT/probe.log"
@@ -18,14 +22,14 @@ source "$HOME/.cargo/env" 2>/dev/null || true
 RV=$(scripts/min-tool-version.sh rustc); BV=$(scripts/min-tool-version.sh bindgen)
 echo "минимальные версии: rustc $RV, bindgen $BV" | tee -a "$OUT/probe.log"
 rustup set profile minimal >/dev/null; rustup toolchain install "$RV" -c rust-src > "$OUT/rustup.log" 2>&1 && rustup default "$RV" >> "$OUT/rustup.log" 2>&1
-cargo install --locked bindgen-cli --version "$BV" > "$OUT/bindgen.log" 2>&1
+cargo install --locked bindgen-cli --version 0.72.1 > "$OUT/bindgen.log" 2>&1     # не ниже минимума ядра ($BV); 0.72.1 — исправление bindgen для libclang ≥ 22
 { rustc --version; bindgen --version; clang --version | head -1; echo "инструменты: $(( $(date +%s) - T0 )) с"; } | tee -a "$OUT/probe.log"
 { echo "--- HAVE_RUST в Kconfig архитектур:"; grep -n "HAVE_RUST" arch/um/Kconfig arch/x86/Kconfig arch/Kconfig init/Kconfig 2>/dev/null | head -20; } | tee -a "$OUT/probe.log"
 { echo "--- зависимости config RUST (init/Kconfig):"; awk '/^config RUST$/{f=1} f&&/^config /&&!/^config RUST$/{exit} f' init/Kconfig; } | tee -a "$OUT/probe.log"
 for a in um x86_64; do
   mkdir -p "$RUNNER_TEMP/kbuild_$a"
   { echo "--- rustc в папке сборки $a: $(cd "$RUNNER_TEMP/kbuild_$a" && rustc --version)"; \
-    make ARCH=$a LLVM=1 O="$RUNNER_TEMP/kbuild_$a" rustavailable 2>&1 | tail -6 | sed "s/^/  rustavailable $a: /"; } | tee -a "$OUT/probe.log"
+    make ARCH=$a LLVM=1 O="$RUNNER_TEMP/kbuild_$a" rustavailable 2>&1 | grep -v "Entering\|Leaving" | sed "s/^/  rustavailable $a: /"; } | tee -a "$OUT/probe.log"
 done
 printf 'CONFIG_KUNIT=y\nCONFIG_INT_POW_KUNIT_TEST=y\nCONFIG_RUST=y\n' > "$RUNNER_TEMP/lx.kunitconfig"
 cp "$RUNNER_TEMP/lx.kunitconfig" "$OUT/kunitconfig.txt"
