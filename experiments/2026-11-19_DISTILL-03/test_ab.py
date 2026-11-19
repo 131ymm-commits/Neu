@@ -83,6 +83,45 @@ def t_rows_match_fit_program():
     check('строки формулы те же, что в fit_program', len(y) == fp['n_rows'] and np.allclose(w, fp['w'], atol=1e-9), f"{len(y)} строк")
 
 
+def t_large_slopes():
+    """Ошибка № 224: при наклонах ±20 свободный член должен находиться, а своя форма при своём уровне — совпадать со своей программой."""
+    rng = np.random.default_rng(4)
+    items = items_pool(3000, rng)
+    rows, y = [], []
+    for it in items:
+        for r in D2.position_features(it['a'], it['b'], it['ood']):
+            z = 17.0 - 23.0 * r['top'] - 22.0 * r['ood']
+            rows.append(r)
+            y.append(float(rng.random() < 1 / (1 + math.exp(-max(-30, min(30, z))))))
+    b0 = ab.fit_intercept(rows, np.array(y), ['top', 'ood'], [-23.0, -22.0])
+    check('большие наклоны: свободный член найден (около 17)', abs(b0 - 17.0) < 2.0, f'{b0:.3f}')
+    prog = mk(0.1, 17.0, ['top', 'ood'], [-23.0, -22.0])
+    offs = np.array([D2.sample_program(prog, it, rng) for it in items])
+    P = ab.programs_from(items, {'h0': offs, 'h1': offs.copy()})
+    own = P['prog']['h0']
+    sh = P['shape'][('h0', 'h0')]
+    ll_p, ll_s = [], []
+    for it, d in zip(items[:800], offs[:800]):
+        if d >= D2.NC:
+            continue
+        y_ = it['sum'] + int(d)
+        ll_p.append(D2.mlog(D2.answer_prob(own, it, y_, True), it['sum']))
+        ll_s.append(D2.mlog(D2.answer_prob(sh, it, y_, True), it['sum']))
+    check('большие наклоны: своя форма при своём уровне ≈ своя программа', abs(np.mean(ll_s) - np.mean(ll_p)) < 0.05,
+          f'{np.mean(ll_s):.4f} против {np.mean(ll_p):.4f}')
+
+
+def t_loader_keeps_phases():
+    """Ошибка № 224: одна среда в двух фазах — обе в построении (список, не словарь)."""
+    orig = D2.load_merged
+    try:
+        D2.load_merged = lambda d: {'T_X19_p3': {'phase': d}, 'L_X9_p3': {'phase': d}}
+        envs = ab.load_family_envs(['ф1', 'ф2'], 'thousands')
+    finally:
+        D2.load_merged = orig
+    check('сборка построения: одна среда из двух фаз — обе, чужое семейство отброшено', [e['phase'] for _, e in envs] == ['ф1', 'ф2'], str(envs))
+
+
 # ───────────── сквозные заглушки: головы из известных программ
 def synth(progs, n_con, n_env, n_envs, seed):
     rng = np.random.default_rng(seed)
@@ -125,6 +164,8 @@ if __name__ == '__main__':
     t_s_table()
     t_intercept()
     t_rows_match_fit_program()
+    t_large_slopes()
+    t_loader_keeps_phases()
     t_end_to_end()
     print('провалов:', len(FAILS), FAILS)
     sys.exit(1 if FAILS else 0)

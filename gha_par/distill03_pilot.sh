@@ -29,3 +29,4 @@ python3 $E3/ab.py fits "$OUT/fits.json" "$OUT/spec.json" | tee "$OUT/fits.log"
 python3 $E3/ab.py pilot "$OUT/pilot.json" "$OUT/spec.json" | tee "$OUT/pilot.log"
 echo "всего: $(( $(date +%s) - T0 )) с" | tee -a "$OUT/time.log"
 rm -rf "$OUT"/c_* "$OUT"/t_*          # сборки восстанавливаются из gha_out/ теми же командами
+# перезапуск пилота после ERRORS № 224 (18:32 UTC)

@@ -54,22 +54,29 @@ def program_rows(items, offsets):
     return rows, np.array(y)
 
 
-def fit_intercept(rows, y, feats, slopes, iters=100):
-    """Свободный член логистической формулы при заданных признаках и наклонах (метод Ньютона по одному параметру)."""
+def fit_intercept(rows, y, feats, slopes, lo=-60.0, hi=60.0, iters=200):
+    """Свободный член логистической формулы при заданных признаках и наклонах. Уравнение Σ(y − σ(b + x·w)) = 0 монотонно по b —
+    решается делением отрезка (метод Ньютона расходился при наклонах ±20, ERRORS № 224). Все y одной метки — край отрезка."""
     if not len(y):
         return 0.0
     off = np.array([sum(s * r[f] for s, f in zip(slopes, feats)) for r in rows], float) if feats else np.zeros(len(y))
-    b = 0.0
+    y = np.asarray(y, float)
+
+    def g(b):
+        return float(np.sum(y - 1 / (1 + np.exp(-np.clip(b + off, -60, 60)))))
+    if g(lo) <= 0:
+        return lo
+    if g(hi) >= 0:
+        return hi
     for _ in range(iters):
-        z = np.clip(b + off, -30, 30)
-        p = 1 / (1 + np.exp(-z))
-        g = float(np.sum(y - p))
-        h = float(np.sum(p * (1 - p))) + 1e-12
-        step = g / h
-        b += step
-        if abs(step) < 1e-12:
+        mid = (lo + hi) / 2
+        if g(mid) > 0:
+            lo = mid
+        else:
+            hi = mid
+        if hi - lo < 1e-10:
             break
-    return float(b)
+    return float((lo + hi) / 2)
 
 
 def shape_at_level(prog_a, prog_b, rows_b, y_b):
@@ -157,11 +164,16 @@ def s_table(mats):
         return np.nanmean(A, axis=0)
 
 
+_PERMS = {}
+
+
 def perm_test(s):
     """D = среднее по головам s[b, b]; D_π для всех перестановок меток программ; p = доля D_π ≥ D (с допуском 1e-12)."""
     k = s.shape[0]
     D = float(np.mean(np.diag(s)))
-    vals = np.array([np.mean(s[list(pi), range(k)]) for pi in itertools.permutations(range(k))])
+    if k not in _PERMS:
+        _PERMS[k] = np.array(list(itertools.permutations(range(k))), dtype=np.int64)
+    vals = s[_PERMS[k], np.arange(k)].mean(axis=1)                     # все перестановки меток программ сразу
     p = float(np.mean(vals >= D - 1e-12))
     return dict(D=D, p=p, n_perm=len(vals), rank=int(np.sum(vals > D + 1e-12)) + 1, perm_mean=float(np.mean(vals)),
                 perm_max=float(np.max(vals)), per_head={int(b): float(s[b, b] - (np.sum(s[:, b]) - s[b, b]) / (k - 1)) for b in range(k)})
@@ -197,14 +209,19 @@ def family_result(P, envs, names, heads_order):
         res[kind]['nearest_other'] = dict(per_env_head=nn.tolist(), per_head=np.nanmean(nn, axis=0).tolist(), mean=float(np.nanmean(nn)),
                                           heads_own_best=int(np.sum(np.nanmean(nn, axis=0) > 0)))
     res['accuracy_construction'] = {h: P['acc'].get(h) for h in heads_order}
+    # проверка формы: своя форма при своём уровне почти совпадает со своей программой (наклоны те же, свободный член подобран заново)
+    res['own_shape_minus_own_prog'] = (np.array([np.diag(m) for m in mats['shape']]) - own).tolist()
+    res['shape_intercepts'] = {f"{a}|{b}": P['shape'][(a, b)]['w_round'][0] for a in heads_order for b in heads_order}
     return res
 
 
 # ───────────── сборка данных и команды
-def load_family_envs(dirs):
-    envs = {}
+def load_family_envs(dirs, fam):
+    """Список сред семейства из всех папок — как в DISTILL-02 (`test_d2`): одна и та же среда (T_X19_p3) есть в нескольких фазах,
+    поэтому список, а не словарь по имени (ERRORS № 224: словарь оставлял только последнюю фазу)."""
+    envs = []
     for d in dirs:
-        envs.update(D2.load_merged(d))
+        envs += [(n, e) for n, e in D2.load_merged(d).items() if D2.family_of(n) == fam]
     return envs
 
 
@@ -213,8 +230,7 @@ def fits_cmd(dst, spec):
     out = dict(families={})
     ref = json.load(open(spec['distill02_analysis'], encoding='utf-8'))['formulas'] if spec.get('distill02_analysis') else None
     for fam, dirs in spec['construction'].items():
-        envs = load_family_envs(dirs)
-        progs = family_programs(list(envs.values()))['prog']
+        progs = family_programs([e for _, e in load_family_envs(dirs, fam)])['prog']
         cmp = {}
         for h, p in progs.items():
             r = (ref or {}).get(fam, {}).get(h)
@@ -232,9 +248,12 @@ def run_cmd(dst, spec, phase):
     t0 = time.time()
     out = dict(phase=phase, lam=D2.LAMBDA, families={})
     for fam, dirs in spec['construction'].items():
-        P = family_programs(list(load_family_envs(dirs).values()))
+        P = family_programs([e for _, e in load_family_envs(dirs, fam)])
         heads_order = sorted(P['prog'])
-        test_envs = load_family_envs(spec['test'][fam])
+        test_list = load_family_envs(spec['test'][fam], fam)
+        test_envs = dict(test_list)
+        assert len(test_envs) == len(test_list), 'в тесте одна среда встретилась дважды'
+        out.setdefault('construction_n', {})[fam] = {h: int(p['n_numeric']) for h, p in P['prog'].items()}
         names = [n for n in (PILOT_ENVS if phase == 'pilot' else TEST_ENVS[fam]) if n in test_envs]
         if not names:
             continue
@@ -244,7 +263,7 @@ def run_cmd(dst, spec, phase):
             print(fam, kind, '| сред', len(names), '| D =', round(r['D'], 4), '| p =', round(r['p'], 5), '| ранг', r['rank'], 'из', r['n_perm'], flush=True)
         if 'descriptive' in spec:
             for dfam_name, ddirs in spec['descriptive'].get(fam, {}).items():
-                denvs = load_family_envs(ddirs)
+                denvs = dict(load_family_envs(ddirs, fam))
                 out['families'][fam].setdefault('descriptive', {})[dfam_name] = family_result(P, denvs, sorted(denvs), heads_order)
     out['seconds'] = round(time.time() - t0, 1)
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
