@@ -11,7 +11,7 @@ import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-OUT = os.path.join(ROOT, 'gha_out', 'distill04_sum_test')
+OUT = os.path.join(ROOT, 'gha_out', 'distill04_sum_test_b')          # повтор после сбоя (DEVIATIONS.md, отступление 1)
 SHORT = {'Falcon3-1B-Instruct': 'Falcon 1B', 'OLMo-2-0425-1B-Instruct': 'OLMo 1B', 'Qwen2.5-0.5B-Instruct': 'Qwen 0,5B',
          'Qwen2.5-1.5B-Instruct': 'Qwen 1,5B', 'SmolLM2-1.7B-Instruct': 'SmolLM 1,7B', 'SmolLM2-360M-Instruct': 'SmolLM 360M',
          'TinyLlama-1.1B-Chat-v1.0': 'TinyLlama 1,1B'}
