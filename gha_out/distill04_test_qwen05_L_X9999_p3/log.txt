@@ -1,0 +1,5 @@
+[    0.0 с] фаза test6L | сред 1 | задач 2200
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   11.1 с] Qwen/Qwen2.5-0.5B-Instruct 7ae557604adf67be50417f59c2c2f167def9a775 загружена за 8.2 с; ревизия 7ae557604adf67be50417f59c2c2f167def9a775
+[ 1113.0 с] L_X9999_p3 | задач 2200 | время 1101.9 с, 0.501 с на задачу
+[ 1113.4 с] записано gha_out/distill04_test_qwen05_L_X9999_p3/answers_Qwen2.5-0.5B-Instruct.json
