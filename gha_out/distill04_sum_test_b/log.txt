@@ -1,0 +1,40 @@
+версии: python 3.13.18 numpy 2.5.3 scipy 1.18.1 sklearn 1.9.1
+сверка хешей: совпало (478 файлов)
+провалов: 0
+== experiments/2026-11-19_DISTILL-04/test_prog_m.py
+провалов: 0 []
+== experiments/2026-11-19_DISTILL-04/test_explore_d4.py
+провалов: 0 []
+== experiments/2026-11-19_DISTILL-04/test_extract_d4.py
+провалов: 0 []
+== experiments/2026-11-19_DISTILL-04/test_analysis_d4.py
+провалов: 0 []
+== experiments/2026-11-19_DISTILL-03/test_ab.py
+провалов: 0 []
+== сборка построения
+собрано: test2, семейство thousands: голов 7, ошибок 0, сред 5 → /home/runner/work/Neu/Neu/gha_out/distill04_sum_test_b/c_T_o3/answers.json
+собрано: pilot3, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill04_sum_test_b/c_T_p3/answers.json
+собрано: test3, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill04_sum_test_b/c_T_t3/answers.json
+собрано: pilot3, семейство length: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill04_sum_test_b/c_L_p3/answers.json
+собрано: test3, семейство length: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill04_sum_test_b/c_L_t3/answers.json
+== сборка свежих ответов теста
+собрано: test6, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill04_sum_test_b/t_T_6/answers.json
+собрано: test6L, семейство length: голов 7, ошибок 0, сред 1 → /home/runner/work/Neu/Neu/gha_out/distill04_sum_test_b/t_L_6/answers.json
+сборки: 6 с
+== программы (сверка с DISTILL-02 — иначе СТОП; совет 76, замок а)
+thousands | совпадение с DISTILL-02: {'Qwen2.5-0.5B-Instruct': True, 'Qwen2.5-1.5B-Instruct': True, 'SmolLM2-1.7B-Instruct': True, 'Falcon3-1B-Instruct': True, 'OLMo-2-0425-1B-Instruct': True, 'SmolLM2-360M-Instruct': True, 'TinyLlama-1.1B-Chat-v1.0': True}
+length | совпадение с DISTILL-02: {'Qwen2.5-0.5B-Instruct': True, 'Qwen2.5-1.5B-Instruct': True, 'SmolLM2-1.7B-Instruct': True, 'Falcon3-1B-Instruct': True, 'OLMo-2-0425-1B-Instruct': True, 'SmolLM2-360M-Instruct': True, 'TinyLlama-1.1B-Chat-v1.0': True}
+сверка программ с DISTILL-02 (замок а): все 7 голов в обоих семействах
+== тест
+П1-Т | m_M | среднее сред -0.3593 | меньше
+П1МТ-Т | m_MT | среднее сред 0.0415 | описательно (в среднем этих сред (на новые среды не переносится))
+П2-Т | top3 | среднее сред 0.0125 | описательно (в среднем этих сред (на новые среды не переносится))
+АБ-П-Т6 | да | D 0.5927 | p 0.0003968253968253968 | k 7
+АБ-Ф-Т6 | нет | D 0.0925 | p 0.12857142857142856 | k 7
+== повторы извлечения (описательно)
+distill04_rep_falcon1_T_X44_p3 | {'T_X44_p3': {'answer': 1.0, 'correct': 1.0, 'logp': 0.055, 'n_tok': 1.0, 'text_none': None}}
+distill04_rep_olmo1_T_X84_p3 | {'T_X84_p3': {'answer': 1.0, 'correct': 1.0, 'logp': 0.012727272727272728, 'n_tok': 1.0, 'text_none': None}}
+distill04_rep_smol17_T_X44_p3 | {'T_X44_p3': {'answer': 1.0, 'correct': 1.0, 'logp': 1.0, 'n_tok': 1.0, 'text_none': None}}
+== повтор анализа на детерминизм (побайтно без seconds)
+детерминизм: одинаково
+всего: 156 с
