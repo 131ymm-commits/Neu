@@ -1,0 +1,5 @@
+a7677b8bc57b757ff3b60229848ebcd2f7a4a0471b3c27630c132cb1da24f5e0  experiments/2026-11-15_OCPOST-01/facts_ocpost.py
+c0c20c599e64c565dba7127449eabb0b4addf9b36b82803babee432c557da25e  experiments/2026-11-15_OCPOST-01/expect_ocpost.json
+23049b708a8f4c6f8d42e14802634863a963ca53f49f861c065411e4d3030998  gha_out/ocpost_test/analysis.json
+308232495563cd726c94a7d56ed1eab9cdf950fc42470bdefb5c0d719cd27bdb  gha_out/ocpost_tail_sum/tail.json
+готово: Т подтверждено | вес, бит {'P0': 8.64, 'P1': 8.64, 'P2': 0.0, 'P3': 8.64, 'N': 0.0, 'Т': 0.0}

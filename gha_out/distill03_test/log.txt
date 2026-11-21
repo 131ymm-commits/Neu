@@ -1,0 +1,32 @@
+версии: python 3.13.18 numpy 2.5.3 scipy 1.18.1 sklearn 1.9.1
+сверка хешей: совпало (350 файлов)
+провалов: 0
+провалов: 0 []
+== сборка построения
+собрано: test2, семейство thousands: голов 7, ошибок 0, сред 5 → /home/runner/work/Neu/Neu/gha_out/distill03_test/c_T_o3/answers.json
+собрано: pilot3, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill03_test/c_T_p3/answers.json
+собрано: test3, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill03_test/c_T_t3/answers.json
+собрано: pilot3, семейство length: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill03_test/c_L_p3/answers.json
+собрано: test3, семейство length: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill03_test/c_L_t3/answers.json
+== сборка теста
+собрано: test5, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill03_test/t_T_5/answers.json
+собрано: test5, семейство length: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill03_test/t_L_5/answers.json
+собрано: new5, семейство thousands: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill03_test/t_T_n/answers.json
+собрано: new5, семейство length: голов 7, ошибок 0, сред 1 → /home/runner/work/Neu/Neu/gha_out/distill03_test/t_L_n/answers.json
+сборки: 13 с
+== программы (сверка с DISTILL-02 — иначе СТОП; совет 76, замок а)
+thousands | совпадение с DISTILL-02: {'Qwen2.5-0.5B-Instruct': True, 'Qwen2.5-1.5B-Instruct': True, 'SmolLM2-1.7B-Instruct': True, 'Falcon3-1B-Instruct': True, 'OLMo-2-0425-1B-Instruct': True, 'SmolLM2-360M-Instruct': True, 'TinyLlama-1.1B-Chat-v1.0': True}
+length | совпадение с DISTILL-02: {'Qwen2.5-0.5B-Instruct': True, 'Qwen2.5-1.5B-Instruct': True, 'SmolLM2-1.7B-Instruct': True, 'Falcon3-1B-Instruct': True, 'OLMo-2-0425-1B-Instruct': True, 'SmolLM2-360M-Instruct': True, 'TinyLlama-1.1B-Chat-v1.0': True}
+сверка программ с DISTILL-02 (замок а): все 7 голов в обоих семействах
+== тест
+thousands prog | сред 7 | D = 0.8242 | p = 0.0002 | ранг 1 из 5040
+thousands shape | сред 7 | D = 0.1716 | p = 0.0002 | ранг 1 из 5040
+length prog | сред 3 | D = 0.9134 | p = 0.0002 | ранг 1 из 5040
+length shape | сред 3 | D = 0.0585 | p = 0.0002 | ранг 1 из 5040
+АБ-П-Т | да | D = 0.8242 | p = 0.0001984126984126984 | голов k = 7 | наименьшее возможное p = 0.0001984126984126984
+АБ-П-Л | да | D = 0.9134 | p = 0.0001984126984126984 | голов k = 7 | наименьшее возможное p = 0.0001984126984126984
+АБ-Ф-Т | да | D = 0.1716 | p = 0.0001984126984126984 | голов k = 7 | наименьшее возможное p = 0.0001984126984126984
+АБ-Ф-Л | да | D = 0.0585 | p = 0.0001984126984126984 | голов k = 7 | наименьшее возможное p = 0.0001984126984126984
+== повтор на детерминизм (побайтно без seconds)
+детерминизм: одинаково
+всего: 265 с

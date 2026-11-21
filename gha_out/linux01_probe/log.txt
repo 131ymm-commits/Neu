@@ -1,0 +1,22 @@
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+
+Service restarts being deferred:
+ systemctl restart hosted-compute-agent.service
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+пакеты: 9 с
+ядро: 666539eecdf4db623f5e3c3e55cf9f2dfad24aa4 7.4.0-rc3
+клон: 45 с
+KUnit в UML: код 1, 7 с
+минимальные версии: rustc 1.85.0, bindgen 0.71.1
+info: profile set to minimal
+инструменты Rust: 51 с
+rustavailable (x86_64): код 0
+всего: 105 с

@@ -1,0 +1,33 @@
+{
+ "phase": "pilot2_over_limit",
+ "n_calls": 1,
+ "n_translations": 1,
+ "n_refused": 0,
+ "all_sealed": true,
+ "env": {
+  "sealed_cwd_entries": {
+   "sealed_linux02_p2": []
+  },
+  "user_claude_md_exists": false,
+  "ok": true
+ },
+ "rows": [
+  {
+   "head": "opus",
+   "module": "string_helpers",
+   "rep": 1,
+   "file": "translations/pilot2_over_limit/opus/string_helpers_r1.json",
+   "prompt_matches_committed": true,
+   "tools_flag_empty": true,
+   "cwd_outside_repo": true,
+   "model_is_target": true,
+   "sealed": true,
+   "returncode_zero": true,
+   "not_error": true,
+   "code_extracted": true,
+   "rs_exists": true,
+   "refused": false,
+   "translation": true
+  }
+ ]
+}

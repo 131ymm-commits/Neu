@@ -1,0 +1,56 @@
+[18:04:36] Configuring KUnit Kernel ...
+[18:04:36] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=um O=/home/runner/work/_temp/kbuild_um olddefconfig LLVM=1
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=um O=/home/runner/work/_temp/kbuild_um --jobs=4 LLVM=1
+warning: missing documentation for the crate
+  --> /home/runner/work/_temp/linux/lib/math/int_pow_rs.rs:1:1
+   |
+1  | / use core::ffi::c_uint;
+2  | |
+3  | | #[no_mangle]
+4  | | pub extern "C" fn int_pow(base: u64, exp: c_uint) -> u64 {
+...  |
+17 | |     result
+18 | | }
+   | |_^
+   |
+   = note: requested on the command line with `-W missing-docs`
+
+warning: missing documentation for a function
+ --> /home/runner/work/_temp/linux/lib/math/int_pow_rs.rs:4:1
+  |
+4 | pub extern "C" fn int_pow(base: u64, exp: c_uint) -> u64 {
+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: 2 warnings emitted
+
+
+[18:04:42] Starting KUnit Kernel (1/1)...
+[18:04:42] ============================================================
+Running tests with:
+$ /home/runner/work/_temp/kbuild_um/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+[18:04:42] =============== rust_kernel_fmt (1 subtest) ================
+[18:04:42] [PASSED] test_ptr_formatting
+[18:04:42] ================= [PASSED] rust_kernel_fmt =================
+[18:04:42] ========== rust_spinlock_irq_condvar (1 subtest) ===========
+[18:04:42] [PASSED] spinlock_irq_condvar
+[18:04:42] ============ [PASSED] rust_spinlock_irq_condvar ============
+[18:04:42] ================= math-int_pow (1 subtest) =================
+[18:04:42] ====================== int_pow_test  =======================
+[18:04:42] [PASSED] Power of zero
+[18:04:42] [PASSED] Power of one
+[18:04:42] [PASSED] Base zero
+[18:04:42] [PASSED] Base one
+[18:04:42] [PASSED] Two squared
+[18:04:42] [PASSED] Two cubed
+[18:04:42] [PASSED] Five raised to the fifth power
+[18:04:42] [PASSED] Max base
+[18:04:42] [PASSED] Large result
+[18:04:42] ================== [PASSED] int_pow_test ===================
+[18:04:42] ================== [PASSED] math-int_pow ===================
+[18:04:42] ============================================================
+[18:04:42] Testing complete. Ran 11 tests: passed: 11
+[18:04:42] Elapsed time: 6.341s total, 0.001s configuring, 6.277s building, 0.055s running
+

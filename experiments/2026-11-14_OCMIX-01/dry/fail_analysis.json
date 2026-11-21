@@ -1,0 +1,158 @@
+{
+ "n_id": 1205,
+ "n_ood": 1494,
+ "errors": [],
+ "heads": {
+  "pythia-1.4b": {
+   "acc_id": 1.0,
+   "acc_ood": 0.998661311914324,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 1205,
+     "wrong": 0
+    },
+    "OOD": {
+     "correct": 1492,
+     "wrong": 2
+    }
+   },
+   "method_ok": false
+  },
+  "pythia-1.4b-deduped": {
+   "acc_id": 0.995850622406639,
+   "acc_ood": 0.9979919678714859,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 1200,
+     "wrong": 5
+    },
+    "OOD": {
+     "correct": 1491,
+     "wrong": 3
+    }
+   },
+   "method_ok": false
+  },
+  "pythia-2.8b": {
+   "acc_id": 0.9983402489626556,
+   "acc_ood": 0.999330655957162,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 1203,
+     "wrong": 2
+    },
+    "OOD": {
+     "correct": 1493,
+     "wrong": 1
+    }
+   },
+   "method_ok": false
+  },
+  "pythia-2.8b@step133000": {
+   "acc_id": 1.0,
+   "acc_ood": 0.999330655957162,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 1205,
+     "wrong": 0
+    },
+    "OOD": {
+     "correct": 1493,
+     "wrong": 1
+    }
+   },
+   "method_ok": false
+  },
+  "pythia-2.8b@step123000": {
+   "acc_id": 1.0,
+   "acc_ood": 0.998661311914324,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 1205,
+     "wrong": 0
+    },
+    "OOD": {
+     "correct": 1492,
+     "wrong": 2
+    }
+   },
+   "method_ok": false
+  },
+  "pythia-2.8b@step113000": {
+   "acc_id": 0.700414937759336,
+   "acc_ood": 0.4979919678714859,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 844,
+     "wrong": 361
+    },
+    "OOD": {
+     "correct": 744,
+     "wrong": 750
+    }
+   },
+   "method_ok": true
+  },
+  "pythia-2.8b-deduped": {
+   "acc_id": 0.7195020746887967,
+   "acc_ood": 0.49464524765729584,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 867,
+     "wrong": 338
+    },
+    "OOD": {
+     "correct": 739,
+     "wrong": 755
+    }
+   },
+   "method_ok": true
+  },
+  "pythia-6.9b": {
+   "acc_id": 0.7012448132780082,
+   "acc_ood": 0.46921017402945114,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 845,
+     "wrong": 360
+    },
+    "OOD": {
+     "correct": 701,
+     "wrong": 793
+    }
+   },
+   "method_ok": true
+  },
+  "pythia-6.9b-deduped": {
+   "acc_id": 0.6979253112033195,
+   "acc_ood": 0.5026773761713521,
+   "none_frac": 0.0,
+   "counts": {
+    "ID": {
+     "correct": 841,
+     "wrong": 364
+    },
+    "OOD": {
+     "correct": 751,
+     "wrong": 743
+    }
+   },
+   "method_ok": true
+  }
+ },
+ "kept": [
+  "pythia-2.8b@step113000",
+  "pythia-2.8b-deduped",
+  "pythia-6.9b",
+  "pythia-6.9b-deduped"
+ ],
+ "design_ok": false
+}

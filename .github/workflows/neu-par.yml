@@ -1,0 +1,73 @@
+# Параллельные прогоны Neu на бесплатных раннерах GitHub. Слово автора, 15.11.2026: «да, разрешаю оба» — параллельные задания
+# и ключ API Anthropic из секретов репозитория. Запуск: положить или изменить gha_par/<имя>.sh и запушить. Каждое изменённое
+# задание идёт на своём раннере, параллельно с другими (на бесплатном тарифе — до 20 заданий одновременно). Одно имя задания —
+# один прогон в полёте (очередь по имени). Задание получает папку gha_out/<имя>/ первым аргументом и пишет туда результаты;
+# workflow коммитит их обратно в ту же ветку. Секрет ANTHROPIC_API_KEY передаётся заданию переменной окружения (печатать его нельзя).
+# neu-run.yml не менялся: его хеш входит в регистрацию OCPOST-01 (docs/COMPUTE.md).
+# Другие ИИ (слово автора, 16.11.2026: «Ты думаешь. Внешние ресурсы считают. … Попробуй их так то интегрировать в проект»):
+# разрешение models: read снято — GitHub Models закрыт 30.07.2026 (ERRORS № 174). Ответы моделей — только текст, ничего из них не исполняется.
+name: neu-par
+on:
+  push:
+    paths: ['gha_par/*.sh']
+permissions:
+  contents: write
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    outputs:
+      jobs: ${{ steps.changed.outputs.jobs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: changed
+        name: Задания, изменённые в этом пуше
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then BEFORE="HEAD~1"; fi
+          list=$(git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'gha_par/*.sh' | while read -r f; do [ -f "$f" ] && basename "$f" .sh; done | jq -R . | jq -cs .)
+          echo "jobs=$list" >> "$GITHUB_OUTPUT"
+          echo "задания: $list"
+  run:
+    needs: list
+    if: needs.list.outputs.jobs != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        job: ${{ fromJSON(needs.list.outputs.jobs) }}
+    concurrency:
+      group: neu-par-${{ github.ref }}-${{ matrix.job }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Прогон
+        id: run
+        # свой лимит шага (ERRORS № 171): при выходе за него шаг падает, а коммит ниже всё равно сохраняет частичный вывод
+        timeout-minutes: 340
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          n="${{ matrix.job }}"
+          mkdir -p "gha_out/$n"
+          ( set -o pipefail; bash "gha_par/$n.sh" "gha_out/$n" 2>&1 | tee "gha_out/$n/log.txt" ) || echo "задание $n завершилось с ошибкой" >> "gha_out/$n/log.txt"
+      - name: Коммит результатов
+        if: always()
+        run: |
+          n="${{ matrix.job }}"
+          mkdir -p "gha_out/$n"
+          if [ "${{ steps.run.outcome }}" != "success" ]; then echo "шаг прогона: ${{ steps.run.outcome }} (лимит шага 340 мин или сбой); вывод частичный" >> "gha_out/$n/log.txt"; fi
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add "gha_out/$n" || true
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Прогон GitHub Actions (параллельно): результаты gha_par/$n.sh"
+          for i in 1 2 3 4 5 6; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break; sleep $((RANDOM % 20 + 5)); done

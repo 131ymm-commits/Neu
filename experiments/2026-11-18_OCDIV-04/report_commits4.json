@@ -1,0 +1,7 @@
+{
+ "source": "git log ветки claude/zealous-carson-87we1s: коммиты регистрации, запуска теста, запуска анализа и вывода анализа OCDIV-04 (для ledger.py audit: хеш запуска анализа состоит из одних цифр)",
+ "prereg": "5a7706fe",
+ "launch_test": "89a20828",
+ "launch_analysis": "44382485",
+ "analysis_output": "db3467b5"
+}

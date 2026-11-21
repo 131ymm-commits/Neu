@@ -1,0 +1,61 @@
+[18:04:19] Configuring KUnit Kernel ...
+[18:04:19] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=um O=/home/runner/work/_temp/kbuild_um olddefconfig LLVM=1
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=um O=/home/runner/work/_temp/kbuild_um --jobs=4 LLVM=1
+In file included from /home/runner/work/_temp/linux/kernel/sys.c:10:
+In file included from /home/runner/work/_temp/linux/include/linux/mm_inline.h:8:
+In file included from /home/runner/work/_temp/linux/include/linux/swap.h:9:
+In file included from /home/runner/work/_temp/linux/include/linux/memcontrol.h:13:
+In file included from /home/runner/work/_temp/linux/include/linux/cgroup.h:27:
+In file included from /home/runner/work/_temp/linux/include/linux/kernel_stat.h:8:
+In file included from /home/runner/work/_temp/linux/include/linux/interrupt.h:11:
+In file included from /home/runner/work/_temp/linux/include/linux/hardirq.h:11:
+In file included from /home/runner/work/_temp/linux/arch/um/include/asm/hardirq.h:24:
+In file included from /home/runner/work/_temp/linux/include/linux/irq.h:20:
+In file included from /home/runner/work/_temp/linux/include/linux/io.h:12:
+In file included from /home/runner/work/_temp/linux/arch/um/include/asm/io.h:24:
+/home/runner/work/_temp/linux/include/asm-generic/io.h:1209:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+ 1209 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+      |                                                   ~~~~~~~~~~ ^
+In file included from /home/runner/work/_temp/linux/drivers/base/firmware_loader/main.c:21:
+In file included from /home/runner/work/_temp/linux/include/linux/interrupt.h:11:
+In file included from /home/runner/work/_temp/linux/include/linux/hardirq.h:11:
+In file included from /home/runner/work/_temp/linux/arch/um/include/asm/hardirq.h:24:
+In file included from /home/runner/work/_temp/linux/include/linux/irq.h:20:
+In file included from /home/runner/work/_temp/linux/include/linux/io.h:12:
+In file included from /home/runner/work/_temp/linux/arch/um/include/asm/io.h:24:
+/home/runner/work/_temp/linux/include/asm-generic/io.h:1209:55: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+ 1209 |         return (port > MMIO_UPPER_LIMIT) ? NULL : PCI_IOBASE + port;
+      |                                                   ~~~~~~~~~~ ^
+1 warning generated.
+1 warning generated.
+
+[18:04:26] Starting KUnit Kernel (1/1)...
+[18:04:26] ============================================================
+Running tests with:
+$ /home/runner/work/_temp/kbuild_um/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+[18:04:26] =============== rust_kernel_fmt (1 subtest) ================
+[18:04:26] [PASSED] test_ptr_formatting
+[18:04:26] ================= [PASSED] rust_kernel_fmt =================
+[18:04:26] ========== rust_spinlock_irq_condvar (1 subtest) ===========
+[18:04:26] [PASSED] spinlock_irq_condvar
+[18:04:26] ============ [PASSED] rust_spinlock_irq_condvar ============
+[18:04:26] ================= math-int_pow (1 subtest) =================
+[18:04:26] ====================== int_pow_test  =======================
+[18:04:26] [PASSED] Power of zero
+[18:04:26] [PASSED] Power of one
+[18:04:26] [PASSED] Base zero
+[18:04:26] [PASSED] Base one
+[18:04:26] [PASSED] Two squared
+[18:04:26] [PASSED] Two cubed
+[18:04:26] [PASSED] Five raised to the fifth power
+[18:04:26] [PASSED] Max base
+[18:04:26] [PASSED] Large result
+[18:04:26] ================== [PASSED] int_pow_test ===================
+[18:04:26] ================== [PASSED] math-int_pow ===================
+[18:04:26] ============================================================
+[18:04:26] Testing complete. Ran 11 tests: passed: 11
+[18:04:26] Elapsed time: 7.163s total, 0.001s configuring, 7.048s building, 0.105s running
+

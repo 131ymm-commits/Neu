@@ -1,0 +1,5 @@
+[    0.0 с] фаза test2 | сред 1 | задач 2200
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   29.0 с] Qwen/Qwen2.5-1.5B-Instruct 989aa7980e4cf806f80c7fef2b1adb7bc71aa306 загружена за 26.4 с; ревизия 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+[ 2279.1 с] T_X59_p3 | задач 2200 | время 2250.1 с, 1.023 с на задачу
+[ 2279.9 с] записано gha_out/ocdiv3_test_qwen15_T_X59_p3/answers_Qwen2.5-1.5B-Instruct.json

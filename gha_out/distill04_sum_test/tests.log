@@ -1,0 +1,10 @@
+== experiments/2026-11-19_DISTILL-04/test_prog_m.py
+провалов: 0 []
+== experiments/2026-11-19_DISTILL-04/test_explore_d4.py
+провалов: 0 []
+== experiments/2026-11-19_DISTILL-04/test_extract_d4.py
+провалов: 0 []
+== experiments/2026-11-19_DISTILL-04/test_analysis_d4.py
+провалов: 0 []
+== experiments/2026-11-19_DISTILL-03/test_ab.py
+провалов: 0 []

@@ -1,0 +1,9 @@
+[    0.0 с] фаза pilot | сред 5 | задач 2000
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   11.4 с] Qwen/Qwen2.5-0.5B-Instruct 7ae557604adf67be50417f59c2c2f167def9a775 загружена за 7.9 с; ревизия 7ae557604adf67be50417f59c2c2f167def9a775
+[  178.6 с] T_X19_p0 | задач 400 | время 167.2 с, 0.418 с на задачу
+[  346.1 с] T_X29_p0 | задач 400 | время 167.4 с, 0.419 с на задачу
+[  513.1 с] T_X39_p0 | задач 400 | время 167.0 с, 0.417 с на задачу
+[  679.9 с] T_X49_p0 | задач 400 | время 166.8 с, 0.417 с на задачу
+[  846.5 с] T_X59_p0 | задач 400 | время 166.6 с, 0.416 с на задачу
+[  847.0 с] записано gha_out/ocdiv2_pilot_qwen05_T/answers_Qwen2.5-0.5B-Instruct.json

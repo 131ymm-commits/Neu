@@ -1,0 +1,26 @@
+{
+ "files": {
+  "ocshift_extract_test.py": "c6165713b4a8fc9791096819e1b1f217238cf6c69a851815c6a374180b7fd8fd",
+  "ocshift_extract.py": "180c6c604591f8757c83361f8cf940129b1e70732b4838df63611d4992c9e04c",
+  "analyze_ocshift.py": "efa47c8e6276dde97c0c9b0eba0625131b96f7d23a334a22b2532ef1fd58dc9d",
+  "analyze_ocshift_test.py": "d7a01d088a42eeb465f1b39519b84b0fdb1eef50071bd4ea8334e07066bb0c74",
+  "pilot_ocshift.py": "359b8212677d1036a9de35957e94ac3f48f67bd942a2b1a631a04c87e4fb78fa",
+  "power_ocshift.py": "7d08a631c0054c2f84f68ecf7c3adc7ade0c7d13f60a8471144c984d23729702",
+  "test_ocshift.py": "2c3e6c3b4668a315fa8eda7a46208ce8f3a079e9b4c3cd87c18f7c46832b4d52",
+  "dry_ocshift.py": "50899b6d872565bd83ff5a4adcc95236d23dbe691172fbd5af0746e3918eb4bb",
+  "explore_shifts.py": "9031886c217bb845d9bbd1f5a1513734f2236b80798ec7ef199261f92ab5aa2e",
+  "gha_ocshift_test.sh": "f1b88dfdbf1453feb931ebb6bfd1698d719d54085ebc0ac5347599f1e1e94d2c",
+  "gha_job_ocshift_test.sh": "c9205ca0baa52d1b7717bf386dce52668d8a1bbda20b8112c02962a7d24e05a7",
+  "prereg_hashes.py": "cad34173cd4a7ad700757c87525f96c2729a16628a740e9e7d68997c073a00cf",
+  "../../.github/workflows/neu-run.yml": "41369bae34b1cfe514dee172b53d713969fc705ebb092ae12bc67ee2405edba2",
+  "../../gha_out/ocshift_chain/power.json": "d8ad3928b1ed0834721305d1a1db201d9759bd2f25358bf4305d352d2c94bdf3",
+  "../../gha_out/ocshift_pilot/analysis_pilot.json": "17722002373d16843a6bc187fc3a8b01d2bfb674be3b55e158e213e90a916306",
+  "../2026-11-15_OCREP-01/analyze_ocrep.py": "38b0bbb57d6ec145f9048d5fc11830318f26c4c0affbd16c7df79bbe4d192a38",
+  "../2026-11-15_OCREP-01/analyze_ocrep_test.py": "60db5ba8f3cba7086577222812c85fb07c3d67d56b986c0eab104e161efd4b44",
+  "../2026-11-15_OCREP-01/pilot/out/answers.json": "a6af037c46af3e9ab0eacf85cd494dffcb87818da6a698f6e157df44f978c571",
+  "../2026-11-14_OCMIX-01/analyze_ocmix.py": "275b240c73c7de26edbc6e3ad772f6c358a71f1e523df107cc209aa2c7d8003b",
+  "../2026-11-14_OCCOR-01/analyze_occor.py": "3210343c6dfba697bb489f01572be42683c76e8f7f18b5adbd031a046c7a5c27",
+  "../2026-11-14_OCGEO-01/analyze_ocgeo.py": "d7724c385718ec5fade09cf385b69edd730230cd8423b2bc87274a2c9214ffca",
+  "../2026-11-14_OCGEO-01/analyze_ocgeo_test.py": "2aee14122df8bc287fe4a49b33dafa98c76ce3c85230ece2cbd41a03c85194ca"
+ }
+}

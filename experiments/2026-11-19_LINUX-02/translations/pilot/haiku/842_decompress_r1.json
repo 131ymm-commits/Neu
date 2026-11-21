@@ -1,0 +1,73 @@
+{
+ "phase": "pilot",
+ "head": "haiku",
+ "module": "842_decompress",
+ "rep": 1,
+ "model_target": "claude-haiku-5-5",
+ "prompt_sha256": "dcf8160869065456c80df9a6e07b51ca803a5193bdd12a9f2851c0ec60ea3853",
+ "seconds": 121.2,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\n// SPDX-License-Identifier: GPL-2.0-or-later\n/*\n * 842 Software Decompression\n *\n * Copyright (C) 2015 Dan Streetman, IBM Corp\n *\n * Rust translation of lib/842/842_decompress.c.\n * See 842.h for details of the 842 compressed format.\n */\n\nuse core::ffi::{c_int, c_uint};\nuse core::ptr;\n\n// ---------------------------------------------------------------------------\n// Constants from 842.h\n// ---------------------------------------------------------------------------\n\n/* special templates */\nconst OP_REPEAT: u64 = 0x1B;\nconst OP_ZEROS: u64 = 0x1C;\nconst OP_END: u64 = 0x1E;\n\n/* sw only template - not in the hw design */\nconst OP_SHORT_DATA: u64 = 0x1D;\n\n/* additional bits of each op param */\nconst OP_BITS: u8 = 5;\nconst REPEAT_BITS: u8 = 6;\nconst SHORT_DATA_BITS: u8 = 3;\nconst I2_BITS: u8 = 8;\nconst I4_BITS: u8 = 9;\nconst I8_BITS: u8 = 8;\nconst CRC_BITS: u8 = 32;\n\nconst SHORT_DATA_BITS_MAX: u64 = 0x7;\n\n/* Arbitrary values used to indicate action */\nconst OP_ACTION: u8 = 0x70;\nconst OP_ACTION_INDEX: u8 = 0x10;\nconst OP_ACTION_DATA: u8 = 0x20;\nconst OP_ACTION_NOOP: u8 = 0x40;\nconst OP_AMOUNT: u8 = 0x0f;\nconst OP_AMOUNT_0: u8 = 0x00;\nconst OP_AMOUNT_2: u8 = 0x02;\nconst OP_AMOUNT_4: u8 = 0x04;\nconst OP_AMOUNT_8: u8 = 0x08;\n\nconst D2: u8 = OP_ACTION_DATA | OP_AMOUNT_2;\nconst D4: u8 = OP_ACTION_DATA | OP_AMOUNT_4;\nconst D8: u8 = OP_ACTION_DATA | OP_AMOUNT_8;\nconst I2: u8 = OP_ACTION_INDEX | OP_AMOUNT_2;\nconst I4: u8 = OP_ACTION_INDEX | OP_AMOUNT_4;\nconst I8: u8 = OP_ACTION_INDEX | OP_AMOUNT_8;\nconst N0: u8 = OP_ACTION_NOOP | OP_AMOUNT_0;\n\n/* the max of the regular templates - not including the special templates */\nconst OPS_MAX: usize = 0x1a;\n\n// ---------------------------------------------------------------------------\n// Constants from linux/sw842.h / errno (x86_64) / limits\n// ---------------------------------------------------------------------------\n\nconst EINVAL: c_int = 22;\nconst ENOSPC: c_int = 28;\nconst EOVERFLOW: c_int = 75;\n\nconst UINT_MAX: u32 = u32::MAX;\n\n// ---------------------------------------------------------------------------\n// Constants from 842_decompress.c\n// ---------------------------------------------------------------------------\n\n/* rolling fifo sizes */\nconst I2_FIFO_SIZE: u64 = 2 * (1u64 << I2_BITS);\nconst I4_FIFO_SIZE: u64 = 4 * (1u64 << I4_BITS);\nconst I8_FIFO_SIZE: u64 = 8 * (1u64 << I8_BITS);\n\nstatic DECOMP_OPS: [[u8; 4]; OPS_MAX] = [\n    [D8, N0, N0, N0],\n    [D4, D2, I2, N0],\n    [D4, I2, D2, N0],\n    [D4, I2, I2, N0],\n    [D4, I4, N0, N0],\n    [D2, I2, D4, N0],\n    [D2, I2, D2, I2],\n    [D2, I2, I2, D2],\n    [D2, I2, I2, I2],\n    [D2, I2, I4, N0],\n    [I2, D2, D4, N0],\n    [I2, D4, I2, N0],\n    [I2, D2, I2, D2],\n    [I2, D2, I2, I2],\n    [I2, D2, I4, N0],\n    [I2, I2, D4, N0],\n    [I2, I2, D2, I2],\n    [I2, I2, I2, D2],\n    [I2, I2, I2, I2],\n    [I2, I2, I4, N0],\n    [I4, D4, N0, N0],\n    [I4, D2, I2, N0],\n    [I4, I2, D2, N0],\n    [I4, I2, I2, N0],\n    [I4, I4, N0, N0],\n    [I8, N0, N0, N0],\n];\n\nstruct Sw842Param {\n    input: *const u8,\n    bit: u8,\n    ilen: u64,\n    out: *mut u8,\n    ostart: *mut u8,\n    olen: u64,\n}\n\nimpl Sw842Param {\n    /// Number of bytes written so far (p->out - p->ostart).\n    #[inline]\n    fn written(&self) -> u64 {\n        (self.out as usize - self.ostart as usize) as u64\n    }\n}\n\nextern \"C\" {\n    /// u32 crc32_be(u32 crc, const u8 *p, size_t len)\n    fn crc32_be(crc: u32, p: *const u8, len: usize) -> u32;\n}\n\n/// WARN(cond, ...): logging is a no-op here; returns cond.\n#[inline]\nfn warn(cond: bool) -> bool {\n    cond\n}\n\n/// Unaligned big-endian load helper.\n#[inline(always)]\nunsafe fn load<const N: usize>(p: *const u8) -> [u8; N] {\n    ptr::read_unaligned(p as *const [u8; N])\n}\n\n/// Mask with the low `n` bits set (GENMASK_ULL(n - 1, 0)).\n#[inline(always)]\nfn low_mask(n: u8) -> u64 {\n    if n >= 64 {\n        u64::MAX\n    } else {\n        (1u64 << n) - 1\n    }\n}\n\nunsafe fn split_next_bits(p: &mut Sw842Param, d: &mut u64, n: u8, s: u8) -> c_int {\n    let mut tmp: u64 = 0;\n    let mut ret: c_int;\n\n    if n <= s {\n        /* pr_debug(\"split_next_bits invalid n %u s %u\\n\", n, s); */\n        return -EINVAL;\n    }\n\n    ret = next_bits(p, &mut tmp, n - s);\n    if ret != 0 {\n        return ret;\n    }\n    ret = next_bits(p, d, s);\n    if ret != 0 {\n        return ret;\n    }\n    *d |= tmp << s;\n    0\n}\n\nunsafe fn next_bits(p: &mut Sw842Param, d: &mut u64, n: u8) -> c_int {\n    let inp = p.input;\n    let b = p.bit;\n    /* u8 arithmetic, as in the C original (no overflow possible for n <= 64) */\n    let bits = b.wrapping_add(n);\n\n    if n > 64 {\n        /* pr_debug(\"next_bits invalid n %u\\n\", n); */\n        return -EINVAL;\n    }\n\n    /* split this up if reading > 8 bytes, or if we're at the end of\n     * the input buffer and would read past the end\n     */\n    if bits > 64 {\n        return split_next_bits(p, d, n, 32);\n    } else if p.ilen < 8 && bits > 32 && bits <= 56 {\n        return split_next_bits(p, d, n, 16);\n    } else if p.ilen < 4 && bits > 16 && bits <= 24 {\n        return split_next_bits(p, d, n, 8);\n    }\n\n    /* DIV_ROUND_UP(bits, 8) > p->ilen */\n    if (bits as u64 + 7) / 8 > p.ilen {\n        return -EOVERFLOW;\n    }\n\n    let v: u64 = if bits <= 8 {\n        (*inp as u64) >> (8 - bits)\n    } else if bits <= 16 {\n        (u16::from_be_bytes(load::<2>(inp)) as u64) >> (16 - bits)\n    } else if bits <= 32 {\n        (u32::from_be_bytes(load::<4>(inp)) as u64) >> (32 - bits)\n    } else {\n        u64::from_be_bytes(load::<8>(inp)) >> (64 - bits)\n    };\n\n    *d = v & low_mask(n);\n\n    p.bit = bits;\n\n    if p.bit > 7 {\n        let bytes = (p.bit / 8) as u64;\n        p.input = p.input.add(bytes as usize);\n        p.ilen -= bytes;\n        p.bit %= 8;\n    }\n\n    0\n}\n\nunsafe fn do_data(p: &mut Sw842Param, n: u8) -> c_int {\n    let mut v: u64 = 0;\n\n    if (n as u64) > p.olen {\n        return -ENOSPC;\n    }\n\n    let ret = next_bits(p, &mut v, n * 8);\n    if ret != 0 {\n        return ret;\n    }\n\n    let be = v.to_be_bytes();\n    match n {\n        /* write the low n bytes of v, big-endian */\n        2 | 4 | 8 => {\n            ptr::copy_nonoverlapping(be.as_ptr().add(8 - n as usize), p.out, n as usize);\n        }\n        _ => return -EINVAL,\n    }\n\n    p.out = p.out.add(n as usize);\n    p.olen -= n as u64;\n\n    0\n}\n\nunsafe fn do_index_impl(p: &mut Sw842Param, size: u8, bits: u8, fsize: u64) -> c_int {\n    let total = p.written() & !7u64; /* round_down(p->out - p->ostart, 8) */\n    let mut index: u64 = 0;\n    let mut offset: u64;\n\n    if (size as u64) > p.olen {\n        return -ENOSPC;\n    }\n\n    let ret = next_bits(p, &mut index, bits);\n    if ret != 0 {\n        return ret;\n    }\n\n    offset = index * (size as u64);\n\n    /* a ring buffer of fsize is used; correct the offset */\n    if total > fsize {\n        /* this is where the current fifo is */\n        let mut section = total & !(fsize - 1); /* round_down(total, fsize) */\n        /* the current pos in the fifo */\n        let pos = total - section;\n\n        /* if the offset is past/at the pos, we need to\n         * go back to the last fifo section\n         */\n        if offset >= pos {\n            section -= fsize;\n        }\n\n        offset += section;\n    }\n\n    if offset + size as u64 > total {\n        /* pr_debug(\"index%x points past end\\n\", size); */\n        return -EINVAL;\n    }\n\n    /* WARN(1, \"__do_index invalid size\") when size is not 2/4/8; the copy\n     * below still happens, exactly as in the C original. */\n    let _ = warn(size != 2 && size != 4 && size != 8);\n\n    ptr::copy(p.ostart.add(offset as usize), p.out, size as usize);\n    p.out = p.out.add(size as usize);\n    p.olen -= size as u64;\n\n    0\n}\n\nunsafe fn do_index(p: &mut Sw842Param, n: u8) -> c_int {\n    match n {\n        2 => do_index_impl(p, 2, I2_BITS, I2_FIFO_SIZE),\n        4 => do_index_impl(p, 4, I4_BITS, I4_FIFO_SIZE),\n        8 => do_index_impl(p, 8, I8_BITS, I8_FIFO_SIZE),\n        _ => -EINVAL,\n    }\n}\n\nunsafe fn do_op(p: &mut Sw842Param, o: u8) -> c_int {\n    if (o as usize) >= OPS_MAX {\n        return -EINVAL;\n    }\n\n    for i in 0..4 {\n        let op = DECOMP_OPS[o as usize][i];\n\n        let ret = match op & OP_ACTION {\n            OP_ACTION_DATA => do_data(p, op & OP_AMOUNT),\n            OP_ACTION_INDEX => do_index(p, op & OP_AMOUNT),\n            OP_ACTION_NOOP => 0,\n            /* pr_err(\"Internal error, invalid op %x\\n\", op); */\n            _ => return -EINVAL,\n        };\n\n        if ret != 0 {\n            return ret;\n        }\n    }\n\n    0\n}\n\n/// sw842_decompress\n///\n/// Decompress the 842-compressed buffer of length `ilen` at `input`\n/// to the output buffer `out`, using no more than `*olen` bytes.\n///\n/// Returns: 0 on success, negative errno on failure. `*olen` receives the\n/// number of output bytes written on success, or 0 on error.\n#[no_mangle]\npub unsafe extern \"C\" fn sw842_decompress(\n    input: *const u8,\n    ilen: c_uint,\n    out: *mut u8,\n    olen: *mut c_uint,\n) -> c_int {\n    let mut p = Sw842Param {\n        input,\n        bit: 0,\n        ilen: ilen as u64,\n        out,\n        ostart: out,\n        olen: *olen as u64,\n    };\n\n    let total = p.olen;\n\n    *olen = 0;\n\n    loop {\n        let mut op: u64 = 0;\n\n        let ret = next_bits(&mut p, &mut op, OP_BITS);\n        if ret != 0 {\n            return ret;\n        }\n\n        match op {\n            OP_REPEAT => {\n                let mut rep: u64 = 0;\n\n                let ret = next_bits(&mut p, &mut rep, REPEAT_BITS);\n                if ret != 0 {\n                    return ret;\n                }\n\n                if p.written() < 8 {\n                    /* no complete previous block */\n                    return -EINVAL;\n                }\n\n                /* copy rep + 1 */\n                rep += 1;\n\n                if rep * 8 > p.olen {\n                    return -ENOSPC;\n                }\n\n                while rep > 0 {\n                    rep -= 1;\n                    ptr::copy_nonoverlapping(p.out.sub(8), p.out, 8);\n                    p.out = p.out.add(8);\n                    p.olen -= 8;\n                }\n            }\n            OP_ZEROS => {\n                if 8 > p.olen {\n                    return -ENOSPC;\n                }\n\n                ptr::write_bytes(p.out, 0, 8);\n                p.out = p.out.add(8);\n                p.olen -= 8;\n            }\n            OP_SHORT_DATA => {\n                let mut bytes: u64 = 0;\n\n                let ret = next_bits(&mut p, &mut bytes, SHORT_DATA_BITS);\n                if ret != 0 {\n                    return ret;\n                }\n\n                if bytes == 0 || bytes > SHORT_DATA_BITS_MAX {\n                    return -EINVAL;\n                }\n                if bytes > p.olen {\n                    return -ENOSPC;\n                }\n\n                while bytes > 0 {\n                    bytes -= 1;\n\n                    let mut tmp: u64 = 0;\n                    let ret = next_bits(&mut p, &mut tmp, 8);\n                    if ret != 0 {\n                        return ret;\n                    }\n\n                    *p.out = tmp as u8;\n                    p.out = p.out.add(1);\n                    p.olen -= 1;\n                }\n            }\n            OP_END => {\n                /* end of stream; loop exits below */\n            }\n            _ => {\n                /* use template */\n                let ret = do_op(&mut p, op as u8);\n                if ret != 0 {\n                    return ret;\n                }\n            }\n        }\n\n        if op == OP_END {\n            break;\n        }\n    }\n\n    /*\n     * crc(0:31) is saved in compressed data starting with the\n     * next bit after End of stream template.\n     */\n    let mut crc: u64 = 0;\n    let ret = next_bits(&mut p, &mut crc, CRC_BITS);\n    if ret != 0 {\n        return ret;\n    }\n\n    let written = total - p.olen;\n\n    /*\n     * Validate CRC saved in compressed data.\n     */\n    let calc = crc32_be(0, out as *const u8, written as usize);\n    if crc != calc as u64 {\n        /* pr_debug(\"CRC mismatch for decompression\\n\"); */\n        return -EINVAL;\n    }\n\n    if written > UINT_MAX as u64 {\n        return -ENOSPC;\n    }\n\n    *olen = written as c_uint;\n\n    0\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 10226,
+  "cache_read_input_tokens": 2366,
+  "output_tokens": 31148,
+  "output_tokens_details": {
+   "thinking_tokens": 25468
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 10226,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 31148,
+    "cache_read_input_tokens": 2366,
+    "cache_creation_input_tokens": 10226,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 10226
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.01764306,
+ "model_usage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 31148,
+   "cacheReadInputTokens": 2366,
+   "cacheCreationInputTokens": 10226,
+   "webSearchRequests": 0,
+   "costUSD": 0.01764306,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 25468,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 10226,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 119898,
+ "code_extracted": true,
+ "models_used": [
+  "claude-haiku-5-5"
+ ]
+}

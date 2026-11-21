@@ -1,0 +1,45 @@
+✓ П1 Δ: +0,0250 — analysis.json П1/delta
+✓ П1 M4 нижняя: +0,0141 — analysis.json П1/ci/0
+✓ П1 M4 верхняя: +0,0358 — analysis.json П1/ci/1
+✓ П1 t по средам: 0,96 — notes_derived.json t_env/П1
+✓ П2 Δ: +0,0282 — analysis.json П2/delta
+✓ П2 M4 нижняя: +0,0186 — analysis.json П2/ci/0
+✓ П2 M4 верхняя: +0,0377 — analysis.json П2/ci/1
+✓ П2 t по средам: 2,33 — notes_derived.json t_env/П2
+✓ П3 Δ: +0,0477 — analysis.json П3/delta
+✓ П3 M4 нижняя: +0,0396 — analysis.json П3/ci/0
+✓ П3 M4 верхняя: +0,0558 — analysis.json П3/ci/1
+✓ П3 t по средам: 8,80 — notes_derived.json t_env/П3
+✓ Т4 T_X19_p3: +0,0694 — analysis.json envs/T_X19_p3/T4/point
+✓ Т4ᵈ T_X19_p3: +0,0376 — analysis.json envs/T_X19_p3/T4d/point
+✓ Т4-ID T_X19_p3: +0,0325 — analysis.json envs/T_X19_p3/T4id/point
+✓ Т4 T_X29_p3: +0,0750 — analysis.json envs/T_X29_p3/T4/point
+✓ Т4ᵈ T_X29_p3: +0,0382 — analysis.json envs/T_X29_p3/T4d/point
+✓ Т4-ID T_X29_p3: +0,0530 — analysis.json envs/T_X29_p3/T4id/point
+✓ Т4 T_X39_p3: +0,0486 — analysis.json envs/T_X39_p3/T4/point
+✓ Т4ᵈ T_X39_p3: +0,0527 — analysis.json envs/T_X39_p3/T4d/point
+✓ Т4-ID T_X39_p3: +0,0643 — analysis.json envs/T_X39_p3/T4id/point
+✓ Т4 T_X49_p3: −0,0624 — analysis.json envs/T_X49_p3/T4/point
+✓ Т4ᵈ T_X49_p3: −0,0179 — analysis.json envs/T_X49_p3/T4d/point
+✓ Т4-ID T_X49_p3: +0,0404 — analysis.json envs/T_X49_p3/T4id/point
+✓ Т4 T_X59_p3: −0,0057 — analysis.json envs/T_X59_p3/T4/point
+✓ Т4ᵈ T_X59_p3: +0,0303 — analysis.json envs/T_X59_p3/T4d/point
+✓ Т4-ID T_X59_p3: +0,0483 — analysis.json envs/T_X59_p3/T4id/point
+✓ интервал среды T_X49_p3 по П1, нижняя: −0,0846 — notes_derived.json env_ci/П1/T_X49_p3/0
+✓ интервал среды T_X49_p3 по П1, верхняя: −0,0402 — notes_derived.json env_ci/П1/T_X49_p3/1
+✓ та же нижняя граница в поле анализа env_lower: −0,0846 — analysis.json П1/env_lower/T_X49_p3
+✓ порог t: 5,598 — notes_derived.json t_threshold
+✓ ложный уровень серии: 0,0075 — notes_derived.json series_confirm
+✓ F₀ вне диапазона, наименьшее: 0,4919 — notes_derived.json F0_ood_min
+✓ F₀ вне диапазона, наибольшее: 0,9393 — notes_derived.json F0_ood_max
+✓ F вне диапазона, наименьшее: 0,5613 — notes_derived.json F_ood_min
+✓ F вне диапазона, наибольшее: 0,8769 — notes_derived.json F_ood_max
+✓ F на ID, наибольшее: 0,0794 — notes_derived.json F_id_max
+✓ разложение: трудность по входу: −0,0031 — analysis.json descr_descr трудность по входу/delta
+✓ разложение: совместность ошибок: −0,0030 — analysis.json descr_descr совместность ошибок/delta
+✓ разложение: совпадение ответов: +0,0309 — analysis.json descr_descr совпадение ответов/delta
+✓ совпадение ответов, нижняя: +0,0239 — analysis.json descr_descr совпадение ответов/ci/0
+✓ совпадение ответов, верхняя: +0,0379 — analysis.json descr_descr совпадение ответов/ci/1
+✓ Т4 − Т4-ID: −0,0227 — analysis.json descr_T4 − T4-ID/delta
+✓ пары: p: 0,0857 — analysis.json pairs/p_exact
+проверено: 44; промахов: 0

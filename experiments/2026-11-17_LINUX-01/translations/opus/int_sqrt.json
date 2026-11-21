@@ -1,0 +1,71 @@
+{
+ "head": "opus",
+ "module": "int_sqrt",
+ "model_target": "claude-opus-5-5",
+ "prompt_sha256": "b42ac49dd2e0aaa07927ff1238f996d69b98625c90d339cad396c1b39e3f034a",
+ "seconds": 14.4,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\n// SPDX-License-Identifier: GPL-2.0\n//\n// Copyright (C) 2013 Davidlohr Bueso <davidlohr.bueso@hp.com>\n//\n//  Based on the shift-and-subtract algorithm for computing integer\n//  square root from Guy L. Steele.\n//\n// Rust translation of lib/math/int_sqrt.c for x86_64 (BITS_PER_LONG == 64).\n// int_sqrt64 is compiled only when BITS_PER_LONG < 64, so it is omitted here.\n\nuse core::ffi::c_ulong;\n\n/// __fls - index of the most significant set bit, counting from 0.\n/// The caller guarantees `x != 0`.\n#[inline(always)]\nfn __fls(x: c_ulong) -> c_ulong {\n    ((c_ulong::BITS - 1) - x.leading_zeros()) as c_ulong\n}\n\n/// int_sqrt - computes the integer square root\n/// @x: integer of which to calculate the sqrt\n///\n/// Computes: floor(sqrt(x))\n#[no_mangle]\npub extern \"C\" fn int_sqrt(x: c_ulong) -> c_ulong {\n    let mut x = x;\n    let mut b: c_ulong;\n    let mut m: c_ulong;\n    let mut y: c_ulong = 0;\n\n    if x <= 1 {\n        return x;\n    }\n\n    m = (1 as c_ulong) << (__fls(x) & !(1 as c_ulong));\n    while m != 0 {\n        b = y.wrapping_add(m);\n        y >>= 1;\n\n        if x >= b {\n            x = x.wrapping_sub(b);\n            y = y.wrapping_add(m);\n        }\n        m >>= 2;\n    }\n\n    y\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 3933,
+  "cache_read_input_tokens": 649,
+  "output_tokens": 825,
+  "output_tokens_details": {
+   "thinking_tokens": 219
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 3933,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 825,
+    "cache_read_input_tokens": 649,
+    "cache_creation_input_tokens": 3933,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3933
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.0481018,
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 825,
+   "cacheReadInputTokens": 649,
+   "cacheCreationInputTokens": 3933,
+   "webSearchRequests": 0,
+   "costUSD": 0.0481018,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 219,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 3933,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 13031,
+ "code_extracted": true,
+ "models_used": [
+  "claude-opus-5-5"
+ ]
+}

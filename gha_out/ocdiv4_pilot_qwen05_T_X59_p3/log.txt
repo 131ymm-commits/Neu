@@ -1,0 +1,5 @@
+[    0.0 с] фаза pilot3 | сред 1 | задач 600
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   12.2 с] Qwen/Qwen2.5-0.5B-Instruct 7ae557604adf67be50417f59c2c2f167def9a775 загружена за 8.7 с; ревизия 7ae557604adf67be50417f59c2c2f167def9a775
+[  261.2 с] T_X59_p3 | задач 600 | время 248.9 с, 0.415 с на задачу
+[  261.6 с] записано gha_out/ocdiv4_pilot_qwen05_T_X59_p3/answers_Qwen2.5-0.5B-Instruct.json

@@ -1,0 +1,68 @@
+{
+ "weights": {
+  "P0": {
+   "bits": 8.643856189774725,
+   "verdict": "подтверждено",
+   "power": 1.0
+  },
+  "P1": {
+   "bits": 8.642123916153487,
+   "verdict": "подтверждено",
+   "power": 0.9988
+  },
+  "P2": {
+   "bits": 0.0,
+   "verdict": "не решено",
+   "power": 0.0895
+  },
+  "P3": {
+   "bits": 8.636032368047989,
+   "verdict": "подтверждено",
+   "power": 0.9945916182729814
+  },
+  "N": {
+   "bits": 0.0,
+   "verdict": "подтверждено",
+   "note": "служебное условие для P3 (PREREG §9, §10)"
+  },
+  "Т": {
+   "bits": 0.0,
+   "verdict": "подтверждено",
+   "note": "проверка метода (PREREG §10)"
+  }
+ },
+ "false_level": {
+  "P0": {
+   "value": 0.0025,
+   "side": "сверху (miss_high)",
+   "tail_upper_low": 0.001518279057777324,
+   "tail_upper_high": 0.0016417880742399583,
+   "groups_descr": 0.003416517008283541,
+   "groups_larger": true
+  },
+  "P1": {
+   "value": 0.0025,
+   "side": "сверху (miss_high)",
+   "tail_upper_low": 0.002231812486609423,
+   "tail_upper_high": 0.001518279057777324,
+   "groups_descr": 0.003416517008283541,
+   "groups_larger": true
+  },
+  "P2": {
+   "value": 0.0033349911976906666,
+   "side": "сверху (miss_high)",
+   "tail_upper_low": 0.002458776056247571,
+   "tail_upper_high": 0.0033349911976906666,
+   "groups_descr": 0.004211491475448769,
+   "groups_larger": true
+  },
+  "P3": {
+   "value": 0.0025,
+   "side": "номинал (Т малоинформативна)",
+   "tail_upper_low": 0.0004991640883918653,
+   "tail_upper_high": 0.0004991640883918653,
+   "groups_descr": 0.0024933300375186798,
+   "groups_larger": false
+  }
+ }
+}

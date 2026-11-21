@@ -1,0 +1,20 @@
+error: 'rustfmt' is not installed for the toolchain '1.85.0-x86_64-unknown-linux-gnu'.
+help: run `rustup component add --toolchain 1.85.0-x86_64-unknown-linux-gnu rustfmt` to install it
+Failed to run rustfmt: Internal rustfmt error (non-fatal, continuing)
+***
+*** Rust bindings generator 'bindgen' < 0.72.1 together with libclang >= 22
+*** may not work due to a bug (https://github.com/rust-lang/rust-bindgen/pull/3278).
+***   Your bindgen version:  0.71.1
+***   Your libclang version: 22.1.2
+***
+***
+*** libclang (used by the Rust bindings generator 'bindgen')
+*** version does not match Clang's. This may be a problem.
+***   libclang version: 22.1.2
+***   Clang version:    21.1.8
+***
+***
+*** Please see Documentation/rust/quick-start.rst for details
+*** on how to set up the Rust support.
+***
+Rust is available!

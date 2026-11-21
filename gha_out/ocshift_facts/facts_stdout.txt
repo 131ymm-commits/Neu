@@ -1,0 +1,242 @@
+{
+ "source": "gha_out/ocshift_test/analysis.json",
+ "n_envs": 10,
+ "n_valid": 10,
+ "n_problems": {
+  "id": 9988,
+  "ood": 12012,
+  "all": 22000
+ },
+ "crowd_size": {
+  "X4_p0": 8,
+  "X4_p1": 9,
+  "X5_p0": 8,
+  "X5_p1": 8,
+  "X6_p0": 8,
+  "X6_p1": 8,
+  "X7_p0": 9,
+  "X7_p1": 8,
+  "X8_p0": 8,
+  "X8_p1": 8
+ },
+ "crowd_size_range": {
+  "min": 8,
+  "max": 9
+ },
+ "excluded_heads": {
+  "X4_p0": [
+   "pythia-1.4b-deduped"
+  ],
+  "X4_p1": [],
+  "X5_p0": [
+   "pythia-1.4b-deduped"
+  ],
+  "X5_p1": [
+   "pythia-1.4b-deduped"
+  ],
+  "X6_p0": [
+   "pythia-1.4b-deduped"
+  ],
+  "X6_p1": [
+   "pythia-1.4b-deduped"
+  ],
+  "X7_p0": [],
+  "X7_p1": [
+   "pythia-1.4b-deduped"
+  ],
+  "X8_p0": [
+   "pythia-1.4b-deduped"
+  ],
+  "X8_p1": [
+   "pythia-1.4b-deduped"
+  ]
+ },
+ "per_env": {
+  "X4_p0": {
+   "one_best": "pythia-2.8b-deduped",
+   "one_best_is_best_ood": true,
+   "best_ood_head": "pythia-2.8b-deduped",
+   "best_ood_acc": 0.3284072249589491,
+   "T_one": 0.3284072249589491,
+   "C_one": 0.5035404654777061,
+   "dec_one": 0.17513324051875706,
+   "ioi_one": 0.846726015559808,
+   "best8": "LR-AGREE",
+   "ioi_best8": 0.9476877458196855,
+   "T_best8": 0.32019704433497537,
+   "oracle": 0.4942528735632184,
+   "T_range8": [
+    0.2651888341543514,
+    0.32019704433497537
+   ],
+   "one_beats_min8": true,
+   "one_beats_lr": true,
+   "one_beats_conf": true,
+   "conf_beats_lr": false
+  },
+  "X4_p1": {
+   "one_best": "pythia-6.9b",
+   "one_best_is_best_ood": false,
+   "best_ood_head": "pythia-2.8b-deduped",
+   "best_ood_acc": 0.31821998320738876,
+   "T_one": 0.15952980688497062,
+   "C_one": 0.2930656979257125,
+   "dec_one": 0.1335358910407419,
+   "ioi_one": 0.9740060841557713,
+   "best8": "CONF",
+   "ioi_best8": 0.7762633997497239,
+   "T_best8": 0.3250069969213546,
+   "oracle": 0.6104114189756508,
+   "T_range8": [
+    0.23761544920235098,
+    0.3250069969213546
+   ],
+   "one_beats_min8": false,
+   "one_beats_lr": false,
+   "one_beats_conf": false,
+   "conf_beats_lr": true
+  },
+  "X5_p0": {
+   "one_best": "pythia-2.8b-deduped",
+   "one_best_is_best_ood": true,
+   "best_ood_head": "pythia-2.8b-deduped",
+   "best_ood_acc": 0.3117206982543641,
+   "T_one": 0.3117206982543641,
+   "C_one": 0.297032149988856,
+   "dec_one": -0.014688548265508083,
+   "ioi_one": 0.6882793017456359,
+   "best8": "CONF",
+   "ioi_best8": 0.692979405184861,
+   "T_best8": 0.3566084788029925,
+   "oracle": 0.6209476309226932,
+   "T_range8": [
+    0.30673316708229426,
+    0.3566084788029925
+   ],
+   "one_beats_min8": true,
+   "one_beats_lr": true,
+   "one_beats_conf": true,
+   "conf_beats_lr": true
+  },
+  "X5_p1": {
+   "one_best": "pythia-2.8b-deduped",
+   "one_best_is_best_ood": false,
+   "best_ood_head": "pythia-6.9b-deduped",
+   "best_ood_acc": 0.29067796610169494,
+   "T_one": 0.27033898305084747,
+   "C_one": 0.22458644898844854,
+   "dec_one": -0.04575253406239893,
+   "ioi_one": 0.7296610169491525,
+   "best8": "CONF",
+   "ioi_best8": 0.6716101694915254,
+   "T_best8": 0.3283898305084746,
+   "oracle": 0.5533898305084746,
+   "T_range8": [
+    0.24745762711864408,
+    0.3283898305084746
+   ],
+   "one_beats_min8": false,
+   "one_beats_lr": true,
+   "one_beats_conf": false,
+   "conf_beats_lr": true
+  },
+  "X6_p0": {
+   "one_best": "pythia-2.8b-deduped",
+   "one_best_is_best_ood": true,
+   "best_ood_head": "pythia-2.8b-deduped",
+   "best_ood_acc": 0.15118243243243243,
+   "T_one": 0.15118243243243243,
+   "C_one": 0.18796329589812807,
+   "dec_one": 0.036780863465695646,
+   "ioi_one": 0.8855984310332632,
+   "best8": "MIX-LR",
+   "ioi_best8": 0.9194971260825707,
+   "T_best8": 0.17947635135135134,
+   "oracle": 0.33614864864864863,
+   "T_range8": [
+    0.14527027027027026,
+    0.17947635135135134
+   ],
+   "one_beats_min8": true,
+   "one_beats_lr": true,
+   "one_beats_conf": true,
+   "conf_beats_lr": true
+  },
+  "X6_p1": {
+   "one_best": "pythia-2.8b-deduped",
+   "one_best_is_best_ood": false,
+   "best_ood_head": "pythia-6.9b-deduped",
+   "best_ood_acc": 0.23953098827470687,
+   "T_one": 0.21943048576214405,
+   "C_one": 0.27119676983341734,
+   "dec_one": 0.05176628407127329,
+   "ioi_one": 0.8323357983091292,
+   "best8": "MIX-LR",
+   "ioi_best8": 0.8957231331492546,
+   "T_best8": 0.2567001675041876,
+   "oracle": 0.4765494137353434,
+   "T_range8": [
+    0.18676716917922948,
+    0.2567001675041876
+   ],
+   "one_beats_min8": true,
+   "one_beats_lr": true,
+   "one_beats_conf": true,
+   "conf_beats_lr": true
+  },
+  "X7_p0": {
+   "one_best": "pythia-6.9b-deduped",
+   "one_best_is_best_ood": false,
+   "best_ood_head": "pythia-6.9b",
+   "best_ood_acc": 0.2160337552742616,
+   "T_one": 0.14177215189873418,
+   "C_one": 0.16984315821184112,
+   "dec_one": 0.02807100631310694,
+   "ioi_one": 0.8862988544143728,
+   "best8": "MIX-LR",
+   "ioi_best8": 0.8325587163043524,
+   "T_best8": 0.24219409282700421,
+   "oracle": 0.4118143459915612,
+   "T_range8": [
+    0.1881856540084388,
+    0.24219409282700421
+   ],
+   "one_beats_min8": false,
+   "one_beats_lr": true,
+   "one_beats_conf": false,
+   "conf_beats_lr": true
+  },
+  "X7_p1": {
+   "one_best": "pythia-6.9b-deduped",
+   "one_best_is_best_ood": true,
+   "best_ood_head": "pythia-6.9b-deduped",
+   "best_ood_acc": 0.11726384364820847,
+   "T_one": 0.11726384364820847,
+   "C_one": 0.2216471942134609,
+   "dec_one": 0.10438335056525244,
+   "ioi_one": 0.987119506917044,
+   "best8": "CONF",
+   "ioi_best8": 1.047676844630458,
+   "T_best8": 0.1278501628664495,
+   "oracle": 0.2899022801302932,
+   "T_range8": [
+    0.10830618892508144,
+    0.1278501628664495
+   ],
+   "one_beats_min8": true,
+   "one_beats_lr": true,
+   "one_beats_conf": true,
+   "conf_beats_lr": true
+  },
+  "X8_p0": {
+   "one_best": "pythia-2.8b-deduped",
+   "one_best_is_best_ood": true,
+   "best_ood_head": "pythia-2.8b-deduped",
+   "best_ood_acc": 0.2956081081081081,
+   "T_one": 0.2956081081081081,
+   "C_one": 0.2734396246935727,
+   "dec_one": -0.022168483414535423,
+   "ioi_one": 0.7043918918918919,
+   "best8": "NB-IND",
+   "ioi_best8": 0.8156762628701559,
+   "T_best8": 0.298141891891891

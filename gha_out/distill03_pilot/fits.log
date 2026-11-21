@@ -1,0 +1,2 @@
+thousands | совпадение с DISTILL-02: {'Qwen2.5-0.5B-Instruct': True, 'Qwen2.5-1.5B-Instruct': True, 'SmolLM2-1.7B-Instruct': True, 'Falcon3-1B-Instruct': True, 'OLMo-2-0425-1B-Instruct': True, 'SmolLM2-360M-Instruct': True, 'TinyLlama-1.1B-Chat-v1.0': True}
+length | совпадение с DISTILL-02: {'Qwen2.5-0.5B-Instruct': True, 'Qwen2.5-1.5B-Instruct': True, 'SmolLM2-1.7B-Instruct': True, 'Falcon3-1B-Instruct': True, 'OLMo-2-0425-1B-Instruct': True, 'SmolLM2-360M-Instruct': True, 'TinyLlama-1.1B-Chat-v1.0': True}

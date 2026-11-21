@@ -1,0 +1,73 @@
+{
+ "phase": "pilot",
+ "head": "opus",
+ "module": "842_decompress",
+ "rep": 1,
+ "model_target": "claude-opus-5-5",
+ "prompt_sha256": "dcf8160869065456c80df9a6e07b51ca803a5193bdd12a9f2851c0ec60ea3853",
+ "seconds": 66.4,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\n// SPDX-License-Identifier: GPL-2.0-or-later\n//\n// 842 Software Decompression (Rust translation of lib/842/842_decompress.c)\n//\n// Copyright (C) 2015 Dan Streetman, IBM Corp\n//\n// See 842.h for details of the 842 compressed format.\n\n#![allow(dead_code)]\n\nuse core::ffi::{c_int, c_uint};\nuse core::ptr;\n\nextern \"C\" {\n    fn crc32_be(crc: u32, p: *const u8, len: usize) -> u32;\n}\n\nconst EINVAL: c_int = 22;\nconst ENOSPC: c_int = 28;\nconst EOVERFLOW: c_int = 75;\n\nconst UINT_MAX: u64 = c_uint::MAX as u64;\n\n/* special templates */\nconst OP_REPEAT: u64 = 0x1B;\nconst OP_ZEROS: u64 = 0x1C;\nconst OP_END: u64 = 0x1E;\nconst OP_SHORT_DATA: u64 = 0x1D;\n\n/* additional bits of each op param */\nconst OP_BITS: u8 = 5;\nconst REPEAT_BITS: u8 = 6;\nconst SHORT_DATA_BITS: u8 = 3;\nconst I2_BITS: u8 = 8;\nconst I4_BITS: u8 = 9;\nconst I8_BITS: u8 = 8;\nconst CRC_BITS: u8 = 32;\n\nconst REPEAT_BITS_MAX: u64 = 0x3f;\nconst SHORT_DATA_BITS_MAX: u64 = 0x7;\n\nconst OP_ACTION: u8 = 0x70;\nconst OP_ACTION_INDEX: u8 = 0x10;\nconst OP_ACTION_DATA: u8 = 0x20;\nconst OP_ACTION_NOOP: u8 = 0x40;\nconst OP_AMOUNT: u8 = 0x0f;\nconst OP_AMOUNT_0: u8 = 0x00;\nconst OP_AMOUNT_2: u8 = 0x02;\nconst OP_AMOUNT_4: u8 = 0x04;\nconst OP_AMOUNT_8: u8 = 0x08;\n\nconst D2: u8 = OP_ACTION_DATA | OP_AMOUNT_2;\nconst D4: u8 = OP_ACTION_DATA | OP_AMOUNT_4;\nconst D8: u8 = OP_ACTION_DATA | OP_AMOUNT_8;\nconst I2: u8 = OP_ACTION_INDEX | OP_AMOUNT_2;\nconst I4: u8 = OP_ACTION_INDEX | OP_AMOUNT_4;\nconst I8: u8 = OP_ACTION_INDEX | OP_AMOUNT_8;\nconst N0: u8 = OP_ACTION_NOOP | OP_AMOUNT_0;\n\nconst OPS_MAX: u8 = 0x1a;\n\n/* rolling fifo sizes */\nconst I2_FIFO_SIZE: u64 = 2 * (1 << I2_BITS);\nconst I4_FIFO_SIZE: u64 = 4 * (1 << I4_BITS);\nconst I8_FIFO_SIZE: u64 = 8 * (1 << I8_BITS);\n\nstatic DECOMP_OPS: [[u8; 4]; OPS_MAX as usize] = [\n    [D8, N0, N0, N0],\n    [D4, D2, I2, N0],\n    [D4, I2, D2, N0],\n    [D4, I2, I2, N0],\n    [D4, I4, N0, N0],\n    [D2, I2, D4, N0],\n    [D2, I2, D2, I2],\n    [D2, I2, I2, D2],\n    [D2, I2, I2, I2],\n    [D2, I2, I4, N0],\n    [I2, D2, D4, N0],\n    [I2, D4, I2, N0],\n    [I2, D2, I2, D2],\n    [I2, D2, I2, I2],\n    [I2, D2, I4, N0],\n    [I2, I2, D4, N0],\n    [I2, I2, D2, I2],\n    [I2, I2, I2, D2],\n    [I2, I2, I2, I2],\n    [I2, I2, I4, N0],\n    [I4, D4, N0, N0],\n    [I4, D2, I2, N0],\n    [I4, I2, D2, N0],\n    [I4, I2, I2, N0],\n    [I4, I4, N0, N0],\n    [I8, N0, N0, N0],\n];\n\nstruct Sw842Param {\n    inp: *mut u8,\n    bit: u8,\n    ilen: u64,\n    out: *mut u8,\n    ostart: *mut u8,\n    olen: u64,\n}\n\n#[inline]\nfn out_pos(p: &Sw842Param) -> u64 {\n    (p.out as usize).wrapping_sub(p.ostart as usize) as u64\n}\n\nunsafe fn split_next_bits(p: &mut Sw842Param, d: &mut u64, n: u8, s: u8) -> c_int {\n    let mut tmp: u64 = 0;\n\n    if n <= s {\n        return -EINVAL;\n    }\n\n    let ret = next_bits(p, &mut tmp, n - s);\n    if ret != 0 {\n        return ret;\n    }\n    let ret = next_bits(p, d, s);\n    if ret != 0 {\n        return ret;\n    }\n    *d |= tmp << s;\n    0\n}\n\nunsafe fn next_bits(p: &mut Sw842Param, d: &mut u64, n: u8) -> c_int {\n    let inp = p.inp;\n    let b = p.bit;\n    let bits = b.wrapping_add(n);\n\n    if n > 64 {\n        return -EINVAL;\n    }\n\n    if bits > 64 {\n        return split_next_bits(p, d, n, 32);\n    } else if p.ilen < 8 && bits > 32 && bits <= 56 {\n        return split_next_bits(p, d, n, 16);\n    } else if p.ilen < 4 && bits > 16 && bits <= 24 {\n        return split_next_bits(p, d, n, 8);\n    }\n\n    if ((bits as u64) + 7) / 8 > p.ilen {\n        return -EOVERFLOW;\n    }\n\n    let bits32 = bits as u32;\n    if bits <= 8 {\n        *d = ((*inp as u32) >> (8 - bits32)) as u64;\n    } else if bits <= 16 {\n        let v = u16::from_be(ptr::read_unaligned(inp as *const u16));\n        *d = ((v as u32) >> (16 - bits32)) as u64;\n    } else if bits <= 32 {\n        let v = u32::from_be(ptr::read_unaligned(inp as *const u32));\n        *d = (v >> (32 - bits32)) as u64;\n    } else {\n        let v = u64::from_be(ptr::read_unaligned(inp as *const u64));\n        *d = v >> (64 - bits32);\n    }\n\n    let mask: u64 = if n >= 64 {\n        !0u64\n    } else if n == 0 {\n        0\n    } else {\n        (1u64 << n) - 1\n    };\n    *d &= mask;\n\n    p.bit = p.bit.wrapping_add(n);\n\n    if p.bit > 7 {\n        let adv = (p.bit / 8) as u64;\n        p.inp = p.inp.wrapping_add(adv as usize);\n        p.ilen = p.ilen.wrapping_sub(adv);\n        p.bit %= 8;\n    }\n\n    0\n}\n\nunsafe fn do_data(p: &mut Sw842Param, n: u8) -> c_int {\n    let mut v: u64 = 0;\n\n    if (n as u64) > p.olen {\n        return -ENOSPC;\n    }\n\n    let ret = next_bits(p, &mut v, n.wrapping_mul(8));\n    if ret != 0 {\n        return ret;\n    }\n\n    match n {\n        2 => ptr::write_unaligned(p.out as *mut u16, (v as u16).to_be()),\n        4 => ptr::write_unaligned(p.out as *mut u32, (v as u32).to_be()),\n        8 => ptr::write_unaligned(p.out as *mut u64, v.to_be()),\n        _ => return -EINVAL,\n    }\n\n    p.out = p.out.wrapping_add(n as usize);\n    p.olen = p.olen.wrapping_sub(n as u64);\n\n    0\n}\n\nunsafe fn do_index_inner(p: &mut Sw842Param, size: u8, bits: u8, fsize: u64) -> c_int {\n    let mut index: u64 = 0;\n    let total: u64 = out_pos(p) & !7u64;\n\n    if (size as u64) > p.olen {\n        return -ENOSPC;\n    }\n\n    let ret = next_bits(p, &mut index, bits);\n    if ret != 0 {\n        return ret;\n    }\n\n    let mut offset = index.wrapping_mul(size as u64);\n\n    /* a ring buffer of fsize is used; correct the offset */\n    if total > fsize {\n        let mut section = total & !(fsize - 1);\n        let pos = total - section;\n\n        if offset >= pos {\n            section = section.wrapping_sub(fsize);\n        }\n\n        offset = offset.wrapping_add(section);\n    }\n\n    if offset.wrapping_add(size as u64) > total {\n        return -EINVAL;\n    }\n\n    // WARN / pr_debug have no effect on the result.\n\n    ptr::copy(\n        p.ostart.wrapping_add(offset as usize) as *const u8,\n        p.out,\n        size as usize,\n    );\n    p.out = p.out.wrapping_add(size as usize);\n    p.olen = p.olen.wrapping_sub(size as u64);\n\n    0\n}\n\nunsafe fn do_index(p: &mut Sw842Param, n: u8) -> c_int {\n    match n {\n        2 => do_index_inner(p, 2, I2_BITS, I2_FIFO_SIZE),\n        4 => do_index_inner(p, 4, I4_BITS, I4_FIFO_SIZE),\n        8 => do_index_inner(p, 8, I8_BITS, I8_FIFO_SIZE),\n        _ => -EINVAL,\n    }\n}\n\nunsafe fn do_op(p: &mut Sw842Param, o: u8) -> c_int {\n    if o >= OPS_MAX {\n        return -EINVAL;\n    }\n\n    for i in 0..4 {\n        let op = DECOMP_OPS[o as usize][i];\n        let ret;\n\n        match op & OP_ACTION {\n            OP_ACTION_DATA => ret = do_data(p, op & OP_AMOUNT),\n            OP_ACTION_INDEX => ret = do_index(p, op & OP_AMOUNT),\n            OP_ACTION_NOOP => ret = 0,\n            _ => return -EINVAL,\n        }\n\n        if ret != 0 {\n            return ret;\n        }\n    }\n\n    0\n}\n\n/// sw842_decompress\n///\n/// Returns: 0 on success, error on failure.  `*olen` will contain the\n/// number of output bytes written on success, or 0 on error.\n#[no_mangle]\npub extern \"C\" fn sw842_decompress(\n    inp: *const u8,\n    ilen: c_uint,\n    out: *mut u8,\n    olen: *mut c_uint,\n) -> c_int {\n    unsafe {\n        let mut p = Sw842Param {\n            inp: inp as *mut u8,\n            bit: 0,\n            ilen: ilen as u64,\n            out,\n            ostart: out,\n            olen: *olen as u64,\n        };\n        let mut op: u64 = 0;\n        let mut rep: u64 = 0;\n        let mut tmp: u64 = 0;\n        let mut bytes: u64 = 0;\n        let mut crc: u64 = 0;\n\n        let total: u64 = p.olen;\n\n        *olen = 0;\n\n        loop {\n            let ret = next_bits(&mut p, &mut op, OP_BITS);\n            if ret != 0 {\n                return ret;\n            }\n\n            match op {\n                OP_REPEAT => {\n                    let ret = next_bits(&mut p, &mut rep, REPEAT_BITS);\n                    if ret != 0 {\n                        return ret;\n                    }\n\n                    /* no complete previous block */\n                    if ((p.out as isize).wrapping_sub(p.ostart as isize)) < 8 {\n                        return -EINVAL;\n                    }\n\n                    /* copy rep + 1 */\n                    rep = rep.wrapping_add(1);\n\n                    if rep.wrapping_mul(8) > p.olen {\n                        return -ENOSPC;\n                    }\n\n                    while rep > 0 {\n                        rep -= 1;\n                        ptr::copy(p.out.wrapping_sub(8) as *const u8, p.out, 8);\n                        p.out = p.out.wrapping_add(8);\n                        p.olen = p.olen.wrapping_sub(8);\n                    }\n                }\n                OP_ZEROS => {\n                    if 8 > p.olen {\n                        return -ENOSPC;\n                    }\n\n                    ptr::write_bytes(p.out, 0, 8);\n                    p.out = p.out.wrapping_add(8);\n                    p.olen = p.olen.wrapping_sub(8);\n                }\n                OP_SHORT_DATA => {\n                    let ret = next_bits(&mut p, &mut bytes, SHORT_DATA_BITS);\n                    if ret != 0 {\n                        return ret;\n                    }\n\n                    if bytes == 0 || bytes > SHORT_DATA_BITS_MAX {\n                        return -EINVAL;\n                    }\n                    if bytes > p.olen {\n                        return -ENOSPC;\n                    }\n\n                    while bytes > 0 {\n                        bytes -= 1;\n                        let ret = next_bits(&mut p, &mut tmp, 8);\n                        if ret != 0 {\n                            return ret;\n                        }\n                        *p.out = tmp as u8;\n                        p.out = p.out.wrapping_add(1);\n                        p.olen = p.olen.wrapping_sub(1);\n                    }\n                }\n                OP_END => {}\n                _ => {\n                    let ret = do_op(&mut p, op as u8);\n                    if ret != 0 {\n                        return ret;\n                    }\n                }\n            }\n\n            if op == OP_END {\n                break;\n            }\n        }\n\n        /*\n         * crc(0:31) is saved in compressed data starting with the\n         * next bit after End of stream template.\n         */\n        let ret = next_bits(&mut p, &mut crc, CRC_BITS);\n        if ret != 0 {\n            return ret;\n        }\n\n        let written = total.wrapping_sub(p.olen);\n\n        /*\n         * Validate CRC saved in compressed data.\n         */\n        if crc != crc32_be(0, out as *const u8, written as usize) as u64 {\n            return -EINVAL;\n        }\n\n        if written > UINT_MAX {\n            return -ENOSPC;\n        }\n\n        *olen = written as c_uint;\n\n        0\n    }\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 10197,
+  "cache_read_input_tokens": 1639,
+  "output_tokens": 8073,
+  "output_tokens_details": {
+   "thinking_tokens": 2936
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 10197,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 8073,
+    "cache_read_input_tokens": 1639,
+    "cache_creation_input_tokens": 10197,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 10197
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.24337179999999997,
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 8073,
+   "cacheReadInputTokens": 1639,
+   "cacheCreationInputTokens": 10197,
+   "webSearchRequests": 0,
+   "costUSD": 0.24337179999999997,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 2936,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 10197,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 65077,
+ "code_extracted": true,
+ "models_used": [
+  "claude-opus-5-5"
+ ]
+}

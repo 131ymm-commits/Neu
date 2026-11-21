@@ -1,0 +1,65 @@
+площадка: {'mode': 'pilot', 'python': '3.13.16', 'torch': '2.11.0+cu130', 'transformers': '5.20.2', 'n_gpu': 2, 'disk_free_gb': 966.9, 'cpus': 4, 'workers': [{'worker': 0, 'device': 'cuda', 'gpu': 'Tesla T4'}, {'worker': 1, 'device': 'cuda', 'gpu': 'Tesla T4'}], 'exit_codes': [0, 0]}
+ошибки голов: [] | первые ошибки (до повтора): []
+сверка цепочки: ответы равны — True; наибольшее расхождение logp — 0; голов 9
+    pythia-1.4b {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+    pythia-1.4b-deduped {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+    pythia-2.8b {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+    pythia-2.8b@step133000 {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+    pythia-2.8b@step123000 {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+    pythia-2.8b@step113000 {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+    pythia-2.8b-deduped {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+    pythia-6.9b {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+    pythia-6.9b-deduped {'same_answer': 96, 'none_mismatch': 0, 'max_abs_dlogp': 0.0}
+время, с: 594.8 | по головам: {'pythia-1.4b': (117.9, 'W1'), 'pythia-1.4b-deduped': (48.7, 'W1'), 'pythia-2.8b': (91.4, 'W0'), 'pythia-2.8b@step133000': (141.1, 'W0'), 'pythia-2.8b@step123000': (63.9, 'W0'), 'pythia-2.8b@step113000': (61.3, 'W1'), 'pythia-2.8b-deduped': (86.4, 'W1'), 'pythia-6.9b': (229.6, 'W0'), 'pythia-6.9b-deduped': (251.9, 'W1')}
+прогноз времени теста, с: {'1': 3035, '0': 3151} → 3151
+X4_p9: ID 131, OOD 169; пройдут проверку метода по прогнозу: 9 из 9; лучшая на ID — pythia-2.8b-deduped, лучшая на OOD — pythia-2.8b-deduped
+    pythia-1.4b                ID 0.153 OOD 0.012 | наименьшее ожидаемое число на ID 152 
+    pythia-1.4b-deduped        ID 0.031 OOD 0.018 | наименьшее ожидаемое число на ID 30 
+    pythia-2.8b                ID 0.321 OOD 0.219 | наименьшее ожидаемое число на ID 319 
+    pythia-2.8b@step133000     ID 0.313 OOD 0.112 | наименьшее ожидаемое число на ID 312 
+    pythia-2.8b@step123000     ID 0.229 OOD 0.237 | наименьшее ожидаемое число на ID 228 
+    pythia-2.8b@step113000     ID 0.252 OOD 0.172 | наименьшее ожидаемое число на ID 251 
+    pythia-2.8b-deduped        ID 0.405 OOD 0.337 | наименьшее ожидаемое число на ID 403 
+    pythia-6.9b                ID 0.275 OOD 0.296 | наименьшее ожидаемое число на ID 274 
+    pythia-6.9b-deduped        ID 0.298 OOD 0.290 | наименьшее ожидаемое число на ID 296 
+X5_p9: ID 119, OOD 181; пройдут проверку метода по прогнозу: 9 из 9; лучшая на ID — pythia-2.8b-deduped, лучшая на OOD — pythia-6.9b-deduped
+    pythia-1.4b                ID 0.059 OOD 0.055 | наименьшее ожидаемое число на ID 59 
+    pythia-1.4b-deduped        ID 0.025 OOD 0.028 | наименьшее ожидаемое число на ID 25 
+    pythia-2.8b                ID 0.336 OOD 0.083 | наименьшее ожидаемое число на ID 339 
+    pythia-2.8b@step133000     ID 0.261 OOD 0.022 | наименьшее ожидаемое число на ID 263 
+    pythia-2.8b@step123000     ID 0.227 OOD 0.055 | наименьшее ожидаемое число на ID 229 
+    pythia-2.8b@step113000     ID 0.109 OOD 0.028 | наименьшее ожидаемое число на ID 110 
+    pythia-2.8b-deduped        ID 0.361 OOD 0.122 | наименьшее ожидаемое число на ID 364 
+    pythia-6.9b                ID 0.244 OOD 0.133 | наименьшее ожидаемое число на ID 246 
+    pythia-6.9b-deduped        ID 0.252 OOD 0.199 | наименьшее ожидаемое число на ID 254 
+X6_p9: ID 124, OOD 176; пройдут проверку метода по прогнозу: 7 из 9; лучшая на ID — pythia-2.8b-deduped, лучшая на OOD — pythia-2.8b-deduped
+    pythia-1.4b                ID 0.008 OOD 0.023 | наименьшее ожидаемое число на ID 8 — НЕ ПРОЙДЁТ
+    pythia-1.4b-deduped        ID 0.000 OOD 0.011 | наименьшее ожидаемое число на ID 0 — НЕ ПРОЙДЁТ
+    pythia-2.8b                ID 0.371 OOD 0.210 | наименьшее ожидаемое число на ID 375 
+    pythia-2.8b@step133000     ID 0.298 OOD 0.136 | наименьшее ожидаемое число на ID 302 
+    pythia-2.8b@step123000     ID 0.242 OOD 0.153 | наименьшее ожидаемое число на ID 245 
+    pythia-2.8b@step113000     ID 0.266 OOD 0.108 | наименьшее ожидаемое число на ID 269 
+    pythia-2.8b-deduped        ID 0.484 OOD 0.290 | наименьшее ожидаемое число на ID 489 
+    pythia-6.9b                ID 0.266 OOD 0.102 | наименьшее ожидаемое число на ID 269 
+    pythia-6.9b-deduped        ID 0.185 OOD 0.193 | наименьшее ожидаемое число на ID 188 
+X7_p9: ID 133, OOD 167; пройдут проверку метода по прогнозу: 9 из 9; лучшая на ID — pythia-6.9b-deduped, лучшая на OOD — pythia-6.9b-deduped
+    pythia-1.4b                ID 0.083 OOD 0.042 | наименьшее ожидаемое число на ID 82 
+    pythia-1.4b-deduped        ID 0.030 OOD 0.012 | наименьшее ожидаемое число на ID 30 
+    pythia-2.8b                ID 0.113 OOD 0.108 | наименьшее ожидаемое число на ID 112 
+    pythia-2.8b@step133000     ID 0.083 OOD 0.072 | наименьшее ожидаемое число на ID 82 
+    pythia-2.8b@step123000     ID 0.068 OOD 0.102 | наименьшее ожидаемое число на ID 67 
+    pythia-2.8b@step113000     ID 0.038 OOD 0.078 | наименьшее ожидаемое число на ID 37 
+    pythia-2.8b-deduped        ID 0.173 OOD 0.144 | наименьшее ожидаемое число на ID 172 
+    pythia-6.9b                ID 0.203 OOD 0.132 | наименьшее ожидаемое число на ID 202 
+    pythia-6.9b-deduped        ID 0.286 OOD 0.150 | наименьшее ожидаемое число на ID 284 
+X8_p9: ID 146, OOD 154; пройдут проверку метода по прогнозу: 9 из 9; лучшая на ID — pythia-2.8b-deduped, лучшая на OOD — pythia-2.8b-deduped
+    pythia-1.4b                ID 0.048 OOD 0.013 | наименьшее ожидаемое число на ID 47 
+    pythia-1.4b-deduped        ID 0.041 OOD 0.013 | наименьшее ожидаемое число на ID 40 
+    pythia-2.8b                ID 0.507 OOD 0.266 | наименьшее ожидаемое число на ID 486 
+    pythia-2.8b@step133000     ID 0.377 OOD 0.221 | наименьшее ожидаемое число на ID 371 
+    pythia-2.8b@step123000     ID 0.363 OOD 0.201 | наименьшее ожидаемое число на ID 358 
+    pythia-2.8b@step113000     ID 0.425 OOD 0.214 | наименьшее ожидаемое число на ID 418 
+    pythia-2.8b-deduped        ID 0.514 OOD 0.325 | наименьшее ожидаемое число на ID 479 
+    pythia-6.9b                ID 0.281 OOD 0.084 | наименьшее ожидаемое число на ID 277 
+    pythia-6.9b-deduped        ID 0.322 OOD 0.123 | наименьшее ожидаемое число на ID 317 
+итог прогноза: {'min_pass': 7, 'worst_expected_count': {'pythia-1.4b': 8.153225806451612, 'pythia-1.4b-deduped': 0.0, 'pythia-2.8b': 112.04887218045113, 'pythia-2.8b@step133000': 82.16917293233082, 'pythia-2.8b@step123000': 67.22932330827068, 'pythia-2.8b@step113000': 37.349624060150376, 'pythia-2.8b-deduped': 171.8082706766917, 'pythia-6.9b': 201.68796992481202, 'pythia-6.9b-deduped': 187.5241935483871}, 'ranges_below_6': 0}

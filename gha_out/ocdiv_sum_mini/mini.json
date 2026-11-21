@@ -1,0 +1,151 @@
+{
+ "source": "mini",
+ "crowd": [
+  "Qwen2.5-0.5B-Instruct",
+  "Qwen2.5-1.5B-Instruct",
+  "SmolLM2-1.7B-Instruct",
+  "Falcon3-1B-Instruct",
+  "OLMo-2-0425-1B-Instruct",
+  "SmolLM2-360M-Instruct",
+  "TinyLlama-1.1B-Chat-v1.0"
+ ],
+ "thresholds": {
+  "max_none": 0.05,
+  "method": "проверка метода в масштабе теста, как отбор пилота 2"
+ },
+ "head_errors": [],
+ "heads": {
+  "Falcon3-1B-Instruct": {
+   "none_frac": 0.0,
+   "none_ok": true,
+   "method_ok": true,
+   "id_correct": 234,
+   "id_wrong": 38,
+   "sec_per_task": 1.025,
+   "revision": "28ba2251970a01dd1edc7ba7dad2eb71216ccfdf",
+   "versions": [
+    {
+     "python": "3.13.18",
+     "torch": "2.11.0+cpu",
+     "transformers": "5.20.2",
+     "numpy": "2.5.3"
+    }
+   ]
+  },
+  "OLMo-2-0425-1B-Instruct": {
+   "none_frac": 0.0,
+   "none_ok": true,
+   "method_ok": true,
+   "id_correct": 200,
+   "id_wrong": 72,
+   "sec_per_task": 0.47883333333333333,
+   "revision": "48d788eca847d4d7548f375ad03d3c9312f6139e",
+   "versions": [
+    {
+     "python": "3.13.18",
+     "torch": "2.11.0+cpu",
+     "transformers": "5.20.2",
+     "numpy": "2.5.3"
+    }
+   ]
+  },
+  "Qwen2.5-0.5B-Instruct": {
+   "none_frac": 0.0,
+   "none_ok": true,
+   "method_ok": true,
+   "id_correct": 258,
+   "id_wrong": 14,
+   "sec_per_task": 0.26733333333333337,
+   "revision": "7ae557604adf67be50417f59c2c2f167def9a775",
+   "versions": [
+    {
+     "python": "3.13.18",
+     "torch": "2.11.0+cpu",
+     "transformers": "5.20.2",
+     "numpy": "2.5.3"
+    }
+   ]
+  },
+  "Qwen2.5-1.5B-Instruct": {
+   "none_frac": 0.008333333333333333,
+   "none_ok": true,
+   "method_ok": true,
+   "id_correct": 218,
+   "id_wrong": 54,
+   "sec_per_task": 1.1593333333333333,
+   "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+   "versions": [
+    {
+     "python": "3.13.18",
+     "torch": "2.11.0+cpu",
+     "transformers": "5.20.2",
+     "numpy": "2.5.3"
+    }
+   ]
+  },
+  "SmolLM2-1.7B-Instruct": {
+   "none_frac": 0.0,
+   "none_ok": true,
+   "method_ok": true,
+   "id_correct": 205,
+   "id_wrong": 67,
+   "sec_per_task": 1.425,
+   "revision": "31b70e2e869a7173562077fd711b654946d38674",
+   "versions": [
+    {
+     "python": "3.13.18",
+     "torch": "2.11.0+cpu",
+     "transformers": "5.20.2",
+     "numpy": "2.5.3"
+    }
+   ]
+  },
+  "SmolLM2-360M-Instruct": {
+   "none_frac": 0.0,
+   "none_ok": true,
+   "method_ok": true,
+   "id_correct": 136,
+   "id_wrong": 136,
+   "sec_per_task": 0.26966666666666667,
+   "revision": "a10cc1512eabd3dde888204e902eca88bddb4951",
+   "versions": [
+    {
+     "python": "3.13.18",
+     "torch": "2.11.0+cpu",
+     "transformers": "5.20.2",
+     "numpy": "2.5.3"
+    }
+   ]
+  },
+  "TinyLlama-1.1B-Chat-v1.0": {
+   "none_frac": 0.0,
+   "none_ok": true,
+   "method_ok": true,
+   "id_correct": 168,
+   "id_wrong": 104,
+   "sec_per_task": 0.7753333333333333,
+   "revision": "fe8a4ea1ffedaf415f4da2f062534de366a451e6",
+   "versions": [
+    {
+     "python": "3.13.18",
+     "torch": "2.11.0+cpu",
+     "transformers": "5.20.2",
+     "numpy": "2.5.3"
+    }
+   ]
+  }
+ },
+ "envs": {
+  "X3_p2": {
+   "n": 600,
+   "n_id": 272,
+   "n_ood": 328,
+   "min_each": 6
+  }
+ },
+ "missing": [],
+ "failed": [],
+ "revision_mismatch": [],
+ "stop": false,
+ "verdict": "формат и проверка метода на p = 2 — в порядке; регистрация"
+}

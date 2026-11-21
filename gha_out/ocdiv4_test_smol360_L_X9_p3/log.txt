@@ -1,0 +1,5 @@
+[    0.0 с] фаза test3 | сред 1 | задач 2200
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   10.0 с] HuggingFaceTB/SmolLM2-360M-Instruct a10cc1512eabd3dde888204e902eca88bddb4951 загружена за 5.7 с; ревизия a10cc1512eabd3dde888204e902eca88bddb4951
+[  860.3 с] L_X9_p3 | задач 2200 | время 850.3 с, 0.386 с на задачу
+[  860.7 с] записано gha_out/ocdiv4_test_smol360_L_X9_p3/answers_SmolLM2-360M-Instruct.json

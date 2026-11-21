@@ -1,0 +1,5 @@
+[    0.0 с] источник mini | выборка first | сред 1 | задач 600 | ID 272 | OOD 328
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   29.6 с] allenai/OLMo-2-0425-1B-Instruct 48d788eca847d4d7548f375ad03d3c9312f6139e загружена за 26.9 с; ревизия 48d788eca847d4d7548f375ad03d3c9312f6139e
+[  316.9 с] X3_p2 точность {'ID': 0.7353, 'OOD': 0.5579} | без числа 0 | время 287.3 с, 0.479 с на задачу
+[  317.6 с] записано gha_out/ocdiv_mini_olmo1/answers_OLMo-2-0425-1B-Instruct.json

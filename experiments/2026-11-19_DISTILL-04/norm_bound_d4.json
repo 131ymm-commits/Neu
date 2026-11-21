@@ -1,0 +1,72 @@
+{
+ "catalog": [
+  "plus10j",
+  "minus10j",
+  "digit_pm1",
+  "shift",
+  "operand",
+  "omit_digit",
+  "drop_b_digit",
+  "drop_a_digit",
+  "move_b_digit",
+  "clamp9"
+ ],
+ "K": 10,
+ "envs": {
+  "T_X14_p3": {
+   "max_bound": 0.00014001400140014,
+   "max_S": 4,
+   "max_out_V": 0,
+   "n": 2200
+  },
+  "T_X24_p3": {
+   "max_bound": 0.00014001400140014,
+   "max_S": 4,
+   "max_out_V": 0,
+   "n": 2200
+  },
+  "T_X34_p3": {
+   "max_bound": 0.00014001400140014,
+   "max_S": 4,
+   "max_out_V": 0,
+   "n": 2200
+  },
+  "T_X44_p3": {
+   "max_bound": 0.00014001400140014,
+   "max_S": 4,
+   "max_out_V": 0,
+   "n": 2200
+  },
+  "T_X54_p3": {
+   "max_bound": 0.00014001400140014,
+   "max_S": 4,
+   "max_out_V": 0,
+   "n": 2200
+  },
+  "T_X64_p3": {
+   "max_bound": 0.00014001400140014,
+   "max_S": 4,
+   "max_out_V": 0,
+   "n": 2200
+  },
+  "T_X74_p3": {
+   "max_bound": 0.00014001400140014,
+   "max_S": 4,
+   "max_out_V": 0,
+   "n": 2200
+  },
+  "T_X84_p3": {
+   "max_bound": 0.00014001400140014,
+   "max_S": 4,
+   "max_out_V": 0,
+   "n": 2200
+  },
+  "L_X9999_p3": {
+   "max_bound": 1.3001300130013002e-06,
+   "max_S": 64,
+   "max_out_V": 2,
+   "n": 2200
+  }
+ },
+ "max_bound": 0.00014001400140014
+}

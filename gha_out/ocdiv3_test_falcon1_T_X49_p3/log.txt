@@ -1,0 +1,6 @@
+[    0.0 с] фаза test2 | сред 1 | задач 2200
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   30.1 с] tiiuae/Falcon3-1B-Instruct 28ba2251970a01dd1edc7ba7dad2eb71216ccfdf загружена за 27.3 с; ревизия 28ba2251970a01dd1edc7ba7dad2eb71216ccfdf
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+[ 2249.7 с] T_X49_p3 | задач 2200 | время 2219.6 с, 1.009 с на задачу
+[ 2250.4 с] записано gha_out/ocdiv3_test_falcon1_T_X49_p3/answers_Falcon3-1B-Instruct.json

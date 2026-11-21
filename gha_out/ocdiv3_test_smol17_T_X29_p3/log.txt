@@ -1,0 +1,5 @@
+[    0.0 с] фаза test2 | сред 1 | задач 2200
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   28.4 с] HuggingFaceTB/SmolLM2-1.7B-Instruct 31b70e2e869a7173562077fd711b654946d38674 загружена за 25.7 с; ревизия 31b70e2e869a7173562077fd711b654946d38674
+[ 2571.3 с] T_X29_p3 | задач 2200 | время 2542.9 с, 1.156 с на задачу
+[ 2572.1 с] записано gha_out/ocdiv3_test_smol17_T_X29_p3/answers_SmolLM2-1.7B-Instruct.json

@@ -1,0 +1,2998 @@
+{
+ "sources": [
+  {
+   "spec": "new:experiments/2026-11-15_OCSHIFT-01/run/out",
+   "mode": "test",
+   "info": {
+    "mode": "test",
+    "python": "3.13.16",
+    "torch": "2.11.0+cu130",
+    "transformers": "5.20.2",
+    "n_gpu": 2,
+    "disk_free_gb": 966.9,
+    "cpus": 4,
+    "workers": [
+     {
+      "worker": 0,
+      "device": "cuda",
+      "gpu": "Tesla T4"
+     },
+     {
+      "worker": 1,
+      "device": "cuda",
+      "gpu": "Tesla T4"
+     }
+    ],
+    "exit_codes": [
+     0,
+     0
+    ]
+   },
+   "design": {
+    "ranges": [
+     4,
+     5,
+     6,
+     7,
+     8
+    ],
+    "b": [
+     10,
+     99
+    ],
+    "shots_base": 7600000,
+    "split_base": 7610000,
+    "n_env": 2200,
+    "n_pilot": 300,
+    "p_test": [
+     0,
+     1
+    ],
+    "p_pilot": 9,
+    "check_n": 96,
+    "plan": [
+     [
+      7,
+      2,
+      3,
+      4
+     ],
+     [
+      0,
+      1,
+      5,
+      6,
+      8
+     ]
+    ]
+   },
+   "head_errors": []
+  }
+ ],
+ "B": 2000,
+ "level": 0.0025,
+ "z": 2.807033768343811,
+ "band": 0.02,
+ "m_new": 5,
+ "envs": {
+  "X4_p0": {
+   "n_id": 982,
+   "n_ood": 1218,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 269,
+     "id_wrong": 713,
+     "ood_correct": 63,
+     "ood_wrong": 1155,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 19,
+     "id_wrong": 963,
+     "ood_correct": 37,
+     "ood_wrong": 1181,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "pythia-2.8b": {
+     "id_correct": 510,
+     "id_wrong": 472,
+     "ood_correct": 337,
+     "ood_wrong": 881,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 433,
+     "id_wrong": 549,
+     "ood_correct": 220,
+     "ood_wrong": 998,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 417,
+     "id_wrong": 565,
+     "ood_correct": 310,
+     "ood_wrong": 908,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 333,
+     "id_wrong": 649,
+     "ood_correct": 213,
+     "ood_wrong": 1005,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 631,
+     "id_wrong": 351,
+     "ood_correct": 400,
+     "ood_wrong": 818,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 297,
+     "id_wrong": 685,
+     "ood_correct": 133,
+     "ood_wrong": 1085,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 328,
+     "id_wrong": 654,
+     "ood_correct": 149,
+     "ood_wrong": 1069,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620040,
+   "seed_boot": 7830040,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.2939244663382594,
+    "C CONF": 0.5592372566471894,
+    "ioi CONF": 0.9713883239706705,
+    "brier CONF": 0.24927217888413888,
+    "ign CONF": 0.7060755336617406,
+    "dec CONF": 0.26531279030892996,
+    "T ONE-BEST": 0.3284072249589491,
+    "C ONE-BEST": 0.5035404654777061,
+    "ioi ONE-BEST": 0.846726015559808,
+    "brier ONE-BEST": 0.22890811315755705,
+    "ign ONE-BEST": 0.6715927750410509,
+    "dec ONE-BEST": 0.17513324051875706,
+    "T FIXED": 0.3284072249589491,
+    "C FIXED": 0.5035404654777061,
+    "ioi FIXED": 0.846726015559808,
+    "brier FIXED": 0.22890811315755705,
+    "ign FIXED": 0.6715927750410509,
+    "dec FIXED": 0.17513324051875706,
+    "T POST-IN": 0.2939244663382594,
+    "C POST-IN": 0.4963930104489622,
+    "ioi POST-IN": 0.9085440777724434,
+    "brier POST-IN": 0.21975961692367185,
+    "ign POST-IN": 0.7060755336617406,
+    "dec POST-IN": 0.2024685441107028,
+    "T POST-CV": 0.2939244663382594,
+    "C POST-CV": 0.4871464742409326,
+    "ioi POST-CV": 0.8992975415644138,
+    "brier POST-CV": 0.21879162043808376,
+    "ign POST-CV": 0.7060755336617406,
+    "dec POST-CV": 0.1932220079026732,
+    "wc CONF": -0.054640246374041856,
+    "wc ONE-BEST": -0.0004335136272646256,
+    "wc FIXED": -0.0004335136272646256,
+    "wc POST": 0.011691917863477452,
+    "one_best_is_fixed": 1.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.2739307535641548,
+      "ood": 0.05172413793103448
+     },
+     "pythia-2.8b": {
+      "id": 0.5193482688391039,
+      "ood": 0.2766830870279146
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.4409368635437882,
+      "ood": 0.180623973727422
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.42464358452138495,
+      "ood": 0.2545155993431856
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.3391038696537678,
+      "ood": 0.1748768472906404
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.6425661914460286,
+      "ood": 0.3284072249589491
+     },
+     "pythia-6.9b": {
+      "id": 0.3024439918533605,
+      "ood": 0.10919540229885058
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.3340122199592668,
+      "ood": 0.12233169129720854
+     }
+    },
+    "one_best": "pythia-2.8b-deduped",
+    "one_best_is_fixed": true,
+    "id_gap": 0.12321792260692466,
+    "oracle_ood": 0.4942528735632184
+   },
+   "meta": {
+    "name": "X4_p0",
+    "kind": "test",
+    "X": 4,
+    "p": 0,
+    "a": [
+     400,
+     499
+    ],
+    "bound": 500,
+    "shots_seed": 7604000,
+    "split_seed": 7610004,
+    "prompt_head": "404+68=472\n486+27=513\n478+17=495\n472+40=512\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.054640246374041856,
+     "sd": 0.011068320694286366,
+     "boot_shift": -0.014794611908765742
+    },
+    "P1": {
+     "point": -0.07209078240625677,
+     "sd": 0.0197961966777681,
+     "boot_shift": -0.009236095797134886
+    },
+    "P2": {
+     "point": 0.052571526004605795,
+     "sd": 0.027828780405554917,
+     "boot_shift": 0.005025866127107759
+    },
+    "P3": {
+     "point": 0.011691917863477452,
+     "sd": 0.005990876724941304,
+     "boot_shift": -0.004882796498866604
+    },
+    "N": {
+     "point": -0.0004335136272646256,
+     "sd": 0.0016623671891879044,
+     "boot_shift": 0.00020623357039290235
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": -0.010116492719473291,
+     "sd": 0.007956950334673885
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.030480558446055128,
+     "sd": 0.007578961851199373
+    },
+    "P2: разность незнания": {
+     "point": 0.034482758620689724,
+     "sd": 0.01020908415444996
+    },
+    "P2: разность самообмана": {
+     "point": 0.018088767383916127,
+     "sd": 0.021509578991367344
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.1932220079026732,
+     "sd": 0.02492425065670852
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.26531279030892996,
+     "sd": 0.01695258665234074
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.17513324051875706,
+     "sd": 0.020503193896708936
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.17513324051875706,
+     "sd": 0.020503193896708936
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.009246536208029621,
+     "sd": 0.016566363117259012
+    },
+    "POST-CV − FIXED": {
+     "point": 0.052571526004605795,
+     "sd": 0.027828780405554917
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.0,
+     "sd": 0.0
+    },
+    "wc ONE-BEST": {
+     "point": -0.0004335136272646256,
+     "sd": 0.0016623671891879044
+    },
+    "wc POST − wc CONF": {
+     "point": 0.06633216423751931,
+     "sd": 0.010149424202009092
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.0,
+     "sd": 0.0
+    }
+   },
+   "seconds": 10.2,
+   "seconds_per_rep": 0.0051
+  },
+  "X4_p1": {
+   "n_id": 1009,
+   "n_ood": 1191,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 75,
+     "id_wrong": 934,
+     "ood_correct": 9,
+     "ood_wrong": 1182,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 30,
+     "id_wrong": 979,
+     "ood_correct": 4,
+     "ood_wrong": 1187,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b": {
+     "id_correct": 316,
+     "id_wrong": 693,
+     "ood_correct": 253,
+     "ood_wrong": 938,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 239,
+     "id_wrong": 770,
+     "ood_correct": 130,
+     "ood_wrong": 1061,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 265,
+     "id_wrong": 744,
+     "ood_correct": 264,
+     "ood_wrong": 927,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 182,
+     "id_wrong": 827,
+     "ood_correct": 118,
+     "ood_wrong": 1073,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 320,
+     "id_wrong": 689,
+     "ood_correct": 379,
+     "ood_wrong": 812,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 380,
+     "id_wrong": 629,
+     "ood_correct": 190,
+     "ood_wrong": 1001,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 372,
+     "id_wrong": 637,
+     "ood_correct": 368,
+     "ood_wrong": 823,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-1.4b-deduped",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620041,
+   "seed_boot": 7830041,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.3250069969213546,
+    "C CONF": 0.42627739359243316,
+    "ioi CONF": 0.7762633997497239,
+    "brier CONF": 0.2219393667273765,
+    "ign CONF": 0.6749930030786454,
+    "dec CONF": 0.10127039667107857,
+    "T ONE-BEST": 0.15952980688497062,
+    "C ONE-BEST": 0.2930656979257125,
+    "ioi ONE-BEST": 0.9740060841557713,
+    "brier ONE-BEST": 0.161948934674138,
+    "ign ONE-BEST": 0.8404701931150294,
+    "dec ONE-BEST": 0.1335358910407419,
+    "T FIXED": 0.31821998320738876,
+    "C FIXED": 0.2536287468260329,
+    "ioi FIXED": 0.6817800167926112,
+    "brier FIXED": 0.17924261205311265,
+    "ign FIXED": 0.6817800167926112,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.3250069969213546,
+    "C POST-IN": 0.33193108102096125,
+    "ioi POST-IN": 0.6819170871782521,
+    "brier POST-IN": 0.21341013418288865,
+    "ign POST-IN": 0.6749930030786454,
+    "dec POST-IN": 0.006924084099606653,
+    "T POST-CV": 0.3250069969213546,
+    "C POST-CV": 0.3238026395272842,
+    "ioi POST-CV": 0.6749930030786454,
+    "brier POST-CV": 0.21334403940928567,
+    "ign POST-CV": 0.6749930030786454,
+    "dec POST-CV": 0.0,
+    "wc CONF": -0.1249222306167801,
+    "wc ONE-BEST": -0.021265075826114033,
+    "wc FIXED": -0.0005696278975767521,
+    "wc POST": -0.0015418847778566613,
+    "one_best_is_fixed": 0.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.07433102081268583,
+      "ood": 0.007556675062972292
+     },
+     "pythia-1.4b-deduped": {
+      "id": 0.02973240832507433,
+      "ood": 0.0033585222502099076
+     },
+     "pythia-2.8b": {
+      "id": 0.313181367690783,
+      "ood": 0.21242653232577666
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.23686818632309217,
+      "ood": 0.109151973131822
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.2626362735381566,
+      "ood": 0.2216624685138539
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.18037661050545095,
+      "ood": 0.09907640638119228
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.31714568880079286,
+      "ood": 0.31821998320738876
+     },
+     "pythia-6.9b": {
+      "id": 0.37661050545094155,
+      "ood": 0.15952980688497062
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.3686818632309217,
+      "ood": 0.3089840470193115
+     }
+    },
+    "one_best": "pythia-6.9b",
+    "one_best_is_fixed": false,
+    "id_gap": 0.007928642220019821,
+    "oracle_ood": 0.6104114189756508
+   },
+   "meta": {
+    "name": "X4_p1",
+    "kind": "test",
+    "X": 4,
+    "p": 1,
+    "a": [
+     400,
+     499
+    ],
+    "bound": 500,
+    "shots_seed": 7604001,
+    "split_seed": 7610004,
+    "prompt_head": "495+86=581\n450+66=516\n447+43=490\n426+59=485\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.1249222306167801,
+     "sd": 0.012216175611512895,
+     "boot_shift": -0.008159400532346345
+    },
+    "P1": {
+     "point": -0.10127039667107851,
+     "sd": 0.01581312684110837,
+     "boot_shift": -4.754179511289036e-05
+    },
+    "P2": {
+     "point": -0.2990130810771259,
+     "sd": 0.12882910886496293,
+     "boot_shift": 0.10323758952084405
+    },
+    "P3": {
+     "point": -0.0015418847778566613,
+     "sd": 0.006894433173494449,
+     "boot_shift": 0.006162086524310817
+    },
+    "N": {
+     "point": -0.0005696278975767521,
+     "sd": 0.0014448026009910627,
+     "boot_shift": -0.00019953389390618475
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": 0.05139510473514766,
+     "sd": 0.019881076329385988
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.008595327318090817,
+     "sd": 0.005540696838029464
+    },
+    "P2: разность незнания": {
+     "point": -0.16547719003638395,
+     "sd": 0.06864540101044674
+    },
+    "P2: разность самообмана": {
+     "point": -0.1335358910407419,
+     "sd": 0.06174589309667312
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.0,
+     "sd": 0.01094824240108341
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.10127039667107857,
+     "sd": 0.018383121363395927
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.1335358910407419,
+     "sd": 0.06221752407202413
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.0,
+     "sd": 0.0
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.006924084099606653,
+     "sd": 0.01386659415154146
+    },
+    "POST-CV − FIXED": {
+     "point": -0.006787013713965839,
+     "sd": 0.022936035268460924
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.29222606736316004,
+     "sd": 0.1333739016501339
+    },
+    "wc ONE-BEST": {
+     "point": -0.021265075826114033,
+     "sd": 0.015754314727995548
+    },
+    "wc POST − wc CONF": {
+     "point": 0.12338034583892343,
+     "sd": 0.010976678349000771
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.02069544792853728,
+     "sd": 0.015820885247509648
+    }
+   },
+   "seconds": 11.4,
+   "seconds_per_rep": 0.0057
+  },
+  "X5_p0": {
+   "n_id": 997,
+   "n_ood": 1203,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 146,
+     "id_wrong": 851,
+     "ood_correct": 43,
+     "ood_wrong": 1160,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 18,
+     "id_wrong": 979,
+     "ood_correct": 19,
+     "ood_wrong": 1184,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "pythia-2.8b": {
+     "id_correct": 377,
+     "id_wrong": 620,
+     "ood_correct": 328,
+     "ood_wrong": 875,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 265,
+     "id_wrong": 732,
+     "ood_correct": 241,
+     "ood_wrong": 962,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 249,
+     "id_wrong": 748,
+     "ood_correct": 320,
+     "ood_wrong": 883,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 140,
+     "id_wrong": 857,
+     "ood_correct": 217,
+     "ood_wrong": 986,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 379,
+     "id_wrong": 618,
+     "ood_correct": 375,
+     "ood_wrong": 828,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 279,
+     "id_wrong": 718,
+     "ood_correct": 370,
+     "ood_wrong": 833,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 330,
+     "id_wrong": 667,
+     "ood_correct": 264,
+     "ood_wrong": 939,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620050,
+   "seed_boot": 7830050,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.3566084788029925,
+    "C CONF": 0.40619636279084603,
+    "ioi CONF": 0.692979405184861,
+    "brier CONF": 0.20837633675477937,
+    "ign CONF": 0.6433915211970075,
+    "dec CONF": 0.04958788398785352,
+    "T ONE-BEST": 0.3117206982543641,
+    "C ONE-BEST": 0.297032149988856,
+    "ioi ONE-BEST": 0.6882793017456359,
+    "brier ONE-BEST": 0.17221297777126093,
+    "ign ONE-BEST": 0.6882793017456359,
+    "dec ONE-BEST": 0.0,
+    "T FIXED": 0.3117206982543641,
+    "C FIXED": 0.297032149988856,
+    "ioi FIXED": 0.6882793017456359,
+    "brier FIXED": 0.17221297777126093,
+    "ign FIXED": 0.6882793017456359,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.3566084788029925,
+    "C POST-IN": 0.3315588349339809,
+    "ioi POST-IN": 0.6433915211970075,
+    "brier POST-IN": 0.2052606742226453,
+    "ign POST-IN": 0.6433915211970075,
+    "dec POST-IN": 0.0,
+    "T POST-CV": 0.3566084788029925,
+    "C POST-CV": 0.3197355630310136,
+    "ioi POST-CV": 0.6433915211970075,
+    "brier POST-CV": 0.20451734219914644,
+    "ign POST-CV": 0.6433915211970075,
+    "dec POST-CV": 0.0,
+    "wc CONF": -0.10688928137131926,
+    "wc ONE-BEST": -0.011942370197199459,
+    "wc FIXED": -0.0027329573642299043,
+    "wc POST": 0.00018519417771623026,
+    "one_best_is_fixed": 1.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.1464393179538616,
+      "ood": 0.03574397339983375
+     },
+     "pythia-2.8b": {
+      "id": 0.3781344032096289,
+      "ood": 0.2726517040731505
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.2657973921765296,
+      "ood": 0.200332502078138
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.24974924774322968,
+      "ood": 0.2660016625103907
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.14042126379137412,
+      "ood": 0.18038237738985868
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.3801404212637914,
+      "ood": 0.3117206982543641
+     },
+     "pythia-6.9b": {
+      "id": 0.279839518555667,
+      "ood": 0.30756442227763925
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.33099297893681046,
+      "ood": 0.2194513715710723
+     }
+    },
+    "one_best": "pythia-2.8b-deduped",
+    "one_best_is_fixed": true,
+    "id_gap": 0.002006018054162506,
+    "oracle_ood": 0.6209476309226932
+   },
+   "meta": {
+    "name": "X5_p0",
+    "kind": "test",
+    "X": 5,
+    "p": 0,
+    "a": [
+     500,
+     599
+    ],
+    "bound": 600,
+    "shots_seed": 7605000,
+    "split_seed": 7610005,
+    "prompt_head": "587+29=616\n584+67=651\n537+53=590\n543+55=598\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.10688928137131926,
+     "sd": 0.01278279742729036,
+     "boot_shift": -0.00807252567419163
+    },
+    "P1": {
+     "point": -0.04958788398785352,
+     "sd": 0.01621242900287426,
+     "boot_shift": -0.008589624492396322
+    },
+    "P2": {
+     "point": -0.04488778054862841,
+     "sd": 0.029641747331383504,
+     "boot_shift": -0.018018393338500374
+    },
+    "P3": {
+     "point": 0.00018519417771623026,
+     "sd": 0.006403183943734924,
+     "boot_shift": 0.004027509418843035
+    },
+    "N": {
+     "point": -0.0027329573642299043,
+     "sd": 0.001603558699728436,
+     "boot_shift": 0.001550757070471116
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": 0.03230436442788551,
+     "sd": 0.01193242189851691
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.003858994555632933,
+     "sd": 0.004443410108351174
+    },
+    "P2: разность незнания": {
+     "point": -0.04488778054862841,
+     "sd": 0.023626443771304666
+    },
+    "P2: разность самообмана": {
+     "point": 0.0,
+     "sd": 0.0099127097835814
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.0,
+     "sd": 0.0027899473886460763
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.04958788398785352,
+     "sd": 0.016705326820946536
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.0,
+     "sd": 0.009987590954705793
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.0,
+     "sd": 0.005534439400876074
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.0,
+     "sd": 0.0074623868631570845
+    },
+    "POST-CV − FIXED": {
+     "point": -0.04488778054862841,
+     "sd": 0.01623340482724106
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.0,
+     "sd": 0.027127112349936162
+    },
+    "wc ONE-BEST": {
+     "point": -0.011942370197199459,
+     "sd": 0.008767031273571568
+    },
+    "wc POST − wc CONF": {
+     "point": 0.10707447554903549,
+     "sd": 0.011552974001093055
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.009209412832969555,
+     "sd": 0.008691512113978174
+    }
+   },
+   "seconds": 10.3,
+   "seconds_per_rep": 0.0052
+  },
+  "X5_p1": {
+   "n_id": 1020,
+   "n_ood": 1180,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 39,
+     "id_wrong": 981,
+     "ood_correct": 41,
+     "ood_wrong": 1139,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 9,
+     "id_wrong": 1011,
+     "ood_correct": 13,
+     "ood_wrong": 1167,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "pythia-2.8b": {
+     "id_correct": 225,
+     "id_wrong": 795,
+     "ood_correct": 255,
+     "ood_wrong": 925,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 196,
+     "id_wrong": 824,
+     "ood_correct": 146,
+     "ood_wrong": 1034,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 203,
+     "id_wrong": 817,
+     "ood_correct": 220,
+     "ood_wrong": 960,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 137,
+     "id_wrong": 883,
+     "ood_correct": 225,
+     "ood_wrong": 955,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 334,
+     "id_wrong": 686,
+     "ood_correct": 319,
+     "ood_wrong": 861,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 143,
+     "id_wrong": 877,
+     "ood_correct": 116,
+     "ood_wrong": 1064,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 304,
+     "id_wrong": 716,
+     "ood_correct": 343,
+     "ood_wrong": 837,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620051,
+   "seed_boot": 7830051,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.3283898305084746,
+    "C CONF": 0.3153083706693643,
+    "ioi CONF": 0.6716101694915254,
+    "brier CONF": 0.2039897359931551,
+    "ign CONF": 0.6716101694915254,
+    "dec CONF": 0.0,
+    "T ONE-BEST": 0.27033898305084747,
+    "C ONE-BEST": 0.22458644898844854,
+    "ioi ONE-BEST": 0.7296610169491525,
+    "brier ONE-BEST": 0.15816059303198407,
+    "ign ONE-BEST": 0.7296610169491525,
+    "dec ONE-BEST": 0.0,
+    "T FIXED": 0.27033898305084747,
+    "C FIXED": 0.22458644898844854,
+    "ioi FIXED": 0.7296610169491525,
+    "brier FIXED": 0.15816059303198407,
+    "ign FIXED": 0.7296610169491525,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.3283898305084746,
+    "C POST-IN": 0.2467601603744669,
+    "ioi POST-IN": 0.6716101694915254,
+    "brier POST-IN": 0.2103904561014025,
+    "ign POST-IN": 0.6716101694915254,
+    "dec POST-IN": 0.0,
+    "T POST-CV": 0.3283898305084746,
+    "C POST-CV": 0.23586939057821546,
+    "ioi POST-CV": 0.6716101694915254,
+    "brier POST-CV": 0.2126054046990599,
+    "ign POST-CV": 0.6716101694915254,
+    "dec POST-CV": 0.0,
+    "wc CONF": -0.0947394959330991,
+    "wc ONE-BEST": -0.0007299894653615135,
+    "wc FIXED": -0.0007299894653615135,
+    "wc POST": 0.005747874539716258,
+    "one_best_is_fixed": 1.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.03823529411764706,
+      "ood": 0.03474576271186441
+     },
+     "pythia-2.8b": {
+      "id": 0.22058823529411764,
+      "ood": 0.21610169491525424
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.19215686274509805,
+      "ood": 0.12372881355932204
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.19901960784313724,
+      "ood": 0.1864406779661017
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.13431372549019607,
+      "ood": 0.1906779661016949
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.32745098039215687,
+      "ood": 0.27033898305084747
+     },
+     "pythia-6.9b": {
+      "id": 0.14019607843137255,
+      "ood": 0.09830508474576272
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.2980392156862745,
+      "ood": 0.29067796610169494
+     }
+    },
+    "one_best": "pythia-2.8b-deduped",
+    "one_best_is_fixed": true,
+    "id_gap": 0.02941176470588236,
+    "oracle_ood": 0.5533898305084746
+   },
+   "meta": {
+    "name": "X5_p1",
+    "kind": "test",
+    "X": 5,
+    "p": 1,
+    "a": [
+     500,
+     599
+    ],
+    "bound": 600,
+    "shots_seed": 7605001,
+    "split_seed": 7610005,
+    "prompt_head": "590+80=670\n535+36=571\n520+51=571\n536+70=606\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.0947394959330991,
+     "sd": 0.012202163254248721,
+     "boot_shift": -0.013422158518308358
+    },
+    "P1": {
+     "point": 0.0,
+     "sd": 0.010886721551700063,
+     "boot_shift": -0.007202700243087581
+    },
+    "P2": {
+     "point": -0.05805084745762712,
+     "sd": 0.015525763969094332,
+     "boot_shift": 0.006227799962120327
+    },
+    "P3": {
+     "point": 0.005747874539716258,
+     "sd": 0.005894227084149442,
+     "boot_shift": -0.0019643588123910345
+    },
+    "N": {
+     "point": -0.0007299894653615135,
+     "sd": 0.001555594009482057,
+     "boot_shift": 0.0003958300055285801
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": 0.05444481166707582,
+     "sd": 0.012560736074309835
+    },
+    "Брайер POST-CV − CONF": {
+     "point": 0.0086156687059048,
+     "sd": 0.004631513974725332
+    },
+    "P2: разность незнания": {
+     "point": -0.05805084745762712,
+     "sd": 0.015506722114428799
+    },
+    "P2: разность самообмана": {
+     "point": 0.0,
+     "sd": 0.0005132829081321616
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.0,
+     "sd": 0.0
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.0,
+     "sd": 0.010886721551700063
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.0,
+     "sd": 0.0005132829081321616
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.0,
+     "sd": 0.0005098352741526285
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.0,
+     "sd": 5.519285376633065e-05
+    },
+    "POST-CV − FIXED": {
+     "point": -0.05805084745762712,
+     "sd": 0.01512746931825598
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.0,
+     "sd": 0.005488664677389444
+    },
+    "wc ONE-BEST": {
+     "point": -0.0007299894653615135,
+     "sd": 0.010412674883583974
+    },
+    "wc POST − wc CONF": {
+     "point": 0.10048737047281536,
+     "sd": 0.011358113893836721
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.0,
+     "sd": 0.010237996053977624
+    }
+   },
+   "seconds": 9.7,
+   "seconds_per_rep": 0.0048
+  },
+  "X6_p0": {
+   "n_id": 1016,
+   "n_ood": 1184,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 59,
+     "id_wrong": 957,
+     "ood_correct": 17,
+     "ood_wrong": 1167,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 0,
+     "id_wrong": 1016,
+     "ood_correct": 16,
+     "ood_wrong": 1168,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "pythia-2.8b": {
+     "id_correct": 298,
+     "id_wrong": 718,
+     "ood_correct": 143,
+     "ood_wrong": 1041,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 148,
+     "id_wrong": 868,
+     "ood_correct": 69,
+     "ood_wrong": 1115,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 129,
+     "id_wrong": 887,
+     "ood_correct": 84,
+     "ood_wrong": 1100,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 42,
+     "id_wrong": 974,
+     "ood_correct": 46,
+     "ood_wrong": 1138,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 390,
+     "id_wrong": 626,
+     "ood_correct": 179,
+     "ood_wrong": 1005,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 76,
+     "id_wrong": 940,
+     "ood_correct": 115,
+     "ood_wrong": 1069,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 118,
+     "id_wrong": 898,
+     "ood_correct": 132,
+     "ood_wrong": 1052,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620060,
+   "seed_boot": 7830060,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.17166385135135134,
+    "C CONF": 0.26391239496977886,
+    "ioi CONF": 0.9205846922670762,
+    "brier CONF": 0.13126863563079946,
+    "ign CONF": 0.8283361486486487,
+    "dec CONF": 0.09224854361842752,
+    "T ONE-BEST": 0.15118243243243243,
+    "C ONE-BEST": 0.18796329589812807,
+    "ioi ONE-BEST": 0.8855984310332632,
+    "brier ONE-BEST": 0.11115000701849984,
+    "ign ONE-BEST": 0.8488175675675675,
+    "dec ONE-BEST": 0.036780863465695646,
+    "T FIXED": 0.15118243243243243,
+    "C FIXED": 0.18796329589812807,
+    "ioi FIXED": 0.8855984310332632,
+    "brier FIXED": 0.11115000701849984,
+    "ign FIXED": 0.8488175675675675,
+    "dec FIXED": 0.036780863465695646,
+    "T POST-IN": 0.17166385135135134,
+    "C POST-IN": 0.23022531053112563,
+    "ioi POST-IN": 0.886897607828423,
+    "brier POST-IN": 0.1256273021181979,
+    "ign POST-IN": 0.8283361486486487,
+    "dec POST-IN": 0.05856145917977429,
+    "T POST-CV": 0.17166385135135134,
+    "C POST-CV": 0.22357006027034484,
+    "ioi POST-CV": 0.8802423575676421,
+    "brier POST-CV": 0.12484822360913085,
+    "ign POST-CV": 0.8283361486486487,
+    "dec POST-CV": 0.0519062089189935,
+    "wc CONF": -0.04981284030770411,
+    "wc ONE-BEST": 0.00022732514233192447,
+    "wc FIXED": 0.00022732514233192447,
+    "wc POST": 0.001857158718932883,
+    "one_best_is_fixed": 1.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.058070866141732284,
+      "ood": 0.014358108108108109
+     },
+     "pythia-2.8b": {
+      "id": 0.2933070866141732,
+      "ood": 0.12077702702702703
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.14566929133858267,
+      "ood": 0.05827702702702703
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.12696850393700787,
+      "ood": 0.07094594594594594
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.04133858267716536,
+      "ood": 0.03885135135135135
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.3838582677165354,
+      "ood": 0.15118243243243243
+     },
+     "pythia-6.9b": {
+      "id": 0.07480314960629922,
+      "ood": 0.09712837837837837
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.11614173228346457,
+      "ood": 0.11148648648648649
+     }
+    },
+    "one_best": "pythia-2.8b-deduped",
+    "one_best_is_fixed": true,
+    "id_gap": 0.09055118110236221,
+    "oracle_ood": 0.33614864864864863
+   },
+   "meta": {
+    "name": "X6_p0",
+    "kind": "test",
+    "X": 6,
+    "p": 0,
+    "a": [
+     600,
+     699
+    ],
+    "bound": 700,
+    "shots_seed": 7606000,
+    "split_seed": 7610006,
+    "prompt_head": "664+27=691\n669+28=697\n640+83=723\n668+45=713\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.04981284030770411,
+     "sd": 0.009679554289373109,
+     "boot_shift": -0.011218810133055424
+    },
+    "P1": {
+     "point": -0.040342334699434046,
+     "sd": 0.012149769184680328,
+     "boot_shift": -0.007292108707214973
+    },
+    "P2": {
+     "point": -0.0053560734656210585,
+     "sd": 0.02150145647922717,
+     "boot_shift": -0.007441647097851672
+    },
+    "P3": {
+     "point": 0.001857158718932883,
+     "sd": 0.005740393213880323,
+     "boot_shift": 0.00376442389909597
+    },
+    "N": {
+     "point": 0.00022732514233192447,
+     "sd": 0.0016878103131052883,
+     "boot_shift": 6.01516605642759e-05
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": 0.013698216590631015,
+     "sd": 0.007854996663126614
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.006420412021668612,
+     "sd": 0.002806019507771188
+    },
+    "P2: разность незнания": {
+     "point": -0.02048141891891886,
+     "sd": 0.009286084401109385
+    },
+    "P2: разность самообмана": {
+     "point": 0.015125345453297856,
+     "sd": 0.014787568941014758
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.0519062089189935,
+     "sd": 0.017600727989964596
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.09224854361842752,
+     "sd": 0.013688845074144364
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.036780863465695646,
+     "sd": 0.012568447382379461
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.036780863465695646,
+     "sd": 0.012568447382379461
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.006655250260780843,
+     "sd": 0.009505197704611943
+    },
+    "POST-CV − FIXED": {
+     "point": -0.0053560734656210585,
+     "sd": 0.02150145647922717
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.0,
+     "sd": 0.0
+    },
+    "wc ONE-BEST": {
+     "point": 0.00022732514233192447,
+     "sd": 0.0016878103131052883
+    },
+    "wc POST − wc CONF": {
+     "point": 0.05166999902663699,
+     "sd": 0.00855877386734091
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.0,
+     "sd": 0.0
+    }
+   },
+   "seconds": 9.5,
+   "seconds_per_rep": 0.0047
+  },
+  "X6_p1": {
+   "n_id": 1006,
+   "n_ood": 1194,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 104,
+     "id_wrong": 902,
+     "ood_correct": 43,
+     "ood_wrong": 1151,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 1,
+     "id_wrong": 1005,
+     "ood_correct": 16,
+     "ood_wrong": 1178,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "pythia-2.8b": {
+     "id_correct": 481,
+     "id_wrong": 525,
+     "ood_correct": 182,
+     "ood_wrong": 1012,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 392,
+     "id_wrong": 614,
+     "ood_correct": 107,
+     "ood_wrong": 1087,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 370,
+     "id_wrong": 636,
+     "ood_correct": 158,
+     "ood_wrong": 1036,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 274,
+     "id_wrong": 732,
+     "ood_correct": 114,
+     "ood_wrong": 1080,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 537,
+     "id_wrong": 469,
+     "ood_correct": 262,
+     "ood_wrong": 932,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 152,
+     "id_wrong": 854,
+     "ood_correct": 98,
+     "ood_wrong": 1096,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 385,
+     "id_wrong": 621,
+     "ood_correct": 286,
+     "ood_wrong": 908,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620061,
+   "seed_boot": 7830061,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.2520938023450586,
+    "C CONF": 0.4402125334763985,
+    "ioi CONF": 0.9360249287862812,
+    "brier CONF": 0.2288790623136885,
+    "ign CONF": 0.7479061976549414,
+    "dec CONF": 0.18811873113133987,
+    "T ONE-BEST": 0.21943048576214405,
+    "C ONE-BEST": 0.27119676983341734,
+    "ioi ONE-BEST": 0.8323357983091292,
+    "brier ONE-BEST": 0.1602186856390632,
+    "ign ONE-BEST": 0.7805695142378559,
+    "dec ONE-BEST": 0.05176628407127329,
+    "T FIXED": 0.21943048576214405,
+    "C FIXED": 0.27119676983341734,
+    "ioi FIXED": 0.8323357983091292,
+    "brier FIXED": 0.1602186856390632,
+    "ign FIXED": 0.7805695142378559,
+    "dec FIXED": 0.05176628407127329,
+    "T POST-IN": 0.2520938023450586,
+    "C POST-IN": 0.3871412673150645,
+    "ioi POST-IN": 0.8829536626249472,
+    "brier POST-IN": 0.20779994722490305,
+    "ign POST-IN": 0.7479061976549414,
+    "dec POST-IN": 0.13504746497000586,
+    "T POST-CV": 0.2520938023450586,
+    "C POST-CV": 0.36314568815780296,
+    "ioi POST-CV": 0.8589580834676858,
+    "brier POST-CV": 0.20273035946122295,
+    "ign POST-CV": 0.7479061976549414,
+    "dec POST-CV": 0.11105188581274433,
+    "wc CONF": -0.09823060311980913,
+    "wc ONE-BEST": 6.358977874398875e-05,
+    "wc FIXED": 6.358977874398875e-05,
+    "wc POST": -0.0034780822342660445,
+    "one_best_is_fixed": 1.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.10337972166998012,
+      "ood": 0.036013400335008376
+     },
+     "pythia-2.8b": {
+      "id": 0.47813121272365805,
+      "ood": 0.152428810720268
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.38966202783300197,
+      "ood": 0.08961474036850921
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.36779324055666,
+      "ood": 0.1323283082077052
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.27236580516898606,
+      "ood": 0.09547738693467336
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.5337972166998012,
+      "ood": 0.21943048576214405
+     },
+     "pythia-6.9b": {
+      "id": 0.15109343936381708,
+      "ood": 0.08207705192629816
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.3827037773359841,
+      "ood": 0.23953098827470687
+     }
+    },
+    "one_best": "pythia-2.8b-deduped",
+    "one_best_is_fixed": true,
+    "id_gap": 0.05566600397614313,
+    "oracle_ood": 0.4765494137353434
+   },
+   "meta": {
+    "name": "X6_p1",
+    "kind": "test",
+    "X": 6,
+    "p": 1,
+    "a": [
+     600,
+     699
+    ],
+    "bound": 700,
+    "shots_seed": 7606001,
+    "split_seed": 7610006,
+    "prompt_head": "679+84=763\n623+65=688\n690+83=773\n682+13=695\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.09823060311980913,
+     "sd": 0.01184166505294226,
+     "boot_shift": -0.004844201040196394
+    },
+    "P1": {
+     "point": -0.07706684531859542,
+     "sd": 0.019451989916632228,
+     "boot_shift": 4.4217532942925075e-06
+    },
+    "P2": {
+     "point": 0.02662228515855658,
+     "sd": 0.03383272333103841,
+     "boot_shift": 0.020725046173609665
+    },
+    "P3": {
+     "point": -0.0034780822342660445,
+     "sd": 0.006188018371649555,
+     "boot_shift": 0.0073122631291910115
+    },
+    "N": {
+     "point": 6.358977874398875e-05,
+     "sd": 0.0014312717563031336,
+     "boot_shift": -7.414882144689028e-05
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": 0.04251167382215976,
+     "sd": 0.009027154021771379
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.026148702852465566,
+     "sd": 0.005447744506730902
+    },
+    "P2: разность незнания": {
+     "point": -0.03266331658291455,
+     "sd": 0.013877527372791167
+    },
+    "P2: разность самообмана": {
+     "point": 0.059285601741471045,
+     "sd": 0.02446915959313348
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.11105188581274433,
+     "sd": 0.024753330218634313
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.18811873113133987,
+     "sd": 0.01660692728515142
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.05176628407127329,
+     "sd": 0.016192165145213818
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.05176628407127329,
+     "sd": 0.01618180426499704
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.02399557915726147,
+     "sd": 0.016824391573332775
+    },
+    "POST-CV − FIXED": {
+     "point": 0.02662228515855658,
+     "sd": 0.0337883984574876
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.0,
+     "sd": 0.003257291332000377
+    },
+    "wc ONE-BEST": {
+     "point": 6.358977874398875e-05,
+     "sd": 0.001928882993357357
+    },
+    "wc POST − wc CONF": {
+     "point": 0.09475252088554309,
+     "sd": 0.010837681827070724
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.0,
+     "sd": 0.0012763357870473108
+    }
+   },
+   "seconds": 10.1,
+   "seconds_per_rep": 0.005
+  },
+  "X7_p0": {
+   "n_id": 1015,
+   "n_ood": 1185,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 34,
+     "id_wrong": 981,
+     "ood_correct": 12,
+     "ood_wrong": 1173,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 28,
+     "id_wrong": 987,
+     "ood_correct": 8,
+     "ood_wrong": 1177,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b": {
+     "id_correct": 277,
+     "id_wrong": 738,
+     "ood_correct": 168,
+     "ood_wrong": 1017,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 165,
+     "id_wrong": 850,
+     "ood_correct": 123,
+     "ood_wrong": 1062,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 260,
+     "id_wrong": 755,
+     "ood_correct": 176,
+     "ood_wrong": 1009,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 180,
+     "id_wrong": 835,
+     "ood_correct": 135,
+     "ood_wrong": 1050,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 271,
+     "id_wrong": 744,
+     "ood_correct": 195,
+     "ood_wrong": 990,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 319,
+     "id_wrong": 696,
+     "ood_correct": 256,
+     "ood_wrong": 929,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 321,
+     "id_wrong": 694,
+     "ood_correct": 168,
+     "ood_wrong": 1017,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-1.4b-deduped",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620070,
+   "seed_boot": 7830070,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.23459915611814347,
+    "C CONF": 0.31303750481646986,
+    "ioi CONF": 0.8438391925801829,
+    "brier CONF": 0.161874413594755,
+    "ign CONF": 0.7654008438818565,
+    "dec CONF": 0.07843834869832639,
+    "T ONE-BEST": 0.14177215189873418,
+    "C ONE-BEST": 0.16984315821184112,
+    "ioi ONE-BEST": 0.8862988544143728,
+    "brier ONE-BEST": 0.11089249950125028,
+    "ign ONE-BEST": 0.8582278481012658,
+    "dec ONE-BEST": 0.02807100631310694,
+    "T FIXED": 0.16455696202531644,
+    "C FIXED": 0.12126826477749844,
+    "ioi FIXED": 0.8354430379746836,
+    "brier FIXED": 0.10765614000823664,
+    "ign FIXED": 0.8354430379746836,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.23459915611814347,
+    "C POST-IN": 0.2746743083684273,
+    "ioi POST-IN": 0.8054759961321403,
+    "brier POST-IN": 0.15606265603107106,
+    "ign POST-IN": 0.7654008438818565,
+    "dec POST-IN": 0.04007515225028385,
+    "T POST-CV": 0.23459915611814347,
+    "C POST-CV": 0.2549273877081658,
+    "ioi POST-CV": 0.7857290754718789,
+    "brier POST-CV": 0.15474005420307585,
+    "ign POST-CV": 0.7654008438818565,
+    "dec POST-CV": 0.02032823159002234,
+    "wc CONF": -0.07337676731290171,
+    "wc ONE-BEST": -0.014458863070288375,
+    "wc FIXED": -0.0001302279665486017,
+    "wc POST": 0.0008487891354336807,
+    "one_best_is_fixed": 0.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.033497536945812804,
+      "ood": 0.010126582278481013
+     },
+     "pythia-1.4b-deduped": {
+      "id": 0.027586206896551724,
+      "ood": 0.006751054852320675
+     },
+     "pythia-2.8b": {
+      "id": 0.2729064039408867,
+      "ood": 0.14177215189873418
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.1625615763546798,
+      "ood": 0.10379746835443038
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.2561576354679803,
+      "ood": 0.14852320675105485
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.17733990147783252,
+      "ood": 0.11392405063291139
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.26699507389162563,
+      "ood": 0.16455696202531644
+     },
+     "pythia-6.9b": {
+      "id": 0.3142857142857143,
+      "ood": 0.2160337552742616
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.316256157635468,
+      "ood": 0.14177215189873418
+     }
+    },
+    "one_best": "pythia-6.9b-deduped",
+    "one_best_is_fixed": false,
+    "id_gap": 0.0019704433497537144,
+    "oracle_ood": 0.4118143459915612
+   },
+   "meta": {
+    "name": "X7_p0",
+    "kind": "test",
+    "X": 7,
+    "p": 0,
+    "a": [
+     700,
+     799
+    ],
+    "bound": 800,
+    "shots_seed": 7607000,
+    "split_seed": 7610007,
+    "prompt_head": "756+77=833\n761+88=849\n762+22=784\n716+38=754\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.07337676731290171,
+     "sd": 0.012527257887048894,
+     "boot_shift": -0.009786615302198043
+    },
+    "P1": {
+     "point": -0.05811011710830405,
+     "sd": 0.013612758850669638,
+     "boot_shift": -0.0011794927838793476
+    },
+    "P2": {
+     "point": -0.10056977894249397,
+     "sd": 0.05006862587005582,
+     "boot_shift": 0.039790788100038346
+    },
+    "P3": {
+     "point": 0.0008487891354336807,
+     "sd": 0.006527866667323702,
+     "boot_shift": 0.00336278827419081
+    },
+    "N": {
+     "point": -0.0001302279665486017,
+     "sd": 0.0015335539932088956,
+     "boot_shift": 0.0004061816154308522
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": 0.04384755470182557,
+     "sd": 0.020130411718715734
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.00713435939167914,
+     "sd": 0.0027411164438231805
+    },
+    "P2: разность незнания": {
+     "point": -0.09282700421940937,
+     "sd": 0.038342634125348524
+    },
+    "P2: разность самообмана": {
+     "point": -0.0077427747230846,
+     "sd": 0.019378215105703925
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.02032823159002234,
+     "sd": 0.01814878554394083
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.07843834869832639,
+     "sd": 0.014866179430474514
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.02807100631310694,
+     "sd": 0.014612456000335262
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.0,
+     "sd": 5.6479171852440155e-06
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.019746920660261402,
+     "sd": 0.01198320338726342
+    },
+    "POST-CV − FIXED": {
+     "point": -0.04971396250280469,
+     "sd": 0.025687081446864646
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.05085581643968928,
+     "sd": 0.04813090356134827
+    },
+    "wc ONE-BEST": {
+     "point": -0.014458863070288375,
+     "sd": 0.012504723409037632
+    },
+    "wc POST − wc CONF": {
+     "point": 0.0742255564483354,
+     "sd": 0.011215003540014088
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.014328635103739773,
+     "sd": 0.012566260755980488
+    }
+   },
+   "seconds": 10.9,
+   "seconds_per_rep": 0.0054
+  },
+  "X7_p1": {
+   "n_id": 972,
+   "n_ood": 1228,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 63,
+     "id_wrong": 909,
+     "ood_correct": 15,
+     "ood_wrong": 1213,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 19,
+     "id_wrong": 953,
+     "ood_correct": 14,
+     "ood_wrong": 1214,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "pythia-2.8b": {
+     "id_correct": 201,
+     "id_wrong": 771,
+     "ood_correct": 99,
+     "ood_wrong": 1129,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 126,
+     "id_wrong": 846,
+     "ood_correct": 40,
+     "ood_wrong": 1188,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 172,
+     "id_wrong": 800,
+     "ood_correct": 86,
+     "ood_wrong": 1142,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 126,
+     "id_wrong": 846,
+     "ood_correct": 67,
+     "ood_wrong": 1161,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 240,
+     "id_wrong": 732,
+     "ood_correct": 135,
+     "ood_wrong": 1093,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 291,
+     "id_wrong": 681,
+     "ood_correct": 130,
+     "ood_wrong": 1098,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 370,
+     "id_wrong": 602,
+     "ood_correct": 144,
+     "ood_wrong": 1084,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620071,
+   "seed_boot": 7830071,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.1278501628664495,
+    "C CONF": 0.3033771703633571,
+    "ioi CONF": 1.047676844630458,
+    "brier CONF": 0.14307284142005258,
+    "ign CONF": 0.8721498371335505,
+    "dec CONF": 0.17552700749690758,
+    "T ONE-BEST": 0.11726384364820847,
+    "C ONE-BEST": 0.2216471942134609,
+    "ioi ONE-BEST": 0.987119506917044,
+    "brier ONE-BEST": 0.1118287690021524,
+    "ign ONE-BEST": 0.8827361563517915,
+    "dec ONE-BEST": 0.10438335056525244,
+    "T FIXED": 0.10993485342019543,
+    "C FIXED": 0.120003054860439,
+    "ioi FIXED": 0.9001333480200482,
+    "brier FIXED": 0.09393835103836459,
+    "ign FIXED": 0.8900651465798046,
+    "dec FIXED": 0.010068201440243563,
+    "T POST-IN": 0.1278501628664495,
+    "C POST-IN": 0.22321793798734083,
+    "ioi POST-IN": 0.9675176122544419,
+    "brier POST-IN": 0.12397189896483213,
+    "ign POST-IN": 0.8721498371335505,
+    "dec POST-IN": 0.09536777512089131,
+    "T POST-CV": 0.1278501628664495,
+    "C POST-CV": 0.22264298168795096,
+    "ioi POST-CV": 0.966942655955052,
+    "brier POST-CV": 0.12182387166800464,
+    "ign POST-CV": 0.8721498371335505,
+    "dec POST-CV": 0.09479281882150145,
+    "wc CONF": -0.08848040951453312,
+    "wc ONE-BEST": 0.00015127064019504477,
+    "wc FIXED": 0.00031619234958499276,
+    "wc POST": -0.002381787891374998,
+    "one_best_is_fixed": 0.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.06481481481481481,
+      "ood": 0.012214983713355049
+     },
+     "pythia-2.8b": {
+      "id": 0.20679012345679013,
+      "ood": 0.08061889250814332
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.12962962962962962,
+      "ood": 0.03257328990228013
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.17695473251028807,
+      "ood": 0.07003257328990228
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.12962962962962962,
+      "ood": 0.05456026058631922
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.24691358024691357,
+      "ood": 0.10993485342019543
+     },
+     "pythia-6.9b": {
+      "id": 0.2993827160493827,
+      "ood": 0.10586319218241043
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.38065843621399176,
+      "ood": 0.11726384364820847
+     }
+    },
+    "one_best": "pythia-6.9b-deduped",
+    "one_best_is_fixed": false,
+    "id_gap": 0.08127572016460904,
+    "oracle_ood": 0.2899022801302932
+   },
+   "meta": {
+    "name": "X7_p1",
+    "kind": "test",
+    "X": 7,
+    "p": 1,
+    "a": [
+     700,
+     799
+    ],
+    "bound": 800,
+    "shots_seed": 7607001,
+    "split_seed": 7610007,
+    "prompt_head": "715+76=791\n780+28=808\n775+37=812\n710+61=771\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.08848040951453312,
+     "sd": 0.011253305373062003,
+     "boot_shift": -0.00969602370112374
+    },
+    "P1": {
+     "point": -0.08073418867540605,
+     "sd": 0.014371265883253726,
+     "boot_shift": -0.007353369703489904
+    },
+    "P2": {
+     "point": -0.020176850961991954,
+     "sd": 0.02411032188914575,
+     "boot_shift": -0.0016536319528882397
+    },
+    "P3": {
+     "point": -0.002381787891374998,
+     "sd": 0.005846201921910265,
+     "boot_shift": 0.0065450858746090345
+    },
+    "N": {
+     "point": 0.00031619234958499276,
+     "sd": 0.00159310625613426,
+     "boot_shift": -0.00024077305922634776
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": 0.00999510266585224,
+     "sd": 0.0068450818814048365
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.021248969752047944,
+     "sd": 0.004121359282187612
+    },
+    "P2: разность незнания": {
+     "point": -0.010586319218240936,
+     "sd": 0.008712623113385743
+    },
+    "P2: разность самообмана": {
+     "point": -0.00959053174375099,
+     "sd": 0.018901011697081825
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.09479281882150145,
+     "sd": 0.019792675874671154
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.17552700749690758,
+     "sd": 0.014313181834489859
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.10438335056525244,
+     "sd": 0.015927893124751447
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.010068201440243563,
+     "sd": 0.009951318871658581
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.0005749562993898616,
+     "sd": 0.012599938054176966
+    },
+    "POST-CV − FIXED": {
+     "point": 0.06680930793500384,
+     "sd": 0.027520341154335014
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.08698615889699579,
+     "sd": 0.026371264475030128
+    },
+    "wc ONE-BEST": {
+     "point": 0.00015127064019504477,
+     "sd": 0.00203498523870936
+    },
+    "wc POST − wc CONF": {
+     "point": 0.08609862162315812,
+     "sd": 0.010750397886920478
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.000164921709389948,
+     "sd": 0.002537357832052865
+    }
+   },
+   "seconds": 9.6,
+   "seconds_per_rep": 0.0048
+  },
+  "X8_p0": {
+   "n_id": 1016,
+   "n_ood": 1184,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 35,
+     "id_wrong": 981,
+     "ood_correct": 35,
+     "ood_wrong": 1149,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 0,
+     "id_wrong": 1016,
+     "ood_correct": 18,
+     "ood_wrong": 1166,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "pythia-2.8b": {
+     "id_correct": 332,
+     "id_wrong": 684,
+     "ood_correct": 296,
+     "ood_wrong": 888,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 199,
+     "id_wrong": 817,
+     "ood_correct": 163,
+     "ood_wrong": 1021,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 159,
+     "id_wrong": 857,
+     "ood_correct": 160,
+     "ood_wrong": 1024,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 174,
+     "id_wrong": 842,
+     "ood_correct": 153,
+     "ood_wrong": 1031,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 396,
+     "id_wrong": 620,
+     "ood_correct": 350,
+     "ood_wrong": 834,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 334,
+     "id_wrong": 682,
+     "ood_correct": 172,
+     "ood_wrong": 1012,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 210,
+     "id_wrong": 806,
+     "ood_correct": 159,
+     "ood_wrong": 1025,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620080,
+   "seed_boot": 7830080,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.23902027027027026,
+    "C CONF": 0.3859093960969923,
+    "ioi CONF": 0.9078688555564518,
+    "brier CONF": 0.1856969593974873,
+    "ign CONF": 0.7609797297297297,
+    "dec CONF": 0.14688912582672206,
+    "T ONE-BEST": 0.2956081081081081,
+    "C ONE-BEST": 0.2734396246935727,
+    "ioi ONE-BEST": 0.7043918918918919,
+    "brier ONE-BEST": 0.19206446013358597,
+    "ign ONE-BEST": 0.7043918918918919,
+    "dec ONE-BEST": 0.0,
+    "T FIXED": 0.2956081081081081,
+    "C FIXED": 0.2734396246935727,
+    "ioi FIXED": 0.7043918918918919,
+    "brier FIXED": 0.19206446013358597,
+    "ign FIXED": 0.7043918918918919,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.23902027027027026,
+    "C POST-IN": 0.3447268163052573,
+    "ioi POST-IN": 0.8666862757647168,
+    "brier POST-IN": 0.1753202187491687,
+    "ign POST-IN": 0.7609797297297297,
+    "dec POST-IN": 0.10570654603498705,
+    "T POST-CV": 0.23902027027027026,
+    "C POST-CV": 0.3453005892480188,
+    "ioi POST-CV": 0.8672600487074783,
+    "brier POST-CV": 0.1767384993426227,
+    "ign POST-CV": 0.7609797297297297,
+    "dec POST-CV": 0.10628031897774856,
+    "wc CONF": -0.04952684680061603,
+    "wc ONE-BEST": 0.0008461677187922567,
+    "wc FIXED": 0.0008461677187922567,
+    "wc POST": 0.003617591793507957,
+    "one_best_is_fixed": 1.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.0344488188976378,
+      "ood": 0.02956081081081081
+     },
+     "pythia-2.8b": {
+      "id": 0.32677165354330706,
+      "ood": 0.25
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.19586614173228348,
+      "ood": 0.13766891891891891
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.15649606299212598,
+      "ood": 0.13513513513513514
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.17125984251968504,
+      "ood": 0.12922297297297297
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.38976377952755903,
+      "ood": 0.2956081081081081
+     },
+     "pythia-6.9b": {
+      "id": 0.328740157480315,
+      "ood": 0.14527027027027026
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.20669291338582677,
+      "ood": 0.13429054054054054
+     }
+    },
+    "one_best": "pythia-2.8b-deduped",
+    "one_best_is_fixed": true,
+    "id_gap": 0.06102362204724404,
+    "oracle_ood": 0.49577702702702703
+   },
+   "meta": {
+    "name": "X8_p0",
+    "kind": "test",
+    "X": 8,
+    "p": 0,
+    "a": [
+     800,
+     899
+    ],
+    "bound": 900,
+    "shots_seed": 7608000,
+    "split_seed": 7610008,
+    "prompt_head": "802+99=901\n814+51=865\n839+13=852\n856+72=928\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.04952684680061603,
+     "sd": 0.011800885033710502,
+     "boot_shift": -0.013406397878963347
+    },
+    "P1": {
+     "point": -0.0406088068489735,
+     "sd": 0.015742448391000318,
+     "boot_shift": -0.008921769470338639
+    },
+    "P2": {
+     "point": 0.16286815681558642,
+     "sd": 0.02796059982038036,
+     "boot_shift": -0.008522109290732605
+    },
+    "P3": {
+     "point": 0.003617591793507957,
+     "sd": 0.006101319202792104,
+     "boot_shift": 0.0011847683276648433
+    },
+    "N": {
+     "point": 0.0008461677187922567,
+     "sd": 0.0015848010936489103,
+     "boot_shift": -0.0002814583905872783
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": -0.015325960790963267,
+     "sd": 0.009738423639519345
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.008958460054864587,
+     "sd": 0.004396145339355081
+    },
+    "P2: разность незнания": {
+     "point": 0.05658783783783783,
+     "sd": 0.012224500850447127
+    },
+    "P2: разность самообмана": {
+     "point": 0.10628031897774856,
+     "sd": 0.021862816174967863
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.10628031897774856,
+     "sd": 0.022256275658102797
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.14688912582672206,
+     "sd": 0.016569669346464304
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.0,
+     "sd": 0.003620096201404081
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.0,
+     "sd": 0.003620096201404081
+    },
+    "POST-IN − POST-CV": {
+     "point": -0.0005737729427615079,
+     "sd": 0.012108540351007193
+    },
+    "POST-CV − FIXED": {
+     "point": 0.16286815681558642,
+     "sd": 0.02796059982038036
+    },
+    "ONE-BEST − FIXED": {
+     "point": 0.0,
+     "sd": 0.0
+    },
+    "wc ONE-BEST": {
+     "point": 0.0008461677187922567,
+     "sd": 0.004896005344582286
+    },
+    "wc POST − wc CONF": {
+     "point": 0.05314443859412399,
+     "sd": 0.01061237483879499
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.0,
+     "sd": 0.004618587178152061
+    }
+   },
+   "seconds": 9.9,
+   "seconds_per_rep": 0.005
+  },
+  "X8_p1": {
+   "n_id": 955,
+   "n_ood": 1245,
+   "method": {
+    "pythia-1.4b": {
+     "id_correct": 26,
+     "id_wrong": 929,
+     "ood_correct": 42,
+     "ood_wrong": 1203,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-1.4b-deduped": {
+     "id_correct": 5,
+     "id_wrong": 950,
+     "ood_correct": 17,
+     "ood_wrong": 1228,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "pythia-2.8b": {
+     "id_correct": 285,
+     "id_wrong": 670,
+     "ood_correct": 96,
+     "ood_wrong": 1149,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step133000": {
+     "id_correct": 176,
+     "id_wrong": 779,
+     "ood_correct": 74,
+     "ood_wrong": 1171,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step123000": {
+     "id_correct": 165,
+     "id_wrong": 790,
+     "ood_correct": 72,
+     "ood_wrong": 1173,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b@step113000": {
+     "id_correct": 214,
+     "id_wrong": 741,
+     "ood_correct": 89,
+     "ood_wrong": 1156,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-2.8b-deduped": {
+     "id_correct": 315,
+     "id_wrong": 640,
+     "ood_correct": 164,
+     "ood_wrong": 1081,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b": {
+     "id_correct": 322,
+     "id_wrong": 633,
+     "ood_correct": 193,
+     "ood_wrong": 1052,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "pythia-6.9b-deduped": {
+     "id_correct": 278,
+     "id_wrong": 677,
+     "ood_correct": 161,
+     "ood_wrong": 1084,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "crowd": [
+    "pythia-1.4b",
+    "pythia-2.8b",
+    "pythia-2.8b@step133000",
+    "pythia-2.8b@step123000",
+    "pythia-2.8b@step113000",
+    "pythia-2.8b-deduped",
+    "pythia-6.9b",
+    "pythia-6.9b-deduped"
+   ],
+   "valid": true,
+   "seed_cv": 7620081,
+   "seed_boot": 7830081,
+   "fixed_in_crowd": true,
+   "point": {
+    "T CONF": 0.14056224899598393,
+    "C CONF": 0.3295800100473869,
+    "ioi CONF": 1.048455512055419,
+    "brier CONF": 0.1582824656653726,
+    "ign CONF": 0.8594377510040161,
+    "dec CONF": 0.18901776105140297,
+    "T ONE-BEST": 0.15502008032128514,
+    "C ONE-BEST": 0.13063216787159213,
+    "ioi ONE-BEST": 0.8449799196787149,
+    "brier ONE-BEST": 0.12486803919235803,
+    "ign ONE-BEST": 0.8449799196787149,
+    "dec ONE-BEST": 0.0,
+    "T FIXED": 0.13172690763052208,
+    "C FIXED": 0.16373005001944893,
+    "ioi FIXED": 0.9002762347584048,
+    "brier FIXED": 0.11919498953902516,
+    "ign FIXED": 0.8682730923694779,
+    "dec FIXED": 0.03200314238892685,
+    "T POST-IN": 0.14056224899598393,
+    "C POST-IN": 0.2670821438285763,
+    "ioi POST-IN": 0.9859576458366085,
+    "brier POST-IN": 0.1401329379679599,
+    "ign POST-IN": 0.8594377510040161,
+    "dec POST-IN": 0.12651989483259238,
+    "T POST-CV": 0.14056224899598393,
+    "C POST-CV": 0.2661141588778249,
+    "ioi POST-CV": 0.984989660885857,
+    "brier POST-CV": 0.1367977008825304,
+    "ign POST-CV": 0.8594377510040161,
+    "dec POST-CV": 0.12555190988184098,
+    "wc CONF": -0.07826605360462235,
+    "wc ONE-BEST": -0.00727688031219198,
+    "wc FIXED": 8.335502611106493e-05,
+    "wc POST": 0.005550496766115465,
+    "one_best_is_fixed": 0.0
+   },
+   "extras": {
+    "accuracy": {
+     "pythia-1.4b": {
+      "id": 0.027225130890052355,
+      "ood": 0.033734939759036145
+     },
+     "pythia-2.8b": {
+      "id": 0.29842931937172773,
+      "ood": 0.07710843373493977
+     },
+     "pythia-2.8b@step133000": {
+      "id": 0.18429319371727748,
+      "ood": 0.05943775100401606
+     },
+     "pythia-2.8b@step123000": {
+      "id": 0.17277486910994763,
+      "ood": 0.05783132530120482
+     },
+     "pythia-2.8b@step113000": {
+      "id": 0.22408376963350785,
+      "ood": 0.0714859437751004
+     },
+     "pythia-2.8b-deduped": {
+      "id": 0.3298429319371728,
+      "ood": 0.13172690763052208
+     },
+     "pythia-6.9b": {
+      "id": 0.33717277486910996,
+      "ood": 0.15502008032128514
+     },
+     "pythia-6.9b-deduped": {
+      "id": 0.29109947643979056,
+      "ood": 0.12931726907630522
+     }
+    },
+    "one_best": "pythia-6.9b",
+    "one_best_is_fixed": false,
+    "id_gap": 0.007329842931937169,
+    "oracle_ood": 0.3646586345381526
+   },
+   "meta": {
+    "name": "X8_p1",
+    "kind": "test",
+    "X": 8,
+    "p": 1,
+    "a": [
+     800,
+     899
+    ],
+    "bound": 900,
+    "shots_seed": 7608001,
+    "split_seed": 7610008,
+    "prompt_head": "871+91=962\n833+11=844\n809+63=872\n869+46=915\n"
+   },
+   "rules_env": {
+    "P0": {
+     "point": -0.07826605360462235,
+     "sd": 0.012259948953772104,
+     "boot_shift": -0.01253957643787977
+    },
+    "P1": {
+     "point": -0.06346585116956205,
+     "sd": 0.012924465848411408,
+     "boot_shift": -0.010006459728947661
+    },
+    "P2": {
+     "point": 0.14000974120714216,
+     "sd": 0.035981973203965935,
+     "boot_shift": -0.02832921855885749
+    },
+    "P3": {
+     "point": 0.005550496766115465,
+     "sd": 0.006268763866851005,
+     "boot_shift": -0.001105087252712301
+    },
+    "N": {
+     "point": 8.335502611106493e-05,
+     "sd": 0.0014783096746887809,
+     "boot_shift": 0.00025251163468254775
+    }
+   },
+   "descr_env": {
+    "Брайер POST-CV − ONE-BEST": {
+     "point": 0.011929661690172372,
+     "sd": 0.009990917042387441
+    },
+    "Брайер POST-CV − CONF": {
+     "point": -0.021484764782842197,
+     "sd": 0.005005806563687939
+    },
+    "P2: разность незнания": {
+     "point": 0.014457831325301207,
+     "sd": 0.015503766802268554
+    },
+    "P2: разность самообмана": {
+     "point": 0.12555190988184098,
+     "sd": 0.023689638320112952
+    },
+    "самообман POST-CV вне диапазона": {
+     "point": 0.12555190988184098,
+     "sd": 0.01796513997240111
+    },
+    "самообман CONF вне диапазона": {
+     "point": 0.18901776105140297,
+     "sd": 0.014010322107380655
+    },
+    "самообман ONE-BEST вне диапазона": {
+     "point": 0.0,
+     "sd": 0.018180206097169662
+    },
+    "самообман FIXED вне диапазона": {
+     "point": 0.03200314238892685,
+     "sd": 0.012301349119106466
+    },
+    "POST-IN − POST-CV": {
+     "point": 0.0009679849507514549,
+     "sd": 0.010090263945988286
+    },
+    "POST-CV − FIXED": {
+     "point": 0.08471342612745225,
+     "sd": 0.02529299203728094
+    },
+    "ONE-BEST − FIXED": {
+     "point": -0.055296315079689906,
+     "sd": 0.030115904849986632
+    },
+    "wc ONE-BEST": {
+     "point": -0.00727688031219198,
+     "sd": 0.010690793626888942
+    },
+    "wc POST − wc CONF": {
+     "point": 0.08381655037073782,
+     "sd": 0.011048937886391478
+    },
+    "wc FIXED − wc ONE-BEST": {
+     "point": 0.007360235338303045,
+     "sd": 0.01074164194661783
+    }
+   },
+   "seconds": 9.6,
+   "seconds_per_rep": 0.0048
+  }
+ },
+ "reproduction": {
+  "max_abs": 0.0,
+  "by_env": {
+   "X4_p0": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X4_p1": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X5_p0": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X5_p1": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X6_p0": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X6_p1": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X7_p0": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X7_p1": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X8_p0": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   },
+   "X8_p1": {
+    "ioi CONF": 0.0,
+    "ioi ONE-BEST": 0.0,
+    "wc CONF": 0.0,
+    "wc ONE-BEST": 0.0,
+    "ioi POST-IN": 0.0,
+    "brier CONF": 0.0,
+    "T CONF": 0.0,
+    "C CONF": 0.0,
+    "ioi POST-CV": 0.0,
+    "brier POST-CV": 0.0,
+    "crowd": 0.0
+   }
+  },
+  "ref": "gha_out/ocshift_test/analysis.json"
+ },
+ "power": {
+  "P0": {
+   "mu": -0.08188847749554268,
+   "tau": 0.022619531606710687,
+   "s_rms": 0.011794449873123924,
+   "power_confirm": 0.9999999979500697,
+   "power_refute": 1.1676362897766787e-17,
+   "kind": "sign",
+   "subsets": {
+    "n": 32,
+    "outcomes": {
+     "подтверждено": 32
+    }
+   }
+  },
+  "P1": {
+   "mu": -0.05832772068854639,
+   "tau": 0.023353988068448878,
+   "s_rms": 0.01534930530055623,
+   "power_confirm": 0.9991115958986866,
+   "power_refute": 2.671848533540309e-10,
+   "kind": "sign",
+   "subsets": {
+    "n": 32,
+    "outcomes": {
+     "подтверждено": 32
+    }
+   }
+  },
+  "P2": {
+   "mu": -0.014598270326759744,
+   "tau": 0.12022084273977034,
+   "s_rms": 0.05026201457988487,
+   "power_confirm": 0.20263751645077355,
+   "power_refute": 0.09122347372209849,
+   "kind": "sign",
+   "subsets": {
+    "n": 32,
+    "outcomes": {
+     "не решено": 32
+    }
+   }
+  },
+  "P3": {
+   "mu": 0.0022097268091402222,
+   "tau": 0.0,
+   "s_rms": 0.006194552384496276,
+   "power_confirm": 0.9998496040839348,
+   "power_refute": 1.3677997227084576e-20,
+   "kind": "equiv",
+   "subsets": {
+    "n": 32,
+    "outcomes": {
+     "подтверждено": 32
+    }
+   }
+  },
+  "N": {
+   "mu": -0.000305968630541717,
+   "tau": 0.0,
+   "s_rms": 0.0015596860049662616,
+   "power_confirm": 1.0,
+   "power_refute": 7.385962396675485e-212,
+   "kind": "equiv",
+   "subsets": {
+    "n": 32,
+    "outcomes": {
+     "подтверждено": 32
+    }
+   }
+  }
+ },
+ "seconds": 101.5
+}

@@ -1,0 +1,4 @@
+{"construction": {"thousands": ["/home/runner/work/Neu/Neu/gha_out/distill03_test/c_T_o3", "/home/runner/work/Neu/Neu/gha_out/distill03_test/c_T_p3", "/home/runner/work/Neu/Neu/gha_out/distill03_test/c_T_t3"], "length": ["/home/runner/work/Neu/Neu/gha_out/distill03_test/c_L_p3", "/home/runner/work/Neu/Neu/gha_out/distill03_test/c_L_t3"]},
+ "test": {"thousands": ["/home/runner/work/Neu/Neu/gha_out/distill03_test/t_T_5"], "length": ["/home/runner/work/Neu/Neu/gha_out/distill03_test/t_L_5"]},
+ "descriptive": {"thousands": {"new5": ["/home/runner/work/Neu/Neu/gha_out/distill03_test/t_T_n"]}, "length": {"new5": ["/home/runner/work/Neu/Neu/gha_out/distill03_test/t_L_n"]}},
+ "distill02_analysis": "gha_out/distill02_sum_test/analysis.json"}

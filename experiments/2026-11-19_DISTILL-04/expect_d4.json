@@ -1,0 +1,171 @@
+{
+ "rule": "0,95 × решающая мощность пилота 2 (test5) / наименьшая мощность DISTILL-03 для A-на-B",
+ "power_min": 0.2,
+ "level": 0.0025,
+ "pilot": "gha_out/distill04_pilot2/pilot.json",
+ "rules": {
+  "П1-Т": {
+   "measure": "m_M",
+   "kind": "two",
+   "mu": -0.3773635021006802,
+   "tau": 0.1548991204333464,
+   "tau_hi": 0.317953486342243,
+   "s_test": 0.02328934627163547,
+   "power": {
+    "confirm": 0.0,
+    "refute": 0.97477,
+    "part_a": 0.0,
+    "part_b": 0.0,
+    "crit": 4.0293371776425015
+   },
+   "power_tau_hi": {
+    "confirm": 0.0,
+    "refute": 0.361225,
+    "part_a": 0.00016,
+    "part_b": 0.0,
+    "crit": 4.0293371776425015
+   },
+   "decisive": 0.97477,
+   "decisive_tau_hi": 0.361225,
+   "active": true,
+   "expect": 0.926,
+   "expect_tau_hi": 0.3432,
+   "expect_side": "refute",
+   "expect_side_p": 0.926,
+   "expect_outcome": "меньше",
+   "bits_side": 8.61,
+   "bits_dec": 8.61,
+   "bits_not": -5.31,
+   "models_78": {
+    "test5_thousands": {
+     "mu": -0.3773635021006802,
+     "tau": 0.1548991204333464,
+     "s": 0.02328934627163547,
+     "p_more": 0.0,
+     "p_less": 0.97477,
+     "decisive": 0.97477,
+     "p_more_mirror": 0.97484,
+     "n_envs": 8
+    },
+    "new5_thousands": {
+     "mu": -0.027146196637263902,
+     "tau": 0.19968989488766895,
+     "s": 0.03084207798196249,
+     "p_more": 0.000965,
+     "p_less": 0.005955,
+     "decisive": 0.00692,
+     "p_more_mirror": 0.00604,
+     "n_envs": 3
+    }
+   },
+   "expect_e1": {
+    "test5_thousands": 0.926,
+    "new5_thousands": 0.0057
+   },
+   "expect_e1_used": 0.0057,
+   "expect_e1_mix_judgment": 0.4658,
+   "bits_less": 1.25,
+   "bits_more": 1.27,
+   "bits_undecided": 0.0,
+   "bits_council_estimate": 1.47
+  },
+  "П1МТ-Т": {
+   "measure": "m_MT",
+   "kind": "pos",
+   "mu": 0.04434544559894913,
+   "tau": 0.050867910383712425,
+   "tau_hi": 0.10511573081308906,
+   "s_test": 0.010260965063040412,
+   "power": {
+    "confirm": 0.154795,
+    "refute": 0.0,
+    "part_a": 0.96825,
+    "part_b": 0.154795,
+    "crit": 4.0293371776425015
+   },
+   "power_tau_hi": {
+    "confirm": 0.028405,
+    "refute": 0.0001,
+    "part_a": 0.82064,
+    "part_b": 0.028405,
+    "crit": 4.0293371776425015
+   },
+   "decisive": 0.154795,
+   "decisive_tau_hi": 0.028405,
+   "active": false,
+   "expect": 0.1471,
+   "expect_tau_hi": 0.027,
+   "expect_side": "confirm",
+   "expect_side_p": 0.1471,
+   "expect_outcome": "подтверждено/больше",
+   "bits_side": 5.95,
+   "bits_dec": 5.95,
+   "bits_not": -0.24
+  },
+  "П2-Т": {
+   "measure": "top3",
+   "kind": "pos",
+   "mu": 0.020715247432064265,
+   "tau": 0.02929952051443375,
+   "tau_hi": 0.060300548517793984,
+   "s_test": 0.005049501932097217,
+   "power": {
+    "confirm": 0.09061,
+    "refute": 0.0,
+    "part_a": 0.931705,
+    "part_b": 0.09061,
+    "crit": 4.0293371776425015
+   },
+   "power_tau_hi": {
+    "confirm": 0.01913,
+    "refute": 0.0002,
+    "part_a": 0.76903,
+    "part_b": 0.01913,
+    "crit": 4.0293371776425015
+   },
+   "decisive": 0.09061,
+   "decisive_tau_hi": 0.01913,
+   "active": false,
+   "expect": 0.0861,
+   "expect_tau_hi": 0.0182,
+   "expect_side": "confirm",
+   "expect_side_p": 0.0861,
+   "expect_outcome": "подтверждено/больше",
+   "bits_side": 5.18,
+   "bits_dec": 5.18,
+   "bits_not": -0.13
+  },
+  "АБ-П-Т6": {
+   "kind": "prog",
+   "power_min_d3": 0.9825,
+   "active": true,
+   "expect": 0.9334,
+   "bits_yes": 8.62,
+   "bits_no": -5.83
+  },
+  "АБ-Ф-Т6": {
+   "kind": "shape",
+   "power_min_d3": 0.5775,
+   "active": true,
+   "expect": 0.5486,
+   "bits_yes": 7.85,
+   "bits_no": -1.24
+  }
+ },
+ "descriptive": {
+  "П1МТ-Т": {
+   "measure": "m_MT",
+   "p_mean_pos": 0.9921770178303821,
+   "p_mean_pos_tau_hi": 0.8825027263455478,
+   "expect": 0.9426,
+   "m": 8
+  },
+  "П2-Т": {
+   "measure": "top3",
+   "p_mean_pos": 0.9756204971299246,
+   "p_mean_pos_tau_hi": 0.8335452353839627,
+   "expect": 0.9268,
+   "m": 8
+  }
+ }
+}

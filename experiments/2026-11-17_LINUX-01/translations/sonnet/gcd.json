@@ -1,0 +1,71 @@
+{
+ "head": "sonnet",
+ "module": "gcd",
+ "model_target": "claude-sonnet-5-5",
+ "prompt_sha256": "5f284660ad53b7ad99f62baad405a1f675cab5c0653122ed4ef7c150e658fe3c",
+ "seconds": 13.2,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::c_ulong;\n\n#[inline(always)]\nfn ffs(x: c_ulong) -> u32 {\n    // __ffs(x): index of the lowest set bit, x != 0\n    x.trailing_zeros()\n}\n\nfn binary_gcd(mut a: c_ulong, mut b: c_ulong) -> c_ulong {\n    let r: c_ulong = a | b;\n\n    b >>= ffs(b);\n    if b == 1 {\n        return r & r.wrapping_neg();\n    }\n\n    loop {\n        a >>= ffs(a);\n        if a == 1 {\n            return r & r.wrapping_neg();\n        }\n        if a == b {\n            return a << ffs(r);\n        }\n\n        if a < b {\n            core::mem::swap(&mut a, &mut b);\n        }\n        a = a.wrapping_sub(b);\n    }\n}\n\n#[no_mangle]\npub extern \"C\" fn gcd(a: c_ulong, b: c_ulong) -> c_ulong {\n    let r: c_ulong = a | b;\n\n    if a == 0 || b == 0 {\n        return r;\n    }\n\n    // efficient_ffs_key is enabled in this configuration, so the\n    // static-branch condition is always true and the generic\n    // loop-based fallback after it is unreachable.\n    binary_gcd(a, b)\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 3192,
+  "cache_read_input_tokens": 1563,
+  "output_tokens": 983,
+  "output_tokens_details": {
+   "thinking_tokens": 528
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 3192,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 983,
+    "cache_read_input_tokens": 1563,
+    "cache_creation_input_tokens": 3192,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3192
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.0227583,
+ "model_usage": {
+  "claude-sonnet-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 983,
+   "cacheReadInputTokens": 1563,
+   "cacheCreationInputTokens": 3192,
+   "webSearchRequests": 0,
+   "costUSD": 0.0227583,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 528,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 3192,
+   "canonicalModel": "claude-sonnet-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 11716,
+ "code_extracted": true,
+ "models_used": [
+  "claude-sonnet-5-5"
+ ]
+}

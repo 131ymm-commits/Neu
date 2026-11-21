@@ -1,0 +1,17 @@
+{
+ "source": "https://raw.githubusercontent.com/torvalds/linux/master (Makefile: 7.4-rc3), скачано 17.11.2026",
+ "files": {
+  "src/lib/cmdline.c": "ab8dea19d720ea8ea974a090e63f927ac7f8d2a37241732875b8b5abbbf1083e",
+  "src/lib/math/gcd.c": "5e2ccd0128e6bf31d76c9c7c3bcba61392aa22688a22badf8b5cd2d8dcea8f79",
+  "src/lib/math/int_log.c": "2274ba331cd66c9e1b2de189f7d94737b8daf9c955050b447a2e99baf5dabf9c",
+  "src/lib/math/int_pow.c": "10275c5f460e7d053a46b1847d5bf4dc9ee01d2dd74bbff8b2d3e01197b668f3",
+  "src/lib/math/int_sqrt.c": "a51e271e78ec485015762a62838c2919a050b1fceb9cf6d0e306558ab97ff846",
+  "src/lib/math/rational.c": "b81fc254d5f71ec9cfb5210a4a65c81f1a60b3a1357e365d0cd71aab5da09742",
+  "src/lib/math/tests/gcd_kunit.c": "3483dbe94fce781145b049dd0fef499d18ff7979afa09c5e011cc315fc4d9793",
+  "src/lib/math/tests/int_log_kunit.c": "e46b0c7fdcb808d55ceccc14d3c25c0932ce5dc528b16532ad36d0a3f7a0f071",
+  "src/lib/math/tests/int_pow_kunit.c": "67fc92a2ef84b8ac979b57415472e62e4187d04e80d41c057cb62566bf8ec8fc",
+  "src/lib/math/tests/int_sqrt_kunit.c": "f5950aa1979487dbdbd757f3f5f4f28bf1c6c6173acbfec8089deee00b71a529",
+  "src/lib/math/tests/rational_kunit.c": "a8c4f0eea86ac501efeef2f71b0e99808b74f8bf2cebdf87e4f0d1e9d371e058",
+  "src/lib/tests/cmdline_kunit.c": "84f38a99a481f078a93240be12fb3975fca69fca1e8cf22d78dace6a66258ed8"
+ }
+}

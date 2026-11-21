@@ -1,0 +1,3 @@
+{"construction": {"thousands": ["gha_out/distill02_sum_test/c_T_o3", "gha_out/distill02_sum_test/c_T_p3", "gha_out/distill02_sum_test/c_T_t3"], "length": ["gha_out/distill02_sum_test/c_L_p3", "gha_out/distill02_sum_test/c_L_t3"]},
+ "test": {"test5": ["gha_out/distill02_sum_test/t_T_5", "gha_out/distill02_sum_test/t_L_5"], "new5": ["gha_out/distill02_sum_test/t_T_n", "gha_out/distill02_sum_test/t_L_n"]},
+ "B": 4000, "R": 20, "workers": 4, "part_dir": "gha_out/distill02_sum_test/envs"}

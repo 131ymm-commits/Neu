@@ -1,0 +1,46 @@
+# Прогоны Neu на бесплатных раннерах GitHub (открытый репозиторий): процессор, до 6 ч на задание.
+# Запуск: положить или изменить файл gha_jobs/<имя>.sh и запушить. Задание получает папку gha_out/<имя>/ первым
+# аргументом и пишет туда результаты; workflow коммитит их обратно в ту же ветку (порядок — docs/COMPUTE.md).
+# Подключено по слову автора 14.11.2026: «да, GitHub Action».
+name: neu-run
+on:
+  push:
+    paths: ['gha_jobs/*.sh']
+permissions:
+  contents: write
+concurrency:
+  group: neu-run-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Задания, изменённые в этом пуше
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then BEFORE="HEAD~1"; fi
+          git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'gha_jobs/*.sh' > changed.txt || true
+          cat changed.txt
+      - name: Прогон
+        run: |
+          while read -r f; do
+            [ -f "$f" ] || continue
+            n=$(basename "$f" .sh)
+            mkdir -p "gha_out/$n"
+            ( set -o pipefail; bash "$f" "gha_out/$n" 2>&1 | tee "gha_out/$n/log.txt" ) || echo "задание $n завершилось с ошибкой" >> "gha_out/$n/log.txt"
+          done < changed.txt
+      - name: Коммит результатов
+        run: |
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add gha_out || true
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Прогон GitHub Actions: результаты $(tr '\n' ' ' < changed.txt)"
+          for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done

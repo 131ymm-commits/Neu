@@ -1,0 +1,1603 @@
+{
+ "rows": [
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_L_X999_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "L_X999_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 757,
+   "n_longer": 89,
+   "max_digits_answer": 6,
+   "max_digits_truth": 6,
+   "n_tok_hist": {
+    "5": 1710,
+    "6": 490
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_L_X99_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "L_X99_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 266,
+   "n_longer": 399,
+   "max_digits_answer": 5,
+   "max_digits_truth": 5,
+   "n_tok_hist": {
+    "4": 851,
+    "5": 1349
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_L_X9_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "L_X9_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 274,
+   "n_longer": 77,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 1209,
+    "4": 991
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_T_X19_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "T_X19_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 1,
+    "4": 2199
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_T_X29_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "T_X29_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_T_X39_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "T_X39_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_T_X49_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "T_X49_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_T_X59_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "T_X59_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 1,
+    "4": 2199
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_T_X69_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "T_X69_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 1,
+   "max_digits_answer": 5,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2199,
+    "5": 1
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_T_X79_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "T_X79_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_falcon1_T_X89_p3/answers_Falcon3-1B-Instruct.json",
+   "model": "tiiuae/Falcon3-1B-Instruct",
+   "env": "T_X89_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_L_X999_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "L_X999_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 75,
+   "n_shorter": 372,
+   "n_longer": 536,
+   "max_digits_answer": 6,
+   "max_digits_truth": 6,
+   "n_tok_hist": {
+    "2": 2199,
+    "3": 1
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_L_X99_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "L_X99_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 4,
+   "n_shorter": 663,
+   "n_longer": 183,
+   "max_digits_answer": 6,
+   "max_digits_truth": 5,
+   "n_tok_hist": {
+    "2": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_L_X9_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "L_X9_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 418,
+   "n_longer": 37,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 1393,
+    "2": 807
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_T_X19_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "T_X19_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2197,
+   "n_at_max": 9,
+   "share_at_max": 0.004096495220755576,
+   "n_extra_tokens": 9,
+   "share_extra_tokens": 0.004096495220755576,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 207,
+   "n_longer": 3,
+   "max_digits_answer": 5,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 197,
+    "2": 1991,
+    "6": 9
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_T_X29_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "T_X29_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 13,
+   "n_longer": 5,
+   "max_digits_answer": 5,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 13,
+    "2": 2187
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_T_X39_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "T_X39_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 4,
+   "n_shorter": 16,
+   "n_longer": 5,
+   "max_digits_answer": 5,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 9,
+    "2": 2191
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_T_X49_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "T_X49_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 2,
+   "n_longer": 2,
+   "max_digits_answer": 5,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 2,
+    "2": 2198
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_T_X59_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "T_X59_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1,
+   "n_longer": 1,
+   "max_digits_answer": 5,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 1,
+    "2": 2199
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_T_X69_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "T_X69_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 1,
+   "n_shorter": 5,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 5,
+    "2": 2195
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_T_X79_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "T_X79_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "2": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_olmo1_T_X89_p3/answers_OLMo-2-0425-1B-Instruct.json",
+   "model": "allenai/OLMo-2-0425-1B-Instruct",
+   "env": "T_X89_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 2,
+   "n_shorter": 14,
+   "n_longer": 9,
+   "max_digits_answer": 5,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 14,
+    "2": 2186
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_L_X999_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "L_X999_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1156,
+   "n_longer": 0,
+   "max_digits_answer": 6,
+   "max_digits_truth": 6,
+   "n_tok_hist": {
+    "4": 1,
+    "5": 2197,
+    "6": 2
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_L_X99_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "L_X99_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1213,
+   "n_longer": 0,
+   "max_digits_answer": 5,
+   "max_digits_truth": 5,
+   "n_tok_hist": {
+    "4": 2197,
+    "5": 3
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_L_X9_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "L_X9_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 26,
+   "n_shorter": 404,
+   "n_longer": 4,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 26,
+    "3": 1386,
+    "4": 788
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_T_X19_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "T_X19_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 2,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 2,
+    "4": 2198
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_T_X29_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "T_X29_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_T_X39_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "T_X39_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_T_X49_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "T_X49_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_T_X59_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "T_X59_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_T_X69_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "T_X69_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_T_X79_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "T_X79_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 1,
+    "4": 2199
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen05_T_X89_p3/answers_Qwen2.5-0.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-0.5B-Instruct",
+   "env": "T_X89_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_L_X999_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "L_X999_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2199,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1150,
+   "n_longer": 0,
+   "max_digits_answer": 6,
+   "max_digits_truth": 6,
+   "n_tok_hist": {
+    "5": 2192,
+    "6": 7
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_L_X99_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "L_X99_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2163,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1178,
+   "n_longer": 0,
+   "max_digits_answer": 5,
+   "max_digits_truth": 5,
+   "n_tok_hist": {
+    "4": 2161,
+    "5": 2
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_L_X9_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "L_X9_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 1844,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 10,
+   "n_longer": 17,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 883,
+    "4": 961
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_T_X19_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "T_X19_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2161,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2161
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_T_X29_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "T_X29_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2189,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2189
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_T_X39_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "T_X39_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 1409,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 1409
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_T_X49_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "T_X49_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2118,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2118
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_T_X59_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "T_X59_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_T_X69_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "T_X69_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 1993,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 1993
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_T_X79_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "T_X79_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2049,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2049
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_qwen15_T_X89_p3/answers_Qwen2.5-1.5B-Instruct.json",
+   "model": "Qwen/Qwen2.5-1.5B-Instruct",
+   "env": "T_X89_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 1504,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 1504
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_L_X999_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "L_X999_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1033,
+   "n_longer": 0,
+   "max_digits_answer": 6,
+   "max_digits_truth": 6,
+   "n_tok_hist": {
+    "5": 2075,
+    "6": 125
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_L_X99_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "L_X99_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 747,
+   "n_longer": 26,
+   "max_digits_answer": 5,
+   "max_digits_truth": 5,
+   "n_tok_hist": {
+    "4": 1705,
+    "5": 495
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_L_X9_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "L_X9_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 63,
+   "n_longer": 126,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 949,
+    "4": 1251
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_T_X19_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "T_X19_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 1,
+    "4": 2199
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_T_X29_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "T_X29_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_T_X39_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "T_X39_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_T_X49_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "T_X49_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_T_X59_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "T_X59_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_T_X69_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "T_X69_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 3,
+   "max_digits_answer": 5,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2197,
+    "5": 3
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_T_X79_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "T_X79_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol17_T_X89_p3/answers_SmolLM2-1.7B-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-1.7B-Instruct",
+   "env": "T_X89_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_L_X999_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "L_X999_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1148,
+   "n_longer": 0,
+   "max_digits_answer": 6,
+   "max_digits_truth": 6,
+   "n_tok_hist": {
+    "5": 2190,
+    "6": 10
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_L_X99_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "L_X99_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1173,
+   "n_longer": 0,
+   "max_digits_answer": 5,
+   "max_digits_truth": 5,
+   "n_tok_hist": {
+    "4": 2157,
+    "5": 43
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_L_X9_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "L_X9_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 250,
+   "n_longer": 39,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 1223,
+    "4": 977
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_T_X19_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "T_X19_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 1,
+   "n_shorter": 2,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 2,
+    "4": 2198
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_T_X29_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "T_X29_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_T_X39_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "T_X39_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 1,
+   "n_shorter": 1,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 1,
+    "4": 2199
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_T_X49_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "T_X49_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_T_X59_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "T_X59_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_T_X69_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "T_X69_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_T_X79_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "T_X79_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_smol360_T_X89_p3/answers_SmolLM2-360M-Instruct.json",
+   "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "env": "T_X89_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 1,
+    "4": 2199
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_L_X999_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "L_X999_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1158,
+   "n_longer": 0,
+   "max_digits_answer": 5,
+   "max_digits_truth": 6,
+   "n_tok_hist": {
+    "5": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_L_X99_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "L_X99_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1172,
+   "n_longer": 0,
+   "max_digits_answer": 5,
+   "max_digits_truth": 5,
+   "n_tok_hist": {
+    "4": 2156,
+    "5": 44
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_L_X9_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "L_X9_p3",
+   "phase": "test3",
+   "max_new": 10,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 249,
+   "n_longer": 63,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "1": 2,
+    "3": 1194,
+    "4": 1004
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_T_X19_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "T_X19_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 2,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 2,
+    "4": 2198
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_T_X29_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "T_X29_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 2,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "3": 2,
+    "4": 2198
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_T_X39_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "T_X39_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_T_X49_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "T_X49_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_T_X59_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "T_X59_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_T_X69_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "T_X69_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_T_X79_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "T_X79_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 0,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "4": 2200
+   }
+  },
+  {
+   "file": "gha_out/ocdiv4_test_tinyllama_T_X89_p3/answers_TinyLlama-1.1B-Chat-v1.0.json",
+   "model": "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
+   "env": "T_X89_p3",
+   "phase": "test3",
+   "max_new": 6,
+   "n_numeric": 2200,
+   "n_at_max": 0,
+   "share_at_max": 0.0,
+   "n_extra_tokens": 0,
+   "share_extra_tokens": 0.0,
+   "n_prefix_of_truth": 0,
+   "n_shorter": 1,
+   "n_longer": 0,
+   "max_digits_answer": 4,
+   "max_digits_truth": 4,
+   "n_tok_hist": {
+    "2": 1,
+    "4": 2199
+   }
+  }
+ ],
+ "summary": {
+  "test3 L": {
+   "n_pairs": 21,
+   "n_numeric": 45806,
+   "n_at_max": 0,
+   "n_extra_tokens": 0,
+   "n_prefix_of_truth": 105
+  },
+  "test3 T": {
+   "n_pairs": 56,
+   "n_numeric": 121220,
+   "n_at_max": 9,
+   "n_extra_tokens": 9,
+   "n_prefix_of_truth": 9
+  }
+ }
+}
