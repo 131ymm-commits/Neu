@@ -116,6 +116,12 @@ def main(a):
           f"{r(nn.get('mean'), 4, True)}; без OLMo — D {r(wo.get('D'), 4, True)}, p {r(wo.get('p'), 6)}.")
         w(f"  - срезы (среднее по головам): своя − среднее чужих {r(sl['mean'], 4, True)}, − медиана чужих {r(sl['median'], 4, True)}, "
           f"− без худшей чужой {r(sl['drop_worst'], 4, True)} → {'; '.join(line) if line else 'D ≤ 0'}.")
+    va = {k_: v['verdict'] for k_, v in AB['verdicts'].items()}
+    ab_read = {('да', 'да'): 'повтор специфичности на независимых ответах и новых средах — для программы и для формы.',
+               ('да', 'нет'): 'повтор для программы целиком; на новых средах test6 своя форма не показана (мощность формы ≈ 0,58: «нет» не доказывает, что форма общая).',
+               ('да', 'непроверяемо'): 'повтор для программы целиком; на новых средах test6 своя форма не показана (мощность формы ≈ 0,58: «нет» не доказывает, что форма общая).'}
+    w(f"**Чтение повтора A-на-B (PREREG §5, правило «П и Ф»):** " + ab_read.get((va['АБ-П-Т6'], va['АБ-Ф-Т6']),
+      'на новых средах test6 (переход через x500) специфичность программы не повторилась; «установлено» остаётся только для сред устройства построения.'))
     ig = res.get('input_gain', {})
     w(f"- Вклад входа (своя программа − своя без входа): {r(ig.get('mean'), 4, True)}, больше нуля у {ig.get('n_pos')} голов из {len(res.get('heads_kept') or [])}.")
     dec = res.get('decomposition') or {}
@@ -138,9 +144,9 @@ def main(a):
         q = v['point']
         w(f"- «Длина» {n} (описательно): m_M {r(q['m_M'], 4, True)}, m_Mo {r(q['m_Mo'], 4, True)}, top3 {r(q['top3'], 4, True)}, m_MT {r(q['m_MT'], 4, True)}.")
     for job, x in rep['jobs'].items():
-        sh = [c['equal_share'] for e in x['columns'].values() for c in e.values() if c['equal_share'] is not None]
-        w(f"- Повтор извлечения {job.replace('distill04_rep_', '')}: наименьшая доля совпавших значений по столбцам {r(min(sh) if sh else None, 4)} "
-          f"(столбцов {len(sh)}).")
+        cols = {c: v['equal_share'] for e in x['columns'].values() for c, v in e.items() if v['equal_share'] is not None}
+        w(f"- Повтор извлечения {job.replace('distill04_rep_', '')} (доля совпавших значений по столбцам): " +
+          ', '.join(f"{c} {r(v, 4)}" for c, v in cols.items()) + '.')
     w(f"- Повтор анализа: {det}.")
     w('')
     # калибровка и вес
@@ -168,7 +174,14 @@ def main(a):
                 slices={kind: AB['slices'][kind]['mean'] for kind in ('prog', 'shape')}, envs={n: envs[n]['point'] for n in names},
                 per_head=ph, tok=tok, sym=dict(delta=sym.get('delta'), verdict=sym.get('verdict_rule')), diff_test5=float(p1['delta'] - m5),
                 input_gain=dict(mean=ig.get('mean'), n_pos=ig.get('n_pos')), weights_same=same_w, kin=k['n_kin_closer'],
-                length={n: v['point'] for n, v in lt.items()}, outcomes=oc, expect=vals, bits=bits)
+                length={n: v['point'] for n, v in lt.items()}, outcomes=oc, expect=vals, bits=bits,
+                ab_desc={kind: dict(nearest=(res.get(kind) or {}).get('nearest_other', {}).get('mean'),
+                                    without={kk: ((res.get(kind) or {}).get('without') or {}).get(OLMO, {}).get(kk) for kk in ('D', 'p')})
+                         for kind in ('prog', 'shape')},
+                decomposition={p_: dec[p_]['mean'] for p_ in dec} if dec else None,
+                others_share=(dec['others']['mean'] / dec['total']['mean']) if dec.get('total') else None,
+                rep={job: {c: v['equal_share'] for e in x['columns'].values() for c, v in e.items()} for job, x in rep['jobs'].items()},
+                errors_refs=[225, 233])
     json.dump(view, open(os.path.join(HERE, 'report_view_d4.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
     print('\n'.join(L[:16]))
     return 0
