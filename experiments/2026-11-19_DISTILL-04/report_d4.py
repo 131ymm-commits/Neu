@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""DISTILL-04: отчёт из вывода анализа (gha_out/distill04_sum_test/test.json) — все числа подставляются из json (ERRORS № 200, 226);
+"""DISTILL-04: отчёт из вывода анализа (gha_out/distill04_sum_test_b/test.json — повтор задания анализа, DEVIATIONS.md, отступление 1) — все числа подставляются из json (ERRORS № 200, 226);
 чтения — по таблицам PREREG §5 (регистрация c659755b). Пишет REPORT-DISTILL-04.md и report_view_d4.json (выборка для ledger.py audit).
   python3 report_d4.py [--council docs/council/….json]"""
 import json
@@ -38,17 +38,22 @@ def main(a):
     p1 = R['П1-Т']
     w('# DISTILL-04 «ПРОЧИЕ» — отчёт')
     w('')
-    w('PREREG — регистрация c659755b (`PREREG-DISTILL-04.md`). Числа ниже подставляет `report_d4.py` из `gha_out/distill04_sum_test/test.json`.')
+    w('PREREG — регистрация c659755b (`PREREG-DISTILL-04.md`). Числа ниже подставляет `report_d4.py` из `gha_out/distill04_sum_test_b/test.json`. '
+      'Отступление: повтор задания анализа — `DEVIATIONS.md`, отступление 1, ERRORS № 233.')
     w('')
     w('## 1. Итог')
     w('')
     w('| правило | мера | статус | среднее 8 сред | интервал M4 (0,0025) | t по средам (порог) | вердикт |')
     w('|---|---|---|---|---|---|---|')
+    def vf(v):                                   # совет 79, п. 6: подпись без двойных скобок
+        if v.startswith('описательно (') and v.endswith(')'):
+            v = 'описательно: ' + v[len('описательно ('):-1].replace(' (на новые среды не переносится)', ', на новые среды не переносится')
+        return v
     for rule in ('П1-Т', 'П1МТ-Т', 'П2-Т'):
         e = R[rule]
         ci = e.get('ci') or [None, None]
         w(f"| {rule} | {e['measure']} | {'решающее' if e['active'] else 'описательно'} | {r(e['delta'], 4, True)} | [{r(ci[0], 4, True)}; {r(ci[1], 4, True)}] | "
-          f"{r(e['t_envs']['t'], 2, True)} ({r(e['t_envs']['crit'], 4)}) | {e['verdict_final']} |")
+          f"{r(e['t_envs']['t'], 2, True)} ({r(e['t_envs']['crit'], 4)}) | {vf(e['verdict_final'])} |")
     for rule, v in AB['verdicts'].items():
         w(f"| {rule} | D ({'программа' if v['kind'] == 'prog' else 'форма'}) | решающее | D {r(v.get('D'), 4, True)} | точное p {r(v.get('p'), 6)}; ранг {v.get('rank', '—')} из {v.get('n_perm', '—')}; k = {v.get('k')} | — | {v['verdict']} |")
     w('')
@@ -65,9 +70,16 @@ def main(a):
     signs = p1.get('signs', {})
     w(f"- Знак по средам (интервал среды при 0,0025 / 8): больше нуля — {len(signs.get('pos', []))}, меньше — {len(signs.get('neg', []))}, "
       f"накрывает ноль — {len(signs.get('zero', []))}." + (f" Пометка: {p1['mark']}." if p1.get('mark') else ''))
+    six_env = [float(np.mean([envs[n]['per_head'][h]['m_M'] for h in envs[n]['per_head'] if h != OLMO])) for n in names]
+    no_olmo = float(np.mean(six_env))
+    w(f"- **П1-Т без OLMo** (описательно, вердикт не меняет; совет 79): среднее m_M по шести головам {r(no_olmo, 4, True)} (по средам от "
+      f"{r(min(six_env), 4, True)} до {r(max(six_env), 4, True)}); интервала в json нет — повторы бутстрепа по головам не сохранялись. "
+      f"Величина П1-Т в основном за счёт OLMo; причина не проверялась. Вывод — о семи головах при фиксированном составе.")
     sym = T['descriptive'].get('m_M_sym', {})
     w(f"- Симметричная версия нормировки (описательно): среднее m_M_sym {r(sym.get('delta'), 4, True)}, вердикт тем же правилом — «{sym.get('verdict_rule')}». "
-      f"Нормировка (PREREG §4, ветвь «мала»): направление влияния недостачи не проверялось, величина не больше 1,4e-4 · ε.")
+      f"Нормировка (PREREG §4, ветвь «мала»): направление влияния недостачи не проверялось, величина не больше 1,4e-4 · ε. "
+      f"Совпадение m_M_sym с m_M до 4-го знака ожидаемо по этой границе; версии считаются разным кодом (на заглушке `test_prog_m.t_norm` недостача М "
+      f"до 1,2e-4 · ε, у симметричной версии сумма «прочих» равна ε), но разведение версий на данных не проверено — как независимый срез не засчитывается.")
     m5 = np.mean([v['point']['m_M'] for v in P2['sets']['test5_thousands']['envs'].values()])
     w(f"- m_M на test6 минус m_M на test5 (пилот 2, устройство построения; описательно): {r(p1['delta'] - m5, 4, True)}.")
     w('')
@@ -113,7 +125,9 @@ def main(a):
         wo = (x.get('without') or {}).get(OLMO, {})
         w(f"- **{nm}**: D {r(x.get('D'), 4, True)}, точное p {r(x.get('p'), 6)}, ранг {x.get('rank')} из {x.get('n_perm')}, различных D_π {x.get('n_distinct')}; "
           f"своя первая в столбце у {x.get('own_first')} голов из {x.get('k')}; своя лучше любой чужой у {nn.get('heads_own_best')} голов, средний зазор "
-          f"{r(nn.get('mean'), 4, True)}; без OLMo — D {r(wo.get('D'), 4, True)}, p {r(wo.get('p'), 6)}.")
+          f"{r(nn.get('mean'), 4, True)}; без OLMo — D {r(wo.get('D'), 4, True)}, p {r(wo.get('p'), 6)}" +
+          (f" — выше порога 0,0025 (наименьшее достижимое при {wo.get('n_perm')} перестановках — {r(1 / wo['n_perm'], 5)}): без OLMo вердикт «да» не держится "
+           f"(описательно, вердикт не меняет)." if wo.get('p') is not None and wo['p'] > 0.0025 else '.'))
         w(f"  - срезы (среднее по головам): своя − среднее чужих {r(sl['mean'], 4, True)}, − медиана чужих {r(sl['median'], 4, True)}, "
           f"− без худшей чужой {r(sl['drop_worst'], 4, True)} → {'; '.join(line) if line else 'D ≤ 0'}.")
     va = {k_: v['verdict'] for k_, v in AB['verdicts'].items()}
@@ -147,6 +161,8 @@ def main(a):
         cols = {c: v['equal_share'] for e in x['columns'].values() for c, v in e.items() if v['equal_share'] is not None}
         w(f"- Повтор извлечения {job.replace('distill04_rep_', '')} (доля совпавших значений по столбцам): " +
           ', '.join(f"{c} {r(v, 4)}" for c, v in cols.items()) + '.')
+    w("- logp в анализ не входит (m_M и D считаются по числовым ответам; `distill02.env_table` вызывается без logp). Расхождение logp в повторах "
+      "вывода не задевает; причина (п: недетерминизм счёта на процессоре) не проверялась.")
     w(f"- Повтор анализа: {det}.")
     w('')
     # калибровка и вес
@@ -160,7 +176,13 @@ def main(a):
     vals = {'E1': ex['П1-Т']['expect_e1']['new5_thousands'], 'E1а': ex['П1-Т']['expect_e1']['test5_thousands'], 'E2': ex['АБ-П-Т6']['expect'],
             'E3': ex['АБ-Ф-Т6']['expect'], 'E4': E['descriptive']['П1МТ-Т']['expect'], 'E5': E['descriptive']['П2-Т']['expect']}
     for kk in oc:
-        w(f"| {kk} | {r(vals[kk], 4)} | {'да' if oc[kk] else 'нет'} |")
+        note = {'E1': ' (в сводной калибровке: меньшая из двух строк, совет 78)', 'E1а': ' (вне сводной калибровки)'}.get(kk, '')
+        w(f"| {kk}{note} | {r(vals[kk], 4)} | {'да' if oc[kk] else 'нет'} |")
+    b1 = (vals['E1'] - (1.0 if oc['E1'] else 0.0)) ** 2
+    w('')
+    w(f"- **Урок калибровки** (совет 79): правило «меньшая из двух строк» здесь занизило ожидание — балл Брайера строки E1 {r(b1, 3)}. Модель new5 "
+      "ошиблась, сбылась модель test5. Правило задним числом не меняем; объяснение не проверялось; пересмотр — когда в классе двойных ожиданий "
+      "будет не меньше 5 исходов (ERRORS № 234).")
     bits = {'П1-Т': ex['П1-Т']['bits_less'] if v1 == 'меньше' else (ex['П1-Т']['bits_more'] if v1 == 'больше' else 0.0)}
     for rule in ('АБ-П-Т6', 'АБ-Ф-Т6'):
         vv = AB['verdicts'][rule]['verdict']
@@ -168,6 +190,30 @@ def main(a):
     w('')
     w('- Вес опоры: ' + '; '.join(f"{k_} {r(b, 2, True)} бит" for k_, b in bits.items()) + ' (модельный; перенос M4 на 0,0025 для среднего сред не проверен).')
     w('')
+    council_s = None
+    w('## 6. Реестр (по таблицам PREREG §5, через `ledger.py`)')
+    w('')
+    w(f"- **C-110 (новое, «подтверждено»; вес {r(bits['П1-Т'], 2, True)} бита):** «на новых средах test6 (переход через x500) механизм из каталога 10 операторов "
+      f"описывает ответы семи малых голов хуже таблицы частот „прочих“ смещений того же размера (m_M {r(p1['delta'], 4, True)}, интервал "
+      f"[{r(p1['ci'][0], 4, True)}; {r(p1['ci'][1], 4, True)}], t {r(p1['t_envs']['t'], 2, True)})». Приписка (описательно; причина не проверялась): "
+      f"без OLMo среднее m_M по шести головам {r(no_olmo, 4, True)} — величина в основном за счёт OLMo.")
+    w(f"- **C-109 (дописки):** «своё у программы — профиль частот „прочих“; механизм из каталога его не заменяет»; повтор A-на-B на новых ответах: "
+      f"АБ-П-Т6 «да» (D {r(AB['verdicts']['АБ-П-Т6']['D'], 4, True)}, p {r(AB['verdicts']['АБ-П-Т6']['p'], 6)}; вес {r(bits['АБ-П-Т6'], 2, True)} бита, "
+      f"группа «повтор специфичности на независимых ответах»), АБ-Ф-Т6 «нет» (D {r(AB['verdicts']['АБ-Ф-Т6']['D'], 4, True)}, p {r(AB['verdicts']['АБ-Ф-Т6']['p'], 6)}; "
+      f"{r(bits['АБ-Ф-Т6'], 2, True)} бита) — на новых средах test6 своя форма не показана (мощность формы ≈ 0,58: «нет» не доказывает, что форма общая). "
+      f"Описательно: без OLMo вердикт АБ-П «да» не держится.")
+    if '--council' in a:
+        C = json.load(open(a[a.index('--council') + 1], encoding='utf-8'))
+        council_s = C['timer']['end'] - C['timer']['start']
+        w('')
+        w('## 7. Совет по отчёту')
+        w('')
+        w(f"- Совет 79 (сокращённое заседание — один раунд, по просьбе автора беречь лимиты): {C['status']}; заседание {C['timer']['end'] - C['timer']['start']} с. "
+          "Стенограмма — `docs/council/2026-11-20_DISTILL-04-report_session79.md`.")
+        w('- Правки совета внесены: путь вывода и ссылка на отступление; строка «П1-Т без OLMo»; оговорка «без OLMo» для АБ-П; строка о logp; пометка о '
+          'совпадении m_M_sym с m_M; подпись без двойных скобок; урок калибровки. Вердикты, текст C-110, дописки C-109 и веса не менялись.')
+        w('- Несогласие формалиста (голос «против»): фразу «величина в основном за счёт OLMo» он предлагал не писать, раз интервала для среза без OLMo '
+          'в json нет. Решение совета — оставить с пометкой «описательно; причина не проверялась».')
     open(os.path.join(HERE, 'REPORT-DISTILL-04.md'), 'w', encoding='utf-8').write('\n'.join(L) + '\n')
     view = dict(rules={k_: dict(delta=e['delta'], ci=e.get('ci'), t=e['t_envs']['t'], crit=e['t_envs']['crit'], verdict=e['verdict_final']) for k_, e in R.items()},
                 ab={k_: {kk: v.get(kk) for kk in ('D', 'p', 'rank', 'n_perm', 'k', 'n_distinct', 'verdict')} for k_, v in AB['verdicts'].items()},
@@ -181,7 +227,8 @@ def main(a):
                 decomposition={p_: dec[p_]['mean'] for p_ in dec} if dec else None,
                 others_share=(dec['others']['mean'] / dec['total']['mean']) if dec.get('total') else None,
                 rep={job: {c: v['equal_share'] for e in x['columns'].values() for c, v in e.items()} for job, x in rep['jobs'].items()},
-                errors_refs=[225, 233])
+                errors_refs=[225, 233, 234], council_seconds=council_s, no_olmo=dict(mean=no_olmo, lo=min(six_env), hi=max(six_env)), brier_e1=b1,
+                min_p_without={kind: (1 / ((res.get(kind) or {}).get('without') or {}).get(OLMO, {}).get('n_perm', 1)) for kind in ('prog', 'shape')})
     json.dump(view, open(os.path.join(HERE, 'report_view_d4.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
     print('\n'.join(L[:16]))
     return 0
