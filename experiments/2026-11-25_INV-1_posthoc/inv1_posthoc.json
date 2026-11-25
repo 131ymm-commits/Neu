@@ -1,0 +1,1641 @@
+{
+ "note": "пост-хок, разведка, без предрегистрации; вердикты PLATON-01 и PLATON-01R не меняет",
+ "models": {
+  "haiku": {
+   "tau_0.1": {
+    "free": {
+     "all": {
+      "heads": 640,
+      "expr": 261,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 261,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0145
+      ],
+      "uncaught_conf_mean": null
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 261,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 261,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0145
+      ],
+      "uncaught_conf_mean": null
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 102,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 102,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0363
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 159,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 159,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0236
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    },
+    "forced": {
+     "all": {
+      "heads": 640,
+      "expr": 639,
+      "errors": 369,
+      "caught": 353,
+      "caught_share": 0.9566,
+      "caught_ci95": [
+       0.9307,
+       0.9731
+      ],
+      "correct": 270,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0.0,
+       0.014
+      ],
+      "uncaught_conf_mean": 0.0856
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 319,
+      "errors": 49,
+      "caught": 33,
+      "caught_share": 0.6735,
+      "caught_ci95": [
+       0.5338,
+       0.7879
+      ],
+      "correct": 270,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0.0,
+       0.014
+      ],
+      "uncaught_conf_mean": 0.0856
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 320,
+      "caught": 320,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9881,
+       1.0
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 49,
+      "caught": 33,
+      "caught_share": 0.6735,
+      "caught_ci95": [
+       0.5338,
+       0.7879
+      ],
+      "correct": 111,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0335
+      ],
+      "uncaught_conf_mean": 0.0856
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 159,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 159,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0236
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    }
+   },
+   "tau_0.05": {
+    "free": {
+     "all": {
+      "heads": 640,
+      "expr": 261,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 261,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0038,
+      "false_alarm_ci95": [
+       0.0007,
+       0.0214
+      ],
+      "uncaught_conf_mean": null
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 261,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 261,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0038,
+      "false_alarm_ci95": [
+       0.0007,
+       0.0214
+      ],
+      "uncaught_conf_mean": null
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 102,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 102,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0363
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 159,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 159,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0063,
+      "false_alarm_ci95": [
+       0.0011,
+       0.0348
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    },
+    "forced": {
+     "all": {
+      "heads": 640,
+      "expr": 639,
+      "errors": 369,
+      "caught": 361,
+      "caught_share": 0.9783,
+      "caught_ci95": [
+       0.9578,
+       0.989
+      ],
+      "correct": 270,
+      "false_alarms": 5,
+      "false_alarm_share": 0.0185,
+      "false_alarm_ci95": [
+       0.0079,
+       0.0426
+      ],
+      "uncaught_conf_mean": 0.1225
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 319,
+      "errors": 49,
+      "caught": 41,
+      "caught_share": 0.8367,
+      "caught_ci95": [
+       0.7096,
+       0.9149
+      ],
+      "correct": 270,
+      "false_alarms": 5,
+      "false_alarm_share": 0.0185,
+      "false_alarm_ci95": [
+       0.0079,
+       0.0426
+      ],
+      "uncaught_conf_mean": 0.1225
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 320,
+      "caught": 320,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9881,
+       1.0
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 49,
+      "caught": 41,
+      "caught_share": 0.8367,
+      "caught_ci95": [
+       0.7096,
+       0.9149
+      ],
+      "correct": 111,
+      "false_alarms": 4,
+      "false_alarm_share": 0.036,
+      "false_alarm_ci95": [
+       0.0141,
+       0.089
+      ],
+      "uncaught_conf_mean": 0.1225
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 159,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 159,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0063,
+      "false_alarm_ci95": [
+       0.0011,
+       0.0348
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    }
+   },
+   "tau_0.2": {
+    "free": {
+     "all": {
+      "heads": 640,
+      "expr": 261,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 261,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0145
+      ],
+      "uncaught_conf_mean": null
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 261,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 261,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0145
+      ],
+      "uncaught_conf_mean": null
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 102,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 102,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0363
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 159,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 159,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0236
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    },
+    "forced": {
+     "all": {
+      "heads": 640,
+      "expr": 639,
+      "errors": 369,
+      "caught": 343,
+      "caught_share": 0.9295,
+      "caught_ci95": [
+       0.8988,
+       0.9515
+      ],
+      "correct": 270,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0.0,
+       0.014
+      ],
+      "uncaught_conf_mean": 0.0619
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 319,
+      "errors": 49,
+      "caught": 23,
+      "caught_share": 0.4694,
+      "caught_ci95": [
+       0.337,
+       0.6062
+      ],
+      "correct": 270,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0.0,
+       0.014
+      ],
+      "uncaught_conf_mean": 0.0619
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 320,
+      "caught": 320,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9881,
+       1.0
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 49,
+      "caught": 23,
+      "caught_share": 0.4694,
+      "caught_ci95": [
+       0.337,
+       0.6062
+      ],
+      "correct": 111,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0335
+      ],
+      "uncaught_conf_mean": 0.0619
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 159,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 159,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0236
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    }
+   }
+  },
+  "sonnet": {
+   "tau_0.1": {
+    "free": {
+     "all": {
+      "heads": 640,
+      "expr": 293,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 291,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.013
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 293,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 291,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.013
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 133,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 131,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0285
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 160,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0234
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    },
+    "forced": {
+     "all": {
+      "heads": 640,
+      "expr": 640,
+      "errors": 350,
+      "caught": 338,
+      "caught_share": 0.9657,
+      "caught_ci95": [
+       0.941,
+       0.9803
+      ],
+      "correct": 290,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0131
+      ],
+      "uncaught_conf_mean": 0.1683
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 30,
+      "caught": 18,
+      "caught_share": 0.6,
+      "caught_ci95": [
+       0.4232,
+       0.7541
+      ],
+      "correct": 290,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0131
+      ],
+      "uncaught_conf_mean": 0.1683
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 320,
+      "caught": 320,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9881,
+       1.0
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 30,
+      "caught": 18,
+      "caught_share": 0.6,
+      "caught_ci95": [
+       0.4232,
+       0.7541
+      ],
+      "correct": 130,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0287
+      ],
+      "uncaught_conf_mean": 0.1683
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 160,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0234
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    }
+   },
+   "tau_0.05": {
+    "free": {
+     "all": {
+      "heads": 640,
+      "expr": 293,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 291,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0034,
+      "false_alarm_ci95": [
+       0.0006,
+       0.0192
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 293,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 291,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0034,
+      "false_alarm_ci95": [
+       0.0006,
+       0.0192
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 133,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 131,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0076,
+      "false_alarm_ci95": [
+       0.0013,
+       0.042
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 160,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0234
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    },
+    "forced": {
+     "all": {
+      "heads": 640,
+      "expr": 640,
+      "errors": 350,
+      "caught": 345,
+      "caught_share": 0.9857,
+      "caught_ci95": [
+       0.967,
+       0.9939
+      ],
+      "correct": 290,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0034,
+      "false_alarm_ci95": [
+       0.0006,
+       0.0193
+      ],
+      "uncaught_conf_mean": 0.164
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 30,
+      "caught": 25,
+      "caught_share": 0.8333,
+      "caught_ci95": [
+       0.6644,
+       0.9266
+      ],
+      "correct": 290,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0034,
+      "false_alarm_ci95": [
+       0.0006,
+       0.0193
+      ],
+      "uncaught_conf_mean": 0.164
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 320,
+      "caught": 320,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9881,
+       1.0
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 30,
+      "caught": 25,
+      "caught_share": 0.8333,
+      "caught_ci95": [
+       0.6644,
+       0.9266
+      ],
+      "correct": 130,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0287
+      ],
+      "uncaught_conf_mean": 0.164
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 160,
+      "false_alarms": 1,
+      "false_alarm_share": 0.0063,
+      "false_alarm_ci95": [
+       0.0011,
+       0.0345
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    }
+   },
+   "tau_0.2": {
+    "free": {
+     "all": {
+      "heads": 640,
+      "expr": 293,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 291,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.013
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 293,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 291,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.013
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 133,
+      "errors": 2,
+      "caught": 0,
+      "caught_share": 0.0,
+      "caught_ci95": [
+       0,
+       0.6576
+      ],
+      "correct": 131,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0285
+      ],
+      "uncaught_conf_mean": 0.15
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 160,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0234
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 0,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    },
+    "forced": {
+     "all": {
+      "heads": 640,
+      "expr": 640,
+      "errors": 350,
+      "caught": 334,
+      "caught_share": 0.9543,
+      "caught_ci95": [
+       0.927,
+       0.9717
+      ],
+      "correct": 290,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0131
+      ],
+      "uncaught_conf_mean": 0.1469
+     },
+     "T_law_present": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 30,
+      "caught": 14,
+      "caught_share": 0.4667,
+      "caught_ci95": [
+       0.3023,
+       0.6386
+      ],
+      "correct": 290,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0131
+      ],
+      "uncaught_conf_mean": 0.1469
+     },
+     "Z_no_law": {
+      "heads": 320,
+      "expr": 320,
+      "errors": 320,
+      "caught": 320,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9881,
+       1.0
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "TN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 30,
+      "caught": 14,
+      "caught_share": 0.4667,
+      "caught_ci95": [
+       0.3023,
+       0.6386
+      ],
+      "correct": 130,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0287
+      ],
+      "uncaught_conf_mean": 0.1469
+     },
+     "TS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 0,
+      "caught": 0,
+      "caught_share": null,
+      "caught_ci95": [
+       null,
+       null
+      ],
+      "correct": 160,
+      "false_alarms": 0,
+      "false_alarm_share": 0.0,
+      "false_alarm_ci95": [
+       0,
+       0.0234
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZN": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     },
+     "ZS": {
+      "heads": 160,
+      "expr": 160,
+      "errors": 160,
+      "caught": 160,
+      "caught_share": 1.0,
+      "caught_ci95": [
+       0.9766,
+       1
+      ],
+      "correct": 0,
+      "false_alarms": 0,
+      "false_alarm_share": null,
+      "false_alarm_ci95": [
+       null,
+       null
+      ],
+      "uncaught_conf_mean": null
+     }
+    }
+   }
+  }
+ }
+}
