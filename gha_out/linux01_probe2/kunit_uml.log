@@ -1,0 +1,104 @@
+[18:15:03] Configuring KUnit Kernel ...
+Generating .config ...
+Populating config with:
+$ make ARCH=um O=/home/runner/work/_temp/kbuild olddefconfig
+[18:15:09] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=um O=/home/runner/work/_temp/kbuild olddefconfig
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=um O=/home/runner/work/_temp/kbuild --jobs=4
+[18:16:38] Starting KUnit Kernel (1/1)...
+[18:16:38] ============================================================
+Running tests with:
+$ /home/runner/work/_temp/kbuild/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+[18:16:38] =================== math-gcd (1 subtest) ===================
+[18:16:38] ======================== gcd_test  =========================
+[18:16:38] [PASSED] GCD of 48 and 18
+[18:16:38] [PASSED] GCD of 18 and 48
+[18:16:38] [PASSED] GCD of 56 and 98
+[18:16:38] [PASSED] Coprime numbers
+[18:16:38] [PASSED] Coprime numbers
+[18:16:38] [PASSED] GCD of 270 and 192
+[18:16:38] [PASSED] GCD with zero
+[18:16:38] [PASSED] GCD with zero reversed
+[18:16:38] [PASSED] GCD of identical numbers
+[18:16:38] [PASSED] GCD of max ulong and 1
+[18:16:38] [PASSED] GCD of max ulong values
+[18:16:38] ==================== [PASSED] gcd_test =====================
+[18:16:38] ==================== [PASSED] math-gcd =====================
+[18:16:38] ================ math-int_log (2 subtests) =================
+[18:16:38] ====================== intlog2_test  =======================
+[18:16:38] [PASSED] Log base 2 of 0
+[18:16:38] [PASSED] Log base 2 of 1
+[18:16:38] [PASSED] Log base 2 of 2
+[18:16:38] [PASSED] Log base 2 of 3
+[18:16:38] [PASSED] Log base 2 of 4
+[18:16:38] [PASSED] Log base 2 of 8
+[18:16:38] [PASSED] Log base 2 of 16
+[18:16:38] [PASSED] Log base 2 of 32
+[18:16:38] [PASSED] Log base 2 of MAX
+[18:16:38] ================== [PASSED] intlog2_test ===================
+[18:16:38] ====================== intlog10_test  ======================
+[18:16:38] [PASSED] Log base 10 of 0
+[18:16:38] [PASSED] Log base 10 of 1
+[18:16:38] [PASSED] Log base 10 of 6
+[18:16:38] [PASSED] Log base 10 of 10
+[18:16:38] [PASSED] Log base 10 of 100
+[18:16:38] [PASSED] Log base 10 of 1000
+[18:16:38] [PASSED] Log base 10 of 10000
+[18:16:38] [PASSED] Log base 10 of MAX
+[18:16:38] ================== [PASSED] intlog10_test ==================
+[18:16:38] ================== [PASSED] math-int_log ===================
+[18:16:38] ================= math-int_pow (1 subtest) =================
+[18:16:38] ====================== int_pow_test  =======================
+[18:16:38] [PASSED] Power of zero
+[18:16:38] [PASSED] Power of one
+[18:16:38] [PASSED] Base zero
+[18:16:38] [PASSED] Base one
+[18:16:38] [PASSED] Two squared
+[18:16:38] [PASSED] Two cubed
+[18:16:38] [PASSED] Five raised to the fifth power
+[18:16:38] [PASSED] Max base
+[18:16:38] [PASSED] Large result
+[18:16:38] ================== [PASSED] int_pow_test ===================
+[18:16:38] ================== [PASSED] math-int_pow ===================
+[18:16:38] ================ math-int_sqrt (1 subtest) =================
+[18:16:38] ====================== int_sqrt_test  ======================
+[18:16:38] [PASSED] edge case: square root of 0
+[18:16:38] [PASSED] perfect square: square root of 1
+[18:16:38] [PASSED] non-perfect square: square root of 2
+[18:16:38] [PASSED] non-perfect square: square root of 3
+[18:16:38] [PASSED] perfect square: square root of 4
+[18:16:38] [PASSED] non-perfect square: square root of 5
+[18:16:38] [PASSED] non-perfect square: square root of 6
+[18:16:38] [PASSED] non-perfect square: square root of 7
+[18:16:38] [PASSED] non-perfect square: square root of 8
+[18:16:38] [PASSED] perfect square: square root of 9
+[18:16:38] [PASSED] non-perfect square: square root of 15 (N-1 from 16)
+[18:16:38] [PASSED] perfect square: square root of 16
+[18:16:38] [PASSED] non-perfect square: square root of 17 (N+1 from 16)
+[18:16:38] [PASSED] non-perfect square: square root of 80 (N-1 from 81)
+[18:16:38] [PASSED] perfect square: square root of 81
+[18:16:38] [PASSED] non-perfect square: square root of 82 (N+1 from 81)
+[18:16:38] [PASSED] non-perfect square: square root of 255 (N-1 from 256)
+[18:16:38] [PASSED] perfect square: square root of 256
+[18:16:38] [PASSED] non-perfect square: square root of 257 (N+1 from 256)
+[18:16:38] [PASSED] large input: square root of 2147483648
+[18:16:38] [PASSED] edge case: ULONG_MAX for 32-bit
+[18:16:38] ================== [PASSED] int_sqrt_test ==================
+[18:16:38] ================== [PASSED] math-int_sqrt ==================
+[18:16:38] =================== cmdline (9 subtests) ===================
+[18:16:38] [PASSED] cmdline_test_noint
+[18:16:38] [PASSED] cmdline_test_lead_int
+[18:16:38] [PASSED] cmdline_test_tail_int
+[18:16:38] [PASSED] cmdline_test_range
+[18:16:38] [PASSED] cmdline_test_range_overflow
+[18:16:38] [PASSED] cmdline_test_next_arg_quoted_value
+[18:16:38] [PASSED] cmdline_test_next_arg_bare_quote_regression
+[18:16:38] [PASSED] cmdline_test_next_arg_mixed_tokens
+[18:16:38] [PASSED] cmdline_test_memparse
+[18:16:38] ===================== [PASSED] cmdline =====================
+[18:16:38] ============================================================
+[18:16:38] Testing complete. Ran 67 tests: passed: 67
+[18:16:38] Elapsed time: 95.566s total, 6.024s configuring, 89.378s building, 0.112s running
+

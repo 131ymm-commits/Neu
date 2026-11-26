@@ -1,0 +1,9 @@
+[    0.1 с] источник pilot | выборка random | сред 5 | задач 3000 | ID 1367 | OOD 1633
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   12.3 с] HuggingFaceTB/SmolLM2-360M-Instruct a10cc1512eabd3dde888204e902eca88bddb4951 загружена за 8.5 с; ревизия a10cc1512eabd3dde888204e902eca88bddb4951
+[  177.4 с] X4_p0 точность {'ID': 0.7614, 'OOD': 0.7917} | без числа 0 | время 165.1 с, 0.275 с на задачу
+[  342.8 с] X5_p0 точность {'ID': 0.5571, 'OOD': 0.7156} | без числа 0 | время 165.4 с, 0.276 с на задачу
+[  509.6 с] X6_p0 точность {'ID': 0.7837, 'OOD': 0.7327} | без числа 0 | время 166.8 с, 0.278 с на задачу
+[  677.4 с] X7_p0 точность {'ID': 0.8189, 'OOD': 0.7672} | без числа 0 | время 167.8 с, 0.28 с на задачу
+[  844.2 с] X8_p0 точность {'ID': 0.6196, 'OOD': 0.7901} | без числа 0 | время 166.8 с, 0.278 с на задачу
+[  844.3 с] записано gha_out/ocdiv_pilot2_smol360_p0/answers_SmolLM2-360M-Instruct.json

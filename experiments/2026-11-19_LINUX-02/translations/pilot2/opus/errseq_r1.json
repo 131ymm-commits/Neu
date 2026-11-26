@@ -1,0 +1,73 @@
+{
+ "phase": "pilot2",
+ "head": "opus",
+ "module": "errseq",
+ "rep": 1,
+ "model_target": "claude-opus-5-5",
+ "prompt_sha256": "17f2635586d112da4b21aedf6f67083f47691dc2150f66dde1e75825163d6a57",
+ "seconds": 25.6,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::{c_int, c_uint};\nuse core::sync::atomic::{AtomicU32, Ordering};\n\n#[allow(non_camel_case_types)]\npub type errseq_t = u32;\n\n/// include/linux/err.h\nconst MAX_ERRNO: c_uint = 4095;\n\n/// ilog2(n): номер старшего установленного бита (n > 0).\nconst fn ilog2(n: u32) -> u32 {\n    31 - n.leading_zeros()\n}\n\n/* The low bits are designated for error code (max of MAX_ERRNO) */\nconst ERRSEQ_SHIFT: u32 = ilog2(MAX_ERRNO) + 1;\n\n/* This bit is used as a flag to indicate whether the value has been seen */\nconst ERRSEQ_SEEN: u32 = 1u32 << ERRSEQ_SHIFT;\n\n/* Leverage macro ERRSEQ_SEEN to define errno mask macro here */\nconst ERRNO_MASK: u32 = ERRSEQ_SEEN - 1;\n\n/* The lowest bit of the counter */\nconst ERRSEQ_CTR_INC: u32 = 1u32 << (ERRSEQ_SHIFT + 1);\n\n#[inline(always)]\nfn atomic_of<'a>(p: *mut errseq_t) -> &'a AtomicU32 {\n    // SAFETY: вызывающий код на C передаёт валидный выровненный указатель на errseq_t,\n    // к которому все конкурентные обращения идут атомарно (READ_ONCE/cmpxchg).\n    unsafe { AtomicU32::from_ptr(p) }\n}\n\n/// READ_ONCE(*p)\n#[inline(always)]\nfn read_once(p: *mut errseq_t) -> errseq_t {\n    atomic_of(p).load(Ordering::Relaxed)\n}\n\n/// cmpxchg(p, old, new): полностью упорядоченная операция, возвращает прежнее значение.\n#[inline(always)]\nfn cmpxchg(p: *mut errseq_t, old: errseq_t, new: errseq_t) -> errseq_t {\n    match atomic_of(p).compare_exchange(old, new, Ordering::SeqCst, Ordering::SeqCst) {\n        Ok(v) => v,\n        Err(v) => v,\n    }\n}\n\n/// WARN(cond, ...): возвращает cond (вывода в журнал здесь нет — только core).\n#[inline(always)]\nfn warn(cond: bool, _err: c_int) -> bool {\n    cond\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_set(eseq: *mut errseq_t, err: c_int) -> errseq_t {\n    let mut cur: errseq_t;\n    let mut old: errseq_t;\n\n    old = read_once(eseq);\n\n    let neg_err: u32 = err.wrapping_neg() as c_uint;\n    if warn(err == 0 || neg_err > MAX_ERRNO, err) {\n        return old;\n    }\n\n    loop {\n        /* Clear out error bits and set new error */\n        let mut new: errseq_t = (old & !(ERRNO_MASK | ERRSEQ_SEEN)) | neg_err;\n\n        /* Only increment if someone has looked at it */\n        if old & ERRSEQ_SEEN != 0 {\n            new = new.wrapping_add(ERRSEQ_CTR_INC);\n        }\n\n        /* If there would be no change, then call it done */\n        if new == old {\n            cur = new;\n            break;\n        }\n\n        /* Try to swap the new value into place */\n        cur = cmpxchg(eseq, old, new);\n\n        /*\n         * Call it success if we did the swap or someone else beat us\n         * to it for the same value.\n         */\n        if cur == old || cur == new {\n            break;\n        }\n\n        /* Raced with an update, try again */\n        old = cur;\n    }\n    cur\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_sample(eseq: *mut errseq_t) -> errseq_t {\n    let mut old = read_once(eseq);\n\n    /* If nobody has seen this error yet, then we can be the first. */\n    if old & ERRSEQ_SEEN == 0 {\n        old = 0;\n    }\n    old\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_check(eseq: *mut errseq_t, since: errseq_t) -> c_int {\n    let cur = read_once(eseq);\n\n    if cur == since {\n        return 0;\n    }\n    (cur & ERRNO_MASK).wrapping_neg() as c_int\n}\n\n#[no_mangle]\npub extern \"C\" fn errseq_check_and_advance(eseq: *mut errseq_t, since: *mut errseq_t) -> c_int {\n    let mut err: c_int = 0;\n    let mut old: errseq_t;\n    let mut new: errseq_t;\n\n    old = read_once(eseq);\n    // SAFETY: since — валидный указатель от вызывающего кода; обычное чтение, как в C.\n    while old != unsafe { *since } {\n        new = old | ERRSEQ_SEEN;\n        if new != old {\n            let cur = cmpxchg(eseq, old, new);\n\n            if cur != old {\n                old = cur;\n                continue;\n            }\n        }\n        // SAFETY: since — валидный указатель от вызывающего кода; обычная запись, как в C.\n        unsafe {\n            *since = new;\n        }\n        err = (new & ERRNO_MASK).wrapping_neg() as c_int;\n        break;\n    }\n    err\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 6923,
+  "cache_read_input_tokens": 649,
+  "output_tokens": 2650,
+  "output_tokens_details": {
+   "thinking_tokens": 745
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 6923,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 2650,
+    "cache_read_input_tokens": 649,
+    "cache_creation_input_tokens": 6923,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 6923
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.1085218,
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 2650,
+   "cacheReadInputTokens": 649,
+   "cacheCreationInputTokens": 6923,
+   "webSearchRequests": 0,
+   "costUSD": 0.1085218,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 745,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 6923,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 24417,
+ "code_extracted": true,
+ "models_used": [
+  "claude-opus-5-5"
+ ]
+}

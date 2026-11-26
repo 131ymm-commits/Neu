@@ -1,0 +1,6 @@
+сверка хешей: совпало (64 файлов)
+91adfb4fb9ecbb003f8ea92a7721801eae24f55b33cc2b1c0356999a3650fb48  experiments/2026-11-16_OCDIV-01/facts_ocdiv.py
+5dedd3aba59ab548a47cb9e67eeed63170c0d3094d6c494c5834137132a7292e  gha_out/ocdiv_sum_mini/expect_ocdiv.json
+2af5dd79c0c82ce6b94ec2d1e36b56841913a540d3855c5a9427d5343bbe4145  gha_out/ocdiv_sum_test/analysis.json
+собрано: голов 7, ошибок 0, сред 5, выборка first 0, ключи сверены: True → gha_out/ocdiv_facts/merged/answers.json
+{"check_ok": true, "weights": {"D1": 0.0, "D2": 0.0, "D4": 0.0, "D5": 0.0, "N": 0.0, "D3": 0.0}, "max_diff": 0.0}

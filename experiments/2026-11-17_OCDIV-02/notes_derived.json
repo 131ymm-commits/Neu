@@ -1,0 +1,33 @@
+{
+ "source": "notes_ocdiv2.py по analysis.json",
+ "t4_point_by_env": {
+  "L_X99999_p3": 0.0,
+  "L_X9999_p3": 1.6666666666775853e-06,
+  "L_X999_p3": -0.006524440762220474,
+  "L_X99_p3": 0.020372208436724604,
+  "L_X9_p3": 0.12722092050209205
+ },
+ "t4_positive_beyond_construction": [
+  "L_X99_p3",
+  "L_X9_p3"
+ ],
+ "t4_zero_by_construction": [
+  "L_X99999_p3",
+  "L_X9999_p3"
+ ],
+ "homoplasy_diff_by_env": {
+  "L_X99999_p3": 0.08411467116357502,
+  "L_X9999_p3": 0.10500166666666666,
+  "L_X999_p3": 0.11744324772162387,
+  "L_X99_p3": 0.19082299421009097,
+  "L_X9_p3": 0.06359246861924686
+ },
+ "homoplasy_diff_positive": 5,
+ "nondeg_by_test": [
+  "L_X9_p3",
+  "L_X99_p3",
+  "L_X999_p3"
+ ],
+ "n_nondeg_by_test": 3,
+ "t4_share_from_x9": 0.9018260473183164
+}

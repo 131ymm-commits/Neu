@@ -1,0 +1,1310 @@
+ERROR:root:error: 'rustfmt' is not installed for the toolchain '1.85.0-x86_64-unknown-linux-gnu'.
+help: run `rustup component add rustfmt` to install it
+Failed to run rustfmt: Internal rustfmt error (non-fatal, continuing)
+***
+*** Rust bindings generator 'bindgen' < 0.72.1 together with libclang >= 22
+*** may not work due to a bug (https://github.com/rust-lang/rust-bindgen/pull/3278).
+***   Your bindgen version:  0.71.1
+***   Your libclang version: 22.1.2
+***
+***
+*** libclang (used by the Rust bindings generator 'bindgen')
+*** version does not match Clang's. This may be a problem.
+***   libclang version: 22.1.2
+***   Clang version:    21.1.8
+***
+***
+*** Please see Documentation/rust/quick-start.rst for details
+*** on how to set up the Rust support.
+***
+error[E0560]: struct `blk_mq_tag_set` has no field named `ops`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:46:21
+   |
+46 |                     ops: OperationsVTable::<T>::build(),
+   |                     ^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_tag_set` has no field named `nr_hw_queues`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:47:21
+   |
+47 |                     nr_hw_queues,
+   |                     ^^^^^^^^^^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_tag_set` has no field named `timeout`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:48:21
+   |
+48 |                     timeout: 0, // 0 means default which is 30Hz in C
+   |                     ^^^^^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_tag_set` has no field named `numa_node`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:49:21
+   |
+49 |                     numa_node: bindings::NUMA_NO_NODE,
+   |                     ^^^^^^^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_tag_set` has no field named `queue_depth`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:50:21
+   |
+50 |                     queue_depth: num_tags,
+   |                     ^^^^^^^^^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_tag_set` has no field named `cmd_size`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:51:21
+   |
+51 |                     cmd_size,
+   |                     ^^^^^^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_tag_set` has no field named `flags`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:52:21
+   |
+52 |                     flags: 0,
+   |                     ^^^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_tag_set` has no field named `driver_data`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:53:21
+   |
+53 |                     driver_data: core::ptr::null_mut::<crate::ffi::c_void>(),
+   |                     ^^^^^^^^^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_tag_set` has no field named `nr_maps`
+  --> /home/runner/work/_temp/linux/rust/kernel/block/mq/tag_set.rs:54:21
+   |
+54 |                     nr_maps: num_maps,
+   |                     ^^^^^^^ `blk_mq_tag_set` does not have this field
+   |
+   = note: available fields are: `_address`
+
+error[E0560]: struct `kunit_suite` has no field named `name`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:272:21
+    |
+272 |                     name: KUNIT_TEST_SUITE_NAME,
+    |                     ^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `test_cases`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:277:21
+    |
+277 |                     test_cases: unsafe {
+    |                     ^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `suite_init`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:281:21
+    |
+281 |                     suite_init: None,
+    |                     ^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `suite_exit`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:282:21
+    |
+282 |                     suite_exit: None,
+    |                     ^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `init`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:283:21
+    |
+283 |                     init: None,
+    |                     ^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `exit`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:284:21
+    |
+284 |                     exit: None,
+    |                     ^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `attr`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:285:21
+    |
+285 |                     attr: ::kernel::bindings::kunit_attributes {
+    |                     ^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `status_comment`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:288:21
+    |
+288 |                     status_comment: [0; 256usize],
+    |                     ^^^^^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `debugfs`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:289:21
+    |
+289 |                     debugfs: ::core::ptr::null_mut(),
+    |                     ^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `log`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:290:21
+    |
+290 |                     log: ::core::ptr::null_mut(),
+    |                     ^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `suite_init_err`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:291:21
+    |
+291 |                     suite_init_err: 0,
+    |                     ^^^^^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `is_init`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:292:21
+    |
+292 |                     is_init: false,
+    |                     ^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `status`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:293:21
+    |
+293 |                     status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
+    |                     ^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | --------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `name`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:272:21
+    |
+272 |                     name: KUNIT_TEST_SUITE_NAME,
+    |                     ^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `test_cases`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:277:21
+    |
+277 |                     test_cases: unsafe {
+    |                     ^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `suite_init`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:281:21
+    |
+281 |                     suite_init: None,
+    |                     ^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `suite_exit`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:282:21
+    |
+282 |                     suite_exit: None,
+    |                     ^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `init`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:283:21
+    |
+283 |                     init: None,
+    |                     ^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `exit`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:284:21
+    |
+284 |                     exit: None,
+    |                     ^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `attr`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:285:21
+    |
+285 |                     attr: ::kernel::bindings::kunit_attributes {
+    |                     ^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `status_comment`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:288:21
+    |
+288 |                     status_comment: [0; 256usize],
+    |                     ^^^^^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `debugfs`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:289:21
+    |
+289 |                     debugfs: ::core::ptr::null_mut(),
+    |                     ^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `log`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:290:21
+    |
+290 |                     log: ::core::ptr::null_mut(),
+    |                     ^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `suite_init_err`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:291:21
+    |
+291 |                     suite_init_err: 0,
+    |                     ^^^^^^^^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `is_init`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:292:21
+    |
+292 |                     is_init: false,
+    |                     ^^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0560]: struct `kunit_suite` has no field named `status`
+   --> /home/runner/work/_temp/linux/rust/kernel/kunit.rs:293:21
+    |
+293 |                     status: kernel::bindings::kunit_status_KUNIT_SUCCESS,
+    |                     ^^^^^^ `kunit_suite` does not have this field
+    |
+   ::: /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ----------------------------------------- in this procedural macro expansion
+    |
+    = note: all struct fields are already assigned
+    = note: this error originates in the macro `::kernel::kunit_unsafe_test_suite` which comes from the expansion of the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0609]: no field `parent` on type `bindings::device`
+   --> /home/runner/work/_temp/linux/rust/kernel/auxiliary.rs:508:25
+    |
+508 |             (*adev).dev.parent = parent.as_raw();
+    |                         ^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `release` on type `bindings::device`
+   --> /home/runner/work/_temp/linux/rust/kernel/auxiliary.rs:509:25
+    |
+509 |             (*adev).dev.release = Some(Device::release);
+    |                         ^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `logical_block_size` on type `queue_limits`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/gen_disk.rs:124:13
+    |
+124 |         lim.logical_block_size = self.logical_block_size;
+    |             ^^^^^^^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `physical_block_size` on type `queue_limits`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/gen_disk.rs:125:13
+    |
+125 |         lim.physical_block_size = self.physical_block_size;
+    |             ^^^^^^^^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `features` on type `queue_limits`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/gen_disk.rs:127:17
+    |
+127 |             lim.features = bindings::BLK_FEAT_ROTATIONAL;
+    |                 ^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `fops` on type `gendisk`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/gen_disk.rs:142:29
+    |
+142 |         unsafe { (*gendisk).fops = &GenDisk::<T>::VTABLE };
+    |                             ^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `disk_name` on type `gendisk`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/gen_disk.rs:161:38
+    |
+161 |             unsafe { &mut (*gendisk).disk_name },
+    |                                      ^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0560]: struct `block_device_operations` has no field named `owner`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/gen_disk.rs:207:9
+    |
+207 |         owner: crate::module::this_module::<T::OwnerModule>().as_ptr(),
+    |         ^^^^^ `block_device_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0609]: no field `queue` on type `gendisk`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/gen_disk.rs:228:53
+    |
+228 |         let queue_data = unsafe { (*(*self.gendisk).queue).queuedata };
+    |                                                     ^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `queue` on type `blk_mq_hw_ctx`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:111:45
+    |
+111 |         let queue_data = unsafe { (*(*hctx).queue).queuedata };
+    |                                             ^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `queue` on type `blk_mq_hw_ctx`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:146:45
+    |
+146 |         let queue_data = unsafe { (*(*hctx).queue).queuedata };
+    |                                             ^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `queue_rq`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:264:9
+    |
+264 |         queue_rq: Some(Self::queue_rq_callback),
+    |         ^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `queue_rqs`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:265:9
+    |
+265 |         queue_rqs: None,
+    |         ^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `commit_rqs`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:266:9
+    |
+266 |         commit_rqs: Some(Self::commit_rqs_callback),
+    |         ^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `get_budget`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:267:9
+    |
+267 |         get_budget: None,
+    |         ^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `put_budget`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:268:9
+    |
+268 |         put_budget: None,
+    |         ^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `set_rq_budget_token`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:269:9
+    |
+269 |         set_rq_budget_token: None,
+    |         ^^^^^^^^^^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `get_rq_budget_token`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:270:9
+    |
+270 |         get_rq_budget_token: None,
+    |         ^^^^^^^^^^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `timeout`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:271:9
+    |
+271 |         timeout: None,
+    |         ^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `poll`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:272:9
+    |
+272 |         poll: if T::HAS_POLL {
+    |         ^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `complete`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:277:9
+    |
+277 |         complete: Some(Self::complete_callback),
+    |         ^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `init_hctx`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:278:9
+    |
+278 |         init_hctx: Some(Self::init_hctx_callback),
+    |         ^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `exit_hctx`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:279:9
+    |
+279 |         exit_hctx: Some(Self::exit_hctx_callback),
+    |         ^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `init_request`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:280:9
+    |
+280 |         init_request: Some(Self::init_request_callback),
+    |         ^^^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `exit_request`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:281:9
+    |
+281 |         exit_request: Some(Self::exit_request_callback),
+    |         ^^^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `cleanup_rq`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:282:9
+    |
+282 |         cleanup_rq: None,
+    |         ^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `busy`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:283:9
+    |
+283 |         busy: None,
+    |         ^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `blk_mq_ops` has no field named `map_queues`
+   --> /home/runner/work/_temp/linux/rust/kernel/block/mq/operations.rs:284:9
+    |
+284 |         map_queues: None,
+    |         ^^^^^^^^^^ `blk_mq_ops` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0609]: no field `euid` on type `bindings::cred`
+  --> /home/runner/work/_temp/linux/rust/kernel/cred.rs:74:49
+   |
+74 |         Kuid::from_raw(unsafe { (*self.0.get()).euid })
+   |                                                 ^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `i_private` on type `bindings::inode`
+  --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:93:34
+   |
+93 |     let data = unsafe { (*inode).i_private };
+   |                                  ^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `private` on type `bindings::seq_file`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:115:35
+    |
+115 |     let data = unsafe { &*((*seq).private.cast::<T>()) };
+    |                                   ^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `read`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:131:13
+    |
+131 |             read: Some(bindings::seq_read),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `llseek`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:132:13
+    |
+132 |             llseek: Some(bindings::seq_lseek),
+    |             ^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `release`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:133:13
+    |
+133 |             release: Some(bindings::single_release),
+    |             ^^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `open`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:134:13
+    |
+134 |             open: Some(writer_open::<Self>),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:168:39
+    |
+168 |     let seq = unsafe { &mut *((*file).private_data.cast::<bindings::seq_file>()) };
+    |                                       ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `open`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:182:13
+    |
+182 |             open: Some(writer_open::<T>),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `read`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:183:13
+    |
+183 |             read: Some(bindings::seq_read),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `write`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:184:13
+    |
+184 |             write: Some(write::<T>),
+    |             ^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `llseek`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:185:13
+    |
+185 |             llseek: Some(bindings::seq_lseek),
+    |             ^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `release`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:186:13
+    |
+186 |             release: Some(bindings::single_release),
+    |             ^^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:210:22
+    |
+210 |     unsafe { (*file).private_data = (*inode).i_private };
+    |                      ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `i_private` on type `bindings::inode`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:210:46
+    |
+210 |     unsafe { (*file).private_data = (*inode).i_private };
+    |                                              ^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:228:36
+    |
+228 |     let data = unsafe { &*((*file).private_data as *const T) };
+    |                                    ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `open`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:239:13
+    |
+239 |             open: Some(write_only_open),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `write`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:240:13
+    |
+240 |             write: Some(write_only_write::<T>),
+    |             ^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `llseek`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:241:13
+    |
+241 |             llseek: Some(bindings::noop_llseek),
+    |             ^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:262:36
+    |
+262 |     let this = unsafe { &*((*file).private_data.cast::<T>()) };
+    |                                    ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `read`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:291:13
+    |
+291 |             read: Some(blob_read::<T>),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `llseek`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:292:13
+    |
+292 |             llseek: Some(bindings::default_llseek),
+    |             ^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `open`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:293:13
+    |
+293 |             open: Some(bindings::simple_open),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:316:36
+    |
+316 |     let this = unsafe { &*((*file).private_data.cast::<T>()) };
+    |                                    ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `write`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:345:13
+    |
+345 |             write: Some(blob_write::<T>),
+    |             ^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `llseek`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:346:13
+    |
+346 |             llseek: Some(bindings::default_llseek),
+    |             ^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `open`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:347:13
+    |
+347 |             open: Some(bindings::simple_open),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `read`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:369:13
+    |
+369 |             read: Some(blob_read::<T>),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `write`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:370:13
+    |
+370 |             write: Some(blob_write::<T>),
+    |             ^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `llseek`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:371:13
+    |
+371 |             llseek: Some(bindings::default_llseek),
+    |             ^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `open`
+   --> /home/runner/work/_temp/linux/rust/kernel/debugfs/file_ops.rs:372:13
+    |
+372 |             open: Some(bindings::simple_open),
+    |             ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0609]: no field `parent` on type `bindings::device`
+   --> /home/runner/work/_temp/linux/rust/kernel/device.rs:275:48
+    |
+275 |         let parent = unsafe { (*self.as_raw()).parent };
+    |                                                ^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `p_cb` on type `bindings::device_driver`
+   --> /home/runner/work/_temp/linux/rust/kernel/driver.rs:224:26
+    |
+224 |         unsafe { (*base).p_cb.post_unbind_rust = Some(Self::post_unbind_callback) };
+    |                          ^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `status` on type `bindings::kunit`
+   --> /home/runner/work/_temp/linux/rust/kernel/fmt.rs:215:1
+    |
+215 | #[macros::kunit_tests(rust_kernel_fmt)]
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unknown field
+    |
+    = note: this error originates in the attribute macro `macros::kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0609]: no field `f_cred` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/fs/file.rs:325:45
+    |
+325 |         let ptr = unsafe { (*self.as_ptr()).f_cred };
+    |                                             ^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `f_flags` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/fs/file.rs:343:55
+    |
+343 |         unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_volatile() }
+    |                                                       ^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `ki_filp` on type `bindings::kiocb`
+  --> /home/runner/work/_temp/linux/rust/kernel/fs/kiocb.rs:52:51
+   |
+52 |         let private = unsafe { (*(*self.as_raw()).ki_filp).private_data };
+   |                                                   ^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `ki_pos` on type `bindings::kiocb`
+  --> /home/runner/work/_temp/linux/rust/kernel/fs/kiocb.rs:60:35
+   |
+60 |         unsafe { (*self.as_raw()).ki_pos }
+   |                                   ^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `ki_pos` on type `bindings::kiocb`
+  --> /home/runner/work/_temp/linux/rust/kernel/fs/kiocb.rs:66:40
+   |
+66 |         unsafe { &mut (*self.as_raw()).ki_pos }
+   |                                        ^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `data_source` on type `bindings::iov_iter`
+  --> /home/runner/work/_temp/linux/rust/kernel/iov.rs:65:43
+   |
+65 |         let data_source = unsafe { (*ptr).data_source };
+   |                                           ^^^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `__bindgen_anon_1` on type `bindings::iov_iter`
+  --> /home/runner/work/_temp/linux/rust/kernel/iov.rs:88:18
+   |
+88 |                 .__bindgen_anon_1
+   |                  ^^^^^^^^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `data_source` on type `bindings::iov_iter`
+   --> /home/runner/work/_temp/linux/rust/kernel/iov.rs:216:43
+    |
+216 |         let data_source = unsafe { (*ptr).data_source };
+    |                                           ^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `__bindgen_anon_1` on type `bindings::iov_iter`
+   --> /home/runner/work/_temp/linux/rust/kernel/iov.rs:239:18
+    |
+239 |                 .__bindgen_anon_1
+    |                  ^^^^^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:249:63
+    |
+249 |         let misc_ptr = Opaque::cast_from(unsafe { (*raw_file).private_data }.cast());
+    |                                                               ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:274:30
+    |
+274 |         unsafe { (*raw_file).private_data = ptr.into_foreign() };
+    |                              ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:285:40
+    |
+285 |         let private = unsafe { (*file).private_data };
+    |                                        ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:346:40
+    |
+346 |         let private = unsafe { (*file).private_data };
+    |                                        ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:369:40
+    |
+369 |         let private = unsafe { (*file).private_data };
+    |                                        ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `private_data` on type `bindings::file`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:415:40
+    |
+415 |         let private = unsafe { (*file).private_data };
+    |                                        ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `open`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:430:9
+    |
+430 |         open: Some(Self::open),
+    |         ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `release`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:431:9
+    |
+431 |         release: Some(Self::release),
+    |         ^^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `mmap`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:432:9
+    |
+432 |         mmap: if T::HAS_MMAP { Some(Self::mmap) } else { None },
+    |         ^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `read_iter`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:433:9
+    |
+433 |         read_iter: if T::HAS_READ_ITER {
+    |         ^^^^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `write_iter`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:438:9
+    |
+438 |         write_iter: if T::HAS_WRITE_ITER {
+    |         ^^^^^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `unlocked_ioctl`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:443:9
+    |
+443 |         unlocked_ioctl: if T::HAS_IOCTL {
+    |         ^^^^^^^^^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `show_fdinfo`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:456:9
+    |
+456 |         show_fdinfo: if T::HAS_SHOW_FDINFO {
+    |         ^^^^^^^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0560]: struct `bindings::file_operations` has no field named `owner`
+   --> /home/runner/work/_temp/linux/rust/kernel/miscdevice.rs:461:9
+    |
+461 |         owner: this_module::<T::OwnerModule>().as_ptr(),
+    |         ^^^^^ `bindings::file_operations` does not have this field
+    |
+    = note: available fields are: `_address`
+
+error[E0609]: no field `vm_mm` on type `bindings::vm_area_struct`
+  --> /home/runner/work/_temp/linux/rust/kernel/mm/virt.rs:66:56
+   |
+66 |         unsafe { MmWithUser::from_raw((*self.as_ptr()).vm_mm) }
+   |                                                        ^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `__bindgen_anon_2` on type `bindings::vm_area_struct`
+  --> /home/runner/work/_temp/linux/rust/kernel/mm/virt.rs:76:35
+   |
+76 |         unsafe { (*self.as_ptr()).__bindgen_anon_2.vm_flags }
+   |                                   ^^^^^^^^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `__bindgen_anon_1` on type `bindings::vm_area_struct`
+  --> /home/runner/work/_temp/linux/rust/kernel/mm/virt.rs:84:35
+   |
+84 |         unsafe { (*self.as_ptr()).__bindgen_anon_1.__bindgen_anon_1.vm_start }
+   |                                   ^^^^^^^^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `__bindgen_anon_1` on type `bindings::vm_area_struct`
+  --> /home/runner/work/_temp/linux/rust/kernel/mm/virt.rs:92:35
+   |
+92 |         unsafe { (*self.as_ptr()).__bindgen_anon_1.__bindgen_anon_1.vm_end }
+   |                                   ^^^^^^^^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `__bindgen_anon_2` on type `bindings::vm_area_struct`
+   --> /home/runner/work/_temp/linux/rust/kernel/mm/virt.rs:251:35
+    |
+251 |         unsafe { (*self.as_ptr()).__bindgen_anon_2.vm_flags = flags };
+    |                                   ^^^^^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `__bindgen_anon_1` on type `bindings::kernel_param`
+  --> /home/runner/work/_temp/linux/rust/kernel/module_param.rs:78:37
+   |
+78 |         let arg = unsafe { (*param).__bindgen_anon_1.arg };
+   |                                     ^^^^^^^^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `name` on type `bindings::device_driver`
+  --> /home/runner/work/_temp/linux/rust/kernel/platform.rs:77:34
+   |
+77 |             (*pdrv.get()).driver.name = name.as_char_ptr();
+   |                                  ^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `of_match_table` on type `bindings::device_driver`
+  --> /home/runner/work/_temp/linux/rust/kernel/platform.rs:80:34
+   |
+80 |             (*pdrv.get()).driver.of_match_table = of_table;
+   |                                  ^^^^^^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `acpi_match_table` on type `bindings::device_driver`
+  --> /home/runner/work/_temp/linux/rust/kernel/platform.rs:81:34
+   |
+81 |             (*pdrv.get()).driver.acpi_match_table = acpi_table;
+   |                                  ^^^^^^^^^^^^^^^^ unknown field
+   |
+   = note: available field is: `_address`
+
+error[E0609]: no field `dev` on type `platform_device`
+   --> /home/runner/work/_temp/linux/rust/kernel/platform.rs:331:65
+    |
+331 |     const OFFSET: usize = offset_of!(bindings::platform_device, dev);
+    |                                                                 ^^^
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `dev` on type `platform_device`
+   --> /home/runner/work/_temp/linux/rust/kernel/platform.rs:553:58
+    |
+553 |         let dev = unsafe { addr_of_mut!((*self.as_raw()).dev) };
+    |                                                          ^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `dev` on type `platform_device`
+   --> /home/runner/work/_temp/linux/rust/kernel/platform.rs:573:84
+    |
+573 |         let pdev = unsafe { container_of!(dev.as_raw(), bindings::platform_device, dev) };
+    |                                                                                    ^^^
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `dev` on type `platform_device`
+   --> /home/runner/work/_temp/linux/rust/kernel/platform.rs:573:84
+    |
+573 |         let pdev = unsafe { container_of!(dev.as_raw(), bindings::platform_device, dev) };
+    |                                                                                    ^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `nents` on type `bindings::sg_table`
+   --> /home/runner/work/_temp/linux/rust/kernel/scatterlist.rs:158:47
+    |
+158 |         let nents = unsafe { (*self.as_raw()).nents };
+    |                                               ^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `sgl` on type `bindings::sg_table`
+   --> /home/runner/work/_temp/linux/rust/kernel/scatterlist.rs:162:49
+    |
+162 |             let ptr = unsafe { (*self.as_raw()).sgl };
+    |                                                 ^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `status` on type `bindings::kunit`
+   --> /home/runner/work/_temp/linux/rust/kernel/sync/lock/spinlock.rs:371:1
+    |
+371 | #[kunit_tests(rust_spinlock_irq_condvar)]
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ unknown field
+    |
+    = note: this error originates in the attribute macro `kunit_tests` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0609]: no field `pid` on type `bindings::task_struct`
+   --> /home/runner/work/_temp/linux/rust/kernel/task.rs:210:50
+    |
+210 |         unsafe { *ptr::addr_of!((*self.as_ptr()).pid) }
+    |                                                  ^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `tgid` on type `bindings::task_struct`
+   --> /home/runner/work/_temp/linux/rust/kernel/task.rs:217:50
+    |
+217 |         unsafe { *ptr::addr_of!((*self.as_ptr()).tgid) }
+    |                                                  ^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `mm` on type `bindings::task_struct`
+   --> /home/runner/work/_temp/linux/rust/kernel/task.rs:281:44
+    |
+281 |         let mm = unsafe { (*self.as_ptr()).mm };
+    |                                            ^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error[E0609]: no field `group_leader` on type `bindings::task_struct`
+   --> /home/runner/work/_temp/linux/rust/kernel/task.rs:340:45
+    |
+340 |         let ptr = unsafe { (*self.as_ptr()).group_leader };
+    |                                             ^^^^^^^^^^^^ unknown field
+    |
+    = note: available field is: `_address`
+
+error: aborting due to 140 previous errors
+
+Some errors have detailed explanations: E0560, E0609.
+For more information about an error, try `rustc --explain E0560`.
+make[3]: *** [/home/runner/work/_temp/linux/rust/Makefile:806: rust/kernel.o] Error 1
+make[2]: *** [/home/runner/work/_temp/linux/Makefile:1423: prepare] Error 2
+make[1]: *** [/home/runner/work/_temp/linux/Makefile:248: __sub-make] Error 2
+make: *** [Makefile:248: __sub-make] Error 2
+
+[17:54:11] Configuring KUnit Kernel ...
+[17:54:11] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=x86_64 O=/home/runner/work/_temp/kbuild_x86_64 olddefconfig LLVM=1
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=x86_64 O=/home/runner/work/_temp/kbuild_x86_64 --jobs=4 LLVM=1

@@ -1,0 +1,5 @@
+[    0.0 с] источник mini | выборка first | сред 1 | задач 600 | ID 272 | OOD 328
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   12.4 с] Qwen/Qwen2.5-0.5B-Instruct 7ae557604adf67be50417f59c2c2f167def9a775 загружена за 9.7 с; ревизия 7ae557604adf67be50417f59c2c2f167def9a775
+[  172.7 с] X3_p2 точность {'ID': 0.9485, 'OOD': 0.8384} | без числа 0 | время 160.4 с, 0.267 с на задачу
+[  173.1 с] записано gha_out/ocdiv_mini_qwen05/answers_Qwen2.5-0.5B-Instruct.json

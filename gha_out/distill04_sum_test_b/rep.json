@@ -1,0 +1,98 @@
+{
+ "jobs": {
+  "distill04_rep_falcon1_T_X44_p3": {
+   "test_job": "distill04_test_falcon1_T_X44_p3",
+   "envs": [
+    "T_X44_p3"
+   ],
+   "columns": {
+    "T_X44_p3": {
+     "answer": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "correct": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "logp": {
+      "n": 2200,
+      "equal_share": 0.055
+     },
+     "n_tok": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "text_none": {
+      "n": null,
+      "equal_share": null
+     }
+    }
+   },
+   "missing": []
+  },
+  "distill04_rep_olmo1_T_X84_p3": {
+   "test_job": "distill04_test_olmo1_T_X84_p3",
+   "envs": [
+    "T_X84_p3"
+   ],
+   "columns": {
+    "T_X84_p3": {
+     "answer": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "correct": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "logp": {
+      "n": 2200,
+      "equal_share": 0.012727272727272728
+     },
+     "n_tok": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "text_none": {
+      "n": null,
+      "equal_share": null
+     }
+    }
+   },
+   "missing": []
+  },
+  "distill04_rep_smol17_T_X44_p3": {
+   "test_job": "distill04_test_smol17_T_X44_p3",
+   "envs": [
+    "T_X44_p3"
+   ],
+   "columns": {
+    "T_X44_p3": {
+     "answer": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "correct": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "logp": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "n_tok": {
+      "n": 2200,
+      "equal_share": 1.0
+     },
+     "text_none": {
+      "n": null,
+      "equal_share": null
+     }
+    }
+   },
+   "missing": []
+  }
+ },
+ "n_jobs": 3
+}

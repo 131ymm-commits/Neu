@@ -1,0 +1,15 @@
+[    0.1 с] источник pilot | сред 10 | задач 3000
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   20.6 с] ibm-granite/granite-3.1-1b-a400m-instruct main загружена за 16.6 с; ревизия 0da7a48b0276d500ce5922fd2b33944091fc6c09
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+[  158.0 с] X4_p0 точность {'ID': 0.9788, 'OOD': 1.0} | без числа 0 | время 137.4 с, 0.458 с на задачу
+[  295.1 с] X4_p1 точность {'ID': 1.0, 'OOD': 0.5} | без числа 0 | время 137.1 с, 0.457 с на задачу
+[  432.1 с] X5_p0 точность {'ID': 1.0, 'OOD': 0.4737} | без числа 0 | время 137.0 с, 0.457 с на задачу
+[  570.0 с] X5_p1 точность {'ID': 0.9964, 'OOD': 0.3462} | без числа 0 | время 137.9 с, 0.46 с на задачу
+[  706.7 с] X6_p0 точность {'ID': 0.9964, 'OOD': 0.5263} | без числа 0 | время 136.7 с, 0.456 с на задачу
+[  845.0 с] X6_p1 точность {'ID': 0.9858, 'OOD': 0.8889} | без числа 0 | время 138.3 с, 0.461 с на задачу
+[  985.7 с] X7_p0 точность {'ID': 0.9895, 'OOD': 0.5} | без числа 0 | время 140.6 с, 0.469 с на задачу
+[ 1125.7 с] X7_p1 точность {'ID': 0.9929, 'OOD': 0.5} | без числа 0 | время 140.0 с, 0.467 с на задачу
+[ 1264.6 с] X8_p0 точность {'ID': 0.993, 'OOD': 1.0} | без числа 0 | время 139.0 с, 0.463 с на задачу
+[ 1403.5 с] X8_p1 точность {'ID': 1.0, 'OOD': 0.7619} | без числа 0 | время 138.9 с, 0.463 с на задачу
+[ 1404.0 с] записано gha_out/ocdiv_pilot_gran1/answers_granite-3.1-1b-a400m-instruct.json

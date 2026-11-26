@@ -1,0 +1,145 @@
+{
+ "source": "tools/ai_probe.py",
+ "prompt": "Reply with the number only. 347 + 58 =",
+ "truth": 405,
+ "token_present": true,
+ "catalog": {
+  "status": 200,
+  "seconds": 0.24,
+  "n": 0,
+  "error": "не JSON",
+  "models": [],
+  "fallback": [
+   "openai/gpt-4.1-mini",
+   "meta/Llama-3.3-70B-Instruct",
+   "mistral-ai/Ministral-3B",
+   "microsoft/Phi-4-mini-instruct",
+   "deepseek/DeepSeek-V3-0324",
+   "xai/grok-3-mini",
+   "cohere/cohere-command-r-08-2024",
+   "ai21-labs/AI21-Jamba-1.5-Mini"
+  ]
+ },
+ "calls": [
+  {
+   "model": "ai21-labs/AI21-Jamba-1.5-Mini",
+   "publisher": "ai21-labs",
+   "tier": "low",
+   "status": 200,
+   "seconds": 0.2,
+   "answer": "",
+   "parsed": null,
+   "correct": false,
+   "usage": null,
+   "error": "не JSON",
+   "ratelimit": {
+    "content-type": "text/plain"
+   }
+  },
+  {
+   "model": "cohere/cohere-command-r-08-2024",
+   "publisher": "cohere",
+   "tier": "low",
+   "status": 200,
+   "seconds": 0.2,
+   "answer": "",
+   "parsed": null,
+   "correct": false,
+   "usage": null,
+   "error": "не JSON",
+   "ratelimit": {
+    "content-type": "text/plain"
+   }
+  },
+  {
+   "model": "deepseek/DeepSeek-V3-0324",
+   "publisher": "deepseek",
+   "tier": "low",
+   "status": 200,
+   "seconds": 0.2,
+   "answer": "",
+   "parsed": null,
+   "correct": false,
+   "usage": null,
+   "error": "не JSON",
+   "ratelimit": {
+    "content-type": "text/plain"
+   }
+  },
+  {
+   "model": "meta/Llama-3.3-70B-Instruct",
+   "publisher": "meta",
+   "tier": "low",
+   "status": 200,
+   "seconds": 0.21,
+   "answer": "",
+   "parsed": null,
+   "correct": false,
+   "usage": null,
+   "error": "не JSON",
+   "ratelimit": {
+    "content-type": "text/plain"
+   }
+  },
+  {
+   "model": "microsoft/Phi-4-mini-instruct",
+   "publisher": "microsoft",
+   "tier": "low",
+   "status": 200,
+   "seconds": 0.2,
+   "answer": "",
+   "parsed": null,
+   "correct": false,
+   "usage": null,
+   "error": "не JSON",
+   "ratelimit": {
+    "content-type": "text/plain"
+   }
+  },
+  {
+   "model": "mistral-ai/Ministral-3B",
+   "publisher": "mistral-ai",
+   "tier": "low",
+   "status": 200,
+   "seconds": 0.21,
+   "answer": "",
+   "parsed": null,
+   "correct": false,
+   "usage": null,
+   "error": "не JSON",
+   "ratelimit": {
+    "content-type": "text/plain"
+   }
+  },
+  {
+   "model": "openai/gpt-4.1-mini",
+   "publisher": "openai",
+   "tier": "low",
+   "status": 200,
+   "seconds": 0.2,
+   "answer": "",
+   "parsed": null,
+   "correct": false,
+   "usage": null,
+   "error": "не JSON",
+   "ratelimit": {
+    "content-type": "text/plain"
+   }
+  },
+  {
+   "model": "xai/grok-3-mini",
+   "publisher": "xai",
+   "tier": "low",
+   "status": 200,
+   "seconds": 0.2,
+   "answer": "",
+   "parsed": null,
+   "correct": false,
+   "usage": null,
+   "error": "не JSON",
+   "ratelimit": {
+    "content-type": "text/plain"
+   }
+  }
+ ]
+}

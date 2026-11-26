@@ -1,0 +1,615 @@
+{
+ "verdicts": {
+  "АБ-П-Т": {
+   "family": "thousands",
+   "kind": "prog",
+   "D": 0.8242221057621438,
+   "p": 0.0001984126984126984,
+   "rank": 1,
+   "n_perm": 5040,
+   "k": 7,
+   "min_p": 0.0001984126984126984,
+   "heads": 7,
+   "n_distinct": 5040,
+   "level": 0.0025,
+   "verdict": "да"
+  },
+  "АБ-П-Л": {
+   "family": "length",
+   "kind": "prog",
+   "D": 0.9134309256735522,
+   "p": 0.0001984126984126984,
+   "rank": 1,
+   "n_perm": 5040,
+   "k": 7,
+   "min_p": 0.0001984126984126984,
+   "heads": 7,
+   "n_distinct": 5040,
+   "level": 0.0025,
+   "verdict": "да"
+  },
+  "АБ-Ф-Т": {
+   "family": "thousands",
+   "kind": "shape",
+   "D": 0.17158272287368304,
+   "p": 0.0001984126984126984,
+   "rank": 1,
+   "n_perm": 5040,
+   "k": 7,
+   "min_p": 0.0001984126984126984,
+   "heads": 7,
+   "n_distinct": 5040,
+   "level": 0.0025,
+   "verdict": "да"
+  },
+  "АБ-Ф-Л": {
+   "family": "length",
+   "kind": "shape",
+   "D": 0.05852551116669258,
+   "p": 0.0001984126984126984,
+   "rank": 1,
+   "n_perm": 5040,
+   "k": 7,
+   "min_p": 0.0001984126984126984,
+   "heads": 7,
+   "n_distinct": 5040,
+   "level": 0.0025,
+   "verdict": "да"
+  }
+ },
+ "seconds": 118.4,
+ "families": {
+  "thousands": {
+   "k": 7,
+   "n_envs": 7,
+   "input_gain": {
+    "per_head": {
+     "Falcon3-1B-Instruct": 0.15371971097921946,
+     "OLMo-2-0425-1B-Instruct": 0.053607901625147454,
+     "Qwen2.5-0.5B-Instruct": 0.4296800850761535,
+     "Qwen2.5-1.5B-Instruct": 0.22318049023503958,
+     "SmolLM2-1.7B-Instruct": 0.15325254475315567,
+     "SmolLM2-360M-Instruct": 0.24198542154225325,
+     "TinyLlama-1.1B-Chat-v1.0": 0.12420788951718273
+    },
+    "mean": 0.19709057767545027,
+    "n_pos": 7
+   },
+   "decomposition": {
+    "total": {
+     "per_head": {
+      "Falcon3-1B-Instruct": 0.6128085695431732,
+      "OLMo-2-0425-1B-Instruct": 1.9052707027700109,
+      "Qwen2.5-0.5B-Instruct": 0.7354100975148649,
+      "Qwen2.5-1.5B-Instruct": 0.6814697110220892,
+      "SmolLM2-1.7B-Instruct": 0.45992370950655,
+      "SmolLM2-360M-Instruct": 0.730264568967851,
+      "TinyLlama-1.1B-Chat-v1.0": 0.6444073810104681
+     },
+     "mean": 0.8242221057621438
+    },
+    "form": {
+     "per_head": {
+      "Falcon3-1B-Instruct": 0.1329386839922821,
+      "OLMo-2-0425-1B-Instruct": 0.1321606914936522,
+      "Qwen2.5-0.5B-Instruct": 0.2922173749051508,
+      "Qwen2.5-1.5B-Instruct": 0.19212048809512064,
+      "SmolLM2-1.7B-Instruct": 0.10956279335547991,
+      "SmolLM2-360M-Instruct": 0.18519483591003374,
+      "TinyLlama-1.1B-Chat-v1.0": 0.17984267957566963
+     },
+     "mean": 0.17486250676105558
+    },
+    "level": {
+     "per_head": {
+      "Falcon3-1B-Instruct": 0.02553874714418407,
+      "OLMo-2-0425-1B-Instruct": 0.008425108899212821,
+      "Qwen2.5-0.5B-Instruct": 0.06556282877950143,
+      "Qwen2.5-1.5B-Instruct": 0.08878569480562958,
+      "SmolLM2-1.7B-Instruct": 0.03559406549901624,
+      "SmolLM2-360M-Instruct": 0.04118886298645235,
+      "TinyLlama-1.1B-Chat-v1.0": 0.02220121848843323
+     },
+     "mean": 0.04104236094320424
+    },
+    "others": {
+     "per_head": {
+      "Falcon3-1B-Instruct": 0.4543311384067072,
+      "OLMo-2-0425-1B-Instruct": 1.7646849023771456,
+      "Qwen2.5-0.5B-Instruct": 0.37762989383021267,
+      "Qwen2.5-1.5B-Instruct": 0.40056352812133905,
+      "SmolLM2-1.7B-Instruct": 0.3147668506520538,
+      "SmolLM2-360M-Instruct": 0.5038808700713652,
+      "TinyLlama-1.1B-Chat-v1.0": 0.4423634829463654
+     },
+     "mean": 0.6083172380578841
+    }
+   },
+   "kinship": {
+    "prog": {
+     "Qwen2.5-0.5B-Instruct": {
+      "relative": "Qwen2.5-1.5B-Instruct",
+      "own_minus_relative": 0.5398962644066972,
+      "relative_minus_strangers": 0.23461659972980117,
+      "own_minus_strangers": 0.7745128641364983
+     },
+     "Qwen2.5-1.5B-Instruct": {
+      "relative": "Qwen2.5-0.5B-Instruct",
+      "own_minus_relative": 0.4882487356259016,
+      "relative_minus_strangers": 0.23186517047542507,
+      "own_minus_strangers": 0.7201139061013268
+     },
+     "SmolLM2-360M-Instruct": {
+      "relative": "SmolLM2-1.7B-Instruct",
+      "own_minus_relative": 0.38590781331646545,
+      "relative_minus_strangers": 0.4132281067816629,
+      "own_minus_strangers": 0.7991359200981284
+     },
+     "SmolLM2-1.7B-Instruct": {
+      "relative": "SmolLM2-360M-Instruct",
+      "own_minus_relative": 0.20719946863509955,
+      "relative_minus_strangers": 0.30326908904574046,
+      "own_minus_strangers": 0.51046855768084
+     }
+    },
+    "shape": {
+     "Qwen2.5-0.5B-Instruct": {
+      "relative": "Qwen2.5-1.5B-Instruct",
+      "own_minus_relative": 0.09607874098137954,
+      "relative_minus_strangers": 0.2104769139186147,
+      "own_minus_strangers": 0.30655565489999426
+     },
+     "Qwen2.5-1.5B-Instruct": {
+      "relative": "Qwen2.5-0.5B-Instruct",
+      "own_minus_relative": 0.03266409567381096,
+      "relative_minus_strangers": 0.19134767090557167,
+      "own_minus_strangers": 0.2240117665793826
+     },
+     "SmolLM2-360M-Instruct": {
+      "relative": "SmolLM2-1.7B-Instruct",
+      "own_minus_relative": 0.09637134079600407,
+      "relative_minus_strangers": 0.10658819413683565,
+      "own_minus_strangers": 0.20295953493283972
+     },
+     "SmolLM2-1.7B-Instruct": {
+      "relative": "SmolLM2-360M-Instruct",
+      "own_minus_relative": 0.05707772855699015,
+      "relative_minus_strangers": 0.06298207775818769,
+      "own_minus_strangers": 0.12005980631517785
+     }
+    }
+   },
+   "prog": {
+    "D": 0.8242221057621438,
+    "p": 0.0001984126984126984,
+    "k": 7,
+    "n_perm": 5040,
+    "rank": 1,
+    "n_distinct": 5040,
+    "n_pos": 7,
+    "own_first": 7,
+    "diag": [
+     0.6128085695431734,
+     1.9052707027700109,
+     0.7354100975148651,
+     0.6814697110220892,
+     0.45992370950655,
+     0.730264568967851,
+     0.6444073810104679
+    ],
+    "nearest": {
+     "per_head": [
+      0.12850324380856973,
+      1.2672634707633763,
+      0.32551537934963815,
+      0.18585030266977623,
+      0.05825132135233562,
+      0.2148550277984342,
+      0.2003113384233108
+     ],
+     "mean": 0.3400785834522059,
+     "best": 7
+    },
+    "without": {
+     "OLMo-2-0425-1B-Instruct": {
+      "D": 0.4797474953019661,
+      "p": 0.001388888888888889,
+      "k": 6,
+      "n_perm": 720,
+      "rank": 1,
+      "n_distinct": 720,
+      "n_pos": 6
+     }
+    }
+   },
+   "shape": {
+    "D": 0.17158272287368304,
+    "p": 0.0001984126984126984,
+    "k": 7,
+    "n_perm": 5040,
+    "rank": 1,
+    "n_distinct": 5040,
+    "n_pos": 7,
+    "own_first": 7,
+    "diag": [
+     0.1329386839922822,
+     0.1321606914936521,
+     0.27147616924689183,
+     0.19212048809512058,
+     0.10956279335547985,
+     0.18519483591003355,
+     0.17762539802232108
+    ],
+    "nearest": {
+     "per_head": [
+      0.017040366475836954,
+      0.0403523575538605,
+      0.06252121475608062,
+      -0.004439502532791605,
+      -0.08096477848912206,
+      0.03163634335757304,
+      0.026317809824797176
+     ],
+     "mean": 0.013209115849462088,
+     "best": 5
+    },
+    "without": {
+     "OLMo-2-0425-1B-Instruct": {
+      "D": 0.160428928861888,
+      "p": 0.001388888888888889,
+      "k": 6,
+      "n_perm": 720,
+      "rank": 1,
+      "n_distinct": 720,
+      "n_pos": 6
+     }
+    }
+   },
+   "new5": {
+    "k": 7,
+    "n_envs": 3,
+    "prog": {
+     "D": 0.6011452109397876,
+     "p": 0.0001984126984126984,
+     "rank": 1,
+     "n_perm": 5040
+    },
+    "shape": {
+     "D": 0.13538627869026465,
+     "p": 0.0003968253968253968,
+     "rank": 2,
+     "n_perm": 5040
+    }
+   }
+  },
+  "length": {
+   "k": 7,
+   "n_envs": 3,
+   "input_gain": {
+    "per_head": {
+     "Falcon3-1B-Instruct": 0.08211748226806843,
+     "OLMo-2-0425-1B-Instruct": 0.03506091453350576,
+     "Qwen2.5-0.5B-Instruct": 0.2768535150606392,
+     "Qwen2.5-1.5B-Instruct": 0.27666420216989135,
+     "SmolLM2-1.7B-Instruct": 0.2134542851330602,
+     "SmolLM2-360M-Instruct": 0.21043245158878396,
+     "TinyLlama-1.1B-Chat-v1.0": 0.14936550867109397
+    },
+    "mean": 0.17770690848929183,
+    "n_pos": 7
+   },
+   "decomposition": {
+    "total": {
+     "per_head": {
+      "Falcon3-1B-Instruct": 0.9060488089980846,
+      "OLMo-2-0425-1B-Instruct": 1.7395445857922598,
+      "Qwen2.5-0.5B-Instruct": 0.5838885761314667,
+      "Qwen2.5-1.5B-Instruct": 1.0153162514725158,
+      "SmolLM2-1.7B-Instruct": 0.5074161807491089,
+      "SmolLM2-360M-Instruct": 0.9898748849406207,
+      "TinyLlama-1.1B-Chat-v1.0": 0.6519271916308114
+     },
+     "mean": 0.9134309256735527
+    },
+    "form": {
+     "per_head": {
+      "Falcon3-1B-Instruct": 0.0375271563012319,
+      "OLMo-2-0425-1B-Instruct": 0.020215273866058148,
+      "Qwen2.5-0.5B-Instruct": 0.06860429314363954,
+      "Qwen2.5-1.5B-Instruct": 0.15383138482954314,
+      "SmolLM2-1.7B-Instruct": 0.0487016897551125,
+      "SmolLM2-360M-Instruct": 0.03249945362253174,
+      "TinyLlama-1.1B-Chat-v1.0": 0.047940254552511906
+     },
+     "mean": 0.058474215152946984
+    },
+    "level": {
+     "per_head": {
+      "Falcon3-1B-Instruct": 0.07339704658794476,
+      "OLMo-2-0425-1B-Instruct": 0.010158821280703457,
+      "Qwen2.5-0.5B-Instruct": 0.04853840390249039,
+      "Qwen2.5-1.5B-Instruct": 0.02891619709069744,
+      "SmolLM2-1.7B-Instruct": 0.048684715013593144,
+      "SmolLM2-360M-Instruct": 0.04259809829985925,
+      "TinyLlama-1.1B-Chat-v1.0": 0.06560217276515279
+     },
+     "mean": 0.04541363642006303
+    },
+    "others": {
+     "per_head": {
+      "Falcon3-1B-Instruct": 0.7951246061089079,
+      "OLMo-2-0425-1B-Instruct": 1.7091704906454979,
+      "Qwen2.5-0.5B-Instruct": 0.46674587908533677,
+      "Qwen2.5-1.5B-Instruct": 0.8325686695522748,
+      "SmolLM2-1.7B-Instruct": 0.4100297759804031,
+      "SmolLM2-360M-Instruct": 0.9147773330182297,
+      "TinyLlama-1.1B-Chat-v1.0": 0.5383847643131466
+     },
+     "mean": 0.8095430741005424
+    }
+   },
+   "kinship": {
+    "prog": {
+     "Qwen2.5-0.5B-Instruct": {
+      "relative": "Qwen2.5-1.5B-Instruct",
+      "own_minus_relative": 0.38585251872505677,
+      "relative_minus_strangers": 0.23764326888769208,
+      "own_minus_strangers": 0.6234957876127488
+     },
+     "Qwen2.5-1.5B-Instruct": {
+      "relative": "Qwen2.5-0.5B-Instruct",
+      "own_minus_relative": 0.6699125297261658,
+      "relative_minus_strangers": 0.4144844660956199,
+      "own_minus_strangers": 1.0843969958217856
+     },
+     "SmolLM2-360M-Instruct": {
+      "relative": "SmolLM2-1.7B-Instruct",
+      "own_minus_relative": 0.8875662592705665,
+      "relative_minus_strangers": 0.12277035080406458,
+      "own_minus_strangers": 1.0103366100746312
+     },
+     "SmolLM2-1.7B-Instruct": {
+      "relative": "SmolLM2-360M-Instruct",
+      "own_minus_relative": 0.3109896027393791,
+      "relative_minus_strangers": 0.23571189361167577,
+      "own_minus_strangers": 0.5467014963510549
+     }
+    },
+    "shape": {
+     "Qwen2.5-0.5B-Instruct": {
+      "relative": "Qwen2.5-1.5B-Instruct",
+      "own_minus_relative": 0.014081471058788505,
+      "relative_minus_strangers": 0.06542738650182096,
+      "own_minus_strangers": 0.07950885756060948
+     },
+     "Qwen2.5-1.5B-Instruct": {
+      "relative": "Qwen2.5-0.5B-Instruct",
+      "own_minus_relative": 0.014359987552648076,
+      "relative_minus_strangers": 0.1677827797179476,
+      "own_minus_strangers": 0.18214276727059567
+     },
+     "SmolLM2-360M-Instruct": {
+      "relative": "SmolLM2-1.7B-Instruct",
+      "own_minus_relative": 0.029387391732036344,
+      "relative_minus_strangers": 0.003734474268594671,
+      "own_minus_strangers": 0.033121866000631016
+     },
+     "SmolLM2-1.7B-Instruct": {
+      "relative": "SmolLM2-360M-Instruct",
+      "own_minus_relative": 0.047762560447881186,
+      "relative_minus_strangers": 0.001126955168677483,
+      "own_minus_strangers": 0.04888951561655867
+     }
+    }
+   },
+   "prog": {
+    "D": 0.9134309256735522,
+    "p": 0.0001984126984126984,
+    "k": 7,
+    "n_perm": 5040,
+    "rank": 1,
+    "n_distinct": 5040,
+    "n_pos": 7,
+    "own_first": 7,
+    "diag": [
+     0.9060488089980846,
+     1.7395445857922593,
+     0.5838885761314666,
+     1.0153162514725154,
+     0.5074161807491085,
+     0.9898748849406207,
+     0.651927191630811
+    ],
+    "nearest": {
+     "per_head": [
+      0.18880106898424973,
+      0.8999543141266985,
+      0.26770450695324305,
+      0.3840715531202626,
+      0.16819328453836632,
+      0.4561267987012192,
+      0.3267336714056491
+     ],
+     "mean": 0.3845121711185269,
+     "best": 7
+    },
+    "without": {
+     "OLMo-2-0425-1B-Instruct": {
+      "D": 0.7047580082256327,
+      "p": 0.001388888888888889,
+      "k": 6,
+      "n_perm": 720,
+      "rank": 1,
+      "n_distinct": 720,
+      "n_pos": 6
+     }
+    }
+   },
+   "shape": {
+    "D": 0.05852551116669258,
+    "p": 0.0001984126984126984,
+    "k": 7,
+    "n_perm": 5040,
+    "rank": 1,
+    "n_distinct": 5040,
+    "n_pos": 7,
+    "own_first": 7,
+    "diag": [
+     0.0375271563012319,
+     0.020215273866058148,
+     0.06860429314363962,
+     0.1541789706509381,
+     0.048701689755112465,
+     0.03249945362253174,
+     0.047951740827336074
+    ],
+    "nearest": {
+     "per_head": [
+      -0.0007001667397630307,
+      0.00778180459180966,
+      -0.024916809675429086,
+      0.00033447471603139284,
+      -0.005151959879479843,
+      -0.016863069496713567,
+      -0.003514243165031535
+     ],
+     "mean": -0.0061471385212251446,
+     "best": 2
+    },
+    "without": {
+     "OLMo-2-0425-1B-Instruct": {
+      "D": 0.06391621435651439,
+      "p": 0.001388888888888889,
+      "k": 6,
+      "n_perm": 720,
+      "rank": 1,
+      "n_distinct": 720,
+      "n_pos": 6
+     }
+    }
+   },
+   "new5": {
+    "k": 7,
+    "n_envs": 1,
+    "prog": {
+     "D": 0.6217254642154567,
+     "p": 0.0011904761904761906,
+     "rank": 6,
+     "n_perm": 5040
+    },
+    "shape": {
+     "D": 0.05382855389943532,
+     "p": 0.135515873015873,
+     "rank": 683,
+     "n_perm": 5040
+    }
+   }
+  }
+ },
+ "hashes_files": 350,
+ "pilot": {
+  "prog_D": 0.7868602893808324,
+  "shape_D": 0.13002540080282654
+ },
+ "expect": {
+  "АБ-П-Т": {
+   "family": "thousands",
+   "kind": "prog",
+   "power_min": 0.9825,
+   "model_min": "thousands_эмп_общий",
+   "powers": {
+    "thousands_норм_общий": 0.995,
+    "thousands_норм_независимый": 1.0,
+    "thousands_эмп_общий": 0.9825,
+    "thousands_эмп_независимый": 1.0
+   },
+   "expect": 0.9334,
+   "bits_yes": 8.62,
+   "bits_no": -5.83
+  },
+  "АБ-П-Л": {
+   "family": "length",
+   "kind": "prog",
+   "power_min": 0.9775,
+   "model_min": "length_эмп_общий",
+   "powers": {
+    "length_норм_общий": 0.9875,
+    "length_норм_независимый": 1.0,
+    "length_эмп_общий": 0.9775,
+    "length_эмп_независимый": 1.0
+   },
+   "expect": 0.9286,
+   "bits_yes": 8.61,
+   "bits_no": -5.47
+  },
+  "АБ-Ф-Т": {
+   "family": "thousands",
+   "kind": "shape",
+   "power_min": 0.5775,
+   "model_min": "thousands_эмп_общий",
+   "powers": {
+    "thousands_норм_общий": 0.595,
+    "thousands_норм_независимый": 1.0,
+    "thousands_эмп_общий": 0.5775,
+    "thousands_эмп_независимый": 1.0
+   },
+   "expect": 0.5486,
+   "bits_yes": 7.85,
+   "bits_no": -1.24
+  },
+  "АБ-Ф-Л": {
+   "family": "length",
+   "kind": "shape",
+   "power_min": 0.585,
+   "model_min": "length_норм_общий",
+   "powers": {
+    "length_норм_общий": 0.585,
+    "length_норм_независимый": 0.995,
+    "length_эмп_общий": 0.5925,
+    "length_эмп_независимый": 0.9875
+   },
+   "expect": 0.5557,
+   "bits_yes": 7.87,
+   "bits_no": -1.27
+  }
+ },
+ "derived": {
+  "pilot_others_share": 0.7734651533756426,
+  "shares": {
+   "thousands": {
+    "others": 0.7380501369778038,
+    "form": 0.21215459466397502,
+    "level": 0.04979526835822133
+   },
+   "length": {
+    "others": 0.8862663298854211,
+    "form": 0.06401602300669733,
+    "level": 0.04971764710788129
+   }
+  },
+  "kinship_rows": 16,
+  "kinship_own_gt_relative": 16,
+  "kinship_relative_gt_strangers": 16,
+  "frechet": {
+   "power_P": 0.9825,
+   "power_F": 0.5775,
+   "joint_power_lower": 0.56,
+   "bits_lower": 7.807354922057605
+  }
+ },
+ "support_bits_C109": {
+  "total_bits": 8.1,
+  "base_bits": 0.23,
+  "group_bits": 7.85,
+  "power": 0.5775,
+  "false_level": 0.0025
+ },
+ "errors_refs": [
+  180,
+  224,
+  225,
+  226,
+  227
+ ],
+ "familywise_bound": 0.009523809523809525
+}

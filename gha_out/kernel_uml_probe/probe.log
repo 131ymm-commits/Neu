@@ -1,0 +1,114 @@
+пакеты: 231 с
+ядро: aebb7274476403040d582c61478df8f4a7bf9cd3 7.4.0-rc3
+клон: 265 с
+минимальные версии: rustc 1.85.0, bindgen 0.71.1
+rustc 1.85.0 (4d91de4e4 2025-02-17)
+bindgen 0.72.1
+Ubuntu clang version 21.1.8 (6ubuntu1)
+инструменты: 313 с
+--- HAVE_RUST в Kconfig архитектур:
+arch/um/Kconfig:42:	select HAVE_RUST
+arch/x86/Kconfig:299:	select HAVE_RUST			if X86_64
+arch/Kconfig:449:config HAVE_RUST
+init/Kconfig:2062:	depends on HAVE_RUST
+--- зависимости config RUST (init/Kconfig):
+config RUST
+	bool "Rust support"
+	depends on HAVE_RUST
+	depends on RUST_IS_AVAILABLE
+	select EXTENDED_MODVERSIONS if MODVERSIONS
+	depends on !MODVERSIONS || GENDWARFKSYMS
+	depends on !GCC_PLUGIN_RANDSTRUCT
+	depends on !RANDSTRUCT
+	depends on !DEBUG_INFO_BTF || (PAHOLE_HAS_LANG_EXCLUDE && !LTO)
+	depends on !CFI || HAVE_CFI_ICALL_NORMALIZE_INTEGERS_RUSTC
+	select CFI_ICALL_NORMALIZE_INTEGERS if CFI
+	depends on !KASAN || CC_IS_CLANG
+	depends on !KASAN_SW_TAGS || RUSTC_VERSION >= 109600
+	help
+	  Enables Rust support in the kernel.
+
+	  This allows other Rust-related options, like drivers written in Rust,
+	  to be selected.
+
+	  It is also required to be able to load external kernel modules
+	  written in Rust.
+
+	  See Documentation/rust/ for more information.
+
+	  If unsure, say N.
+
+source "rust/kernel/Kconfig.test"
+
+--- rustc в папке сборки um: rustc 1.85.0 (4d91de4e4 2025-02-17)
+  rustavailable um: Rust is available!
+--- rustc в папке сборки x86_64: rustc 1.85.0 (4d91de4e4 2025-02-17)
+  rustavailable x86_64: Rust is available!
+control_um (um): код 0, 145 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+error: 'rustfmt' is not installed for the toolchain '1.85.0-x86_64-unknown-linux-gnu'.
+error: 'rustfmt' is not installed for the toolchain '1.85.0-x86_64-unknown-linux-gnu'.
+error: 'rustfmt' is not installed for the toolchain '1.85.0-x86_64-unknown-linux-gnu'.
+[18:04:19] Testing complete. Ran 11 tests: passed: 11
+--- lib/math/Makefile до подмены:
+2:obj-y += div64.o gcd.o lcm.o int_log.o int_pow.o int_sqrt.o reciprocal_div.o
+2:obj-y += div64.o gcd.o lcm.o int_log.o int_pow_rs.o int_sqrt.o reciprocal_div.o
+trans_haiku_um (um): код 0, 7 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+[18:04:26] Testing complete. Ran 11 tests: passed: 11
+  haiku: int_pow_rs.o собран; в built-in.a: /home/runner/work/_temp/kbuild_um/lib/math/int_pow_rs.o /home/runner/work/_temp/kbuild_um/lib/math/tests/int_pow_kunit.o 
+  символ: 0000000000000000 T int_pow
+trans_sonnet_um (um): код 0, 6 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+warning: missing documentation for the crate
+   = note: requested on the command line with `-W missing-docs`
+warning: missing documentation for a function
+[18:04:42] Testing complete. Ran 11 tests: passed: 11
+  sonnet: int_pow_rs.o собран; в built-in.a: /home/runner/work/_temp/kbuild_um/lib/math/int_pow_rs.o /home/runner/work/_temp/kbuild_um/lib/math/tests/int_pow_kunit.o 
+  символ: 0000000000000000 T int_pow
+trans_opus_um (um): код 0, 7 с; CONFIG_RUST в .config: 1
+  .config: CONFIG_CC_IS_CLANG=y
+  .config: CONFIG_RUST_IS_AVAILABLE=y
+  .config: CONFIG_RUST=y
+  .config: CONFIG_LTO_NONE=y
+  .config: # CONFIG_LTO_CLANG_FULL is not set
+  .config: # CONFIG_LTO_CLANG_THIN is not set
+  .config: # CONFIG_LTO_CLANG_THIN_DIST is not set
+  .config: CONFIG_RANDSTRUCT_NONE=y
+  .config: # CONFIG_RANDSTRUCT_FULL is not set
+  .config: # CONFIG_KASAN is not set
+  .config: # CONFIG_RANDSTRUCT_KUNIT_TEST is not set
+[18:04:49] Testing complete. Ran 11 tests: passed: 11
+  opus: int_pow_rs.o собран; в built-in.a: /home/runner/work/_temp/kbuild_um/lib/math/int_pow_rs.o /home/runner/work/_temp/kbuild_um/lib/math/tests/int_pow_kunit.o 
+  символ: 0000000000000000 T int_pow
+всего: 489 с

@@ -1,0 +1,9 @@
+[    0.1 с] источник pilot | выборка random | сред 5 | задач 3000 | ID 1367 | OOD 1633
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   24.1 с] bigscience/bloomz-1b1 3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d загружена за 20.6 с; ревизия 3c4e8ecc1fbeb3a127a9869dd5a2d0f34560577d
+[  281.0 с] X4_p0 точность {'ID': 0.0076, 'OOD': 0.0} | без числа 0 | время 256.9 с, 0.428 с на задачу
+[  539.5 с] X5_p0 точность {'ID': 0.0179, 'OOD': 0.0} | без числа 0 | время 258.5 с, 0.431 с на задачу
+[  798.0 с] X6_p0 точность {'ID': 0.0106, 'OOD': 0.0126} | без числа 0 | время 258.5 с, 0.431 с на задачу
+[ 1057.5 с] X7_p0 точность {'ID': 0.0377, 'OOD': 0.0} | без числа 0 | время 259.6 с, 0.433 с на задачу
+[ 1316.1 с] X8_p0 точность {'ID': 0.0109, 'OOD': 0.0} | без числа 0 | время 258.6 с, 0.431 с на задачу
+[ 1316.5 с] записано gha_out/ocdiv_pilot2_bloomz1_p0/answers_bloomz-1b1.json

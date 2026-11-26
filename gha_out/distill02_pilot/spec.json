@@ -1,0 +1,7 @@
+{"fit": {"T": ["gha_out/distill02_pilot/m_T_p3", null], "L": ["gha_out/distill02_pilot/m_L_p3", null],
+         "T_low": ["gha_out/distill02_pilot/m_T_p3", ["T_X19_p3", "T_X29_p3", "T_X39_p3", "T_X49_p3"]]},
+ "eval": {"ocdiv3_test_T": ["T", ["gha_out/distill02_pilot/m_T_o3"], null],
+          "ocdiv4_test_T": ["T", ["gha_out/distill02_pilot/m_T_t3"], null],
+          "ocdiv4_test_L": ["L", ["gha_out/distill02_pilot/m_L_t3"], null],
+          "transfer_T_highX": ["T_low", ["gha_out/distill02_pilot/m_T_t3"], ["T_X59_p3", "T_X69_p3", "T_X79_p3", "T_X89_p3"]]},
+ "R": 50}

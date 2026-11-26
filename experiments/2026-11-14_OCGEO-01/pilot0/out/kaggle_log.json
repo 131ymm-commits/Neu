@@ -1,0 +1,29 @@
+[{"stream_name":"stdout","time":53.867326419,"data":"[   52.5 с] площадка: {'python': '3.13.16', 'torch': '2.11.0+cu130', 'transformers': '5.20.2', 'device': 'cuda', 'gpu': 'Tesla T4'}\n"}
+,{"stream_name":"stdout","time":53.871740122,"data":"[   52.5 с] задач: 360 | подсказка: '803+442=1245\\n347+598=945\\n67+68=135\\n56+67=123\\n'\n"}
+,{"stream_name":"stderr","time":54.312211696,"data":"Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.\n"}
+,{"stream_name":"stderr","time":59.228378305,"data":"\rLoading weights:   0%|          | 0/148 [00:00\u003c?, ?it/s]\rLoading weights: 100%|██████████| 148/148 [00:00\u003c00:00, 2673.12it/s]\n"}
+,{"stream_name":"stdout","time":59.670105896,"data":"[   58.3 с] pythia-160m main загружена за 5.8 с; слоёв 12 ; ширина 768 ; слои [0, 3, 6, 9, 12]\n"}
+,{"stream_name":"stdout","time":64.591121215,"data":"[   63.2 с] pythia-160m main точность {'2d': 0.004166666666666667, '3d': 0.0} | время 10.7 с\n"}
+,{"stream_name":"stderr","time":72.824326501,"data":"\rLoading weights:   0%|          | 0/292 [00:00\u003c?, ?it/s]\rLoading weights:  86%|████████▌ | 251/292 [00:00\u003c00:00, 2509.10it/s]\rLoading weights: 100%|██████████| 292/292 [00:00\u003c00:00, 2588.04it/s]\n"}
+,{"stream_name":"stdout","time":73.193475348,"data":"[   71.8 с] pythia-410m main загружена за 8.6 с; слоёв 24 ; ширина 1024 ; слои [0, 6, 12, 18, 24]\n"}
+,{"stream_name":"stdout","time":75.850299304,"data":"[   74.4 с] pythia-410m main точность {'2d': 0.0, '3d': 0.0} | время 11.2 с\n"}
+,{"stream_name":"stderr","time":90.043515349,"data":"\rLoading weights:   0%|          | 0/196 [00:00\u003c?, ?it/s]\rLoading weights: 100%|██████████| 196/196 [00:00\u003c00:00, 2582.79it/s]\n"}
+,{"stream_name":"stdout","time":90.700914844,"data":"[   89.3 с] pythia-1b main загружена за 14.8 с; слоёв 16 ; ширина 2048 ; слои [0, 4, 8, 12, 16]\n"}
+,{"stream_name":"stdout","time":94.32427219,"data":"[   92.9 с] pythia-1b main точность {'2d': 0.008333333333333333, '3d': 0.0} | время 18.4 с\n"}
+,{"stream_name":"stderr","time":112.648142434,"data":"\rLoading weights:   0%|          | 0/292 [00:00\u003c?, ?it/s]\rLoading weights:  83%|████████▎ | 242/292 [00:00\u003c00:00, 2374.11it/s]\rLoading weights: 100%|██████████| 292/292 [00:00\u003c00:00, 2399.76it/s]\n"}
+,{"stream_name":"stdout","time":114.551456809,"data":"[  113.1 с] pythia-1.4b main загружена за 20.1 с; слоёв 24 ; ширина 2048 ; слои [0, 6, 12, 18, 24]\n"}
+,{"stream_name":"stdout","time":119.870972171,"data":"[  118.5 с] pythia-1.4b main точность {'2d': 0.39166666666666666, '3d': 0.008333333333333333} | время 25.5 с\n"}
+,{"stream_name":"stderr","time":152.362381378,"data":"\rLoading weights:   0%|          | 0/388 [00:00\u003c?, ?it/s]\rLoading weights:  59%|█████▊    | 227/388 [00:00\u003c00:00, 2269.41it/s]\rLoading weights: 100%|██████████| 388/388 [00:00\u003c00:00, 2400.03it/s]\n"}
+,{"stream_name":"stdout","time":154.948398292,"data":"[  153.5 с] pythia-2.8b main загружена за 35.0 с; слоёв 32 ; ширина 2560 ; слои [0, 8, 16, 24, 32]\n"}
+,{"stream_name":"stdout","time":166.049307319,"data":"[  164.6 с] pythia-2.8b main точность {'2d': 0.8166666666666667, '3d': 0.1} | время 46.1 с\n"}
+,{"stream_name":"stderr","time":178.63766034,"data":"\rLoading weights:   0%|          | 0/292 [00:00\u003c?, ?it/s]\rLoading weights:   0%|          | 1/292 [00:00\u003c00:49,  5.85it/s]\rLoading weights:  62%|██████▏   | 180/292 [00:00\u003c00:00, 802.34it/s]\rLoading weights:  97%|█████████▋| 284/292 [00:00\u003c00:00, 874.76it/s]\rLoading weights: 100%|██████████| 292/292 [00:00\u003c00:00, 761.19it/s]\n"}
+,{"stream_name":"stdout","time":178.985589252,"data":"[  177.6 с] pythia-410m step0 загружена за 12.8 с; слоёв 24 ; ширина 1024 ; слои [0, 6, 12, 18, 24]\n"}
+,{"stream_name":"stdout","time":181.605744355,"data":"[  180.2 с] pythia-410m step0 точность {'2d': 0.0, '3d': 0.0} | время 15.4 с\n"}
+,{"stream_name":"stdout","time":181.702235358,"data":"[  180.3 с] готово\n"}
+,{"stream_name":"stderr","time":192.544067995,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":192.544103522,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":192.996038343,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":192.99606469,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":193.872729954,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":195.213074828,"data":"[NbConvertApp] Writing 311814 bytes to __results__.html\n"}
+]

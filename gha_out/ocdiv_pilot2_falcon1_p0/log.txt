@@ -1,0 +1,10 @@
+[    0.1 с] источник pilot | выборка random | сред 5 | задач 3000 | ID 1367 | OOD 1633
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   36.4 с] tiiuae/Falcon3-1B-Instruct 28ba2251970a01dd1edc7ba7dad2eb71216ccfdf загружена за 32.2 с; ревизия 28ba2251970a01dd1edc7ba7dad2eb71216ccfdf
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+[  329.5 с] X4_p0 точность {'ID': 0.7462, 'OOD': 0.8214} | без числа 0 | время 293.2 с, 0.489 с на задачу
+[  623.4 с] X5_p0 точность {'ID': 0.8107, 'OOD': 0.5969} | без числа 0 | время 293.8 с, 0.49 с на задачу
+[  916.9 с] X6_p0 точность {'ID': 0.5, 'OOD': 0.7642} | без числа 0 | время 293.5 с, 0.489 с на задачу
+[ 1210.5 с] X7_p0 точность {'ID': 0.8528, 'OOD': 0.6269} | без числа 0 | время 293.6 с, 0.489 с на задачу
+[ 1505.9 с] X8_p0 точность {'ID': 0.7971, 'OOD': 0.6944} | без числа 0 | время 295.4 с, 0.492 с на задачу
+[ 1506.2 с] записано gha_out/ocdiv_pilot2_falcon1_p0/answers_Falcon3-1B-Instruct.json

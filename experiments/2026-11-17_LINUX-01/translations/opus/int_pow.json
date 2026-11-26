@@ -1,0 +1,71 @@
+{
+ "head": "opus",
+ "module": "int_pow",
+ "model_target": "claude-opus-5-5",
+ "prompt_sha256": "7e44de8a755dba55609cb75b9bd0f354d90f3cd685427c63b7208746cab9c449",
+ "seconds": 8.1,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\n// SPDX-License-Identifier: GPL-2.0\n//! An integer based power function\n//!\n//! Derived from drivers/video/backlight/pwm_bl.c\n\nuse core::ffi::c_uint;\n\n/// int_pow - computes the exponentiation of the given base and exponent\n/// @base: base which will be raised to the given power\n/// @exp: power to be raised to\n///\n/// Computes: pow(base, exp), i.e. @base raised to the @exp power\n#[no_mangle]\npub extern \"C\" fn int_pow(mut base: u64, mut exp: c_uint) -> u64 {\n    let mut result: u64 = 1;\n\n    while exp != 0 {\n        if exp & 1 != 0 {\n            result = result.wrapping_mul(base);\n        }\n        exp >>= 1;\n        base = base.wrapping_mul(base);\n    }\n\n    result\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 3517,
+  "cache_read_input_tokens": 649,
+  "output_tokens": 300,
+  "output_tokens_details": {
+   "thinking_tokens": 0
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 3517,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 300,
+    "cache_read_input_tokens": 649,
+    "cache_creation_input_tokens": 3517,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3517
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.0342738,
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 300,
+   "cacheReadInputTokens": 649,
+   "cacheCreationInputTokens": 3517,
+   "webSearchRequests": 0,
+   "costUSD": 0.0342738,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 0,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 3517,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 6782,
+ "code_extracted": true,
+ "models_used": [
+  "claude-opus-5-5"
+ ]
+}

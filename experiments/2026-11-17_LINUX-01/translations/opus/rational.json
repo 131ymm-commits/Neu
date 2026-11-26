@@ -1,0 +1,71 @@
+{
+ "head": "opus",
+ "module": "rational",
+ "model_target": "claude-opus-5-5",
+ "prompt_sha256": "50733b996477bcac2df44c979c961280a5343af78c31943b4783bded70b8c2d7",
+ "seconds": 18.5,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\n// SPDX-License-Identifier: GPL-2.0\n//! rational fractions\n//!\n//! Copyright (C) 2009 emlix GmbH, Oskar Schirmer <oskar@scara.com>\n//! Copyright (C) 2019 Trent Piepho <tpiepho@gmail.com>\n//!\n//! helper functions when coping with rational numbers\n//!\n//! Rust translation of lib/math/rational.c (x86_64, BITS_PER_LONG = 64).\n\nuse core::ffi::c_ulong;\n\nconst ULONG_MAX: c_ulong = c_ulong::MAX;\n\n#[inline(always)]\nfn min(a: c_ulong, b: c_ulong) -> c_ulong {\n    if a < b {\n        a\n    } else {\n        b\n    }\n}\n\n/// Calculate best rational approximation for a given fraction\n/// taking into account restricted register size.\n///\n/// See https://en.wikipedia.org/wiki/Continued_fraction\n#[no_mangle]\npub extern \"C\" fn rational_best_approximation(\n    given_numerator: c_ulong,\n    given_denominator: c_ulong,\n    max_numerator: c_ulong,\n    max_denominator: c_ulong,\n    best_numerator: *mut c_ulong,\n    best_denominator: *mut c_ulong,\n) {\n    // n/d is the starting rational, which is continually\n    // decreased each iteration using the Euclidean algorithm.\n    //\n    // dp is the value of d from the prior iteration.\n    //\n    // n2/d2, n1/d1, and n0/d0 are our successively more accurate\n    // approximations of the rational. They are, respectively,\n    // the current, previous, and two prior iterations of it.\n    //\n    // a is current term of the continued fraction.\n    let mut n: c_ulong = given_numerator;\n    let mut d: c_ulong = given_denominator;\n    let mut n0: c_ulong = 0;\n    let mut d1: c_ulong = 0;\n    let mut n1: c_ulong = 1;\n    let mut d0: c_ulong = 1;\n    let mut n2: c_ulong;\n    let mut d2: c_ulong;\n\n    loop {\n        if d == 0 {\n            break;\n        }\n        // Find next term in continued fraction, 'a', via\n        // Euclidean algorithm.\n        let dp: c_ulong = d;\n        let a: c_ulong = n / d;\n        d = n % d;\n        n = dp;\n\n        // Calculate the current rational approximation (aka\n        // convergent), n2/d2, using the term just found and\n        // the two prior approximations.\n        n2 = n0.wrapping_add(a.wrapping_mul(n1));\n        d2 = d0.wrapping_add(a.wrapping_mul(d1));\n\n        // If the current convergent exceeds the maxes, then\n        // return either the previous convergent or the\n        // largest semi-convergent, the final term of which is\n        // found below as 't'.\n        if n2 > max_numerator || d2 > max_denominator {\n            let mut t: c_ulong = ULONG_MAX;\n\n            if d1 != 0 {\n                t = max_denominator.wrapping_sub(d0) / d1;\n            }\n            if n1 != 0 {\n                t = min(t, max_numerator.wrapping_sub(n0) / n1);\n            }\n\n            // This tests if the semi-convergent is closer than the previous\n            // convergent. If d1 is zero there is no previous convergent as this\n            // is the 1st iteration, so always choose the semi-convergent.\n            //\n            // `2u * t`: 2u (unsigned int) is converted to unsigned long.\n            let two_t: c_ulong = (2 as c_ulong).wrapping_mul(t);\n            if d1 == 0\n                || two_t > a\n                || (two_t == a && d0.wrapping_mul(dp) > d1.wrapping_mul(d))\n            {\n                n1 = n0.wrapping_add(t.wrapping_mul(n1));\n                d1 = d0.wrapping_add(t.wrapping_mul(d1));\n            }\n            break;\n        }\n        n0 = n1;\n        n1 = n2;\n        d0 = d1;\n        d1 = d2;\n    }\n\n    // SAFETY: the caller (as in the C original) must pass valid,\n    // writable pointers to unsigned long.\n    unsafe {\n        *best_numerator = n1;\n        *best_denominator = d1;\n    }\n}\n\n// MODULE_DESCRIPTION(\"Rational fraction support library\");\n// MODULE_LICENSE(\"GPL v2\");\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 3656,
+  "cache_read_input_tokens": 1639,
+  "output_tokens": 1788,
+  "output_tokens_details": {
+   "thinking_tokens": 239
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 3656,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 1788,
+    "cache_read_input_tokens": 1639,
+    "cache_creation_input_tokens": 3656,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 3656
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.06534380000000001,
+ "model_usage": {
+  "claude-opus-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 1788,
+   "cacheReadInputTokens": 1639,
+   "cacheCreationInputTokens": 3656,
+   "webSearchRequests": 0,
+   "costUSD": 0.06534380000000001,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 239,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 3656,
+   "canonicalModel": "claude-opus-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 17305,
+ "code_extracted": true,
+ "models_used": [
+  "claude-opus-5-5"
+ ]
+}

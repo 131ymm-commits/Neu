@@ -1,0 +1,4189 @@
+{
+ "phase": "pilot",
+ "B": 200,
+ "families": {
+  "thousands": {
+   "family": "thousands",
+   "drop_by_head": {
+    "Qwen2.5-0.5B-Instruct": 0.04624530894956158,
+    "Qwen2.5-1.5B-Instruct": -0.3697632792567201,
+    "SmolLM2-1.7B-Instruct": -0.20361598101621667,
+    "Falcon3-1B-Instruct": 0.10674591768863509,
+    "OLMo-2-0425-1B-Instruct": 0.02504804737424282,
+    "SmolLM2-360M-Instruct": 0.05962358490397912,
+    "TinyLlama-1.1B-Chat-v1.0": -0.27924191038832685
+   },
+   "drop_mean": -0.08785118739212071,
+   "heads_drop_ge": [
+    "Falcon3-1B-Instruct"
+   ],
+   "pass_envs": {
+    "Qwen2.5-0.5B-Instruct": 5,
+    "Qwen2.5-1.5B-Instruct": 4,
+    "SmolLM2-1.7B-Instruct": 5,
+    "Falcon3-1B-Instruct": 5,
+    "OLMo-2-0425-1B-Instruct": 5,
+    "SmolLM2-360M-Instruct": 5,
+    "TinyLlama-1.1B-Chat-v1.0": 5
+   },
+   "heads_pass_4of5": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "none_max": {
+    "Qwen2.5-0.5B-Instruct": 0.0,
+    "Qwen2.5-1.5B-Instruct": 0.2325,
+    "SmolLM2-1.7B-Instruct": 0.0,
+    "Falcon3-1B-Instruct": 0.0,
+    "OLMo-2-0425-1B-Instruct": 0.0,
+    "SmolLM2-360M-Instruct": 0.0,
+    "TinyLlama-1.1B-Chat-v1.0": 0.0
+   },
+   "sec_per_task": {
+    "Qwen2.5-0.5B-Instruct": 0.4175,
+    "Qwen2.5-1.5B-Instruct": 1.3171,
+    "SmolLM2-1.7B-Instruct": 1.568,
+    "Falcon3-1B-Instruct": 1.0285,
+    "OLMo-2-0425-1B-Instruct": 0.85475,
+    "SmolLM2-360M-Instruct": 0.15005000000000002,
+    "TinyLlama-1.1B-Chat-v1.0": 0.49440000000000006
+   },
+   "max_sec_per_task": 1.568,
+   "qualifies": false,
+   "rule": {
+    "drop_min": 0.1,
+    "drop_heads_min": 3,
+    "pass_heads_min": 6,
+    "pass_envs_min": 4,
+    "max_sec": 4.6
+   },
+   "scale": {
+    "ood": 0.4266676729390754,
+    "all": 0.4264014327112209,
+    "n_ood_pilot": 218.6,
+    "n_ood_test": 1200.8
+   },
+   "power": {
+    "T1": {
+     "kind": "over",
+     "n_envs": 5,
+     "mu": 0.004712617447681811,
+     "tau": 0.056746716090371886,
+     "s_pilot_rms": 0.033872279102423575,
+     "s_test": 0.01445220650177394,
+     "power_confirm": 0.100555,
+     "power_refute": 0.056145,
+     "power_confirm_tau_s": 0.0001,
+     "power_refute_tau_s": 0.141315
+    },
+    "T2": {
+     "kind": "sign",
+     "n_envs": 5,
+     "mu": 0.10066620720450654,
+     "tau": 0.05416650801662935,
+     "s_pilot_rms": 0.05690003111385056,
+     "s_test": 0.024277403865507606,
+     "power_confirm": 0.0,
+     "power_refute": 0.995605,
+     "power_confirm_tau_s": 0.0,
+     "power_refute_tau_s": 1.0
+    },
+    "T3": {
+     "kind": "unit",
+     "n_envs": 3,
+     "mu": -0.1954884177614257,
+     "tau": 0.0,
+     "s_pilot_rms": 2.831109362538257,
+     "s_test": 1.207189088348464,
+     "power_confirm": 0.0,
+     "power_refute": 0.007465,
+     "power_confirm_tau_s": 0.0,
+     "power_refute_tau_s": 0.042305
+    },
+    "T4 (страты по числу переносов)": {
+     "kind": "pos",
+     "n_envs": 5,
+     "mu": 0.07713998792753239,
+     "tau": 0.011400674022488946,
+     "s_pilot_rms": 0.018334867174656065,
+     "s_test": 0.007822895111057543,
+     "power_confirm": 1.0,
+     "power_refute": 0.0,
+     "power_confirm_tau_s": 1.0,
+     "power_refute_tau_s": 0.0
+    },
+    "T4": {
+     "kind": "pos",
+     "n_envs": 5,
+     "mu": 0.08776130215400013,
+     "tau": 0.012830402395818641,
+     "s_pilot_rms": 0.018903324078969736,
+     "s_test": 0.00806543729558721,
+     "power_confirm": 1.0,
+     "power_refute": 0.0,
+     "power_confirm_tau_s": 1.0,
+     "power_refute_tau_s": 0.0
+    },
+    "D3 (описательно)": {
+     "kind": "over",
+     "n_envs": 5,
+     "mu": 0.020905727928194097,
+     "tau": 0.09732478835965017,
+     "s_pilot_rms": 0.04322048402364858,
+     "s_test": 0.018440783341670628,
+     "power_confirm": 0.307035,
+     "power_refute": 0.0,
+     "power_confirm_tau_s": 0.028175,
+     "power_refute_tau_s": 0.0
+    },
+    "AGREE − CONF (описательно)": {
+     "kind": "sign",
+     "n_envs": 5,
+     "mu": 0.05755607433175434,
+     "tau": 0.05138702374291673,
+     "s_pilot_rms": 0.061299907742934215,
+     "s_test": 0.026154688988057753,
+     "power_confirm": 0.000225,
+     "power_refute": 0.828655,
+     "power_confirm_tau_s": 0.0,
+     "power_refute_tau_s": 0.93234
+    },
+    "wc CONF (описательно)": {
+     "kind": "sign",
+     "n_envs": 5,
+     "mu": -0.06675599544628934,
+     "tau": 0.03865750544760746,
+     "s_pilot_rms": 0.021442326672026047,
+     "s_test": 0.009148747623552823,
+     "power_confirm": 0.998475,
+     "power_refute": 0.0,
+     "power_confirm_tau_s": 1.0,
+     "power_refute_tau_s": 0.0
+    }
+   },
+   "n_valid": 5
+  },
+  "length": {
+   "family": "length",
+   "drop_by_head": {
+    "Qwen2.5-0.5B-Instruct": 0.2450214795101299,
+    "Qwen2.5-1.5B-Instruct": -0.506556925719062,
+    "SmolLM2-1.7B-Instruct": 0.20573820042158167,
+    "Falcon3-1B-Instruct": -0.21898028810787223,
+    "OLMo-2-0425-1B-Instruct": 0.3666989498637709,
+    "SmolLM2-360M-Instruct": 0.15998736665741764,
+    "TinyLlama-1.1B-Chat-v1.0": 0.14603950592250792
+   },
+   "drop_mean": 0.05684975550692483,
+   "heads_drop_ge": [
+    "Qwen2.5-0.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "pass_envs": {
+    "Qwen2.5-0.5B-Instruct": 5,
+    "Qwen2.5-1.5B-Instruct": 4,
+    "SmolLM2-1.7B-Instruct": 5,
+    "Falcon3-1B-Instruct": 5,
+    "OLMo-2-0425-1B-Instruct": 4,
+    "SmolLM2-360M-Instruct": 5,
+    "TinyLlama-1.1B-Chat-v1.0": 5
+   },
+   "heads_pass_4of5": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "none_max": {
+    "Qwen2.5-0.5B-Instruct": 0.0,
+    "Qwen2.5-1.5B-Instruct": 0.005,
+    "SmolLM2-1.7B-Instruct": 0.0,
+    "Falcon3-1B-Instruct": 0.0,
+    "OLMo-2-0425-1B-Instruct": 0.0,
+    "SmolLM2-360M-Instruct": 0.0,
+    "TinyLlama-1.1B-Chat-v1.0": 0.0
+   },
+   "sec_per_task": {
+    "Qwen2.5-0.5B-Instruct": 0.2363,
+    "Qwen2.5-1.5B-Instruct": 0.78515,
+    "SmolLM2-1.7B-Instruct": 1.81185,
+    "Falcon3-1B-Instruct": 1.1000999999999999,
+    "OLMo-2-0425-1B-Instruct": 0.8553,
+    "SmolLM2-360M-Instruct": 0.4659,
+    "TinyLlama-1.1B-Chat-v1.0": 0.88395
+   },
+   "max_sec_per_task": 1.81185,
+   "qualifies": false,
+   "rule": {
+    "drop_min": 0.1,
+    "drop_heads_min": 3,
+    "pass_heads_min": 6,
+    "pass_envs_min": 4,
+    "max_sec": 4.6
+   },
+   "scale": {
+    "ood": 0.4238668796074979,
+    "all": 0.4264014327112209,
+    "n_ood_pilot": 216.0,
+    "n_ood_test": 1202.25
+   },
+   "power": {
+    "T1": {
+     "kind": "over",
+     "n_envs": 4,
+     "mu": 0.11488494688600956,
+     "tau": 0.08535897541616366,
+     "s_pilot_rms": 0.10348943093483758,
+     "s_test": 0.04386574216270527,
+     "power_confirm": 0.822225,
+     "power_refute": 0.0,
+     "power_confirm_tau_s": 0.92401,
+     "power_refute_tau_s": 0.0
+    },
+    "T2": {
+     "kind": "sign",
+     "n_envs": 4,
+     "mu": 0.3581035183866491,
+     "tau": 0.3773921005935065,
+     "s_pilot_rms": 0.15169583284528562,
+     "s_test": 0.06429883931759181,
+     "power_confirm": 0.00354,
+     "power_refute": 0.91336,
+     "power_confirm_tau_s": 0.0,
+     "power_refute_tau_s": 1.0
+    },
+    "T3": {
+     "kind": "unit",
+     "n_envs": 3,
+     "mu": 0.3199787704009709,
+     "tau": 0.3577591912763187,
+     "s_pilot_rms": 0.05799299662093333,
+     "s_test": 0.024728296846382964,
+     "power_confirm": 0.964035,
+     "power_refute": 0.01426,
+     "power_confirm_tau_s": 1.0,
+     "power_refute_tau_s": 0.0
+    },
+    "T4 (страты по числу переносов)": {
+     "kind": "pos",
+     "n_envs": 4,
+     "mu": 0.0965484285528371,
+     "tau": 0.08377306603192683,
+     "s_pilot_rms": 0.021492907035612234,
+     "s_test": 0.009110131438878996,
+     "power_confirm": 0.966775,
+     "power_refute": 0.00092,
+     "power_confirm_tau_s": 1.0,
+     "power_refute_tau_s": 0.0
+    },
+    "T4": {
+     "kind": "pos",
+     "n_envs": 4,
+     "mu": 0.10466664981811312,
+     "tau": 0.08110408541158604,
+     "s_pilot_rms": 0.021529743569671838,
+     "s_test": 0.009125745225626395,
+     "power_confirm": 0.9832,
+     "power_refute": 0.00024,
+     "power_confirm_tau_s": 1.0,
+     "power_refute_tau_s": 0.0
+    },
+    "D3 (описательно)": {
+     "kind": "over",
+     "n_envs": 4,
+     "mu": 0.17322498219325794,
+     "tau": 0.37668308977932347,
+     "s_pilot_rms": 0.053437123886092605,
+     "s_test": 0.022650226956797366,
+     "power_confirm": 0.770375,
+     "power_refute": 0.0,
+     "power_confirm_tau_s": 1.0,
+     "power_refute_tau_s": 0.0
+    },
+    "AGREE − CONF (описательно)": {
+     "kind": "sign",
+     "n_envs": 4,
+     "mu": 0.19155883745488117,
+     "tau": 0.4621508187231604,
+     "s_pilot_rms": 0.12280537610995886,
+     "s_test": 0.05205313157075343,
+     "power_confirm": 0.063805,
+     "power_refute": 0.601605,
+     "power_confirm_tau_s": 0.0,
+     "power_refute_tau_s": 0.99995
+    },
+    "wc CONF (описательно)": {
+     "kind": "sign",
+     "n_envs": 4,
+     "mu": -0.05038009080334213,
+     "tau": 0.0,
+     "s_pilot_rms": 0.016757113423286014,
+     "s_test": 0.007102785377957161,
+     "power_confirm": 1.0,
+     "power_refute": 0.0,
+     "power_confirm_tau_s": 1.0,
+     "power_refute_tau_s": 0.0
+    }
+   },
+   "n_valid": 4
+  }
+ },
+ "envs": {
+  "T_X19_p0": {
+   "n_id": 181,
+   "n_ood": 219,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 148,
+     "id_wrong": 33,
+     "ood_correct": 118,
+     "ood_wrong": 101,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 89,
+     "id_wrong": 92,
+     "ood_correct": 219,
+     "ood_wrong": 0,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 129,
+     "id_wrong": 52,
+     "ood_correct": 192,
+     "ood_wrong": 27,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 130,
+     "id_wrong": 51,
+     "ood_correct": 142,
+     "ood_wrong": 77,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 15,
+     "id_wrong": 166,
+     "ood_correct": 10,
+     "ood_wrong": 209,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 122,
+     "id_wrong": 59,
+     "ood_correct": 143,
+     "ood_wrong": 76,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 82,
+     "id_wrong": 99,
+     "ood_correct": 149,
+     "ood_wrong": 70,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.8176795580110497,
+     "ood": 0.5388127853881278,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.49171270718232046,
+     "ood": 1.0,
+     "none": 0.0
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.712707182320442,
+     "ood": 0.8767123287671232,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.7182320441988951,
+     "ood": 0.6484018264840182,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.08287292817679558,
+     "ood": 0.045662100456621,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.6740331491712708,
+     "ood": 0.6529680365296804,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.4530386740331492,
+     "ood": 0.680365296803653,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.9440639269406392,
+    "C CONF": 0.9901273475795984,
+    "ioi CONF": 0.10199949369831995,
+    "brier CONF": 0.0555122506442587,
+    "ign CONF": 0.05593607305936077,
+    "dec CONF": 0.046063420638959185,
+    "T ONE-BEST": 0.5388127853881278,
+    "C ONE-BEST": 0.6279175973086418,
+    "ioi ONE-BEST": 0.5502920265323862,
+    "brier ONE-BEST": 0.20832477891486842,
+    "ign ONE-BEST": 0.4611872146118722,
+    "dec ONE-BEST": 0.089104811920514,
+    "T FIXED": 0.5388127853881278,
+    "C FIXED": 0.6279175973086418,
+    "ioi FIXED": 0.5502920265323862,
+    "brier FIXED": 0.20832477891486842,
+    "ign FIXED": 0.4611872146118722,
+    "dec FIXED": 0.089104811920514,
+    "T POST-IN": 0.9440639269406392,
+    "C POST-IN": 0.9779274006656092,
+    "ioi POST-IN": 0.08979954678433077,
+    "brier POST-IN": 0.05717607091129831,
+    "ign POST-IN": 0.05593607305936077,
+    "dec POST-IN": 0.033863473724970006,
+    "T POST-CV": 0.9440639269406392,
+    "C POST-CV": 0.9574791371437569,
+    "ioi POST-CV": 0.06935128326247841,
+    "brier POST-CV": 0.05415233278495376,
+    "ign POST-CV": 0.05593607305936077,
+    "dec POST-CV": 0.013415210203117645,
+    "wc CONF": -0.04157325333208761,
+    "T SHIFT": 0.9440639269406392,
+    "C SHIFT": 0.9485540942475107,
+    "ioi SHIFT": 0.06042624036623223,
+    "brier SHIFT": 0.053410573525740766,
+    "ign SHIFT": 0.05593607305936077,
+    "dec SHIFT": 0.004490167306871462,
+    "wc ONE-BEST": 0.0005388109798012408,
+    "wc FIXED": 0.0005388109798012408,
+    "wc POST": 0.010379322518235146,
+    "one_best_is_fixed": 1.0,
+    "T AGREE": 0.8538812785388128,
+    "C AGREE": 0.9360802901389557,
+    "ioi AGREE": 0.22831773306133007,
+    "brier AGREE": 0.09679280228895303,
+    "ign AGREE": 0.1461187214611872,
+    "dec AGREE": 0.08219901160014287,
+    "T CONF (core)": 0.9440639269406392,
+    "C CONF (core)": 0.9901273475795984,
+    "ioi CONF (core)": 0.10199949369831995,
+    "brier CONF (core)": 0.0555122506442587,
+    "ign CONF (core)": 0.05593607305936077,
+    "dec CONF (core)": 0.046063420638959185,
+    "T1": 0.013415210203117645,
+    "T2": 0.15896644979885166,
+    "T3 num": -0.09458845761492451,
+    "T3 den": 0.06983021771487685,
+    "T3": -1.3545490864877126,
+    "D3": 0.089104811920514,
+    "AGREE − CONF": 0.12631823936301012
+   },
+   "sd": {
+    "T1": 0.02599357557813389,
+    "T2": 0.05484952023799461,
+    "T3": 4.900169283320568,
+    "D3": 0.041858870225128145,
+    "AGREE − CONF": 0.056784534351236725,
+    "wc CONF": 0.020365649324679283,
+    "wc POST": 0.013237011098379329,
+    "wc FIXED": 0.0055702917879478075
+   },
+   "boot_shift": {
+    "T1": -0.013303800239019965,
+    "T2": 0.006106196794092772,
+    "T3": -1.5003192786922916,
+    "D3": 0.0018201168795695666,
+    "AGREE − CONF": 0.002415249672842429,
+    "wc CONF": -0.015968497674046025,
+    "wc POST": -0.0031076334903883977,
+    "wc FIXED": -0.0005993533045039645
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Falcon3-1B-Instruct"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": 0.089104811920514,
+    "Qwen2.5-1.5B-Instruct": -0.05053166053965552,
+    "SmolLM2-1.7B-Instruct": -0.01880023138746334,
+    "Falcon3-1B-Instruct": -0.09458845761492451,
+    "OLMo-2-0425-1B-Instruct": 0.005016520647748844,
+    "SmolLM2-360M-Instruct": -0.0005135971532094219,
+    "TinyLlama-1.1B-Chat-v1.0": -0.14445872293060702
+   },
+   "T4": {
+    "F": 0.1552511415525114,
+    "F0": 0.03337899543378995,
+    "point": 0.12187214611872146,
+    "sd": 0.02051951662548464,
+    "F0_strata": 0.04611872146118721,
+    "point_strata": 0.1091324200913242,
+    "sd_strata": 0.019954163836409376,
+    "strata_counts": {
+     "2": 120,
+     "3": 99
+    }
+   },
+   "oracle_ood": 1.0,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Qwen2.5-1.5B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.0,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.0365296803652968,
+     "both_wrong": 0.0867579908675799,
+     "u перенос": 0.0365296803652968,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0821917808219178,
+     "both_wrong": 0.2054794520547945,
+     "u перенос": 0.0821917808219178,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0091324200913242,
+     "both_wrong": 0.4429223744292237,
+     "u перенос": 0.0045662100456621,
+     "u прочее": 0.0045662100456621,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.1415525114155251,
+     "both_wrong": 0.2328767123287671,
+     "u перенос": 0.1324200913242009,
+     "u прочее": 0.0091324200913242,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0410958904109589,
+     "both_wrong": 0.1095890410958904,
+     "u перенос": 0.0410958904109589,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.0,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.0,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.0,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.0,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0,
+     "both_wrong": 0.0,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0182648401826484,
+     "both_wrong": 0.0776255707762557,
+     "u перенос": 0.0091324200913242,
+     "u прочее": 0.0091324200913242,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.1232876712328767,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.0365296803652968,
+     "both_wrong": 0.0867579908675799,
+     "u перенос": 0.0365296803652968,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0182648401826484,
+     "both_wrong": 0.045662100456621,
+     "u перенос": 0.0136986301369863,
+     "u прочее": 0.0045662100456621,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.3287671232876712,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.0958904109589041,
+     "both_wrong": 0.1963470319634703,
+     "u перенос": 0.091324200913242,
+     "u прочее": 0.0045662100456621,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0547945205479452,
+     "both_wrong": 0.1278538812785388,
+     "u перенос": 0.0502283105022831,
+     "u прочее": 0.0045662100456621,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.0091324200913242,
+     "both_wrong": 0.3242009132420091,
+     "u перенос": 0.0091324200913242,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0091324200913242,
+     "both_wrong": 0.2922374429223744,
+     "u перенос": 0.0091324200913242,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.1095890410958904,
+     "both_wrong": 0.1598173515981735,
+     "u перенос": 0.1095890410958904,
+     "u прочее": 0.0,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "thousands",
+    "X": 19,
+    "p": 0,
+    "bound": 2000,
+    "max_new": 6
+   },
+   "n_test_ood": 1199
+  },
+  "T_X29_p0": {
+   "n_id": 183,
+   "n_ood": 217,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 69,
+     "id_wrong": 114,
+     "ood_correct": 112,
+     "ood_wrong": 105,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 51,
+     "id_wrong": 132,
+     "ood_correct": 212,
+     "ood_wrong": 5,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 99,
+     "id_wrong": 84,
+     "ood_correct": 206,
+     "ood_wrong": 11,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 73,
+     "id_wrong": 110,
+     "ood_correct": 153,
+     "ood_wrong": 64,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 25,
+     "id_wrong": 158,
+     "ood_correct": 36,
+     "ood_wrong": 181,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 73,
+     "id_wrong": 110,
+     "ood_correct": 157,
+     "ood_wrong": 60,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 91,
+     "id_wrong": 92,
+     "ood_correct": 155,
+     "ood_wrong": 62,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.3770491803278688,
+     "ood": 0.5161290322580645,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.2786885245901639,
+     "ood": 0.9769585253456221,
+     "none": 0.0
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.5409836065573771,
+     "ood": 0.9493087557603687,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.3989071038251366,
+     "ood": 0.7050691244239631,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.1366120218579235,
+     "ood": 0.16589861751152074,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.3989071038251366,
+     "ood": 0.7235023041474654,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.4972677595628415,
+     "ood": 0.7142857142857143,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.9109062980030723,
+    "C CONF": 0.9428894588528989,
+    "ioi CONF": 0.12107686284675423,
+    "brier CONF": 0.07179980464884415,
+    "ign CONF": 0.08909370199692768,
+    "dec CONF": 0.03198316084982655,
+    "T ONE-BEST": 0.9493087557603687,
+    "C ONE-BEST": 0.8964199515928956,
+    "ioi ONE-BEST": 0.05069124423963134,
+    "brier ONE-BEST": 0.031120875844533366,
+    "ign ONE-BEST": 0.05069124423963134,
+    "dec ONE-BEST": 0.0,
+    "T FIXED": 0.5161290322580645,
+    "C FIXED": 0.42049049560621987,
+    "ioi FIXED": 0.4838709677419355,
+    "brier FIXED": 0.28400122740549527,
+    "ign FIXED": 0.4838709677419355,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.9109062980030723,
+    "C POST-IN": 0.9228387507770397,
+    "ioi POST-IN": 0.10102615477089505,
+    "brier POST-IN": 0.07593455822286709,
+    "ign POST-IN": 0.08909370199692768,
+    "dec POST-IN": 0.011932452773967372,
+    "T POST-CV": 0.9109062980030723,
+    "C POST-CV": 0.8238960198989302,
+    "ioi POST-CV": 0.08909370199692768,
+    "brier POST-CV": 0.07820531159911154,
+    "ign POST-CV": 0.08909370199692768,
+    "dec POST-CV": 0.0,
+    "wc CONF": -0.1421324356574264,
+    "T SHIFT": 0.9109062980030723,
+    "C SHIFT": 0.8007570231954724,
+    "ioi SHIFT": 0.08909370199692768,
+    "brier SHIFT": 0.08290974481153834,
+    "ign SHIFT": 0.08909370199692768,
+    "dec SHIFT": 0.0,
+    "wc ONE-BEST": 0.00026318256133606166,
+    "wc FIXED": -0.012003660607584565,
+    "wc POST": 0.02788868362459207,
+    "one_best_is_fixed": 0.0,
+    "T AGREE": 0.9262672811059908,
+    "C AGREE": 0.8027184267566957,
+    "ioi AGREE": 0.07373271889400923,
+    "brier AGREE": 0.07921849262836429,
+    "ign AGREE": 0.07373271889400923,
+    "dec AGREE": 0.0,
+    "T CONF (core)": 0.9109062980030723,
+    "C CONF (core)": 0.9428894588528989,
+    "ioi CONF (core)": 0.12107686284675423,
+    "brier CONF (core)": 0.07179980464884415,
+    "ign CONF (core)": 0.08909370199692768,
+    "dec CONF (core)": 0.03198316084982655,
+    "T1": -0.08701027810414208,
+    "T2": -0.015360983102918446,
+    "T3 num": -0.2437379268050774,
+    "T3 den": -0.30616202059882647,
+    "T3": NaN,
+    "D3": -0.09563853665184463,
+    "AGREE − CONF": -0.047344143952745
+   },
+   "sd": {
+    "T1": 0.03900404958244276,
+    "T2": 0.03146111339344522,
+    "T3": NaN,
+    "D3": 0.048441458979477,
+    "AGREE − CONF": 0.05255766003522363,
+    "wc CONF": 0.029796941141240447,
+    "wc POST": 0.017943667658374123,
+    "wc FIXED": 0.007710171085558589
+   },
+   "boot_shift": {
+    "T1": -0.01675370246913424,
+    "T2": 0.0015349462365589848,
+    "T3": NaN,
+    "D3": -0.005131048056471382,
+    "AGREE − CONF": -0.015284324505761712,
+    "wc CONF": -0.03546830851046906,
+    "wc POST": -0.017890110907017302,
+    "wc FIXED": 0.0038336746343494293
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Falcon3-1B-Instruct"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": -0.09563853665184463,
+    "Qwen2.5-1.5B-Instruct": -0.4363780538427453,
+    "SmolLM2-1.7B-Instruct": -0.0528888041674731,
+    "Falcon3-1B-Instruct": -0.2437379268050774,
+    "OLMo-2-0425-1B-Instruct": -0.025377079315695134,
+    "SmolLM2-360M-Instruct": -0.0885395809847056,
+    "TinyLlama-1.1B-Chat-v1.0": -0.06363278354675028
+   },
+   "T4": {
+    "F": 0.0967741935483871,
+    "F0": 0.015691244239631336,
+    "point": 0.08108294930875576,
+    "sd": 0.018159602311324,
+    "F0_strata": 0.02811059907834101,
+    "point_strata": 0.06866359447004608,
+    "sd_strata": 0.016574142745917102,
+    "strata_counts": {
+     "2": 120,
+     "3": 97
+    }
+   },
+   "oracle_ood": 1.0,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Qwen2.5-1.5B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.004608294930875576,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.02304147465437788,
+     "both_wrong": 0.03225806451612903,
+     "u перенос": 0.02304147465437788,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.03225806451612903,
+     "both_wrong": 0.15207373271889402,
+     "u перенос": 0.02304147465437788,
+     "u прочее": 0.009216589861751152,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.09216589861751152,
+     "both_wrong": 0.423963133640553,
+     "u перенос": 0.027649769585253458,
+     "u прочее": 0.06451612903225806,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.041474654377880185,
+     "both_wrong": 0.14285714285714285,
+     "u перенос": 0.041474654377880185,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.06451612903225806,
+     "both_wrong": 0.15207373271889402,
+     "u перенос": 0.055299539170506916,
+     "u прочее": 0.009216589861751152,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.004608294930875576,
+     "both_wrong": 0.004608294930875576,
+     "u перенос": 0.004608294930875576,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.009216589861751152,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.02304147465437788,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.004608294930875576,
+     "both_wrong": 0.013824884792626729,
+     "u перенос": 0.004608294930875576,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0,
+     "both_wrong": 0.004608294930875576,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.009216589861751152,
+     "both_wrong": 0.02304147465437788,
+     "u перенос": 0.009216589861751152,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.004608294930875576,
+     "both_wrong": 0.03686635944700461,
+     "u перенос": 0.004608294930875576,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.013824884792626729,
+     "both_wrong": 0.027649769585253458,
+     "u перенос": 0.013824884792626729,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.027649769585253458,
+     "both_wrong": 0.03686635944700461,
+     "u перенос": 0.02304147465437788,
+     "u прочее": 0.004608294930875576,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.03225806451612903,
+     "both_wrong": 0.2488479262672811,
+     "u перенос": 0.027649769585253458,
+     "u прочее": 0.004608294930875576,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.06451612903225806,
+     "both_wrong": 0.08294930875576037,
+     "u перенос": 0.059907834101382486,
+     "u прочее": 0.004608294930875576,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.04608294930875576,
+     "both_wrong": 0.08294930875576037,
+     "u перенос": 0.041474654377880185,
+     "u прочее": 0.004608294930875576,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.02304147465437788,
+     "both_wrong": 0.2534562211981567,
+     "u перенос": 0.02304147465437788,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.013824884792626729,
+     "both_wrong": 0.20276497695852536,
+     "u перенос": 0.013824884792626729,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.08755760368663594,
+     "both_wrong": 0.14285714285714285,
+     "u перенос": 0.08294930875576037,
+     "u прочее": 0.004608294930875576,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "thousands",
+    "X": 29,
+    "p": 0,
+    "bound": 3000,
+    "max_new": 6
+   },
+   "n_test_ood": 1204
+  },
+  "T_X39_p0": {
+   "n_id": 179,
+   "n_ood": 221,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 90,
+     "id_wrong": 89,
+     "ood_correct": 182,
+     "ood_wrong": 39,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 76,
+     "id_wrong": 103,
+     "ood_correct": 194,
+     "ood_wrong": 27,
+     "none_frac": 0.2325,
+     "ok": false
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 116,
+     "id_wrong": 63,
+     "ood_correct": 210,
+     "ood_wrong": 11,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 154,
+     "id_wrong": 25,
+     "ood_correct": 97,
+     "ood_wrong": 124,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 15,
+     "id_wrong": 164,
+     "ood_correct": 16,
+     "ood_wrong": 205,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 133,
+     "id_wrong": 46,
+     "ood_correct": 145,
+     "ood_wrong": 76,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 58,
+     "id_wrong": 121,
+     "ood_correct": 159,
+     "ood_wrong": 62,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.5027932960893855,
+     "ood": 0.8235294117647058,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.4245810055865922,
+     "ood": 0.8778280542986425,
+     "none": 0.2325
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.6480446927374302,
+     "ood": 0.9502262443438914,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.8603351955307262,
+     "ood": 0.43891402714932126,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.08379888268156424,
+     "ood": 0.07239819004524888,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.7430167597765364,
+     "ood": 0.6561085972850679,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.3240223463687151,
+     "ood": 0.7194570135746606,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.8891402714932126,
+    "C CONF": 0.952555263777515,
+    "ioi CONF": 0.17427472079108974,
+    "brier CONF": 0.093635526833369,
+    "ign CONF": 0.11085972850678738,
+    "dec CONF": 0.06341499228430236,
+    "T ONE-BEST": 0.43891402714932126,
+    "C ONE-BEST": 0.5771209538172825,
+    "ioi ONE-BEST": 0.6992928995186399,
+    "brier ONE-BEST": 0.2756733339856188,
+    "ign ONE-BEST": 0.5610859728506787,
+    "dec ONE-BEST": 0.1382069266679612,
+    "T FIXED": 0.8235294117647058,
+    "C FIXED": 0.7302859532588105,
+    "ioi FIXED": 0.17647058823529416,
+    "brier FIXED": 0.12929568449073556,
+    "ign FIXED": 0.17647058823529416,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.8891402714932126,
+    "C POST-IN": 0.9299674789414871,
+    "ioi POST-IN": 0.15168693595506189,
+    "brier POST-IN": 0.10646966673122078,
+    "ign POST-IN": 0.11085972850678738,
+    "dec POST-IN": 0.040827207448274505,
+    "T POST-CV": 0.8891402714932126,
+    "C POST-CV": 0.883452856115106,
+    "ioi POST-CV": 0.11085972850678738,
+    "brier POST-CV": 0.10518214022937734,
+    "ign POST-CV": 0.11085972850678738,
+    "dec POST-CV": 0.0,
+    "wc CONF": -0.0467540151757897,
+    "T SHIFT": 0.8891402714932126,
+    "C SHIFT": 0.9058012486017253,
+    "ioi SHIFT": 0.12752070561530005,
+    "brier SHIFT": 0.08989165374516123,
+    "ign SHIFT": 0.11085972850678738,
+    "dec SHIFT": 0.016660977108512665,
+    "wc ONE-BEST": -0.003068747094940427,
+    "wc FIXED": -0.0039433079567898766,
+    "wc POST": 0.010611544274645057,
+    "one_best_is_fixed": 0.0,
+    "T AGREE": 0.8461538461538461,
+    "C AGREE": 0.9003521218336219,
+    "ioi AGREE": 0.2080444295259296,
+    "brier AGREE": 0.10038096665002322,
+    "ign AGREE": 0.15384615384615385,
+    "dec AGREE": 0.054198275679775754,
+    "T CONF (core)": 0.8891402714932126,
+    "C CONF (core)": 0.952555263777515,
+    "ioi CONF (core)": 0.17427472079108974,
+    "brier CONF (core)": 0.093635526833369,
+    "ign CONF (core)": 0.11085972850678738,
+    "dec CONF (core)": 0.06341499228430236,
+    "T1": -0.005687415378106575,
+    "T2": 0.09718470101914223,
+    "T3 num": 0.1382069266679612,
+    "T3 den": 0.421421168381405,
+    "T3": 0.327954400579322,
+    "D3": -0.09324345850589533,
+    "AGREE − CONF": 0.033769708734839865
+   },
+   "sd": {
+    "T1": 0.03623391708258603,
+    "T2": 0.062397279969163326,
+    "T3": 0.1490349005684374,
+    "D3": 0.03522889133339324,
+    "AGREE − CONF": 0.06631325738124239,
+    "wc CONF": 0.02141366609429149,
+    "wc POST": 0.01208880043696362,
+    "wc FIXED": 0.00748281067784785
+   },
+   "boot_shift": {
+    "T1": -0.018953386767805797,
+    "T2": 0.02612986773645197,
+    "T3": -0.025227020210156104,
+    "D3": 0.005422462081443244,
+    "AGREE − CONF": 0.03642017174286016,
+    "wc CONF": -0.02110766206025816,
+    "wc POST": -0.0018456369950690388,
+    "wc FIXED": 0.0006112967771461368
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Falcon3-1B-Instruct"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": -0.09324345850589533,
+    "SmolLM2-1.7B-Instruct": -0.0731131374606625,
+    "Falcon3-1B-Instruct": 0.1382069266679612,
+    "OLMo-2-0425-1B-Instruct": 0.00990542363669479,
+    "SmolLM2-360M-Instruct": -0.04097598152859183,
+    "TinyLlama-1.1B-Chat-v1.0": -0.15319844064785515
+   },
+   "T4": {
+    "F": 0.14027149321266968,
+    "F0": 0.06911764705882353,
+    "point": 0.07115384615384615,
+    "sd": 0.016718250910998548,
+    "F0_strata": 0.07712669683257918,
+    "point_strata": 0.0631447963800905,
+    "sd_strata": 0.016799642082127572,
+    "strata_counts": {
+     "2": 117,
+     "3": 104
+    }
+   },
+   "oracle_ood": 0.9819004524886877,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.01809954751131222,
+     "both_wrong": 0.01809954751131222,
+     "u перенос": 0.01809954751131222,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.04072398190045249,
+     "both_wrong": 0.14027149321266968,
+     "u перенос": 0.04072398190045249,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.02262443438914027,
+     "both_wrong": 0.1583710407239819,
+     "u перенос": 0.01809954751131222,
+     "u прочее": 0.004524886877828055,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.03167420814479638,
+     "both_wrong": 0.09954751131221719,
+     "u перенос": 0.03167420814479638,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.03167420814479638,
+     "both_wrong": 0.08144796380090498,
+     "u перенос": 0.03167420814479638,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.013574660633484163,
+     "both_wrong": 0.04072398190045249,
+     "u перенос": 0.013574660633484163,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.049773755656108594,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.02262443438914027,
+     "both_wrong": 0.04072398190045249,
+     "u перенос": 0.02262443438914027,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.01809954751131222,
+     "both_wrong": 0.03619909502262444,
+     "u перенос": 0.01809954751131222,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.03619909502262444,
+     "both_wrong": 0.5203619909502263,
+     "u перенос": 0.027149321266968326,
+     "u прочее": 0.00904977375565611,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.10407239819004525,
+     "both_wrong": 0.24434389140271492,
+     "u перенос": 0.06787330316742081,
+     "u прочее": 0.03619909502262444,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.02262443438914027,
+     "both_wrong": 0.19909502262443438,
+     "u перенос": 0.01809954751131222,
+     "u прочее": 0.004524886877828055,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.04072398190045249,
+     "both_wrong": 0.334841628959276,
+     "u перенос": 0.027149321266968326,
+     "u прочее": 0.013574660633484163,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.02262443438914027,
+     "both_wrong": 0.2669683257918552,
+     "u перенос": 0.013574660633484163,
+     "u прочее": 0.00904977375565611,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.06787330316742081,
+     "both_wrong": 0.1583710407239819,
+     "u перенос": 0.058823529411764705,
+     "u прочее": 0.00904977375565611,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "thousands",
+    "X": 39,
+    "p": 0,
+    "bound": 4000,
+    "max_new": 6
+   },
+   "n_test_ood": 1167
+  },
+  "T_X49_p0": {
+   "n_id": 179,
+   "n_ood": 221,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 141,
+     "id_wrong": 38,
+     "ood_correct": 139,
+     "ood_wrong": 82,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 94,
+     "id_wrong": 85,
+     "ood_correct": 204,
+     "ood_wrong": 17,
+     "none_frac": 0.01,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 109,
+     "id_wrong": 70,
+     "ood_correct": 179,
+     "ood_wrong": 42,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 74,
+     "id_wrong": 105,
+     "ood_correct": 171,
+     "ood_wrong": 50,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 26,
+     "id_wrong": 153,
+     "ood_correct": 18,
+     "ood_wrong": 203,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 123,
+     "id_wrong": 56,
+     "ood_correct": 104,
+     "ood_wrong": 117,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 39,
+     "id_wrong": 140,
+     "ood_correct": 85,
+     "ood_wrong": 136,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.7877094972067039,
+     "ood": 0.6289592760180995,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.5251396648044693,
+     "ood": 0.9230769230769231,
+     "none": 0.01
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.6089385474860335,
+     "ood": 0.8099547511312217,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.4134078212290503,
+     "ood": 0.7737556561085973,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.1452513966480447,
+     "ood": 0.08144796380090498,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.6871508379888268,
+     "ood": 0.47058823529411764,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.21787709497206703,
+     "ood": 0.38461538461538464,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.9147812971342383,
+    "C CONF": 0.9692110443833232,
+    "ioi CONF": 0.1396484501148466,
+    "brier CONF": 0.07749409758310118,
+    "ign CONF": 0.08521870286576172,
+    "dec CONF": 0.05442974724908489,
+    "T ONE-BEST": 0.6289592760180995,
+    "C ONE-BEST": 0.7522613197040477,
+    "ioi ONE-BEST": 0.4943427676678487,
+    "brier ONE-BEST": 0.20479609679468483,
+    "ign ONE-BEST": 0.37104072398190047,
+    "dec ONE-BEST": 0.12330204368594821,
+    "T FIXED": 0.6289592760180995,
+    "C FIXED": 0.7522613197040477,
+    "ioi FIXED": 0.4943427676678487,
+    "brier FIXED": 0.20479609679468483,
+    "ign FIXED": 0.37104072398190047,
+    "dec FIXED": 0.12330204368594821,
+    "T POST-IN": 0.9147812971342383,
+    "C POST-IN": 0.9515541853409706,
+    "ioi POST-IN": 0.12199159107249402,
+    "brier POST-IN": 0.08347794565602024,
+    "ign POST-IN": 0.08521870286576172,
+    "dec POST-IN": 0.0367728882067323,
+    "T POST-CV": 0.9147812971342383,
+    "C POST-CV": 0.918720298904328,
+    "ioi POST-CV": 0.08915770463585149,
+    "brier POST-CV": 0.08236771685950181,
+    "ign POST-CV": 0.08521870286576172,
+    "dec POST-CV": 0.003939001770089767,
+    "wc CONF": -0.06961949391962907,
+    "T SHIFT": 0.9147812971342383,
+    "C SHIFT": 0.8995915504636941,
+    "ioi SHIFT": 0.08521870286576172,
+    "brier SHIFT": 0.07476222860141721,
+    "ign SHIFT": 0.08521870286576172,
+    "dec SHIFT": 0.0,
+    "wc ONE-BEST": -0.0030100267368806666,
+    "wc FIXED": -0.0030100267368806666,
+    "wc POST": 0.009056619987202197,
+    "one_best_is_fixed": 1.0,
+    "T AGREE": 0.8416289592760181,
+    "C AGREE": 0.8491887590184044,
+    "ioi AGREE": 0.1659308404663682,
+    "brier AGREE": 0.09200292678490571,
+    "ign AGREE": 0.1583710407239819,
+    "dec AGREE": 0.007559799742386297,
+    "T CONF (core)": 0.9147812971342383,
+    "C CONF (core)": 0.9692110443833232,
+    "ioi CONF (core)": 0.1396484501148466,
+    "brier CONF (core)": 0.07749409758310118,
+    "ign CONF (core)": 0.08521870286576172,
+    "dec CONF (core)": 0.05442974724908489,
+    "T1": 0.003939001770089767,
+    "T2": 0.0767731358305167,
+    "T3 num": -0.22628548187823638,
+    "T3 den": -0.360347834879547,
+    "T3": NaN,
+    "D3": 0.12330204368594821,
+    "AGREE − CONF": 0.02628239035152158
+   },
+   "sd": {
+    "T1": 0.03403240945761633,
+    "T2": 0.0639778898517145,
+    "T3": NaN,
+    "D3": 0.05007918967311689,
+    "AGREE − CONF": 0.06891484993316013,
+    "wc CONF": 0.01961189540464291,
+    "wc POST": 0.014128444031051473,
+    "wc FIXED": 0.007649975151884635
+   },
+   "boot_shift": {
+    "T1": 0.0019159042931714589,
+    "T2": -0.006330943048580312,
+    "T3": NaN,
+    "D3": 0.010486962421474982,
+    "AGREE − CONF": -0.009852836129804733,
+    "wc CONF": -0.015256268483244961,
+    "wc POST": -0.003407760850211123,
+    "wc FIXED": 1.1534579681859482e-05
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Falcon3-1B-Instruct"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": 0.12330204368594821,
+    "Qwen2.5-1.5B-Instruct": -0.07215224636068396,
+    "SmolLM2-1.7B-Instruct": -0.07070253518651182,
+    "Falcon3-1B-Instruct": -0.22628548187823638,
+    "OLMo-2-0425-1B-Instruct": 0.07260448317666034,
+    "SmolLM2-360M-Instruct": 0.02760205233413815,
+    "TinyLlama-1.1B-Chat-v1.0": -0.17563203346951267
+   },
+   "T4": {
+    "F": 0.12217194570135746,
+    "F0": 0.05633484162895927,
+    "point": 0.06583710407239819,
+    "sd": 0.018415643472296173,
+    "F0_strata": 0.06604072398190045,
+    "point_strata": 0.05613122171945702,
+    "sd_strata": 0.016891531507981,
+    "strata_counts": {
+     "2": 105,
+     "3": 116
+    }
+   },
+   "oracle_ood": 0.995475113122172,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Qwen2.5-1.5B-Instruct",
+     "u": 0.01809954751131222,
+     "both_wrong": 0.04524886877828054,
+     "u перенос": 0.013574660633484163,
+     "u прочее": 0.004524886877828055,
+     "same_vendor": true
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.03619909502262444,
+     "both_wrong": 0.09049773755656108,
+     "u перенос": 0.03619909502262444,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.00904977375565611,
+     "both_wrong": 0.06787330316742081,
+     "u перенос": 0.00904977375565611,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.027149321266968326,
+     "both_wrong": 0.3438914027149321,
+     "u перенос": 0.02262443438914027,
+     "u прочее": 0.004524886877828055,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.05429864253393665,
+     "both_wrong": 0.22171945701357465,
+     "u перенос": 0.05429864253393665,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.01809954751131222,
+     "both_wrong": 0.24434389140271492,
+     "u перенос": 0.01809954751131222,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.00904977375565611,
+     "both_wrong": 0.01809954751131222,
+     "u перенос": 0.00904977375565611,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.004524886877828055,
+     "both_wrong": 0.02262443438914027,
+     "u перенос": 0.004524886877828055,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.013574660633484163,
+     "both_wrong": 0.07692307692307693,
+     "u перенос": 0.00904977375565611,
+     "u прочее": 0.004524886877828055,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.004524886877828055,
+     "both_wrong": 0.058823529411764705,
+     "u перенос": 0.004524886877828055,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.01809954751131222,
+     "both_wrong": 0.06787330316742081,
+     "u перенос": 0.01809954751131222,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.00904977375565611,
+     "both_wrong": 0.07692307692307693,
+     "u перенос": 0.00904977375565611,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.013574660633484163,
+     "both_wrong": 0.18552036199095023,
+     "u перенос": 0.013574660633484163,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.06787330316742081,
+     "both_wrong": 0.167420814479638,
+     "u перенос": 0.06334841628959276,
+     "u прочее": 0.004524886877828055,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.01809954751131222,
+     "both_wrong": 0.13574660633484162,
+     "u перенос": 0.01809954751131222,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.00904977375565611,
+     "both_wrong": 0.2171945701357466,
+     "u перенос": 0.00904977375565611,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.049773755656108594,
+     "both_wrong": 0.1493212669683258,
+     "u перенос": 0.04524886877828054,
+     "u прочее": 0.004524886877828055,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.004524886877828055,
+     "both_wrong": 0.14027149321266968,
+     "u перенос": 0.004524886877828055,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.058823529411764705,
+     "both_wrong": 0.502262443438914,
+     "u перенос": 0.05429864253393665,
+     "u прочее": 0.004524886877828055,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.02262443438914027,
+     "both_wrong": 0.583710407239819,
+     "u перенос": 0.02262443438914027,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.08144796380090498,
+     "both_wrong": 0.3891402714932127,
+     "u перенос": 0.07239819004524888,
+     "u прочее": 0.00904977375565611,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "thousands",
+    "X": 49,
+    "p": 0,
+    "bound": 5000,
+    "max_new": 6
+   },
+   "n_test_ood": 1218
+  },
+  "T_X59_p0": {
+   "n_id": 185,
+   "n_ood": 215,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 151,
+     "id_wrong": 34,
+     "ood_correct": 121,
+     "ood_wrong": 94,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 166,
+     "id_wrong": 19,
+     "ood_correct": 148,
+     "ood_wrong": 67,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 144,
+     "id_wrong": 41,
+     "ood_correct": 155,
+     "ood_wrong": 60,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 163,
+     "id_wrong": 22,
+     "ood_correct": 37,
+     "ood_wrong": 178,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 25,
+     "id_wrong": 160,
+     "ood_correct": 20,
+     "ood_wrong": 195,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 124,
+     "id_wrong": 61,
+     "ood_correct": 80,
+     "ood_wrong": 135,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 63,
+     "id_wrong": 122,
+     "ood_correct": 157,
+     "ood_wrong": 58,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.8162162162162162,
+     "ood": 0.5627906976744186,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.8972972972972973,
+     "ood": 0.6883720930232559,
+     "none": 0.0
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.7783783783783784,
+     "ood": 0.7209302325581395,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.8810810810810811,
+     "ood": 0.17209302325581396,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.13513513513513514,
+     "ood": 0.09302325581395349,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.6702702702702703,
+     "ood": 0.37209302325581395,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.34054054054054056,
+     "ood": 0.7302325581395349,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.8407751937984496,
+    "C CONF": 0.9766953178606953,
+    "ioi CONF": 0.2951449302637962,
+    "brier CONF": 0.13666045744977104,
+    "ign CONF": 0.15922480620155044,
+    "dec CONF": 0.13592012406224574,
+    "T ONE-BEST": 0.6883720930232559,
+    "C ONE-BEST": 0.7700270137623236,
+    "ioi ONE-BEST": 0.3932828277158119,
+    "brier ONE-BEST": 0.07201483084367877,
+    "ign ONE-BEST": 0.31162790697674414,
+    "dec ONE-BEST": 0.08165492073906777,
+    "T FIXED": 0.5627906976744186,
+    "C FIXED": 0.6437944768666668,
+    "ioi FIXED": 0.5182130815178296,
+    "brier FIXED": 0.22821233095733356,
+    "ign FIXED": 0.4372093023255814,
+    "dec FIXED": 0.08100377919224822,
+    "T POST-IN": 0.8407751937984496,
+    "C POST-IN": 0.9669102990033221,
+    "ioi POST-IN": 0.28535991140642303,
+    "brier POST-IN": 0.13207150767283657,
+    "ign POST-IN": 0.15922480620155044,
+    "dec POST-IN": 0.1261351052048726,
+    "T POST-CV": 0.8407751937984496,
+    "C POST-CV": 0.9396817625458999,
+    "ioi POST-CV": 0.25813137494900074,
+    "brier POST-CV": 0.1217514997046016,
+    "ign POST-CV": 0.15922480620155044,
+    "dec POST-CV": 0.0989065687474503,
+    "wc CONF": -0.033700779146513926,
+    "T SHIFT": 0.8407751937984496,
+    "C SHIFT": 0.9429945387141812,
+    "ioi SHIFT": 0.26144415111728203,
+    "brier SHIFT": 0.1286349717996761,
+    "ign SHIFT": 0.15922480620155044,
+    "dec SHIFT": 0.10221934491573159,
+    "wc ONE-BEST": 0.00035977250619290135,
+    "wc FIXED": -0.0019506203515915477,
+    "wc POST": -0.0038415808701566245,
+    "one_best_is_fixed": 0.0,
+    "T AGREE": 0.7023255813953488,
+    "C AGREE": 0.848550270216639,
+    "ioi AGREE": 0.4438991074259413,
+    "brier AGREE": 0.183002618292307,
+    "ign AGREE": 0.29767441860465116,
+    "dec AGREE": 0.14622468882129014,
+    "T CONF (core)": 0.8407751937984496,
+    "C CONF (core)": 0.9766953178606953,
+    "ioi CONF (core)": 0.2951449302637962,
+    "brier CONF (core)": 0.13666045744977104,
+    "ign CONF (core)": 0.15922480620155044,
+    "dec CONF (core)": 0.13592012406224574,
+    "T1": 0.0989065687474503,
+    "T2": 0.18576773247694056,
+    "T3 num": 0.31204651162790686,
+    "T3 den": 0.7089880578252671,
+    "T3": 0.44012943262411336,
+    "D3": 0.08100377919224822,
+    "AGREE − CONF": 0.14875417716214512
+   },
+   "sd": {
+    "T1": 0.032689034279984756,
+    "T2": 0.06483213123185254,
+    "T3": 0.10802898300675622,
+    "D3": 0.03863044406568208,
+    "AGREE − CONF": 0.06045575101489868,
+    "wc CONF": 0.012372467611538878,
+    "wc POST": 0.008392406847037598,
+    "wc FIXED": 0.005651491888133313
+   },
+   "boot_shift": {
+    "T1": 0.0023885959399260054,
+    "T2": -0.029382527726087543,
+    "T3": -0.01907643167990397,
+    "D3": 0.005303012002379301,
+    "AGREE − CONF": -0.028440233378348445,
+    "wc CONF": -0.0016357275881906663,
+    "wc POST": 0.006657098816781696,
+    "wc FIXED": 0.00037696674464227586
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Falcon3-1B-Instruct"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": 0.08100377919224822,
+    "Qwen2.5-1.5B-Instruct": 0.08165492073906777,
+    "SmolLM2-1.7B-Instruct": 0.009012752014853631,
+    "Falcon3-1B-Instruct": 0.31204651162790686,
+    "OLMo-2-0425-1B-Instruct": 0.04345114159254748,
+    "SmolLM2-360M-Instruct": 0.15814005350372773,
+    "TinyLlama-1.1B-Chat-v1.0": -0.10250387094083435
+   },
+   "T4": {
+    "F": 0.29767441860465116,
+    "F0": 0.19881395348837208,
+    "point": 0.09886046511627908,
+    "sd": 0.020425982216333485,
+    "F0_strata": 0.209046511627907,
+    "point_strata": 0.08862790697674416,
+    "sd_strata": 0.020986045330561733,
+    "strata_counts": {
+     "2": 124,
+     "3": 91
+    }
+   },
+   "oracle_ood": 0.9720930232558139,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Qwen2.5-1.5B-Instruct",
+     "u": 0.13953488372093023,
+     "both_wrong": 0.21395348837209302,
+     "u перенос": 0.13488372093023257,
+     "u прочее": 0.004651162790697674,
+     "same_vendor": true
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.046511627906976744,
+     "both_wrong": 0.10697674418604651,
+     "u перенос": 0.046511627906976744,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.09302325581395349,
+     "both_wrong": 0.3813953488372093,
+     "u перенос": 0.08372093023255814,
+     "u прочее": 0.009302325581395349,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.023255813953488372,
+     "both_wrong": 0.3813953488372093,
+     "u перенос": 0.0,
+     "u прочее": 0.023255813953488372,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.05116279069767442,
+     "both_wrong": 0.3023255813953488,
+     "u перенос": 0.046511627906976744,
+     "u прочее": 0.004651162790697674,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0,
+     "both_wrong": 0.12558139534883722,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.06976744186046512,
+     "both_wrong": 0.13488372093023257,
+     "u перенос": 0.06976744186046512,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.046511627906976744,
+     "both_wrong": 0.29767441860465116,
+     "u перенос": 0.04186046511627907,
+     "u прочее": 0.004651162790697674,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.018604651162790697,
+     "both_wrong": 0.27906976744186046,
+     "u перенос": 0.0,
+     "u прочее": 0.018604651162790697,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.027906976744186046,
+     "both_wrong": 0.2558139534883721,
+     "u перенос": 0.027906976744186046,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0,
+     "both_wrong": 0.08372093023255814,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.05581395348837209,
+     "both_wrong": 0.26046511627906976,
+     "u перенос": 0.046511627906976744,
+     "u прочее": 0.009302325581395349,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.009302325581395349,
+     "both_wrong": 0.2651162790697674,
+     "u перенос": 0.009302325581395349,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.04186046511627907,
+     "both_wrong": 0.2651162790697674,
+     "u перенос": 0.03255813953488372,
+     "u прочее": 0.009302325581395349,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.03255813953488372,
+     "both_wrong": 0.12558139534883722,
+     "u перенос": 0.03255813953488372,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.06511627906976744,
+     "both_wrong": 0.7441860465116279,
+     "u перенос": 0.013953488372093023,
+     "u прочее": 0.05116279069767442,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.12093023255813953,
+     "both_wrong": 0.5395348837209303,
+     "u перенос": 0.05581395348837209,
+     "u прочее": 0.06511627906976744,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.013953488372093023,
+     "both_wrong": 0.22325581395348837,
+     "u перенос": 0.013953488372093023,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.06046511627906977,
+     "both_wrong": 0.586046511627907,
+     "u перенос": 0.004651162790697674,
+     "u прочее": 0.05581395348837209,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.009302325581395349,
+     "both_wrong": 0.24651162790697675,
+     "u перенос": 0.009302325581395349,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.08837209302325581,
+     "both_wrong": 0.2372093023255814,
+     "u перенос": 0.08837209302325581,
+     "u прочее": 0.0,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "thousands",
+    "X": 59,
+    "p": 0,
+    "bound": 6000,
+    "max_new": 6
+   },
+   "n_test_ood": 1216
+  },
+  "L_X9_p0": {
+   "n_id": 176,
+   "n_ood": 224,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 151,
+     "id_wrong": 25,
+     "ood_correct": 186,
+     "ood_wrong": 38,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 125,
+     "id_wrong": 51,
+     "ood_correct": 223,
+     "ood_wrong": 1,
+     "none_frac": 0.005,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 77,
+     "id_wrong": 99,
+     "ood_correct": 211,
+     "ood_wrong": 13,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 53,
+     "id_wrong": 123,
+     "ood_correct": 127,
+     "ood_wrong": 97,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 113,
+     "id_wrong": 63,
+     "ood_correct": 39,
+     "ood_wrong": 185,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 126,
+     "id_wrong": 50,
+     "ood_correct": 181,
+     "ood_wrong": 43,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 26,
+     "id_wrong": 150,
+     "ood_correct": 189,
+     "ood_wrong": 35,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.8579545454545454,
+     "ood": 0.8303571428571429,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.7102272727272727,
+     "ood": 0.9955357142857143,
+     "none": 0.005
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.4375,
+     "ood": 0.9419642857142857,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.30113636363636365,
+     "ood": 0.5669642857142857,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.6420454545454546,
+     "ood": 0.17410714285714285,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.7159090909090909,
+     "ood": 0.8080357142857143,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.14772727272727273,
+     "ood": 0.84375,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.9694940476190477,
+    "C CONF": 0.9991284013605443,
+    "ioi CONF": 0.06014030612244892,
+    "brier CONF": 0.03014567136378361,
+    "ign CONF": 0.030505952380952328,
+    "dec CONF": 0.02963435374149659,
+    "T ONE-BEST": 0.8303571428571429,
+    "C ONE-BEST": 0.7754786324796425,
+    "ioi ONE-BEST": 0.1696428571428571,
+    "brier ONE-BEST": 0.15350323749860667,
+    "ign ONE-BEST": 0.1696428571428571,
+    "dec ONE-BEST": 0.0,
+    "T FIXED": 0.8303571428571429,
+    "C FIXED": 0.7754786324796425,
+    "ioi FIXED": 0.1696428571428571,
+    "brier FIXED": 0.15350323749860667,
+    "ign FIXED": 0.1696428571428571,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.9694940476190477,
+    "C POST-IN": 0.9976258116883117,
+    "ioi POST-IN": 0.058637716450216315,
+    "brier POST-IN": 0.03031492891578119,
+    "ign POST-IN": 0.030505952380952328,
+    "dec POST-IN": 0.028131764069263987,
+    "T POST-CV": 0.9694940476190477,
+    "C POST-CV": 0.9704865272451259,
+    "ioi POST-CV": 0.03149843200703051,
+    "brier POST-CV": 0.03020609884727865,
+    "ign POST-CV": 0.030505952380952328,
+    "dec POST-CV": 0.0009924796260781799,
+    "wc CONF": -0.07309397221260416,
+    "T SHIFT": 0.9694940476190477,
+    "C SHIFT": 0.9260344291479402,
+    "ioi SHIFT": 0.030505952380952328,
+    "brier SHIFT": 0.03115621487976166,
+    "ign SHIFT": 0.030505952380952328,
+    "dec SHIFT": 0.0,
+    "wc ONE-BEST": -0.0006987586080224872,
+    "wc FIXED": -0.0006987586080224872,
+    "wc POST": -0.011748190451823293,
+    "one_best_is_fixed": 1.0,
+    "T AGREE": 0.9464285714285714,
+    "C AGREE": 0.9690485858669656,
+    "ioi AGREE": 0.07619144300982283,
+    "brier AGREE": 0.04399686790744621,
+    "ign AGREE": 0.0535714285714286,
+    "dec AGREE": 0.02262001443839423,
+    "T CONF (core)": 0.9694940476190477,
+    "C CONF (core)": 0.9991284013605443,
+    "ioi CONF (core)": 0.06014030612244892,
+    "brier CONF (core)": 0.03014567136378361,
+    "ign CONF (core)": 0.030505952380952328,
+    "dec CONF (core)": 0.02963435374149659,
+    "T1": 0.0009924796260781799,
+    "T2": 0.04469301100279233,
+    "T3 num": -0.5271243114822267,
+    "T3 den": -0.797077922077922,
+    "T3": NaN,
+    "D3": -0.054878510377500356,
+    "AGREE − CONF": 0.016051136887373918
+   },
+   "sd": {
+    "T1": 0.01739283305156313,
+    "T2": 0.03311991928271576,
+    "T3": NaN,
+    "D3": 0.03206615301010215,
+    "AGREE − CONF": 0.03493194782007767,
+    "wc CONF": 0.017004548629249047,
+    "wc POST": 0.01392883437551831,
+    "wc FIXED": 0.006025518526570508
+   },
+   "boot_shift": {
+    "T1": -0.008468358252494652,
+    "T2": -0.008755927803662293,
+    "T3": NaN,
+    "D3": 0.0016388989590216674,
+    "AGREE − CONF": -0.013136746293161878,
+    "wc CONF": -0.0018412039683865788,
+    "wc POST": 0.02121301672389906,
+    "wc FIXED": -0.0018678858334930924
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Qwen2.5-0.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": -0.054878510377500356,
+    "Qwen2.5-1.5B-Instruct": -0.008045784103114961,
+    "SmolLM2-1.7B-Instruct": -0.047429821875710654,
+    "Falcon3-1B-Instruct": -0.16822074165059864,
+    "OLMo-2-0425-1B-Instruct": 0.31905036134181297,
+    "SmolLM2-360M-Instruct": -0.08801928583984531,
+    "TinyLlama-1.1B-Chat-v1.0": -0.6558470547309834
+   },
+   "T4": {
+    "F": 0.044642857142857144,
+    "F0": 0.006272321428571428,
+    "point": 0.03837053571428572,
+    "sd": 0.013000331045411033,
+    "F0_strata": 0.010089285714285712,
+    "point_strata": 0.034553571428571433,
+    "sd_strata": 0.012278375133685036,
+    "strata_counts": {
+     "2": 124,
+     "3": 100
+    }
+   },
+   "oracle_ood": 1.0,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Qwen2.5-1.5B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.004464285714285714,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.017857142857142856,
+     "both_wrong": 0.03125,
+     "u перенос": 0.017857142857142856,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.03125,
+     "both_wrong": 0.10267857142857142,
+     "u перенос": 0.026785714285714284,
+     "u прочее": 0.004464285714285714,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.013392857142857142,
+     "both_wrong": 0.12946428571428573,
+     "u перенос": 0.013392857142857142,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.03125,
+     "both_wrong": 0.0625,
+     "u перенос": 0.03125,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.026785714285714284,
+     "both_wrong": 0.044642857142857144,
+     "u перенос": 0.026785714285714284,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.004464285714285714,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.004464285714285714,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.0,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.004464285714285714,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0,
+     "both_wrong": 0.004464285714285714,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.017857142857142856,
+     "both_wrong": 0.044642857142857144,
+     "u перенос": 0.017857142857142856,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.017857142857142856,
+     "both_wrong": 0.049107142857142856,
+     "u перенос": 0.017857142857142856,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.013392857142857142,
+     "both_wrong": 0.022321428571428572,
+     "u перенос": 0.013392857142857142,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.013392857142857142,
+     "both_wrong": 0.017857142857142856,
+     "u перенос": 0.013392857142857142,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.008928571428571428,
+     "both_wrong": 0.36160714285714285,
+     "u перенос": 0.008928571428571428,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.022321428571428572,
+     "both_wrong": 0.10714285714285714,
+     "u перенос": 0.022321428571428572,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.017857142857142856,
+     "both_wrong": 0.08482142857142858,
+     "u перенос": 0.013392857142857142,
+     "u прочее": 0.004464285714285714,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.013392857142857142,
+     "both_wrong": 0.15178571428571427,
+     "u перенос": 0.008928571428571428,
+     "u прочее": 0.004464285714285714,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.013392857142857142,
+     "both_wrong": 0.12946428571428573,
+     "u перенос": 0.013392857142857142,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.044642857142857144,
+     "both_wrong": 0.0625,
+     "u перенос": 0.044642857142857144,
+     "u прочее": 0.0,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "length",
+    "X": 9,
+    "p": 0,
+    "bound": 1000,
+    "max_new": 10
+   },
+   "n_test_ood": 1195
+  },
+  "L_X99_p0": {
+   "n_id": 190,
+   "n_ood": 210,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 76,
+     "id_wrong": 114,
+     "ood_correct": 144,
+     "ood_wrong": 66,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 97,
+     "id_wrong": 93,
+     "ood_correct": 167,
+     "ood_wrong": 43,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 170,
+     "id_wrong": 20,
+     "ood_correct": 17,
+     "ood_wrong": 193,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 4,
+     "id_wrong": 186,
+     "ood_correct": 93,
+     "ood_wrong": 117,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 29,
+     "id_wrong": 161,
+     "ood_correct": 7,
+     "ood_wrong": 203,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 49,
+     "id_wrong": 141,
+     "ood_correct": 42,
+     "ood_wrong": 168,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 124,
+     "id_wrong": 66,
+     "ood_correct": 48,
+     "ood_wrong": 162,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.4,
+     "ood": 0.6857142857142857,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.5105263157894737,
+     "ood": 0.7952380952380952,
+     "none": 0.0
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.8947368421052632,
+     "ood": 0.08095238095238096,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.021052631578947368,
+     "ood": 0.44285714285714284,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.15263157894736842,
+     "ood": 0.03333333333333333,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.2578947368421053,
+     "ood": 0.2,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.6526315789473685,
+     "ood": 0.22857142857142856,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.7523809523809524,
+    "C CONF": 0.828597666577314,
+    "ioi CONF": 0.3238357618154093,
+    "brier CONF": 0.1607785020347839,
+    "ign CONF": 0.24761904761904763,
+    "dec CONF": 0.07621671419636167,
+    "T ONE-BEST": 0.08095238095238096,
+    "C ONE-BEST": 0.20581075384698316,
+    "ioi ONE-BEST": 1.0439059919422211,
+    "brier ONE-BEST": 0.14522977252011388,
+    "ign ONE-BEST": 0.919047619047619,
+    "dec ONE-BEST": 0.12485837289460221,
+    "T FIXED": 0.6857142857142857,
+    "C FIXED": 0.441780374410964,
+    "ioi FIXED": 0.3142857142857143,
+    "brier FIXED": 0.30818940693795926,
+    "ign FIXED": 0.3142857142857143,
+    "dec FIXED": 0.0,
+    "T POST-IN": 0.7523809523809524,
+    "C POST-IN": 0.7573597544544164,
+    "ioi POST-IN": 0.25259784969251164,
+    "brier POST-IN": 0.16046139403857107,
+    "ign POST-IN": 0.24761904761904763,
+    "dec POST-IN": 0.004978802073464017,
+    "T POST-CV": 0.7523809523809524,
+    "C POST-CV": 0.8030722322130261,
+    "ioi POST-CV": 0.2983103274511214,
+    "brier POST-CV": 0.16176586837563028,
+    "ign POST-CV": 0.24761904761904763,
+    "dec POST-CV": 0.05069127983207378,
+    "wc CONF": -0.03567564231319409,
+    "T SHIFT": 0.7523809523809524,
+    "C SHIFT": 0.7929220242641198,
+    "ioi SHIFT": 0.2881601195022151,
+    "brier SHIFT": 0.15661309302133017,
+    "ign SHIFT": 0.24761904761904763,
+    "dec SHIFT": 0.04054107188316747,
+    "wc ONE-BEST": 0.0009502430940279138,
+    "wc FIXED": 0.00025008958184874475,
+    "wc POST": 0.012292329896305798,
+    "one_best_is_fixed": 0.0,
+    "T AGREE": 0.28095238095238095,
+    "C AGREE": 0.7750974214051656,
+    "ioi AGREE": 1.2131926595004037,
+    "brier AGREE": 0.3685907069855578,
+    "ign AGREE": 0.719047619047619,
+    "dec AGREE": 0.4941450404527846,
+    "T CONF (core)": 0.7523809523809524,
+    "C CONF (core)": 0.828597666577314,
+    "ioi CONF (core)": 0.3238357618154093,
+    "brier CONF (core)": 0.1607785020347839,
+    "ign CONF (core)": 0.24761904761904763,
+    "dec CONF (core)": 0.07621671419636167,
+    "T1": 0.05069127983207378,
+    "T2": 0.9148823320492823,
+    "T3 num": -0.11077801096097975,
+    "T3 den": 1.1293233082706768,
+    "T3": -0.09809237987889684,
+    "D3": -0.2439339113033217,
+    "AGREE − CONF": 0.8893568976849944
+   },
+   "sd": {
+    "T1": 0.06307358972682182,
+    "T2": 0.1761128678186532,
+    "T3": 0.08128233864244616,
+    "D3": 0.041906560274568905,
+    "AGREE − CONF": 0.17771176957612983,
+    "wc CONF": 0.019224121015534903,
+    "wc POST": 0.013476585635345751,
+    "wc FIXED": 0.006548239104032665
+   },
+   "boot_shift": {
+    "T1": -0.061785319854707754,
+    "T2": -0.11362264449767301,
+    "T3": 0.0029971367588159797,
+    "D3": 0.009418428850740679,
+    "AGREE − CONF": -0.14626504005507468,
+    "wc CONF": -0.02296285174415344,
+    "wc POST": -0.0036637786234425176,
+    "wc FIXED": -0.001031841269092036
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Qwen2.5-0.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": -0.2439339113033217,
+    "Qwen2.5-1.5B-Instruct": -0.12354832982400177,
+    "SmolLM2-1.7B-Instruct": 0.12485837289460221,
+    "Falcon3-1B-Instruct": -0.42198095238095235,
+    "OLMo-2-0425-1B-Instruct": 0.12068901376238458,
+    "SmolLM2-360M-Instruct": -0.15031841021011605,
+    "TinyLlama-1.1B-Chat-v1.0": 0.037926923895471226
+   },
+   "T4": {
+    "F": 0.3,
+    "F0": 0.2728095238095238,
+    "point": 0.02719047619047621,
+    "sd": 0.02151092415012343,
+    "F0_strata": 0.28892857142857137,
+    "point_strata": 0.011071428571428621,
+    "sd_strata": 0.020916804510895677,
+    "strata_counts": {
+     "3": 105,
+     "4": 105
+    }
+   },
+   "oracle_ood": 0.9857142857142858,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Qwen2.5-1.5B-Instruct",
+     "u": 0.009523809523809525,
+     "both_wrong": 0.05714285714285714,
+     "u перенос": 0.009523809523809525,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.02857142857142857,
+     "both_wrong": 0.28095238095238095,
+     "u перенос": 0.01904761904761905,
+     "u прочее": 0.009523809523809525,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.15714285714285714,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.004761904761904762,
+     "both_wrong": 0.3,
+     "u перенос": 0.0,
+     "u прочее": 0.004761904761904762,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.0380952380952381,
+     "both_wrong": 0.2714285714285714,
+     "u перенос": 0.023809523809523808,
+     "u прочее": 0.014285714285714285,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0380952380952381,
+     "both_wrong": 0.2523809523809524,
+     "u перенос": 0.01904761904761905,
+     "u прочее": 0.01904761904761905,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.05238095238095238,
+     "both_wrong": 0.18571428571428572,
+     "u перенос": 0.047619047619047616,
+     "u прочее": 0.004761904761904762,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.10952380952380952,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.2,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.009523809523809525,
+     "both_wrong": 0.18571428571428572,
+     "u перенос": 0.004761904761904762,
+     "u прочее": 0.004761904761904762,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.01904761904761905,
+     "both_wrong": 0.17142857142857143,
+     "u перенос": 0.014285714285714285,
+     "u прочее": 0.004761904761904762,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.5142857142857142,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.047619047619047616,
+     "both_wrong": 0.8952380952380953,
+     "u перенос": 0.02857142857142857,
+     "u прочее": 0.01904761904761905,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.01904761904761905,
+     "both_wrong": 0.7380952380952381,
+     "u перенос": 0.014285714285714285,
+     "u прочее": 0.004761904761904762,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.07142857142857142,
+     "both_wrong": 0.7238095238095238,
+     "u перенос": 0.0380952380952381,
+     "u прочее": 0.03333333333333333,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.004761904761904762,
+     "both_wrong": 0.5380952380952381,
+     "u перенос": 0.0,
+     "u прочее": 0.004761904761904762,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.009523809523809525,
+     "both_wrong": 0.43333333333333335,
+     "u перенос": 0.009523809523809525,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.004761904761904762,
+     "both_wrong": 0.42857142857142855,
+     "u перенос": 0.004761904761904762,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.004761904761904762,
+     "both_wrong": 0.7761904761904762,
+     "u перенос": 0.0,
+     "u прочее": 0.004761904761904762,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.04285714285714286,
+     "both_wrong": 0.7476190476190476,
+     "u перенос": 0.01904761904761905,
+     "u прочее": 0.023809523809523808,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.06666666666666667,
+     "both_wrong": 0.6190476190476191,
+     "u перенос": 0.047619047619047616,
+     "u прочее": 0.01904761904761905,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "length",
+    "X": 99,
+    "p": 0,
+    "bound": 10000,
+    "max_new": 10
+   },
+   "n_test_ood": 1208
+  },
+  "L_X999_p0": {
+   "n_id": 174,
+   "n_ood": 226,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 148,
+     "id_wrong": 26,
+     "ood_correct": 3,
+     "ood_wrong": 223,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 4,
+     "id_wrong": 170,
+     "ood_correct": 223,
+     "ood_wrong": 3,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 161,
+     "id_wrong": 13,
+     "ood_correct": 60,
+     "ood_wrong": 166,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 27,
+     "id_wrong": 147,
+     "ood_correct": 120,
+     "ood_wrong": 106,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 140,
+     "id_wrong": 34,
+     "ood_correct": 4,
+     "ood_wrong": 222,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 46,
+     "id_wrong": 128,
+     "ood_correct": 9,
+     "ood_wrong": 217,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 97,
+     "id_wrong": 77,
+     "ood_correct": 5,
+     "ood_wrong": 221,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.8505747126436781,
+     "ood": 0.01327433628318584,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.022988505747126436,
+     "ood": 0.9867256637168141,
+     "none": 0.0
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.9252873563218391,
+     "ood": 0.26548672566371684,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.15517241379310345,
+     "ood": 0.5309734513274337,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.8045977011494253,
+     "ood": 0.017699115044247787,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.26436781609195403,
+     "ood": 0.03982300884955752,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.5574712643678161,
+     "ood": 0.022123893805309734,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.19469026548672566,
+    "C CONF": 0.7624550406628128,
+    "ioi CONF": 1.3730745096893615,
+    "brier CONF": 0.5103282291624658,
+    "ign CONF": 0.8053097345132744,
+    "dec CONF": 0.5677647751760871,
+    "T ONE-BEST": 0.26548672566371684,
+    "C ONE-BEST": 0.4689446097566895,
+    "ioi ONE-BEST": 0.9379711584292558,
+    "brier ONE-BEST": 0.2226259744238289,
+    "ign ONE-BEST": 0.7345132743362832,
+    "dec ONE-BEST": 0.20345788409297266,
+    "T FIXED": 0.01327433628318584,
+    "C FIXED": 0.5080102834483721,
+    "ioi FIXED": 1.4814616108820005,
+    "brier FIXED": 0.3204926046320569,
+    "ign FIXED": 0.9867256637168141,
+    "dec FIXED": 0.4947359471651862,
+    "T POST-IN": 0.19469026548672566,
+    "C POST-IN": 0.589653671654573,
+    "ioi POST-IN": 1.2002731406811218,
+    "brier POST-IN": 0.43321739549580596,
+    "ign POST-IN": 0.8053097345132744,
+    "dec POST-IN": 0.3949634061678474,
+    "T POST-CV": 0.19469026548672566,
+    "C POST-CV": 0.5011828796413222,
+    "ioi POST-CV": 1.111802348667871,
+    "brier POST-CV": 0.2956186667972582,
+    "ign POST-CV": 0.8053097345132744,
+    "dec POST-CV": 0.3064926141545966,
+    "wc CONF": -0.041900293522470045,
+    "T SHIFT": 0.19469026548672566,
+    "C SHIFT": 0.7205547471403426,
+    "ioi SHIFT": 1.3311742161668914,
+    "brier SHIFT": 0.4645048422965403,
+    "ign SHIFT": 0.8053097345132744,
+    "dec SHIFT": 0.525864481653617,
+    "wc ONE-BEST": -0.002144126798963142,
+    "wc FIXED": -0.0027321342037458507,
+    "wc POST": 0.007418914858675629,
+    "one_best_is_fixed": 0.0,
+    "T AGREE": 0.252212389380531,
+    "C AGREE": 0.6816692863790729,
+    "ioi AGREE": 1.177244507618011,
+    "brier AGREE": 0.36403447213393003,
+    "ign AGREE": 0.747787610619469,
+    "dec AGREE": 0.4294568969985419,
+    "T CONF (core)": 0.19469026548672566,
+    "C CONF (core)": 0.7624550406628128,
+    "ioi CONF (core)": 1.3730745096893615,
+    "brier CONF (core)": 0.5103282291624658,
+    "ign CONF (core)": 0.8053097345132744,
+    "dec CONF (core)": 0.5677647751760871,
+    "T1": 0.3064926141545966,
+    "T2": 0.06544215895013994,
+    "T3 num": 1.5605051089732016,
+    "T3 den": 3.0438917709286946,
+    "T3": 0.5126677380178631,
+    "D3": 0.4947359471651862,
+    "AGREE − CONF": -0.1958300020713506
+   },
+   "sd": {
+    "T1": 0.15116456833196498,
+    "T2": 0.17224284449680982,
+    "T3": 0.04129710789603316,
+    "D3": 0.07988211624657551,
+    "AGREE − CONF": 0.08737883968855252,
+    "wc CONF": 0.015947286501163276,
+    "wc POST": 0.011139748779918938,
+    "wc FIXED": 0.006972409804683764
+   },
+   "boot_shift": {
+    "T1": 0.034914704703506716,
+    "T2": -0.03246197721283237,
+    "T3": -0.003619400311464238,
+    "D3": -0.020594234511523313,
+    "AGREE − CONF": -0.011757198596036855,
+    "wc CONF": -0.009800590267987824,
+    "wc POST": -0.002343468018400789,
+    "wc FIXED": 0.0012292965180319276
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Qwen2.5-0.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": 0.4947359471651862,
+    "Qwen2.5-1.5B-Instruct": -0.9564226334137839,
+    "SmolLM2-1.7B-Instruct": 0.20345788409297266,
+    "Falcon3-1B-Instruct": -0.3129468473510152,
+    "OLMo-2-0425-1B-Instruct": 0.4567119544500635,
+    "SmolLM2-360M-Instruct": 0.079654535100695,
+    "TinyLlama-1.1B-Chat-v1.0": 0.32594478816428435
+   },
+   "T4": {
+    "F": 0.6415929203539823,
+    "F0": 0.4790265486725664,
+    "point": 0.1625663716814159,
+    "sd": 0.02252151908306682,
+    "F0_strata": 0.48573008849557525,
+    "point_strata": 0.15586283185840705,
+    "sd_strata": 0.02391324855504316,
+    "strata_counts": {
+     "4": 123,
+     "5": 103
+    }
+   },
+   "oracle_ood": 0.995575221238938,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Qwen2.5-1.5B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.01327433628318584,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.13716814159292035,
+     "both_wrong": 0.7300884955752213,
+     "u перенос": 0.10619469026548672,
+     "u прочее": 0.030973451327433628,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.4646017699115044,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.04424778761061947,
+     "both_wrong": 0.9690265486725663,
+     "u перенос": 0.022123893805309734,
+     "u прочее": 0.022123893805309734,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.061946902654867256,
+     "both_wrong": 0.9469026548672567,
+     "u перенос": 0.05309734513274336,
+     "u прочее": 0.008849557522123894,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.15486725663716813,
+     "both_wrong": 0.9646017699115044,
+     "u перенос": 0.01327433628318584,
+     "u прочее": 0.1415929203539823,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.008849557522123894,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.004424778761061947,
+     "both_wrong": 0.008849557522123894,
+     "u перенос": 0.004424778761061947,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.01327433628318584,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.01327433628318584,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.004424778761061947,
+     "both_wrong": 0.01327433628318584,
+     "u перенос": 0.004424778761061947,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.017699115044247787,
+     "both_wrong": 0.37610619469026546,
+     "u перенос": 0.017699115044247787,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0752212389380531,
+     "both_wrong": 0.7300884955752213,
+     "u перенос": 0.05309734513274336,
+     "u прочее": 0.022123893805309734,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.14601769911504425,
+     "both_wrong": 0.7079646017699115,
+     "u перенос": 0.1415929203539823,
+     "u прочее": 0.004424778761061947,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.1415929203539823,
+     "both_wrong": 0.7300884955752213,
+     "u перенос": 0.0752212389380531,
+     "u прочее": 0.06637168141592921,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.46017699115044247,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.01327433628318584,
+     "both_wrong": 0.4557522123893805,
+     "u перенос": 0.0,
+     "u прочее": 0.01327433628318584,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0,
+     "both_wrong": 0.4646017699115044,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.017699115044247787,
+     "both_wrong": 0.9424778761061947,
+     "u перенос": 0.008849557522123894,
+     "u прочее": 0.008849557522123894,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.08849557522123894,
+     "both_wrong": 0.9646017699115044,
+     "u перенос": 0.022123893805309734,
+     "u прочее": 0.06637168141592921,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.035398230088495575,
+     "both_wrong": 0.9380530973451328,
+     "u перенос": 0.030973451327433628,
+     "u прочее": 0.004424778761061947,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "length",
+    "X": 999,
+    "p": 0,
+    "bound": 100000,
+    "max_new": 10
+   },
+   "n_test_ood": 1206
+  },
+  "L_X9999_p0": {
+   "n_id": 196,
+   "n_ood": 204,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 144,
+     "id_wrong": 52,
+     "ood_correct": 0,
+     "ood_wrong": 204,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 10,
+     "id_wrong": 186,
+     "ood_correct": 159,
+     "ood_wrong": 45,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 187,
+     "id_wrong": 9,
+     "ood_correct": 41,
+     "ood_wrong": 163,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 137,
+     "id_wrong": 59,
+     "ood_correct": 97,
+     "ood_wrong": 107,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 91,
+     "id_wrong": 105,
+     "ood_correct": 0,
+     "ood_wrong": 204,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 101,
+     "id_wrong": 95,
+     "ood_correct": 4,
+     "ood_wrong": 200,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 80,
+     "id_wrong": 116,
+     "ood_correct": 16,
+     "ood_wrong": 188,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "Qwen2.5-1.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": true,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.7346938775510204,
+     "ood": 0.0,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.05102040816326531,
+     "ood": 0.7794117647058824,
+     "none": 0.0
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.9540816326530612,
+     "ood": 0.20098039215686275,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.6989795918367347,
+     "ood": 0.47549019607843135,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.4642857142857143,
+     "ood": 0.0,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.5153061224489796,
+     "ood": 0.0196078431372549,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.40816326530612246,
+     "ood": 0.0784313725490196,
+     "none": 0.0
+    }
+   },
+   "point": {
+    "T CONF": 0.35784313725490197,
+    "C CONF": 0.8099458054120664,
+    "ioi CONF": 1.0942595309022625,
+    "brier CONF": 0.4299083290658575,
+    "ign CONF": 0.642156862745098,
+    "dec CONF": 0.45210266815716443,
+    "T ONE-BEST": 0.20098039215686275,
+    "C ONE-BEST": 0.5114728217870341,
+    "ioi ONE-BEST": 1.1095120374733087,
+    "brier ONE-BEST": 0.2849669445311844,
+    "ign ONE-BEST": 0.7990196078431373,
+    "dec ONE-BEST": 0.3104924296301714,
+    "T FIXED": 0.0,
+    "C FIXED": 0.49697640328866766,
+    "ioi FIXED": 1.4969764032886677,
+    "brier FIXED": 0.30476872211358835,
+    "ign FIXED": 1.0,
+    "dec FIXED": 0.49697640328866766,
+    "T POST-IN": 0.35784313725490197,
+    "C POST-IN": 0.585351787773933,
+    "ioi POST-IN": 0.8696655132641291,
+    "brier POST-IN": 0.34689308249251255,
+    "ign POST-IN": 0.642156862745098,
+    "dec POST-IN": 0.22750865051903107,
+    "T POST-CV": 0.35784313725490197,
+    "C POST-CV": 0.45920655118619164,
+    "ioi POST-CV": 0.7435202766763876,
+    "brier POST-CV": 0.3928813052602461,
+    "ign POST-CV": 0.642156862745098,
+    "dec POST-CV": 0.10136341393128967,
+    "wc CONF": -0.05085045516510023,
+    "T SHIFT": 0.35784313725490197,
+    "C SHIFT": 0.759095350246966,
+    "ioi SHIFT": 1.043409075737162,
+    "brier SHIFT": 0.38651484494205923,
+    "ign SHIFT": 0.642156862745098,
+    "dec SHIFT": 0.401252212992064,
+    "wc ONE-BEST": -0.0014817841567520418,
+    "wc FIXED": 0.002563629530820344,
+    "wc POST": 0.004798528929454204,
+    "one_best_is_fixed": 0.0,
+    "T AGREE": 0.28921568627450983,
+    "C AGREE": 0.7293482207697892,
+    "ioi AGREE": 1.1509168482207695,
+    "brier AGREE": 0.45992154758445153,
+    "ign AGREE": 0.7107843137254901,
+    "dec AGREE": 0.4401325344952794,
+    "T CONF (core)": 0.35784313725490197,
+    "C CONF (core)": 0.8099458054120664,
+    "ioi CONF (core)": 1.0942595309022625,
+    "brier CONF (core)": 0.4299083290658575,
+    "ign CONF (core)": 0.642156862745098,
+    "dec CONF (core)": 0.45210266815716443,
+    "T1": 0.10136341393128967,
+    "T2": 0.4073965715443818,
+    "T3 num": 1.5147460485061433,
+    "T3 den": 2.777511004401761,
+    "T3": 0.5453609530639464,
+    "D3": 0.49697640328866766,
+    "AGREE − CONF": 0.05665731731850698
+   },
+   "sd": {
+    "T1": 0.12533448918509926,
+    "T2": 0.17397193470655864,
+    "T3": 0.04215795625341503,
+    "D3": 0.04750320387011461,
+    "AGREE − CONF": 0.14102434526113555,
+    "wc CONF": 0.014497101485085855,
+    "wc POST": 0.010178373285891898,
+    "wc FIXED": 0.008053885686836668
+   },
+   "boot_shift": {
+    "T1": 0.08858072940864914,
+    "T2": -0.05139826255463448,
+    "T3": -0.003964434914216053,
+    "D3": -0.008675184771645639,
+    "AGREE − CONF": 0.024173086299538266,
+    "wc CONF": -0.0066659581294375644,
+    "wc POST": -0.0010117024189044812,
+    "wc FIXED": -0.003620423029476917
+   },
+   "fixed_in_crowd": true,
+   "t3_heads": [
+    "Qwen2.5-0.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "OLMo-2-0425-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "ct_ood_by_head": {
+    "Qwen2.5-0.5B-Instruct": 0.49697640328866766,
+    "Qwen2.5-1.5B-Instruct": -0.6806500931930459,
+    "SmolLM2-1.7B-Instruct": 0.3104924296301714,
+    "Falcon3-1B-Instruct": 0.08270769197969996,
+    "OLMo-2-0425-1B-Instruct": 0.25726502769787923,
+    "SmolLM2-360M-Instruct": 0.3381411860725532,
+    "TinyLlama-1.1B-Chat-v1.0": 0.11187100181687173
+   },
+   "T4": {
+    "F": 0.7598039215686274,
+    "F0": 0.5692647058823528,
+    "point": 0.19053921568627463,
+    "sd": 0.026742702664684422,
+    "F0_strata": 0.5750980392156861,
+    "point_strata": 0.18470588235294128,
+    "sd_strata": 0.026223377891493784,
+    "strata_counts": {
+     "5": 99,
+     "6": 105
+    }
+   },
+   "oracle_ood": 0.946078431372549,
+   "uncond_ood": [
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Qwen2.5-1.5B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.22058823529411764,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": true
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.07352941176470588,
+     "both_wrong": 0.7990196078431373,
+     "u перенос": 0.024509803921568627,
+     "u прочее": 0.049019607843137254,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.004901960784313725,
+     "both_wrong": 0.5245098039215687,
+     "u перенос": 0.0,
+     "u прочее": 0.004901960784313725,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.049019607843137254,
+     "both_wrong": 1.0,
+     "u перенос": 0.00980392156862745,
+     "u прочее": 0.0392156862745098,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.1568627450980392,
+     "both_wrong": 0.9803921568627451,
+     "u перенос": 0.00980392156862745,
+     "u прочее": 0.14705882352941177,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-0.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.20588235294117646,
+     "both_wrong": 0.9215686274509803,
+     "u перенос": 0.014705882352941176,
+     "u прочее": 0.19117647058823528,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-1.7B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.12745098039215685,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.00980392156862745,
+     "both_wrong": 0.10784313725490197,
+     "u перенос": 0.00980392156862745,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.0,
+     "both_wrong": 0.22058823529411764,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.004901960784313725,
+     "both_wrong": 0.22058823529411764,
+     "u перенос": 0.0,
+     "u прочее": 0.004901960784313725,
+     "same_vendor": false
+    },
+    {
+     "i": "Qwen2.5-1.5B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0,
+     "both_wrong": 0.20098039215686275,
+     "u перенос": 0.0,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "Falcon3-1B-Instruct",
+     "u": 0.10294117647058823,
+     "both_wrong": 0.44607843137254904,
+     "u перенос": 0.09803921568627451,
+     "u прочее": 0.004901960784313725,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.04411764705882353,
+     "both_wrong": 0.7990196078431373,
+     "u перенос": 0.0196078431372549,
+     "u прочее": 0.024509803921568627,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.12745098039215685,
+     "both_wrong": 0.7892156862745098,
+     "u перенос": 0.058823529411764705,
+     "u прочее": 0.06862745098039216,
+     "same_vendor": true
+    },
+    {
+     "i": "SmolLM2-1.7B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.18137254901960784,
+     "both_wrong": 0.7647058823529411,
+     "u перенос": 0.07352941176470588,
+     "u прочее": 0.10784313725490197,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "OLMo-2-0425-1B-Instruct",
+     "u": 0.05392156862745098,
+     "both_wrong": 0.5245098039215687,
+     "u перенос": 0.05392156862745098,
+     "u прочее": 0.0,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.029411764705882353,
+     "both_wrong": 0.5147058823529411,
+     "u перенос": 0.014705882352941176,
+     "u прочее": 0.014705882352941176,
+     "same_vendor": false
+    },
+    {
+     "i": "Falcon3-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.024509803921568627,
+     "both_wrong": 0.49019607843137253,
+     "u перенос": 0.014705882352941176,
+     "u прочее": 0.00980392156862745,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "SmolLM2-360M-Instruct",
+     "u": 0.029411764705882353,
+     "both_wrong": 0.9803921568627451,
+     "u перенос": 0.004901960784313725,
+     "u прочее": 0.024509803921568627,
+     "same_vendor": false
+    },
+    {
+     "i": "OLMo-2-0425-1B-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.0196078431372549,
+     "both_wrong": 0.9215686274509803,
+     "u перенос": 0.004901960784313725,
+     "u прочее": 0.014705882352941176,
+     "same_vendor": false
+    },
+    {
+     "i": "SmolLM2-360M-Instruct",
+     "j": "TinyLlama-1.1B-Chat-v1.0",
+     "u": 0.14215686274509803,
+     "both_wrong": 0.9215686274509803,
+     "u перенос": 0.0392156862745098,
+     "u прочее": 0.10294117647058823,
+     "same_vendor": false
+    }
+   ],
+   "meta": {
+    "family": "length",
+    "X": 9999,
+    "p": 0,
+    "bound": 1000000,
+    "max_new": 10
+   },
+   "n_test_ood": 1200
+  },
+  "L_X99999_p0": {
+   "n_id": 197,
+   "n_ood": 203,
+   "method": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id_correct": 65,
+     "id_wrong": 132,
+     "ood_correct": 85,
+     "ood_wrong": 118,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id_correct": 2,
+     "id_wrong": 195,
+     "ood_correct": 57,
+     "ood_wrong": 146,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id_correct": 7,
+     "id_wrong": 190,
+     "ood_correct": 148,
+     "ood_wrong": 55,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "Falcon3-1B-Instruct": {
+     "id_correct": 8,
+     "id_wrong": 189,
+     "ood_correct": 60,
+     "ood_wrong": 143,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id_correct": 0,
+     "id_wrong": 197,
+     "ood_correct": 1,
+     "ood_wrong": 202,
+     "none_frac": 0.0,
+     "ok": false
+    },
+    "SmolLM2-360M-Instruct": {
+     "id_correct": 37,
+     "id_wrong": 160,
+     "ood_correct": 15,
+     "ood_wrong": 188,
+     "none_frac": 0.0,
+     "ok": true
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id_correct": 60,
+     "id_wrong": 137,
+     "ood_correct": 34,
+     "ood_wrong": 169,
+     "none_frac": 0.0,
+     "ok": true
+    }
+   },
+   "min_each": 4,
+   "crowd": [
+    "Qwen2.5-0.5B-Instruct",
+    "SmolLM2-1.7B-Instruct",
+    "Falcon3-1B-Instruct",
+    "SmolLM2-360M-Instruct",
+    "TinyLlama-1.1B-Chat-v1.0"
+   ],
+   "valid": false,
+   "acc": {
+    "Qwen2.5-0.5B-Instruct": {
+     "id": 0.3299492385786802,
+     "ood": 0.4187192118226601,
+     "none": 0.0
+    },
+    "Qwen2.5-1.5B-Instruct": {
+     "id": 0.01015228426395939,
+     "ood": 0.28078817733990147,
+     "none": 0.0
+    },
+    "SmolLM2-1.7B-Instruct": {
+     "id": 0.03553299492385787,
+     "ood": 0.729064039408867,
+     "none": 0.0
+    },
+    "Falcon3-1B-Instruct": {
+     "id": 0.04060913705583756,
+     "ood": 0.2955665024630542,
+     "none": 0.0
+    },
+    "OLMo-2-0425-1B-Instruct": {
+     "id": 0.0,
+     "ood": 0.0049261083743842365,
+     "none": 0.0
+    },
+    "SmolLM2-360M-Instruct": {
+     "id": 0.18781725888324874,
+     "ood": 0.07389162561576355,
+     "none": 0.0
+    },
+    "TinyLlama-1.1B-Chat-v1.0": {
+     "id": 0.30456852791878175,
+     "ood": 0.16748768472906403,
+     "none": 0.0
+    }
+   },
+   "meta": {
+    "family": "length",
+    "X": 99999,
+    "p": 0,
+    "bound": 10000000,
+    "max_new": 10
+   },
+   "n_test_ood": 1185
+  }
+ },
+ "head_errors": {
+  "thousands": [],
+  "length": []
+ },
+ "chosen": null,
+ "verdict": "годного семейства нет: теста нет, перепроектирование (HYPOTHESIS)",
+ "seconds": 11.8
+}

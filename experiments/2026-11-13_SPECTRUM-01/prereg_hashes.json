@@ -1,0 +1,14 @@
+{
+ "files": {
+  "../2026-10-28_SELF-02/exp_self_02.py": "011999160014582594df583688c257415947e6234d17ef4c6006eaa87df1d86b",
+  "../2026-10-27_SELF-01/exp_self_01.py": "9e78b7f01d8d64ccaa1d8dad0b6f2cc6fabbc94101127d7b8cf3f86c424b9422",
+  "spectrum01.py": "4c92c18d85b37b47cb07f7360089a0a351ef3c50a9f61fee7c2eef87ff8031d2",
+  "analyze_spectrum01.py": "b9b76e51e335a16e829a2775a70dcf2df04e7ffd892d0ef79c6662246a9cd73c",
+  "test_spectrum01.py": "d1ba0aad49933074498f730eb5d24bb4b7b017b25800b2be933288d81a63dfd3",
+  "dry_spectrum01.py": "dcd070106c5f08f4c3f36296c44e6373f77e73e25a820712de59a6f86d8172c5",
+  "power_spectrum01.py": "5dbcc274c45841f0704c8a5ed738891be81fa2e3a21c5a8b32dbd8c21a5a5745",
+  "power.json": "722d486f93fb43f9e30ab4b157903578b01e3e6db554db141913c5e7db830a23",
+  "requirements.txt": "1cda8e7849efaae54e9094d55c7a578df775689bd846dd0dee1d9cba4eaf574b",
+  "prereg_hashes.py": "0c881e618b2827ed6c075b787f1da45b2c2bbc739c50700ef1e347568116b7ff"
+ }
+}

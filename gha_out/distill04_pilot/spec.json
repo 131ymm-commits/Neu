@@ -1,0 +1,4 @@
+{"construction": {"thousands": ["/home/runner/work/Neu/Neu/gha_out/distill04_pilot/c_T_o3", "/home/runner/work/Neu/Neu/gha_out/distill04_pilot/c_T_p3", "/home/runner/work/Neu/Neu/gha_out/distill04_pilot/c_T_t3"], "length": ["/home/runner/work/Neu/Neu/gha_out/distill04_pilot/c_L_p3", "/home/runner/work/Neu/Neu/gha_out/distill04_pilot/c_L_t3"]},
+ "eval": {"test5_thousands": {"family": "thousands", "dirs": ["/home/runner/work/Neu/Neu/gha_out/distill04_pilot/t_T_5"]}, "test5_length": {"family": "length", "dirs": ["/home/runner/work/Neu/Neu/gha_out/distill04_pilot/t_L_5"]},
+          "new5_thousands": {"family": "thousands", "dirs": ["/home/runner/work/Neu/Neu/gha_out/distill04_pilot/t_T_n"]}, "new5_length": {"family": "length", "dirs": ["/home/runner/work/Neu/Neu/gha_out/distill04_pilot/t_L_n"]}},
+ "B": 200, "seed": 9940000, "m_test": {"thousands": 8, "length": 1}}

@@ -1,0 +1,37 @@
+== переменные прокси (только имена)
+нет
+== DNS
+models.github.ai -> 140.82.113.22   glb-db52c2cf8be544.github.com models.github.ai 
+api.github.com -> 140.82.114.6    api.github.com 
+models.inference.ai.azure.com -> 
+pypi.org -> 2a04:4e42:600::223 pypi.org 2a04:4e42:400::223 pypi.org 
+example.com -> 2606:4700:10::6814:179a example.com 2606:4700:10::ac42:93f3 example.com 
+== /etc/resolv.conf
+
+nameserver 127.0.0.53
+options edns0 trust-ad
+search eryogxzmxa1u1oo0v2c1amj0ie.cx.internal.cloudapp.net
+== https://models.github.ai/catalog/models (с токеном раннера)
+ip 140.82.113.22 код 200 тип text/plain байт 4
+-- начало тела: OK 
+== https://api.github.com/meta (с токеном раннера)
+ip 140.82.114.6 код 200 тип application/json; charset=utf-8 байт 253328
+-- начало тела: {   "verifiable_password_authentication": false,   "ssh_key_fingerprints": {     "SHA256_ECDSA": "p2QAMXNIC1TJYWeIOttrVc98/R1BUFWu3/LiyKgUfQM",     "SHA256_ED25
+== https://models.github.ai/ (без токена)
+ip 140.82.113.22 код 200 тип text/plain байт 4
+-- начало тела: OK 
+== https://pypi.org/simple/numpy/ (без токена)
+ip 151.101.0.223 код 200 тип text/html байт 2395376
+-- начало тела: <!DOCTYPE html> <html lang="en">   <head>     <meta name="pypi:repository-version" content="1.4"> <meta name="pypi:proje
+== https://example.com/ (без токена)
+ip 172.66.147.243 код 200 тип text/html; charset=utf-8 байт 577
+-- начало тела: <!doctype html><html lang=en><head><meta charset=utf-8><link rel=icon href=data:,><meta name=viewport content="width=dev
+== сертификат models.github.ai
+subject=CN=*.github.ai
+issuer=C=GB, O=Sectigo Limited, CN=Sectigo Public Server Authentication CA DV R36
+== сертификат api.github.com
+subject=CN=*.github.com
+issuer=C=GB, O=Sectigo Limited, CN=Sectigo Public Server Authentication CA DV E36
+== сертификат example.com
+subject=CN=example.com
+issuer=C=US, O=SSL Corporation, CN=Cloudflare TLS Issuing ECC CA 3

@@ -1,0 +1,5 @@
+[    0.1 с] источник test | выборка first | сред 1 | задач 2200 | ID 999 | OOD 1201
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   19.2 с] Qwen/Qwen2.5-1.5B-Instruct 989aa7980e4cf806f80c7fef2b1adb7bc71aa306 загружена за 15.5 с; ревизия 989aa7980e4cf806f80c7fef2b1adb7bc71aa306
+[ 2641.2 с] X6_p2 точность {'ID': 0.9099, 'OOD': 0.9759} | без числа 6 | время 2622.0 с, 1.192 с на задачу
+[ 2642.1 с] записано gha_out/ocdiv_test_qwen15_x6/answers_Qwen2.5-1.5B-Instruct.json

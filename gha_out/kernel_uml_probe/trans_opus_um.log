@@ -1,0 +1,33 @@
+[18:04:42] Configuring KUnit Kernel ...
+[18:04:42] Building KUnit Kernel ...
+Populating config with:
+$ make ARCH=um O=/home/runner/work/_temp/kbuild_um olddefconfig LLVM=1
+Building with:
+$ make all compile_commands.json scripts_gdb ARCH=um O=/home/runner/work/_temp/kbuild_um --jobs=4 LLVM=1
+[18:04:49] Starting KUnit Kernel (1/1)...
+[18:04:49] ============================================================
+Running tests with:
+$ /home/runner/work/_temp/kbuild_um/linux kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+[18:04:49] =============== rust_kernel_fmt (1 subtest) ================
+[18:04:49] [PASSED] test_ptr_formatting
+[18:04:49] ================= [PASSED] rust_kernel_fmt =================
+[18:04:49] ========== rust_spinlock_irq_condvar (1 subtest) ===========
+[18:04:49] [PASSED] spinlock_irq_condvar
+[18:04:49] ============ [PASSED] rust_spinlock_irq_condvar ============
+[18:04:49] ================= math-int_pow (1 subtest) =================
+[18:04:49] ====================== int_pow_test  =======================
+[18:04:49] [PASSED] Power of zero
+[18:04:49] [PASSED] Power of one
+[18:04:49] [PASSED] Base zero
+[18:04:49] [PASSED] Base one
+[18:04:49] [PASSED] Two squared
+[18:04:49] [PASSED] Two cubed
+[18:04:49] [PASSED] Five raised to the fifth power
+[18:04:49] [PASSED] Max base
+[18:04:49] [PASSED] Large result
+[18:04:49] ================== [PASSED] int_pow_test ===================
+[18:04:49] ================== [PASSED] math-int_pow ===================
+[18:04:49] ============================================================
+[18:04:49] Testing complete. Ran 11 tests: passed: 11
+[18:04:49] Elapsed time: 6.457s total, 0.001s configuring, 6.392s building, 0.055s running
+

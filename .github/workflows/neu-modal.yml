@@ -1,0 +1,78 @@
+# Прогоны Neu на Modal — ТОЛЬКО бесплатные кредиты (слово автора 14.11.2026: «давай модал но там только бесплатные прогоны»).
+# Задания modal_jobs/*.py запускаются из раннера GitHub командой `modal run <файл> --out modal_out/<имя>`;
+# результаты коммитятся в ту же ветку. Ключи Modal — секреты репозитория (добавляет автор в настройках GitHub;
+# в коде и в чате их нет). Без ключей workflow ничего не делает. Два способа:
+#   1) один секрет MODAL — вся строка, которую показывает Modal при создании токена
+#      («modal token set --token-id ak-… --token-secret as-… …»); части ak-… и as-… workflow находит сам (с 14.11.2026);
+#   2) два секрета MODAL_TOKEN_ID (ak-…) и MODAL_TOKEN_SECRET (as-…).
+# Только бесплатно: у аккаунта Modal нет способа оплаты (когда кредиты кончаются, задания останавливаются — по выдаче
+# поиска, docs/MODAL.md); плюс пределы времени: 60 мин на workflow, свой timeout у каждой функции.
+name: neu-modal
+on:
+  push:
+    paths: ['modal_jobs/*.py']
+permissions:
+  contents: write
+concurrency:
+  group: neu-modal-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Ключи Modal на месте?
+        id: keys
+        env:
+          S_LINE: ${{ secrets.MODAL }}
+          S_ID: ${{ secrets.MODAL_TOKEN_ID }}
+          S_SECRET: ${{ secrets.MODAL_TOKEN_SECRET }}
+        run: |
+          id="$S_ID"; sec="$S_SECRET"; src="MODAL_TOKEN_ID и MODAL_TOKEN_SECRET"
+          if [ -n "$S_LINE" ]; then
+            id=$(printf '%s' "$S_LINE" | grep -oE 'ak-[A-Za-z0-9]+' | head -n1 || true)
+            sec=$(printf '%s' "$S_LINE" | grep -oE 'as-[A-Za-z0-9]+' | head -n1 || true)
+            src="MODAL"
+          fi
+          if [ -z "$id" ] || [ -z "$sec" ]; then
+            echo "нет ключей Modal в секретах репозитория (или в секрете MODAL нет частей ak-… и as-…) — пропуск"
+            echo "ok=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "::add-mask::$id"; echo "::add-mask::$sec"
+            echo "MODAL_TOKEN_ID=$id" >> "$GITHUB_ENV"; echo "MODAL_TOKEN_SECRET=$sec" >> "$GITHUB_ENV"
+            echo "ключи найдены (секрет $src)"; echo "ok=1" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v4
+        if: steps.keys.outputs.ok == '1'
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        if: steps.keys.outputs.ok == '1'
+        with:
+          python-version: '3.12'
+      - name: Задания, изменённые в этом пуше
+        if: steps.keys.outputs.ok == '1'
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [ -z "$BEFORE" ] || [ "$BEFORE" = "0000000000000000000000000000000000000000" ]; then BEFORE="HEAD~1"; fi
+          git diff --name-only "$BEFORE" "${{ github.sha }}" -- 'modal_jobs/*.py' > changed.txt || true
+          cat changed.txt
+      - name: Прогон на Modal
+        if: steps.keys.outputs.ok == '1'
+        run: |
+          python -m pip install -q modal
+          while read -r f; do
+            [ -f "$f" ] || continue
+            n=$(basename "$f" .py)
+            mkdir -p "modal_out/$n"
+            ( set -o pipefail; modal run "$f" --out "modal_out/$n" 2>&1 | tee "modal_out/$n/log.txt" ) || echo "задание $n завершилось с ошибкой" >> "modal_out/$n/log.txt"
+          done < changed.txt
+      - name: Коммит результатов
+        if: steps.keys.outputs.ok == '1'
+        run: |
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add modal_out || true
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Прогон Modal: результаты $(tr '\n' ' ' < changed.txt)"
+          for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && break; sleep 5; done

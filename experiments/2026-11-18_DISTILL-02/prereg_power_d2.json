@@ -1,0 +1,331 @@
+{
+ "source": "gha_out/distill02_pilot3/pilot3.json",
+ "power_min": 0.2,
+ "council_descriptive": [
+  "Р2-Л",
+  "Р3-Т"
+ ],
+ "rules": {
+  "Р1-Т": {
+   "n_envs": 8,
+   "mu": 0.19715415544859763,
+   "tau": 0.04087717705772261,
+   "tau_hi": 0.083904564421229,
+   "s_pilot_rms": 0.006137596783233328,
+   "s_test": 0.006137596783233328,
+   "scale": 1.0,
+   "power": {
+    "confirm": 1.0,
+    "refute": 0.0,
+    "part_a": 1.0,
+    "part_b": 1.0,
+    "crit": 4.0293371776425015
+   },
+   "power_tau_hi": {
+    "confirm": 0.96672,
+    "refute": 0.0,
+    "part_a": 1.0,
+    "part_b": 0.96672,
+    "crit": 4.0293371776425015
+   },
+   "decisive": 1.0,
+   "decisive_tau_hi": 0.96672,
+   "source": "T_test3",
+   "m": 8,
+   "passes": true,
+   "active": true
+  },
+  "Р1-Л": {
+   "n_envs": 3,
+   "mu": 0.18399092638645378,
+   "tau": 0.07232547240915187,
+   "tau_hi": 0.45767473739244574,
+   "s_pilot_rms": 0.008609699351862841,
+   "s_test": 0.008609699351862841,
+   "scale": 1.0,
+   "power": {
+    "confirm": 0.999975,
+    "refute": 0.0,
+    "part_a": 0.999975,
+    "part_b": 0.09609,
+    "crit": 14.089047275555446
+   },
+   "power_tau_hi": {
+    "confirm": 0.74084,
+    "refute": 0.225695,
+    "part_a": 0.74084,
+    "part_b": 0.00668,
+    "crit": 14.089047275555446
+   },
+   "decisive": 0.999975,
+   "decisive_tau_hi": 0.74084,
+   "source": "L_test3",
+   "m": 3,
+   "passes": true,
+   "active": true
+  },
+  "Р1Ф-Т": {
+   "n_envs": 8,
+   "mu": 0.18428175063313657,
+   "tau": 0.026756956728512884,
+   "tau_hi": 0.05522374285881413,
+   "s_pilot_rms": 0.00517095346280195,
+   "s_test": 0.00517095346280195,
+   "scale": 1.0,
+   "power": {
+    "confirm": 1.0,
+    "refute": 0.0,
+    "part_a": 1.0,
+    "part_b": 1.0,
+    "crit": 4.0293371776425015
+   },
+   "power_tau_hi": {
+    "confirm": 0.999855,
+    "refute": 0.0,
+    "part_a": 1.0,
+    "part_b": 0.999855,
+    "crit": 4.0293371776425015
+   },
+   "decisive": 1.0,
+   "decisive_tau_hi": 0.999855,
+   "source": "T_test3",
+   "m": 8,
+   "passes": true,
+   "active": true
+  },
+  "Р1Ф-Л": {
+   "n_envs": 3,
+   "mu": 0.1549446507043846,
+   "tau": 0.057534812722057245,
+   "tau_hi": 0.3636557350770177,
+   "s_pilot_rms": 0.006236674135053361,
+   "s_test": 0.006236674135053361,
+   "scale": 1.0,
+   "power": {
+    "confirm": 0.999995,
+    "refute": 0.0,
+    "part_a": 0.999995,
+    "part_b": 0.106725,
+    "crit": 14.089047275555446
+   },
+   "power_tau_hi": {
+    "confirm": 0.75601,
+    "refute": 0.214645,
+    "part_a": 0.75601,
+    "part_b": 0.00707,
+    "crit": 14.089047275555446
+   },
+   "decisive": 0.999995,
+   "decisive_tau_hi": 0.75601,
+   "source": "L_test3",
+   "m": 3,
+   "passes": true,
+   "active": true
+  },
+  "Р2-Т": {
+   "n_envs": 8,
+   "mu": 0.2568213360387007,
+   "tau": 0.06416491907887426,
+   "tau_hi": 0.13415384148754136,
+   "s_pilot_rms": 0.01732054268892561,
+   "s_test": 0.01732054268892561,
+   "scale": 1.0,
+   "power": {
+    "confirm": 1.0,
+    "refute": 0.0,
+    "part_a": 1.0,
+    "part_b": 1.0,
+    "crit": 4.0293371776425015
+   },
+   "power_tau_hi": {
+    "confirm": 0.84606,
+    "refute": 0.0,
+    "part_a": 0.999995,
+    "part_b": 0.84606,
+    "crit": 4.0293371776425015
+   },
+   "decisive": 1.0,
+   "decisive_tau_hi": 0.84606,
+   "source": "T_test3",
+   "m": 8,
+   "passes": true,
+   "active": true
+  },
+  "Р2-Л": {
+   "n_envs": 3,
+   "mu": -0.08614095762546259,
+   "tau": 0.04608432595435937,
+   "tau_hi": 0.3043583676612409,
+   "s_pilot_rms": 0.01507578671839065,
+   "s_test": 0.01507578671839065,
+   "scale": 1.0,
+   "power": {
+    "confirm": 4.5e-05,
+    "refute": 0.98644,
+    "part_a": 4.5e-05,
+    "part_b": 0.0,
+    "crit": 14.089047275555446
+   },
+   "power_tau_hi": {
+    "confirm": 0.266615,
+    "refute": 0.63603,
+    "part_a": 0.266615,
+    "part_b": 0.001045,
+    "crit": 14.089047275555446
+   },
+   "decisive": 4.5e-05,
+   "decisive_tau_hi": 0.266615,
+   "source": "L_test3",
+   "m": 3,
+   "passes": false,
+   "active": false
+  },
+  "Р3-Т": {
+   "n_envs": 8,
+   "mu": 0.13247915253678144,
+   "tau": 0.10981849194122989,
+   "tau_hi": 0.2286254133696743,
+   "s_pilot_rms": 0.027128581444013127,
+   "s_test": 0.027128581444013127,
+   "scale": 1.0,
+   "power": {
+    "confirm": 0.352165,
+    "refute": 0.0,
+    "part_a": 0.99558,
+    "part_b": 0.352165,
+    "crit": 4.0293371776425015
+   },
+   "power_tau_hi": {
+    "confirm": 0.056565,
+    "refute": 1.5e-05,
+    "part_a": 0.90242,
+    "part_b": 0.056565,
+    "crit": 4.0293371776425015
+   },
+   "decisive": 0.352165,
+   "decisive_tau_hi": 0.05658,
+   "source": "T_test3",
+   "m": 8,
+   "passes": false,
+   "active": false
+  },
+  "Р3-Л": {
+   "n_envs": 3,
+   "mu": 0.3443489256055856,
+   "tau": 0.46211625403477063,
+   "tau_hi": 2.9182755816940134,
+   "s_pilot_rms": 0.046011238975754765,
+   "s_test": 0.046011238975754765,
+   "scale": 1.0,
+   "power": {
+    "confirm": 0.84351,
+    "refute": 0.05934,
+    "part_a": 0.84351,
+    "part_b": 0.013145,
+    "crit": 14.089047275555446
+   },
+   "power_tau_hi": {
+    "confirm": 0.564515,
+    "refute": 0.40046,
+    "part_a": 0.564515,
+    "part_b": 0.00341,
+    "crit": 14.089047275555446
+   },
+   "decisive": 0.9028499999999999,
+   "decisive_tau_hi": 0.9649749999999999,
+   "source": "L_test3",
+   "m": 3,
+   "passes": true,
+   "active": true
+  },
+  "Р4-Т": {
+   "n_envs": 4,
+   "mu": 0.16905279262380854,
+   "tau": 0.04567865848097072,
+   "tau_hi": 0.1724474544037296,
+   "s_pilot_rms": 0.007526673556044451,
+   "s_test": 0.007526673556044451,
+   "scale": 1.0,
+   "power": {
+    "confirm": 1.0,
+    "refute": 0.0,
+    "part_a": 1.0,
+    "part_b": 0.18566,
+    "crit": 14.089047275555446
+   },
+   "power_tau_hi": {
+    "confirm": 0.941935,
+    "refute": 0.03443,
+    "part_a": 0.941935,
+    "part_b": 0.01937,
+    "crit": 14.089047275555446
+   },
+   "decisive": 1.0,
+   "decisive_tau_hi": 0.941935,
+   "source": "T_transfer",
+   "m": 3,
+   "passes": true,
+   "active": false
+  },
+  "Р4Ф-Т": {
+   "n_envs": 4,
+   "mu": 0.13387430102669529,
+   "tau": 0.04615235476085012,
+   "tau_hi": 0.1733803772706961,
+   "s_pilot_rms": 0.005897913194159376,
+   "s_test": 0.005897913194159376,
+   "scale": 1.0,
+   "power": {
+    "confirm": 1.0,
+    "refute": 0.0,
+    "part_a": 1.0,
+    "part_b": 0.12147,
+    "crit": 14.089047275555446
+   },
+   "power_tau_hi": {
+    "confirm": 0.892925,
+    "refute": 0.076245,
+    "part_a": 0.892925,
+    "part_b": 0.013865,
+    "crit": 14.089047275555446
+   },
+   "decisive": 1.0,
+   "decisive_tau_hi": 0.892925,
+   "source": "T_transfer",
+   "m": 3,
+   "passes": true,
+   "active": true
+  }
+ },
+ "active": {
+  "Р1-Т": true,
+  "Р1-Л": true,
+  "Р1Ф-Т": true,
+  "Р1Ф-Л": true,
+  "Р2-Т": true,
+  "Р2-Л": false,
+  "Р3-Т": false,
+  "Р3-Л": true,
+  "Р4-Т": false,
+  "Р4Ф-Т": true
+ },
+ "r2l_calibration": {
+  "mu_m2": 0.4138590423745374,
+  "p_below": 0.9989548317685174,
+  "p_below_tau_hi": 0.6877961176828192
+ },
+ "fwer": {
+  "chosen": {
+   "n_one_sided": 6,
+   "n_two_sided": 1,
+   "false_confirm": 0.02,
+   "false_any": 0.035
+  },
+  "other_branch": {
+   "n_one_sided": 6,
+   "n_two_sided": 1,
+   "false_confirm": 0.02,
+   "false_any": 0.035
+  }
+ }
+}

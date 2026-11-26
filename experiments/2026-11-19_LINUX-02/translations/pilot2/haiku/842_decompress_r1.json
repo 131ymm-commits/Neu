@@ -1,0 +1,73 @@
+{
+ "phase": "pilot2",
+ "head": "haiku",
+ "module": "842_decompress",
+ "rep": 1,
+ "model_target": "claude-haiku-5-5",
+ "prompt_sha256": "b5d049f6fa8d5f16aefd3cd7b990ad30463bb9955bb780c0229baa09cd3f9dd3",
+ "seconds": 127.1,
+ "returncode": 0,
+ "cwd_outside_repo": true,
+ "tools_flag": "--tools \"\"",
+ "is_error": false,
+ "result": "```rust\nuse core::ffi::{c_int, c_uint};\nuse core::ptr;\n\nextern \"C\" {\n    fn crc32_be(crc: u32, p: *const u8, len: usize) -> u32;\n}\n\n// ---- Константы из 842.h ----\n\nconst OP_REPEAT: u64 = 0x1B;\nconst OP_ZEROS: u64 = 0x1C;\nconst OP_END: u64 = 0x1E;\nconst OP_SHORT_DATA: u64 = 0x1D;\n\nconst OP_BITS: u8 = 5;\nconst REPEAT_BITS: u8 = 6;\nconst SHORT_DATA_BITS: u8 = 3;\nconst I2_BITS: u8 = 8;\nconst I4_BITS: u8 = 9;\nconst I8_BITS: u8 = 8;\nconst CRC_BITS: u8 = 32;\n\nconst SHORT_DATA_BITS_MAX: u64 = 0x7;\n\nconst OP_ACTION: u8 = 0x70;\nconst OP_ACTION_INDEX: u8 = 0x10;\nconst OP_ACTION_DATA: u8 = 0x20;\nconst OP_ACTION_NOOP: u8 = 0x40;\nconst OP_AMOUNT: u8 = 0x0f;\nconst OP_AMOUNT_0: u8 = 0x00;\nconst OP_AMOUNT_2: u8 = 0x02;\nconst OP_AMOUNT_4: u8 = 0x04;\nconst OP_AMOUNT_8: u8 = 0x08;\n\nconst D2: u8 = OP_ACTION_DATA | OP_AMOUNT_2;\nconst D4: u8 = OP_ACTION_DATA | OP_AMOUNT_4;\nconst D8: u8 = OP_ACTION_DATA | OP_AMOUNT_8;\nconst I2: u8 = OP_ACTION_INDEX | OP_AMOUNT_2;\nconst I4: u8 = OP_ACTION_INDEX | OP_AMOUNT_4;\nconst I8: u8 = OP_ACTION_INDEX | OP_AMOUNT_8;\nconst N0: u8 = OP_ACTION_NOOP | OP_AMOUNT_0;\n\nconst OPS_MAX: u8 = 0x1a;\n\n// ---- Коды ошибок ----\n\nconst EINVAL: c_int = 22;\nconst ENOSPC: c_int = 28;\nconst EOVERFLOW: c_int = 75;\n\n// ---- Размеры кольцевых FIFO из 842_decompress.c ----\n\nconst I2_FIFO_SIZE: u64 = 2 * (1u64 << I2_BITS);\nconst I4_FIFO_SIZE: u64 = 4 * (1u64 << I4_BITS);\nconst I8_FIFO_SIZE: u64 = 8 * (1u64 << I8_BITS);\n\nstatic DECOMP_OPS: [[u8; 4]; 26] = [\n    [D8, N0, N0, N0],\n    [D4, D2, I2, N0],\n    [D4, I2, D2, N0],\n    [D4, I2, I2, N0],\n    [D4, I4, N0, N0],\n    [D2, I2, D4, N0],\n    [D2, I2, D2, I2],\n    [D2, I2, I2, D2],\n    [D2, I2, I2, I2],\n    [D2, I2, I4, N0],\n    [I2, D2, D4, N0],\n    [I2, D4, I2, N0],\n    [I2, D2, I2, D2],\n    [I2, D2, I2, I2],\n    [I2, D2, I4, N0],\n    [I2, I2, D4, N0],\n    [I2, I2, D2, I2],\n    [I2, I2, I2, D2],\n    [I2, I2, I2, I2],\n    [I2, I2, I4, N0],\n    [I4, D4, N0, N0],\n    [I4, D2, I2, N0],\n    [I4, I2, D2, N0],\n    [I4, I2, I2, N0],\n    [I4, I4, N0, N0],\n    [I8, N0, N0, N0],\n];\n\n#[repr(C)]\nstruct SwParam {\n    input: *const u8,\n    bit: u8,\n    ilen: u64,\n    out: *mut u8,\n    ostart: *mut u8,\n    olen: u64,\n}\n\n// ---- Вспомогательные функции ----\n\nfn round_down(x: u64, y: u64) -> u64 {\n    x & !(y - 1)\n}\n\nfn div_round_up(n: u64, d: u64) -> u64 {\n    (n + d - 1) / d\n}\n\nfn out_pos(p: &SwParam) -> u64 {\n    (p.out as usize - p.ostart as usize) as u64\n}\n\n/// SAFETY: p должен быть валиден для чтения 2 байт.\nunsafe fn read_be16(p: *const u8) -> u16 {\n    u16::from_be(ptr::read_unaligned(p as *const u16))\n}\n\n/// SAFETY: p должен быть валиден для чтения 4 байт.\nunsafe fn read_be32(p: *const u8) -> u32 {\n    u32::from_be(ptr::read_unaligned(p as *const u32))\n}\n\n/// SAFETY: p должен быть валиден для чтения 8 байт.\nunsafe fn read_be64(p: *const u8) -> u64 {\n    u64::from_be(ptr::read_unaligned(p as *const u64))\n}\n\n/// SAFETY: p должен быть валиден для записи 2 байт.\nunsafe fn write_be16(p: *mut u8, v: u16) {\n    ptr::write_unaligned(p as *mut u16, v.to_be());\n}\n\n/// SAFETY: p должен быть валиден для записи 4 байт.\nunsafe fn write_be32(p: *mut u8, v: u32) {\n    ptr::write_unaligned(p as *mut u32, v.to_be());\n}\n\n/// SAFETY: p должен быть валиден для записи 8 байт.\nunsafe fn write_be64(p: *mut u8, v: u64) {\n    ptr::write_unaligned(p as *mut u64, v.to_be());\n}\n\n// ---- Разбор битового потока ----\n\nfn split_next_bits(p: &mut SwParam, d: &mut u64, n: u8, s: u8) -> c_int {\n    let mut tmp: u64 = 0;\n\n    if n <= s {\n        return -EINVAL;\n    }\n\n    let ret = next_bits(p, &mut tmp, n - s);\n    if ret != 0 {\n        return ret;\n    }\n    let ret = next_bits(p, d, s);\n    if ret != 0 {\n        return ret;\n    }\n    *d |= tmp << s;\n    0\n}\n\nfn next_bits(p: &mut SwParam, d: &mut u64, n: u8) -> c_int {\n    let b = p.bit;\n    let bits = b.wrapping_add(n);\n\n    if n > 64 {\n        return -EINVAL;\n    }\n\n    // Разбиваем чтение, если оно больше 8 байт или вышло бы за конец входа.\n    if bits > 64 {\n        return split_next_bits(p, d, n, 32);\n    } else if p.ilen < 8 && bits > 32 && bits <= 56 {\n        return split_next_bits(p, d, n, 16);\n    } else if p.ilen < 4 && bits > 16 && bits <= 24 {\n        return split_next_bits(p, d, n, 8);\n    }\n\n    if div_round_up(bits as u64, 8) > p.ilen {\n        return -EOVERFLOW;\n    }\n\n    let inp = p.input;\n    // SAFETY: div_round_up(bits, 8) <= ilen, поэтому читается не больше ilen байт.\n    let mut val: u64 = unsafe {\n        if bits <= 8 {\n            (*inp >> (8 - bits)) as u64\n        } else if bits <= 16 {\n            (read_be16(inp) >> (16 - bits)) as u64\n        } else if bits <= 32 {\n            (read_be32(inp) >> (32 - bits)) as u64\n        } else {\n            read_be64(inp) >> (64 - bits)\n        }\n    };\n\n    let mask: u64 = if n >= 64 { u64::MAX } else { (1u64 << n) - 1 };\n    val &= mask;\n    *d = val;\n\n    p.bit += n;\n\n    if p.bit > 7 {\n        let adv = p.bit / 8;\n        // SAFETY: adv не превышает ilen (проверено выше), смещение внутри входа.\n        p.input = unsafe { p.input.add(adv as usize) };\n        p.ilen -= adv as u64;\n        p.bit %= 8;\n    }\n\n    0\n}\n\n// ---- Операции ----\n\nfn do_data(p: &mut SwParam, n: u8) -> c_int {\n    if (n as u64) > p.olen {\n        return -ENOSPC;\n    }\n\n    let mut v: u64 = 0;\n    let ret = next_bits(p, &mut v, n.wrapping_mul(8));\n    if ret != 0 {\n        return ret;\n    }\n\n    // SAFETY: n <= olen проверено, запись n байт в выходной буфер.\n    unsafe {\n        match n {\n            2 => write_be16(p.out, v as u16),\n            4 => write_be32(p.out, v as u32),\n            8 => write_be64(p.out, v),\n            _ => return -EINVAL,\n        }\n        p.out = p.out.add(n as usize);\n    }\n    p.olen -= n as u64;\n\n    0\n}\n\nfn __do_index(p: &mut SwParam, size: u8, bits: u8, fsize: u64) -> c_int {\n    let total = round_down(out_pos(p), 8);\n\n    if (size as u64) > p.olen {\n        return -ENOSPC;\n    }\n\n    let mut index: u64 = 0;\n    let ret = next_bits(p, &mut index, bits);\n    if ret != 0 {\n        return ret;\n    }\n\n    let mut offset = index * (size as u64);\n\n    // Кольцевой буфер размером fsize: корректируем смещение.\n    if total > fsize {\n        let mut section = round_down(total, fsize);\n        let pos = total - section;\n\n        if offset >= pos {\n            section -= fsize;\n        }\n\n        offset += section;\n    }\n\n    if offset + (size as u64) > total {\n        return -EINVAL;\n    }\n\n    // size всегда 2, 4 или 8 (вызывается только из do_index), поэтому\n    // WARN в оригинале не срабатывает; отладочный вывод на результат не влияет.\n\n    // SAFETY: offset + size <= total <= out - ostart, источник и приёмник не перекрываются;\n    // запись size байт в выходной буфер проверена через olen.\n    unsafe {\n        ptr::copy_nonoverlapping(p.ostart.add(offset as usize), p.out, size as usize);\n        p.out = p.out.add(size as usize);\n    }\n    p.olen -= size as u64;\n\n    0\n}\n\nfn do_index(p: &mut SwParam, n: u8) -> c_int {\n    match n {\n        2 => __do_index(p, 2, I2_BITS, I2_FIFO_SIZE),\n        4 => __do_index(p, 4, I4_BITS, I4_FIFO_SIZE),\n        8 => __do_index(p, 8, I8_BITS, I8_FIFO_SIZE),\n        _ => -EINVAL,\n    }\n}\n\nfn do_op(p: &mut SwParam, o: u8) -> c_int {\n    if o >= OPS_MAX {\n        return -EINVAL;\n    }\n\n    for i in 0..4usize {\n        let op = DECOMP_OPS[o as usize][i];\n\n        let ret = match op & OP_ACTION {\n            OP_ACTION_DATA => do_data(p, op & OP_AMOUNT),\n            OP_ACTION_INDEX => do_index(p, op & OP_AMOUNT),\n            OP_ACTION_NOOP => 0,\n            _ => return -EINVAL,\n        };\n\n        if ret != 0 {\n            return ret;\n        }\n    }\n\n    0\n}\n\n// ---- Экспортируемая функция ----\n\n#[no_mangle]\npub extern \"C\" fn sw842_decompress(\n    input: *const u8,\n    ilen: c_uint,\n    out: *mut u8,\n    olen: *mut c_uint,\n) -> c_int {\n    // SAFETY: olen указывает на допустимый unsigned int (контракт вызова из C).\n    let olen_init = unsafe { *olen } as u64;\n\n    let mut p = SwParam {\n        input,\n        bit: 0,\n        ilen: ilen as u64,\n        out,\n        ostart: out,\n        olen: olen_init,\n    };\n\n    let total = p.olen;\n\n    // SAFETY: olen валиден (см. выше).\n    unsafe {\n        *olen = 0;\n    }\n\n    let mut op: u64 = 0;\n    loop {\n        let ret = next_bits(&mut p, &mut op, OP_BITS);\n        if ret != 0 {\n            return ret;\n        }\n\n        match op {\n            OP_REPEAT => {\n                let mut rep: u64 = 0;\n                let ret = next_bits(&mut p, &mut rep, REPEAT_BITS);\n                if ret != 0 {\n                    return ret;\n                }\n\n                // Нет полного предыдущего блока.\n                if out_pos(&p) < 8 {\n                    return -EINVAL;\n                }\n\n                // Копируем rep + 1 раз.\n                rep += 1;\n\n                if rep * 8 > p.olen {\n                    return -ENOSPC;\n                }\n\n                for _ in 0..rep {\n                    // SAFETY: есть не менее 8 записанных байт перед out и 8 свободных\n                    // байт впереди; источник [out-8, out) и приёмник [out, out+8) не перекрываются.\n                    unsafe {\n                        ptr::copy_nonoverlapping(p.out.sub(8), p.out, 8);\n                        p.out = p.out.add(8);\n                    }\n                    p.olen -= 8;\n                }\n            }\n            OP_ZEROS => {\n                if 8 > p.olen {\n                    return -ENOSPC;\n                }\n\n                // SAFETY: 8 байт свободны (проверено olen).\n                unsafe {\n                    ptr::write_bytes(p.out, 0, 8);\n                    p.out = p.out.add(8);\n                }\n                p.olen -= 8;\n            }\n            OP_SHORT_DATA => {\n                let mut bytes: u64 = 0;\n                let ret = next_bits(&mut p, &mut bytes, SHORT_DATA_BITS);\n                if ret != 0 {\n                    return ret;\n                }\n\n                if bytes == 0 || bytes > SHORT_DATA_BITS_MAX {\n                    return -EINVAL;\n                }\n                if bytes > p.olen {\n                    return -ENOSPC;\n                }\n\n                while bytes > 0 {\n                    bytes -= 1;\n\n                    let mut tmp: u64 = 0;\n                    let ret = next_bits(&mut p, &mut tmp, 8);\n                    if ret != 0 {\n                        return ret;\n                    }\n\n                    // SAFETY: место для байта проверено через olen.\n                    unsafe {\n                        *p.out = tmp as u8;\n                        p.out = p.out.add(1);\n                    }\n                    p.olen -= 1;\n                }\n            }\n            OP_END => {}\n            _ => {\n                let ret = do_op(&mut p, op as u8);\n                if ret != 0 {\n                    return ret;\n                }\n            }\n        }\n\n        if op == OP_END {\n            break;\n        }\n    }\n\n    // CRC(0:31) записан сразу после шаблона END.\n    let mut crc: u64 = 0;\n    let ret = next_bits(&mut p, &mut crc, CRC_BITS);\n    if ret != 0 {\n        return ret;\n    }\n\n    let used = total - p.olen;\n\n    // SAFETY: out..out+used — уже записанные выходные данные.\n    let calc = unsafe { crc32_be(0, out as *const u8, used as usize) } as u64;\n    if crc != calc {\n        return -EINVAL;\n    }\n\n    if used > u32::MAX as u64 {\n        return -ENOSPC;\n    }\n\n    // SAFETY: olen валиден (см. выше).\n    unsafe {\n        *olen = used as c_uint;\n    }\n\n    0\n}\n```",
+ "usage": {
+  "input_tokens": 2,
+  "cache_creation_input_tokens": 10661,
+  "cache_read_input_tokens": 2366,
+  "output_tokens": 32858,
+  "output_tokens_details": {
+   "thinking_tokens": 27264
+  },
+  "server_tool_use": {
+   "web_search_requests": 0,
+   "web_fetch_requests": 0
+  },
+  "service_tier": "standard",
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 10661,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "inference_geo": "global",
+  "iterations": [
+   {
+    "input_tokens": 2,
+    "output_tokens": 32858,
+    "cache_read_input_tokens": 2366,
+    "cache_creation_input_tokens": 10661,
+    "cache_creation": {
+     "ephemeral_5m_input_tokens": 0,
+     "ephemeral_1h_input_tokens": 10661
+    },
+    "type": "message"
+   }
+  ],
+  "speed": "standard",
+  "fallback_credit": null
+ },
+ "total_cost_usd": 0.01858506,
+ "model_usage": {
+  "claude-haiku-5-5": {
+   "inputTokens": 2,
+   "outputTokens": 32858,
+   "cacheReadInputTokens": 2366,
+   "cacheCreationInputTokens": 10661,
+   "webSearchRequests": 0,
+   "costUSD": 0.01858506,
+   "contextWindow": 1000000,
+   "maxOutputTokens": 128000,
+   "thinkingTokens": 27264,
+   "cacheCreationEphemeral5mInputTokens": 0,
+   "cacheCreationEphemeral1hInputTokens": 10661,
+   "canonicalModel": "claude-haiku-5-5",
+   "provider": "firstParty",
+   "costBasis": "list"
+  }
+ },
+ "num_turns": 1,
+ "duration_ms": 125789,
+ "code_extracted": true,
+ "models_used": [
+  "claude-haiku-5-5"
+ ]
+}

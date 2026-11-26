@@ -1,0 +1,615 @@
+{
+ "inputs": {
+  "check": "/home/runner/work/Neu/Neu/gha_out/linux02_pilot/check.json",
+  "mutants_dir": "/home/runner/work/Neu/Neu/gha_out/linux02_pilot/mutants",
+  "evals": [
+   "pilot",
+   "pilot2"
+  ],
+  "phase_of": {},
+  "default_phase": "pilot2"
+ },
+ "modules": {
+  "errseq": {
+   "phase": "pilot2",
+   "conditions": {
+    "1_2_harness": true,
+    "3_truth_stronger": false,
+    "4_some_wrong": false,
+    "5_kunit_can_fail": true
+   },
+   "selected": false,
+   "translations": {
+    "haiku/errseq_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 14
+    },
+    "opus/errseq_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 14
+    },
+    "sonnet/errseq_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 14
+    }
+   },
+   "calls": {
+    "haiku/r1": {
+     "cost": 0.00433299,
+     "code": true,
+     "refused": false,
+     "output_tokens": 5579
+    },
+    "opus/r1": {
+     "cost": 0.1085218,
+     "code": true,
+     "refused": false,
+     "output_tokens": 2650
+    },
+    "sonnet/r1": {
+     "cost": 0.0449289,
+     "code": true,
+     "refused": false,
+     "output_tokens": 1744
+    }
+   },
+   "c_lines": 192,
+   "n_translations": 3,
+   "n_correct": 3,
+   "n_kunit_pass": 3,
+   "n_false_pass": 0,
+   "mutants": {
+    "phase": "pilot2",
+    "base_kind": "чистые переводы пилота",
+    "clean_bases": [
+     "haiku/errseq_r1",
+     "opus/errseq_r1",
+     "sonnet/errseq_r1"
+    ],
+    "kunit_refs": 4,
+    "exported": 4,
+    "generated": 75,
+    "stillborn": 8,
+    "not_linked": 0,
+    "harness_errors": 0,
+    "alive": 67,
+    "changed": 62,
+    "changed_killed_kunit": 43,
+    "changed_killed_main": 62,
+    "killed_kunit": 45,
+    "kunit_caught_main_missed": 2,
+    "main_killed_not_changed": 0,
+    "survived_all": 3,
+    "share_changed_killed_kunit": 0.6935483870967742,
+    "share_changed_killed_main": 1.0,
+    "share_kunit_caught_main_missed": 0.044444444444444446,
+    "timeouts": {
+     "kunit": 0,
+     "main": 0,
+     "bnd": 0,
+     "ind": 0,
+     "ibnd": 0
+    }
+   }
+  },
+  "842_decompress": {
+   "phase": "pilot2",
+   "conditions": {
+    "1_2_harness": true,
+    "3_truth_stronger": true,
+    "4_some_wrong": false,
+    "5_kunit_can_fail": true
+   },
+   "selected": false,
+   "translations": {
+    "haiku/842_decompress_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 6
+    },
+    "opus/842_decompress_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 6
+    },
+    "sonnet/842_decompress_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 6
+    }
+   },
+   "calls": {
+    "haiku/r1": {
+     "cost": 0.01858506,
+     "code": true,
+     "refused": false,
+     "output_tokens": 32858
+    },
+    "opus/r1": {
+     "cost": 0.27097180000000004,
+     "code": true,
+     "refused": false,
+     "output_tokens": 9279
+    },
+    "sonnet/r1": {
+     "cost": 0.1194183,
+     "code": true,
+     "refused": false,
+     "output_tokens": 7669
+    }
+   },
+   "c_lines": 347,
+   "n_translations": 3,
+   "n_correct": 3,
+   "n_kunit_pass": 3,
+   "n_false_pass": 0,
+   "mutants": {
+    "phase": "pilot2",
+    "base_kind": "чистые переводы пилота",
+    "clean_bases": [
+     "haiku/842_decompress_r1",
+     "opus/842_decompress_r1",
+     "sonnet/842_decompress_r1"
+    ],
+    "kunit_refs": 1,
+    "exported": 1,
+    "generated": 75,
+    "stillborn": 10,
+    "not_linked": 0,
+    "harness_errors": 0,
+    "alive": 65,
+    "changed": 52,
+    "changed_killed_kunit": 36,
+    "changed_killed_main": 52,
+    "killed_kunit": 36,
+    "kunit_caught_main_missed": 0,
+    "main_killed_not_changed": 0,
+    "survived_all": 13,
+    "share_changed_killed_kunit": 0.6923076923076923,
+    "share_changed_killed_main": 1.0,
+    "share_kunit_caught_main_missed": 0.0,
+    "timeouts": {
+     "kunit": 0,
+     "main": 0,
+     "bnd": 0,
+     "ind": 8,
+     "ibnd": 0
+    }
+   }
+  },
+  "md5": {
+   "phase": "pilot2",
+   "conditions": {
+    "1_2_harness": true,
+    "3_truth_stronger": true,
+    "4_some_wrong": false,
+    "5_kunit_can_fail": true
+   },
+   "selected": false,
+   "translations": {
+    "haiku/md5_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 11
+    },
+    "opus/md5_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 11
+    },
+    "sonnet/md5_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 11
+    }
+   },
+   "calls": {
+    "haiku/r1": {
+     "cost": 0.02360426,
+     "code": true,
+     "refused": false,
+     "output_tokens": 42192
+    },
+    "opus/r1": {
+     "cost": 3.6352797999999997,
+     "code": true,
+     "refused": false,
+     "output_tokens": 137302
+    },
+    "sonnet/r1": {
+     "cost": 0.1511863,
+     "code": true,
+     "refused": false,
+     "output_tokens": 10141
+    }
+   },
+   "c_lines": 257,
+   "n_translations": 3,
+   "n_correct": 3,
+   "n_kunit_pass": 3,
+   "n_false_pass": 0,
+   "mutants": {
+    "phase": "pilot2",
+    "base_kind": "чистые переводы пилота",
+    "clean_bases": [
+     "haiku/md5_r1",
+     "opus/md5_r1",
+     "sonnet/md5_r1"
+    ],
+    "kunit_refs": 9,
+    "exported": 10,
+    "generated": 75,
+    "stillborn": 15,
+    "not_linked": 0,
+    "harness_errors": 0,
+    "alive": 60,
+    "changed": 56,
+    "changed_killed_kunit": 56,
+    "changed_killed_main": 56,
+    "killed_kunit": 56,
+    "kunit_caught_main_missed": 0,
+    "main_killed_not_changed": 0,
+    "survived_all": 4,
+    "share_changed_killed_kunit": 1.0,
+    "share_changed_killed_main": 1.0,
+    "share_kunit_caught_main_missed": 0.0,
+    "timeouts": {
+     "kunit": 0,
+     "main": 0,
+     "bnd": 0,
+     "ind": 4,
+     "ibnd": 0
+    }
+   }
+  },
+  "random32": {
+   "phase": "pilot2",
+   "conditions": {
+    "1_2_harness": true,
+    "3_truth_stronger": true,
+    "4_some_wrong": false,
+    "5_kunit_can_fail": true
+   },
+   "selected": false,
+   "translations": {
+    "haiku/random32_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 2
+    },
+    "opus/random32_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 2
+    },
+    "sonnet/random32_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 2
+    }
+   },
+   "calls": {
+    "haiku/r1": {
+     "cost": 0.004733960000000001,
+     "code": true,
+     "refused": false,
+     "output_tokens": 7105
+    },
+    "opus/r1": {
+     "cost": 0.1252718,
+     "code": true,
+     "refused": false,
+     "output_tokens": 3942
+    },
+    "sonnet/r1": {
+     "cost": 0.0407183,
+     "code": true,
+     "refused": false,
+     "output_tokens": 1749
+    }
+   },
+   "c_lines": 125,
+   "n_translations": 3,
+   "n_correct": 3,
+   "n_kunit_pass": 3,
+   "n_false_pass": 0,
+   "mutants": {
+    "phase": "pilot2",
+    "base_kind": "чистые переводы пилота",
+    "clean_bases": [
+     "haiku/random32_r1",
+     "opus/random32_r1",
+     "sonnet/random32_r1"
+    ],
+    "kunit_refs": 2,
+    "exported": 4,
+    "generated": 75,
+    "stillborn": 12,
+    "not_linked": 0,
+    "harness_errors": 0,
+    "alive": 63,
+    "changed": 57,
+    "changed_killed_kunit": 24,
+    "changed_killed_main": 57,
+    "killed_kunit": 24,
+    "kunit_caught_main_missed": 0,
+    "main_killed_not_changed": 0,
+    "survived_all": 6,
+    "share_changed_killed_kunit": 0.42105263157894735,
+    "share_changed_killed_main": 1.0,
+    "share_kunit_caught_main_missed": 0.0,
+    "timeouts": {
+     "kunit": 0,
+     "main": 1,
+     "bnd": 3,
+     "ind": 11,
+     "ibnd": 1
+    }
+   }
+  },
+  "min_heap": {
+   "phase": "pilot2",
+   "conditions": {
+    "1_2_harness": true,
+    "3_truth_stronger": true,
+    "4_some_wrong": false,
+    "5_kunit_can_fail": false
+   },
+   "selected": false,
+   "translations": {
+    "haiku/min_heap_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 8
+    },
+    "opus/min_heap_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 8
+    },
+    "sonnet/min_heap_r1": {
+     "compiled": false,
+     "linked": false,
+     "kunit_pass": null,
+     "main_mismatches": null,
+     "bnd_mismatches": null,
+     "correct": false,
+     "kunit_failed": null,
+     "kunit_total": null
+    }
+   },
+   "calls": {
+    "haiku/r1": {
+     "cost": 0.02071506,
+     "code": true,
+     "refused": false,
+     "output_tokens": 36774
+    },
+    "opus/r1": {
+     "cost": 0.2747358,
+     "code": true,
+     "refused": false,
+     "output_tokens": 9122
+    },
+    "sonnet/r1": {
+     "cost": 0.11453630000000001,
+     "code": true,
+     "refused": false,
+     "output_tokens": 6836
+    }
+   },
+   "c_lines": 60,
+   "n_translations": 3,
+   "n_correct": 2,
+   "n_kunit_pass": 2,
+   "n_false_pass": 0,
+   "mutants": {
+    "phase": "pilot2",
+    "base_kind": "чистые переводы пилота",
+    "clean_bases": [
+     "haiku/min_heap_r1",
+     "opus/min_heap_r1"
+    ],
+    "kunit_refs": 0,
+    "exported": 10,
+    "generated": 50,
+    "stillborn": 3,
+    "not_linked": 0,
+    "harness_errors": 0,
+    "alive": 47,
+    "changed": 45,
+    "changed_killed_kunit": 0,
+    "changed_killed_main": 45,
+    "killed_kunit": 0,
+    "kunit_caught_main_missed": 0,
+    "main_killed_not_changed": 0,
+    "survived_all": 2,
+    "share_changed_killed_kunit": 0.0,
+    "share_changed_killed_main": 1.0,
+    "share_kunit_caught_main_missed": null,
+    "timeouts": {
+     "kunit": 0,
+     "main": 1,
+     "bnd": 1,
+     "ind": 19,
+     "ibnd": 1
+    }
+   }
+  },
+  "string_helpers": {
+   "phase": "pilot2",
+   "conditions": {
+    "1_2_harness": true,
+    "3_truth_stronger": true,
+    "4_some_wrong": true,
+    "5_kunit_can_fail": true
+   },
+   "selected": true,
+   "translations": {
+    "haiku/string_helpers_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 0,
+     "bnd_mismatches": 0,
+     "correct": true,
+     "kunit_failed": 0,
+     "kunit_total": 4
+    },
+    "sonnet/string_helpers_r1": {
+     "compiled": true,
+     "linked": true,
+     "kunit_pass": true,
+     "main_mismatches": 634,
+     "bnd_mismatches": 319,
+     "correct": false,
+     "kunit_failed": 0,
+     "kunit_total": 4
+    }
+   },
+   "calls": {
+    "haiku/r1": {
+     "cost": 0.03778116,
+     "code": true,
+     "refused": false,
+     "output_tokens": 68423
+    },
+    "sonnet/r1": {
+     "cost": 0.24310230000000002,
+     "code": true,
+     "refused": false,
+     "output_tokens": 17211
+    }
+   },
+   "c_lines": 918,
+   "n_translations": 2,
+   "n_correct": 1,
+   "n_kunit_pass": 2,
+   "n_false_pass": 1,
+   "mutants": {
+    "phase": "pilot2",
+    "base_kind": "чистые переводы пилота",
+    "clean_bases": [
+     "haiku/string_helpers_r1"
+    ],
+    "kunit_refs": 3,
+    "exported": 19,
+    "generated": 25,
+    "stillborn": 3,
+    "not_linked": 0,
+    "harness_errors": 0,
+    "alive": 22,
+    "changed": 20,
+    "changed_killed_kunit": 15,
+    "changed_killed_main": 20,
+    "killed_kunit": 15,
+    "kunit_caught_main_missed": 0,
+    "main_killed_not_changed": 0,
+    "survived_all": 2,
+    "share_changed_killed_kunit": 0.75,
+    "share_changed_killed_main": 1.0,
+    "share_kunit_caught_main_missed": 0.0,
+    "timeouts": {
+     "kunit": 0,
+     "main": 1,
+     "bnd": 1,
+     "ind": 2,
+     "ibnd": 1
+    }
+   }
+  }
+ },
+ "selected": [
+  "string_helpers"
+ ],
+ "test_possible": false,
+ "note": "в тест проходит меньше двух модулей — тест в этом виде не ставится: решение по слову автора, с докладом",
+ "pilot": {
+  "calls": 17,
+  "translations": 17,
+  "refused": 0,
+  "correct": 15,
+  "kunit_pass": 16,
+  "false_pass": 1,
+  "cost_usd_by_phase": {
+   "pilot": 4.9088,
+   "pilot2": 5.2384
+  },
+  "cost_usd_used_calls": 5.2384,
+  "c_lines_called": 4779,
+  "cost_per_c_line": 0.001096
+ }
+}

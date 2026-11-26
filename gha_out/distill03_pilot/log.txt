@@ -1,0 +1,17 @@
+версии: python 3.13.18 numpy 2.5.3
+✓ все одинаковы: форма не своя (p > 0,05) — D -0.00005, p 0.5972
+✓ вклад входа у формы с наклоном > 0 — 0.0117
+провалов: 0 []
+собрано: test2, семейство thousands: голов 7, ошибок 0, сред 5 → /home/runner/work/Neu/Neu/gha_out/distill03_pilot/c_T_o3/answers.json
+собрано: pilot3, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill03_pilot/c_T_p3/answers.json
+собрано: test3, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill03_pilot/c_T_t3/answers.json
+собрано: pilot3, семейство length: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill03_pilot/c_L_p3/answers.json
+собрано: test3, семейство length: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill03_pilot/c_L_t3/answers.json
+собрано: test5, семейство thousands: голов 7, ошибок 0, сред 8 → /home/runner/work/Neu/Neu/gha_out/distill03_pilot/t_T_5/answers.json
+собрано: test5, семейство length: голов 7, ошибок 0, сред 3 → /home/runner/work/Neu/Neu/gha_out/distill03_pilot/t_L_5/answers.json
+сборки: 7 с
+thousands | совпадение с DISTILL-02: {'Qwen2.5-0.5B-Instruct': True, 'Qwen2.5-1.5B-Instruct': True, 'SmolLM2-1.7B-Instruct': True, 'Falcon3-1B-Instruct': True, 'OLMo-2-0425-1B-Instruct': True, 'SmolLM2-360M-Instruct': True, 'TinyLlama-1.1B-Chat-v1.0': True}
+length | совпадение с DISTILL-02: {'Qwen2.5-0.5B-Instruct': True, 'Qwen2.5-1.5B-Instruct': True, 'SmolLM2-1.7B-Instruct': True, 'Falcon3-1B-Instruct': True, 'OLMo-2-0425-1B-Instruct': True, 'SmolLM2-360M-Instruct': True, 'TinyLlama-1.1B-Chat-v1.0': True}
+thousands prog | сред 1 | D = 0.7869 | p = 0.0002 | ранг 1 из 5040
+thousands shape | сред 1 | D = 0.13 | p = 0.0002 | ранг 1 из 5040
+всего: 28 с

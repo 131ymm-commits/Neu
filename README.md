@@ -15,7 +15,7 @@ python3 experiments/2026-10-07_SELECT-01/check_final.py
 Скрипт строит из данных 65 чисел и фраз отчёта и ищет их в тексте: `проверено фраз: 65; не найдено: 0`.
 
 **Как присоединиться.**
-- План «открытых весов» и первые задачи — `docs/2026-10-19_community_linux.md`. Лицензия MIT.
+- План «открытых весов» и первые задачи — `docs/2026-10-19_community_linux.md`. Лицензия MIT; исключение — копии файлов ядра Linux и их переводы в `experiments/2026-11-17_LINUX-01/` (лицензии ядра, см. `LICENSES.md` там).
 - Вопросы и возражения — в Issues, по-русски или по-английски. Рабочий язык репозитория — русский.
 - Связанные проекты автора: Основание (Foundation-1.3) — сеть без центра, где судья — жизнь выпускников; Баланс (balance-github) — рекомендатель, которого нельзя купить.
 
@@ -32,7 +32,7 @@ python3 experiments/2026-10-07_SELECT-01/check_final.py
 **Check us in one second:** `python3 experiments/2026-10-07_SELECT-01/check_final.py` rebuilds 65 numbers and phrases of the report from the data.
 
 **Join:**
-- The "open scales" plan — `docs/2026-10-19_community_linux.md` (Russian for now). MIT license.
+- The "open scales" plan — `docs/2026-10-19_community_linux.md` (Russian for now). MIT license, except the Linux kernel file copies and their translations in `experiments/2026-11-17_LINUX-01/` (kernel licenses, see `LICENSES.md` there).
 - Issues welcome in English or Russian.
 
 ---

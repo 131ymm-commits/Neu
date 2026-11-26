@@ -1,0 +1,14 @@
+D1 {'kind': 'sign', 'mu': 0.1873, 'tau': 0.0581, 's_test': 0.0152, 'n_pilot': 600.0, 'n_test': 2200.0, 'power_confirm': 0.0, 'power_refute': 1.0, 'power_confirm_tau_s': 0.0, 'power_refute_tau_s': 1.0, 'power_confirm_guard': 0.0, 'power_refute_guard': 1.0}
+D1 adj (описательно) {'kind': 'sign', 'mu': -0.3748, 'tau': 0.1862, 's_test': 0.0647, 'n_pilot': 600.0, 'n_test': 2200.0, 'power_confirm': 0.9996, 'power_refute': 0.0, 'power_confirm_tau_s': 1.0, 'power_refute_tau_s': 0.0, 'power_confirm_guard': 0.9995, 'power_refute_guard': 0.0}
+D2 {'kind': 'sign', 'mu': -0.0204, 'tau': 0.0059, 's_test': 0.0046, 'n_pilot': 275.7, 'n_test': 1004.6, 'power_confirm': 1.0, 'power_refute': 0.0, 'power_confirm_tau_s': 1.0, 'power_refute_tau_s': 0.0, 'power_confirm_guard': 1.0, 'power_refute_guard': 0.0}
+D3 {'kind': 'equiv_out', 'mu': -0.0012, 'tau': 0.0, 's_test': 0.0134, 'n_pilot': 324.3, 'n_test': 1195.4, 'power_confirm': 0.0, 'power_refute': 0.4035, 'power_confirm_tau_s': 0.0, 'power_refute_tau_s': 0.2947}
+D4 {'kind': 'equiv', 'mu': 0.001, 'tau': 0.0, 's_test': 0.0034, 'n_pilot': 275.7, 'n_test': 1004.6, 'power_confirm': 1.0, 'power_refute': 0.0, 'power_confirm_tau_s': 1.0, 'power_refute_tau_s': 0.0}
+D5 {'kind': 'sign', 'mu': 0.0008, 'tau': 0.0113, 's_test': 0.0128, 'n_pilot': 324.3, 'n_test': 1195.4, 'power_confirm': 0.0134, 'power_refute': 0.023, 'power_confirm_tau_s': 0.0184, 'power_refute_tau_s': 0.03, 'power_confirm_guard': 0.0135, 'power_refute_guard': 0.023}
+N {'kind': 'equiv', 'mu': -0.0007, 'tau': 0.0, 's_test': 0.0024, 'n_pilot': 275.7, 'n_test': 1004.6, 'power_confirm': 1.0, 'power_refute': 0.0, 'power_confirm_tau_s': 1.0, 'power_refute_tau_s': 0.0}
+E1 0.95 D1 опровергнуто (Q-нов − Q-py > 0: ошибки разнородной толпы совпадают чаще, чем у шести Pythia)
+E2 0.95 D2 подтверждено (wc CONF разнородной толпы < 0: C-090 вне семейства Pythia)
+E3 0.28 D3 опровергнуто (калибровка FIXED-нов на ID переносится вне диапазона: C − T в полосе ±0,02)
+E4 0.0 D3 подтверждено (не переносится: C − T вне полосы ±0,02)
+E5 0.95 D4 подтверждено (wc POST разнородной толпы в полосе ±0,02: C-100 вне семейства Pythia)
+E6 0.95 N подтверждено (wc FIXED-нов в полосе ±0,02)
+E7 0.95 опыт определён (годны не меньше 4 сред из 5, ревизии голов совпали)

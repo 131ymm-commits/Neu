@@ -1,0 +1,5 @@
+[    0.1 с] источник test | выборка first | сред 1 | задач 2200 | ID 986 | OOD 1214
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   18.6 с] HuggingFaceTB/SmolLM2-1.7B-Instruct 31b70e2e869a7173562077fd711b654946d38674 загружена за 15.2 с; ревизия 31b70e2e869a7173562077fd711b654946d38674
+[ 3119.7 с] X5_p2 точность {'ID': 0.8306, 'OOD': 0.9209} | без числа 0 | время 3101.1 с, 1.41 с на задачу
+[ 3120.6 с] записано gha_out/ocdiv_test_smol17_x5/answers_SmolLM2-1.7B-Instruct.json

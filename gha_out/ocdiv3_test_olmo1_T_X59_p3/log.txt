@@ -1,0 +1,5 @@
+[    0.0 с] фаза test2 | сред 1 | задач 2200
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[   28.4 с] allenai/OLMo-2-0425-1B-Instruct 48d788eca847d4d7548f375ad03d3c9312f6139e загружена за 25.6 с; ревизия 48d788eca847d4d7548f375ad03d3c9312f6139e
+[ 1097.1 с] T_X59_p3 | задач 2200 | время 1068.7 с, 0.486 с на задачу
+[ 1097.6 с] записано gha_out/ocdiv3_test_olmo1_T_X59_p3/answers_OLMo-2-0425-1B-Instruct.json

@@ -1,0 +1,66 @@
+{
+ "rule": "0,95 × наименьшая из четырёх моделей шума мощность при δ = D пилота T_X19",
+ "alpha": 0.0025,
+ "rules": {
+  "АБ-П-Т": {
+   "family": "thousands",
+   "kind": "prog",
+   "power_min": 0.9825,
+   "model_min": "thousands_эмп_общий",
+   "powers": {
+    "thousands_норм_общий": 0.995,
+    "thousands_норм_независимый": 1.0,
+    "thousands_эмп_общий": 0.9825,
+    "thousands_эмп_независимый": 1.0
+   },
+   "expect": 0.9334,
+   "bits_yes": 8.62,
+   "bits_no": -5.83
+  },
+  "АБ-П-Л": {
+   "family": "length",
+   "kind": "prog",
+   "power_min": 0.9775,
+   "model_min": "length_эмп_общий",
+   "powers": {
+    "length_норм_общий": 0.9875,
+    "length_норм_независимый": 1.0,
+    "length_эмп_общий": 0.9775,
+    "length_эмп_независимый": 1.0
+   },
+   "expect": 0.9286,
+   "bits_yes": 8.61,
+   "bits_no": -5.47
+  },
+  "АБ-Ф-Т": {
+   "family": "thousands",
+   "kind": "shape",
+   "power_min": 0.5775,
+   "model_min": "thousands_эмп_общий",
+   "powers": {
+    "thousands_норм_общий": 0.595,
+    "thousands_норм_независимый": 1.0,
+    "thousands_эмп_общий": 0.5775,
+    "thousands_эмп_независимый": 1.0
+   },
+   "expect": 0.5486,
+   "bits_yes": 7.85,
+   "bits_no": -1.24
+  },
+  "АБ-Ф-Л": {
+   "family": "length",
+   "kind": "shape",
+   "power_min": 0.585,
+   "model_min": "length_норм_общий",
+   "powers": {
+    "length_норм_общий": 0.585,
+    "length_норм_независимый": 0.995,
+    "length_эмп_общий": 0.5925,
+    "length_эмп_независимый": 0.9875
+   },
+   "expect": 0.5557,
+   "bits_yes": 7.87,
+   "bits_no": -1.27
+  }
+ }
+}
