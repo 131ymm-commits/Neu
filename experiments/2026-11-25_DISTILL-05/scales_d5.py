@@ -32,10 +32,18 @@ HEADS = ('Falcon3-1B-Instruct', 'OLMo-2-0425-1B-Instruct', 'Qwen2.5-0.5B-Instruc
          'SmolLM2-360M-Instruct', 'TinyLlama-1.1B-Chat-v1.0')
 N_DIGITS = 5
 MIN_OTHER = 30                     # голова входит в среду, если у неё не меньше 30 «прочих» ответов
-LEVEL = 0.0025                     # на сторону; у правил по головам — LEVEL / 7 (Бонферрони по семи головам)
+LEVEL = 0.0025                     # на сторону: Р1 OLMo (главное, HYPOTHESIS П1) и Р2; шесть контрольных голов (П2) — LEVEL / 6 (Бонферрони)
 TEST_ENVS = tuple(f'T_X{x}_p3' for x in (119, 129, 149, 159, 179, 189, 199, 209))
 B_TEST, SEED = 4000, 9_950_000
-RULES_ACTIVE = None                # PREREG: записывается до регистрации (правило активности по пилоту)
+# PREREG §5–§6: правило активности по пилоту (gha_out/distill05_pilot/pilot.json; prereg_numbers_d5.py сверяет): True — решающее
+RULES_ACTIVE = {'Р1:Falcon3-1B-Instruct': False, 'Р1:OLMo-2-0425-1B-Instruct': True, 'Р1:Qwen2.5-0.5B-Instruct': False,
+                'Р1:Qwen2.5-1.5B-Instruct': False, 'Р1:SmolLM2-1.7B-Instruct': True, 'Р1:SmolLM2-360M-Instruct': False,
+                'Р1:TinyLlama-1.1B-Chat-v1.0': False, 'Р2': False}
+
+
+def level_of(key):
+    """Уровень на сторону: Р1 OLMo и Р2 — LEVEL; Р1 шести контрольных голов — LEVEL / 6."""
+    return LEVEL if key in ('Р2', f'Р1:{OLMO}') else LEVEL / 6
 
 
 def rows(items, offs_by_head):
@@ -164,24 +172,23 @@ def main(a):
     out = dict(mode=mode, code=code_hashes(), B=B, seed=SEED, level=LEVEL, min_other=MIN_OTHER,
                envs={k: dict(env=v['env'], n=v['n'], shares=v['shares'], delta={h: float(v['delta'][h][0]) for h in v['delta']},
                              contrast=float(v['contrast'][0])) for k, v in M.items()})
-    lv_head = LEVEL / len(heads)
     if mode == 'pilot':
         out['power'] = {}
         for h in heads:
             pts = [float(v['delta'][h][0]) for v in M.values() if h in v['delta']]
             sds = [float(np.nanstd(v['delta'][h][1:], ddof=1)) for v in M.values() if h in v['delta']]
-            out['power'][f'Р1:{h}'] = power(pts, sds, len(TEST_ENVS), lv_head)
+            out['power'][f'Р1:{h}'] = power(pts, sds, len(TEST_ENVS), level_of(f'Р1:{h}'))
         pts = [float(v['contrast'][0]) for v in M.values()]
         sds = [float(np.nanstd(v['contrast'][1:], ddof=1)) for v in M.values()]
-        out['power']['Р2'] = power(pts, sds, len(TEST_ENVS), LEVEL)
+        out['power']['Р2'] = power(pts, sds, len(TEST_ENVS), level_of('Р2'))
         for k, v in out['power'].items():
             print(k, {kk: (round(vv, 4) if isinstance(vv, float) else vv) for kk, vv in (v or {}).items()}, flush=True)
     else:
         out['rules'] = {}
         for h in heads:
-            e = rule({n: float(M[n]['delta'][h][0]) for n in M}, {n: M[n]['delta'][h][1:] for n in M}, lv_head)
+            e = rule({n: float(M[n]['delta'][h][0]) for n in M}, {n: M[n]['delta'][h][1:] for n in M}, level_of(f'Р1:{h}'))
             out['rules'][f'Р1:{h}'] = dict(e, active=bool(RULES_ACTIVE.get(f'Р1:{h}', True)))
-        e = rule({n: float(M[n]['contrast'][0]) for n in M}, {n: M[n]['contrast'][1:] for n in M}, LEVEL)
+        e = rule({n: float(M[n]['contrast'][0]) for n in M}, {n: M[n]['contrast'][1:] for n in M}, level_of('Р2'))
         out['rules']['Р2'] = dict(e, active=bool(RULES_ACTIVE.get('Р2', True)))
         for k, v in out['rules'].items():
             print(k, '|', v['verdict'], '| среднее', round(v.get('mean', float('nan')), 4), flush=True)
