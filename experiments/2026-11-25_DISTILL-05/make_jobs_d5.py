@@ -3,7 +3,8 @@
 """DISTILL-05: шаблоны заданий (процессор раннера, без ключей). Шаблоны — в jobs/ (в хешах регистрации); в gha_par/ их копируют только при
 запуске, в ходе по уведомлению.
   python3 make_jobs_d5.py test --dir DIR    — 56 заданий: 7 голов × 8 сред test7 (по 1100 свежих задач) и 2 повтора на детерминизм
-  python3 make_jobs_d5.py pilot --dir DIR   — пилот на уже виденных пятизначных суммах (new5 DISTILL-02, L_X99 построения)"""
+  python3 make_jobs_d5.py pilot --dir DIR   — пилот на уже виденных пятизначных суммах (new5 DISTILL-02, L_X99 построения)
+  python3 make_jobs_d5.py pilot2 --dir DIR  — пилот 2 (совет 80): те же данные, три варианта меры, мощность Δ* на слое без переноса"""
 import os
 import sys
 
@@ -77,8 +78,8 @@ def main():
             nm, env = allj[i]
             out.append(write(f'distill05_rep_{KEY[nm]}_{env}', f'повтор задания distill05_test_{KEY[nm]}_{env} на другом раннере (детерминизм, описательно)',
                              extract(nm, env), dst))
-    elif mode == 'pilot':
-        out.append(write('distill05_pilot', 'пилот (описательно, до PREREG): доли масштабов «прочих» смещений по головам на уже виденных пятизначных '
+    elif mode in ('pilot', 'pilot2'):
+        out.append(write('distill05_pilot' if mode == 'pilot' else 'distill05_pilot2', 'пилот (описательно, до PREREG): доли масштабов «прочих» смещений по головам на уже виденных пятизначных '
                          'суммах (new5 DISTILL-02, L_X99 построения), мощность правил для 8 сред теста', PILOT, dst))
     else:
         raise SystemExit(__doc__)

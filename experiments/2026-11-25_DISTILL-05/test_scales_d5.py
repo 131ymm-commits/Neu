@@ -38,6 +38,12 @@ def head_offs(rng, its, kind, p_err=0.5):
             out.append(0)
             continue
         k = int(rng.integers(2, 7)) * (1 if rng.random() < 0.5 else -1)
+        if kind == 'm100':                                        # совет 80, правка 3: все ошибки — ровно −100 (подпись «соседнего куска»)
+            out.append(-100)
+            continue
+        if kind == 'mixed':                                       # 60 % ошибок — −100, 40 % — масштаб 10
+            out.append(-100 if rng.random() < 0.6 else k * 10)
+            continue
         q = {'chunk': 0.8, 'tens': 0.2, 'mix': 0.5}[kind]          # доля масштаба 100; остальное — масштаб 10 (разброс по средам не нулевой)
         sc = 100 if rng.random() < q else 10
         out.append(k * sc)
@@ -48,39 +54,54 @@ def world(seed, olmo_kind, other_kind):
     rng = np.random.default_rng(seed)
     envs = {}
     for x in (119, 129, 149, 159, 179, 189, 199, 209):
-        its = items(rng, x, 300)
+        its = items(rng, x, 600)
         envs[f'T_X{x}_p3'] = dict(items=its, offs={h: head_offs(rng, its, olmo_kind if h == S.OLMO else other_kind) for h in S.HEADS})
     return envs
 
 
 def run(envs):
-    orig = (S.D2.load_merged, S.D2.env_table, S.RULES_ACTIVE)
+    orig = (S.D2.load_merged, S.D2.env_table, S.RULES_ACTIVE, S.DECISIVE)
     try:
         S.D2.load_merged = lambda d: envs
         S.D2.env_table = lambda e, heads=None, with_logp=False: (e['items'], e['offs'])
-        S.RULES_ACTIVE = {}
+        S.RULES_ACTIVE, S.DECISIVE = {}, 'star'
         tmp = tempfile.mkdtemp()
         json.dump({'sets': {'t': ['x']}, 'B': 300}, open(os.path.join(tmp, 's.json'), 'w'))
         S.main(['test', os.path.join(tmp, 'o.json'), os.path.join(tmp, 's.json')])
         return json.load(open(os.path.join(tmp, 'o.json')))
     finally:
-        S.D2.load_merged, S.D2.env_table, S.RULES_ACTIVE = orig
+        S.D2.load_merged, S.D2.env_table, S.RULES_ACTIVE, S.DECISIVE = orig
 
 
 def main():
     a = run(world(1, 'chunk', 'tens'))
-    v = {k: r['verdict'] for k, r in a['rules'].items()}
+    v = {k: r['verdict'] for k, r in a['rules']['star'].items()}
     check('положительный контроль: у OLMo-заглушки ошибки в разряде сотен — Р1 OLMo «больше»', v[f'Р1:{S.OLMO}'] == 'больше', v[f'Р1:{S.OLMO}'])
     check('отрицательный контроль: у шести голов ошибки в разряде десятков — Р1 «меньше» у всех шести',
           all(v[f'Р1:{h}'] == 'меньше' for h in S.HEADS if h != S.OLMO), str({h[:6]: v[f'Р1:{h}'] for h in S.HEADS}))
     check('контраст: доля сотен у OLMo выше, чем у шести — Р2 «больше»', v['Р2'] == 'больше', v['Р2'])
     b = run(world(2, 'mix', 'mix'))
-    vb = {k: r['verdict'] for k, r in b['rules'].items()}
+    vb = {k: r['verdict'] for k, r in b['rules']['star'].items()}
     check('нуль: сотни и десятки поровну у всех — Р1 «не решено» у всех семи, Р2 «не решено»',
           all(vb[f'Р1:{h}'] == 'не решено' for h in S.HEADS) and vb['Р2'] == 'не решено', str(vb))
     c = run(world(3, 'tens', 'tens'))
-    check('OLMo как все (десятки) — Р1 OLMo «меньше», Р2 «не решено»', c['rules'][f'Р1:{S.OLMO}']['verdict'] == 'меньше' and c['rules']['Р2']['verdict'] == 'не решено',
-          f"{c['rules'][f'Р1:{S.OLMO}']['verdict']}, {c['rules']['Р2']['verdict']}")
+    cs = c['rules']['star']
+    check('OLMo как все (десятки) — Р1 OLMo «меньше», Р2 «не решено»', cs[f'Р1:{S.OLMO}']['verdict'] == 'меньше' and cs['Р2']['verdict'] == 'не решено',
+          f"{cs[f'Р1:{S.OLMO}']['verdict']}, {cs['Р2']['verdict']}")
+    # совет 80, правка 3: смещение прежней меры (−100 уходит в потерю переноса при переносе в сотни) и его отсутствие на слое
+    mx = run(world(4, 'mixed', 'tens'))
+    vo, vs = mx['rules']['old'][f'Р1:{S.OLMO}']['verdict'], mx['rules']['star'][f'Р1:{S.OLMO}']['verdict']
+    check('заглушка 60 % −100 / 40 % десятков: прежняя Δ OLMo «меньше», Δ* на слое «больше»', vo == 'меньше' and vs == 'больше', f'Δ: {vo}; Δ*: {vs}')
+    w100 = world(5, 'm100', 'tens')
+    import explore_d4 as XE
+    lost = [XE.classify(it, d) == 'lost' for e in w100.values() for it, d in zip(e['items'], e['offs'][S.OLMO]) if d != 0]
+    carry2 = [2 in XE.carry_positions(it['a'], it['b']) for e in w100.values() for it, d in zip(e['items'], e['offs'][S.OLMO]) if d != 0]
+    m1 = run(w100)
+    r_old, r_star = m1['rules']['old'][f'Р1:{S.OLMO}'], m1['rules']['star'][f'Р1:{S.OLMO}']
+    check('заглушка «все ошибки OLMo = −100»: в потерю переноса уходят ровно ошибки задач с переносом в сотни', lost == carry2,
+          f'доля в потерю переноса {np.mean(lost):.3f}')
+    print(f"ℹ заглушка «все ошибки OLMo = −100»: прежняя Δ — {r_old['verdict']} (среднее {r_old.get('mean', float('nan')):+.3f}); "
+          f"Δ* на слое — {r_star['verdict']} (среднее {r_star.get('mean', float('nan')):+.3f})", flush=True)
     p_hi = S.power([0.5, 0.45, 0.55, 0.5, 0.52], [0.02] * 5, 8, S.LEVEL / 7)
     p_0 = S.power([0.01, -0.02, 0.0, 0.02, -0.01], [0.02] * 5, 8, S.LEVEL / 7)
     check('мощность: большой эффект — решающая ≈ 1; нулевой — малая', p_hi['decisive'] > 0.99 and p_0['decisive'] < 0.01,

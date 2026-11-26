@@ -7,6 +7,9 @@
   предсказывает Δ > 0: первый кусок пятизначной суммы кончается разрядом сотен. Контраст C = s100(OLMo) − среднее s100 шести голов.
   Интервал среды — бутстреп по задачам (строки одни для всех голов); правило по средам — часть А (M4 среднего сред: точка ± z · ст. откл.
   повторов среднего) и часть Б (t по средам против t(1 − уровень; m − 1)), как distill02.family_rule, но с уровнем как параметром.
+  Варианты меры (совет 80): 'star' — решающая Δ* на слое без переноса в разряды 1 и 2 (там −10 и −100 попадают в «прочие» одинаково);
+  'old' — прежняя Δ по всем пятизначным суммам (−100 уходит в потерю переноса при переносе в сотни: s100 занижена, Δ смещена к «меньше»);
+  'all' — Δ по всем неверным числовым ответам, вместе с потерей переноса (описательно). Решающий вариант — DECISIVE (константа PREREG).
   python3 scales_d5.py pilot ВЫХОД.json SPEC.json   — уже виденные пятизначные суммы: меры, мощность для 8 сред теста
   python3 scales_d5.py test ВЫХОД.json SPEC.json    — тест (константы PREREG)
 SPEC: {"sets": {имя: [папки сборок]}}; учитываются только задачи с пятизначной суммой."""
@@ -36,6 +39,7 @@ LEVEL = 0.0025                     # на сторону: Р1 OLMo (главно
 TEST_ENVS = tuple(f'T_X{x}_p3' for x in (119, 129, 149, 159, 179, 189, 199, 209))
 B_TEST, SEED = 4000, 9_950_000
 # PREREG §5–§6: правило активности по пилоту (gha_out/distill05_pilot/pilot.json; prereg_numbers_d5.py сверяет): True — решающее
+DECISIVE = None                    # PREREG §4: 'star' или 'old' — по правилу выбора меры (prereg_numbers_d5.py)
 RULES_ACTIVE = {'Р1:Falcon3-1B-Instruct': False, 'Р1:OLMo-2-0425-1B-Instruct': True, 'Р1:Qwen2.5-0.5B-Instruct': False,
                 'Р1:Qwen2.5-1.5B-Instruct': False, 'Р1:SmolLM2-1.7B-Instruct': True, 'Р1:SmolLM2-360M-Instruct': False,
                 'Р1:TinyLlama-1.1B-Chat-v1.0': False, 'Р2': False}
@@ -46,17 +50,27 @@ def level_of(key):
     return LEVEL if key in ('Р2', f'Р1:{OLMO}') else LEVEL / 6
 
 
-def rows(items, offs_by_head):
-    """Задачи с пятизначной суммой; по головам — метка «прочий» и масштаб смещения (−1 — не «прочий»)."""
-    keep = [i for i, it in enumerate(items) if len(str(it['sum'])) == N_DIGITS]
+VARIANTS = ('star', 'old', 'all')
+
+
+def in_stratum(it):
+    """Слой без переноса в разряды десятков и сотен (совет 80): задаётся только по (a, b)."""
+    return not (set(XE.carry_positions(it['a'], it['b'])) & {1, 2})
+
+
+def rows(items, offs_by_head, variant='old'):
+    """Задачи с пятизначной суммой (у 'star' — только слой без переноса); по головам — метка ответа меры («прочий»; у 'all' — любой
+    неверный числовой) и масштаб смещения (−1 — не входит)."""
+    keep = [i for i, it in enumerate(items) if len(str(it['sum'])) == N_DIGITS and (variant != 'star' or in_stratum(it))]
     oth = {h: np.zeros(len(keep), bool) for h in offs_by_head}
     sc = {h: np.full(len(keep), -1) for h in offs_by_head}
+    take = ('other', 'lost') if variant == 'all' else ('other',)
     for h, o in offs_by_head.items():
         for j, i in enumerate(keep):
-            if XE.classify(items[i], o[i]) == 'other':
+            if XE.classify(items[i], o[i]) in take:
                 oth[h][j] = True
                 sc[h][j] = X5.scale(o[i])
-    return dict(n=len(keep), other=oth, scale=sc)
+    return dict(n=len(keep), other=oth, scale=sc, variant=variant)
 
 
 def shares(R, W):
@@ -67,6 +81,7 @@ def shares(R, W):
         den = W @ o
         with np.errstate(invalid='ignore', divide='ignore'):
             out[h] = {k: (W @ (R['scale'][h] == k).astype(float)) / den for k in (0, 1, 2)}
+            out[h]['ge3'] = (W @ (R['scale'][h] >= 3).astype(float)) / den
         out[h]['n_other'] = den
     return out
 
@@ -79,7 +94,7 @@ def env_measures(R, B, rng, heads):
     delta = {h: (S[h][2] - S[h][1]) if R['other'][h].sum() >= MIN_OTHER else np.full(B + 1, np.nan) for h in heads}
     six = [h for h in heads if h != OLMO and R['other'][h].sum() >= MIN_OTHER]
     c = (S[OLMO][2] - np.mean([S[h][2] for h in six], axis=0)) if (R['other'][OLMO].sum() >= MIN_OTHER and six) else np.full(B + 1, np.nan)
-    sh = {h: {str(k): float(S[h][k][0]) for k in (0, 1, 2)} | dict(n_other=int(R['other'][h].sum())) for h in heads}
+    sh = {h: {str(k): float(S[h][k][0]) for k in (0, 1, 2)} | dict(ge3=float(S[h]['ge3'][0]), n_other=int(R['other'][h].sum())) for h in heads}
     return dict(delta={h: v for h, v in delta.items()}, contrast=c, shares=sh)
 
 
@@ -142,17 +157,27 @@ def code_hashes():
 
 
 def measure_sets(spec, B, heads):
+    """По каждой среде и варианту меры: точка и повторы бутстрепа (свой поток зёрен на вариант: ключ «набор:среда:номер:вариант»)."""
     res = {}
     for name, dirs in spec['sets'].items():
         for k, (en, env) in enumerate(load(dirs)):
             items, offs = D2.env_table(env)
-            R = rows(items, {h: offs[h] for h in heads if h in offs})
-            if R['n'] == 0:
-                continue
+            hv = {h: offs[h] for h in heads if h in offs}
             key = f'{name}:{en}:{k}'
-            rng = np.random.default_rng([SEED, int.from_bytes(key.encode(), 'little') % (2 ** 32)])
-            res[key] = dict(env=en, n=R['n'], **env_measures(R, B, rng, [h for h in heads if h in R['other']]))
+            var = {}
+            for v in VARIANTS:
+                R = rows(items, hv, v)
+                if R['n'] == 0:
+                    continue
+                rng = np.random.default_rng([SEED, int.from_bytes(f'{key}:{v}'.encode(), 'little') % (2 ** 32)])
+                var[v] = dict(n=R['n'], **env_measures(R, B, rng, [h for h in heads if h in R['other']]))
+            if var:
+                res[key] = dict(env=en, **var)
     return res
+
+
+def env_view(v):
+    return dict(n=v['n'], shares=v['shares'], delta={h: float(v['delta'][h][0]) for h in v['delta']}, contrast=float(v['contrast'][0]))
 
 
 def main(a):
@@ -160,7 +185,7 @@ def main(a):
     mode, dst, spec = a[0], a[1], json.load(open(a[2], encoding='utf-8'))
     heads = list(HEADS)
     if mode == 'test':
-        assert RULES_ACTIVE is not None, 'константы PREREG не записаны: анализ теста не идёт'
+        assert RULES_ACTIVE is not None and DECISIVE in ('star', 'old'), 'константы PREREG не записаны: анализ теста не идёт'
     B = int(spec.get('B', B_TEST if mode == 'test' else 400))
     M = measure_sets(spec, B, heads)
     if mode == 'test':
@@ -169,29 +194,32 @@ def main(a):
         assert not miss, f'в тесте нет сред: {miss}'
         assert len(names) == len(M), 'одна среда теста дважды'
         M = {n: M[names[n]] for n in TEST_ENVS}
-    out = dict(mode=mode, code=code_hashes(), B=B, seed=SEED, level=LEVEL, min_other=MIN_OTHER,
-               envs={k: dict(env=v['env'], n=v['n'], shares=v['shares'], delta={h: float(v['delta'][h][0]) for h in v['delta']},
-                             contrast=float(v['contrast'][0])) for k, v in M.items()})
+    out = dict(mode=mode, code=code_hashes(), B=B, seed=SEED, level=LEVEL, min_other=MIN_OTHER, decisive=DECISIVE,
+               envs={k: dict(env=v['env'], **{var: env_view(v[var]) for var in VARIANTS if var in v}) for k, v in M.items()})
+    keys = [f'Р1:{h}' for h in heads] + ['Р2']
+
+    def series(var, key):
+        pick = (lambda x: x['contrast']) if key == 'Р2' else (lambda x: x['delta'].get(key[3:]))
+        return {n: pick(v[var]) for n, v in M.items() if var in v and pick(v[var]) is not None}
     if mode == 'pilot':
         out['power'] = {}
-        for h in heads:
-            pts = [float(v['delta'][h][0]) for v in M.values() if h in v['delta']]
-            sds = [float(np.nanstd(v['delta'][h][1:], ddof=1)) for v in M.values() if h in v['delta']]
-            out['power'][f'Р1:{h}'] = power(pts, sds, len(TEST_ENVS), level_of(f'Р1:{h}'))
-        pts = [float(v['contrast'][0]) for v in M.values()]
-        sds = [float(np.nanstd(v['contrast'][1:], ddof=1)) for v in M.values()]
-        out['power']['Р2'] = power(pts, sds, len(TEST_ENVS), level_of('Р2'))
-        for k, v in out['power'].items():
-            print(k, {kk: (round(vv, 4) if isinstance(vv, float) else vv) for kk, vv in (v or {}).items()}, flush=True)
+        for var in ('star', 'old'):
+            out['power'][var] = {}
+            for key in keys:
+                ser = series(var, key)
+                out['power'][var][key] = power([float(x[0]) for x in ser.values()], [float(np.nanstd(x[1:], ddof=1)) for x in ser.values()],
+                                               len(TEST_ENVS), level_of(key))
+                e = out['power'][var][key]
+                print(var, key, {kk: (round(vv, 4) if isinstance(vv, float) else vv) for kk, vv in (e or {}).items()}, flush=True)
     else:
         out['rules'] = {}
-        for h in heads:
-            e = rule({n: float(M[n]['delta'][h][0]) for n in M}, {n: M[n]['delta'][h][1:] for n in M}, level_of(f'Р1:{h}'))
-            out['rules'][f'Р1:{h}'] = dict(e, active=bool(RULES_ACTIVE.get(f'Р1:{h}', True)))
-        e = rule({n: float(M[n]['contrast'][0]) for n in M}, {n: M[n]['contrast'][1:] for n in M}, level_of('Р2'))
-        out['rules']['Р2'] = dict(e, active=bool(RULES_ACTIVE.get('Р2', True)))
-        for k, v in out['rules'].items():
-            print(k, '|', v['verdict'], '| среднее', round(v.get('mean', float('nan')), 4), flush=True)
+        for var in VARIANTS:
+            out['rules'][var] = {}
+            for key in keys:
+                ser = series(var, key)
+                e = rule({n: float(x[0]) for n, x in ser.items()}, {n: x[1:] for n, x in ser.items()}, level_of(key))
+                out['rules'][var][key] = dict(e, active=bool(var == DECISIVE and RULES_ACTIVE.get(key, True)))
+                print(var, key, '|', e['verdict'], '| среднее', round(e.get('mean', float('nan')), 4), flush=True)
     out['seconds'] = round(time.time() - t0, 1)
     json.dump(out, open(dst, 'w', encoding='utf-8'), ensure_ascii=False, indent=1, default=float)
     return 0
