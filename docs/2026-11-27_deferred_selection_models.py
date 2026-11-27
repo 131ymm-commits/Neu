@@ -1,0 +1,180 @@
+"""Модели к docs/2026-11-27_deferred_selection_models.md («Отсрочка отбора: модели и предсказания»).
+Это проверка вывода формул вторым способом и расчёт чисел, а не опыт: стохастическая модель в разделе М3 —
+та же модель, что и формула, только со случайностью. Входные числа из мира помечены [сн.] (сниппет) или [пам.] (по памяти).
+Запуск: python3 docs/2026-11-27_deferred_selection_models.py — пишет docs/2026-11-27_deferred_selection_models.json."""
+import json, math, os
+import numpy as np
+
+out = {}
+
+# ───────────────────────── М1. Длина щита ─────────────────────────
+# Ученик копит умение Q(tau) = (1 − exp(−tau/theta))^k, потом пользуется им. Каждый год ожидания стоит h = mu + r
+# (риск не дожить + цена отсрочки). Максимум ln Q(tau) − h·tau:  tau* = theta · ln(1 + k / (h·theta)).
+def tau_star(theta, k, h):
+    return theta * math.log(1 + k / (h * theta))
+
+def tau_numeric(theta, k, h):          # второй способ: прямой поиск максимума золотым сечением
+    f = lambda t: k * math.log(1 - math.exp(-t / theta)) - h * t
+    lo, hi = 1e-9, 200 * theta + 200 / h
+    g = (math.sqrt(5) - 1) / 2
+    c, d = hi - g * (hi - lo), lo + g * (hi - lo)
+    for _ in range(400):
+        if f(c) > f(d): hi, d = d, c; c = hi - g * (hi - lo)
+        else: lo, c = c, d; d = lo + g * (hi - lo)
+    return (lo + hi) / 2
+
+rng = np.random.default_rng(1)
+worst = 0.0
+for _ in range(200):
+    th, k, h = 10 ** rng.uniform(-1, 2), 10 ** rng.uniform(-0.5, 0.7), 10 ** rng.uniform(-3, 0)
+    a, b = tau_star(th, k, h), tau_numeric(th, k, h)
+    worst = max(worst, abs(a - b) / a)
+out['M1_check_max_rel_error_200_random'] = float(f'{worst:.2e}')
+
+def alphaM(y, k):                      # безразмерное произведение «возраст зрелости × риск»: tau*·h = y·ln(1 + k/y), y = h·theta
+    return y * math.log(1 + k / y)
+def share(y, k):                       # доля предельной «длины» (умения до возведения в степень k), набранная к зрелости
+    return k / (k + y)
+def y_from_alphaM(target, k):          # обратная задача: какая «опасность × объём учёбы» даёт наблюдаемое произведение
+    lo, hi = 1e-9, 1e6
+    for _ in range(300):
+        mid = math.sqrt(lo * hi)
+        lo, hi = (mid, hi) if alphaM(mid, k) < target else (lo, mid)
+    return math.sqrt(lo * hi)
+
+out['M1_invariants'] = {
+    'fish_k3_y1.5': dict(alphaM=round(alphaM(1.5, 3), 3), length_share_at_maturity=round(share(1.5, 3), 3),
+                         note='k = 3 (плодовитость ~ длина^3), y = M/K = 1,5; сравнить: Beverton–Holt/Jensen 1996 — 1,65 и 0,66 [пам.]'),
+    'limit_y_to_infinity_k1': 1.0,
+    'k1_y1': dict(alphaM=round(alphaM(1, 1), 3), share=round(share(1, 1), 3)),
+    'k1_y0.1': dict(alphaM=round(alphaM(0.1, 1), 3), share=round(share(0.1, 1), 3)),
+}
+obs = {   # наблюдаемые произведения alpha·M
+    'mammals_typical': 1 / 1.43,                 # [сн.] Charnov: E/alpha ≈ 1,43 у млекопитающих → alpha·M ≈ 0,70
+    'orangutan': 0.28, 'gorilla': 0.21,          # [сн.] таблица из работы по инвариантам Чарнова
+    'human_foragers_low': 15 * 0.010,            # [сн.] смертность взрослых собирателей 1–1,5 % в год; возраст зрелости 15–19 [пам.]
+    'human_foragers_high': 19 * 0.015,
+}
+out['M1_fit_k1'] = {n: dict(alphaM=round(v, 3), y=round(y_from_alphaM(v, 1), 3), share_learned=round(share(y_from_alphaM(v, 1), 1), 2))
+                    for n, v in obs.items()}
+def elasticity(y, k): return -(k / (y + k)) / math.log(1 + k / y)
+out['M1_elasticity_of_childhood_to_hazard'] = {f'y={y}': round(elasticity(y, 1), 2) for y in (0.05, 0.1, 0.3, 1, 3, 10)}
+out['M1_childhood_ratio_when_hazard_doubles'] = {f'y={y}': round(math.log(1 + 1 / (2 * y)) / math.log(1 + 1 / y), 2) for y in (0.1, 1, 10)}
+
+# ───────────────────────── М2. Число × вложение ─────────────────────────
+# Родитель делит запас R на n потомков: n·(I0 + I) = R, I0 — неизбежная цена одного, I — вложение в умение.
+# Максимум n·Q(I), Q(I) = 1 − exp(−I/theta):  exp(u) = 1 + iota + u,  u = I/theta, iota = I0/theta.
+def u_star(iota):
+    lo, hi = 1e-12, 50.0
+    for _ in range(300):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if math.exp(mid) - mid < 1 + iota else (lo, mid)
+    return (lo + hi) / 2
+def n_numeric(theta, I0, R=1000.0):    # второй способ: перебор по сетке
+    best = max(((R / (I0 + I)) * (1 - math.exp(-I / theta)), I) for I in np.linspace(1e-6, 60 * theta, 600001))
+    return best[1]
+chk = []
+for theta, I0 in ((1, 1), (5, 1), (20, 1), (5, 10)):
+    I_closed = u_star(I0 / theta) * theta
+    chk.append(abs(I_closed - n_numeric(theta, I0)) / I_closed)
+out['M2_check_max_rel_error'] = float(f'{max(chk):.1e}')
+out['M2_number_vs_learning_scale'] = []
+for theta in (1, 2, 4, 8, 16, 32):     # I0 = 1 закреплено: во сколько раз падает число потомков, когда учиться приходится дольше
+    u = u_star(1 / theta); I = u * theta
+    out['M2_number_vs_learning_scale'].append(dict(theta=theta, investment=round(I, 2), number_rel=round(100 / (1 + I), 1),
+                                                  quality=round(1 - math.exp(-u), 3)))
+
+# ───────────────────────── М3. Экзамен ─────────────────────────
+# Доля усилий x идёт на показатель без пользы для дела. Правда T = a·(1 − x). Показатель P = a·(1 − x) + b·phi(x),
+# phi(x) = (1 − exp(−lam·x))/lam (дыры кончаются). Раунд с вероятностью q оценивает экзамен (сила отбора bT, по T),
+# иначе — показатель (сила bP, по P). Средний градиент логарифма приспособленности по x равен нулю при
+#   phi'(x*) = (a/b)·(1 + S·q/(1 − q)),  S = bT/bP;   обман исчезает при  q/(1 − q) >= G/S,  G = (b − a)/a.
+def q_star(G, S): return G / (G + S)
+def x_star(q, a, b, lam, S):
+    if q >= 1: return 0.0
+    v = (b / a) / (1 + S * q / (1 - q))
+    return min(1.0, max(0.0, math.log(v) / lam)) if v > 1 else 0.0
+def phi(x, lam): return (1 - math.exp(-lam * x)) / lam
+
+def simulate(q, a, b, lam, bP, bT, N=4000, gens=4000, sd=0.02, seed=0):
+    """Та же модель со случайностью: N особей, отбор пропорционален exp(сила × оценка), мутации доли x."""
+    r = np.random.default_rng(seed)
+    x = np.full(N, 0.3)
+    acc = []
+    for g in range(gens):
+        T = a * (1 - x)
+        if r.random() < q: w = np.exp(bT * (T - T.max()))
+        else:
+            P = T + b * (1 - np.exp(-lam * x)) / lam
+            w = np.exp(bP * (P - P.max()))
+        x = x[r.choice(N, N, p=w / w.sum())] + r.normal(0, sd, N)
+        x = np.abs(x); x = np.where(x > 1, 2 - x, x)          # отражение от границ 0 и 1
+        if g >= gens // 2: acc.append(x.mean())
+    return float(np.mean(acc))
+
+a, b, lam, bP = 1.0, 2.0, 2.0, 3.0
+out['M3_check'] = []
+for S in (1.0, 4.0):
+    qs = q_star((b - a) / a, S)
+    row = dict(S=S, q_star_formula=round(qs, 3), points=[])
+    for q in (0.0, 0.5 * qs, 0.8 * qs, qs, min(0.99, 1.3 * qs), min(0.99, 2 * qs)):
+        row['points'].append(dict(q=round(q, 3), x_formula=round(x_star(q, a, b, lam, S), 3),
+                                  x_simulated=round(simulate(q, a, b, lam, bP, S * bP, seed=int(1000 * q) + int(10 * S)), 3)))
+    out['M3_check'].append(row)
+out['M3_threshold_table'] = {f'G={G}': {f'S={S}': round(q_star(G, S), 3) for S in (0.1, 1, 10, 100)} for G in (0.1, 0.5, 1, 4, 10)}
+
+# Цена. Раунд показателя стоит 1, раунд экзамена — C. Рост настоящего умения за единицу бюджета:
+#   Pi(q) = (1 − x*(q)) · ((1 − q)·bP + q·bT) / ((1 − q) + q·C)
+# Три кандидата в оптимум: q = 0 (терпеть обман), q = q* (экзамен на пороге), q = 1 (только правда).
+#   C < S: лучше q = 1.   C > S: экзамен на пороге окупается, только если x0 > G·(C − S)/(S + G·C),
+#   где x0 = x*(0) — доля усилий, уходящая в обман без экзамена.
+def progress(q, a, b, lam, S, C, bP=1.0):
+    return (1 - x_star(q, a, b, lam, S)) * ((1 - q) * bP + q * S * bP) / ((1 - q) + q * C)
+def pays_threshold(G, S, C): return G * (C - S) / (S + G * C)
+grid = np.linspace(0, 1, 2001)
+out['M3_optimum'] = {}
+for name, (lam_, S, C) in {'дыры быстро кончаются (lam=2), экзамен дорогой (S=4, C=40)': (2.0, 4, 40),
+                            'дыры быстро кончаются (lam=2), экзамен умеренный (S=4, C=8)': (2.0, 4, 8),
+                            'дыр много (lam=0,7), экзамен дорогой (S=4, C=40)': (0.7, 4, 40),
+                            'дыр много (lam=0,7), экзамен умеренный (S=4, C=8)': (0.7, 4, 8),
+                            'экзамен дешёвый (lam=2, S=4, C=2)': (2.0, 4, 2)}.items():
+    vals = [progress(q, a, b, lam_, S, C) for q in grid]
+    G = (b - a) / a
+    out['M3_optimum'][name] = dict(x0=round(x_star(0, a, b, lam_, S), 3), q_star=round(q_star(G, S), 3),
+                                   pays_if_x0_above=(round(pays_threshold(G, S, C), 3) if C > S else 'экзамен дешевле своей силы: q = 1'),
+                                   q_best=round(float(grid[int(np.argmax(vals))]), 3),
+                                   progress_q0=round(vals[0], 3), progress_qstar=round(progress(q_star(G, S), a, b, lam_, S, C), 3), progress_q1=round(vals[-1], 3))
+# проверка правила на случайных параметрах: совпадает ли лучший q на сетке с выбором из трёх кандидатов
+r2 = np.random.default_rng(7); agree = interior = 0; n_rand = 400
+for _ in range(n_rand):
+    bb, lam_, S, C = 1 + 10 ** r2.uniform(-1, 1), 10 ** r2.uniform(-0.5, 1), 10 ** r2.uniform(-1, 2), 10 ** r2.uniform(-1, 2.5)
+    G = bb - 1; qs = q_star(G, S)
+    vals = np.array([progress(q, 1.0, bb, lam_, S, C) for q in grid]); qb = float(grid[int(np.argmax(vals))])
+    cand = {0.0: progress(0, 1.0, bb, lam_, S, C), qs: progress(qs, 1.0, bb, lam_, S, C), 1.0: progress(1, 1.0, bb, lam_, S, C)}
+    best_c = max(cand.values())
+    if vals.max() <= best_c * (1 + 1e-3): agree += 1
+    elif min(abs(qb - c) for c in cand) > 2e-3: interior += 1
+out['M3_optimum_rule_check'] = dict(random_cases=n_rand, best_is_one_of_three=agree, interior_optimum=interior)
+
+# Числа из мира для сверки с М3 (не доказательство, а проверка «не противоречит»)
+out['world_drift'] = dict(
+    ussr_indicator_drift_per_year=round(math.log(90 / 6.9) / (1989 - 1928), 4),   # [сн., отчёт Neu 09.10]: официально ×90, по Ханину ×6,9 за 1928–1989
+    autocracy_gdp_growth_overstatement=0.35,                                       # [сн.] Martinez 2022
+    us_gpa_drift_per_year=round((3.36 - 3.17) / (2021 - 2010), 4),                 # [сн.] ACT: средний балл 3,17 → 3,36 при падении ACT 21,0 → 20,3
+    swe_bench_tests_minus_merge_pp=24,                                             # [сн.] METR, март 2026
+)
+
+# ───────────────────────── Пороги и мощность знаковых проверок (к PREREG-DEFER-01) ─────────────────────────
+def binom_tail(n, k, p):               # P(X >= k)
+    return sum(math.comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(k, n + 1))
+def threshold(n, alpha=0.01):
+    return next(k for k in range(n + 1) if binom_tail(n, k, 0.5) <= alpha)
+out['sign_test'] = {}
+for n in (40, 50, 60, 100, 120):
+    k = threshold(n)
+    out['sign_test'][n] = dict(k=k, false_level=round(binom_tail(n, k, 0.5), 4),
+                               power={p: round(binom_tail(n, k, p), 2) for p in (0.6, 0.65, 0.7, 0.75, 0.8)})
+
+p = os.path.join(os.path.dirname(os.path.abspath(__file__)), '2026-11-27_deferred_selection_models.json')
+json.dump(out, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+print(json.dumps(out, ensure_ascii=False, indent=1))

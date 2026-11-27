@@ -1,0 +1,319 @@
+{
+ "M1_check_max_rel_error_200_random": 9.34e-08,
+ "M1_invariants": {
+  "fish_k3_y1.5": {
+   "alphaM": 1.648,
+   "length_share_at_maturity": 0.667,
+   "note": "k = 3 (плодовитость ~ длина^3), y = M/K = 1,5; сравнить: Beverton–Holt/Jensen 1996 — 1,65 и 0,66 [пам.]"
+  },
+  "limit_y_to_infinity_k1": 1.0,
+  "k1_y1": {
+   "alphaM": 0.693,
+   "share": 0.5
+  },
+  "k1_y0.1": {
+   "alphaM": 0.24,
+   "share": 0.909
+  }
+ },
+ "M1_fit_k1": {
+  "mammals_typical": {
+   "alphaM": 0.699,
+   "y": 1.033,
+   "share_learned": 0.49
+  },
+  "orangutan": {
+   "alphaM": 0.28,
+   "y": 0.129,
+   "share_learned": 0.89
+  },
+  "gorilla": {
+   "alphaM": 0.21,
+   "y": 0.081,
+   "share_learned": 0.93
+  },
+  "human_foragers_low": {
+   "alphaM": 0.15,
+   "y": 0.049,
+   "share_learned": 0.95
+  },
+  "human_foragers_high": {
+   "alphaM": 0.285,
+   "y": 0.133,
+   "share_learned": 0.88
+  }
+ },
+ "M1_elasticity_of_childhood_to_hazard": {
+  "y=0.05": -0.31,
+  "y=0.1": -0.38,
+  "y=0.3": -0.52,
+  "y=1": -0.72,
+  "y=3": -0.87,
+  "y=10": -0.95
+ },
+ "M1_childhood_ratio_when_hazard_doubles": {
+  "y=0.1": 0.75,
+  "y=1": 0.58,
+  "y=10": 0.51
+ },
+ "M2_check_max_rel_error": 8.7e-05,
+ "M2_number_vs_learning_scale": [
+  {
+   "theta": 1,
+   "investment": 1.15,
+   "number_rel": 46.6,
+   "quality": 0.682
+  },
+  {
+   "theta": 2,
+   "investment": 1.72,
+   "number_rel": 36.8,
+   "quality": 0.576
+  },
+  {
+   "theta": 4,
+   "investment": 2.53,
+   "number_rel": 28.3,
+   "quality": 0.469
+  },
+  {
+   "theta": 8,
+   "investment": 3.69,
+   "number_rel": 21.3,
+   "quality": 0.37
+  },
+  {
+   "theta": 16,
+   "investment": 5.34,
+   "number_rel": 15.8,
+   "quality": 0.284
+  },
+  {
+   "theta": 32,
+   "investment": 7.68,
+   "number_rel": 11.5,
+   "quality": 0.213
+  }
+ ],
+ "M3_check": [
+  {
+   "S": 1.0,
+   "q_star_formula": 0.5,
+   "points": [
+    {
+     "q": 0.0,
+     "x_formula": 0.347,
+     "x_simulated": 0.351
+    },
+    {
+     "q": 0.25,
+     "x_formula": 0.203,
+     "x_simulated": 0.198
+    },
+    {
+     "q": 0.4,
+     "x_formula": 0.091,
+     "x_simulated": 0.12
+    },
+    {
+     "q": 0.5,
+     "x_formula": 0.0,
+     "x_simulated": 0.078
+    },
+    {
+     "q": 0.65,
+     "x_formula": 0.0,
+     "x_simulated": 0.06
+    },
+    {
+     "q": 0.99,
+     "x_formula": 0.0,
+     "x_simulated": 0.043
+    }
+   ]
+  },
+  {
+   "S": 4.0,
+   "q_star_formula": 0.2,
+   "points": [
+    {
+     "q": 0.0,
+     "x_formula": 0.347,
+     "x_simulated": 0.353
+    },
+    {
+     "q": 0.1,
+     "x_formula": 0.163,
+     "x_simulated": 0.177
+    },
+    {
+     "q": 0.16,
+     "x_formula": 0.063,
+     "x_simulated": 0.114
+    },
+    {
+     "q": 0.2,
+     "x_formula": 0.0,
+     "x_simulated": 0.086
+    },
+    {
+     "q": 0.26,
+     "x_formula": 0.0,
+     "x_simulated": 0.064
+    },
+    {
+     "q": 0.4,
+     "x_formula": 0.0,
+     "x_simulated": 0.045
+    }
+   ]
+  }
+ ],
+ "M3_threshold_table": {
+  "G=0.1": {
+   "S=0.1": 0.5,
+   "S=1": 0.091,
+   "S=10": 0.01,
+   "S=100": 0.001
+  },
+  "G=0.5": {
+   "S=0.1": 0.833,
+   "S=1": 0.333,
+   "S=10": 0.048,
+   "S=100": 0.005
+  },
+  "G=1": {
+   "S=0.1": 0.909,
+   "S=1": 0.5,
+   "S=10": 0.091,
+   "S=100": 0.01
+  },
+  "G=4": {
+   "S=0.1": 0.976,
+   "S=1": 0.8,
+   "S=10": 0.286,
+   "S=100": 0.038
+  },
+  "G=10": {
+   "S=0.1": 0.99,
+   "S=1": 0.909,
+   "S=10": 0.5,
+   "S=100": 0.091
+  }
+ },
+ "M3_optimum": {
+  "дыры быстро кончаются (lam=2), экзамен дорогой (S=4, C=40)": {
+   "x0": 0.347,
+   "q_star": 0.2,
+   "pays_if_x0_above": 0.818,
+   "q_best": 0.0,
+   "progress_q0": 0.653,
+   "progress_qstar": 0.182,
+   "progress_q1": 0.1
+  },
+  "дыры быстро кончаются (lam=2), экзамен умеренный (S=4, C=8)": {
+   "x0": 0.347,
+   "q_star": 0.2,
+   "pays_if_x0_above": 0.333,
+   "q_best": 0.2,
+   "progress_q0": 0.653,
+   "progress_qstar": 0.667,
+   "progress_q1": 0.5
+  },
+  "дыр много (lam=0,7), экзамен дорогой (S=4, C=40)": {
+   "x0": 0.99,
+   "q_star": 0.2,
+   "pays_if_x0_above": 0.818,
+   "q_best": 0.2,
+   "progress_q0": 0.01,
+   "progress_qstar": 0.182,
+   "progress_q1": 0.1
+  },
+  "дыр много (lam=0,7), экзамен умеренный (S=4, C=8)": {
+   "x0": 0.99,
+   "q_star": 0.2,
+   "pays_if_x0_above": 0.333,
+   "q_best": 0.2,
+   "progress_q0": 0.01,
+   "progress_qstar": 0.667,
+   "progress_q1": 0.5
+  },
+  "экзамен дешёвый (lam=2, S=4, C=2)": {
+   "x0": 0.347,
+   "q_star": 0.2,
+   "pays_if_x0_above": "экзамен дешевле своей силы: q = 1",
+   "q_best": 1.0,
+   "progress_q0": 0.653,
+   "progress_qstar": 1.333,
+   "progress_q1": 2.0
+  }
+ },
+ "M3_optimum_rule_check": {
+  "random_cases": 400,
+  "best_is_one_of_three": 400,
+  "interior_optimum": 0
+ },
+ "world_drift": {
+  "ussr_indicator_drift_per_year": 0.0421,
+  "autocracy_gdp_growth_overstatement": 0.35,
+  "us_gpa_drift_per_year": 0.0173,
+  "swe_bench_tests_minus_merge_pp": 24
+ },
+ "sign_test": {
+  "40": {
+   "k": 28,
+   "false_level": 0.0083,
+   "power": {
+    "0.6": 0.13,
+    "0.65": 0.31,
+    "0.7": 0.58,
+    "0.75": 0.82,
+    "0.8": 0.96
+   }
+  },
+  "50": {
+   "k": 34,
+   "false_level": 0.0077,
+   "power": {
+    "0.6": 0.16,
+    "0.65": 0.39,
+    "0.7": 0.68,
+    "0.75": 0.9,
+    "0.8": 0.99
+   }
+  },
+  "60": {
+   "k": 40,
+   "false_level": 0.0067,
+   "power": {
+    "0.6": 0.18,
+    "0.65": 0.45,
+    "0.7": 0.76,
+    "0.75": 0.95,
+    "0.8": 1.0
+   }
+  },
+  "100": {
+   "k": 63,
+   "false_level": 0.006,
+   "power": {
+    "0.6": 0.31,
+    "0.65": 0.7,
+    "0.7": 0.95,
+    "0.75": 1.0,
+    "0.8": 1.0
+   }
+  },
+  "120": {
+   "k": 74,
+   "false_level": 0.0067,
+   "power": {
+    "0.6": 0.39,
+    "0.65": 0.81,
+    "0.7": 0.98,
+    "0.75": 1.0,
+    "0.8": 1.0
+   }
+  }
+ }
+}
