@@ -310,6 +310,254 @@
   "sign_matches_F_gt_c_over_B": 1990,
   "sign_matches_odds_form": 1739
  },
+ "M3_rank_selection": {
+  "note": "доля обмана x: формула (отбор по величине, S = 1) против турнира; a = 1, lam = 2",
+  "rows": [
+   {
+    "q": 0.0,
+    "formula_G1": 0.347,
+    "tournament5_G1": 0.347,
+    "tournament5_G3": 0.693,
+    "exam_tournament20_proxy_tournament2_G1": 0.347
+   },
+   {
+    "q": 0.2,
+    "formula_G1": 0.235,
+    "tournament5_G1": 0.337,
+    "tournament5_G3": 0.685,
+    "exam_tournament20_proxy_tournament2_G1": 0.249
+   },
+   {
+    "q": 0.35,
+    "formula_G1": 0.131,
+    "tournament5_G1": 0.314,
+    "tournament5_G3": 0.659,
+    "exam_tournament20_proxy_tournament2_G1": 0.052
+   },
+   {
+    "q": 0.45,
+    "formula_G1": 0.048,
+    "tournament5_G1": 0.251,
+    "tournament5_G3": 0.558,
+    "exam_tournament20_proxy_tournament2_G1": 0.033
+   },
+   {
+    "q": 0.55,
+    "formula_G1": 0.0,
+    "tournament5_G1": 0.133,
+    "tournament5_G3": 0.201,
+    "exam_tournament20_proxy_tournament2_G1": 0.027
+   },
+   {
+    "q": 0.7,
+    "formula_G1": 0.0,
+    "tournament5_G1": 0.037,
+    "tournament5_G3": 0.039,
+    "exam_tournament20_proxy_tournament2_G1": 0.021
+   }
+  ],
+  "formula_threshold": {
+   "G1_S1": 0.5,
+   "G3_S1": 0.75
+  }
+ },
+ "M3_check_all_points_abs_error": [
+  {
+   "S": 1.0,
+   "q": 0.0,
+   "formula": 0.347,
+   "simulated": 0.351,
+   "error": 0.004
+  },
+  {
+   "S": 1.0,
+   "q": 0.25,
+   "formula": 0.203,
+   "simulated": 0.198,
+   "error": -0.005
+  },
+  {
+   "S": 1.0,
+   "q": 0.4,
+   "formula": 0.091,
+   "simulated": 0.12,
+   "error": 0.029
+  },
+  {
+   "S": 1.0,
+   "q": 0.5,
+   "formula": 0.0,
+   "simulated": 0.078,
+   "error": 0.078
+  },
+  {
+   "S": 1.0,
+   "q": 0.65,
+   "formula": 0.0,
+   "simulated": 0.06,
+   "error": 0.06
+  },
+  {
+   "S": 1.0,
+   "q": 0.99,
+   "formula": 0.0,
+   "simulated": 0.043,
+   "error": 0.043
+  },
+  {
+   "S": 4.0,
+   "q": 0.0,
+   "formula": 0.347,
+   "simulated": 0.353,
+   "error": 0.006
+  },
+  {
+   "S": 4.0,
+   "q": 0.1,
+   "formula": 0.163,
+   "simulated": 0.177,
+   "error": 0.014
+  },
+  {
+   "S": 4.0,
+   "q": 0.16,
+   "formula": 0.063,
+   "simulated": 0.114,
+   "error": 0.051
+  },
+  {
+   "S": 4.0,
+   "q": 0.2,
+   "formula": 0.0,
+   "simulated": 0.086,
+   "error": 0.086
+  },
+  {
+   "S": 4.0,
+   "q": 0.26,
+   "formula": 0.0,
+   "simulated": 0.064,
+   "error": 0.064
+  },
+  {
+   "S": 4.0,
+   "q": 0.4,
+   "formula": 0.0,
+   "simulated": 0.045,
+   "error": 0.045
+  }
+ ],
+ "M3_mixture": {
+  "G=1": {
+   "exact": [
+    0.75,
+    0.5,
+    0.0
+   ],
+   "formula": [
+    0.75,
+    0.5,
+    0.0
+   ]
+  },
+  "G=3": {
+   "exact": [
+    0.833,
+    0.667,
+    0.333
+   ],
+   "formula": [
+    0.833,
+    0.667,
+    0.333
+   ]
+  },
+  "G=10": {
+   "exact": [
+    0.875,
+    0.75,
+    0.473
+   ],
+   "formula": [
+    0.863,
+    0.725,
+    0.45
+   ]
+  },
+  "upper_bound_1_minus_q": [
+   0.875,
+   0.75,
+   0.5
+  ]
+ },
+ "selection_on_proxy_raw": [
+  {
+   "rho": 0.9,
+   "top_share": 0.01,
+   "raw_formula": 0.563,
+   "raw_simulated": 0.562,
+   "standardized_formula": 0.267,
+   "calibrated_claim_simulated": -0.001
+  },
+  {
+   "rho": 0.5,
+   "top_share": 0.01,
+   "raw_formula": 3.998,
+   "raw_simulated": 3.997,
+   "standardized_formula": 1.333,
+   "calibrated_claim_simulated": -0.001
+  }
+ ],
+ "M1_euler_lotka": [
+  {
+   "adult_mortality": 0.05,
+   "tau_max_r": 8.01,
+   "r": 0.101,
+   "formula_h_juvenile_plus_r": 8.01,
+   "formula_h_juvenile_plus_adult": 9.73
+  },
+  {
+   "adult_mortality": 0.1,
+   "tau_max_r": 8.62,
+   "r": 0.08,
+   "formula_h_juvenile_plus_r": 8.62,
+   "formula_h_juvenile_plus_adult": 8.05
+  },
+  {
+   "adult_mortality": 0.2,
+   "tau_max_r": 9.88,
+   "r": 0.046,
+   "formula_h_juvenile_plus_r": 9.88,
+   "formula_h_juvenile_plus_adult": 6.12
+  },
+  {
+   "adult_mortality": 0.4,
+   "tau_max_r": 12.62,
+   "r": 0.002,
+   "formula_h_juvenile_plus_r": 12.62,
+   "formula_h_juvenile_plus_adult": 4.24
+  }
+ ],
+ "M2_help_into_fixed_cost": [
+  {
+   "theta": 16,
+   "I0": 1.0,
+   "investment": 5.34,
+   "number_rel": 15.8
+  },
+  {
+   "theta": 16,
+   "I0": 0.5,
+   "investment": 3.84,
+   "number_rel": 23.0
+  },
+  {
+   "theta": 16,
+   "I0": 0.25,
+   "investment": 2.75,
+   "number_rel": 33.4
+  }
+ ],
  "sign_test": {
   "40": {
    "k": 28,

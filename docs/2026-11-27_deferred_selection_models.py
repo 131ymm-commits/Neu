@@ -195,6 +195,63 @@ out['world_drift']['ussr_by_truth_estimate'] = dict(
     ofer_factor=round(1.042 ** 61, 1))
 out['world_drift']['olken_share_left_at_full_audit'] = round(19.2 / 27.7, 2)   # [сн., J-PAL]: «пропажа» 27,7 → 19,2 % при аудите 4 → 100 %
 
+# ───────────────────────── Добавлено после критики, цикл 2 (замечания математика) ─────────────────────────
+# М3 при ранговом отборе (замечание 1): та же модель, но отбор — турнир. Формула порога G/S выведена для отбора по величине оценки.
+def simulate_rank(q, a, b, lam, tour=5, tour_exam=None, N=3000, gens=3000, sd=0.02, seed=0):
+    r = np.random.default_rng(seed); x = np.full(N, 0.3); acc = []
+    for g in range(gens):
+        T = a * (1 - x); exam = r.random() < q
+        sc = T if exam else T + b * (1 - np.exp(-lam * x)) / lam
+        k = (tour_exam or tour) if exam else tour
+        c = r.integers(N, size=(N, k)); idx = c[np.arange(N), np.argmax(sc[c], axis=1)]
+        x = np.abs(x[idx] + r.normal(0, sd, N)); x = np.where(x > 1, 2 - x, x)
+        if g >= gens // 2: acc.append(x.mean())
+    return float(np.mean(acc))
+out['M3_rank_selection'] = dict(note='доля обмана x: формула (отбор по величине, S = 1) против турнира; a = 1, lam = 2', rows=[])
+for q in (0.0, 0.2, 0.35, 0.45, 0.55, 0.7):
+    out['M3_rank_selection']['rows'].append(dict(q=q, formula_G1=round(x_star(q, 1.0, 2.0, 2.0, 1.0), 3),
+        tournament5_G1=round(simulate_rank(q, 1.0, 2.0, 2.0, seed=2), 3), tournament5_G3=round(simulate_rank(q, 1.0, 4.0, 2.0, seed=4), 3),
+        exam_tournament20_proxy_tournament2_G1=round(simulate_rank(q, 1.0, 2.0, 2.0, tour=2, tour_exam=20, seed=3), 3)))
+out['M3_rank_selection']['formula_threshold'] = dict(G1_S1=0.5, G3_S1=0.75)
+# М3: все точки стохастической проверки (замечание 7) — не только лучшие
+out['M3_check_all_points_abs_error'] = [dict(S=row['S'], q=p_['q'], formula=p_['x_formula'], simulated=p_['x_simulated'],
+                                             error=round(p_['x_simulated'] - p_['x_formula'], 3)) for row in out['M3_check'] for p_ in row['points']]
+# М3′ — смесь в одном показателе P' = (1 − q)·P + q·T (замечание 10): точный максимум против формулы 1 − q·(1 + G)/G
+def dilution_exact(G, q, lam=2.0, a_=1.0):
+    b_ = a_ * (1 + G); xs = np.linspace(0, 1, 200001)
+    x = xs[int(np.argmax(a_ * (1 - xs) + (1 - q) * b_ * (1 - np.exp(-lam * xs)) / lam))]
+    return (1 - q) * b_ * (1 - math.exp(-lam * x)) / lam
+out['M3_mixture'] = {f'G={G}': dict(exact=[round(dilution_exact(G, q) / dilution_exact(G, 0), 3) for q in (0.125, 0.25, 0.5)],
+                                    formula=[round(max(0.0, 1 - q * (1 + G) / G), 3) for q in (0.125, 0.25, 0.5)]) for G in (1, 3, 10)}
+out['M3_mixture']['upper_bound_1_minus_q'] = [0.875, 0.75, 0.5]
+# Самообман оценщика под отбором (замечание 5): P = T + шум, отбор верхней доли. В единицах разброса правды: (1 − rho²)·i/rho.
+def intensity(p_):
+    lo, hi = -10.0, 10.0
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if 0.5 * math.erfc(mid / math.sqrt(2)) > p_ else (lo, mid)
+    z = (lo + hi) / 2; return math.exp(-z * z / 2) / math.sqrt(2 * math.pi) / p_
+r5 = np.random.default_rng(0); T5 = r5.normal(size=2_000_000); e5 = r5.normal(size=2_000_000)
+out['selection_on_proxy_raw'] = []
+for rho in (0.9, 0.5):
+    P5 = T5 + e5 * math.sqrt((1 - rho ** 2) / rho ** 2); top = P5 >= np.quantile(P5, 0.99); i1 = intensity(0.01)
+    out['selection_on_proxy_raw'].append(dict(rho=rho, top_share=0.01, raw_formula=round((1 - rho ** 2) * i1 / rho, 3), raw_simulated=round(float(np.mean(P5[top] - T5[top])), 3),
+                                               standardized_formula=round((1 - rho) * i1, 3), calibrated_claim_simulated=round(float(np.mean(rho ** 2 * P5[top] - T5[top])), 3)))
+# М1 из уравнения Эйлера — Лотки (замечание 6): 1 = Q(tau)·exp(−(mu_j + r)·tau)/(mu_a + r); максимум r по tau → Q'/Q = mu_j + r
+def r_of(tau, theta, k, mj, ma):
+    Q = (1 - math.exp(-tau / theta)) ** k; lo, hi = -ma + 1e-9, 50.0
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if Q * math.exp(-(mj + mid) * tau) / (ma + mid) > 1 else (lo, mid)
+    return (lo + hi) / 2
+out['M1_euler_lotka'] = []
+for ma in (0.05, 0.1, 0.2, 0.4):
+    taus = np.linspace(0.5, 30, 5901); rs = [r_of(t, 5, 3, 0.05, ma) for t in taus]; j = int(np.argmax(rs))
+    out['M1_euler_lotka'].append(dict(adult_mortality=ma, tau_max_r=round(float(taus[j]), 2), r=round(rs[j], 3),
+                                      formula_h_juvenile_plus_r=round(tau_star(5, 3, 0.05 + rs[j]), 2), formula_h_juvenile_plus_adult=round(tau_star(5, 3, 0.05 + ma), 2)))
+# М2 (замечание 9): помощь, которая покрывает неизбежную цену потомка I0, снижает и оптимальное вложение
+out['M2_help_into_fixed_cost'] = [dict(theta=16, I0=I0, investment=round(u_star(I0 / 16) * 16, 2), number_rel=round(100 / (I0 + u_star(I0 / 16) * 16), 1)) for I0 in (1.0, 0.5, 0.25)]
+
 # ───────────────────────── Пороги и мощность знаковых проверок (к PREREG-DEFER-01) ─────────────────────────
 def binom_tail(n, k, p):               # P(X >= k)
     return sum(math.comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(k, n + 1))
