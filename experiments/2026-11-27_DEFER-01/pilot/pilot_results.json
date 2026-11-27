@@ -265,9 +265,8 @@
     "mean": 0.08724
    }
   },
-  "seed_level": {
+  "seed_level_descriptive": {
    "seeds": 3,
-   "verdict": "n мало",
    "mean": 0.023462962962962967
   },
   "late_gap": {
@@ -372,9 +371,8 @@
     "mean": 0.00116
    }
   },
-  "seed_level": {
+  "seed_level_descriptive": {
    "seeds": 2,
-   "verdict": "n мало",
    "mean": 0.005126388888888892
   },
   "late_gap": {

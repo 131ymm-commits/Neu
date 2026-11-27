@@ -17,6 +17,11 @@ TIE = 1e-12                                     # |разность| меньш�
 DOSES = (('MIRROR_0', 0.0), ('MIRROR_25', 0.125), ('MIRROR_50', 0.25), ('MIRROR_100', 0.5))   # q = f/2: доля свежих в наборе
 
 # ───────── чтение ─────────
+def win(v, lo, hi):
+    """Среднее по поколениям lo..hi включительно."""
+    assert 0 <= lo <= hi < len(v), (lo, hi, len(v))
+    return float(np.mean(v[lo:hi + 1]))
+
 def load(folder, arm, gens=GENS, expect=None):
     """{(задача, сид): (C, T)}; проверяет длину hist и отсутствие NaN; expect = (число задач, число сидов на задачу)."""
     runs = {}
@@ -30,17 +35,18 @@ def load(folder, arm, gens=GENS, expect=None):
         assert [x['gen'] for x in h] == list(range(gens + 1)), f'{f}: поколения не подряд'
         C = np.array([x['claimed'] for x in h], float); T = np.array([x['true'] for x in h], float)
         assert np.isfinite(C).all() and np.isfinite(T).all(), f'{f}: NaN'
+        # метаданные файла должны совпадать с именем (арбитр, цикл 3)
+        assert j.get('task', task) == task and j.get('arm', arm) == arm and j.get('seed', int(tail)) == int(tail), f'{f}: имя и поля не совпадают'
+        assert j.get('tour', 5) == 5 and j.get('gens', gens) == gens, f'{f}: tour/gens'
+        # второй способ для позднего окна: поле signed_ct_late записано исходным кодом EVO-06 (числа не печатаются)
+        if 'signed_ct_late' in j and gens == GENS:
+            assert abs(win(C - T, *LATE) - j['signed_ct_late']) < 1e-9, f'{f}: позднее окно не совпало с signed_ct_late'
         runs[(task, int(tail))] = (C, T)
     if expect is not None:
         tasks = sorted({k[0] for k in runs})
         assert len(tasks) == expect[0] and all(sum(1 for k in runs if k[0] == t) == expect[1] for t in tasks), \
             f'{folder} {arm}: задач {len(tasks)}, прогонов {len(runs)}, ждали {expect[0]} × {expect[1]}'
     return runs
-
-def win(v, lo, hi):
-    """Среднее по поколениям lo..hi включительно."""
-    assert 0 <= lo <= hi < len(v), (lo, hi, len(v))
-    return float(np.mean(v[lo:hi + 1]))
 
 # ───────── статистика ─────────
 def seed_means(keys, vals):
@@ -154,7 +160,8 @@ def fixed_block(folder, arm, early=EARLY, late=LATE, gens=GENS, expect=None):
     dT = [win(runs[k][1], *late) - win(runs[k][1], *early) for k in keys]
     Wl = [win(gap[k], *late) for k in keys]
     changed = [i for i in range(len(keys)) if abs(dC[i]) > TIE or abs(dT[i]) > TIE]
-    R = dict(runs=len(keys), gap_growth=counts(d), gap_growth_by_task=by_task(keys, d), seed_level=directional(keys, d),
+    sl = directional(keys, d); sl.pop('verdict', None)                 # описательно: вердикта у ставок о FIXED нет
+    R = dict(runs=len(keys), gap_growth=counts(d), gap_growth_by_task=by_task(keys, d), seed_level_descriptive=sl,
              late_gap=counts(Wl), runs_with_change=len(changed),
              growth_where_late_gap_positive=counts([d[i] for i in range(len(keys)) if Wl[i] > TIE]) if any(w > TIE for w in Wl) else None,
              truth_change=counts(dT), truth_change_by_task=by_task(keys, dT),
@@ -186,7 +193,9 @@ def analyze(evo01, evo03, evo06, early=EARLY, late=LATE, gens=GENS, strict=True)
     for name, key in (('B3_FIXED16_gap_grows_in_majority', 'EVO01_FIXED16'), ('B4_FIXED32_gap_grows_in_majority', 'EVO06_FIXED32')):
         f = R.get(key, {})
         if 'gap_growth' in f:
-            sh = share_pos(f['gap_growth']); R[name] = dict(share_positive_among_changed=sh, holds=(bool(sh > 0.5) if sh is not None else None))
+            sh = share_pos(f['gap_growth']); g2 = f.get('growth_where_late_gap_positive')
+            R[name] = dict(share_positive_among_changed=sh, holds=(bool(sh > 0.5) if sh is not None else None),
+                           share_positive_among_changed_with_positive_late_gap=(share_pos(g2) if g2 else None))
     s16, s32 = load(evo06, 'SAME16', gens, e6), load(evo06, 'SAME32', gens, e6)
     kk = sorted(set(s16) & set(s32))
     if kk:
@@ -223,6 +232,14 @@ def selftest():
     # 2. точный перебор знаков: 8 положительных значений → p = 1/256 в сторону «вверх»
     pu, pd = signflip_p(np.arange(1, 9)); ok += [abs(pu - 1 / 256) < 1e-12, abs(pd - 1.0) < 1e-12]
     pu, pd = signflip_p([1, -1, 2, -2]); ok.append(abs(pu - pd) < 1e-12)
+    rr = np.random.default_rng(3)
+    for _ in range(200):                                                         # signflip_p против перебора через itertools
+        n = int(rr.integers(1, 10)); m = np.round(rr.normal(0, 1, n), 1) * (rr.random(n) > 0.2)
+        v = np.array([sum(g_ * x_ for g_, x_ in zip(sg, m)) for sg in itertools.product([1, -1], repeat=n)])
+        pu, pd = signflip_p(m); ok.append(abs(pu - np.mean(v >= m.sum() - 1e-9)) < 1e-12 and abs(pd - np.mean(v <= m.sum() + 1e-9)) < 1e-12)
+    ok = [all(ok)] if all(ok) else ok + [False]
+    kk = [('T1', i) for i in range(8)] + [('T2', i) for i in range(8)]           # единица — сид: +3 на одной задаче и −1 на другой дают +1 по сиду
+    dd = directional(kk, [3.0] * 8 + [-1.0] * 8); ok += [dd['seeds'] == 8, abs(dd['mean'] - 1.0) < 1e-9, dd['verdict'] == 'подтверждено']
     K8 = [('T1', i) for i in range(8)]                                           # порог: 1/256 проходит, 9/256 — нет
     ok += [directional(K8, [1.0] * 8)['verdict'] == 'подтверждено', directional(K8, [-1.0] * 8)['verdict'] == 'обратный эффект',
            directional(K8, [1.0] * 7 + [-1.0])['verdict'] == 'не решено', abs(directional(K8, [1.0] * 7 + [-1.0])['p_predicted'] - 9 / 256) < 1e-6]
@@ -254,7 +271,8 @@ def selftest():
            F['gap_growth'] == dict(pos=24, neg=12, ties=24, median=0.0, mean=round((24 * 0.2 - 12 * 0.2) / 60, 5)),   # счёт ничьих и знаков точный
            F['runs_with_change'] == 36, abs(F['truth_share_of_late_gain'] - (12 * 0.3) / (24 * 0.2 + 12 * 0.1)) < 1e-3,
            F['min_step_of_claim'] == 0.0, R['EVO06_FIXED32']['gap_growth']['ties'] == 120,
-           R['B3_FIXED16_gap_grows_in_majority'] == dict(share_positive_among_changed=round(24 / 36, 3), holds=True),
+           R['B3_FIXED16_gap_grows_in_majority']['share_positive_among_changed'] == round(24 / 36, 3), R['B3_FIXED16_gap_grows_in_majority']['holds'] is True,
+           'verdict' not in F['seed_level_descriptive'],
            R['B4_FIXED32_gap_grows_in_majority']['holds'] is None,
            R['B5_SAME32_mean_gap']['holds'] is True, abs(R['B5_SAME32_mean_gap']['mean32'] - 0.012) < 1e-9, abs(R['B5_SAME32_mean_gap']['ratio'] - 0.02 / 0.012) < 1e-3,
            R['B6_FIXED16_truth_declines_in_majority'] == dict(declines=0, rises=12, ties=48, share=0.0, holds=False)]
