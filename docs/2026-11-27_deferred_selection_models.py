@@ -164,6 +164,37 @@ out['world_drift'] = dict(
     swe_bench_tests_minus_merge_pp=24,                                             # [сн.] METR, март 2026
 )
 
+# ───────────────────────── Добавлено после критики, цикл 1 ─────────────────────────
+# М1: что даёт формула при разных определениях цены ожидания h для людей (замечания Б3, Б4): число не одно.
+out['M1_humans_by_definition'] = {
+    'h = смертность лучших лет 1–1,5 % [сн.]; зрелость 15–19 [пам.]': [round(15 * 0.010, 2), round(19 * 0.015, 2)],
+    'h = 1/E, E = 30–40 лет взрослой жизни [сн.: больше чем вдвое против шимпанзе ≈ 15]; зрелость 17–19': [round(17 / 40, 2), round(19 / 30, 2)],
+    'h = 1/срок размножения 25–27 лет [пам.] + 1 %; зрелость 18': [round(18 * (1 / 27 + 0.01), 2), round(18 * (1 / 25 + 0.01), 2)],
+}
+# М2 с помощью группы (замечание Б5): запас R·(1 + H), H — помощь относительно вклада матери. Вложение I* то же, число растёт в (1 + H) раз.
+out['M2_with_helpers'] = []
+for theta, H in ((4, 0.0), (16, 0.0), (16, 1.0), (16, 2.0)):
+    u = u_star(1 / theta); I = u * theta
+    out['M2_with_helpers'].append(dict(theta=theta, help_H=H, investment=round(I, 2), number_rel=round(100 * (1 + H) / (1 + I), 1)))
+# М4 (замечание Б10): w_ij = 1 + B·zbar_j − c·z_ij. По Прайсу признак растёт при F > c/B, F — доля межгрупповой дисперсии.
+r4 = np.random.default_rng(11); agree_F = agree_odds = n_m4 = 0
+for _ in range(2000):
+    ng, m = int(r4.integers(5, 40)), int(r4.integers(3, 30))
+    B, c = float(r4.uniform(0.01, 1.0)), float(r4.uniform(0.005, 0.5))
+    z = np.clip(r4.normal(r4.uniform(0.2, 0.8, ng)[:, None] * float(r4.uniform(0, 1)) + 0.5 * (1 - float(r4.uniform(0, 1))), float(r4.uniform(0.05, 0.3)), (ng, m)), 0, 1)
+    w = 1 + B * z.mean(axis=1, keepdims=True) - c * z
+    dz = (w * z).mean() / w.mean() - z.mean()                      # изменение среднего признака за поколение
+    F = z.mean(axis=1).var() / z.var()
+    if abs(F - c / B) < 1e-3 or abs(F / (1 - F) - c / B) < 1e-3: continue
+    n_m4 += 1; agree_F += (dz > 0) == (F > c / B); agree_odds += (dz > 0) == (F / (1 - F) > c / B)
+out['M4_check'] = dict(cases=n_m4, sign_matches_F_gt_c_over_B=int(agree_F), sign_matches_odds_form=int(agree_odds))
+# СССР: расхождение зависит от того, какую оценку взять за правду (замечание Э2)
+out['world_drift']['ussr_by_truth_estimate'] = dict(
+    khanin_x6_9=round(math.log(90 / 6.9) / 61, 4),                 # [сн., отчёт 09.10; период 1928–1989 одним источником]
+    ofer_4_2pct_growth=round(math.log(90 / 1.042 ** 61) / 61, 4),   # [сн., отчёт 09.10]: ВНП рос на 4,2 % в год → ×12,3 за 61 год
+    ofer_factor=round(1.042 ** 61, 1))
+out['world_drift']['olken_share_left_at_full_audit'] = round(19.2 / 27.7, 2)   # [сн., J-PAL]: «пропажа» 27,7 → 19,2 % при аудите 4 → 100 %
+
 # ───────────────────────── Пороги и мощность знаковых проверок (к PREREG-DEFER-01) ─────────────────────────
 def binom_tail(n, k, p):               # P(X >= k)
     return sum(math.comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(k, n + 1))

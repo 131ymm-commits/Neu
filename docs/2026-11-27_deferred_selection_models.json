@@ -257,7 +257,58 @@
   "ussr_indicator_drift_per_year": 0.0421,
   "autocracy_gdp_growth_overstatement": 0.35,
   "us_gpa_drift_per_year": 0.0173,
-  "swe_bench_tests_minus_merge_pp": 24
+  "swe_bench_tests_minus_merge_pp": 24,
+  "ussr_by_truth_estimate": {
+   "khanin_x6_9": 0.0421,
+   "ofer_4_2pct_growth": 0.0326,
+   "ofer_factor": 12.3
+  },
+  "olken_share_left_at_full_audit": 0.69
+ },
+ "M1_humans_by_definition": {
+  "h = смертность лучших лет 1–1,5 % [сн.]; зрелость 15–19 [пам.]": [
+   0.15,
+   0.28
+  ],
+  "h = 1/E, E = 30–40 лет взрослой жизни [сн.: больше чем вдвое против шимпанзе ≈ 15]; зрелость 17–19": [
+   0.42,
+   0.63
+  ],
+  "h = 1/срок размножения 25–27 лет [пам.] + 1 %; зрелость 18": [
+   0.85,
+   0.9
+  ]
+ },
+ "M2_with_helpers": [
+  {
+   "theta": 4,
+   "help_H": 0.0,
+   "investment": 2.53,
+   "number_rel": 28.3
+  },
+  {
+   "theta": 16,
+   "help_H": 0.0,
+   "investment": 5.34,
+   "number_rel": 15.8
+  },
+  {
+   "theta": 16,
+   "help_H": 1.0,
+   "investment": 5.34,
+   "number_rel": 31.5
+  },
+  {
+   "theta": 16,
+   "help_H": 2.0,
+   "investment": 5.34,
+   "number_rel": 47.3
+  }
+ ],
+ "M4_check": {
+  "cases": 1990,
+  "sign_matches_F_gt_c_over_B": 1990,
+  "sign_matches_odds_form": 1739
  },
  "sign_test": {
   "40": {
