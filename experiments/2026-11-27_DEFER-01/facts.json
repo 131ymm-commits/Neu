@@ -1,0 +1,442 @@
+{
+ "A": {
+  "verdict": "подтверждено",
+  "mean": 0.288,
+  "ci": [
+   0.193,
+   0.377
+  ],
+  "p": 3.1e-05,
+  "seeds_for": 16,
+  "seeds_against": 1,
+  "seeds_zero": 3
+ },
+ "B": {
+  "verdict": "подтверждено",
+  "mean": 0.588,
+  "ci": [
+   0.494,
+   0.676
+  ],
+  "p": 1e-06,
+  "seeds_for": 20,
+  "seeds_against": 0,
+  "seeds_zero": 0
+ },
+ "C": {
+  "verdict": "подтверждено",
+  "mean": 0.345,
+  "ci": [
+   0.22,
+   0.464
+  ],
+  "p": 4.8e-05,
+  "seeds_for": 17,
+  "seeds_against": 3,
+  "seeds_zero": 0
+ },
+ "C_by_task": {
+  "T1": {
+   "pos": 12,
+   "neg": 8,
+   "ties": 0,
+   "mean": 0.004
+  },
+  "T2": {
+   "pos": 16,
+   "neg": 2,
+   "ties": 2,
+   "mean": 0.443
+  },
+  "T3": {
+   "pos": 20,
+   "neg": 0,
+   "ties": 0,
+   "mean": 0.588
+  }
+ },
+ "W_by_task": {
+  "T1": {
+   "MIRROR_0": 0.389,
+   "MIRROR_25": 0.406,
+   "MIRROR_50": 0.471,
+   "MIRROR_100": 0.384
+  },
+  "T2": {
+   "MIRROR_0": 0.391,
+   "MIRROR_25": 0.104,
+   "MIRROR_50": 0.036,
+   "MIRROR_100": 0.12
+  },
+  "T3": {
+   "MIRROR_0": 0.751,
+   "MIRROR_25": 0.611,
+   "MIRROR_50": 0.528,
+   "MIRROR_100": 0.443
+  }
+ },
+ "truth_by_task": {
+  "T1": {
+   "MIRROR_0": 0.257,
+   "MIRROR_25": 0.378,
+   "MIRROR_50": 0.233,
+   "MIRROR_100": 0.239
+  },
+  "T2": {
+   "MIRROR_0": 0.608,
+   "MIRROR_25": 0.85,
+   "MIRROR_50": 0.937,
+   "MIRROR_100": 0.773
+  },
+  "T3": {
+   "MIRROR_0": 0.055,
+   "MIRROR_25": 0.12,
+   "MIRROR_50": 0.133,
+   "MIRROR_100": 0.149
+  }
+ },
+ "solved_by_task": {
+  "T1": {
+   "MIRROR_0": 0.2,
+   "MIRROR_25": 0.35,
+   "MIRROR_50": 0.1,
+   "MIRROR_100": 0.2
+  },
+  "T2": {
+   "MIRROR_0": 0.2,
+   "MIRROR_25": 0.6,
+   "MIRROR_50": 0.8,
+   "MIRROR_100": 0.4
+  },
+  "T3": {
+   "MIRROR_0": 0.0,
+   "MIRROR_25": 0.0,
+   "MIRROR_50": 0.0,
+   "MIRROR_100": 0.0
+  }
+ },
+ "degenerate_by_task": {
+  "T1": {
+   "MIRROR_0": 0.2,
+   "MIRROR_25": 0.0,
+   "MIRROR_50": 0.0,
+   "MIRROR_100": 0.0
+  },
+  "T2": {
+   "MIRROR_0": 0.0,
+   "MIRROR_25": 0.0,
+   "MIRROR_50": 0.0,
+   "MIRROR_100": 0.0
+  },
+  "T3": {
+   "MIRROR_0": 0.0,
+   "MIRROR_25": 0.0,
+   "MIRROR_50": 0.0,
+   "MIRROR_100": 0.0
+  }
+ },
+ "norm_slope": {
+  "T1": {
+   "b": -0.01,
+   "ci95": [
+    -0.615,
+    1.155
+   ],
+   "ratios_to_M0": {
+    "MIRROR_0": 1.0,
+    "MIRROR_25": 1.044,
+    "MIRROR_50": 1.21,
+    "MIRROR_100": 0.987
+   }
+  },
+  "T2": {
+   "b": -1.133,
+   "ci95": [
+    -1.355,
+    -0.837
+   ],
+   "ratios_to_M0": {
+    "MIRROR_0": 1.0,
+    "MIRROR_25": 0.265,
+    "MIRROR_50": 0.092,
+    "MIRROR_100": 0.305
+   }
+  },
+  "T3": {
+   "b": -0.783,
+   "ci95": [
+    -0.879,
+    -0.683
+   ],
+   "ratios_to_M0": {
+    "MIRROR_0": 1.0,
+    "MIRROR_25": 0.814,
+    "MIRROR_50": 0.703,
+    "MIRROR_100": 0.59
+   }
+  }
+ },
+ "T3_drop_at_max_dose_percent": 41,
+ "pairs_M25_M0": {
+  "T1": {
+   "pos": 9,
+   "neg": 8,
+   "ties": 3,
+   "mean": -0.017
+  },
+  "T2": {
+   "pos": 16,
+   "neg": 1,
+   "ties": 3,
+   "mean": 0.288
+  },
+  "T3": {
+   "pos": 18,
+   "neg": 2,
+   "ties": 0,
+   "mean": 0.14
+  }
+ },
+ "pairs_M100_M50": {
+  "T1": {
+   "pos": 15,
+   "neg": 5,
+   "ties": 0,
+   "mean": 0.087
+  },
+  "T2": {
+   "pos": 3,
+   "neg": 10,
+   "ties": 7,
+   "mean": -0.084
+  },
+  "T3": {
+   "pos": 15,
+   "neg": 5,
+   "ties": 0,
+   "mean": 0.084
+  }
+ },
+ "EVO01_FIXED16": {
+  "grow": 36,
+  "shrink": 8,
+  "ties": 16,
+  "changed": 44,
+  "mean_growth": 0.038,
+  "seed_mean": 0.038,
+  "seed_ci": [
+   0.019,
+   0.057
+  ],
+  "seed_p": 0.00065,
+  "truth_up": 38,
+  "truth_down": 6,
+  "truth_ties": 16,
+  "late_share": 0.697,
+  "early_share": 0.622,
+  "late_gap_mean": 0.154,
+  "by_task": {
+   "T1": [
+    12,
+    1,
+    7
+   ],
+   "T2": [
+    8,
+    5,
+    7
+   ],
+   "T3": [
+    16,
+    2,
+    2
+   ]
+  }
+ },
+ "EVO06_FIXED32": {
+  "grow": 51,
+  "shrink": 27,
+  "ties": 42,
+  "changed": 78,
+  "mean_growth": 0.008,
+  "seed_mean": 0.008,
+  "seed_ci": [
+   -0.001,
+   0.018
+  ],
+  "seed_p": 0.05393,
+  "truth_up": 70,
+  "truth_down": 6,
+  "truth_ties": 44,
+  "late_share": 0.933,
+  "early_share": 0.921,
+  "late_gap_mean": 0.066,
+  "by_task": {
+   "T1": [
+    8,
+    3,
+    9
+   ],
+   "T2": [
+    7,
+    5,
+    8
+   ],
+   "T3": [
+    16,
+    2,
+    2
+   ],
+   "T4": [
+    8,
+    1,
+    11
+   ],
+   "T5": [
+    8,
+    6,
+    6
+   ],
+   "T6": [
+    4,
+    10,
+    6
+   ]
+  }
+ },
+ "EVO01_RANDOM16": {
+  "grow": 9,
+  "shrink": 47,
+  "ties": 4,
+  "late_gap_mean": 0.0429
+ },
+ "EVO06_SAME16": {
+  "grow": 28,
+  "shrink": 87,
+  "ties": 5,
+  "late_gap_mean": 0.0197
+ },
+ "EVO06_SAME32": {
+  "grow": 30,
+  "shrink": 86,
+  "ties": 4,
+  "late_gap_mean": 0.0143
+ },
+ "bets": [
+  {
+   "id": "A",
+   "p": 0.8,
+   "outcome": 1
+  },
+  {
+   "id": "B",
+   "p": 0.6,
+   "outcome": 1
+  },
+  {
+   "id": "C",
+   "p": 0.7,
+   "outcome": 1
+  },
+  {
+   "id": "B1",
+   "p": 0.75,
+   "outcome": 1
+  },
+  {
+   "id": "B2",
+   "p": 0.55,
+   "outcome": 1
+  },
+  {
+   "id": "B3",
+   "p": 0.7,
+   "outcome": 1
+  },
+  {
+   "id": "B4",
+   "p": 0.75,
+   "outcome": 1
+  },
+  {
+   "id": "B5",
+   "p": 0.55,
+   "outcome": 1
+  },
+  {
+   "id": "B6",
+   "p": 0.15,
+   "outcome": 0
+  },
+  {
+   "id": "B7a",
+   "p": 0.6,
+   "outcome": 0
+  },
+  {
+   "id": "B7b",
+   "p": 0.4,
+   "outcome": 0
+  }
+ ],
+ "bets_summary": {
+  "n": 11,
+  "came_true": 8,
+  "brier": 0.132,
+  "mean_probability": 0.595,
+  "right_side": 10
+ },
+ "B3": {
+  "share_positive_among_changed": 0.818,
+  "holds": true,
+  "share_positive_among_changed_with_positive_late_gap": 0.9
+ },
+ "B4": {
+  "share_positive_among_changed": 0.654,
+  "holds": true,
+  "share_positive_among_changed_with_positive_late_gap": 0.817
+ },
+ "B5": {
+  "mean16": 0.0197,
+  "mean32": 0.0143,
+  "ratio": 1.378,
+  "ratio_unsolved": 1.329,
+  "pairs_unsolved": 63
+ },
+ "B6": {
+  "declines": 6,
+  "rises": 38,
+  "ties": 16,
+  "share": 0.136,
+  "holds": false
+ },
+ "weights_bits": {
+  "A": 7.5,
+  "B": 7.13,
+  "C": 7.42
+ },
+ "power": {
+  "A": 0.906,
+  "B": 0.702,
+  "C": 0.858
+ },
+ "pilot_vs_test": {
+  "T3_slope_pilot": 0.256,
+  "T3_slope_test": 0.588,
+  "T2_share_seeds_with_effect": 0.8
+ },
+ "constants": {
+  "first_registration_commit_digits": 6853317,
+  "b5_interval": [
+   0.0083,
+   0.0167
+  ],
+  "population": 300,
+  "tournament": 5,
+  "late_window": [
+   121,
+   150
+  ],
+  "seeds": 20
+ }
+}
