@@ -22,6 +22,8 @@ w0, w1 = R['dose_curve_W_ind']['FIX'], R['dose_curve_W_ind']['RND']
 F['excess_share'] = {a: r3((x - w1) / (w0 - w1)) for a, x in R['dose_curve_W_ind'].items()} if abs(w0 - w1) > 1e-9 else None
 F['tables'] = {n: {a: {t: r3(x) for t, x in row.items()} for a, row in tab.items()} for n, tab in R['tables'].items()}
 F['solved_share'] = R['solved_share']; F['labels_per_run'] = R['labels_per_run']
+# среднее завышение показателя по задачам T2–T6 для всех ветвей (в кривой доз оно уже есть; здесь — и для контролей); добавлено до конца теста
+F['W_ind_T2_T6'] = {a: r3(np.mean([row[t] for t in ('T2', 'T3', 'T4', 'T5', 'T6')])) for a, row in R['tables']['W_ind'].items()}
 F['bits_per_label'] = None
 # ставки и калибровка
 V = lambda k: R[k].get('verdict')
