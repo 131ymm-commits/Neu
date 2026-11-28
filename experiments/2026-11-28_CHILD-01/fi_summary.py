@@ -19,7 +19,8 @@ for t in ('T1', 'T2', 'T3', 'T4', 'T5', 'T6'):
         for _ in range(4000):
             c = r.poisson(cnt); bs.append(math.log2((c / M * lv ** 16).sum()) - math.log2(max(c[201], 1) / M))      # разность «бит задачи − бит экзамена»
         ci = [round(float(np.percentile(bs, 2.5)), 2), round(float(np.percentile(bs, 97.5)), 2)]
-    out['tasks'][t] = dict(bits_10pct=round(-lf[20], 2), bits_50pct=None if lf[100] is None else round(-lf[100], 2), programs_at_50pct=int(round(tail[100] * M)),
+    out['tasks'][t] = dict(programs_at_10pct=int(round(tail[20] * M)), programs_by_level={str(k): int(round(tail[k] * M)) for k in (100, 105, 110, 114, 115, 116, 117, 118, 120, 150)},
+        bits_10pct=round(-lf[20], 2), bits_50pct=None if lf[100] is None else round(-lf[100], 2), programs_at_50pct=int(round(tail[100] * M)),
         programs_at_75pct=int(round(tail[150] * M)), max_level_seen=mx, max_share_seen=round(mx / 201, 2),
         solved_direct_bits=None if lf[201] is None else round(-lf[201], 2), solved_programs=int(cnt[201]),
         solved_upper_bound_bits=round(-j['bound'][t]['D6'], 2), solved_lower_bound_bits=round(-(lf[201] if lf[201] is not None else math.log2(3 / M)), 2),

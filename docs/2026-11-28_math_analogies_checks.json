@@ -269,7 +269,74 @@
  "tail_mechanics": {
   "shift_sigma": 0.495,
   "tail_1pct_multiplier": 3.35,
-  "observed_multiplier": 4.65
+  "observed_multiplier": 4.65,
+  "multiplier_by_base_share": {
+   "0.01": 3.35,
+   "0.005": 3.74,
+   "0.002": 4.29
+  }
+ },
+ "periodic_gap_scan": {
+  "note": "экзамен по расписанию каждые k поколений: число захватов из 10 и средняя доля обходчиков там, где захвата нет",
+  "rows": [
+   {
+    "gap": 9,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.019
+   },
+   {
+    "gap": 13,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.115
+   },
+   {
+    "gap": 16,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.236
+   },
+   {
+    "gap": 19,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.348
+   },
+   {
+    "gap": 21,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.408
+   },
+   {
+    "gap": 22,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.432
+   },
+   {
+    "gap": 23,
+    "fixed_of_10": 10,
+    "mean_share_not_fixed": null
+   },
+   {
+    "gap": 24,
+    "fixed_of_10": 10,
+    "mean_share_not_fixed": null
+   },
+   {
+    "gap": 25,
+    "fixed_of_10": 10,
+    "mean_share_not_fixed": null
+   },
+   {
+    "gap": 27,
+    "fixed_of_10": 10,
+    "mean_share_not_fixed": null
+   }
+  ],
+  "shortest_gap_with_fixation": 23,
+  "longest_gap_without_fixation": 22,
+  "expected_gaps_23_or_longer_per_run": {
+   "0.1": 180.0,
+   "0.2": 24.0,
+   "0.4": 0.063
+  }
  },
  "drift_thresholds": [
   {
