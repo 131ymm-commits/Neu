@@ -103,5 +103,34 @@
    }
   }
  },
- "sweden_fold_drop_1800_2015": 132
+ "sweden_fold_drop_1800_2015": 132,
+ "under5_same_countries": {
+  "countries": 127,
+  "1960": {
+   "median_q": 0.1394,
+   "median_index": 0.162,
+   "share_countries_q_above_0_2": 0.346,
+   "min_q": 0.0199,
+   "max_q": 0.4358
+  },
+  "1990": {
+   "median_q": 0.0376,
+   "median_index": 0.0391,
+   "share_countries_q_above_0_2": 0.039,
+   "min_q": 0.0064,
+   "max_q": 0.3071
+  },
+  "2024": {
+   "median_q": 0.0155,
+   "median_index": 0.0158,
+   "share_countries_q_above_0_2": 0.0,
+   "min_q": 0.0021,
+   "max_q": 0.1011
+  },
+  "drop_in_q_1960_2024": {
+   "median": 0.1238,
+   "min": 0.0174,
+   "max": 0.3965
+  }
+ }
 }

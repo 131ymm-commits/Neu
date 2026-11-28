@@ -148,5 +148,139 @@
   "0.154": 1.09,
   "0.44": 8.94,
   "0.75": 25.97
- }
+ },
+ "finite_population_with_inflow": {
+  "note": "случайный экзамен допускает длинные паузы; если пауза длиннее времени захвата, честных не остаётся",
+  "rows": [
+   {
+    "s": 0.9999,
+    "q": 0.1,
+    "q_log": 0.07,
+    "random_fixed_of_5": 5,
+    "random_mean_share": 1.0,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0195
+   },
+   {
+    "s": 0.9999,
+    "q": 0.2,
+    "q_log": 0.07,
+    "random_fixed_of_5": 5,
+    "random_mean_share": 1.0,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0011
+   },
+   {
+    "s": 0.9999,
+    "q": 0.4,
+    "q_log": 0.07,
+    "random_fixed_of_5": 0,
+    "random_mean_share": 0.004,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0003
+   },
+   {
+    "s": 1.0,
+    "q": 0.1,
+    "q_log": 0.0,
+    "random_fixed_of_5": 5,
+    "random_mean_share": 1.0,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0187
+   },
+   {
+    "s": 1.0,
+    "q": 0.2,
+    "q_log": 0.0,
+    "random_fixed_of_5": 5,
+    "random_mean_share": 1.0,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0011
+   },
+   {
+    "s": 1.0,
+    "q": 0.4,
+    "q_log": 0.0,
+    "random_fixed_of_5": 0,
+    "random_mean_share": 0.004,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0003
+   }
+  ],
+  "takeover_generations": 27.6,
+  "p_gap_longer_than_takeover": {
+   "0.1": 0.058,
+   "0.2": 0.0024,
+   "0.4": 1e-06
+  },
+  "half_generations": 13.3,
+  "expected_long_gaps_per_run": {
+   "0.1": 120.0,
+   "0.2": 9.7,
+   "0.4": 0.0082
+  },
+  "longest_gap_periodic": {
+   "0.1": 9,
+   "0.2": 4,
+   "0.4": 2
+  }
+ },
+ "deterrence_vs_selection": [
+  {
+   "g": 1.0,
+   "s": 0.5,
+   "deterrence": 0.667,
+   "selection": 0.5
+  },
+  {
+   "g": 1.0,
+   "s": 0.9,
+   "deterrence": 0.526,
+   "selection": 0.231
+  },
+  {
+   "g": 0.1,
+   "s": 0.1,
+   "deterrence": 0.5,
+   "selection": 0.475
+  },
+  {
+   "g": 0.01,
+   "s": 0.01,
+   "deterrence": 0.5,
+   "selection": 0.497
+  }
+ ],
+ "effective_number_of_choices": {
+  "emax": {
+   "2": 0.564,
+   "3": 0.852,
+   "4": 1.027,
+   "5": 1.163,
+   "6": 1.268,
+   "8": 1.426,
+   "10": 1.533,
+   "20": 1.866
+  },
+  "inflation_in_sigma": 1.23,
+  "programs_examined_per_run": 45000,
+  "note": "завышение 0,154 при шуме 0,125 — как у лучшего из 5–6 независимых равных кандидатов"
+ },
+ "tail_mechanics": {
+  "shift_sigma": 0.495,
+  "tail_1pct_multiplier": 3.35,
+  "observed_multiplier": 4.65
+ },
+ "drift_thresholds": [
+  {
+   "a": 1.2,
+   "mean_bounded_if_q_above": 0.167,
+   "second_moment_bounded_if_q_above": 0.306
+  },
+  {
+   "a": 1.5,
+   "mean_bounded_if_q_above": 0.333,
+   "second_moment_bounded_if_q_above": 0.556
+  }
+ ]
 }

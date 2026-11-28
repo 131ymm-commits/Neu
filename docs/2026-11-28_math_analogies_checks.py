@@ -58,5 +58,43 @@ out['russo_zou_best_of_N'] = dict(note='завышение лучшего из N
 # обратное чтение: наименьшее число бит, утёкших в выбор, при наблюдённом завышении W и шуме sigma = 0,125 (16 тестов, правда около 0,5)
 out['bits_from_inflation'] = {str(W): round((W / 0.125) ** 2 / 2 / math.log(2), 2) for W in (0.02, 0.066, 0.154, 0.44, 0.75)}
 
+# 4. (после критики) Конечная популяция с притоком обходчиков: редкий смертельный экзамен — случайный против экзамена по расписанию.
+#    Райт — Фишер, N = 20000, приток обходчиков 1e-4 за поколение (в одну сторону), g = 1; 20000 поколений, 5 повторов.
+def wf_inflow(q, g, s, N=20000, mu=1e-4, gens=20000, periodic=False, seed=0):
+    r = np.random.default_rng(seed); pp = 0.0; acc = []
+    for t in range(gens):
+        # расписание — то же правило, что в опыте CHILD-01: ровно доля q поколений, равномерно (прежде стояло «каждое round(1/q)-е», что при q = 0,4 давало долю 0,5)
+        exam = (int((t + 1) * q + 1e-9) > int(t * q + 1e-9)) if periodic else (r.random() < q)
+        w = (1 - s) if exam else (1 + g); den = pp * w + (1 - pp)
+        pp = pp * w / den if den > 0 else 0.0
+        pp = pp + (1 - pp) * mu; pp = r.binomial(N, min(1.0, pp)) / N
+        if t >= gens // 2: acc.append(pp)
+        if pp >= 1.0: return 1.0, True
+    return float(np.mean(acc)), False
+rows = []
+for s_ in (0.9999, 1.0):
+    for q_ in (0.1, 0.2, 0.4):
+        rnd = [wf_inflow(q_, 1.0, s_, seed=i) for i in range(5)]; per = [wf_inflow(q_, 1.0, s_, periodic=True, seed=10 + i) for i in range(5)]
+        rows.append(dict(s=s_, q=q_, q_log=0.0 if s_ >= 1 else round(q_log(1.0, s_), 3), random_fixed_of_5=int(sum(x[1] for x in rnd)), random_mean_share=round(float(np.mean([x[0] for x in rnd])), 3),
+                         periodic_fixed_of_5=int(sum(x[1] for x in per)), periodic_mean_share=round(float(np.mean([x[0] for x in per])), 4)))
+out['finite_population_with_inflow'] = dict(note='случайный экзамен допускает длинные паузы; если пауза длиннее времени захвата, честных не остаётся', rows=rows,
+    takeover_generations=round(math.log(20000 / 1e-4) / math.log(2), 1), p_gap_longer_than_takeover={str(q_): float(f'{(1 - q_) ** 27:.2g}') for q_ in (0.1, 0.2, 0.4)},
+    half_generations=round(math.log(1 / 1e-4) / math.log(2), 1),                    # до половины популяции; до полного вытеснения честных — takeover_generations
+    expected_long_gaps_per_run={str(q_): float(f'{20000 * q_ * (1 - q_) ** 27:.2g}') for q_ in (0.1, 0.2, 0.4)},   # сколько раз за 20000 поколений случайный экзамен даёт паузу длиннее 27 поколений
+    longest_gap_periodic={str(q_): max(len(x) for x in ''.join('1' if int((t + 1) * q_ + 1e-9) > int(t * q_ + 1e-9) else '0' for t in range(2000)).split('1')) for q_ in (0.1, 0.2, 0.4)})
+# 5. (после критики) Порог рассчитывающего нарушителя (линейная полезность) против порога отбора (логарифмы): форма одна, величины разные
+out['deterrence_vs_selection'] = [dict(g=g_, s=s_, deterrence=round(q_lin(g_, s_), 3), selection=round(q_log(g_, s_), 3)) for g_, s_ in ((1.0, 0.5), (1.0, 0.9), (0.1, 0.1), (0.01, 0.01))]
+# 6. (после критики) «Число независимых выборов»: какому «лучшему из N» отвечает наблюдённое завышение в единицах шума
+def emax(N, reps=40000, rr=np.random.default_rng(5)): return float(np.mean(rr.normal(size=(reps, N)).max(1)))
+tab = {N: round(emax(N), 3) for N in (2, 3, 4, 5, 6, 8, 10, 20)}
+out['effective_number_of_choices'] = dict(emax=tab, inflation_in_sigma=round(0.154 / 0.125, 2), programs_examined_per_run=300 * 150,
+                                          note='завышение 0,154 при шуме 0,125 — как у лучшего из 5–6 независимых равных кандидатов')
+# 7. (после критики) Экзамены в Англии: какой сдвиг нормального распределения переводит 75,5 % в 88,2 % и во сколько раз он увеличивает хвост в 1 %
+from statistics import NormalDist
+nd = NormalDist(); sh = nd.inv_cdf(0.882) - nd.inv_cdf(0.755); z1 = nd.inv_cdf(0.99)
+out['tail_mechanics'] = dict(shift_sigma=round(sh, 3), tail_1pct_multiplier=round((1 - nd.cdf(z1 - sh)) / 0.01, 2), observed_multiplier=round(12950 / 2785, 2))
+# 8. (после критики) Порог для первого и для второго момента при умножительном дрейфе со сбросом
+out['drift_thresholds'] = [dict(a=a_, mean_bounded_if_q_above=round(1 - 1 / a_, 3), second_moment_bounded_if_q_above=round(1 - 1 / a_ ** 2, 3)) for a_ in (1.2, 1.5)]
+
 p = os.path.join(os.path.dirname(os.path.abspath(__file__)), '2026-11-28_math_analogies_checks.json')
 json.dump(out, open(p, 'w', encoding='utf-8'), ensure_ascii=False, indent=1); print(json.dumps(out, ensure_ascii=False, indent=1))
