@@ -252,6 +252,54 @@ for ma in (0.05, 0.1, 0.2, 0.4):
 # М2 (замечание 9): помощь, которая покрывает неизбежную цену потомка I0, снижает и оптимальное вложение
 out['M2_help_into_fixed_cost'] = [dict(theta=16, I0=I0, investment=round(u_star(I0 / 16) * 16, 2), number_rel=round(100 / (I0 + u_star(I0 / 16) * 16), 1)) for I0 in (1.0, 0.5, 0.25)]
 
+# ───────────────────────── Добавлено после критики, цикл 3 (арбитр и моя проверка) ─────────────────────────
+# М3б — частный случай: стоит появиться разбросу правды, не связанному с обманом (умение дня, шум), и турнир снова «видит величину».
+def simulate_rank_spread(q, b, noise, lam=2.0, a=1.0, tour=5, N=3000, gens=3000, sd=0.02, seed=0):
+    r = np.random.default_rng(seed); x = np.full(N, 0.3); acc = []
+    for g in range(gens):
+        T = a * (1 - x) + r.normal(0, noise, N)                       # ненаследуемый разброс правды, общий для T и P
+        exam = r.random() < q
+        sc = T if exam else T + b * (1 - np.exp(-lam * x)) / lam
+        c = r.integers(N, size=(N, tour)); idx = c[np.arange(N), np.argmax(sc[c], axis=1)]
+        x = np.abs(x[idx] + r.normal(0, sd, N)); x = np.where(x > 1, 2 - x, x)
+        if g >= gens // 2: acc.append(x.mean())
+    return round(float(np.mean(acc)), 3)
+out['M3_rank_with_truth_spread'] = dict(note='доля обмана x при турнире 5; разброс правды 0 — частный случай М3б; при разбросе 0,05 и 0,5 перелом возвращается к G/(1 + G)', rows={})
+for b_, G_ in ((2.0, 1), (4.0, 3)):
+    for noise in (0.0, 0.05, 0.5):
+        out['M3_rank_with_truth_spread']['rows'][f'G={G_}, разброс правды {noise}'] = {
+            str(q): simulate_rank_spread(q, b_, noise, seed=int(100 * q + 10 * b_ + 1000 * noise)) for q in (0.0, 0.3, 0.45, 0.55, 0.65, 0.75, 0.85)}
+out['M3_rank_with_truth_spread']['formula_M3a_S1'] = {f'G={G_}': {str(q): round(x_star(q, 1.0, 1.0 + G_, 2.0, 1.0), 3) for q in (0.0, 0.3, 0.45, 0.55, 0.65, 0.75, 0.85)} for G_ in (1, 3)}
+# М1: таблица математика воспроизводится при плодовитости m = 2 (арбитр, А3)
+def r_of_m(tau, theta, k, mj, ma, m_):
+    Q = m_ * (1 - math.exp(-tau / theta)) ** k; lo, hi = -ma + 1e-9, 50.0
+    for _ in range(200):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if Q * math.exp(-(mj + mid) * tau) / (ma + mid) > 1 else (lo, mid)
+    return (lo + hi) / 2
+out['M1_euler_lotka_m2'] = []
+for ma in (0.05, 0.1, 0.2, 0.4):
+    taus = np.linspace(0.5, 30, 5901); rs = [r_of_m(t, 5, 3, 0.05, ma, 2.0) for t in taus]; j = int(np.argmax(rs))
+    out['M1_euler_lotka_m2'].append(dict(adult_mortality=ma, tau_max_r=round(float(taus[j]), 2), r=round(rs[j], 3)))
+# геном против схемы связей: человек и мышь (арбитр, А2): разрыв есть у обоих, но разной величины
+out['genome_vs_wiring_human_and_mouse'] = dict(human=round(1e14 * math.log2(8.6e10) / 6.2e9), mouse=round(1e11 * math.log2(7e7) / 5.4e9),
+                                               note='числа синапсов и нейронов — по памяти')
+
+# готовые таблицы «что формулы дают в числах» (цикл 3): порог экзамена и завышение сырой оценки под отбором
+out['M3_threshold_grid'] = dict(note='доля экзамена q* = G/(G + S), при которой обман исчезает (М3а, экспоненциальные дыры); x при q чуть ниже и чуть выше порога — проверка',
+                                 rows={f'G={G_}': {f'S={S_}': round(q_star(G_, S_), 3) for S_ in (1, 3, 10)} for G_ in (0.25, 1, 3, 10)})
+out['M3_threshold_grid']['check_x_just_below_and_above'] = {
+    f'G={G_}, S={S_}': [round(x_star(q_star(G_, S_) - 0.02, 1.0, 1.0 + G_, 2.0, S_), 4), round(x_star(min(0.999, q_star(G_, S_) + 0.02), 1.0, 1.0 + G_, 2.0, S_), 4)]
+    for G_ in (0.25, 1, 3, 10) for S_ in (1, 3, 10)}
+r6 = np.random.default_rng(1); T6 = r6.normal(size=2_000_000); e6 = r6.normal(size=2_000_000)
+out['evaluator_inflation_table'] = dict(note='завышение сырой оценки у отобранных, (1 − ρ²)·i/ρ, в единицах разброса правды; в скобках проверка на 2 млн пар', rows={})
+for rho in (0.95, 0.9, 0.7, 0.5):
+    P6 = T6 + e6 * math.sqrt((1 - rho ** 2) / rho ** 2); row = {}
+    for top_ in (0.5, 0.1, 0.01, 0.001):
+        sel = P6 >= np.quantile(P6, 1 - top_)
+        row[f'верхние {top_}'] = dict(formula=round((1 - rho ** 2) * intensity(top_) / rho, 2), simulated=round(float((P6[sel] - T6[sel]).mean()), 2))
+    out['evaluator_inflation_table']['rows'][f'rho={rho}'] = row
+
 # ───────────────────────── Пороги и мощность знаковых проверок (к PREREG-DEFER-01) ─────────────────────────
 def binom_tail(n, k, p):               # P(X >= k)
     return sum(math.comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(k, n + 1))

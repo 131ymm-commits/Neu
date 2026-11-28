@@ -1,0 +1,141 @@
+{
+ "B2_T1_pairs": {
+  "for_bet": 8,
+  "against_bet": 9,
+  "ties": 3,
+  "note": "за ставку — сиды, где W(MIRROR_0) < W(MIRROR_25)"
+ },
+ "T2_unsolved_runs": {
+  "MIRROR_0": {
+   "n": 16,
+   "W_mean": 0.489
+  },
+  "MIRROR_25": {
+   "n": 8,
+   "W_mean": 0.26
+  },
+  "MIRROR_50": {
+   "n": 4,
+   "W_mean": 0.18
+  },
+  "MIRROR_100": {
+   "n": 12,
+   "W_mean": 0.199
+  }
+ },
+ "T2_unsolved_at_M0_and_M25": {
+  "seeds": 7,
+  "lower_at_M25": 7,
+  "higher_at_M25": 0,
+  "diff_min": 0.11,
+  "diff_max": 0.37,
+  "mean": 0.215,
+  "p_sign_two_sided": 0.0156,
+  "note": "подвыборка задана исходом (нерешённые) — это не проверка причины"
+ },
+ "T2_M50_vs_M100": {
+  "solved_only_M50": 8,
+  "solved_only_M100": 0,
+  "solved_both": 8,
+  "p_solved_two_sided": 0.0078,
+  "W_higher_at_M100": 10,
+  "W_lower_at_M100": 3,
+  "W_ties": 7,
+  "p_W_two_sided": 0.092,
+  "comparisons_adjacent_pairs": 18,
+  "comparisons_all_pairs": 36,
+  "p_solved_bonferroni": [
+   0.14,
+   0.28
+  ]
+ },
+ "FIXED16": {
+  "runs": 60,
+  "claim_rose": 44,
+  "share_of_sums": 0.697,
+  "median_share_per_run": 0.27,
+  "runs_share_below_half": 29,
+  "top5_runs_share_of_truth_gain": 0.47,
+  "top5_solved": 2,
+  "top5_late_truth": [
+   0.663,
+   0.996,
+   0.484,
+   1.0,
+   1.0
+  ],
+  "solved_by_late": 7,
+  "share_of_sums_without_solved": 0.61,
+  "gap_growth_mean": 0.038,
+  "late_gap_mean": 0.154,
+  "gap_growth_over_late_gap": 0.25,
+  "gap_grew": 36,
+  "gap_fell": 8,
+  "changed": 44,
+  "share_of_sums_ci95": [
+   0.51,
+   0.85
+  ],
+  "claim_rose_over_002": 42,
+  "median_share_per_run_over_002": 0.32,
+  "runs_share_below_half_over_002": 27,
+  "median_claim_gain": 0.115,
+  "median_truth_gain": 0.025,
+  "early_claim_rose": 49,
+  "median_early_share_per_run": 0.22,
+  "runs_late_less_true_than_early": 13,
+  "runs_late_more_true_than_early": 22,
+  "runs_with_both_gains": 40,
+  "p_late_vs_early_two_sided": 0.18
+ },
+ "FIXED32": {
+  "runs": 120,
+  "claim_rose": 78,
+  "share_of_sums": 0.933,
+  "median_share_per_run": 0.5,
+  "runs_share_below_half": 39,
+  "top5_runs_share_of_truth_gain": 0.34,
+  "top5_solved": 4,
+  "top5_late_truth": [
+   1.0,
+   1.0,
+   1.0,
+   0.99,
+   1.0
+  ],
+  "solved_by_late": 16,
+  "share_of_sums_without_solved": 0.86,
+  "gap_growth_mean": 0.008,
+  "late_gap_mean": 0.066,
+  "gap_growth_over_late_gap": 0.13,
+  "gap_grew": 51,
+  "gap_fell": 27,
+  "changed": 78,
+  "share_of_sums_ci95": [
+   0.85,
+   1.01
+  ],
+  "claim_rose_over_002": 67,
+  "median_share_per_run_over_002": 0.79,
+  "runs_share_below_half_over_002": 29,
+  "median_claim_gain": 0.076,
+  "median_truth_gain": 0.031,
+  "early_claim_rose": 105,
+  "median_early_share_per_run": 0.8,
+  "runs_late_less_true_than_early": 40,
+  "runs_late_more_true_than_early": 28,
+  "runs_with_both_gains": 71,
+  "p_late_vs_early_two_sided": 0.18
+ },
+ "bets": {
+  "n": 11,
+  "came_true": 8,
+  "share": 0.73,
+  "wilson95": [
+   0.434,
+   0.903
+  ],
+  "mean_probability_rounded": 0.6,
+  "note": "ставки зависимы (A, B, C — одни прогоны; B3, B4 почти заданы устройством ветви): вывода о недо- или переуверенности нет"
+ }
+}
