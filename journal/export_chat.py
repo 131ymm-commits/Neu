@@ -17,6 +17,11 @@ ENV = (("This session's worker process was restarted", 'перезапуск р�
 def env_event(txt):
     for head, label in ENV:
         if txt.startswith(head): return f'\n- _событие среды (не человек): {label}_\n'
+def agent_report(txt, ts):
+    """Отчёт подагента, вернувшийся в сессию (28.11.2026: прежде шёл под заголовком «Человек (во время хода Claude)»)."""
+    if txt.startswith('<agent-message'):
+        if len(txt) > 4000: txt = txt[:1500] + f'\n\n[… отчёт сокращён, всего {len(txt)} символов …]'
+        return f'\n---\n\n## Отчёт подагента (среда, не человек) · {ts}\n\n{txt}\n'
 last_ts = None
 for line in open(src):
     try: j = json.loads(line)
@@ -35,6 +40,7 @@ for line in open(src):
             m = re.search(r'<summary>(.*?)</summary>', txt, re.S)
             out.append(f'\n- _событие среды (не человек): {(m.group(1) if m else "фоновая задача").strip()[:200]}_\n'); continue
         if txt and env_event(txt): out.append(env_event(txt)); continue
+        if txt and agent_report(txt, ts): out.append(agent_report(txt, ts)); continue
         if txt.startswith('Stop hook feedback'):
             out.append(f'\n---\n\n## Проверка среды (stop hook, не человек) · {ts}\n\n{txt[:800]}\n'); continue
         if 'This session is being continued from a previous conversation' in txt[:600]:   # сводка при сжатии контекста (28.10.2026; с 11.2026 перед ней служебная пометка)
@@ -54,6 +60,7 @@ for line in open(src):
             m = re.search(r'<summary>(.*?)</summary>', txt, re.S)
             out.append(f'\n- _событие среды (не человек): {(m.group(1) if m else "фоновая задача").strip()[:200]}_\n')
         elif txt and env_event(txt): out.append(env_event(txt))
+        elif txt and agent_report(txt, ts): out.append(agent_report(txt, ts))
         elif txt:
             if len(txt) > 4000: txt = txt[:1500] + f'\n\n[… вставка сокращена, всего {len(txt)} символов …]'
             out.append(f'\n---\n\n## Человек (во время хода Claude) · {ts}\n\n{txt}\n')
