@@ -207,6 +207,13 @@
     "periodic_mean_share": 0.0003
    }
   ],
+  "params": {
+   "population": 20000,
+   "inflow_per_generation": 0.0001,
+   "generations": 20000,
+   "g": 1.0,
+   "repeats": 5
+  },
   "takeover_generations": 27.6,
   "p_gap_longer_than_takeover": {
    "0.1": 0.058,
@@ -262,6 +269,8 @@
    "10": 1.533,
    "20": 1.866
   },
+  "inflation": 0.154,
+  "sigma_16_tests_max": 0.125,
   "inflation_in_sigma": 1.23,
   "programs_examined_per_run": 45000,
   "note": "завышение 0,154 при шуме 0,125 — как у лучшего из 5–6 независимых равных кандидатов"

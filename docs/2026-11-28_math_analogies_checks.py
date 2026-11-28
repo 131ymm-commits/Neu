@@ -78,6 +78,7 @@ for s_ in (0.9999, 1.0):
         rows.append(dict(s=s_, q=q_, q_log=0.0 if s_ >= 1 else round(q_log(1.0, s_), 3), random_fixed_of_5=int(sum(x[1] for x in rnd)), random_mean_share=round(float(np.mean([x[0] for x in rnd])), 3),
                          periodic_fixed_of_5=int(sum(x[1] for x in per)), periodic_mean_share=round(float(np.mean([x[0] for x in per])), 4)))
 out['finite_population_with_inflow'] = dict(note='случайный экзамен допускает длинные паузы; если пауза длиннее времени захвата, честных не остаётся', rows=rows,
+    params=dict(population=20000, inflow_per_generation=1e-4, generations=20000, g=1.0, repeats=5),
     takeover_generations=round(math.log(20000 / 1e-4) / math.log(2), 1), p_gap_longer_than_takeover={str(q_): float(f'{(1 - q_) ** 27:.2g}') for q_ in (0.1, 0.2, 0.4)},
     half_generations=round(math.log(1 / 1e-4) / math.log(2), 1),                    # до половины популяции; до полного вытеснения честных — takeover_generations
     expected_long_gaps_per_run={str(q_): float(f'{20000 * q_ * (1 - q_) ** 27:.2g}') for q_ in (0.1, 0.2, 0.4)},   # сколько раз за 20000 поколений случайный экзамен даёт паузу длиннее 27 поколений
@@ -87,7 +88,7 @@ out['deterrence_vs_selection'] = [dict(g=g_, s=s_, deterrence=round(q_lin(g_, s_
 # 6. (после критики) «Число независимых выборов»: какому «лучшему из N» отвечает наблюдённое завышение в единицах шума
 def emax(N, reps=40000, rr=np.random.default_rng(5)): return float(np.mean(rr.normal(size=(reps, N)).max(1)))
 tab = {N: round(emax(N), 3) for N in (2, 3, 4, 5, 6, 8, 10, 20)}
-out['effective_number_of_choices'] = dict(emax=tab, inflation_in_sigma=round(0.154 / 0.125, 2), programs_examined_per_run=300 * 150,
+out['effective_number_of_choices'] = dict(emax=tab, inflation=0.154, sigma_16_tests_max=0.125, inflation_in_sigma=round(0.154 / 0.125, 2), programs_examined_per_run=300 * 150,
                                           note='завышение 0,154 при шуме 0,125 — как у лучшего из 5–6 независимых равных кандидатов')
 # 7. (после критики) Экзамены в Англии: какой сдвиг нормального распределения переводит 75,5 % в 88,2 % и во сколько раз он увеличивает хвост в 1 %
 from statistics import NormalDist
