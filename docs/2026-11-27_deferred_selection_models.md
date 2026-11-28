@@ -209,6 +209,16 @@
 | оценщик под отбором | проклятие победителя; сжатие оценки к среднему (Джеймс — Стейн) | пам.; строки EVO-06 в `docs/PRIORITY.md` | — |
 | М4 | Price; Hamilton 1975; Frank 1995; Bowles 2006 | пам.; пам.; Neu; сн. | — |
 
+**Адреса из выдачи поиска** (сниппеты; полные тексты не открывались):
+- Olken 2007 — https://www.nber.org/papers/w11753
+- Kleven и др. 2011 — https://www.econometricsociety.org/publications/econometrica/2011/05/01/unwilling-or-unable-cheat-evidence-tax-audit-experiment-denmark
+- Martinez 2022 — https://harris.uchicago.edu/news-events/news/qa-luis-martinez-exposes-way-dictators-exaggerate-economic-performance
+- Chen, Chen, Hsieh, Song 2019 — https://www.brookings.edu/wp-content/uploads/2019/03/ChenEtAl_web.pdf
+- Reznick, Bryga, Endler 1990 — список работ автора: https://faculty.ucr.edu/~gupy/Reznick/reznickpublications.html
+- Nee, Colegrave, West, Grafen 2005 — https://users.ox.ac.uk/~grafen/cv/neeetal.pdf
+- Miller & Goldberg 1995 — https://www.complex-systems.com/abstracts/v09_i03_a02/
+- SWE-bench и сопровождающие (METR, 2026) — https://metr.org/notes/2026-03-10-many-swe-bench-passing-prs-would-not-be-merged-into-main/
+
 ## 7. Список к предсказанию № 6: что обесценится раньше (записан 27.11.2026, до сверки)
 Порядок — по грубой оценке «выгода обмана после языковых моделей против частоты и жёсткости прямой проверки умения». Раньше — выше.
 
