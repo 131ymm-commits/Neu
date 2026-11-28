@@ -63,6 +63,13 @@ for (task, arm), v in sorted(fi.items()):
     F['fi_bits'][f'{task}_{arm}'] = dict(truth_bits_median=None if mt > LIM else round(mt, 1), claim_bits_median=None if mc > LIM else round(mc, 1),
                                          share_truth_beyond_limit=round(float(np.mean([x[0] is None for x in v])), 2), share_claim_beyond_limit=round(float(np.mean([x[1] is None for x in v])), 2))
 F['fi_limit_bits'] = LIM
+# производные числа текста отчёта (добавлено после теста, только арифметика над уже посчитанным)
+wm = lambda a: float(np.mean([R['tables']['W_ind'][a][t] for t in ('T2', 'T3', 'T4', 'T5', 'T6')]))
+F['derived'] = dict(inflation_drop_half_exam=r3(wm('FIX') - wm('ALT_50')), inflation_drop_half_noise=r3(wm('FIX') - wm('NOISE_50')),
+                    slope_ratio_exam_to_noise=round(R['P1a_dose_slope']['mean'] / R['D_noise_slope']['mean'], 1) if mode == 'test' and R['D_noise_slope']['mean'] > 0 else None)
+if mode == 'test':
+    RP = json.load(open(os.path.join(H, 'pilot_results.json')))
+    F['derived']['P5_pilot_over_test'] = round(RP['P5_popmean_truth_ALT25_vs_FINAL25']['mean'] / R['P5_popmean_truth_ALT25_vs_FINAL25']['mean'], 1)
 F['constants'] = dict(population=300, generations=150, tournament=5, tests=16, tasks=6, arms=15, late_window=[121, 150], hidden=1000, outside=400, alpha_side=0.005, eq_margin=0.05, eq_sens=0.02,
                       pilot_seeds=[990, 991, 992], registration_digits=84459, council=48, selftest=29, mutants=26, family_error=0.04)
 json.dump(F, open(os.path.join(H, 'facts_pilot.json' if mode == 'pilot' else 'facts.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)

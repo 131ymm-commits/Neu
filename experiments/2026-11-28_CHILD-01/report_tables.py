@@ -11,7 +11,7 @@ def n(x, d=3):
     s = f'{x:.{d}f}'.rstrip('0').rstrip('.') if abs(x) >= 10 ** -d else ('0' if x == 0 else f'{x:.2g}')
     return s.replace('.', ',').replace('-', '−')
 def ci(b): return '—' if b.get('ci') is None else f"от {n(b['ci'][0])} до {n(b['ci'][1])}"
-def pv(x): return '—' if x is None else (f'{x:.2g}'.replace('.', ',').replace('e-0', '·10⁻').replace('e-', '·10⁻') if x < 0.001 else n(x, 4))
+def pv(x): return '—' if x is None else ('меньше 0,000001' if x < 5e-7 else f'{x:.6f}'.rstrip('0').rstrip('.').replace('.', ','))   # p в файле результатов округлено до шести знаков
 def seeds(b): return '—' if b.get('seeds_plus') is None else f"{b['seeds_plus']} / {b['seeds_minus']} / {b.get('seeds_zero', 0)}"
 def tasks(b): return f"{b['tasks_plus']} из {b['tasks_total']}"
 out = []
