@@ -3,6 +3,7 @@
 import json, os, sys
 H = os.path.dirname(os.path.abspath(__file__)); mode = sys.argv[1] if len(sys.argv) > 1 else 'test'
 F = json.load(open(os.path.join(H, 'facts_pilot.json' if mode == 'pilot' else 'facts.json')))
+FP = json.load(open(os.path.join(H, 'facts_pilot.json')))                      # пилот (сиды 990–992) — для столбца «в пилоте»
 def n(x, d=3):
     if x is None: return '—'
     if isinstance(x, bool): return 'да' if x else 'нет'
@@ -19,13 +20,13 @@ W(f"<!-- сгенерировано report_tables.py из {'facts_pilot.json' if
 
 # А. Проверки с вердиктом
 W('### А. Проверки с вердиктом\n')
-W('| № | Мера | Среднее по сидам | Интервал 95 % | p в сторону ожидания | p в обратную | Сиды: плюс / минус / ноль | Задач со знаком плюс | Вердикт |')
-W('|---|---|---|---|---|---|---|---|---|')
+W('| № | Мера | В пилоте (3 сида) | Среднее по сидам | Интервал 95 % | p в сторону ожидания | p в обратную | Сиды: плюс / минус / ноль | Задач со знаком плюс | Вердикт |')
+W('|---|---|---|---|---|---|---|---|---|---|')
 for num, key, name in (('P1', 'P1a_dose_slope', 'минус наклон завышения показателя по доле экзаменов (T2–T6)'),
                        ('P3', 'P3_truth_ALT50_vs_NOISE50', 'правда лучшего по показателю: ALT_50 − NOISE_50'),
                        ('P4', 'P4_purge_NOISE50_minus_ALT50', 'завышение показателя: NOISE_50 − ALT_50 (T2–T6)'),
                        ('P5', 'P5_popmean_truth_ALT25_vs_FINAL25', 'средняя правда популяции: ALT_25 − FINAL_25')):
-    b = F[key]; W(f"| {num} | {name} | {n(b['mean'])} | {ci(b)} | {pv(b['p_up'])} | {pv(b['p_down'])} | {seeds(b)} | {tasks(b)} | {b['verdict']} |")
+    b = F[key]; W(f"| {num} | {name} | {n(FP[key]['mean'])} | {n(b['mean'])} | {ci(b)} | {pv(b['p_up'])} | {pv(b['p_down'])} | {seeds(b)} | {tasks(b)} | {b['verdict']} |")
 b = F['P4_purge_NOISE50_minus_ALT50']
 if 'within_sens_margin' in b: W(f"\nP4, чувствительность: интервал целиком внутри ±0,02 — {n(b['within_sens_margin'])}.")
 
@@ -57,8 +58,8 @@ for a in ('NOISE_25', 'NOISE_50', 'MIX_25', 'MIX_50', 'FINAL_25', 'FINAL_50', 'R
 
 # Д. Описательные меры
 W('\n### Д. Описательные меры (без вердикта)\n')
-W('| Мера | Среднее по сидам | Интервал 95 % | Сиды: плюс / минус / ноль | Задач со знаком плюс |')
-W('|---|---|---|---|---|')
+W('| Мера | В пилоте (3 сида) | Среднее по сидам | Интервал 95 % | Сиды: плюс / минус / ноль | Задач со знаком плюс |')
+W('|---|---|---|---|---|---|')
 for key, name in (('P1b_inner_slope', 'P1b: минус внутренний наклон завышения (ALT_12…ALT_75), T2–T6'),
                   ('P2_exam_gradient_on_inflation', 'P2: градиент отбора по экзамену на завышение при равной правде, ветвь FIX, T2–T6'),
                   ('D_P2_in_ALT50_exam_gens', 'то же в экзаменационных поколениях ALT_50'),
@@ -70,7 +71,7 @@ for key, name in (('P1b_inner_slope', 'P1b: минус внутренний на
                   ('D_P5_by_T_ind', 'P5 по правде лучшего по показателю: ALT_25 − FINAL_25'),
                   ('D_P5_by_T_key', 'P5 по правде рабочей элиты: ALT_25 − FINAL_25'),
                   ('D_uniq_FINAL25_minus_ALT25', 'число разных программ в популяции (из 300): FINAL_25 − ALT_25')):
-    b = F[key]; W(f"| {name} | {n(b['mean'])} | {ci(b)} | {seeds(b)} | {tasks(b)} |")
+    b = F[key]; W(f"| {name} | {n(FP[key]['mean'])} | {n(b['mean'])} | {ci(b)} | {seeds(b)} | {tasks(b)} |")
 for key in ('P2_exam_gradient_on_inflation', 'D_P2_in_ALT50_exam_gens'):
     if 'beta_T_mean' in F[key]: W(f"\nГрадиент по правде ({key}): {n(F[key]['beta_T_mean'])}.")
 W('\nПо задачам:\n')
