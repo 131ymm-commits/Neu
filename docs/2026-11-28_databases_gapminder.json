@@ -1,0 +1,107 @@
+{
+ "source": "github.com/open-numbers/ddf--gapminder--systema_globalis, ветка master, каталог countries-etc-datapoints; версия базы 2.3.2",
+ "files": {
+  "under_five_mortality_from_cme_per_1000_born": "4a63311b0587b14a",
+  "infant_mortality_rate_per_1000_births": "10502a98ee71e3b4"
+ },
+ "under5": {
+  "1960": {
+   "countries": 127,
+   "median_q": 0.1394,
+   "median_index": 0.162,
+   "share_countries_q_above_0_2": 0.346,
+   "max_q": 0.436
+  },
+  "1990": {
+   "countries": 199,
+   "median_q": 0.0472,
+   "median_index": 0.0495,
+   "share_countries_q_above_0_2": 0.07,
+   "max_q": 0.337
+  },
+  "2024": {
+   "countries": 199,
+   "median_q": 0.0152,
+   "median_index": 0.0154,
+   "share_countries_q_above_0_2": 0.0,
+   "max_q": 0.115
+  }
+ },
+ "under5_fold_drop_1960_2024": {
+  "countries": 127,
+  "median": 9.7,
+  "min": 3.0,
+  "max": 61.5
+ },
+ "infant_long_series": {
+  "swe": {
+   "1800": {
+    "q": 0.24,
+    "index": 0.3158
+   },
+   "1850": {
+    "q": 0.146,
+    "index": 0.171
+   },
+   "1900": {
+    "q": 0.099,
+    "index": 0.1099
+   },
+   "1950": {
+    "q": 0.0221,
+    "index": 0.0226
+   },
+   "2015": {
+    "q": 0.0024,
+    "index": 0.0024
+   }
+  },
+  "fra": {
+   "1830": {
+    "q": 0.182,
+    "index": 0.2225
+   },
+   "1900": {
+    "q": 0.16,
+    "index": 0.1905
+   },
+   "1950": {
+    "q": 0.0476,
+    "index": 0.05
+   },
+   "2015": {
+    "q": 0.0035,
+    "index": 0.0035
+   }
+  },
+  "ind": {
+   "1911": {
+    "q": 0.205,
+    "index": 0.2579
+   },
+   "1950": {
+    "q": 0.164,
+    "index": 0.1962
+   },
+   "2015": {
+    "q": 0.0379,
+    "index": 0.0394
+   }
+  },
+  "jpn": {
+   "1920": {
+    "q": 0.166,
+    "index": 0.199
+   },
+   "1950": {
+    "q": 0.0578,
+    "index": 0.0613
+   },
+   "2015": {
+    "q": 0.002,
+    "index": 0.002
+   }
+  }
+ },
+ "sweden_fold_drop_1800_2015": 132
+}

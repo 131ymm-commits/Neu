@@ -1,0 +1,152 @@
+{
+ "threshold_log_vs_linear": {
+  "note": "доля обманщиков в конце: на 0,07 ниже и выше логарифмического порога и на линейном пороге",
+  "rows": [
+   {
+    "g": 1.0,
+    "s": 0.5,
+    "q_log": 0.5,
+    "q_lin": 0.667,
+    "cheaters_below_log": 1.0,
+    "cheaters_above_log": 0.05,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 1.0,
+    "s": 0.9,
+    "q_log": 0.231,
+    "q_lin": 0.526,
+    "cheaters_below_log": 0.9,
+    "cheaters_above_log": 0.0,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 1.0,
+    "s": 0.99,
+    "q_log": 0.131,
+    "q_lin": 0.503,
+    "cheaters_below_log": 1.0,
+    "cheaters_above_log": 0.05,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 0.25,
+    "s": 0.5,
+    "q_log": 0.244,
+    "q_lin": 0.333,
+    "cheaters_below_log": 1.0,
+    "cheaters_above_log": 0.0,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 3.0,
+    "s": 0.5,
+    "q_log": 0.667,
+    "q_lin": 0.857,
+    "cheaters_below_log": 0.9,
+    "cheaters_above_log": 0.05,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 0.1,
+    "s": 0.1,
+    "q_log": 0.475,
+    "q_lin": 0.5,
+    "cheaters_below_log": 1.0,
+    "cheaters_above_log": 0.0,
+    "cheaters_at_lin": 0.001
+   }
+  ]
+ },
+ "drift_with_resets": {
+  "note": "случайная сверка даёт степенной хвост ошибки; сверка по расписанию с той же частотой хвоста не даёт",
+  "rows": [
+   {
+    "a": 1.2,
+    "q": 0.2,
+    "q_critical": 0.306,
+    "alpha_formula": 1.22,
+    "alpha_hill": 1.22,
+    "median": 1.73,
+    "q999": 284.9,
+    "periodic_max": 2.07,
+    "periodic_median": 1.44
+   },
+   {
+    "a": 1.2,
+    "q": 0.4,
+    "q_critical": 0.306,
+    "alpha_formula": 2.8,
+    "alpha_hill": 3.33,
+    "median": 1.2,
+    "q999": 10.7,
+    "periodic_max": 1.2,
+    "periodic_median": 1.1
+   },
+   {
+    "a": 1.5,
+    "q": 0.3,
+    "q_critical": 0.556,
+    "alpha_formula": 0.88,
+    "alpha_hill": 0.82,
+    "median": 1.5,
+    "q999": 2216.8,
+    "periodic_max": 2.25,
+    "periodic_median": 1.5
+   },
+   {
+    "a": 1.5,
+    "q": 0.6,
+    "q_critical": 0.556,
+    "alpha_formula": 2.26,
+    "alpha_hill": 1.65,
+    "median": 1.0,
+    "q999": 17.1,
+    "periodic_max": 1.5,
+    "periodic_median": 1.25
+   }
+  ]
+ },
+ "russo_zou_best_of_N": {
+  "note": "завышение лучшего из N в единицах шума против границы sqrt(2 ln N)",
+  "rows": [
+   {
+    "N": 2,
+    "inflation": 0.57,
+    "bound": 1.177,
+    "bits": 1.0
+   },
+   {
+    "N": 5,
+    "inflation": 1.164,
+    "bound": 1.794,
+    "bits": 2.32
+   },
+   {
+    "N": 30,
+    "inflation": 2.042,
+    "bound": 2.608,
+    "bits": 4.91
+   },
+   {
+    "N": 300,
+    "inflation": 2.877,
+    "bound": 3.378,
+    "bits": 8.23
+   },
+   {
+    "N": 3000,
+    "inflation": 3.547,
+    "bound": 4.002,
+    "bits": 11.55
+   }
+  ]
+ },
+ "bits_from_inflation": {
+  "0.02": 0.02,
+  "0.066": 0.2,
+  "0.154": 1.09,
+  "0.44": 8.94,
+  "0.75": 25.97
+ }
+}

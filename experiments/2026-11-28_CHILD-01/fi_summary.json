@@ -1,0 +1,139 @@
+{
+ "note": "сводка fi_curves.json для отчёта: биты = −log2 доли случайных программ (глубина до 6) с числом верных ответов не меньше уровня; 201 вход",
+ "M": 1500000,
+ "tasks": {
+  "T1": {
+   "bits_10pct": 16.43,
+   "bits_50pct": 17.52,
+   "bits_75pct": null,
+   "max_level_seen": 106,
+   "max_share_seen": 0.53,
+   "bits_at_max": 20.52,
+   "solved_direct_bits": null,
+   "solved_upper_bound_bits": 24.16,
+   "solved_lower_bound_bits": 18.93,
+   "exam16_bits": 32.71,
+   "exam16_share_from_top_levels": 0.0,
+   "bits_10pct_depth4": 16.93,
+   "solved_direct_bits_depth4": 18.93,
+   "split_solved_bits": [
+    14.9,
+    20.3,
+    18.6,
+    14.7
+   ]
+  },
+  "T2": {
+   "bits_10pct": 5.88,
+   "bits_50pct": 6.68,
+   "bits_75pct": 19.52,
+   "max_level_seen": 198,
+   "max_share_seen": 0.99,
+   "bits_at_max": 20.52,
+   "solved_direct_bits": null,
+   "solved_upper_bound_bits": 33.1,
+   "solved_lower_bound_bits": 18.93,
+   "exam16_bits": 19.88,
+   "exam16_share_from_top_levels": 0.66,
+   "bits_10pct_depth4": 5.91,
+   "solved_direct_bits_depth4": null,
+   "split_solved_bits": [
+    34.4,
+    28.9,
+    37.2,
+    26.4
+   ]
+  },
+  "T3": {
+   "bits_10pct": 10.69,
+   "bits_50pct": null,
+   "bits_75pct": null,
+   "max_level_seen": 44,
+   "max_share_seen": 0.22,
+   "bits_at_max": 20.52,
+   "solved_direct_bits": null,
+   "solved_upper_bound_bits": 34.46,
+   "solved_lower_bound_bits": 18.93,
+   "exam16_bits": 50.05,
+   "exam16_share_from_top_levels": 0.0,
+   "bits_10pct_depth4": 10.44,
+   "solved_direct_bits_depth4": null,
+   "split_solved_bits": [
+    47.5,
+    45.7,
+    null,
+    null
+   ]
+  },
+  "T4": {
+   "bits_10pct": 6.39,
+   "bits_50pct": 10.58,
+   "bits_75pct": 20.52,
+   "max_level_seen": 150,
+   "max_share_seen": 0.75,
+   "bits_at_max": 20.52,
+   "solved_direct_bits": null,
+   "solved_upper_bound_bits": 39.94,
+   "solved_lower_bound_bits": 18.93,
+   "exam16_bits": 25.48,
+   "exam16_share_from_top_levels": 0.29,
+   "bits_10pct_depth4": 6.27,
+   "solved_direct_bits_depth4": null,
+   "split_solved_bits": [
+    33.4,
+    null,
+    34.3,
+    32.9
+   ]
+  },
+  "T5": {
+   "bits_10pct": 9.52,
+   "bits_50pct": 13.25,
+   "bits_75pct": null,
+   "max_level_seen": 114,
+   "max_share_seen": 0.57,
+   "bits_at_max": 20.52,
+   "solved_direct_bits": null,
+   "solved_upper_bound_bits": 52.69,
+   "solved_lower_bound_bits": 18.93,
+   "exam16_bits": 27.12,
+   "exam16_share_from_top_levels": 0.0,
+   "bits_10pct_depth4": 9.22,
+   "solved_direct_bits_depth4": null,
+   "split_solved_bits": [
+    41.5,
+    null,
+    null,
+    null
+   ]
+  },
+  "T6": {
+   "bits_10pct": 13.12,
+   "bits_50pct": 14.11,
+   "bits_75pct": 15.99,
+   "max_level_seen": 201,
+   "max_share_seen": 1.0,
+   "bits_at_max": 16.43,
+   "solved_direct_bits": 16.43,
+   "solved_upper_bound_bits": 19.12,
+   "solved_lower_bound_bits": 16.43,
+   "exam16_bits": 16.13,
+   "exam16_share_from_top_levels": 1.0,
+   "bits_10pct_depth4": 13.09,
+   "solved_direct_bits_depth4": 14.12,
+   "split_solved_bits": [
+    null,
+    27.9,
+    22.9,
+    23.0
+   ]
+  }
+ },
+ "constants": {
+  "samples": 1500000,
+  "inputs": 201,
+  "depth": 6,
+  "upper_bound_zero_hits_bits": 18.93,
+  "tournament_bits": 2.32
+ }
+}
