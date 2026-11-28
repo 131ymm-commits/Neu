@@ -1,0 +1,117 @@
+{
+ "pilot_FIX": {
+  "seeds": 3,
+  "late_truth": [
+   1.0,
+   0.998,
+   1.0
+  ],
+  "mean": 0.999,
+  "solved": 2,
+  "above_0_9": 3
+ },
+ "pilot_RND": {
+  "seeds": 3,
+  "late_truth": [
+   0.014,
+   1.0,
+   1.0
+  ],
+  "mean": 0.671,
+  "solved": 2,
+  "above_0_9": 2
+ },
+ "test_FIX": {
+  "seeds": 20,
+  "late_truth": [
+   0.002,
+   0.0,
+   0.006,
+   0.008,
+   1.0,
+   0.163,
+   0.02,
+   0.0,
+   0.015,
+   0.012,
+   0.024,
+   0.01,
+   0.016,
+   0.003,
+   0.472,
+   0.005,
+   0.009,
+   0.012,
+   0.008,
+   0.0
+  ],
+  "mean": 0.089,
+  "solved": 1,
+  "above_0_9": 1
+ },
+ "test_RND": {
+  "seeds": 20,
+  "late_truth": [
+   0.322,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   1.0,
+   0.014,
+   1.0,
+   0.013,
+   1.0,
+   0.012,
+   1.0,
+   0.015,
+   1.0,
+   0.009,
+   0.005,
+   0.015,
+   1.0,
+   0.011,
+   0.009
+  ],
+  "mean": 0.521,
+  "solved": 10,
+  "above_0_9": 10
+ },
+ "EVO01_archive_FIXED16": {
+  "seeds": 20,
+  "final_truth_solved": 1,
+  "final_truth_above_0_4": 5,
+  "mean": 0.155
+ },
+ "DEFER01_pilot_FIXED16": {
+  "seeds": 3,
+  "final_truth": [
+   0.008,
+   0.006,
+   0.011
+  ],
+  "solved": 0
+ },
+ "rerun_original_EVO01_code_on_pilot_seeds": {
+  "990": {
+   "final_truth": 1.0,
+   "max_abs_diff_truth": 0.0,
+   "max_abs_diff_claim": 0.0
+  },
+  "991": {
+   "final_truth": 0.998,
+   "max_abs_diff_truth": 0.0,
+   "max_abs_diff_claim": 0.0
+  },
+  "992": {
+   "final_truth": 1.0,
+   "max_abs_diff_truth": 0.0,
+   "max_abs_diff_claim": 0.0
+  }
+ },
+ "chance_three_of_three": {
+  "if_rate_0.05": 0.00013,
+  "if_rate_0.1": 0.001,
+  "if_rate_0.25": 0.0156
+ }
+}

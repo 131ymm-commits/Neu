@@ -1,0 +1,362 @@
+{
+ "threshold_log_vs_linear": {
+  "note": "доля обманщиков в конце: на 0,07 ниже и выше логарифмического порога и на линейном пороге",
+  "rows": [
+   {
+    "g": 1.0,
+    "s": 0.5,
+    "q_log": 0.5,
+    "q_lin": 0.667,
+    "cheaters_below_log": 1.0,
+    "cheaters_above_log": 0.05,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 1.0,
+    "s": 0.9,
+    "q_log": 0.231,
+    "q_lin": 0.526,
+    "cheaters_below_log": 0.9,
+    "cheaters_above_log": 0.0,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 1.0,
+    "s": 0.99,
+    "q_log": 0.131,
+    "q_lin": 0.503,
+    "cheaters_below_log": 1.0,
+    "cheaters_above_log": 0.05,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 0.25,
+    "s": 0.5,
+    "q_log": 0.244,
+    "q_lin": 0.333,
+    "cheaters_below_log": 1.0,
+    "cheaters_above_log": 0.0,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 3.0,
+    "s": 0.5,
+    "q_log": 0.667,
+    "q_lin": 0.857,
+    "cheaters_below_log": 0.9,
+    "cheaters_above_log": 0.05,
+    "cheaters_at_lin": 0.0
+   },
+   {
+    "g": 0.1,
+    "s": 0.1,
+    "q_log": 0.475,
+    "q_lin": 0.5,
+    "cheaters_below_log": 1.0,
+    "cheaters_above_log": 0.0,
+    "cheaters_at_lin": 0.001
+   }
+  ]
+ },
+ "drift_with_resets": {
+  "note": "случайная сверка даёт степенной хвост ошибки; сверка по расписанию с той же частотой хвоста не даёт",
+  "rows": [
+   {
+    "a": 1.2,
+    "q": 0.2,
+    "q_critical": 0.306,
+    "alpha_formula": 1.22,
+    "alpha_hill": 1.22,
+    "median": 1.73,
+    "q999": 284.9,
+    "periodic_max": 2.07,
+    "periodic_median": 1.44
+   },
+   {
+    "a": 1.2,
+    "q": 0.4,
+    "q_critical": 0.306,
+    "alpha_formula": 2.8,
+    "alpha_hill": 3.33,
+    "median": 1.2,
+    "q999": 10.7,
+    "periodic_max": 1.2,
+    "periodic_median": 1.1
+   },
+   {
+    "a": 1.5,
+    "q": 0.3,
+    "q_critical": 0.556,
+    "alpha_formula": 0.88,
+    "alpha_hill": 0.82,
+    "median": 1.5,
+    "q999": 2216.8,
+    "periodic_max": 2.25,
+    "periodic_median": 1.5
+   },
+   {
+    "a": 1.5,
+    "q": 0.6,
+    "q_critical": 0.556,
+    "alpha_formula": 2.26,
+    "alpha_hill": 1.65,
+    "median": 1.0,
+    "q999": 17.1,
+    "periodic_max": 1.5,
+    "periodic_median": 1.25
+   }
+  ]
+ },
+ "russo_zou_best_of_N": {
+  "note": "завышение лучшего из N в единицах шума против границы sqrt(2 ln N)",
+  "rows": [
+   {
+    "N": 2,
+    "inflation": 0.57,
+    "bound": 1.177,
+    "bits": 1.0
+   },
+   {
+    "N": 5,
+    "inflation": 1.164,
+    "bound": 1.794,
+    "bits": 2.32
+   },
+   {
+    "N": 30,
+    "inflation": 2.042,
+    "bound": 2.608,
+    "bits": 4.91
+   },
+   {
+    "N": 300,
+    "inflation": 2.877,
+    "bound": 3.378,
+    "bits": 8.23
+   },
+   {
+    "N": 3000,
+    "inflation": 3.547,
+    "bound": 4.002,
+    "bits": 11.55
+   }
+  ]
+ },
+ "bits_from_inflation": {
+  "0.02": 0.02,
+  "0.066": 0.2,
+  "0.154": 1.09,
+  "0.44": 8.94,
+  "0.75": 25.97
+ },
+ "finite_population_with_inflow": {
+  "note": "случайный экзамен допускает длинные паузы; если пауза длиннее времени захвата, честных не остаётся",
+  "rows": [
+   {
+    "s": 0.9999,
+    "q": 0.1,
+    "q_log": 0.07,
+    "random_fixed_of_5": 5,
+    "random_mean_share": 1.0,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0195
+   },
+   {
+    "s": 0.9999,
+    "q": 0.2,
+    "q_log": 0.07,
+    "random_fixed_of_5": 5,
+    "random_mean_share": 1.0,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0011
+   },
+   {
+    "s": 0.9999,
+    "q": 0.4,
+    "q_log": 0.07,
+    "random_fixed_of_5": 0,
+    "random_mean_share": 0.004,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0003
+   },
+   {
+    "s": 1.0,
+    "q": 0.1,
+    "q_log": 0.0,
+    "random_fixed_of_5": 5,
+    "random_mean_share": 1.0,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0187
+   },
+   {
+    "s": 1.0,
+    "q": 0.2,
+    "q_log": 0.0,
+    "random_fixed_of_5": 5,
+    "random_mean_share": 1.0,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0011
+   },
+   {
+    "s": 1.0,
+    "q": 0.4,
+    "q_log": 0.0,
+    "random_fixed_of_5": 0,
+    "random_mean_share": 0.004,
+    "periodic_fixed_of_5": 0,
+    "periodic_mean_share": 0.0003
+   }
+  ],
+  "params": {
+   "population": 20000,
+   "inflow_per_generation": 0.0001,
+   "generations": 20000,
+   "g": 1.0,
+   "repeats": 5
+  },
+  "takeover_generations": 27.6,
+  "p_gap_longer_than_takeover": {
+   "0.1": 0.058,
+   "0.2": 0.0024,
+   "0.4": 1e-06
+  },
+  "half_generations": 13.3,
+  "expected_long_gaps_per_run": {
+   "0.1": 120.0,
+   "0.2": 9.7,
+   "0.4": 0.0082
+  },
+  "longest_gap_periodic": {
+   "0.1": 9,
+   "0.2": 4,
+   "0.4": 2
+  }
+ },
+ "deterrence_vs_selection": [
+  {
+   "g": 1.0,
+   "s": 0.5,
+   "deterrence": 0.667,
+   "selection": 0.5
+  },
+  {
+   "g": 1.0,
+   "s": 0.9,
+   "deterrence": 0.526,
+   "selection": 0.231
+  },
+  {
+   "g": 0.1,
+   "s": 0.1,
+   "deterrence": 0.5,
+   "selection": 0.475
+  },
+  {
+   "g": 0.01,
+   "s": 0.01,
+   "deterrence": 0.5,
+   "selection": 0.497
+  }
+ ],
+ "effective_number_of_choices": {
+  "emax": {
+   "2": 0.564,
+   "3": 0.852,
+   "4": 1.027,
+   "5": 1.163,
+   "6": 1.268,
+   "8": 1.426,
+   "10": 1.533,
+   "20": 1.866
+  },
+  "inflation": 0.154,
+  "sigma_16_tests_max": 0.125,
+  "inflation_in_sigma": 1.23,
+  "programs_examined_per_run": 45000,
+  "note": "завышение 0,154 при шуме 0,125 — как у лучшего из 5–6 независимых равных кандидатов"
+ },
+ "tail_mechanics": {
+  "shift_sigma": 0.495,
+  "tail_1pct_multiplier": 3.35,
+  "observed_multiplier": 4.65,
+  "multiplier_by_base_share": {
+   "0.01": 3.35,
+   "0.005": 3.74,
+   "0.002": 4.29
+  }
+ },
+ "periodic_gap_scan": {
+  "note": "экзамен по расписанию каждые k поколений: число захватов из 10 и средняя доля обходчиков там, где захвата нет",
+  "rows": [
+   {
+    "gap": 9,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.019
+   },
+   {
+    "gap": 13,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.115
+   },
+   {
+    "gap": 16,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.236
+   },
+   {
+    "gap": 19,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.348
+   },
+   {
+    "gap": 21,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.408
+   },
+   {
+    "gap": 22,
+    "fixed_of_10": 0,
+    "mean_share_not_fixed": 0.432
+   },
+   {
+    "gap": 23,
+    "fixed_of_10": 10,
+    "mean_share_not_fixed": null
+   },
+   {
+    "gap": 24,
+    "fixed_of_10": 10,
+    "mean_share_not_fixed": null
+   },
+   {
+    "gap": 25,
+    "fixed_of_10": 10,
+    "mean_share_not_fixed": null
+   },
+   {
+    "gap": 27,
+    "fixed_of_10": 10,
+    "mean_share_not_fixed": null
+   }
+  ],
+  "shortest_gap_with_fixation": 23,
+  "longest_gap_without_fixation": 22,
+  "expected_gaps_23_or_longer_per_run": {
+   "0.1": 180.0,
+   "0.2": 24.0,
+   "0.4": 0.063
+  }
+ },
+ "drift_thresholds": [
+  {
+   "a": 1.2,
+   "mean_bounded_if_q_above": 0.167,
+   "second_moment_bounded_if_q_above": 0.306
+  },
+  {
+   "a": 1.5,
+   "mean_bounded_if_q_above": 0.333,
+   "second_moment_bounded_if_q_above": 0.556
+  }
+ ]
+}

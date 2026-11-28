@@ -1,0 +1,98 @@
+{
+ "juvenile_hazard_per_year": {
+  "past": 0.04463,
+  "world_2024": 0.00301,
+  "rich": 0.0004
+ },
+ "p_die_before_15": {
+  "past": 0.488,
+  "world_2024": 0.0441,
+  "rich": 0.006
+ },
+ "hazard_ratio_past_to_world": 14.8,
+ "hazard_ratio_past_to_rich": 111.0,
+ "selection_vs_learning": {
+  "truncation_half_bits": 1.0,
+  "sunfish_max_bits_per_generation": 27.2,
+  "kimura_bits_per_generation": 0.29,
+  "genome_capacity_bits": 6200000000.0,
+  "genome_capacity_megabytes": 775,
+  "mackay_bound_bits_per_generation": 78740,
+  "language_bits_by_18": 12483000,
+  "language_megabytes": 1.56,
+  "language_over_kimura": 43044828,
+  "language_over_mackay": 159
+ },
+ "genome_vs_wiring": {
+  "bits_per_synapse_address": 36.3,
+  "wiring_bits": 3630000000000000.0,
+  "ratio_wiring_to_genome": 590000.0
+ },
+ "smith_fretwell_toy": [
+  {
+   "k": 0.5,
+   "optimal_investment": 1.75,
+   "offspring_number": 57.1,
+   "survival_each": 0.778
+  },
+  {
+   "k": 2,
+   "optimal_investment": 2.72,
+   "offspring_number": 36.8,
+   "survival_each": 0.576
+  },
+  {
+   "k": 8,
+   "optimal_investment": 4.69,
+   "offspring_number": 21.3,
+   "survival_each": 0.37
+  },
+  {
+   "k": 32,
+   "optimal_investment": 8.68,
+   "offspring_number": 11.5,
+   "survival_each": 0.213
+  }
+ ],
+ "selection_on_proxy": [
+  {
+   "top_share": 0.5,
+   "intensity": 0.798,
+   "self_deception_rho_0.9": 0.08,
+   "self_deception_rho_0.7": 0.239,
+   "self_deception_rho_0.5": 0.399
+  },
+  {
+   "top_share": 0.1,
+   "intensity": 1.755,
+   "self_deception_rho_0.9": 0.175,
+   "self_deception_rho_0.7": 0.526,
+   "self_deception_rho_0.5": 0.877
+  },
+  {
+   "top_share": 0.01,
+   "intensity": 2.665,
+   "self_deception_rho_0.9": 0.267,
+   "self_deception_rho_0.7": 0.8,
+   "self_deception_rho_0.5": 1.333
+  },
+  {
+   "top_share": 0.0001,
+   "intensity": 3.958,
+   "self_deception_rho_0.9": 0.396,
+   "self_deception_rho_0.7": 1.188,
+   "self_deception_rho_0.5": 1.979
+  },
+  {
+   "top_share": 1e-06,
+   "intensity": 4.948,
+   "self_deception_rho_0.9": 0.495,
+   "self_deception_rho_0.7": 1.484,
+   "self_deception_rho_0.5": 2.474
+  }
+ ],
+ "learning_time_ratio_if_only_mu": {
+  "world": 14.8,
+  "rich": 111.0
+ }
+}

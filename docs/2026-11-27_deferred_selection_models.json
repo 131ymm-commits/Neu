@@ -1,0 +1,876 @@
+{
+ "M1_check_max_rel_error_200_random": 9.34e-08,
+ "M1_invariants": {
+  "fish_k3_y1.5": {
+   "alphaM": 1.648,
+   "length_share_at_maturity": 0.667,
+   "note": "k = 3 (плодовитость ~ длина^3), y = M/K = 1,5; сравнить: Beverton–Holt/Jensen 1996 — 1,65 и 0,66 [пам.]"
+  },
+  "limit_y_to_infinity_k1": 1.0,
+  "k1_y1": {
+   "alphaM": 0.693,
+   "share": 0.5
+  },
+  "k1_y0.1": {
+   "alphaM": 0.24,
+   "share": 0.909
+  }
+ },
+ "M1_fit_k1": {
+  "mammals_typical": {
+   "alphaM": 0.699,
+   "y": 1.033,
+   "share_learned": 0.49
+  },
+  "orangutan": {
+   "alphaM": 0.28,
+   "y": 0.129,
+   "share_learned": 0.89
+  },
+  "gorilla": {
+   "alphaM": 0.21,
+   "y": 0.081,
+   "share_learned": 0.93
+  },
+  "human_foragers_low": {
+   "alphaM": 0.15,
+   "y": 0.049,
+   "share_learned": 0.95
+  },
+  "human_foragers_high": {
+   "alphaM": 0.285,
+   "y": 0.133,
+   "share_learned": 0.88
+  }
+ },
+ "M1_elasticity_of_childhood_to_hazard": {
+  "y=0.05": -0.31,
+  "y=0.1": -0.38,
+  "y=0.3": -0.52,
+  "y=1": -0.72,
+  "y=3": -0.87,
+  "y=10": -0.95
+ },
+ "M1_childhood_ratio_when_hazard_doubles": {
+  "y=0.1": 0.75,
+  "y=1": 0.58,
+  "y=10": 0.51
+ },
+ "M2_check_max_rel_error": 8.7e-05,
+ "M2_number_vs_learning_scale": [
+  {
+   "theta": 1,
+   "investment": 1.15,
+   "number_rel": 46.6,
+   "quality": 0.682
+  },
+  {
+   "theta": 2,
+   "investment": 1.72,
+   "number_rel": 36.8,
+   "quality": 0.576
+  },
+  {
+   "theta": 4,
+   "investment": 2.53,
+   "number_rel": 28.3,
+   "quality": 0.469
+  },
+  {
+   "theta": 8,
+   "investment": 3.69,
+   "number_rel": 21.3,
+   "quality": 0.37
+  },
+  {
+   "theta": 16,
+   "investment": 5.34,
+   "number_rel": 15.8,
+   "quality": 0.284
+  },
+  {
+   "theta": 32,
+   "investment": 7.68,
+   "number_rel": 11.5,
+   "quality": 0.213
+  }
+ ],
+ "M3_check": [
+  {
+   "S": 1.0,
+   "q_star_formula": 0.5,
+   "points": [
+    {
+     "q": 0.0,
+     "x_formula": 0.347,
+     "x_simulated": 0.351
+    },
+    {
+     "q": 0.25,
+     "x_formula": 0.203,
+     "x_simulated": 0.198
+    },
+    {
+     "q": 0.4,
+     "x_formula": 0.091,
+     "x_simulated": 0.12
+    },
+    {
+     "q": 0.5,
+     "x_formula": 0.0,
+     "x_simulated": 0.078
+    },
+    {
+     "q": 0.65,
+     "x_formula": 0.0,
+     "x_simulated": 0.06
+    },
+    {
+     "q": 0.99,
+     "x_formula": 0.0,
+     "x_simulated": 0.043
+    }
+   ]
+  },
+  {
+   "S": 4.0,
+   "q_star_formula": 0.2,
+   "points": [
+    {
+     "q": 0.0,
+     "x_formula": 0.347,
+     "x_simulated": 0.353
+    },
+    {
+     "q": 0.1,
+     "x_formula": 0.163,
+     "x_simulated": 0.177
+    },
+    {
+     "q": 0.16,
+     "x_formula": 0.063,
+     "x_simulated": 0.114
+    },
+    {
+     "q": 0.2,
+     "x_formula": 0.0,
+     "x_simulated": 0.086
+    },
+    {
+     "q": 0.26,
+     "x_formula": 0.0,
+     "x_simulated": 0.064
+    },
+    {
+     "q": 0.4,
+     "x_formula": 0.0,
+     "x_simulated": 0.045
+    }
+   ]
+  }
+ ],
+ "M3_threshold_table": {
+  "G=0.1": {
+   "S=0.1": 0.5,
+   "S=1": 0.091,
+   "S=10": 0.01,
+   "S=100": 0.001
+  },
+  "G=0.5": {
+   "S=0.1": 0.833,
+   "S=1": 0.333,
+   "S=10": 0.048,
+   "S=100": 0.005
+  },
+  "G=1": {
+   "S=0.1": 0.909,
+   "S=1": 0.5,
+   "S=10": 0.091,
+   "S=100": 0.01
+  },
+  "G=4": {
+   "S=0.1": 0.976,
+   "S=1": 0.8,
+   "S=10": 0.286,
+   "S=100": 0.038
+  },
+  "G=10": {
+   "S=0.1": 0.99,
+   "S=1": 0.909,
+   "S=10": 0.5,
+   "S=100": 0.091
+  }
+ },
+ "M3_optimum": {
+  "дыры быстро кончаются (lam=2), экзамен дорогой (S=4, C=40)": {
+   "x0": 0.347,
+   "q_star": 0.2,
+   "pays_if_x0_above": 0.818,
+   "q_best": 0.0,
+   "progress_q0": 0.653,
+   "progress_qstar": 0.182,
+   "progress_q1": 0.1
+  },
+  "дыры быстро кончаются (lam=2), экзамен умеренный (S=4, C=8)": {
+   "x0": 0.347,
+   "q_star": 0.2,
+   "pays_if_x0_above": 0.333,
+   "q_best": 0.2,
+   "progress_q0": 0.653,
+   "progress_qstar": 0.667,
+   "progress_q1": 0.5
+  },
+  "дыр много (lam=0,7), экзамен дорогой (S=4, C=40)": {
+   "x0": 0.99,
+   "q_star": 0.2,
+   "pays_if_x0_above": 0.818,
+   "q_best": 0.2,
+   "progress_q0": 0.01,
+   "progress_qstar": 0.182,
+   "progress_q1": 0.1
+  },
+  "дыр много (lam=0,7), экзамен умеренный (S=4, C=8)": {
+   "x0": 0.99,
+   "q_star": 0.2,
+   "pays_if_x0_above": 0.333,
+   "q_best": 0.2,
+   "progress_q0": 0.01,
+   "progress_qstar": 0.667,
+   "progress_q1": 0.5
+  },
+  "экзамен дешёвый (lam=2, S=4, C=2)": {
+   "x0": 0.347,
+   "q_star": 0.2,
+   "pays_if_x0_above": "экзамен дешевле своей силы: q = 1",
+   "q_best": 1.0,
+   "progress_q0": 0.653,
+   "progress_qstar": 1.333,
+   "progress_q1": 2.0
+  }
+ },
+ "M3_optimum_rule_check": {
+  "random_cases": 400,
+  "best_is_one_of_three": 400,
+  "interior_optimum": 0
+ },
+ "world_drift": {
+  "ussr_indicator_drift_per_year": 0.0421,
+  "autocracy_gdp_growth_overstatement": 0.35,
+  "us_gpa_drift_per_year": 0.0173,
+  "swe_bench_tests_minus_merge_pp": 24,
+  "ussr_by_truth_estimate": {
+   "khanin_x6_9": 0.0421,
+   "ofer_4_2pct_growth": 0.0326,
+   "ofer_factor": 12.3
+  },
+  "olken_share_left_at_full_audit": 0.69
+ },
+ "M1_humans_by_definition": {
+  "h = смертность лучших лет 1–1,5 % [сн.]; зрелость 15–19 [пам.]": [
+   0.15,
+   0.28
+  ],
+  "h = 1/E, E = 30–40 лет взрослой жизни [сн.: больше чем вдвое против шимпанзе ≈ 15]; зрелость 17–19": [
+   0.42,
+   0.63
+  ],
+  "h = 1/срок размножения 25–27 лет [пам.] + 1 %; зрелость 18": [
+   0.85,
+   0.9
+  ]
+ },
+ "M2_with_helpers": [
+  {
+   "theta": 4,
+   "help_H": 0.0,
+   "investment": 2.53,
+   "number_rel": 28.3
+  },
+  {
+   "theta": 16,
+   "help_H": 0.0,
+   "investment": 5.34,
+   "number_rel": 15.8
+  },
+  {
+   "theta": 16,
+   "help_H": 1.0,
+   "investment": 5.34,
+   "number_rel": 31.5
+  },
+  {
+   "theta": 16,
+   "help_H": 2.0,
+   "investment": 5.34,
+   "number_rel": 47.3
+  }
+ ],
+ "M4_check": {
+  "cases": 1990,
+  "sign_matches_F_gt_c_over_B": 1990,
+  "sign_matches_odds_form": 1739
+ },
+ "M3_rank_selection": {
+  "note": "доля обмана x: формула (отбор по величине, S = 1) против турнира; a = 1, lam = 2",
+  "rows": [
+   {
+    "q": 0.0,
+    "formula_G1": 0.347,
+    "tournament5_G1": 0.347,
+    "tournament5_G3": 0.693,
+    "exam_tournament20_proxy_tournament2_G1": 0.347
+   },
+   {
+    "q": 0.2,
+    "formula_G1": 0.235,
+    "tournament5_G1": 0.337,
+    "tournament5_G3": 0.685,
+    "exam_tournament20_proxy_tournament2_G1": 0.249
+   },
+   {
+    "q": 0.35,
+    "formula_G1": 0.131,
+    "tournament5_G1": 0.314,
+    "tournament5_G3": 0.659,
+    "exam_tournament20_proxy_tournament2_G1": 0.052
+   },
+   {
+    "q": 0.45,
+    "formula_G1": 0.048,
+    "tournament5_G1": 0.251,
+    "tournament5_G3": 0.558,
+    "exam_tournament20_proxy_tournament2_G1": 0.033
+   },
+   {
+    "q": 0.55,
+    "formula_G1": 0.0,
+    "tournament5_G1": 0.133,
+    "tournament5_G3": 0.201,
+    "exam_tournament20_proxy_tournament2_G1": 0.027
+   },
+   {
+    "q": 0.7,
+    "formula_G1": 0.0,
+    "tournament5_G1": 0.037,
+    "tournament5_G3": 0.039,
+    "exam_tournament20_proxy_tournament2_G1": 0.021
+   }
+  ],
+  "formula_threshold": {
+   "G1_S1": 0.5,
+   "G3_S1": 0.75
+  }
+ },
+ "M3_check_all_points_abs_error": [
+  {
+   "S": 1.0,
+   "q": 0.0,
+   "formula": 0.347,
+   "simulated": 0.351,
+   "error": 0.004
+  },
+  {
+   "S": 1.0,
+   "q": 0.25,
+   "formula": 0.203,
+   "simulated": 0.198,
+   "error": -0.005
+  },
+  {
+   "S": 1.0,
+   "q": 0.4,
+   "formula": 0.091,
+   "simulated": 0.12,
+   "error": 0.029
+  },
+  {
+   "S": 1.0,
+   "q": 0.5,
+   "formula": 0.0,
+   "simulated": 0.078,
+   "error": 0.078
+  },
+  {
+   "S": 1.0,
+   "q": 0.65,
+   "formula": 0.0,
+   "simulated": 0.06,
+   "error": 0.06
+  },
+  {
+   "S": 1.0,
+   "q": 0.99,
+   "formula": 0.0,
+   "simulated": 0.043,
+   "error": 0.043
+  },
+  {
+   "S": 4.0,
+   "q": 0.0,
+   "formula": 0.347,
+   "simulated": 0.353,
+   "error": 0.006
+  },
+  {
+   "S": 4.0,
+   "q": 0.1,
+   "formula": 0.163,
+   "simulated": 0.177,
+   "error": 0.014
+  },
+  {
+   "S": 4.0,
+   "q": 0.16,
+   "formula": 0.063,
+   "simulated": 0.114,
+   "error": 0.051
+  },
+  {
+   "S": 4.0,
+   "q": 0.2,
+   "formula": 0.0,
+   "simulated": 0.086,
+   "error": 0.086
+  },
+  {
+   "S": 4.0,
+   "q": 0.26,
+   "formula": 0.0,
+   "simulated": 0.064,
+   "error": 0.064
+  },
+  {
+   "S": 4.0,
+   "q": 0.4,
+   "formula": 0.0,
+   "simulated": 0.045,
+   "error": 0.045
+  }
+ ],
+ "M3_mixture": {
+  "G=1": {
+   "exact": [
+    0.75,
+    0.5,
+    0.0
+   ],
+   "formula": [
+    0.75,
+    0.5,
+    0.0
+   ]
+  },
+  "G=3": {
+   "exact": [
+    0.833,
+    0.667,
+    0.333
+   ],
+   "formula": [
+    0.833,
+    0.667,
+    0.333
+   ]
+  },
+  "G=10": {
+   "exact": [
+    0.875,
+    0.75,
+    0.473
+   ],
+   "formula": [
+    0.863,
+    0.725,
+    0.45
+   ]
+  },
+  "upper_bound_1_minus_q": [
+   0.875,
+   0.75,
+   0.5
+  ]
+ },
+ "selection_on_proxy_raw": [
+  {
+   "rho": 0.9,
+   "top_share": 0.01,
+   "raw_formula": 0.563,
+   "raw_simulated": 0.562,
+   "standardized_formula": 0.267,
+   "calibrated_claim_simulated": -0.001
+  },
+  {
+   "rho": 0.5,
+   "top_share": 0.01,
+   "raw_formula": 3.998,
+   "raw_simulated": 3.997,
+   "standardized_formula": 1.333,
+   "calibrated_claim_simulated": -0.001
+  }
+ ],
+ "M1_euler_lotka": [
+  {
+   "adult_mortality": 0.05,
+   "tau_max_r": 8.01,
+   "r": 0.101,
+   "formula_h_juvenile_plus_r": 8.01,
+   "formula_h_juvenile_plus_adult": 9.73
+  },
+  {
+   "adult_mortality": 0.1,
+   "tau_max_r": 8.62,
+   "r": 0.08,
+   "formula_h_juvenile_plus_r": 8.62,
+   "formula_h_juvenile_plus_adult": 8.05
+  },
+  {
+   "adult_mortality": 0.2,
+   "tau_max_r": 9.88,
+   "r": 0.046,
+   "formula_h_juvenile_plus_r": 9.88,
+   "formula_h_juvenile_plus_adult": 6.12
+  },
+  {
+   "adult_mortality": 0.4,
+   "tau_max_r": 12.62,
+   "r": 0.002,
+   "formula_h_juvenile_plus_r": 12.62,
+   "formula_h_juvenile_plus_adult": 4.24
+  }
+ ],
+ "M2_help_into_fixed_cost": [
+  {
+   "theta": 16,
+   "I0": 1.0,
+   "investment": 5.34,
+   "number_rel": 15.8
+  },
+  {
+   "theta": 16,
+   "I0": 0.5,
+   "investment": 3.84,
+   "number_rel": 23.0
+  },
+  {
+   "theta": 16,
+   "I0": 0.25,
+   "investment": 2.75,
+   "number_rel": 33.4
+  }
+ ],
+ "M3_rank_with_truth_spread": {
+  "note": "доля обмана x при турнире 5; разброс правды 0 — частный случай М3б; при разбросе 0,05 и 0,5 перелом возвращается к G/(1 + G)",
+  "rows": {
+   "G=1, разброс правды 0.0": {
+    "0.0": 0.347,
+    "0.3": 0.325,
+    "0.45": 0.254,
+    "0.55": 0.09,
+    "0.65": 0.051,
+    "0.75": 0.03,
+    "0.85": 0.022
+   },
+   "G=1, разброс правды 0.05": {
+    "0.0": 0.348,
+    "0.3": 0.197,
+    "0.45": 0.101,
+    "0.55": 0.056,
+    "0.65": 0.04,
+    "0.75": 0.03,
+    "0.85": 0.027
+   },
+   "G=1, разброс правды 0.5": {
+    "0.0": 0.353,
+    "0.3": 0.179,
+    "0.45": 0.087,
+    "0.55": 0.073,
+    "0.65": 0.064,
+    "0.75": 0.056,
+    "0.85": 0.051
+   },
+   "G=3, разброс правды 0.0": {
+    "0.0": 0.693,
+    "0.3": 0.671,
+    "0.45": 0.572,
+    "0.55": 0.105,
+    "0.65": 0.045,
+    "0.75": 0.031,
+    "0.85": 0.021
+   },
+   "G=3, разброс правды 0.05": {
+    "0.0": 0.695,
+    "0.3": 0.529,
+    "0.45": 0.384,
+    "0.55": 0.207,
+    "0.65": 0.103,
+    "0.75": 0.048,
+    "0.85": 0.032
+   },
+   "G=3, разброс правды 0.5": {
+    "0.0": 0.697,
+    "0.3": 0.523,
+    "0.45": 0.4,
+    "0.55": 0.274,
+    "0.65": 0.177,
+    "0.75": 0.085,
+    "0.85": 0.06
+   }
+  },
+  "formula_M3a_S1": {
+   "G=1": {
+    "0.0": 0.347,
+    "0.3": 0.168,
+    "0.45": 0.048,
+    "0.55": 0.0,
+    "0.65": 0.0,
+    "0.75": 0.0,
+    "0.85": 0.0
+   },
+   "G=3": {
+    "0.0": 0.693,
+    "0.3": 0.515,
+    "0.45": 0.394,
+    "0.55": 0.294,
+    "0.65": 0.168,
+    "0.75": 0.0,
+    "0.85": 0.0
+   }
+  }
+ },
+ "M1_euler_lotka_m2": [
+  {
+   "adult_mortality": 0.05,
+   "tau_max_r": 6.85,
+   "r": 0.154
+  },
+  {
+   "adult_mortality": 0.1,
+   "tau_max_r": 7.23,
+   "r": 0.135
+  },
+  {
+   "adult_mortality": 0.2,
+   "tau_max_r": 8.0,
+   "r": 0.102
+  },
+  {
+   "adult_mortality": 0.4,
+   "tau_max_r": 9.53,
+   "r": 0.055
+  }
+ ],
+ "genome_vs_wiring_human_and_mouse": {
+  "human": 585865,
+  "mouse": 483,
+  "note": "числа синапсов и нейронов — по памяти"
+ },
+ "M3_threshold_grid": {
+  "note": "доля экзамена q* = G/(G + S), при которой обман исчезает (М3а, экспоненциальные дыры); x при q чуть ниже и чуть выше порога — проверка",
+  "rows": {
+   "G=0.25": {
+    "S=1": 0.2,
+    "S=3": 0.077,
+    "S=10": 0.024
+   },
+   "G=1": {
+    "S=1": 0.5,
+    "S=3": 0.25,
+    "S=10": 0.091
+   },
+   "G=3": {
+    "S=1": 0.75,
+    "S=3": 0.5,
+    "S=10": 0.231
+   },
+   "G=10": {
+    "S=1": 0.909,
+    "S=3": 0.769,
+    "S=10": 0.5
+   }
+  },
+  "check_x_just_below_and_above": {
+   "G=0.25, S=1": [
+    0.0123,
+    0.0
+   ],
+   "G=0.25, S=3": [
+    0.0284,
+    0.0
+   ],
+   "G=0.25, S=10": [
+    0.09,
+    0.0
+   ],
+   "G=1, S=1": [
+    0.0196,
+    0.0
+   ],
+   "G=1, S=3": [
+    0.0267,
+    0.0
+   ],
+   "G=1, S=10": [
+    0.063,
+    0.0
+   ],
+   "G=3, S=1": [
+    0.0385,
+    0.0
+   ],
+   "G=3, S=3": [
+    0.0297,
+    0.0
+   ],
+   "G=3, S=10": [
+    0.043,
+    0.0
+   ],
+   "G=10, S=1": [
+    0.0994,
+    0.0
+   ],
+   "G=10, S=3": [
+    0.0495,
+    0.0
+   ],
+   "G=10, S=10": [
+    0.0362,
+    0.0
+   ]
+  }
+ },
+ "evaluator_inflation_table": {
+  "note": "завышение сырой оценки у отобранных, (1 − ρ²)·i/ρ, в единицах разброса правды; в скобках проверка на 2 млн пар",
+  "rows": {
+   "rho=0.95": {
+    "верхние 0.5": {
+     "formula": 0.08,
+     "simulated": 0.08
+    },
+    "верхние 0.1": {
+     "formula": 0.18,
+     "simulated": 0.18
+    },
+    "верхние 0.01": {
+     "formula": 0.27,
+     "simulated": 0.28
+    },
+    "верхние 0.001": {
+     "formula": 0.35,
+     "simulated": 0.34
+    }
+   },
+   "rho=0.9": {
+    "верхние 0.5": {
+     "formula": 0.17,
+     "simulated": 0.17
+    },
+    "верхние 0.1": {
+     "formula": 0.37,
+     "simulated": 0.37
+    },
+    "верхние 0.01": {
+     "formula": 0.56,
+     "simulated": 0.57
+    },
+    "верхние 0.001": {
+     "formula": 0.71,
+     "simulated": 0.7
+    }
+   },
+   "rho=0.7": {
+    "верхние 0.5": {
+     "formula": 0.58,
+     "simulated": 0.58
+    },
+    "верхние 0.1": {
+     "formula": 1.28,
+     "simulated": 1.28
+    },
+    "верхние 0.01": {
+     "formula": 1.94,
+     "simulated": 1.94
+    },
+    "верхние 0.001": {
+     "formula": 2.45,
+     "simulated": 2.46
+    }
+   },
+   "rho=0.5": {
+    "верхние 0.5": {
+     "formula": 1.2,
+     "simulated": 1.2
+    },
+    "верхние 0.1": {
+     "formula": 2.63,
+     "simulated": 2.64
+    },
+    "верхние 0.01": {
+     "formula": 4.0,
+     "simulated": 4.0
+    },
+    "верхние 0.001": {
+     "formula": 5.05,
+     "simulated": 5.08
+    }
+   }
+  }
+ },
+ "sign_test": {
+  "40": {
+   "k": 28,
+   "false_level": 0.0083,
+   "power": {
+    "0.6": 0.13,
+    "0.65": 0.31,
+    "0.7": 0.58,
+    "0.75": 0.82,
+    "0.8": 0.96
+   }
+  },
+  "50": {
+   "k": 34,
+   "false_level": 0.0077,
+   "power": {
+    "0.6": 0.16,
+    "0.65": 0.39,
+    "0.7": 0.68,
+    "0.75": 0.9,
+    "0.8": 0.99
+   }
+  },
+  "60": {
+   "k": 40,
+   "false_level": 0.0067,
+   "power": {
+    "0.6": 0.18,
+    "0.65": 0.45,
+    "0.7": 0.76,
+    "0.75": 0.95,
+    "0.8": 1.0
+   }
+  },
+  "100": {
+   "k": 63,
+   "false_level": 0.006,
+   "power": {
+    "0.6": 0.31,
+    "0.65": 0.7,
+    "0.7": 0.95,
+    "0.75": 1.0,
+    "0.8": 1.0
+   }
+  },
+  "120": {
+   "k": 74,
+   "false_level": 0.0067,
+   "power": {
+    "0.6": 0.39,
+    "0.65": 0.81,
+    "0.7": 0.98,
+    "0.75": 1.0,
+    "0.8": 1.0
+   }
+  }
+ }
+}
