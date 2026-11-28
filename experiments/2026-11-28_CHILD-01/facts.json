@@ -51,7 +51,7 @@
   "seeds_zero": 0
  },
  "P1b_inner_slope": {
-  "verdict": "подтверждено",
+  "verdict": null,
   "mean": 0.081,
   "ci": [
    0.051,
@@ -95,10 +95,12 @@
     "mean": 0.026
    }
   },
-  "seeds_zero": 0
+  "seeds_zero": 0,
+  "analysis_label": "подтверждено",
+  "status": "описательная мера, без вердикта и веса (PREREG §4, правило мощности)"
  },
  "P2_exam_gradient_on_inflation": {
-  "verdict": "экзамен чистит",
+  "verdict": null,
   "mean": -0.069,
   "ci": [
    -0.088,
@@ -144,7 +146,9 @@
   },
   "seeds_zero": 0,
   "beta_T_mean": 0.5,
-  "blind_margin": 0.05
+  "blind_margin": 0.05,
+  "analysis_label": "экзамен чистит",
+  "status": "описательная мера, без вердикта и веса (PREREG §4, правило мощности)"
  },
  "D_P2_in_ALT50_exam_gens": {
   "verdict": null,
@@ -2963,8 +2967,14 @@
  "derived": {
   "inflation_drop_half_exam": 0.026,
   "inflation_drop_half_noise": 0.004,
-  "slope_ratio_exam_to_noise": 8.3,
+  "ceiling_room_NOISE_50": 0.599,
+  "ceiling_room_ALT_50": 0.405,
   "P5_pilot_over_test": 6.5
+ },
+ "family_error": {
+  "directional": 0.04,
+  "equivalence_if_purge_0_05": 0.015,
+  "equivalence_if_no_difference": 0.989
  },
  "constants": {
   "population": 300,

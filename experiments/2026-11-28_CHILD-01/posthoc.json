@@ -1,0 +1,122 @@
+{
+ "note": "пост-хок: три описательных сравнения с интервалами; сравнений три, поправка на их число не делалась; вердиктов нет",
+ "seeds": 20,
+ "truth_RND4_minus_ALT25": {
+  "mean": 0.015,
+  "ci95": [
+   -0.066,
+   0.1
+  ],
+  "p_two_sided": 0.734,
+  "seeds_plus": 9,
+  "seeds_minus": 11,
+  "by_task": {
+   "T1": 0.105,
+   "T2": -0.06,
+   "T3": 0.112,
+   "T4": 0.022,
+   "T5": 0.003,
+   "T6": -0.093
+  },
+  "tasks_plus": 4,
+  "tasks_total": 6
+ },
+ "truth_RND4_minus_ALT6N64": {
+  "mean": 0.081,
+  "ci95": [
+   0.001,
+   0.163
+  ],
+  "p_two_sided": 0.0713,
+  "seeds_plus": 14,
+  "seeds_minus": 6,
+  "by_task": {
+   "T1": 0.343,
+   "T2": -0.041,
+   "T3": 0.099,
+   "T4": 0.067,
+   "T5": 0.042,
+   "T6": -0.024
+  },
+  "tasks_plus": 4,
+  "tasks_total": 6
+ },
+ "truth_ALT25_minus_ALT6N64": {
+  "mean": 0.066,
+  "ci95": [
+   -0.001,
+   0.132
+  ],
+  "p_two_sided": 0.0771,
+  "seeds_plus": 14,
+  "seeds_minus": 6,
+  "by_task": {
+   "T1": 0.238,
+   "T2": 0.019,
+   "T3": -0.013,
+   "T4": 0.045,
+   "T5": 0.039,
+   "T6": 0.07
+  },
+  "tasks_plus": 5,
+  "tasks_total": 6
+ },
+ "inflation_RND4_minus_ALT25": {
+  "mean": -0.061,
+  "ci95": [
+   -0.076,
+   -0.046
+  ],
+  "p_two_sided": 0.0,
+  "seeds_plus": 1,
+  "seeds_minus": 19,
+  "by_task": {
+   "T2": -0.035,
+   "T3": -0.168,
+   "T4": -0.051,
+   "T5": -0.054,
+   "T6": 0.002
+  },
+  "tasks_plus": 1,
+  "tasks_total": 5
+ },
+ "inflation_ALT12_minus_FIX": {
+  "mean": 0.002,
+  "ci95": [
+   -0.012,
+   0.018
+  ],
+  "p_two_sided": 0.809,
+  "seeds_plus": 7,
+  "seeds_minus": 13,
+  "by_task": {
+   "T2": 0.027,
+   "T3": 0.039,
+   "T4": -0.055,
+   "T5": 0.005,
+   "T6": -0.005
+  },
+  "tasks_plus": 3,
+  "tasks_total": 5
+ },
+ "truth_ALT12_minus_FIX": {
+  "mean": -0.0,
+  "ci95": [
+   -0.059,
+   0.062
+  ],
+  "p_two_sided": 0.9945,
+  "seeds_plus": 7,
+  "seeds_minus": 13,
+  "by_task": {
+   "T1": 0.16,
+   "T2": -0.07,
+   "T3": -0.029,
+   "T4": -0.018,
+   "T5": -0.062,
+   "T6": 0.017
+  },
+  "tasks_plus": 2,
+  "tasks_total": 6
+ }
+}

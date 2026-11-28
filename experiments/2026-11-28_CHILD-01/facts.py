@@ -17,6 +17,9 @@ def block(v):
     return d
 for k, v in R.items():
     if k[:2] in ('P1', 'P2', 'P3', 'P4', 'P5') or k.startswith('D_'): F[k] = block(v)
+# после совета 49: P1b и P2 по PREREG §4 — описательные меры без вердикта; ярлык, который выдаёт код анализа, вердиктом не является
+for k in ('P1b_inner_slope', 'P2_exam_gradient_on_inflation'):
+    F[k]['analysis_label'] = F[k]['verdict']; F[k]['verdict'] = None; F[k]['status'] = 'описательная мера, без вердикта и веса (PREREG §4, правило мощности)'
 F['dose_W_ind'] = {a: r3(x) for a, x in R['dose_curve_W_ind'].items()}; F['dose_T_key'] = {a: r3(x) for a, x in R['dose_curve_T_key'].items()}
 w0, w1 = R['dose_curve_W_ind']['FIX'], R['dose_curve_W_ind']['RND']
 F['excess_share'] = {a: r3((x - w1) / (w0 - w1)) for a, x in R['dose_curve_W_ind'].items()} if abs(w0 - w1) > 1e-9 else None
@@ -66,7 +69,10 @@ F['fi_limit_bits'] = LIM
 # производные числа текста отчёта (добавлено после теста, только арифметика над уже посчитанным)
 wm = lambda a: float(np.mean([R['tables']['W_ind'][a][t] for t in ('T2', 'T3', 'T4', 'T5', 'T6')]))
 F['derived'] = dict(inflation_drop_half_exam=r3(wm('FIX') - wm('ALT_50')), inflation_drop_half_noise=r3(wm('FIX') - wm('NOISE_50')),
-                    slope_ratio_exam_to_noise=round(R['P1a_dose_slope']['mean'] / R['D_noise_slope']['mean'], 1) if mode == 'test' and R['D_noise_slope']['mean'] > 0 else None)
+                    ceiling_room_NOISE_50=r3(1 - R['tables']['T_ind']['NOISE_50']['mean']), ceiling_room_ALT_50=r3(1 - R['tables']['T_ind']['ALT_50']['mean']))
+# ложный уровень: направленные вердикты (4 проверки × 2 стороны × 0,005) и отдельно ошибка вердикта «разницы нет» при чистке 0,05 (power.json)
+F['family_error'] = dict(directional=0.04, equivalence_if_purge_0_05=P['P4_purge_NOISE50_minus_ALT50']['экзамен чистит на 0,05, разброс ×3']['same'],
+                         equivalence_if_no_difference=P['P4_purge_NOISE50_minus_ALT50']['разницы нет, разброс ×3']['same'])
 if mode == 'test':
     RP = json.load(open(os.path.join(H, 'pilot_results.json')))
     F['derived']['P5_pilot_over_test'] = round(RP['P5_popmean_truth_ALT25_vs_FINAL25']['mean'] / R['P5_popmean_truth_ALT25_vs_FINAL25']['mean'], 1)

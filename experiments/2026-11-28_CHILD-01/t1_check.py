@@ -21,5 +21,5 @@ for s in (990, 991, 992):
     rep[str(s)] = dict(final_truth=round(h[-1]['true'], 3), max_abs_diff_truth=float(max(abs(x['true'] - y) for x, y in zip(h, j['t_key']))),
                        max_abs_diff_claim=float(max(abs(x['claimed'] - y) for x, y in zip(h, j['c_key']))))
 out['rerun_original_EVO01_code_on_pilot_seeds'] = rep
-p = 0.1; out['chance_three_of_three'] = {'if_rate_0.1': round(p ** 3, 4), 'if_rate_0.25': round(0.25 ** 3, 4)}
+out['chance_three_of_three'] = {'if_rate_0.05': round(0.05 ** 3, 5), 'if_rate_0.1': round(0.1 ** 3, 4), 'if_rate_0.25': round(0.25 ** 3, 4)}   # 0,05 — частота из архива EVO-01 и теста (1 из 20)
 json.dump(out, open(os.path.join(H, 't1_check.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1); print(json.dumps(out, ensure_ascii=False, indent=1))

@@ -110,6 +110,7 @@
   }
  },
  "chance_three_of_three": {
+  "if_rate_0.05": 0.00013,
   "if_rate_0.1": 0.001,
   "if_rate_0.25": 0.0156
  }
